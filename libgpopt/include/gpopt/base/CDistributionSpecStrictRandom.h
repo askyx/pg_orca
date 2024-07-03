@@ -1,5 +1,5 @@
 //	Greenplum Database
-//	Copyright (C) 2016 Pivotal Software, Inc.
+//	Copyright (C) 2016 VMware, Inc. or its affiliates.
 
 #ifndef GPOPT_CDistributionSpecStrictRandom_H
 #define GPOPT_CDistributionSpecStrictRandom_H
@@ -8,8 +8,7 @@
 
 #include "gpopt/base/CDistributionSpecRandom.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -20,33 +19,24 @@ using namespace gpos;
 //		Class for representing forced random distribution.
 //
 //---------------------------------------------------------------------------
-class CDistributionSpecStrictRandom : public CDistributionSpecRandom
-{
-public:
-	//ctor
-	CDistributionSpecStrictRandom();
+class CDistributionSpecStrictRandom : public CDistributionSpecRandom {
+ public:
+  // ctor
+  CDistributionSpecStrictRandom();
 
-	// accessor
-	virtual EDistributionType
-	Edt() const
-	{
-		return CDistributionSpec::EdtStrictRandom;
-	}
+  // accessor
+  EDistributionType Edt() const override { return CDistributionSpec::EdtStrictRandom; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "STRICT RANDOM";
-	}
+  const CHAR *SzId() const override { return "STRICT RANDOM"; }
 
-	// does this distribution match the given one
-	virtual BOOL Matches(const CDistributionSpec *pds) const;
+  // does this distribution match the given one
+  BOOL Matches(const CDistributionSpec *pds) const override;
 
-	// does this distribution satisfy the given one
-	virtual BOOL FSatisfies(const CDistributionSpec *pds) const;
-};	// class CDistributionSpecStrictRandom
+  // does this distribution satisfy the given one
+  BOOL FSatisfies(const CDistributionSpec *pds) const override;
+};  // class CDistributionSpecStrictRandom
 }  // namespace gpopt
 
-#endif	// !GPOPT_CDistributionSpecStrictRandom_H
+#endif  // !GPOPT_CDistributionSpecStrictRandom_H
 
 // EOF

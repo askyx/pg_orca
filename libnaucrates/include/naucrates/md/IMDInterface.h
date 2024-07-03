@@ -9,16 +9,13 @@
 //		Base interface for metadata-related objects
 //---------------------------------------------------------------------------
 
-
-
 #ifndef GPMD_IMDInterface_H
 #define GPMD_IMDInterface_H
 
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -29,17 +26,12 @@ using namespace gpos;
 //		Base interface for metadata-related objects
 //
 //---------------------------------------------------------------------------
-class IMDInterface : public CRefCount
-{
-public:
-	virtual ~IMDInterface()
-	{
-	}
+class IMDInterface : public CRefCount {
+ public:
+  ~IMDInterface() override = default;
 };
 }  // namespace gpmd
 
-
-
-#endif	// !GPMD_IMDInterface_H
+#endif  // !GPMD_IMDInterface_H
 
 // EOF

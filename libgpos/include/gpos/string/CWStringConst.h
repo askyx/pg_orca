@@ -13,8 +13,7 @@
 
 #include "gpos/string/CWStringBase.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CWStringConst
@@ -27,28 +26,38 @@ namespace gpos
 //		For a general string class that can be modified, see CWString.
 //
 //---------------------------------------------------------------------------
-class CWStringConst : public CWStringBase
-{
-private:
-	// null terminated wide character buffer
-	const WCHAR *m_w_str_buffer;
+class CWStringConst : public CWStringBase {
+ private:
+  // null terminated wide character buffer
+  const WCHAR *m_w_str_buffer;
 
-public:
-	// ctors
-	CWStringConst(const WCHAR *w_str_buffer);
-	CWStringConst(CMemoryPool *mp, const WCHAR *w_str_buffer);
+ public:
+  using CWStringBase::Equals;
+  // ctors
+  CWStringConst(const WCHAR *w_str_buffer);
+  CWStringConst(CMemoryPool *mp, const WCHAR *w_str_buffer);
+  CWStringConst(CMemoryPool *mp, const CHAR *str_buffer);
 
-	// shallow copy ctor
-	CWStringConst(const CWStringConst &);
+  // shallow copy ctor
+  CWStringConst(const CWStringConst &);
 
-	//dtor
-	~CWStringConst();
+  // dtor
+  ~CWStringConst() override;
 
-	// returns the wide character buffer storing the string
-	const WCHAR *GetBuffer() const;
+  // returns the wide character buffer storing the string
+  const WCHAR *GetBuffer() const override;
+
+  // equality
+  static BOOL Equals(const CWStringConst *string1, const CWStringConst *string2);
+
+  // hash function
+  static ULONG HashValue(const CWStringConst *string);
+
+  // checks whether the string is byte-wise equal to another string
+  BOOL Equals(const CWStringBase *str) const override;
 };
 }  // namespace gpos
 
-#endif	// #ifndef GPOS_CWStringConst_H
+#endif  // #ifndef GPOS_CWStringConst_H
 
 // EOF

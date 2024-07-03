@@ -9,7 +9,6 @@
 //		Metadata cache.
 //---------------------------------------------------------------------------
 
-
 #ifndef GPOPT_CMDCache_H
 #define GPOPT_CMDCache_H
 
@@ -20,11 +19,9 @@
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "gpopt/mdcache/CMDKey.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 using namespace gpmd;
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -35,61 +32,51 @@ using namespace gpmd;
 //		creation and encapsulate a singleton cache object
 //
 //---------------------------------------------------------------------------
-class CMDCache
-{
-private:
-	// pointer to the underlying cache
-	static CMDAccessor::MDCache *m_pcache;
+class CMDCache {
+ private:
+  // pointer to the underlying cache
+  static CMDAccessor::MDCache *m_pcache;
 
-	// the maximum size of the cache
-	static ULLONG m_ullCacheQuota;
+  // the maximum size of the cache
+  static ULLONG m_ullCacheQuota;
 
-	// private ctor
-	CMDCache(){};
+  // private ctor
+  CMDCache() = default;
 
-	// no copy ctor
-	CMDCache(const CMDCache &);
+  // private dtor
+  ~CMDCache() = default;
 
-	// private dtor
-	~CMDCache(){};
+ public:
+  CMDCache(const CMDCache &) = delete;
 
-public:
-	// initialize underlying cache
-	static void Init();
+  // initialize underlying cache
+  static void Init();
 
-	// has cache been initialized?
-	static BOOL
-	FInitialized()
-	{
-		return (NULL != m_pcache);
-	}
+  // has cache been initialized?
+  static BOOL FInitialized() { return (nullptr != m_pcache); }
 
-	// destroy global instance
-	static void Shutdown();
+  // destroy global instance
+  static void Shutdown();
 
-	// set the maximum size of the cache
-	static void SetCacheQuota(ULLONG ullCacheQuota);
+  // set the maximum size of the cache
+  static void SetCacheQuota(ULLONG ullCacheQuota);
 
-	// get the maximum size of the cache
-	static ULLONG ULLGetCacheQuota();
+  // get the maximum size of the cache
+  static ULLONG ULLGetCacheQuota();
 
-	// get the number of times we evicted entries from this cache
-	static ULLONG ULLGetCacheEvictionCounter();
+  // get the number of times we evicted entries from this cache
+  static ULLONG ULLGetCacheEvictionCounter();
 
-	// reset global instance
-	static void Reset();
+  // reset global instance
+  static void Reset();
 
-	// global accessor
-	static CMDAccessor::MDCache *
-	Pcache()
-	{
-		return m_pcache;
-	}
+  // global accessor
+  static CMDAccessor::MDCache *Pcache() { return m_pcache; }
 
-};	// class CMDCache
+};  // class CMDCache
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CMDCache_H
+#endif  // !GPOPT_CMDCache_H
 
 // EOF

@@ -10,7 +10,6 @@
 //
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/dxl/operators/CDXLLogicalSelect.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
@@ -27,9 +26,7 @@ using namespace gpdxl;
 //		Construct a DXL Logical select node
 //
 //---------------------------------------------------------------------------
-CDXLLogicalSelect::CDXLLogicalSelect(CMemoryPool *mp) : CDXLLogical(mp)
-{
-}
+CDXLLogicalSelect::CDXLLogicalSelect(CMemoryPool *mp) : CDXLLogical(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -39,10 +36,8 @@ CDXLLogicalSelect::CDXLLogicalSelect(CMemoryPool *mp) : CDXLLogical(mp)
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLLogicalSelect::GetDXLOperator() const
-{
-	return EdxlopLogicalSelect;
+Edxlopid CDXLLogicalSelect::GetDXLOperator() const {
+  return EdxlopLogicalSelect;
 }
 
 //---------------------------------------------------------------------------
@@ -53,10 +48,8 @@ CDXLLogicalSelect::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLLogicalSelect::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenLogicalSelect);
+const CWStringConst *CDXLLogicalSelect::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenLogicalSelect);
 }
 
 //---------------------------------------------------------------------------
@@ -67,20 +60,15 @@ CDXLLogicalSelect::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLLogicalSelect::SerializeToDXL(CXMLSerializer *xml_serializer,
-								  const CDXLNode *node) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLLogicalSelect::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	// serialize children
-	node->SerializeChildrenToDXL(xml_serializer);
+  // serialize children
+  node->SerializeChildrenToDXL(xml_serializer);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -92,28 +80,20 @@ CDXLLogicalSelect::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLLogicalSelect::AssertValid(const CDXLNode *node,
-							   BOOL validate_children) const
-{
-	GPOS_ASSERT(2 == node->Arity());
+void CDXLLogicalSelect::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+  GPOS_ASSERT(2 == node->Arity());
 
-	CDXLNode *condition_dxl = (*node)[0];
-	CDXLNode *child_dxlnode = (*node)[1];
+  CDXLNode *condition_dxl = (*node)[0];
+  CDXLNode *child_dxlnode = (*node)[1];
 
-	GPOS_ASSERT(EdxloptypeScalar ==
-				condition_dxl->GetOperator()->GetDXLOperatorType());
-	GPOS_ASSERT(EdxloptypeLogical ==
-				child_dxlnode->GetOperator()->GetDXLOperatorType());
+  GPOS_ASSERT(EdxloptypeScalar == condition_dxl->GetOperator()->GetDXLOperatorType());
+  GPOS_ASSERT(EdxloptypeLogical == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-	if (validate_children)
-	{
-		condition_dxl->GetOperator()->AssertValid(condition_dxl,
-												  validate_children);
-		child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-												  validate_children);
-	}
+  if (validate_children) {
+    condition_dxl->GetOperator()->AssertValid(condition_dxl, validate_children);
+    child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

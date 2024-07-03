@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerPhysicalBitmapTableScan.cpp
@@ -23,15 +23,12 @@ using namespace gpdxl;
 //		Invoked by Xerces to process an opening tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerPhysicalBitmapTableScan::StartElement(
-	const XMLCh *const,	 // element_uri
-	const XMLCh *const element_local_name,
-	const XMLCh *const,	 // element_qname
-	const Attributes &	 // attrs
-)
-{
-	StartElementHelper(element_local_name, EdxltokenPhysicalBitmapTableScan);
+void CParseHandlerPhysicalBitmapTableScan::StartElement(const XMLCh *const,  // element_uri
+                                                        const XMLCh *const element_local_name,
+                                                        const XMLCh *const,  // element_qname
+                                                        const Attributes &   // attrs
+) {
+  StartElementHelper(element_local_name, EdxltokenPhysicalBitmapTableScan);
 }
 
 //---------------------------------------------------------------------------
@@ -42,12 +39,9 @@ CParseHandlerPhysicalBitmapTableScan::StartElement(
 //		Invoked by Xerces to process a closing tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerPhysicalBitmapTableScan::EndElement(
-	const XMLCh *const,	 // element_uri
-	const XMLCh *const element_local_name,
-	const XMLCh *const	// element_qname
-)
-{
-	EndElementHelper(element_local_name, EdxltokenPhysicalBitmapTableScan);
+void CParseHandlerPhysicalBitmapTableScan::EndElement(const XMLCh *const,  // element_uri
+                                                      const XMLCh *const element_local_name,
+                                                      const XMLCh *const  // element_qname
+) {
+  EndElementHelper(element_local_name, EdxltokenPhysicalBitmapTableScan, nullptr);
 }

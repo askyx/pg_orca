@@ -17,14 +17,12 @@
 #include "gpopt/base/CDistributionSpecHashed.h"
 #include "gpopt/base/CDistributionSpecRandom.h"
 #include "gpopt/base/CDistributionSpecSingleton.h"
-#include "gpopt/base/CPartIndexMap.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/metadata/CName.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "naucrates/statistics/CStatisticsUtils.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -34,17 +32,13 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalDynamicTableScan::CPhysicalDynamicTableScan(
-	CMemoryPool *mp, BOOL is_partial, const CName *pnameAlias,
-	CTableDescriptor *ptabdesc, ULONG ulOriginOpId, ULONG scan_id,
-	CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrParts,
-	ULONG ulSecondaryScanId, CPartConstraint *ppartcnstr,
-	CPartConstraint *ppartcnstrRel)
-	: CPhysicalDynamicScan(mp, is_partial, ptabdesc, ulOriginOpId, pnameAlias,
-						   scan_id, pdrgpcrOutput, pdrgpdrgpcrParts,
-						   ulSecondaryScanId, ppartcnstr, ppartcnstrRel)
-{
-}
+CPhysicalDynamicTableScan::CPhysicalDynamicTableScan(CMemoryPool *mp, const CName *pnameAlias,
+                                                     CTableDescriptor *ptabdesc, ULONG ulOriginOpId, ULONG scan_id,
+                                                     CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrParts,
+                                                     IMdIdArray *partition_mdids,
+                                                     ColRefToUlongMapArray *root_col_mapping_per_part)
+    : CPhysicalDynamicScan(mp, ptabdesc, ulOriginOpId, pnameAlias, scan_id, pdrgpcrOutput, pdrgpdrgpcrParts,
+                           partition_mdids, root_col_mapping_per_part) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -54,10 +48,8 @@ CPhysicalDynamicTableScan::CPhysicalDynamicTableScan(
 //		match operator
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalDynamicTableScan::Matches(COperator *pop) const
-{
-	return CUtils::FMatchDynamicScan(this, pop);
+BOOL CPhysicalDynamicTableScan::Matches(COperator *pop) const {
+  return CUtils::FMatchDynamicScan(this, pop);
 }
 
 //---------------------------------------------------------------------------
@@ -68,17 +60,20 @@ CPhysicalDynamicTableScan::Matches(COperator *pop) const
 //		Statistics derivation during costing
 //
 //---------------------------------------------------------------------------
-IStatistics *
-CPhysicalDynamicTableScan::PstatsDerive(CMemoryPool *mp,
-										CExpressionHandle &exprhdl,
-										CReqdPropPlan *prpplan,
-										IStatisticsArray *	// stats_ctxt
-) const
-{
-	GPOS_ASSERT(NULL != prpplan);
+IStatistics *CPhysicalDynamicTableScan::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                     CReqdPropPlan *prpplan,
+                                                     IStatisticsArray *  // stats_ctxt
+) const {
+  GPOS_ASSERT(nullptr != prpplan);
 
-	return CStatisticsUtils::DeriveStatsForDynamicScan(
-		mp, exprhdl, ScanId(), prpplan->Pepp()->PpfmDerived());
+  return CStatisticsUtils::DeriveStatsForDynamicScan(mp, exprhdl, ScanId(), prpplan->Pepp()->PppsRequired());
+}
+
+CPartitionPropagationSpec *CPhysicalDynamicTableScan::PppsDerive(CMemoryPool *mp, CExpressionHandle &) const {
+  CPartitionPropagationSpec *pps = GPOS_NEW(mp) CPartitionPropagationSpec(mp);
+  pps->Insert(ScanId(), CPartitionPropagationSpec::EpptConsumer, Ptabdesc()->MDId(), nullptr, nullptr);
+
+  return pps;
 }
 
 // EOF

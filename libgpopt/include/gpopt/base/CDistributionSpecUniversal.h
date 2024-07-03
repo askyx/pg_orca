@@ -17,8 +17,7 @@
 #include "gpopt/base/CDistributionSpec.h"
 #include "gpopt/base/CDistributionSpecHashed.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -30,49 +29,47 @@ using namespace gpos;
 //		reports availability everywhere.
 //
 //---------------------------------------------------------------------------
-class CDistributionSpecUniversal : public CDistributionSpec
-{
-private:
-	// private copy ctor
-	CDistributionSpecUniversal(const CDistributionSpecUniversal &);
+class CDistributionSpecUniversal : public CDistributionSpec {
+ private:
+ public:
+  CDistributionSpecUniversal(const CDistributionSpecUniversal &) = delete;
 
-public:
-	//ctor
-	CDistributionSpecUniversal();
+  // ctor
+  CDistributionSpecUniversal();
 
-	// accessor
-	virtual EDistributionType Edt() const;
+  // accessor
+  EDistributionType Edt() const override;
 
-	// does current distribution satisfy the given one
-	virtual BOOL FSatisfies(const CDistributionSpec *pds) const;
+  // does current distribution satisfy the given one
+  BOOL FSatisfies(const CDistributionSpec *pds) const override;
 
-	// return true if distribution spec can be required
-	virtual BOOL FRequirable() const;
+  // return true if distribution spec can be required
+  BOOL FRequirable() const override;
 
-	// does this distribution match the given one
-	virtual BOOL Matches(const CDistributionSpec *pds) const;
+  // does this distribution match the given one
+  BOOL Matches(const CDistributionSpec *pds) const override;
 
-	// append enforcers to dynamic array for the given plan properties
-	virtual void AppendEnforcers(CMemoryPool *,		   //mp,
-								 CExpressionHandle &,  // exprhdl
-								 CReqdPropPlan *,	   //prpp,
-								 CExpressionArray *,   // pdrgpexpr,
-								 CExpression *		   // pexpr
-	);
+  // append enforcers to dynamic array for the given plan properties
+  void AppendEnforcers(CMemoryPool *,        // mp,
+                       CExpressionHandle &,  // exprhdl
+                       CReqdPropPlan *,      // prpp,
+                       CExpressionArray *,   // pdrgpexpr,
+                       CExpression *         // pexpr
+                       ) override;
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // print
+  IOstream &OsPrint(IOstream &os) const override;
 
-	// return distribution partitioning type
-	virtual EDistributionPartitioningType Edpt() const;
+  // return distribution partitioning type
+  EDistributionPartitioningType Edpt() const override;
 
-	// conversion function
-	static CDistributionSpecUniversal *PdsConvert(CDistributionSpec *pds);
+  // conversion function
+  static CDistributionSpecUniversal *PdsConvert(CDistributionSpec *pds);
 
-};	// class CDistributionSpecUniversal
+};  // class CDistributionSpecUniversal
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CDistributionSpecUniversal_H
+#endif  // !GPOPT_CDistributionSpecUniversal_H
 
 // EOF

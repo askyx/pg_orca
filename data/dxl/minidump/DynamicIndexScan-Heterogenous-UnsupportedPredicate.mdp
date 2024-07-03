@@ -3,7 +3,7 @@
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.000000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="2">
@@ -11,7 +11,8 @@
           <dxl:CostParam Name="NLJFactor" Value="1.000000" LowerBound="0.500000" UpperBound="1.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
-      <dxl:TraceFlags Value="103027,101013,102024,102025,102115,102116,102117,102119,102121,103001,103014,103015,103026"/>
+      <dxl:PlanHint/>
+      <dxl:TraceFlags Value="101013,102001,102002,102003,102024,102025,102115,102116,102117,102119,102121,102144,103001,103014,103015,103026,103027,103033"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:GPDBScalarOp Mdid="0.518.1.0" Name="&lt;&gt;" ComparisonType="NEq" ReturnsNullOnNullInput="true">
@@ -36,7 +37,7 @@
       </dxl:GPDBScalarOp>
       <dxl:ColumnStatistics Mdid="1.1637610.1.1.7" Name="ctid" Width="6.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
       <dxl:ColumnStatistics Mdid="1.1637610.1.1.6" Name="c7" Width="8.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
-      <dxl:Index Mdid="0.1637960.1.0" Name="idx_heapaoco_list_part_c1_int_1_prt_p1" IsClustered="false" IndexType="B-tree" KeyColumns="0" IncludedColumns="0,1,2,3,4,5,6,7,8,9,10,11,12,13">
+      <dxl:Index Mdid="0.1637960.1.0" Name="idx_heapaoco_list_part_c1_int_1_prt_p1" IsClustered="false" AmCanOrder="true" IndexType="B-tree" KeyColumns="0" IncludedColumns="" ReturnableColumns="0">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.1978.1.0"/>
         </dxl:Opfamilies>
@@ -170,7 +171,7 @@
         <dxl:SumAgg Mdid="0.0.0.0"/>
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
-      <dxl:Index Mdid="0.1637979.1.0" Name="idx_heapaoco_list_part_c1_int_1_prt_p2" IsClustered="false" IndexType="Bitmap" IndexItemType="0.2283.1.0" KeyColumns="0" IncludedColumns="0,1,2,3,4,5,6,7,8,9,10,11,12,13">
+      <dxl:Index Mdid="0.1637979.1.0" Name="idx_heapaoco_list_part_c1_int_1_prt_p2" IsClustered="false" IndexType="Bitmap" IndexItemType="0.2283.1.0" KeyColumns="0" IncludedColumns="" ReturnableColumns="">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.1978.1.0"/>
         </dxl:Opfamilies>
@@ -264,56 +265,41 @@
       <dxl:ColumnStatistics Mdid="1.1637610.1.1.5" Name="c6" Width="8.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
       <dxl:ColumnStatistics Mdid="1.1637610.1.1.4" Name="c5" Width="8.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
       <dxl:RelationStatistics Mdid="2.1637610.1.1" Name="heapaoco_list_part" Rows="0.000000" EmptyRelation="true"/>
-      <dxl:Relation Mdid="0.1637610.1.0" Name="heapaoco_list_part" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="12,13,7" PartitionColumns="0" PartitionTypes="l">
+      <dxl:Relation Mdid="6.1637610.1.0" Name="heapaoco_list_part" IsTemporary="false" Rows="0.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="12,13,7" PartitionColumns="0" PartitionTypes="l">
         <dxl:Columns>
           <dxl:Column Name="c1" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c2" Attno="2" Mdid="0.25.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c3" Attno="3" Mdid="0.1082.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c4" Attno="4" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c5" Attno="5" Mdid="0.701.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c6" Attno="6" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c7" Attno="7" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.1637960.1.0" IsPartial="true"/>
           <dxl:IndexInfo Mdid="0.1637979.1.0" IsPartial="true"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
         <dxl:PartConstraint DefaultPartition="0" Unbounded="true">
           <dxl:Or>
@@ -424,56 +410,41 @@
           </dxl:Or>
         </dxl:PartConstraint>
       </dxl:Relation>
-      <dxl:Relation Mdid="0.1637610.1.1" Name="heapaoco_list_part" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="12,13,7" PartitionColumns="0" PartitionTypes="l">
+      <dxl:Relation Mdid="6.1637610.1.1" Name="heapaoco_list_part" IsTemporary="false" Rows="0.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="12,13,7" PartitionColumns="0" PartitionTypes="l">
         <dxl:Columns>
           <dxl:Column Name="c1" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c2" Attno="2" Mdid="0.25.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c3" Attno="3" Mdid="0.1082.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c4" Attno="4" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c5" Attno="5" Mdid="0.701.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c6" Attno="6" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c7" Attno="7" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.1637960.1.0" IsPartial="true"/>
           <dxl:IndexInfo Mdid="0.1637979.1.0" IsPartial="true"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
         <dxl:PartConstraint DefaultPartition="0" Unbounded="true">
           <dxl:Or>
@@ -614,10 +585,10 @@
         <dxl:SumAgg Mdid="0.2111.1.0"/>
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
-      <dxl:GPDBFunc Mdid="0.6083.1.0" Name="gp_partition_propagation" ReturnsSet="false" Stability="Volatile" DataAccess="NoSQL" IsStrict="true">
+      <dxl:GPDBFunc Mdid="0.6083.1.0" Name="gp_partition_propagation" ReturnsSet="false" Stability="Volatile" IsStrict="true">
         <dxl:ResultType Mdid="0.2278.1.0"/>
       </dxl:GPDBFunc>
-      <dxl:GPDBFunc Mdid="0.6085.1.0" Name="gp_partition_expansion" ReturnsSet="true" Stability="Stable" DataAccess="NoSQL" IsStrict="true">
+      <dxl:GPDBFunc Mdid="0.6085.1.0" Name="gp_partition_expansion" ReturnsSet="true" Stability="Stable" IsStrict="true">
         <dxl:ResultType Mdid="0.26.1.0"/>
       </dxl:GPDBFunc>
       <dxl:ColumnStatistics Mdid="1.1637610.1.1.11" Name="cmax" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
@@ -686,7 +657,7 @@
           <dxl:ConstValue TypeMdid="0.23.1.0" Value="50"/>
         </dxl:Comparison>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.1637610.1.1" TableName="heapaoco_list_part">
+          <dxl:TableDescriptor Mdid="6.1637610.1.1" TableName="heapaoco_list_part">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="c1" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="2" Attno="2" ColName="c2" TypeMdid="0.25.1.0"/>
@@ -764,7 +735,7 @@
               <dxl:Ident ColId="6" ColName="c7" TypeMdid="0.23.1.0"/>
             </dxl:ProjElem>
           </dxl:ProjList>
-          <dxl:PartitionSelector RelationMdid="0.1637610.1.1" PartitionLevels="1" ScanId="1">
+          <dxl:PartitionSelector RelationMdid="6.1637610.1.1" PartitionLevels="1" ScanId="1">
             <dxl:Properties>
               <dxl:Cost StartupCost="10" TotalCost="100" Rows="100" Width="4"/>
             </dxl:Properties>
@@ -773,22 +744,31 @@
               <dxl:ConstValue TypeMdid="0.16.1.0" Value="true"/>
             </dxl:PartEqFilters>
             <dxl:PartFilters>
-              <dxl:Or>
+              <dxl:And>
                 <dxl:Or>
-                  <dxl:ArrayComp OperatorName="&gt;" OperatorMdid="0.521.1.0" OperatorType="Any">
+                  <dxl:Or>
+                    <dxl:ArrayComp OperatorName="&gt;" OperatorMdid="0.521.1.0" OperatorType="Any">
+                      <dxl:ConstValue TypeMdid="0.23.1.0" Value="50"/>
+                      <dxl:PartListValues Level="0" ResultType="0.1007.1.0" ElementType="0.23.1.0"/>
+                    </dxl:ArrayComp>
+                    <dxl:DefaultPart Level="0"/>
+                  </dxl:Or>
+                  <dxl:Or>
+                    <dxl:ArrayComp OperatorName="&lt;" OperatorMdid="0.97.1.0" OperatorType="Any">
+                      <dxl:ConstValue TypeMdid="0.23.1.0" Value="50"/>
+                      <dxl:PartListValues Level="0" ResultType="0.1007.1.0" ElementType="0.23.1.0"/>
+                    </dxl:ArrayComp>
+                    <dxl:DefaultPart Level="0"/>
+                  </dxl:Or>
+                </dxl:Or>
+                <dxl:Or>
+                  <dxl:ArrayComp OperatorName="&lt;&gt;" OperatorMdid="0.518.1.0" OperatorType="Any">
                     <dxl:ConstValue TypeMdid="0.23.1.0" Value="50"/>
                     <dxl:PartListValues Level="0" ResultType="0.1007.1.0" ElementType="0.23.1.0"/>
                   </dxl:ArrayComp>
                   <dxl:DefaultPart Level="0"/>
                 </dxl:Or>
-                <dxl:Or>
-                  <dxl:ArrayComp OperatorName="&lt;" OperatorMdid="0.97.1.0" OperatorType="Any">
-                    <dxl:ConstValue TypeMdid="0.23.1.0" Value="50"/>
-                    <dxl:PartListValues Level="0" ResultType="0.1007.1.0" ElementType="0.23.1.0"/>
-                  </dxl:ArrayComp>
-                  <dxl:DefaultPart Level="0"/>
-                </dxl:Or>
-              </dxl:Or>
+              </dxl:And>
             </dxl:PartFilters>
             <dxl:ResidualFilter>
               <dxl:ConstValue TypeMdid="0.16.1.0" Value="true"/>
@@ -796,16 +776,22 @@
             <dxl:PropagationExpression>
               <dxl:ConstValue TypeMdid="0.23.1.0" Value="1"/>
             </dxl:PropagationExpression>
-            <dxl:PrintableFilter>
-              <dxl:ArrayComp OperatorName="&lt;&gt;" OperatorMdid="0.518.1.0" OperatorType="All">
-                <dxl:Ident ColId="0" ColName="c1" TypeMdid="0.23.1.0"/>
-                <dxl:Array ArrayType="0.1007.1.0" ElementType="0.23.1.0" MultiDimensional="false">
+            <dxl:PartFilterExpr>
+              <dxl:And>
+                <dxl:ArrayComp OperatorName="&lt;&gt;" OperatorMdid="0.518.1.0" OperatorType="All">
+                  <dxl:Ident ColId="0" ColName="c1" TypeMdid="0.23.1.0"/>
+                  <dxl:Array ArrayType="0.1007.1.0" ElementType="0.23.1.0" MultiDimensional="false">
+                    <dxl:ConstValue TypeMdid="0.23.1.0" Value="50"/>
+                  </dxl:Array>
+                </dxl:ArrayComp>
+                <dxl:Comparison ComparisonOperator="&lt;&gt;" OperatorMdid="0.518.1.0">
+                  <dxl:Ident ColId="0" ColName="c1" TypeMdid="0.23.1.0"/>
                   <dxl:ConstValue TypeMdid="0.23.1.0" Value="50"/>
-                </dxl:Array>
-              </dxl:ArrayComp>
-            </dxl:PrintableFilter>
+                </dxl:Comparison>
+              </dxl:And>
+            </dxl:PartFilterExpr>
           </dxl:PartitionSelector>
-          <dxl:DynamicTableScan PartIndexId="1">
+          <dxl:DynamicTableScan>
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="431.000108" Rows="1.000000" Width="41"/>
             </dxl:Properties>
@@ -838,7 +824,7 @@
                 <dxl:ConstValue TypeMdid="0.23.1.0" Value="50"/>
               </dxl:Comparison>
             </dxl:Filter>
-            <dxl:TableDescriptor Mdid="0.1637610.1.1" TableName="heapaoco_list_part">
+            <dxl:TableDescriptor Mdid="6.1637610.1.1" TableName="heapaoco_list_part">
               <dxl:Columns>
                 <dxl:Column ColId="0" Attno="1" ColName="c1" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="1" Attno="2" ColName="c2" TypeMdid="0.25.1.0"/>

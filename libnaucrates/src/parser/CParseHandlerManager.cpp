@@ -27,15 +27,12 @@ XERCES_CPP_NAMESPACE_USE
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CParseHandlerManager::CParseHandlerManager(
-	CDXLMemoryManager *dxl_memory_manager, SAX2XMLReader *sax_2_xml_reader)
-	: m_dxl_memory_manager(dxl_memory_manager),
-	  m_xml_reader(sax_2_xml_reader),
-	  m_curr_parse_handler(NULL),
-	  m_iteration_since_last_abortcheck(0)
-{
-	m_parse_handler_stack = GPOS_NEW(dxl_memory_manager->Pmp())
-		ParseHandlerStack(dxl_memory_manager->Pmp());
+CParseHandlerManager::CParseHandlerManager(CDXLMemoryManager *dxl_memory_manager, SAX2XMLReader *sax_2_xml_reader)
+    : m_dxl_memory_manager(dxl_memory_manager),
+      m_xml_reader(sax_2_xml_reader),
+      m_curr_parse_handler(nullptr),
+      m_iteration_since_last_abortcheck(0) {
+  m_parse_handler_stack = GPOS_NEW(dxl_memory_manager->Pmp()) ParseHandlerStack(dxl_memory_manager->Pmp());
 }
 
 //---------------------------------------------------------------------------
@@ -46,11 +43,9 @@ CParseHandlerManager::CParseHandlerManager(
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CParseHandlerManager::~CParseHandlerManager()
-{
-	GPOS_DELETE(m_parse_handler_stack);
+CParseHandlerManager::~CParseHandlerManager() {
+  GPOS_DELETE(m_parse_handler_stack);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -60,23 +55,19 @@ CParseHandlerManager::~CParseHandlerManager()
 //		Activates the given parse handler and saves the current one on the stack
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerManager::ActivateParseHandler(
-	CParseHandlerBase *parse_handler_base)
-{
-	CheckForAborts();
+void CParseHandlerManager::ActivateParseHandler(CParseHandlerBase *parse_handler_base) {
+  CheckForAborts();
 
-	if (m_curr_parse_handler)
-	{
-		// push current handler on stack
-		m_parse_handler_stack->Push(m_curr_parse_handler);
-	}
+  if (m_curr_parse_handler) {
+    // push current handler on stack
+    m_parse_handler_stack->Push(m_curr_parse_handler);
+  }
 
-	GPOS_ASSERT(NULL != parse_handler_base);
+  GPOS_ASSERT(nullptr != parse_handler_base);
 
-	m_curr_parse_handler = parse_handler_base;
-	m_xml_reader->setContentHandler(parse_handler_base);
-	m_xml_reader->setErrorHandler(parse_handler_base);
+  m_curr_parse_handler = parse_handler_base;
+  m_xml_reader->setContentHandler(parse_handler_base);
+  m_xml_reader->setErrorHandler(parse_handler_base);
 }
 
 //---------------------------------------------------------------------------
@@ -87,26 +78,21 @@ CParseHandlerManager::ActivateParseHandler(
 //		Activates the given parse handler and throws out the current one
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerManager::ReplaceHandler(CParseHandlerBase *parse_handler_base,
-									 CParseHandlerBase *parse_handler_root)
-{
-	CheckForAborts();
+void CParseHandlerManager::ReplaceHandler(CParseHandlerBase *parse_handler_base,
+                                          CParseHandlerBase *parse_handler_root) {
+  CheckForAborts();
 
-	GPOS_ASSERT(NULL != m_curr_parse_handler);
-	GPOS_ASSERT(NULL != parse_handler_base);
+  GPOS_ASSERT(nullptr != m_curr_parse_handler);
+  GPOS_ASSERT(nullptr != parse_handler_base);
 
-	if (NULL != parse_handler_root)
-	{
-		parse_handler_root->ReplaceParseHandler(m_curr_parse_handler,
-												parse_handler_base);
-	}
+  if (nullptr != parse_handler_root) {
+    parse_handler_root->ReplaceParseHandler(m_curr_parse_handler, parse_handler_base);
+  }
 
-	m_curr_parse_handler = parse_handler_base;
-	m_xml_reader->setContentHandler(parse_handler_base);
-	m_xml_reader->setErrorHandler(parse_handler_base);
+  m_curr_parse_handler = parse_handler_base;
+  m_xml_reader->setContentHandler(parse_handler_base);
+  m_xml_reader->setErrorHandler(parse_handler_base);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -117,24 +103,19 @@ CParseHandlerManager::ReplaceHandler(CParseHandlerBase *parse_handler_base,
 //		parser stack if one exists
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerManager::DeactivateHandler()
-{
-	CheckForAborts();
+void CParseHandlerManager::DeactivateHandler() {
+  CheckForAborts();
 
-	GPOS_ASSERT(NULL != m_curr_parse_handler);
+  GPOS_ASSERT(nullptr != m_curr_parse_handler);
 
-	if (!m_parse_handler_stack->IsEmpty())
-	{
-		m_curr_parse_handler = m_parse_handler_stack->Pop();
-	}
-	else
-	{
-		m_curr_parse_handler = NULL;
-	}
+  if (!m_parse_handler_stack->IsEmpty()) {
+    m_curr_parse_handler = m_parse_handler_stack->Pop();
+  } else {
+    m_curr_parse_handler = nullptr;
+  }
 
-	m_xml_reader->setContentHandler(m_curr_parse_handler);
-	m_xml_reader->setErrorHandler(m_curr_parse_handler);
+  m_xml_reader->setContentHandler(m_curr_parse_handler);
+  m_xml_reader->setErrorHandler(m_curr_parse_handler);
 }
 
 //---------------------------------------------------------------------------
@@ -145,10 +126,8 @@ CParseHandlerManager::DeactivateHandler()
 //		Returns the current handler
 //
 //---------------------------------------------------------------------------
-const CParseHandlerBase *
-CParseHandlerManager::GetCurrentParseHandler()
-{
-	return m_curr_parse_handler;
+const CParseHandlerBase *CParseHandlerManager::GetCurrentParseHandler() {
+  return m_curr_parse_handler;
 }
 
 //---------------------------------------------------------------------------
@@ -160,16 +139,13 @@ CParseHandlerManager::GetCurrentParseHandler()
 //		specified CFA frequency
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerManager::CheckForAborts()
-{
-	m_iteration_since_last_abortcheck++;
+void CParseHandlerManager::CheckForAborts() {
+  m_iteration_since_last_abortcheck++;
 
-	if (GPDXL_PARSE_CFA_FREQUENCY < m_iteration_since_last_abortcheck)
-	{
-		GPOS_CHECK_ABORT;
-		m_iteration_since_last_abortcheck = 0;
-	}
+  if (GPDXL_PARSE_CFA_FREQUENCY < m_iteration_since_last_abortcheck) {
+    GPOS_CHECK_ABORT;
+    m_iteration_since_last_abortcheck = 0;
+  }
 }
 
 // EOF

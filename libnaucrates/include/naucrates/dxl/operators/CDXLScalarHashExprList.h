@@ -16,9 +16,7 @@
 
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDXLScalarHashExprList
@@ -27,54 +25,47 @@ namespace gpdxl
 //		Hash expressions list in Redistribute motion nodes
 //
 //---------------------------------------------------------------------------
-class CDXLScalarHashExprList : public CDXLScalar
-{
-private:
-	// private copy ctor
-	CDXLScalarHashExprList(CDXLScalarHashExprList &);
+class CDXLScalarHashExprList : public CDXLScalar {
+ private:
+ public:
+  CDXLScalarHashExprList(CDXLScalarHashExprList &) = delete;
 
-public:
-	// ctor/dtor
-	explicit CDXLScalarHashExprList(CMemoryPool *mp);
+  // ctor/dtor
+  explicit CDXLScalarHashExprList(CMemoryPool *mp);
 
-	virtual ~CDXLScalarHashExprList(){};
+  ~CDXLScalarHashExprList() override = default;
 
-	// ident accessors
-	Edxlopid GetDXLOperator() const;
+  // ident accessors
+  Edxlopid GetDXLOperator() const override;
 
-	// name of the operator
-	const CWStringConst *GetOpNameStr() const;
+  // name of the operator
+  const CWStringConst *GetOpNameStr() const override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *node) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
-	// conversion function
-	static CDXLScalarHashExprList *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarHashExprList == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarHashExprList *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarHashExprList == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarHashExprList *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarHashExprList *>(dxl_op);
+  }
 
-	// does the operator return a boolean result
-	virtual BOOL
-	HasBoolResult(CMDAccessor *	 //md_accessor
-	) const
-	{
-		GPOS_ASSERT(!"Invalid function call on a container operator");
-		return false;
-	}
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  ) const override {
+    GPOS_ASSERT(!"Invalid function call on a container operator");
+    return false;
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure
-	void AssertValid(const CDXLNode *node, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure
+  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalarHashExprList_H
+#endif  // !GPDXL_CDXLScalarHashExprList_H
 
 // EOF

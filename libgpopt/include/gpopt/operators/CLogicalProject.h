@@ -16,8 +16,7 @@
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalUnary.h"
 
-namespace gpopt
-{
+namespace gpopt {
 // fwd declaration
 class CColRefSet;
 
@@ -29,94 +28,72 @@ class CColRefSet;
 //		Project operator
 //
 //---------------------------------------------------------------------------
-class CLogicalProject : public CLogicalUnary
-{
-private:
-	// private copy ctor
-	CLogicalProject(const CLogicalProject &);
+class CLogicalProject : public CLogicalUnary {
+ private:
+  // return equivalence class from scalar ident project element
+  static CColRefSetArray *PdrgpcrsEquivClassFromScIdent(CMemoryPool *mp, CExpression *pexprPrEl,
+                                                        CColRefSet *not_null_columns);
 
-	// return equivalence class from scalar ident project element
-	static CColRefSetArray *PdrgpcrsEquivClassFromScIdent(
-		CMemoryPool *mp, CExpression *pexprPrEl, CColRefSet *not_null_columns);
+  // extract constraint from scalar constant project element
+  static void ExtractConstraintFromScConst(CMemoryPool *mp, CExpression *pexprPrEl, CConstraintArray *pdrgpcnstr,
+                                           CColRefSetArray *pdrgpcrs);
 
-	// extract constraint from scalar constant project element
-	static void ExtractConstraintFromScConst(CMemoryPool *mp,
-											 CExpression *pexprPrEl,
-											 CConstraintArray *pdrgpcnstr,
-											 CColRefSetArray *pdrgpcrs);
+ public:
+  CLogicalProject(const CLogicalProject &) = delete;
 
-public:
-	// ctor
-	explicit CLogicalProject(CMemoryPool *mp);
+  // ctor
+  explicit CLogicalProject(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CLogicalProject()
-	{
-	}
+  // dtor
+  ~CLogicalProject() override = default;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalProject;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalProject; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalProject";
-	}
+  const CHAR *SzId() const override { return "CLogicalProject"; }
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive output columns
-	virtual CColRefSet *DeriveOutputColumns(CMemoryPool *mp,
-											CExpressionHandle &exprhdl);
+  // derive output columns
+  CColRefSet *DeriveOutputColumns(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
-	// dervive keys
-	virtual CKeyCollection *DeriveKeyCollection(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  // dervive keys
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive max card
-	virtual CMaxCard DeriveMaxCard(CMemoryPool *mp,
-								   CExpressionHandle &exprhdl) const;
+  // derive max card
+  CMaxCard DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive constraint property
-	virtual CPropConstraint *DerivePropertyConstraint(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// candidate set of xforms
-	virtual CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	// derive statistics
-	virtual IStatistics *PstatsDerive(CMemoryPool *mp,
-									  CExpressionHandle &exprhdl,
-									  IStatisticsArray *stats_ctxt) const;
+  // derive statistics
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// conversion function
-	static CLogicalProject *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalProject == pop->Eopid());
+  // conversion function
+  static CLogicalProject *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalProject == pop->Eopid());
 
-		return dynamic_cast<CLogicalProject *>(pop);
-	}
+    return dynamic_cast<CLogicalProject *>(pop);
+  }
 
-};	// class CLogicalProject
+};  // class CLogicalProject
 
 }  // namespace gpopt
 
-#endif	// !GPOS_CLogicalProject_H
+#endif  // !GPOS_CLogicalProject_H
 
 // EOF

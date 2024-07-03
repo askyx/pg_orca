@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,45 +26,32 @@ using namespace gpos;
 //		Transform Logical Split to Physical Split
 //
 //---------------------------------------------------------------------------
-class CXformImplementSplit : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformImplementSplit(const CXformImplementSplit &);
+class CXformImplementSplit : public CXformImplementation {
+ private:
+ public:
+  CXformImplementSplit(const CXformImplementSplit &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementSplit(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementSplit(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformImplementSplit()
-	{
-	}
+  // dtor
+  ~CXformImplementSplit() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementSplit;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementSplit; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementSplit";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformImplementSplit"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformImplementSplit
+};  // class CXformImplementSplit
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementSplit_H
+#endif  // !GPOPT_CXformImplementSplit_H
 
 // EOF

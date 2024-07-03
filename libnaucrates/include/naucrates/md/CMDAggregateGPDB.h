@@ -9,8 +9,6 @@
 //		Class for representing for GPDB-specific aggregates in the metadata cache
 //---------------------------------------------------------------------------
 
-
-
 #ifndef GPMD_CMDAggregateGPDB_H
 #define GPMD_CMDAggregateGPDB_H
 
@@ -19,11 +17,8 @@
 #include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/md/IMDAggregate.h"
 
-
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -34,98 +29,85 @@ using namespace gpos;
 //		cache
 //
 //---------------------------------------------------------------------------
-class CMDAggregateGPDB : public IMDAggregate
-{
-	// memory pool
-	CMemoryPool *m_mp;
+class CMDAggregateGPDB : public IMDAggregate {
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// DXL for object
-	const CWStringDynamic *m_dxl_str;
+  // DXL for object
+  const CWStringDynamic *m_dxl_str = nullptr;
 
-	// aggregate id
-	IMDId *m_mdid;
+  // aggregate id
+  IMDId *m_mdid;
 
-	// aggregate name
-	CMDName *m_mdname;
+  // aggregate name
+  CMDName *m_mdname;
 
-	// result type
-	IMDId *m_mdid_type_result;
+  // result type
+  IMDId *m_mdid_type_result;
 
-	// type of intermediate results
-	IMDId *m_mdid_type_intermediate;
+  // type of intermediate results
+  IMDId *m_mdid_type_intermediate;
 
-	// is aggregate ordered
-	BOOL m_is_ordered;
+  // is aggregate ordered
+  BOOL m_is_ordered;
 
-	// is aggregate splittable
-	BOOL m_is_splittable;
+  // is aggregate splittable
+  BOOL m_is_splittable;
 
-	// is aggregate hash capable
-	BOOL m_hash_agg_capable;
+  // is aggregate hash capable
+  BOOL m_hash_agg_capable;
 
-	// private copy ctor
-	CMDAggregateGPDB(const CMDAggregateGPDB &);
+  // is aggregate replication slice safe for execution
+  BOOL m_is_repsafe;
 
-public:
-	// ctor
-	CMDAggregateGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
-					 IMDId *result_type_mdid,
-					 IMDId *intermediate_result_type_mdid, BOOL is_ordered_agg,
-					 BOOL is_splittable, BOOL is_hash_agg_capable);
+ public:
+  CMDAggregateGPDB(const CMDAggregateGPDB &) = delete;
 
-	//dtor
-	~CMDAggregateGPDB();
+  // ctor
+  CMDAggregateGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *result_type_mdid,
+                   IMDId *intermediate_result_type_mdid, BOOL is_ordered_agg, BOOL is_splittable,
+                   BOOL is_hash_agg_capable, bool is_repsafe);
 
-	// string representation of object
-	virtual const CWStringDynamic *
-	GetStrRepr() const
-	{
-		return m_dxl_str;
-	}
+  // dtor
+  ~CMDAggregateGPDB() override;
 
-	// aggregate id
-	virtual IMDId *MDId() const;
+  // string representation of object
+  const CWStringDynamic *GetStrRepr() override;
 
-	// aggregate name
-	virtual CMDName Mdname() const;
+  // aggregate id
+  IMDId *MDId() const override;
 
-	// result id
-	virtual IMDId *GetResultTypeMdid() const;
+  // aggregate name
+  CMDName Mdname() const override;
 
-	// intermediate result id
-	virtual IMDId *GetIntermediateResultTypeMdid() const;
+  // result id
+  IMDId *GetResultTypeMdid() const override;
 
-	// serialize object in DXL format
-	virtual void Serialize(gpdxl::CXMLSerializer *xml_serializer) const;
+  // intermediate result id
+  IMDId *GetIntermediateResultTypeMdid() const override;
 
-	// is an ordered aggregate
-	virtual BOOL
-	IsOrdered() const
-	{
-		return m_is_ordered;
-	}
+  // serialize object in DXL format
+  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
-	// is aggregate splittable
-	virtual BOOL
-	IsSplittable() const
-	{
-		return m_is_splittable;
-	}
+  // is an ordered aggregate
+  BOOL IsOrdered() const override { return m_is_ordered; }
 
-	// is aggregate hash capable
-	virtual BOOL
-	IsHashAggCapable() const
-	{
-		return m_hash_agg_capable;
-	}
+  // is aggregate splittable
+  BOOL IsSplittable() const override { return m_is_splittable; }
+
+  // is aggregate hash capable
+  BOOL IsHashAggCapable() const override { return m_hash_agg_capable; }
+
+  // is aggregate replicate slice execution safe
+  BOOL IsAggRepSafe() const override { return m_is_repsafe; }
 
 #ifdef GPOS_DEBUG
-	// debug print of the type in the provided stream
-	virtual void DebugPrint(IOstream &os) const;
+  // debug print of the type in the provided stream
+  void DebugPrint(IOstream &os) const override;
 #endif
 };
 }  // namespace gpmd
 
-#endif	// !GPMD_CMDAggregateGPDB_H
+#endif  // !GPMD_CMDAggregateGPDB_H
 
 // EOF

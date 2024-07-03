@@ -18,8 +18,7 @@
 #include "gpopt/metadata/CColumnDescriptor.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CTableDescriptorTest
@@ -28,15 +27,14 @@ namespace gpopt
 //		Static unit tests
 //
 //---------------------------------------------------------------------------
-class CTableDescriptorTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
-};	// class CTableDescriptorTest
+class CTableDescriptorTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
+};  // class CTableDescriptorTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CTableDescriptorTest_H
+#endif  // !GPOPT_CTableDescriptorTest_H
 
 // EOF

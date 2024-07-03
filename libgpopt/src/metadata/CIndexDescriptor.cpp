@@ -19,6 +19,8 @@
 
 using namespace gpopt;
 
+FORCE_GENERATE_DBGSTR(CIndexDescriptor);
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CIndexDescriptor::CIndexDescriptor
@@ -27,22 +29,20 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CIndexDescriptor::CIndexDescriptor(
-	CMemoryPool *mp, IMDId *pmdidIndex, const CName &name,
-	CColumnDescriptorArray *pdrgcoldescKeyCols,
-	CColumnDescriptorArray *pdrgcoldescIncludedCols, BOOL is_clustered,
-	IMDIndex::EmdindexType index_type)
-	: m_pmdidIndex(pmdidIndex),
-	  m_name(mp, name),
-	  m_pdrgpcoldescKeyCols(pdrgcoldescKeyCols),
-	  m_pdrgpcoldescIncludedCols(pdrgcoldescIncludedCols),
-	  m_clustered(is_clustered),
-	  m_index_type(index_type)
-{
-	GPOS_ASSERT(NULL != mp);
-	GPOS_ASSERT(pmdidIndex->IsValid());
-	GPOS_ASSERT(NULL != pdrgcoldescKeyCols);
-	GPOS_ASSERT(NULL != pdrgcoldescIncludedCols);
+CIndexDescriptor::CIndexDescriptor(CMemoryPool *mp, IMDId *pmdidIndex, const CName &name,
+                                   CColumnDescriptorArray *pdrgcoldescKeyCols,
+                                   CColumnDescriptorArray *pdrgcoldescIncludedCols, BOOL is_clustered,
+                                   IMDIndex::EmdindexType index_type)
+    : m_pmdidIndex(pmdidIndex),
+      m_name(mp, name),
+      m_pdrgpcoldescKeyCols(pdrgcoldescKeyCols),
+      m_pdrgpcoldescIncludedCols(pdrgcoldescIncludedCols),
+      m_clustered(is_clustered),
+      m_index_type(index_type) {
+  GPOS_ASSERT(nullptr != mp);
+  GPOS_ASSERT(pmdidIndex->IsValid());
+  GPOS_ASSERT(nullptr != pdrgcoldescKeyCols);
+  GPOS_ASSERT(nullptr != pdrgcoldescIncludedCols);
 }
 
 //---------------------------------------------------------------------------
@@ -53,12 +53,11 @@ CIndexDescriptor::CIndexDescriptor(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CIndexDescriptor::~CIndexDescriptor()
-{
-	m_pmdidIndex->Release();
+CIndexDescriptor::~CIndexDescriptor() {
+  m_pmdidIndex->Release();
 
-	m_pdrgpcoldescKeyCols->Release();
-	m_pdrgpcoldescIncludedCols->Release();
+  m_pdrgpcoldescKeyCols->Release();
+  m_pdrgpcoldescIncludedCols->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -70,9 +69,8 @@ CIndexDescriptor::~CIndexDescriptor()
 //
 //---------------------------------------------------------------------------
 ULONG
-CIndexDescriptor::Keys() const
-{
-	return m_pdrgpcoldescKeyCols->Size();
+CIndexDescriptor::Keys() const {
+  return m_pdrgpcoldescKeyCols->Size();
 }
 
 //---------------------------------------------------------------------------
@@ -84,12 +82,11 @@ CIndexDescriptor::Keys() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CIndexDescriptor::UlIncludedColumns() const
-{
-	// array allocated in ctor
-	GPOS_ASSERT(NULL != m_pdrgpcoldescIncludedCols);
+CIndexDescriptor::UlIncludedColumns() const {
+  // array allocated in ctor
+  GPOS_ASSERT(nullptr != m_pdrgpcoldescIncludedCols);
 
-	return m_pdrgpcoldescIncludedCols->Size();
+  return m_pdrgpcoldescIncludedCols->Size();
 }
 
 //---------------------------------------------------------------------------
@@ -101,43 +98,43 @@ CIndexDescriptor::UlIncludedColumns() const
 //		information from the catalog
 //
 //---------------------------------------------------------------------------
-CIndexDescriptor *
-CIndexDescriptor::Pindexdesc(CMemoryPool *mp, const CTableDescriptor *ptabdesc,
-							 const IMDIndex *pmdindex)
-{
-	CWStringConst strIndexName(mp, pmdindex->Mdname().GetMDName()->GetBuffer());
+CIndexDescriptor *CIndexDescriptor::Pindexdesc(CMemoryPool *mp, const CTableDescriptor *ptabdesc,
+                                               const IMDIndex *pmdindex) {
+  CWStringConst strIndexName(mp, pmdindex->Mdname().GetMDName()->GetBuffer());
 
-	CColumnDescriptorArray *pdrgpcoldesc = ptabdesc->Pdrgpcoldesc();
+  CColumnDescriptorArray *pdrgpcoldesc = ptabdesc->Pdrgpcoldesc();
 
-	pmdindex->MDId()->AddRef();
+  pmdindex->MDId()->AddRef();
 
-	// array of index column descriptors
-	CColumnDescriptorArray *pdrgcoldescKey =
-		GPOS_NEW(mp) CColumnDescriptorArray(mp);
+  // array of index column descriptors
+  CColumnDescriptorArray *pdrgcoldescKey = GPOS_NEW(mp) CColumnDescriptorArray(mp);
 
-	for (ULONG ul = 0; ul < pmdindex->Keys(); ul++)
-	{
-		CColumnDescriptor *pcoldesc = (*pdrgpcoldesc)[ul];
-		pcoldesc->AddRef();
-		pdrgcoldescKey->Append(pcoldesc);
-	}
+  for (ULONG ul = 0; ul < pmdindex->Keys(); ul++) {
+    CColumnDescriptor *pcoldesc = (*pdrgpcoldesc)[ul];
+    pcoldesc->AddRef();
+    pdrgcoldescKey->Append(pcoldesc);
+  }
 
-	// array of included column descriptors
-	CColumnDescriptorArray *pdrgcoldescIncluded =
-		GPOS_NEW(mp) CColumnDescriptorArray(mp);
-	for (ULONG ul = 0; ul < pmdindex->IncludedCols(); ul++)
-	{
-		CColumnDescriptor *pcoldesc = (*pdrgpcoldesc)[ul];
-		pcoldesc->AddRef();
-		pdrgcoldescIncluded->Append(pcoldesc);
-	}
+  // array of included column descriptors
+  CColumnDescriptorArray *pdrgcoldescIncluded = GPOS_NEW(mp) CColumnDescriptorArray(mp);
+  for (ULONG ul = 0; ul < pmdindex->IncludedCols(); ul++) {
+    CColumnDescriptor *pcoldesc = (*pdrgpcoldesc)[ul];
+    pcoldesc->AddRef();
+    pdrgcoldescIncluded->Append(pcoldesc);
+  }
 
+  // create the index descriptors
+  CIndexDescriptor *pindexdesc =
+      GPOS_NEW(mp) CIndexDescriptor(mp, pmdindex->MDId(), CName(&strIndexName), pdrgcoldescKey, pdrgcoldescIncluded,
+                                    pmdindex->IsClustered(), pmdindex->IndexType());
+  return pindexdesc;
+}
 
-	// create the index descriptors
-	CIndexDescriptor *pindexdesc = GPOS_NEW(mp) CIndexDescriptor(
-		mp, pmdindex->MDId(), CName(&strIndexName), pdrgcoldescKey,
-		pdrgcoldescIncluded, pmdindex->IsClustered(), pmdindex->IndexType());
-	return pindexdesc;
+BOOL CIndexDescriptor::SupportsIndexOnlyScan(CTableDescriptor *ptabdesc) const {
+  // index only scan is not supported on GPDB 6 append-only tables.
+  return !((ptabdesc->IsAORowOrColTable() ||
+            IMDRelation::ErelstorageMixedPartitioned == ptabdesc->RetrieveRelStorageType()) &&
+           ptabdesc->GetRelAOVersion() < IMDRelation::AORelationVersion_GP7);
 }
 
 //---------------------------------------------------------------------------
@@ -148,31 +145,24 @@ CIndexDescriptor::Pindexdesc(CMemoryPool *mp, const CTableDescriptor *ptabdesc,
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CIndexDescriptor::OsPrint(IOstream &os) const
-{
-	m_name.OsPrint(os);
-	os << ": (Keys :";
-	CUtils::OsPrintDrgPcoldesc(os, m_pdrgpcoldescKeyCols,
-							   m_pdrgpcoldescKeyCols->Size());
-	os << "); ";
+IOstream &CIndexDescriptor::OsPrint(IOstream &os) const {
+  m_name.OsPrint(os);
+  os << ": (Keys :";
+  CUtils::OsPrintDrgPcoldesc(os, m_pdrgpcoldescKeyCols, m_pdrgpcoldescKeyCols->Size());
+  os << "); ";
 
-	os << "(Included Columns :";
-	CUtils::OsPrintDrgPcoldesc(os, m_pdrgpcoldescIncludedCols,
-							   m_pdrgpcoldescIncludedCols->Size());
-	os << ")";
+  os << "(Included Columns :";
+  CUtils::OsPrintDrgPcoldesc(os, m_pdrgpcoldescIncludedCols, m_pdrgpcoldescIncludedCols->Size());
+  os << ")";
 
-	os << " [ Clustered :";
-	if (m_clustered)
-	{
-		os << "true";
-	}
-	else
-	{
-		os << "false";
-	}
-	os << " ]";
-	return os;
+  os << " [ Clustered :";
+  if (m_clustered) {
+    os << "true";
+  } else {
+    os << "false";
+  }
+  os << " ]";
+  return os;
 }
 
 // EOF

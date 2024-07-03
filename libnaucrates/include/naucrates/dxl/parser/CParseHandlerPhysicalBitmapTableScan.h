@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerPhysicalBitmapTableScan.h
@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerPhysicalAbstractBitmapScan.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 // forward declarations
@@ -33,41 +32,31 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing bitmap table scan operator
 //
 //---------------------------------------------------------------------------
-class CParseHandlerPhysicalBitmapTableScan
-	: public CParseHandlerPhysicalAbstractBitmapScan
-{
-private:
-	// private copy ctor
-	CParseHandlerPhysicalBitmapTableScan(
-		const CParseHandlerPhysicalBitmapTableScan &);
+class CParseHandlerPhysicalBitmapTableScan : public CParseHandlerPhysicalAbstractBitmapScan {
+ private:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	virtual void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	virtual void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerPhysicalBitmapTableScan(const CParseHandlerPhysicalBitmapTableScan &) = delete;
 
-public:
-	// ctor
-	CParseHandlerPhysicalBitmapTableScan(
-		CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-		CParseHandlerBase *parse_handler_root)
-		: CParseHandlerPhysicalAbstractBitmapScan(mp, parse_handler_mgr,
-												  parse_handler_root)
-	{
-	}
+  // ctor
+  CParseHandlerPhysicalBitmapTableScan(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                       CParseHandlerBase *parse_handler_root)
+      : CParseHandlerPhysicalAbstractBitmapScan(mp, parse_handler_mgr, parse_handler_root) {}
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerPhysicalBitmapTableScan_H
+#endif  // !GPDXL_CParseHandlerPhysicalBitmapTableScan_H
 
 // EOF

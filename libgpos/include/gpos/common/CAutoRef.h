@@ -15,8 +15,7 @@
 #include "gpos/common/CAutoP.h"
 #include "gpos/common/CRefCount.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CAutoRef
@@ -26,34 +25,26 @@ namespace gpos
 //
 //---------------------------------------------------------------------------
 template <class T>
-class CAutoRef : public CAutoP<T>
-{
-private:
-	// hidden copy ctor
-	CAutoRef<T>(const CAutoRef &);
+class CAutoRef : public CAutoP<T> {
+ private:
+ public:
+  CAutoRef(const CAutoRef &) = delete;
 
-public:
-	// ctor
-	explicit CAutoRef<T>() : CAutoP<T>()
-	{
-	}
+  // ctor
+  explicit CAutoRef() : CAutoP<T>() {}
 
-	// ctor
-	explicit CAutoRef<T>(T *object) : CAutoP<T>(object)
-	{
-	}
+  // ctor
+  explicit CAutoRef(T *object) : CAutoP<T>(object) {}
 
-	virtual ~CAutoRef();
+  ~CAutoRef() override;
 
-	// simple assignment
-	CAutoRef<T> const &
-	operator=(T *object)
-	{
-		CAutoP<T>::m_object = object;
-		return *this;
-	}
+  // simple assignment
+  CAutoRef<T> const &operator=(T *object) {
+    CAutoP<T>::m_object = object;
+    return *this;
+  }
 
-};	// class CAutoRef
+};  // class CAutoRef
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -64,18 +55,16 @@ public:
 //
 //---------------------------------------------------------------------------
 template <class T>
-CAutoRef<T>::~CAutoRef()
-{
-	if (NULL != CAutoP<T>::m_object)
-	{
-		reinterpret_cast<CRefCount *>(CAutoP<T>::m_object)->Release();
-	}
+CAutoRef<T>::~CAutoRef() {
+  if (nullptr != CAutoP<T>::m_object) {
+    reinterpret_cast<CRefCount *>(CAutoP<T>::m_object)->Release();
+  }
 
-	// null out pointer before ~CAutoP() gets called
-	CAutoP<T>::m_object = NULL;
+  // null out pointer before ~CAutoP() gets called
+  CAutoP<T>::m_object = nullptr;
 }
 }  // namespace gpos
 
-#endif	// !GPOS_CAutoRef_H
+#endif  // !GPOS_CAutoRef_H
 
 // EOF

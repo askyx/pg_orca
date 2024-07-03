@@ -17,8 +17,7 @@
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -30,74 +29,75 @@ using namespace gpmd;
 //		Class for representing DXL scalar FuncExpr
 //
 //---------------------------------------------------------------------------
-class CDXLScalarFuncExpr : public CDXLScalar
-{
-private:
-	// catalog id of the function
-	IMDId *m_func_mdid;
+class CDXLScalarFuncExpr : public CDXLScalar {
+ private:
+  // catalog id of the function
+  IMDId *m_func_mdid;
 
-	// return type
-	IMDId *m_return_type_mdid;
+  // return type
+  IMDId *m_return_type_mdid;
 
-	const INT m_return_type_modifier;
+  const INT m_return_type_modifier;
 
-	// does the func return a set
-	BOOL m_returns_set;
+  // does the func return a set
+  BOOL m_returns_set;
 
-	// private copy ctor
-	CDXLScalarFuncExpr(const CDXLScalarFuncExpr &);
+  //  true if in the function, variadic arguments have been
+  //  combined into an array last argument
+  BOOL m_funcvariadic;
 
-public:
-	// ctor
-	CDXLScalarFuncExpr(CMemoryPool *mp, IMDId *mdid_func,
-					   IMDId *mdid_return_type, INT return_type_modifier,
-					   BOOL returns_set);
+ public:
+  CDXLScalarFuncExpr(const CDXLScalarFuncExpr &) = delete;
 
-	//dtor
-	virtual ~CDXLScalarFuncExpr();
+  // ctor
+  CDXLScalarFuncExpr(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, INT return_type_modifier,
+                     BOOL returns_set, BOOL funcvariadic);
 
-	// ident accessors
-	Edxlopid GetDXLOperator() const;
+  // dtor
+  ~CDXLScalarFuncExpr() override;
 
-	// name of the DXL operator
-	const CWStringConst *GetOpNameStr() const;
+  // ident accessors
+  Edxlopid GetDXLOperator() const override;
 
-	// function id
-	IMDId *FuncMdId() const;
+  // name of the DXL operator
+  const CWStringConst *GetOpNameStr() const override;
 
-	// return type
-	IMDId *ReturnTypeMdId() const;
+  // function id
+  IMDId *FuncMdId() const;
 
-	INT TypeModifier() const;
+  // return type
+  IMDId *ReturnTypeMdId() const;
 
-	// does function return a set
-	BOOL ReturnsSet() const;
+  INT TypeModifier() const;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // does function return a set
+  BOOL ReturnsSet() const;
 
-	// conversion function
-	static CDXLScalarFuncExpr *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarFuncExpr == dxl_op->GetDXLOperator());
+  // Is the variadic flag set
+  BOOL IsFuncVariadic() const;
 
-		return dynamic_cast<CDXLScalarFuncExpr *>(dxl_op);
-	}
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// does the operator return a boolean result
-	virtual BOOL HasBoolResult(CMDAccessor *md_accessor) const;
+  // conversion function
+  static CDXLScalarFuncExpr *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarFuncExpr == dxl_op->GetDXLOperator());
+
+    return dynamic_cast<CDXLScalarFuncExpr *>(dxl_op);
+  }
+
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalarFuncExpr_H
+#endif  // !GPDXL_CDXLScalarFuncExpr_H
 
 // EOF

@@ -13,8 +13,7 @@
 
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CHeapObject
@@ -24,13 +23,12 @@ namespace gpos
 //		constructor is protected to prevent direct instantiation of class;
 //
 //---------------------------------------------------------------------------
-class CHeapObject
-{
-protected:
-	CHeapObject();
+class CHeapObject {
+ protected:
+  CHeapObject();
 };
 }  // namespace gpos
 
-#endif	// !GPOS_CHeapObject_H
+#endif  // !GPOS_CHeapObject_H
 
 // EOF

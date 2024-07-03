@@ -23,8 +23,7 @@
 
 #include "naucrates/dxl/operators/CDXLDatum.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
@@ -38,86 +37,63 @@ class CXMLSerializer;
 //		Class for representing DXL datum of type generic
 //
 //---------------------------------------------------------------------------
-class CDXLDatumGeneric : public CDXLDatum
-{
-private:
-	// private copy ctor
-	CDXLDatumGeneric(const CDXLDatumGeneric &);
+class CDXLDatumGeneric : public CDXLDatum {
+ private:
+ protected:
+  // datum byte array
+  BYTE *m_byte_array;
 
-protected:
-	// datum byte array
-	BYTE *m_byte_array;
+ public:
+  CDXLDatumGeneric(const CDXLDatumGeneric &) = delete;
 
-public:
-	// ctor
-	CDXLDatumGeneric(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier,
-					 BOOL is_null, BYTE *data, ULONG length);
+  // ctor
+  CDXLDatumGeneric(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, BOOL is_null, BYTE *data, ULONG length);
 
-	// dtor
-	virtual ~CDXLDatumGeneric();
+  // dtor
+  ~CDXLDatumGeneric() override;
 
-	// byte array
-	const BYTE *GetByteArray() const;
+  // byte array
+  const BYTE *GetByteArray() const;
 
-	// serialize the datum as the given element
-	virtual void Serialize(CXMLSerializer *xml_serializer);
+  // serialize the datum as the given element
+  void Serialize(CXMLSerializer *xml_serializer) override;
 
-	// datum type
-	virtual EdxldatumType
-	GetDatumType() const
-	{
-		return CDXLDatum::EdxldatumGeneric;
-	}
+  // datum type
+  EdxldatumType GetDatumType() const override { return CDXLDatum::EdxldatumGeneric; }
 
-	// conversion function
-	static CDXLDatumGeneric *
-	Cast(CDXLDatum *dxl_datum)
-	{
-		GPOS_ASSERT(NULL != dxl_datum);
-		GPOS_ASSERT(CDXLDatum::EdxldatumGeneric == dxl_datum->GetDatumType() ||
-					CDXLDatum::EdxldatumStatsDoubleMappable ==
-						dxl_datum->GetDatumType() ||
-					CDXLDatum::EdxldatumStatsLintMappable ==
-						dxl_datum->GetDatumType());
+  // conversion function
+  static CDXLDatumGeneric *Cast(CDXLDatum *dxl_datum) {
+    GPOS_ASSERT(nullptr != dxl_datum);
+    GPOS_ASSERT(CDXLDatum::EdxldatumGeneric == dxl_datum->GetDatumType() ||
+                CDXLDatum::EdxldatumStatsDoubleMappable == dxl_datum->GetDatumType() ||
+                CDXLDatum::EdxldatumStatsLintMappable == dxl_datum->GetDatumType());
 
-		return dynamic_cast<CDXLDatumGeneric *>(dxl_datum);
-	}
+    return dynamic_cast<CDXLDatumGeneric *>(dxl_datum);
+  }
 
-	// statistics related APIs
+  // statistics related APIs
 
-	// can datum be mapped to LINT
-	virtual BOOL
-	IsDatumMappableToLINT() const
-	{
-		return false;
-	}
+  // can datum be mapped to LINT
+  virtual BOOL IsDatumMappableToLINT() const { return false; }
 
-	// return the lint mapping needed for statistics computation
-	virtual LINT
-	GetLINTMapping() const
-	{
-		GPOS_ASSERT(IsDatumMappableToLINT());
+  // return the lint mapping needed for statistics computation
+  virtual LINT GetLINTMapping() const {
+    GPOS_ASSERT(IsDatumMappableToLINT());
 
-		return 0;
-	}
+    return 0;
+  }
 
-	// can datum be mapped to a double
-	virtual BOOL
-	IsDatumMappableToDouble() const
-	{
-		return false;
-	}
+  // can datum be mapped to a double
+  virtual BOOL IsDatumMappableToDouble() const { return false; }
 
-	// return the double mapping needed for statistics computation
-	virtual CDouble
-	GetDoubleMapping() const
-	{
-		GPOS_ASSERT(IsDatumMappableToDouble());
-		return 0;
-	}
+  // return the double mapping needed for statistics computation
+  virtual CDouble GetDoubleMapping() const {
+    GPOS_ASSERT(IsDatumMappableToDouble());
+    return 0;
+  }
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLDatumGeneric_H
+#endif  // !GPDXL_CDXLDatumGeneric_H
 
 // EOF

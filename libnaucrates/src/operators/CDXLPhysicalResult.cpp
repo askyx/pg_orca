@@ -9,7 +9,6 @@
 //		Implementation of DXL physical result operator
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/dxl/operators/CDXLPhysicalResult.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
@@ -26,10 +25,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalResult::CDXLPhysicalResult(CMemoryPool *mp) : CDXLPhysical(mp)
-{
-}
-
+CDXLPhysicalResult::CDXLPhysicalResult(CMemoryPool *mp) : CDXLPhysical(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -39,12 +35,9 @@ CDXLPhysicalResult::CDXLPhysicalResult(CMemoryPool *mp) : CDXLPhysical(mp)
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLPhysicalResult::GetDXLOperator() const
-{
-	return EdxlopPhysicalResult;
+Edxlopid CDXLPhysicalResult::GetDXLOperator() const {
+  return EdxlopPhysicalResult;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -54,12 +47,9 @@ CDXLPhysicalResult::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLPhysicalResult::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalResult);
+const CWStringConst *CDXLPhysicalResult::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalResult);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -69,23 +59,18 @@ CDXLPhysicalResult::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalResult::SerializeToDXL(CXMLSerializer *xml_serializer,
-								   const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLPhysicalResult::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	// serialize properties
-	dxlnode->SerializePropertiesToDXL(xml_serializer);
+  // serialize properties
+  dxlnode->SerializePropertiesToDXL(xml_serializer);
 
-	// serialize children
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
+  // serialize children
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -97,36 +82,26 @@ CDXLPhysicalResult::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalResult::AssertValid(const CDXLNode *dxlnode,
-								BOOL validate_children) const
-{
-	GPOS_ASSERT(EdxlresultIndexSentinel >= dxlnode->Arity());
+void CDXLPhysicalResult::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  GPOS_ASSERT(EdxlresultIndexSentinel >= dxlnode->Arity());
 
-	// check that one time filter is valid
-	CDXLNode *one_time_filter = (*dxlnode)[EdxlresultIndexOneTimeFilter];
-	GPOS_ASSERT(EdxlopScalarOneTimeFilter ==
-				one_time_filter->GetOperator()->GetDXLOperator());
+  // check that one time filter is valid
+  CDXLNode *one_time_filter = (*dxlnode)[EdxlresultIndexOneTimeFilter];
+  GPOS_ASSERT(EdxlopScalarOneTimeFilter == one_time_filter->GetOperator()->GetDXLOperator());
 
-	if (validate_children)
-	{
-		one_time_filter->GetOperator()->AssertValid(one_time_filter,
-													validate_children);
-	}
+  if (validate_children) {
+    one_time_filter->GetOperator()->AssertValid(one_time_filter, validate_children);
+  }
 
-	if (EdxlresultIndexSentinel == dxlnode->Arity())
-	{
-		CDXLNode *child_dxlnode = (*dxlnode)[EdxlresultIndexChild];
-		GPOS_ASSERT(EdxloptypePhysical ==
-					child_dxlnode->GetOperator()->GetDXLOperatorType());
+  if (EdxlresultIndexSentinel == dxlnode->Arity()) {
+    CDXLNode *child_dxlnode = (*dxlnode)[EdxlresultIndexChild];
+    GPOS_ASSERT(EdxloptypePhysical == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-		if (validate_children)
-		{
-			child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-													  validate_children);
-		}
-	}
+    if (validate_children) {
+      child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+    }
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

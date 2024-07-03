@@ -10,7 +10,6 @@
 //		in the MD cache
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/md/CMDScalarOpGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
@@ -29,31 +28,28 @@ using namespace gpmd;
 //		Constructs a metadata scalar op
 //
 //---------------------------------------------------------------------------
-CMDScalarOpGPDB::CMDScalarOpGPDB(
-	CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *mdid_type_left,
-	IMDId *mdid_type_right, IMDId *result_type_mdid, IMDId *mdid_func,
-	IMDId *mdid_commute_opr, IMDId *m_mdid_inverse_opr,
-	IMDType::ECmpType cmp_type, BOOL returns_null_on_null_input,
-	BOOL is_ndv_preserving, IMdIdArray *mdid_opfamilies_array)
-	: m_mp(mp),
-	  m_mdid(mdid),
-	  m_mdname(mdname),
-	  m_mdid_type_left(mdid_type_left),
-	  m_mdid_type_right(mdid_type_right),
-	  m_mdid_type_result(result_type_mdid),
-	  m_func_mdid(mdid_func),
-	  m_mdid_commute_opr(mdid_commute_opr),
-	  m_mdid_inverse_opr(m_mdid_inverse_opr),
-	  m_comparision_type(cmp_type),
-	  m_returns_null_on_null_input(returns_null_on_null_input),
-	  m_is_ndv_preserving(is_ndv_preserving),
-	  m_mdid_opfamilies_array(mdid_opfamilies_array)
-{
-	GPOS_ASSERT(NULL != mdid_opfamilies_array);
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+CMDScalarOpGPDB::CMDScalarOpGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *mdid_type_left,
+                                 IMDId *mdid_type_right, IMDId *result_type_mdid, IMDId *mdid_func,
+                                 IMDId *mdid_commute_opr, IMDId *m_mdid_inverse_opr, IMDType::ECmpType cmp_type,
+                                 BOOL returns_null_on_null_input, IMdIdArray *mdid_opfamilies_array,
+                                 IMDId *mdid_hash_opfamily, IMDId *mdid_legacy_hash_opfamily, BOOL is_ndv_preserving)
+    : m_mp(mp),
+      m_mdid(mdid),
+      m_mdname(mdname),
+      m_mdid_type_left(mdid_type_left),
+      m_mdid_type_right(mdid_type_right),
+      m_mdid_type_result(result_type_mdid),
+      m_func_mdid(mdid_func),
+      m_mdid_commute_opr(mdid_commute_opr),
+      m_mdid_inverse_opr(m_mdid_inverse_opr),
+      m_comparision_type(cmp_type),
+      m_returns_null_on_null_input(returns_null_on_null_input),
+      m_mdid_opfamilies_array(mdid_opfamilies_array),
+      m_mdid_hash_opfamily(mdid_hash_opfamily),
+      m_mdid_legacy_hash_opfamily(mdid_legacy_hash_opfamily),
+      m_is_ndv_preserving(is_ndv_preserving) {
+  GPOS_ASSERT(nullptr != mdid_opfamilies_array);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -63,20 +59,30 @@ CMDScalarOpGPDB::CMDScalarOpGPDB(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CMDScalarOpGPDB::~CMDScalarOpGPDB()
-{
-	m_mdid->Release();
-	m_mdid_type_result->Release();
-	m_func_mdid->Release();
+CMDScalarOpGPDB::~CMDScalarOpGPDB() {
+  m_mdid->Release();
+  m_mdid_type_result->Release();
+  m_func_mdid->Release();
 
-	CRefCount::SafeRelease(m_mdid_type_left);
-	CRefCount::SafeRelease(m_mdid_type_right);
-	CRefCount::SafeRelease(m_mdid_commute_opr);
-	CRefCount::SafeRelease(m_mdid_inverse_opr);
+  CRefCount::SafeRelease(m_mdid_type_left);
+  CRefCount::SafeRelease(m_mdid_type_right);
+  CRefCount::SafeRelease(m_mdid_commute_opr);
+  CRefCount::SafeRelease(m_mdid_inverse_opr);
+  CRefCount::SafeRelease(m_mdid_hash_opfamily);
+  CRefCount::SafeRelease(m_mdid_legacy_hash_opfamily);
 
-	GPOS_DELETE(m_mdname);
-	GPOS_DELETE(m_dxl_str);
-	m_mdid_opfamilies_array->Release();
+  GPOS_DELETE(m_mdname);
+  if (nullptr != m_dxl_str) {
+    GPOS_DELETE(m_dxl_str);
+  }
+  m_mdid_opfamilies_array->Release();
+}
+
+const CWStringDynamic *CMDScalarOpGPDB::GetStrRepr() {
+  if (nullptr == m_dxl_str) {
+    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+  }
+  return m_dxl_str;
 }
 
 //---------------------------------------------------------------------------
@@ -87,10 +93,8 @@ CMDScalarOpGPDB::~CMDScalarOpGPDB()
 //		Operator id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScalarOpGPDB::MDId() const
-{
-	return m_mdid;
+IMDId *CMDScalarOpGPDB::MDId() const {
+  return m_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -101,10 +105,8 @@ CMDScalarOpGPDB::MDId() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-CMDName
-CMDScalarOpGPDB::Mdname() const
-{
-	return *m_mdname;
+CMDName CMDScalarOpGPDB::Mdname() const {
+  return *m_mdname;
 }
 
 //---------------------------------------------------------------------------
@@ -115,10 +117,8 @@ CMDScalarOpGPDB::Mdname() const
 //		Type id of left operand
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScalarOpGPDB::GetLeftMdid() const
-{
-	return m_mdid_type_left;
+IMDId *CMDScalarOpGPDB::GetLeftMdid() const {
+  return m_mdid_type_left;
 }
 
 //---------------------------------------------------------------------------
@@ -129,10 +129,8 @@ CMDScalarOpGPDB::GetLeftMdid() const
 //		Type id of right operand
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScalarOpGPDB::GetRightMdid() const
-{
-	return m_mdid_type_right;
+IMDId *CMDScalarOpGPDB::GetRightMdid() const {
+  return m_mdid_type_right;
 }
 
 //---------------------------------------------------------------------------
@@ -143,10 +141,8 @@ CMDScalarOpGPDB::GetRightMdid() const
 //		Type id of result
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScalarOpGPDB::GetResultTypeMdid() const
-{
-	return m_mdid_type_result;
+IMDId *CMDScalarOpGPDB::GetResultTypeMdid() const {
+  return m_mdid_type_result;
 }
 
 //---------------------------------------------------------------------------
@@ -157,10 +153,8 @@ CMDScalarOpGPDB::GetResultTypeMdid() const
 //		Id of function which implements the operator
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScalarOpGPDB::FuncMdId() const
-{
-	return m_func_mdid;
+IMDId *CMDScalarOpGPDB::FuncMdId() const {
+  return m_func_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -171,10 +165,8 @@ CMDScalarOpGPDB::FuncMdId() const
 //		Id of commute operator
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScalarOpGPDB::GetCommuteOpMdid() const
-{
-	return m_mdid_commute_opr;
+IMDId *CMDScalarOpGPDB::GetCommuteOpMdid() const {
+  return m_mdid_commute_opr;
 }
 
 //---------------------------------------------------------------------------
@@ -185,10 +177,8 @@ CMDScalarOpGPDB::GetCommuteOpMdid() const
 //		Id of inverse operator
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScalarOpGPDB::GetInverseOpMdid() const
-{
-	return m_mdid_inverse_opr;
+IMDId *CMDScalarOpGPDB::GetInverseOpMdid() const {
+  return m_mdid_inverse_opr;
 }
 
 //---------------------------------------------------------------------------
@@ -199,12 +189,9 @@ CMDScalarOpGPDB::GetInverseOpMdid() const
 //		Is this an equality operator
 //
 //---------------------------------------------------------------------------
-BOOL
-CMDScalarOpGPDB::IsEqualityOp() const
-{
-	return IMDType::EcmptEq == m_comparision_type;
+BOOL CMDScalarOpGPDB::IsEqualityOp() const {
+  return IMDType::EcmptEq == m_comparision_type;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -216,17 +203,12 @@ CMDScalarOpGPDB::IsEqualityOp() const
 //		the implementation in GPDB returns what STRICT property states
 //
 //---------------------------------------------------------------------------
-BOOL
-CMDScalarOpGPDB::ReturnsNullOnNullInput() const
-{
-	return m_returns_null_on_null_input;
+BOOL CMDScalarOpGPDB::ReturnsNullOnNullInput() const {
+  return m_returns_null_on_null_input;
 }
 
-
-BOOL
-CMDScalarOpGPDB::IsNDVPreserving() const
-{
-	return m_is_ndv_preserving;
+BOOL CMDScalarOpGPDB::IsNDVPreserving() const {
+  return m_is_ndv_preserving;
 }
 
 //---------------------------------------------------------------------------
@@ -237,10 +219,8 @@ CMDScalarOpGPDB::IsNDVPreserving() const
 //		Comparison type
 //
 //---------------------------------------------------------------------------
-IMDType::ECmpType
-CMDScalarOpGPDB::ParseCmpType() const
-{
-	return m_comparision_type;
+IMDType::ECmpType CMDScalarOpGPDB::ParseCmpType() const {
+  return m_comparision_type;
 }
 
 //---------------------------------------------------------------------------
@@ -251,56 +231,40 @@ CMDScalarOpGPDB::ParseCmpType() const
 //		Serialize scalar op metadata in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CMDScalarOpGPDB::Serialize(CXMLSerializer *xml_serializer) const
-{
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOp));
+void CMDScalarOpGPDB::Serialize(CXMLSerializer *xml_serializer) const {
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                              CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOp));
 
-	m_mdid->Serialize(xml_serializer,
-					  CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName),
-								 m_mdname->GetMDName());
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOpCmpType),
-		IMDType::GetCmpTypeStr(m_comparision_type));
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenReturnsNullOnNullInput),
-		m_returns_null_on_null_input);
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenIsNDVPreserving),
-		m_is_ndv_preserving);
+  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOpCmpType),
+                               IMDType::GetCmpTypeStr(m_comparision_type));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenReturnsNullOnNullInput),
+                               m_returns_null_on_null_input);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsNDVPreserving), m_is_ndv_preserving);
 
-	Edxltoken dxl_token_array[6] = {
-		EdxltokenGPDBScalarOpLeftTypeId,   EdxltokenGPDBScalarOpRightTypeId,
-		EdxltokenGPDBScalarOpResultTypeId, EdxltokenGPDBScalarOpFuncId,
-		EdxltokenGPDBScalarOpCommOpId,	   EdxltokenGPDBScalarOpInverseOpId};
+  Edxltoken dxl_token_array[8] = {EdxltokenGPDBScalarOpLeftTypeId,   EdxltokenGPDBScalarOpRightTypeId,
+                                  EdxltokenGPDBScalarOpResultTypeId, EdxltokenGPDBScalarOpFuncId,
+                                  EdxltokenGPDBScalarOpCommOpId,     EdxltokenGPDBScalarOpInverseOpId,
+                                  EdxltokenGPDBScalarOpHashOpfamily, EdxltokenGPDBScalarOpLegacyHashOpfamily};
 
-	IMDId *mdid_array[6] = {m_mdid_type_left,	m_mdid_type_right,
-							m_mdid_type_result, m_func_mdid,
-							m_mdid_commute_opr, m_mdid_inverse_opr};
+  IMDId *mdid_array[8] = {m_mdid_type_left,   m_mdid_type_right,  m_mdid_type_result,   m_func_mdid,
+                          m_mdid_commute_opr, m_mdid_inverse_opr, m_mdid_hash_opfamily, m_mdid_legacy_hash_opfamily};
 
-	for (ULONG ul = 0; ul < GPOS_ARRAY_SIZE(dxl_token_array); ul++)
-	{
-		SerializeMDIdAsElem(xml_serializer,
-							CDXLTokens::GetDXLTokenStr(dxl_token_array[ul]),
-							mdid_array[ul]);
+  for (ULONG ul = 0; ul < GPOS_ARRAY_SIZE(dxl_token_array); ul++) {
+    SerializeMDIdAsElem(xml_serializer, CDXLTokens::GetDXLTokenStr(dxl_token_array[ul]), mdid_array[ul]);
 
-		GPOS_CHECK_ABORT;
-	}
+    GPOS_CHECK_ABORT;
+  }
 
-	// serialize opfamilies information
-	if (0 < m_mdid_opfamilies_array->Size())
-	{
-		SerializeMDIdList(xml_serializer, m_mdid_opfamilies_array,
-						  CDXLTokens::GetDXLTokenStr(EdxltokenOpfamilies),
-						  CDXLTokens::GetDXLTokenStr(EdxltokenOpfamily));
-	}
+  // serialize opfamilies information
+  if (0 < m_mdid_opfamilies_array->Size()) {
+    SerializeMDIdList(xml_serializer, m_mdid_opfamilies_array, CDXLTokens::GetDXLTokenStr(EdxltokenOpfamilies),
+                      CDXLTokens::GetDXLTokenStr(EdxltokenOpfamily));
+  }
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOp));
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                               CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOp));
 }
 
 //---------------------------------------------------------------------------
@@ -312,9 +276,8 @@ CMDScalarOpGPDB::Serialize(CXMLSerializer *xml_serializer) const
 //
 //---------------------------------------------------------------------------
 ULONG
-CMDScalarOpGPDB::OpfamiliesCount() const
-{
-	return m_mdid_opfamilies_array->Size();
+CMDScalarOpGPDB::OpfamiliesCount() const {
+  return m_mdid_opfamilies_array->Size();
 }
 
 //---------------------------------------------------------------------------
@@ -325,14 +288,20 @@ CMDScalarOpGPDB::OpfamiliesCount() const
 //		Operator family at given position
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScalarOpGPDB::OpfamilyMdidAt(ULONG pos) const
-{
-	GPOS_ASSERT(pos < m_mdid_opfamilies_array->Size());
+IMDId *CMDScalarOpGPDB::OpfamilyMdidAt(ULONG pos) const {
+  GPOS_ASSERT(pos < m_mdid_opfamilies_array->Size());
 
-	return (*m_mdid_opfamilies_array)[pos];
+  return (*m_mdid_opfamilies_array)[pos];
 }
 
+// compatible hash opfamily
+IMDId *CMDScalarOpGPDB::HashOpfamilyMdid() const {
+  if (GPOS_FTRACE(EopttraceUseLegacyOpfamilies)) {
+    return m_mdid_legacy_hash_opfamily;
+  } else {
+    return m_mdid_hash_opfamily;
+  }
+}
 
 #ifdef GPOS_DEBUG
 //---------------------------------------------------------------------------
@@ -343,43 +312,40 @@ CMDScalarOpGPDB::OpfamilyMdidAt(ULONG pos) const
 //		Prints a metadata cache relation to the provided output
 //
 //---------------------------------------------------------------------------
-void
-CMDScalarOpGPDB::DebugPrint(IOstream &os) const
-{
-	os << "Operator id: ";
-	MDId()->OsPrint(os);
-	os << std::endl;
+void CMDScalarOpGPDB::DebugPrint(IOstream &os) const {
+  os << "Operator id: ";
+  MDId()->OsPrint(os);
+  os << std::endl;
 
-	os << "Operator name: " << (Mdname()).GetMDName()->GetBuffer() << std::endl;
+  os << "Operator name: " << (Mdname()).GetMDName()->GetBuffer() << std::endl;
 
-	os << "Left operand type id: ";
-	GetLeftMdid()->OsPrint(os);
-	os << std::endl;
+  os << "Left operand type id: ";
+  GetLeftMdid()->OsPrint(os);
+  os << std::endl;
 
-	os << "Right operand type id: ";
-	GetRightMdid()->OsPrint(os);
-	os << std::endl;
+  os << "Right operand type id: ";
+  GetRightMdid()->OsPrint(os);
+  os << std::endl;
 
-	os << "Result type id: ";
-	GetResultTypeMdid()->OsPrint(os);
-	os << std::endl;
+  os << "Result type id: ";
+  GetResultTypeMdid()->OsPrint(os);
+  os << std::endl;
 
-	os << "Operator func id: ";
-	FuncMdId()->OsPrint(os);
-	os << std::endl;
+  os << "Operator func id: ";
+  FuncMdId()->OsPrint(os);
+  os << std::endl;
 
-	os << "Commute operator id: ";
-	GetCommuteOpMdid()->OsPrint(os);
-	os << std::endl;
+  os << "Commute operator id: ";
+  GetCommuteOpMdid()->OsPrint(os);
+  os << std::endl;
 
-	os << "Inverse operator id: ";
-	GetInverseOpMdid()->OsPrint(os);
-	os << std::endl;
+  os << "Inverse operator id: ";
+  GetInverseOpMdid()->OsPrint(os);
+  os << std::endl;
 
-	os << std::endl;
+  os << std::endl;
 }
 
-#endif	// GPOS_DEBUG
-
+#endif  // GPOS_DEBUG
 
 // EOF

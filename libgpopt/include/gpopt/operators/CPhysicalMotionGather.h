@@ -17,8 +17,7 @@
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/operators/CPhysicalMotion.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CPhysicalMotionGather
@@ -27,133 +26,91 @@ namespace gpopt
 //		Gather motion operator
 //
 //---------------------------------------------------------------------------
-class CPhysicalMotionGather : public CPhysicalMotion
-{
-private:
-	// type of segment on which this gather runs (master/segment)
-	CDistributionSpecSingleton *m_pdssSingeton;
+class CPhysicalMotionGather : public CPhysicalMotion {
+ private:
+  // type of segment on which this gather runs (coordinator/segment)
+  CDistributionSpecSingleton *m_pdssSingeton;
 
-	// merge spec if the operator is order-preserving
-	COrderSpec *m_pos;
+  // merge spec if the operator is order-preserving
+  COrderSpec *m_pos;
 
-	// columns used by order spec
-	CColRefSet *m_pcrsSort;
+  // columns used by order spec
+  CColRefSet *m_pcrsSort;
 
-	// private copy ctor
-	CPhysicalMotionGather(const CPhysicalMotionGather &);
+ public:
+  CPhysicalMotionGather(const CPhysicalMotionGather &) = delete;
 
-public:
-	// ctor
-	CPhysicalMotionGather(CMemoryPool *mp,
-						  CDistributionSpecSingleton::ESegmentType est);
+  // ctor
+  CPhysicalMotionGather(CMemoryPool *mp, CDistributionSpecSingleton::ESegmentType est);
 
-	CPhysicalMotionGather(CMemoryPool *mp,
-						  CDistributionSpecSingleton::ESegmentType est,
-						  COrderSpec *pos);
+  CPhysicalMotionGather(CMemoryPool *mp, CDistributionSpecSingleton::ESegmentType est, COrderSpec *pos);
 
-	// dtor
-	virtual ~CPhysicalMotionGather();
+  // dtor
+  ~CPhysicalMotionGather() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPhysicalMotionGather;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPhysicalMotionGather; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPhysicalMotionGather";
-	}
+  const CHAR *SzId() const override { return "CPhysicalMotionGather"; }
 
-	CDistributionSpecSingleton::ESegmentType
-	Est() const
-	{
-		return m_pdssSingeton->Est();
-	}
+  CDistributionSpecSingleton::ESegmentType Est() const { return m_pdssSingeton->Est(); }
 
-	// output distribution accessor
-	virtual CDistributionSpec *
-	Pds() const
-	{
-		return m_pdssSingeton;
-	}
+  // output distribution accessor
+  CDistributionSpec *Pds() const override { return m_pdssSingeton; }
 
-	BOOL
-	FOrderPreserving() const
-	{
-		return !m_pos->IsEmpty();
-	}
+  BOOL FOrderPreserving() const { return !m_pos->IsEmpty(); }
 
-	BOOL
-	FOnMaster() const
-	{
-		return CDistributionSpecSingleton::EstMaster == Est();
-	}
+  BOOL FOnCoordinator() const { return CDistributionSpecSingleton::EstCoordinator == Est(); }
 
-	// order spec
-	COrderSpec *
-	Pos() const
-	{
-		return m_pos;
-	}
+  // order spec
+  COrderSpec *Pos() const { return m_pos; }
 
-	// match function
-	virtual BOOL Matches(COperator *) const;
+  // match function
+  BOOL Matches(COperator *) const override;
 
-	//-------------------------------------------------------------------------------------
-	// Required Plan Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Required Plan Properties
+  //-------------------------------------------------------------------------------------
 
-	// compute required output columns of the n-th child
-	virtual CColRefSet *PcrsRequired(CMemoryPool *mp,
-									 CExpressionHandle &exprhdl,
-									 CColRefSet *pcrsInput, ULONG child_index,
-									 CDrvdPropArray *pdrgpdpCtxt,
-									 ULONG ulOptReq);
+  // compute required output columns of the n-th child
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput, ULONG child_index,
+                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
 
-	// compute required sort order of the n-th child
-	virtual COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-									COrderSpec *posInput, ULONG child_index,
-									CDrvdPropArray *pdrgpdpCtxt,
-									ULONG ulOptReq) const;
+  // compute required sort order of the n-th child
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, ULONG child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-	// check if required columns are included in output columns
-	virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl,
-								   CColRefSet *pcrsRequired,
-								   ULONG ulOptReq) const;
+  // check if required columns are included in output columns
+  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
 
-	//-------------------------------------------------------------------------------------
-	// Derived Plan Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Derived Plan Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive sort order
-	virtual COrderSpec *PosDerive(CMemoryPool *mp,
-								  CExpressionHandle &exprhdl) const;
+  // derive sort order
+  COrderSpec *PosDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	//-------------------------------------------------------------------------------------
-	// Enforced Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Enforced Properties
+  //-------------------------------------------------------------------------------------
 
-	// return order property enforcing type for this operator
-	virtual CEnfdProp::EPropEnforcingType EpetOrder(
-		CExpressionHandle &exprhdl, const CEnfdOrder *peo) const;
+  // return order property enforcing type for this operator
+  CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// print
-	virtual IOstream &OsPrint(IOstream &) const;
+  // print
+  IOstream &OsPrint(IOstream &) const override;
 
-	// conversion function
-	static CPhysicalMotionGather *PopConvert(COperator *pop);
+  // conversion function
+  static CPhysicalMotionGather *PopConvert(COperator *pop);
 
-};	// class CPhysicalMotionGather
+};  // class CPhysicalMotionGather
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPhysicalMotionGather_H
+#endif  // !GPOPT_CPhysicalMotionGather_H
 
 // EOF

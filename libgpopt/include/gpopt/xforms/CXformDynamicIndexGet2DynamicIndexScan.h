@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,48 +26,33 @@ using namespace gpos;
 //		Transform DynamicIndexGet to DynamicIndexScan
 //
 //---------------------------------------------------------------------------
-class CXformDynamicIndexGet2DynamicIndexScan : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformDynamicIndexGet2DynamicIndexScan(
-		const CXformDynamicIndexGet2DynamicIndexScan &);
+class CXformDynamicIndexGet2DynamicIndexScan : public CXformImplementation {
+ private:
+ public:
+  CXformDynamicIndexGet2DynamicIndexScan(const CXformDynamicIndexGet2DynamicIndexScan &) = delete;
 
-public:
-	// ctor
-	explicit CXformDynamicIndexGet2DynamicIndexScan(CMemoryPool *mp);
+  // ctor
+  explicit CXformDynamicIndexGet2DynamicIndexScan(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformDynamicIndexGet2DynamicIndexScan()
-	{
-	}
+  // dtor
+  ~CXformDynamicIndexGet2DynamicIndexScan() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfDynamicIndexGet2DynamicIndexScan;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfDynamicIndexGet2DynamicIndexScan; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformDynamicIndexGet2DynamicIndexScan";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformDynamicIndexGet2DynamicIndexScan"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformDynamicIndexGet2DynamicIndexScan
+};  // class CXformDynamicIndexGet2DynamicIndexScan
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformDynamicIndexGet2DynamicIndexScan_H
+#endif  // !GPOPT_CXformDynamicIndexGet2DynamicIndexScan_H
 
 // EOF

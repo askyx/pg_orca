@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc..
+//	Copyright (C) 2014 VMware, Inc. or its affiliates..
 //
 //	@filename:
 //		CLogicalMaxOneRow.cpp
@@ -27,19 +27,15 @@ using namespace gpopt;
 //		Promise level for stat derivation
 //
 //---------------------------------------------------------------------------
-CLogical::EStatPromise
-CLogicalMaxOneRow::Esp(CExpressionHandle &exprhdl) const
-{
-	// low promise for stat derivation if logical expression has outer-refs
-	// or is part of an Apply expression
-	if (exprhdl.HasOuterRefs() ||
-		(NULL != exprhdl.Pgexpr() &&
-		 CXformUtils::FGenerateApply(exprhdl.Pgexpr()->ExfidOrigin())))
-	{
-		return EspLow;
-	}
+CLogical::EStatPromise CLogicalMaxOneRow::Esp(CExpressionHandle &exprhdl) const {
+  // low promise for stat derivation if logical expression has outer-refs
+  // or is part of an Apply expression
+  if (exprhdl.HasOuterRefs() ||
+      (nullptr != exprhdl.Pgexpr() && CXformUtils::FGenerateApply(exprhdl.Pgexpr()->ExfidOrigin()))) {
+    return EspLow;
+  }
 
-	return EspHigh;
+  return EspHigh;
 }
 
 //---------------------------------------------------------------------------
@@ -50,19 +46,17 @@ CLogicalMaxOneRow::Esp(CExpressionHandle &exprhdl) const
 //		Promise level for stat derivation
 //
 //---------------------------------------------------------------------------
-CColRefSet *
-CLogicalMaxOneRow::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl,
-							CColRefSet *pcrsInput, ULONG child_index) const
-{
-	GPOS_ASSERT(0 == child_index);
+CColRefSet *CLogicalMaxOneRow::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
+                                        ULONG child_index) const {
+  GPOS_ASSERT(0 == child_index);
 
-	CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
-	pcrs->Union(pcrsInput);
+  CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
+  pcrs->Union(pcrsInput);
 
-	// intersect with the output columns of relational child
-	pcrs->Intersection(exprhdl.DeriveOutputColumns(child_index));
+  // intersect with the output columns of relational child
+  pcrs->Intersection(exprhdl.DeriveOutputColumns(child_index));
 
-	return pcrs;
+  return pcrs;
 }
 
 //---------------------------------------------------------------------------
@@ -73,14 +67,11 @@ CLogicalMaxOneRow::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Compute candidate xforms
 //
 //---------------------------------------------------------------------------
-CXformSet *
-CLogicalMaxOneRow::PxfsCandidates(CMemoryPool *mp) const
-{
-	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	(void) xform_set->ExchangeSet(CXform::ExfMaxOneRow2Assert);
-	return xform_set;
+CXformSet *CLogicalMaxOneRow::PxfsCandidates(CMemoryPool *mp) const {
+  CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
+  (void)xform_set->ExchangeSet(CXform::ExfMaxOneRow2Assert);
+  return xform_set;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -90,15 +81,12 @@ CLogicalMaxOneRow::PxfsCandidates(CMemoryPool *mp) const
 //		Derive statistics
 //
 //---------------------------------------------------------------------------
-IStatistics *
-CLogicalMaxOneRow::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								IStatisticsArray *	// stats_ctxt
-) const
-{
-	// no more than one row can be produced by operator, scale down input statistics accordingly
-	IStatistics *stats = exprhdl.Pstats(0);
-	return stats->ScaleStats(mp, CDouble(1.0 / stats->Rows()));
+IStatistics *CLogicalMaxOneRow::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                             IStatisticsArray *  // stats_ctxt
+) const {
+  // no more than one row can be produced by operator, scale down input statistics accordingly
+  IStatistics *stats = exprhdl.Pstats(0);
+  return stats->ScaleStats(mp, CDouble(1.0 / stats->Rows()));
 }
-
 
 // EOF

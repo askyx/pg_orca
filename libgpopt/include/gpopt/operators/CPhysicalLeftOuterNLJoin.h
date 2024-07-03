@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CPhysicalNLJoin.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CPhysicalLeftOuterNLJoin
@@ -25,48 +24,34 @@ namespace gpopt
 //		Left outer nested-loops join operator
 //
 //---------------------------------------------------------------------------
-class CPhysicalLeftOuterNLJoin : public CPhysicalNLJoin
-{
-private:
-	// private copy ctor
-	CPhysicalLeftOuterNLJoin(const CPhysicalLeftOuterNLJoin &);
+class CPhysicalLeftOuterNLJoin : public CPhysicalNLJoin {
+ private:
+ public:
+  CPhysicalLeftOuterNLJoin(const CPhysicalLeftOuterNLJoin &) = delete;
 
-public:
-	// ctor
-	explicit CPhysicalLeftOuterNLJoin(CMemoryPool *mp);
+  // ctor
+  explicit CPhysicalLeftOuterNLJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CPhysicalLeftOuterNLJoin();
+  // dtor
+  ~CPhysicalLeftOuterNLJoin() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPhysicalLeftOuterNLJoin;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPhysicalLeftOuterNLJoin; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPhysicalLeftOuterNLJoin";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CPhysicalLeftOuterNLJoin"; }
 
+  // conversion function
+  static CPhysicalLeftOuterNLJoin *PopConvert(COperator *pop) {
+    GPOS_ASSERT(EopPhysicalLeftOuterNLJoin == pop->Eopid());
 
-	// conversion function
-	static CPhysicalLeftOuterNLJoin *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(EopPhysicalLeftOuterNLJoin == pop->Eopid());
+    return dynamic_cast<CPhysicalLeftOuterNLJoin *>(pop);
+  }
 
-		return dynamic_cast<CPhysicalLeftOuterNLJoin *>(pop);
-	}
-
-
-};	// class CPhysicalLeftOuterNLJoin
+};  // class CPhysicalLeftOuterNLJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPhysicalLeftOuterNLJoin_H
+#endif  // !GPOPT_CPhysicalLeftOuterNLJoin_H
 
 // EOF

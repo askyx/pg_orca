@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLScalarMinMax.h
@@ -17,8 +17,7 @@
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -30,79 +29,60 @@ using namespace gpmd;
 //		Class for representing DXL MinMax operator
 //
 //---------------------------------------------------------------------------
-class CDXLScalarMinMax : public CDXLScalar
-{
-public:
-	// types of operations: either min or max
-	enum EdxlMinMaxType
-	{
-		EmmtMin,
-		EmmtMax,
-		EmmtSentinel
-	};
+class CDXLScalarMinMax : public CDXLScalar {
+ public:
+  // types of operations: either min or max
+  enum EdxlMinMaxType { EmmtMin, EmmtMax, EmmtSentinel };
 
-private:
-	// return type
-	IMDId *m_mdid_type;
+ private:
+  // return type
+  IMDId *m_mdid_type;
 
-	// min/max type
-	EdxlMinMaxType m_min_max_type;
+  // min/max type
+  EdxlMinMaxType m_min_max_type;
 
-	// private copy ctor
-	CDXLScalarMinMax(const CDXLScalarMinMax &);
+ public:
+  CDXLScalarMinMax(const CDXLScalarMinMax &) = delete;
 
-public:
-	// ctor
-	CDXLScalarMinMax(CMemoryPool *mp, IMDId *mdid_type,
-					 EdxlMinMaxType min_max_type);
+  // ctor
+  CDXLScalarMinMax(CMemoryPool *mp, IMDId *mdid_type, EdxlMinMaxType min_max_type);
 
-	//dtor
-	virtual ~CDXLScalarMinMax();
+  // dtor
+  ~CDXLScalarMinMax() override;
 
-	// name of the operator
-	virtual const CWStringConst *GetOpNameStr() const;
+  // name of the operator
+  const CWStringConst *GetOpNameStr() const override;
 
-	// return type
-	virtual IMDId *
-	MdidType() const
-	{
-		return m_mdid_type;
-	}
+  // return type
+  virtual IMDId *MdidType() const { return m_mdid_type; }
 
-	// DXL Operator ID
-	virtual Edxlopid GetDXLOperator() const;
+  // DXL Operator ID
+  Edxlopid GetDXLOperator() const override;
 
-	// min/max type
-	EdxlMinMaxType
-	GetMinMaxType() const
-	{
-		return m_min_max_type;
-	}
+  // min/max type
+  EdxlMinMaxType GetMinMaxType() const { return m_min_max_type; }
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *node) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
-	// does the operator return a boolean result
-	virtual BOOL HasBoolResult(CMDAccessor *md_accessor) const;
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *node, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 
-	// conversion function
-	static CDXLScalarMinMax *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarMinMax == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarMinMax *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarMinMax == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarMinMax *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarMinMax *>(dxl_op);
+  }
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLScalarMinMax_H
+#endif  // !GPDXL_CDXLScalarMinMax_H
 
 // EOF

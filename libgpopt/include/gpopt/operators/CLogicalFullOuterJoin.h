@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CLogicalJoin.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalFullOuterJoin
@@ -25,109 +24,85 @@ namespace gpopt
 //		Full outer join operator
 //
 //---------------------------------------------------------------------------
-class CLogicalFullOuterJoin : public CLogicalJoin
-{
-private:
-	// private copy ctor
-	CLogicalFullOuterJoin(const CLogicalFullOuterJoin &);
+class CLogicalFullOuterJoin : public CLogicalJoin {
+ private:
+ public:
+  CLogicalFullOuterJoin(const CLogicalFullOuterJoin &) = delete;
 
-public:
-	// ctor
-	explicit CLogicalFullOuterJoin(CMemoryPool *mp);
+  // ctor
+  explicit CLogicalFullOuterJoin(CMemoryPool *mp, CXform::EXformId origin_xform = CXform::ExfSentinel);
 
-	// dtor
-	virtual ~CLogicalFullOuterJoin()
-	{
-	}
+  // dtor
+  ~CLogicalFullOuterJoin() override = default;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalFullOuterJoin;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalFullOuterJoin; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalFullOuterJoin";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalFullOuterJoin"; }
 
-	// return true if we can pull projections up past this operator from its given child
-	virtual BOOL FCanPullProjectionsUp(ULONG  //child_index
-	) const
-	{
-		return false;
-	}
+  // return true if we can pull projections up past this operator from its given child
+  BOOL FCanPullProjectionsUp(ULONG  // child_index
+  ) const override {
+    return false;
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive not nullable output columns
-	virtual CColRefSet *
-	DeriveNotNullColumns(CMemoryPool *mp,
-						 CExpressionHandle &  //exprhdl
-	) const
-	{
-		// all output columns are nullable
-		return GPOS_NEW(mp) CColRefSet(mp);
-	}
+  // derive not nullable output columns
+  CColRefSet *DeriveNotNullColumns(CMemoryPool *mp,
+                                   CExpressionHandle &  // exprhdl
+  ) const override {
+    // all output columns are nullable
+    return GPOS_NEW(mp) CColRefSet(mp);
+  }
 
-	// derive max card
-	virtual CMaxCard DeriveMaxCard(CMemoryPool *mp,
-								   CExpressionHandle &exprhdl) const;
+  // derive max card
+  CMaxCard DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive constraint property
-	virtual CPropConstraint *
-	DerivePropertyConstraint(CMemoryPool *mp,
-							 CExpressionHandle &  //exprhdl
-	) const
-	{
-		return GPOS_NEW(mp) CPropConstraint(
-			mp, GPOS_NEW(mp) CColRefSetArray(mp), NULL /*pcnstr*/);
-	}
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *mp,
+                                            CExpressionHandle &  // exprhdl
+  ) const override {
+    return GPOS_NEW(mp) CPropConstraint(mp, GPOS_NEW(mp) CColRefSetArray(mp), nullptr /*pcnstr*/);
+  }
 
-	// promise level for stat derivation
-	virtual EStatPromise
-	Esp(CExpressionHandle &	 //exprhdl
-	) const
-	{
-		// Disable stats derivation for CLogicalFullOuterJoin because it is
-		// currently not implemented. Instead rely on stats coming from the
-		// equivalent UNION expression (formed using ExfExpandFullOuterJoin).
-		// Also see CXformCTEAnchor2Sequence::Transform() and
-		// CXformCTEAnchor2TrivialSelect::Transform().
-		return EspLow;
-	}
+  // promise level for stat derivation
+  EStatPromise Esp(CExpressionHandle &  // exprhdl
+  ) const override {
+    // Disable stats derivation for CLogicalFullOuterJoin because it is
+    // currently not implemented. Instead rely on stats coming from the
+    // equivalent UNION expression (formed using ExfExpandFullOuterJoin).
+    // Also see CXformCTEAnchor2Sequence::Transform() and
+    // CXformCTEAnchor2TrivialSelect::Transform().
+    return EspLow;
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// candidate set of xforms
-	CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// conversion function
-	static CLogicalFullOuterJoin *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalFullOuterJoin == pop->Eopid());
+  // conversion function
+  static CLogicalFullOuterJoin *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalFullOuterJoin == pop->Eopid());
 
-		return dynamic_cast<CLogicalFullOuterJoin *>(pop);
-	}
+    return dynamic_cast<CLogicalFullOuterJoin *>(pop);
+  }
 
-};	// class CLogicalFullOuterJoin
+};  // class CLogicalFullOuterJoin
 
 }  // namespace gpopt
 
-
-#endif	// !GPOS_CLogicalFullOuterJoin_H
+#endif  // !GPOS_CLogicalFullOuterJoin_H
 
 // EOF

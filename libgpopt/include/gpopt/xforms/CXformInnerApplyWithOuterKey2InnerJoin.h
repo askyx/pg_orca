@@ -14,12 +14,10 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
 #include "gpopt/xforms/CDecorrelator.h"
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -31,54 +29,35 @@ using namespace gpos;
 //		outer child of apply has key
 //
 //---------------------------------------------------------------------------
-class CXformInnerApplyWithOuterKey2InnerJoin : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformInnerApplyWithOuterKey2InnerJoin(
-		const CXformInnerApplyWithOuterKey2InnerJoin &);
+class CXformInnerApplyWithOuterKey2InnerJoin : public CXformExploration {
+ private:
+ public:
+  CXformInnerApplyWithOuterKey2InnerJoin(const CXformInnerApplyWithOuterKey2InnerJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformInnerApplyWithOuterKey2InnerJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformInnerApplyWithOuterKey2InnerJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformInnerApplyWithOuterKey2InnerJoin()
-	{
-	}
+  // dtor
+  ~CXformInnerApplyWithOuterKey2InnerJoin() override = default;
 
-	// transformation promise
-	EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // transformation promise
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfInnerApplyWithOuterKey2InnerJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfInnerApplyWithOuterKey2InnerJoin; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformInnerApplyWithOuterKey2InnerJoin";
-	}
+  const CHAR *SzId() const override { return "CXformInnerApplyWithOuterKey2InnerJoin"; }
 
-	// is transformation an Apply decorrelation (Apply To Join) xform?
-	virtual BOOL
-	FApplyDecorrelating() const
-	{
-		return true;
-	}
+  // is transformation an Apply decorrelation (Apply To Join) xform?
+  BOOL FApplyDecorrelating() const override { return true; }
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-
-};	// class CXformInnerApplyWithOuterKey2InnerJoin
+};  // class CXformInnerApplyWithOuterKey2InnerJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformInnerApplyWithOuterKey2InnerJoin_H
+#endif  // !GPOPT_CXformInnerApplyWithOuterKey2InnerJoin_H
 
 // EOF

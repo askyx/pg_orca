@@ -11,7 +11,7 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="2">
@@ -19,7 +19,8 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
           <dxl:CostParam Name="NLJFactor" Value="1.000000" LowerBound="0.500000" UpperBound="1.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
-      <dxl:TraceFlags Value="103027,102024,102025,102115,102116,102117,102119,102121,103001,103014,103015,103037"/>
+      <dxl:PlanHint/>
+      <dxl:TraceFlags Value="102001,102002,102003,102024,102025,102115,102116,102117,102119,102121,102144,103001,103014,103015,103027,103033,103037"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:ColumnStatistics Mdid="1.1279380.1.1.59" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
@@ -459,191 +460,130 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.1279380.1.1" Name="stg_xdr_crce_cdr" Rows="766993024.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.1279380.1.1" Name="stg_xdr_crce_cdr" IsTemporary="false" HasOids="false" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="58,59,57" PartitionColumns="9" PartitionTypes="r">
+      <dxl:Relation Mdid="6.1279380.1.1" Name="stg_xdr_crce_cdr" IsTemporary="false" Rows="766993024.000000" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="58,59,57" PartitionColumns="9" PartitionTypes="r">
         <dxl:Columns>
           <dxl:Column Name="id" Attno="1" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="headerversion" Attno="2" Mdid="0.1043.1.0" Nullable="true" ColWidth="32">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tickettypeid" Attno="3" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="success" Attno="4" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="provider" Attno="5" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="application" Attno="6" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tickettype" Attno="7" Mdid="0.1043.1.0" Nullable="true" ColWidth="32">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="nodeid" Attno="8" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tickettimestamp" Attno="9" Mdid="0.1184.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="sessioncreationtimestamp" Attno="10" Mdid="0.1184.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="sessionid" Attno="11" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="transactionid" Attno="12" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="sequenceid" Attno="13" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="subscriberid" Attno="14" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="subscriberaddress" Attno="15" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="subscribertype" Attno="16" Mdid="0.1043.1.0" Nullable="true" ColWidth="32">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="errorcode" Attno="17" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="groupid" Attno="18" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="subscriberstate" Attno="19" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="subscriberstateinfo" Attno="20" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="languageid" Attno="21" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="chargenotification" Attno="22" Mdid="0.1043.1.0" Nullable="true" ColWidth="32">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="recordversion" Attno="23" Mdid="0.1043.1.0" Nullable="true" ColWidth="32">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="crceoperation" Attno="24" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="chargemode" Attno="25" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="imsi" Attno="26" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="callingmsisdn" Attno="27" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="clipsuppressnumber" Attno="28" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="calledmsisdn" Attno="29" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="destinationnetwork" Attno="30" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="destinationzone" Attno="31" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="traffictype" Attno="32" Mdid="0.1043.1.0" Nullable="true" ColWidth="32">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="messagetypeindicator" Attno="33" Mdid="0.1043.1.0" Nullable="true" ColWidth="32">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="bearertype" Attno="34" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="subscriberlocation" Attno="35" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="locationnetwork" Attno="36" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="answertime" Attno="37" Mdid="0.1184.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="maxcallcost" Attno="38" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="callduration" Attno="39" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="chargedduration" Attno="40" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="referencenumber" Attno="41" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="chargefreeaction" Attno="42" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tariff" Attno="43" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="accountid" Attno="44" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="accountdifference" Attno="45" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="chargeamount" Attno="46" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="currency" Attno="47" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="closingbalance" Attno="48" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="crceresultcode" Attno="49" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="transparentdata" Attno="50" Mdid="0.25.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="additionalratinginfo" Attno="51" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="apn" Attno="52" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="transferredunits" Attno="53" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="accounttype" Attno="54" Mdid="0.1043.1.0" Nullable="true" ColWidth="128">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ratinggroup" Attno="55" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="roaming" Attno="56" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="nrofsegments" Attno="57" Mdid="0.20.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
         <dxl:PartConstraint DefaultPartition="0" Unbounded="true">
         </dxl:PartConstraint>
@@ -2544,13 +2484,13 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
       <dxl:MDCast Mdid="3.1043.1.0;25.1.0" Name="text" BinaryCoercible="true" SourceTypeId="0.1043.1.0" DestinationTypeId="0.25.1.0" CastFuncId="0.0.0.0"/>
-      <dxl:GPDBFunc Mdid="0.6083.1.0" Name="gp_partition_propagation" ReturnsSet="false" Stability="Volatile" DataAccess="NoSQL" IsStrict="true">
+      <dxl:GPDBFunc Mdid="0.6083.1.0" Name="gp_partition_propagation" ReturnsSet="false" Stability="Volatile" IsStrict="true">
         <dxl:ResultType Mdid="0.2278.1.0"/>
       </dxl:GPDBFunc>
-      <dxl:GPDBFunc Mdid="0.6085.1.0" Name="gp_partition_expansion" ReturnsSet="true" Stability="Stable" DataAccess="NoSQL" IsStrict="true">
+      <dxl:GPDBFunc Mdid="0.6085.1.0" Name="gp_partition_expansion" ReturnsSet="true" Stability="Stable" IsStrict="true">
         <dxl:ResultType Mdid="0.26.1.0"/>
       </dxl:GPDBFunc>
-      <dxl:GPDBFunc Mdid="0.6086.1.0" Name="gp_partition_inverse" ReturnsSet="true" Stability="Stable" DataAccess="NoSQL" IsStrict="true">
+      <dxl:GPDBFunc Mdid="0.6086.1.0" Name="gp_partition_inverse" ReturnsSet="true" Stability="Stable" IsStrict="true">
         <dxl:ResultType Mdid="0.2249.1.0"/>
       </dxl:GPDBFunc>
       <dxl:ColumnStatistics Mdid="1.1279380.1.1.55" Name="roaming" Width="1.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000">
@@ -4823,77 +4763,54 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.1277041.1.1" Name="dim_customer_device" Rows="2221810.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.1277041.1.1" Name="dim_customer_device" IsTemporary="false" HasOids="false" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="21,19">
+      <dxl:Relation Mdid="6.1277041.1.1" Name="dim_customer_device" IsTemporary="false" Rows="2221810.000000" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="21,19">
         <dxl:Columns>
           <dxl:Column Name="customer_device_key" Attno="1" Mdid="0.20.1.0" Nullable="false" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="imsi_number" Attno="2" Mdid="0.1043.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="msisdn" Attno="3" Mdid="0.1043.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="imei_number" Attno="4" Mdid="0.1043.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="country" Attno="5" Mdid="0.1043.1.0" Nullable="true" ColWidth="32">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="carrier" Attno="6" Mdid="0.1043.1.0" Nullable="true" ColWidth="32">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tac_cd" Attno="7" Mdid="0.1043.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="source" Attno="8" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="create_dtm" Attno="9" Mdid="0.1082.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="update_dtm" Attno="10" Mdid="0.1082.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="start_dtm" Attno="11" Mdid="0.1184.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="end_dtm" Attno="12" Mdid="0.1184.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="latest_registration_flag" Attno="13" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="mkt_model" Attno="14" Mdid="0.1043.1.0" Nullable="true" ColWidth="255">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="created_by" Attno="15" Mdid="0.1043.1.0" Nullable="true" ColWidth="50">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="updated_by" Attno="16" Mdid="0.1043.1.0" Nullable="true" ColWidth="50">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="process_run_id" Attno="17" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="row_effective_from_dtm" Attno="18" Mdid="0.1082.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="row_effective_to_dtm" Attno="19" Mdid="0.1082.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.1277041.1.1.15" Name="updated_by" Width="24.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000">
@@ -5048,7 +4965,7 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
       <dxl:CTEList/>
       <dxl:LogicalJoin JoinType="Inner">
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.1279380.1.1" TableName="stg_xdr_crce_cdr">
+          <dxl:TableDescriptor Mdid="6.1279380.1.1" TableName="stg_xdr_crce_cdr">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="id" TypeMdid="0.20.1.0"/>
               <dxl:Column ColId="2" Attno="2" ColName="headerversion" TypeMdid="0.1043.1.0" ColWidth="32"/>
@@ -5114,7 +5031,7 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
           </dxl:TableDescriptor>
         </dxl:LogicalGet>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.1277041.1.1" TableName="dim_customer_device">
+          <dxl:TableDescriptor Mdid="6.1277041.1.1" TableName="dim_customer_device">
             <dxl:Columns>
               <dxl:Column ColId="61" Attno="1" ColName="customer_device_key" TypeMdid="0.20.1.0"/>
               <dxl:Column ColId="62" Attno="2" ColName="imsi_number" TypeMdid="0.1043.1.0" ColWidth="20"/>
@@ -5331,7 +5248,7 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
               </dxl:Cast>
             </dxl:Comparison>
           </dxl:HashCondList>
-          <dxl:DynamicTableScan PartIndexId="1">
+          <dxl:DynamicTableScan>
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="1212816.873037" Rows="766993024.000000" Width="20"/>
             </dxl:Properties>
@@ -5344,7 +5261,7 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:Filter/>
-            <dxl:TableDescriptor Mdid="0.1279380.1.1" TableName="stg_xdr_crce_cdr">
+            <dxl:TableDescriptor Mdid="6.1279380.1.1" TableName="stg_xdr_crce_cdr">
               <dxl:Columns>
                 <dxl:Column ColId="0" Attno="1" ColName="id" TypeMdid="0.20.1.0"/>
                 <dxl:Column ColId="9" Attno="10" ColName="sessioncreationtimestamp" TypeMdid="0.1184.1.0"/>
@@ -5355,7 +5272,7 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
               </dxl:Columns>
             </dxl:TableDescriptor>
           </dxl:DynamicTableScan>
-          <dxl:PartitionSelector RelationMdid="0.1279380.1.1" PartitionLevels="1" ScanId="1">
+          <dxl:PartitionSelector RelationMdid="6.1279380.1.1" PartitionLevels="1" ScanId="1">
             <dxl:Properties>
               <dxl:Cost StartupCost="10" TotalCost="100" Rows="100" Width="4"/>
             </dxl:Properties>
@@ -5457,7 +5374,7 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
             <dxl:PropagationExpression>
               <dxl:ConstValue TypeMdid="0.23.1.0" Value="1"/>
             </dxl:PropagationExpression>
-            <dxl:PrintableFilter>
+            <dxl:PartFilterExpr>
               <dxl:And>
                 <dxl:Comparison ComparisonOperator="&gt;=" OperatorMdid="0.1325.1.0">
                   <dxl:Ident ColId="9" ColName="sessioncreationtimestamp" TypeMdid="0.1184.1.0"/>
@@ -5468,7 +5385,7 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
                   <dxl:Ident ColId="71" ColName="end_dtm" TypeMdid="0.1184.1.0"/>
                 </dxl:Comparison>
               </dxl:And>
-            </dxl:PrintableFilter>
+            </dxl:PartFilterExpr>
             <dxl:BroadcastMotion InputSegments="0,1" OutputSegments="0,1">
               <dxl:Properties>
                 <dxl:Cost StartupCost="0" TotalCost="1182.695646" Rows="29624.133333" Width="544"/>
@@ -5605,7 +5522,7 @@ where d.msisdn=f.subscriberaddress and f.sessioncreationtimestamp >= d.start_dtm
                     <dxl:ConstValue TypeMdid="0.25.1.0" Value="AAAADCVJUEhPTkUl" LintValue="187737006"/>
                   </dxl:Comparison>
                 </dxl:Filter>
-                <dxl:TableDescriptor Mdid="0.1277041.1.1" TableName="dim_customer_device">
+                <dxl:TableDescriptor Mdid="6.1277041.1.1" TableName="dim_customer_device">
                   <dxl:Columns>
                     <dxl:Column ColId="60" Attno="1" ColName="customer_device_key" TypeMdid="0.20.1.0"/>
                     <dxl:Column ColId="61" Attno="2" ColName="imsi_number" TypeMdid="0.1043.1.0" ColWidth="20"/>

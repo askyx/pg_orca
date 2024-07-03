@@ -17,8 +17,7 @@
 #include "gpopt/base/CWindowFrame.h"
 #include "gpopt/operators/CLogicalUnary.h"
 
-namespace gpopt
-{
+namespace gpopt {
 // fwd declarations
 class CDistributionSpec;
 
@@ -30,178 +29,134 @@ class CDistributionSpec;
 //		Logical Sequence Project operator
 //
 //---------------------------------------------------------------------------
-class CLogicalSequenceProject : public CLogicalUnary
-{
-private:
-	// partition by keys
-	CDistributionSpec *m_pds;
+class CLogicalSequenceProject : public CLogicalUnary {
+ private:
+  // partition by keys
+  CDistributionSpec *m_pds;
 
-	// order specs of child window functions
-	COrderSpecArray *m_pdrgpos;
+  // order specs of child window functions
+  COrderSpecArray *m_pdrgpos;
 
-	// frames of child window functions
-	CWindowFrameArray *m_pdrgpwf;
+  // frames of child window functions
+  CWindowFrameArray *m_pdrgpwf;
 
-	// flag indicating if current operator has any non-empty order specs
-	BOOL m_fHasOrderSpecs;
+  // flag indicating if current operator has any non-empty order specs
+  BOOL m_fHasOrderSpecs;
 
-	// flag indicating if current operator has any non-empty frame specs
-	BOOL m_fHasFrameSpecs;
+  // flag indicating if current operator has any non-empty frame specs
+  BOOL m_fHasFrameSpecs;
 
-	// set the flag indicating that SeqPrj has specified order specs
-	void SetHasOrderSpecs(CMemoryPool *mp);
+  // set the flag indicating that SeqPrj has specified order specs
+  void SetHasOrderSpecs(CMemoryPool *mp);
 
-	// set the flag indicating that SeqPrj has specified frame specs
-	void SetHasFrameSpecs(CMemoryPool *mp);
+  // set the flag indicating that SeqPrj has specified frame specs
+  void SetHasFrameSpecs(CMemoryPool *mp);
 
-	// private copy ctor
-	CLogicalSequenceProject(const CLogicalSequenceProject &);
+ public:
+  CLogicalSequenceProject(const CLogicalSequenceProject &) = delete;
 
-public:
-	// ctor
-	CLogicalSequenceProject(CMemoryPool *mp, CDistributionSpec *pds,
-							COrderSpecArray *pdrgpos,
-							CWindowFrameArray *pdrgpwf);
+  // ctor
+  CLogicalSequenceProject(CMemoryPool *mp, CDistributionSpec *pds, COrderSpecArray *pdrgpos,
+                          CWindowFrameArray *pdrgpwf);
 
-	// ctor for pattern
-	explicit CLogicalSequenceProject(CMemoryPool *mp);
+  // ctor for pattern
+  explicit CLogicalSequenceProject(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CLogicalSequenceProject();
+  // dtor
+  ~CLogicalSequenceProject() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalSequenceProject;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalSequenceProject; }
 
-	// operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalSequenceProject";
-	}
+  // operator name
+  const CHAR *SzId() const override { return "CLogicalSequenceProject"; }
 
-	// distribution spec
-	CDistributionSpec *
-	Pds() const
-	{
-		return m_pds;
-	}
+  // distribution spec
+  CDistributionSpec *Pds() const { return m_pds; }
 
-	// order by keys
-	COrderSpecArray *
-	Pdrgpos() const
-	{
-		return m_pdrgpos;
-	}
+  // order by keys
+  COrderSpecArray *Pdrgpos() const { return m_pdrgpos; }
 
-	// frame specifications
-	CWindowFrameArray *
-	Pdrgpwf() const
-	{
-		return m_pdrgpwf;
-	}
+  // frame specifications
+  CWindowFrameArray *Pdrgpwf() const { return m_pdrgpwf; }
 
-	// return true if non-empty order specs are used by current operator
-	BOOL
-	FHasOrderSpecs() const
-	{
-		return m_fHasOrderSpecs;
-	}
+  // return true if non-empty order specs are used by current operator
+  BOOL FHasOrderSpecs() const { return m_fHasOrderSpecs; }
 
-	// return true if non-empty frame specs are used by current operator
-	BOOL
-	FHasFrameSpecs() const
-	{
-		return m_fHasFrameSpecs;
-	}
+  // return true if non-empty frame specs are used by current operator
+  BOOL FHasFrameSpecs() const { return m_fHasFrameSpecs; }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	// return true if we can pull projections up past this operator from its given child
-	virtual BOOL FCanPullProjectionsUp(ULONG  //child_index
-	) const
-	{
-		return false;
-	}
+  // return true if we can pull projections up past this operator from its given child
+  BOOL FCanPullProjectionsUp(ULONG  // child_index
+  ) const override {
+    return false;
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive output columns
-	virtual CColRefSet *DeriveOutputColumns(CMemoryPool *mp,
-											CExpressionHandle &exprhdl);
+  // derive output columns
+  CColRefSet *DeriveOutputColumns(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
-	// derive outer references
-	virtual CColRefSet *DeriveOuterReferences(CMemoryPool *mp,
-											  CExpressionHandle &exprhdl);
+  // derive outer references
+  CColRefSet *DeriveOuterReferences(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
-	// dervive keys
-	virtual CKeyCollection *DeriveKeyCollection(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  // dervive keys
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive max card
-	virtual CMaxCard DeriveMaxCard(CMemoryPool *mp,
-								   CExpressionHandle &exprhdl) const;
+  // derive max card
+  CMaxCard DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive constraint property
-	virtual CPropConstraint *
-	DerivePropertyConstraint(CMemoryPool *,	 //mp,
-							 CExpressionHandle &exprhdl) const
-	{
-		return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
-	}
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *,  // mp,
+                                            CExpressionHandle &exprhdl) const override {
+    return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// candidate set of xforms
-	virtual CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// derive statistics
-	virtual IStatistics *PstatsDerive(CMemoryPool *mp,
-									  CExpressionHandle &exprhdl,
-									  IStatisticsArray *stats_ctxt) const;
+  // derive statistics
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	virtual ULONG HashValue() const;
+  ULONG HashValue() const override;
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // print
+  IOstream &OsPrint(IOstream &os) const override;
 
-	// remove outer references from Order By/ Partition By clauses, and return a new operator
-	CLogicalSequenceProject *PopRemoveLocalOuterRefs(
-		CMemoryPool *mp, CExpressionHandle &exprhdl);
+  // remove outer references from Order By/ Partition By clauses, and return a new operator
+  CLogicalSequenceProject *PopRemoveLocalOuterRefs(CMemoryPool *mp, CExpressionHandle &exprhdl);
 
-	// check for outer references in Partition/Order, or window frame edges
-	BOOL FHasLocalReferencesTo(const CColRefSet *outerRefsToCheck) const;
+  // check for outer references in Partition/Order, or window frame edges
+  BOOL FHasLocalReferencesTo(const CColRefSet *outerRefsToCheck) const;
 
-	// conversion function
-	static CLogicalSequenceProject *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalSequenceProject == pop->Eopid());
+  // conversion function
+  static CLogicalSequenceProject *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalSequenceProject == pop->Eopid());
 
-		return dynamic_cast<CLogicalSequenceProject *>(pop);
-	}
+    return dynamic_cast<CLogicalSequenceProject *>(pop);
+  }
 
-};	// class CLogicalSequenceProject
+};  // class CLogicalSequenceProject
 
 }  // namespace gpopt
 
-#endif	// !GPOS_CLogicalSequenceProject_H
+#endif  // !GPOS_CLogicalSequenceProject_H
 
 // EOF

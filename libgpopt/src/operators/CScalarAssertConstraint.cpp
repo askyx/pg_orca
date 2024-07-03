@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarAssertConstraint.cpp
@@ -13,6 +13,7 @@
 
 #include "gpos/base.h"
 
+#include "gpopt/base/COptCtxt.h"
 #include "naucrates/md/IMDTypeBool.h"
 
 using namespace gpopt;
@@ -26,11 +27,9 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarAssertConstraint::CScalarAssertConstraint(CMemoryPool *mp,
-												 CWStringBase *pstrErrorMsg)
-	: CScalar(mp), m_pstrErrorMsg(pstrErrorMsg)
-{
-	GPOS_ASSERT(NULL != pstrErrorMsg);
+CScalarAssertConstraint::CScalarAssertConstraint(CMemoryPool *mp, CWStringBase *pstrErrorMsg)
+    : CScalar(mp), m_pstrErrorMsg(pstrErrorMsg) {
+  GPOS_ASSERT(nullptr != pstrErrorMsg);
 }
 
 //---------------------------------------------------------------------------
@@ -41,11 +40,9 @@ CScalarAssertConstraint::CScalarAssertConstraint(CMemoryPool *mp,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarAssertConstraint::~CScalarAssertConstraint()
-{
-	GPOS_DELETE(m_pstrErrorMsg);
+CScalarAssertConstraint::~CScalarAssertConstraint() {
+  GPOS_DELETE(m_pstrErrorMsg);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -55,16 +52,12 @@ CScalarAssertConstraint::~CScalarAssertConstraint()
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarAssertConstraint::Matches(COperator *pop) const
-{
-	if (pop->Eopid() != Eopid())
-	{
-		return false;
-	}
+BOOL CScalarAssertConstraint::Matches(COperator *pop) const {
+  if (pop->Eopid() != Eopid()) {
+    return false;
+  }
 
-	return m_pstrErrorMsg->Equals(
-		CScalarAssertConstraint::PopConvert(pop)->PstrErrorMsg());
+  return m_pstrErrorMsg->Equals(CScalarAssertConstraint::PopConvert(pop)->PstrErrorMsg());
 }
 
 //---------------------------------------------------------------------------
@@ -75,14 +68,12 @@ CScalarAssertConstraint::Matches(COperator *pop) const
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarAssertConstraint::OsPrint(IOstream &os) const
-{
-	os << SzId() << " (ErrorMsg: ";
-	os << PstrErrorMsg()->GetBuffer();
-	os << ")";
+IOstream &CScalarAssertConstraint::OsPrint(IOstream &os) const {
+  os << SzId() << " (ErrorMsg: ";
+  os << PstrErrorMsg()->GetBuffer();
+  os << ")";
 
-	return os;
+  return os;
 }
 
 //---------------------------------------------------------------------------
@@ -93,12 +84,9 @@ CScalarAssertConstraint::OsPrint(IOstream &os) const
 //		Type of expression's result
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarAssertConstraint::MdidType() const
-{
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	return md_accessor->PtMDType<IMDTypeBool>()->MDId();
+IMDId *CScalarAssertConstraint::MdidType() const {
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  return md_accessor->PtMDType<IMDTypeBool>()->MDId();
 }
-
 
 // EOF

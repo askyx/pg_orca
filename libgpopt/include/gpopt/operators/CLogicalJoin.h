@@ -16,8 +16,7 @@
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogical.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalJoin
@@ -26,132 +25,108 @@ namespace gpopt
 //		join operator
 //
 //---------------------------------------------------------------------------
-class CLogicalJoin : public CLogical
-{
-private:
-	// private copy ctor
-	CLogicalJoin(const CLogicalJoin &);
+class CLogicalJoin : public CLogical {
+ private:
+  // xform that join originated from
+  CXform::EXformId m_origin_xform;
 
-protected:
-	// ctor
-	explicit CLogicalJoin(CMemoryPool *mp);
+ protected:
+  // ctor
+  explicit CLogicalJoin(CMemoryPool *mp, CXform::EXformId origin_xform = CXform::ExfSentinel);
 
-	// dtor
-	virtual ~CLogicalJoin()
-	{
-	}
+  // dtor
+  ~CLogicalJoin() override = default;
 
-public:
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+ public:
+  CLogicalJoin(const CLogicalJoin &) = delete;
 
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// sensitivity to order of inputs
-	BOOL
-	FInputOrderSensitive() const
-	{
-		return true;
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return true; }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *
-	PopCopyWithRemappedColumns(CMemoryPool *,		//mp,
-							   UlongToColRefMap *,	//colref_mapping,
-							   BOOL					//must_exist
-	)
-	{
-		return PopCopyDefault();
-	}
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
+                                        UlongToColRefMap *,  // colref_mapping,
+                                        BOOL                 // must_exist
+                                        ) override {
+    return PopCopyDefault();
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  // conversion function
+  static CLogicalJoin *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
 
-	// derive output columns
-	virtual CColRefSet *
-	DeriveOutputColumns(CMemoryPool *mp, CExpressionHandle &exprhdl)
-	{
-		return PcrsDeriveOutputCombineLogical(mp, exprhdl);
-	}
+    return dynamic_cast<CLogicalJoin *>(pop);
+  }
 
-	// derive partition consumer info
-	virtual CPartInfo *
-	DerivePartitionInfo(CMemoryPool *mp, CExpressionHandle &exprhdl) const
-	{
-		return PpartinfoDeriveCombine(mp, exprhdl);
-	}
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
+  // derive output columns
+  CColRefSet *DeriveOutputColumns(CMemoryPool *mp, CExpressionHandle &exprhdl) override {
+    return PcrsDeriveOutputCombineLogical(mp, exprhdl);
+  }
 
-	// derive keys
-	CKeyCollection *
-	DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const
-	{
-		return PkcCombineKeys(mp, exprhdl);
-	}
+  // derive partition consumer info
+  CPartInfo *DerivePartitionInfo(CMemoryPool *mp, CExpressionHandle &exprhdl) const override {
+    return PpartinfoDeriveCombine(mp, exprhdl);
+  }
 
-	// derive function properties
-	virtual CFunctionProp *
-	DeriveFunctionProperties(CMemoryPool *mp, CExpressionHandle &exprhdl) const
-	{
-		return PfpDeriveFromScalar(mp, exprhdl, exprhdl.Arity() - 1);
-	}
+  // derive keys
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override {
+    return PkcCombineKeys(mp, exprhdl);
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Derived Stats
-	//-------------------------------------------------------------------------------------
+  // derive function properties
+  CFunctionProp *DeriveFunctionProperties(CMemoryPool *mp, CExpressionHandle &exprhdl) const override {
+    return PfpDeriveFromScalar(mp, exprhdl);
+  }
 
-	// promise level for stat derivation
-	virtual EStatPromise
-	Esp(CExpressionHandle &exprhdl) const
-	{
-		// no stat derivation on Join trees with subqueries
-		if (exprhdl.DeriveHasSubquery(exprhdl.Arity() - 1))
-		{
-			return EspLow;
-		}
+  //-------------------------------------------------------------------------------------
+  // Derived Stats
+  //-------------------------------------------------------------------------------------
 
-		if (NULL != exprhdl.Pgexpr() &&
-			exprhdl.Pgexpr()->ExfidOrigin() == CXform::ExfExpandNAryJoin)
-		{
-			return EspMedium;
-		}
+  // promise level for stat derivation
+  EStatPromise Esp(CExpressionHandle &exprhdl) const override {
+    // no stat derivation on Join trees with subqueries
+    if (exprhdl.DeriveHasSubquery(exprhdl.Arity() - 1)) {
+      return EspLow;
+    }
 
-		return EspHigh;
-	}
+    if (nullptr != exprhdl.Pgexpr() && exprhdl.Pgexpr()->ExfidOrigin() == CXform::ExfExpandNAryJoin) {
+      return EspMedium;
+    }
 
-	// derive statistics
-	virtual IStatistics *PstatsDerive(CMemoryPool *mp,
-									  CExpressionHandle &exprhdl,
-									  IStatisticsArray *stats_ctxt) const;
+    return EspHigh;
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Required Relational Properties
-	//-------------------------------------------------------------------------------------
+  // derive statistics
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
-	// compute required stat columns of the n-th child
-	virtual CColRefSet *
-	PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-			 ULONG child_index) const
-	{
-		const ULONG arity = exprhdl.Arity();
+  //-------------------------------------------------------------------------------------
+  // Required Relational Properties
+  //-------------------------------------------------------------------------------------
 
-		return PcrsReqdChildStats(mp, exprhdl, pcrsInput,
-								  exprhdl.DeriveUsedColumns(arity - 1),
-								  child_index);
-	}
+  // compute required stat columns of the n-th child
+  CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
+                       ULONG child_index) const override {
+    const ULONG arity = exprhdl.Arity();
 
-	// return true if operator can select a subset of input tuples based on some predicate
-	virtual BOOL
-	FSelectionOp() const
-	{
-		return true;
-	}
+    return PcrsReqdChildStats(mp, exprhdl, pcrsInput, exprhdl.DeriveUsedColumns(arity - 1), child_index);
+  }
 
-};	// class CLogicalJoin
+  // return true if operator can select a subset of input tuples based on some predicate
+  BOOL FSelectionOp() const override { return true; }
+
+  CXform::EXformId OriginXform() { return m_origin_xform; }
+
+};  // class CLogicalJoin
 
 }  // namespace gpopt
 
-
-#endif	// !GPOS_CLogicalJoin_H
+#endif  // !GPOS_CLogicalJoin_H
 
 // EOF

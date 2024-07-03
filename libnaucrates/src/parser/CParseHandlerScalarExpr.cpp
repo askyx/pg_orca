@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerScalarExpr.cpp
@@ -16,7 +16,6 @@
 
 using namespace gpdxl;
 
-
 XERCES_CPP_NAMESPACE_USE
 
 //---------------------------------------------------------------------------
@@ -27,13 +26,9 @@ XERCES_CPP_NAMESPACE_USE
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CParseHandlerScalarExpr::CParseHandlerScalarExpr(
-	CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
-	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
-	  m_dxl_node(NULL)
-{
-}
+CParseHandlerScalarExpr::CParseHandlerScalarExpr(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                                 CParseHandlerBase *parse_handler_root)
+    : CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root), m_dxl_node(nullptr) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -43,9 +38,8 @@ CParseHandlerScalarExpr::CParseHandlerScalarExpr(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CParseHandlerScalarExpr::~CParseHandlerScalarExpr()
-{
-	CRefCount::SafeRelease(m_dxl_node);
+CParseHandlerScalarExpr::~CParseHandlerScalarExpr() {
+  CRefCount::SafeRelease(m_dxl_node);
 }
 
 //---------------------------------------------------------------------------
@@ -56,10 +50,8 @@ CParseHandlerScalarExpr::~CParseHandlerScalarExpr()
 //		Root of constructed DXL expression
 //
 //---------------------------------------------------------------------------
-CDXLNode *
-CParseHandlerScalarExpr::CreateDXLNode() const
-{
-	return m_dxl_node;
+CDXLNode *CParseHandlerScalarExpr::CreateDXLNode() const {
+  return m_dxl_node;
 }
 
 //---------------------------------------------------------------------------
@@ -70,10 +62,8 @@ CParseHandlerScalarExpr::CreateDXLNode() const
 //		Return the type of the parse handler.
 //
 //---------------------------------------------------------------------------
-EDxlParseHandlerType
-CParseHandlerScalarExpr::GetParseHandlerType() const
-{
-	return EdxlphScalarExpr;
+EDxlParseHandlerType CParseHandlerScalarExpr::GetParseHandlerType() const {
+  return EdxlphScalarExpr;
 }
 
 //---------------------------------------------------------------------------
@@ -84,29 +74,20 @@ CParseHandlerScalarExpr::GetParseHandlerType() const
 //		Invoked by Xerces to process an opening tag for a scalar expression.
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerScalarExpr::StartElement(const XMLCh *const,
-									  const XMLCh *const element_local_name,
-									  const XMLCh *const, const Attributes &)
-{
-	if (0 !=
-		XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarExpr),
-								 element_local_name))
-	{
-		CWStringDynamic *str = CDXLUtils::CreateDynamicStringFromXMLChArray(
-			m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
-		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag,
-				   str->GetBuffer());
-	}
-	GPOS_ASSERT(NULL != m_mp);
+void CParseHandlerScalarExpr::StartElement(const XMLCh *const, const XMLCh *const element_local_name,
+                                           const XMLCh *const, const Attributes &) {
+  if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarExpr), element_local_name)) {
+    CWStringDynamic *str =
+        CDXLUtils::CreateDynamicStringFromXMLChArray(m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
+    GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, str->GetBuffer());
+  }
+  GPOS_ASSERT(nullptr != m_mp);
 
-	// parse handler for child node
-	CParseHandlerBase *child_parse_handler =
-		CParseHandlerFactory::GetParseHandler(
-			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalar), m_parse_handler_mgr,
-			this);
-	m_parse_handler_mgr->ActivateParseHandler(child_parse_handler);
-	Append(child_parse_handler);
+  // parse handler for child node
+  CParseHandlerBase *child_parse_handler =
+      CParseHandlerFactory::GetParseHandler(m_mp, CDXLTokens::XmlstrToken(EdxltokenScalar), m_parse_handler_mgr, this);
+  m_parse_handler_mgr->ActivateParseHandler(child_parse_handler);
+  Append(child_parse_handler);
 }
 
 //---------------------------------------------------------------------------
@@ -117,30 +98,22 @@ CParseHandlerScalarExpr::StartElement(const XMLCh *const,
 //		Invoked by Xerces to process a closing tag.
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerScalarExpr::EndElement(const XMLCh *const,	 //= element_uri,
-									const XMLCh *const element_local_name,
-									const XMLCh *const	// element_qname,
-)
-{
-	if (0 !=
-		XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarExpr),
-								 element_local_name))
-	{
-		CWStringDynamic *str = CDXLUtils::CreateDynamicStringFromXMLChArray(
-			m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
-		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag,
-				   str->GetBuffer());
-	}
+void CParseHandlerScalarExpr::EndElement(const XMLCh *const,  //= element_uri,
+                                         const XMLCh *const element_local_name,
+                                         const XMLCh *const  // element_qname,
+) {
+  if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarExpr), element_local_name)) {
+    CWStringDynamic *str =
+        CDXLUtils::CreateDynamicStringFromXMLChArray(m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
+    GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, str->GetBuffer());
+  }
 
-	CParseHandlerScalarOp *child_parse_handler =
-		dynamic_cast<CParseHandlerScalarOp *>((*this)[0]);
-	// extract constructed element
-	GPOS_ASSERT(NULL != child_parse_handler &&
-				NULL != child_parse_handler->CreateDXLNode());
-	m_dxl_node = child_parse_handler->CreateDXLNode();
-	m_dxl_node->AddRef();
+  CParseHandlerScalarOp *child_parse_handler = dynamic_cast<CParseHandlerScalarOp *>((*this)[0]);
+  // extract constructed element
+  GPOS_ASSERT(nullptr != child_parse_handler && nullptr != child_parse_handler->CreateDXLNode());
+  m_dxl_node = child_parse_handler->CreateDXLNode();
+  m_dxl_node->AddRef();
 
-	// deactivate handler
-	m_parse_handler_mgr->DeactivateHandler();
+  // deactivate handler
+  m_parse_handler_mgr->DeactivateHandler();
 }

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		IConstDXLNodeEvaluator.h
@@ -21,13 +21,11 @@
 #include "gpos/base.h"
 
 // forward declaration
-namespace gpdxl
-{
+namespace gpdxl {
 class CDXLNode;
 }
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		IConstExprEvaluator
@@ -36,23 +34,21 @@ namespace gpopt
 //		Interface for evaluating constant expressions given as DXL
 //
 //---------------------------------------------------------------------------
-class IConstDXLNodeEvaluator
-{
-public:
-	// dtor
-	virtual ~IConstDXLNodeEvaluator()
-	{
-	}
+class IConstDXLNodeEvaluator {
+ public:
+  // dtor
+  virtual ~IConstDXLNodeEvaluator() = default;
 
-	// evaluate the given DXL node representing an expression and return the result as DXL.
-	// caller takes ownership of returned DXL node
-	virtual gpdxl::CDXLNode *EvaluateExpr(const gpdxl::CDXLNode *pdxlnExpr) = 0;
+  // evaluate the given DXL node representing an expression and return the result
+  // as DXL. caller takes ownership of returned DXL node
+  virtual gpdxl::CDXLNode *EvaluateExpr(const gpdxl::CDXLNode *pdxlnExpr) = 0;
 
-	// returns true iff the evaluator can evaluate constant expressions without subqueries
-	virtual gpos::BOOL FCanEvalExpressions() = 0;
+  // returns true iff the evaluator can evaluate constant expressions without
+  // subqueries
+  virtual gpos::BOOL FCanEvalExpressions() = 0;
 };
 }  // namespace gpopt
 
-#endif	// !GPOPT_IConstDXLNodeEvaluator_H
+#endif  // !GPOPT_IConstDXLNodeEvaluator_H
 
 // EOF

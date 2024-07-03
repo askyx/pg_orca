@@ -12,15 +12,12 @@
 //		header from memory block;
 //---------------------------------------------------------------------------
 
-#ifdef GPOS_DEBUG
-#include "gpos/error/CFSimulator.h"
-#endif	// GPOS_DEBUG
 #include "gpos/memory/CMemoryPool.h"
+
 #include "gpos/memory/CMemoryPoolManager.h"
 #include "gpos/memory/CMemoryPoolTracker.h"
 #include "gpos/memory/CMemoryVisitorPrint.h"
 #include "gpos/task/ITask.h"
-
 
 using namespace gpos;
 
@@ -29,18 +26,14 @@ const ULONG_PTR CMemoryPool::m_invalid = ULONG_PTR_MAX;
 
 // get user requested size of allocation
 ULONG
-CMemoryPool::UserSizeOfAlloc(const void *ptr)
-{
-	GPOS_ASSERT(NULL != ptr);
+CMemoryPool::UserSizeOfAlloc(const void *ptr) {
+  GPOS_ASSERT(nullptr != ptr);
 
-	return CMemoryPoolManager::GetMemoryPoolMgr()->UserSizeOfAlloc(ptr);
+  return CMemoryPoolManager::GetMemoryPoolMgr()->UserSizeOfAlloc(ptr);
 }
 
-
-void
-CMemoryPool::DeleteImpl(void *ptr, EAllocationType eat)
-{
-	CMemoryPoolManager::GetMemoryPoolMgr()->DeleteImpl(ptr, eat);
+void CMemoryPool::DeleteImpl(void *ptr, EAllocationType eat) {
+  CMemoryPoolManager::GetMemoryPoolMgr()->DeleteImpl(ptr, eat);
 }
 
 #ifdef GPOS_DEBUG
@@ -53,29 +46,23 @@ CMemoryPool::DeleteImpl(void *ptr, EAllocationType eat)
 //		Walk all objects and print identification
 //
 //---------------------------------------------------------------------------
-IOstream &
-CMemoryPool::OsPrint(IOstream &os)
-{
-	os << "Memory pool: " << this;
+IOstream &CMemoryPool::OsPrint(IOstream &os) {
+  os << "Memory pool: " << this;
 
-	ITask *task = ITask::Self();
-	if (NULL != task && task->IsTraceSet(EtracePrintMemoryLeakStackTrace))
-	{
-		os << ", stack trace: " << std::endl;
-		m_stack_desc.AppendTrace(os, 8 /*ulDepth*/);
-	}
-	else
-	{
-		os << std::endl;
-	}
+  ITask *task = ITask::Self();
+  if (nullptr != task && task->IsTraceSet(EtracePrintMemoryLeakStackTrace)) {
+    os << ", stack trace: " << std::endl;
+    m_stack_desc.AppendTrace(os, 8 /*ulDepth*/);
+  } else {
+    os << std::endl;
+  }
 
-	if (SupportsLiveObjectWalk())
-	{
-		CMemoryVisitorPrint visitor(os);
-		WalkLiveObjects(&visitor);
-	}
+  if (SupportsLiveObjectWalk()) {
+    CMemoryVisitorPrint visitor(os);
+    WalkLiveObjects(&visitor);
+  }
 
-	return os;
+  return os;
 }
 
 //---------------------------------------------------------------------------
@@ -88,23 +75,18 @@ CMemoryPool::OsPrint(IOstream &os)
 //		an assertion will be thrown;
 //
 //---------------------------------------------------------------------------
-void
-CMemoryPool::AssertEmpty(IOstream &os)
-{
-	if (SupportsLiveObjectWalk() && NULL != ITask::Self() &&
-		!GPOS_FTRACE(EtraceDisablePrintMemoryLeak))
-	{
-		CMemoryVisitorPrint visitor(os);
-		WalkLiveObjects(&visitor);
+void CMemoryPool::AssertEmpty(IOstream &os) {
+  if (SupportsLiveObjectWalk() && nullptr != ITask::Self() && !GPOS_FTRACE(EtraceDisablePrintMemoryLeak)) {
+    CMemoryVisitorPrint visitor(os);
+    WalkLiveObjects(&visitor);
 
-		if (0 != visitor.GetNumVisits())
-		{
-			os << "Unfreed memory in memory pool " << (void *) this << ": "
-			   << visitor.GetNumVisits() << " objects leaked" << std::endl;
+    if (0 != visitor.GetNumVisits()) {
+      os << "Unfreed memory in memory pool " << (void *)this << ": " << visitor.GetNumVisits() << " objects leaked"
+         << std::endl;
 
-			GPOS_ASSERT(!"leak detected");
-		}
-	}
+      GPOS_ASSERT(!"leak detected");
+    }
+  }
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG

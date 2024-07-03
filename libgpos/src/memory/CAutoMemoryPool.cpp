@@ -29,7 +29,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CAutoMemoryPool::CAutoMemoryPool
@@ -39,13 +38,13 @@ using namespace gpos;
 //  	the CMemoryPoolManager global instance
 //
 //---------------------------------------------------------------------------
-CAutoMemoryPool::CAutoMemoryPool(ELeakCheck leak_check_type)
-	: m_leak_check_type(leak_check_type)
+CAutoMemoryPool::CAutoMemoryPool(ELeakCheck leak_check_type GPOS_ASSERTS_ONLY)
+#ifdef GPOS_DEBUG
+    : m_leak_check_type(leak_check_type)
+#endif
 {
-	m_mp = CMemoryPoolManager::GetMemoryPoolMgr()->CreateMemoryPool();
+  m_mp = CMemoryPoolManager::CreateMemoryPool();
 }
-
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -56,15 +55,12 @@ CAutoMemoryPool::CAutoMemoryPool(ELeakCheck leak_check_type)
 //		created pool until it is safe, e.g., in constructors
 //
 //---------------------------------------------------------------------------
-CMemoryPool *
-CAutoMemoryPool::Detach()
-{
-	CMemoryPool *mp = m_mp;
-	m_mp = NULL;
+CMemoryPool *CAutoMemoryPool::Detach() {
+  CMemoryPool *mp = m_mp;
+  m_mp = nullptr;
 
-	return mp;
+  return mp;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -76,55 +72,48 @@ CAutoMemoryPool::Detach()
 //		(2) no checking while pending exception indicated and no pending exception
 //
 //---------------------------------------------------------------------------
-CAutoMemoryPool::~CAutoMemoryPool()
-{
-	if (NULL == m_mp)
-	{
-		return;
-	}
+CAutoMemoryPool::~CAutoMemoryPool() noexcept(false) {
+  if (nullptr == m_mp) {
+    return;
+  }
 
-	// suspend cancellation
-	CAutoSuspendAbort asa;
+  // suspend cancellation
+  CAutoSuspendAbort asa;
 
 #ifdef GPOS_DEBUG
 
-	ITask *task = ITask::Self();
+  ITask *task = ITask::Self();
 
-	// ElcExc must be used inside tasks only
-	GPOS_ASSERT_IMP(ElcExc == m_leak_check_type, NULL != task);
+  // ElcExc must be used inside tasks only
+  GPOS_ASSERT_IMP(ElcExc == m_leak_check_type, nullptr != task);
 
-	GPOS_TRY
-	{
-		if (ElcStrict == m_leak_check_type ||
-			(ElcExc == m_leak_check_type && !task->GetErrCtxt()->IsPending()))
-		{
-			gpos::IOstream &os = gpos::oswcerr;
+  GPOS_TRY {
+    if (ElcStrict == m_leak_check_type || (ElcExc == m_leak_check_type && !task->GetErrCtxt()->IsPending())) {
+      gpos::IOstream &os = gpos::oswcerr;
 
-			// check for leaks, use this to trigger standard Assert handling
-			m_mp->AssertEmpty(os);
-		}
+      // check for leaks, use this to trigger standard Assert handling
+      m_mp->AssertEmpty(os);
+    }
 
-		// release pool
-		CMemoryPoolManager::GetMemoryPoolMgr()->Destroy(m_mp);
-	}
-	GPOS_CATCH_EX(ex)
-	{
-		GPOS_ASSERT(
-			GPOS_MATCH_EX(ex, CException::ExmaSystem, CException::ExmiAssert));
+    // release pool
+    CMemoryPoolManager::Destroy(m_mp);
+  }
+  GPOS_CATCH_EX(ex) {
+    GPOS_ASSERT(GPOS_MATCH_EX(ex, CException::ExmaSystem, CException::ExmiAssert));
 
-		// release pool
-		CMemoryPoolManager::GetMemoryPoolMgr()->Destroy(m_mp);
+    // release pool
+    CMemoryPoolManager::Destroy(m_mp);
 
-		GPOS_RETHROW(ex);
-	}
-	GPOS_CATCH_END;
+    GPOS_RETHROW(ex);
+  }
+  GPOS_CATCH_END;
 
 #else  // GPOS_DEBUG
 
-	// hand in pool and return
-	CMemoryPoolManager::GetMemoryPoolMgr()->Destroy(m_mp);
+  // hand in pool and return
+  CMemoryPoolManager::Destroy(m_mp);
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 }
 
 // EOF

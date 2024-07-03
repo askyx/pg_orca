@@ -23,7 +23,7 @@ explain select * from TestPartitionFilterCasting where p3 = 1.0;
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="3">
@@ -32,6 +32,7 @@ explain select * from TestPartitionFilterCasting where p3 = 1.0;
         </dxl:CostParams>
       </dxl:CostModelConfig>
       <dxl:Hint MinNumOfPartsToRequireSortOnInsert="40000000"/>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="101000,101001,101013,102120,103001,103014,103015,103022,104004,104005"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
@@ -175,40 +176,29 @@ explain select * from TestPartitionFilterCasting where p3 = 1.0;
       <dxl:ColumnStatistics Mdid="1.651256.1.1.7" Name="xmax" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
       <dxl:ColumnStatistics Mdid="1.651256.1.1.6" Name="cmin" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
       <dxl:RelationStatistics Mdid="2.651256.1.1" Name="testpartitionfiltercasting" Rows="0.000000" EmptyRelation="true"/>
-      <dxl:Relation Mdid="0.651256.1.1" Name="testpartitionfiltercasting" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,10,4" PartitionColumns="1,2,3" PartitionTypes="l,l,l" NumberLeafPartitions="1">
+      <dxl:Relation Mdid="6.651256.1.1" Name="testpartitionfiltercasting" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,10,4" PartitionColumns="1,2,3" PartitionTypes="l,l,l" NumberLeafPartitions="1">
         <dxl:Columns>
           <dxl:Column Name="d1" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p1" Attno="2" Mdid="0.1043.1.0" Nullable="true" ColWidth="2">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p2" Attno="3" Mdid="0.1082.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p3" Attno="4" Mdid="0.1700.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
@@ -298,7 +288,7 @@ explain select * from TestPartitionFilterCasting where p3 = 1.0;
           <dxl:ConstValue TypeMdid="0.1700.1.0" Value="AAAACgAAAQABAA==" DoubleValue="1.000000"/>
         </dxl:Comparison>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.651256.1.1" TableName="testpartitionfiltercasting">
+          <dxl:TableDescriptor Mdid="6.651256.1.1" TableName="testpartitionfiltercasting">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="d1" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="2" Attno="2" ColName="p1" TypeMdid="0.1043.1.0" ColWidth="2"/>
@@ -355,7 +345,7 @@ explain select * from TestPartitionFilterCasting where p3 = 1.0;
               <dxl:Ident ColId="3" ColName="p3" TypeMdid="0.1700.1.0"/>
             </dxl:ProjElem>
           </dxl:ProjList>
-          <dxl:PartitionSelector RelationMdid="0.651256.1.1" PartitionLevels="3" ScanId="1">
+          <dxl:PartitionSelector RelationMdid="6.651256.1.1" PartitionLevels="3" ScanId="1">
             <dxl:Properties>
               <dxl:Cost StartupCost="10" TotalCost="100" Rows="100" Width="4"/>
             </dxl:Properties>
@@ -376,14 +366,14 @@ explain select * from TestPartitionFilterCasting where p3 = 1.0;
             <dxl:PropagationExpression>
               <dxl:ConstValue TypeMdid="0.23.1.0" Value="1"/>
             </dxl:PropagationExpression>
-            <dxl:PrintableFilter>
+            <dxl:PartFilterExpr>
               <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.1752.1.0">
                 <dxl:Ident ColId="3" ColName="p3" TypeMdid="0.1700.1.0"/>
                 <dxl:ConstValue TypeMdid="0.1700.1.0" Value="AAAACgAAAQABAA==" DoubleValue="1.000000"/>
               </dxl:Comparison>
-            </dxl:PrintableFilter>
+            </dxl:PartFilterExpr>
           </dxl:PartitionSelector>
-          <dxl:DynamicTableScan PartIndexId="1">
+          <dxl:DynamicTableScan>
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="431.000031" Rows="1.000000" Width="18"/>
             </dxl:Properties>
@@ -407,7 +397,7 @@ explain select * from TestPartitionFilterCasting where p3 = 1.0;
                 <dxl:ConstValue TypeMdid="0.1700.1.0" Value="AAAACgAAAQABAA==" DoubleValue="1.000000"/>
               </dxl:Comparison>
             </dxl:Filter>
-            <dxl:TableDescriptor Mdid="0.651256.1.1" TableName="testpartitionfiltercasting">
+            <dxl:TableDescriptor Mdid="6.651256.1.1" TableName="testpartitionfiltercasting">
               <dxl:Columns>
                 <dxl:Column ColId="0" Attno="1" ColName="d1" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="1" Attno="2" ColName="p1" TypeMdid="0.1043.1.0" ColWidth="2"/>

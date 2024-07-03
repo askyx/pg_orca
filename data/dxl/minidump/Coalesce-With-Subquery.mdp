@@ -3,10 +3,11 @@
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.000000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
-      <dxl:TraceFlags Value="103027,101013,102007,103001"/>
+      <dxl:PlanHint/>
+      <dxl:TraceFlags Value="101013,102001,102002,102003,102007,102144,103001,103027,103033"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:Type Mdid="0.28.1.0" Name="xid" IsRedistributable="false" IsHashable="true" IsMergeJoinable="false" IsComposite="false" IsFixedLength="true" Length="4" PassByValue="true">
@@ -85,10 +86,10 @@
         <dxl:Commutator Mdid="0.410.1.0"/>
         <dxl:InverseOp Mdid="0.411.1.0"/>
       </dxl:GPDBScalarOp>
-      <dxl:GPDBFunc Mdid="0.7000.1.0" Name="row_number" ReturnsSet="false" Stability="Immutable" DataAccess="NoSQL" IsStrict="false">
+      <dxl:GPDBFunc Mdid="0.7000.1.0" Name="row_number" ReturnsSet="false" Stability="Immutable" IsStrict="false">
         <dxl:ResultType Mdid="0.20.1.0"/>
       </dxl:GPDBFunc>
-      <dxl:GPDBFunc Mdid="0.481.1.0" Name="int8" ReturnsSet="false" Stability="Immutable" DataAccess="NoSQL" IsStrict="true">
+      <dxl:GPDBFunc Mdid="0.481.1.0" Name="int8" ReturnsSet="false" Stability="Immutable" IsStrict="true">
         <dxl:ResultType Mdid="0.20.1.0"/>
       </dxl:GPDBFunc>
       <dxl:ColumnStatistics Mdid="1.1213.1.1.11" Name="xmax" Width="4.000000"/>
@@ -165,12 +166,12 @@
         <dxl:SumAgg Mdid="0.0.0.0"/>
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
-      <dxl:Index Mdid="0.2698.1.0" Name="pg_tablespace_spcname_index" IsClustered="false" KeyColumns="0" IncludedColumns="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14">
+      <dxl:Index Mdid="0.2698.1.0" Name="pg_tablespace_spcname_index" IsClustered="false" KeyColumns="0" IncludedColumns="" ReturnableColumns="0">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.3027.1.0"/>
         </dxl:Opfamilies>
       </dxl:Index>
-      <dxl:Index Mdid="0.2672.1.0" Name="pg_database_oid_index" IsClustered="false" KeyColumns="12" IncludedColumns="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18">
+      <dxl:Index Mdid="0.2672.1.0" Name="pg_database_oid_index" IsClustered="false" KeyColumns="12" IncludedColumns="" ReturnableColumns="12">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.1989.1.0"/>
         </dxl:Opfamilies>
@@ -336,15 +337,15 @@
         <dxl:SumAgg Mdid="0.0.0.0"/>
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
-      <dxl:GPDBFunc Mdid="0.1597.1.0" Name="pg_encoding_to_char" ReturnsSet="false" Stability="Stable" DataAccess="NoSQL" IsStrict="true">
+      <dxl:GPDBFunc Mdid="0.1597.1.0" Name="pg_encoding_to_char" ReturnsSet="false" Stability="Stable" IsStrict="true">
         <dxl:ResultType Mdid="0.19.1.0"/>
       </dxl:GPDBFunc>
-      <dxl:Index Mdid="0.2697.1.0" Name="pg_tablespace_oid_index" IsClustered="false" KeyColumns="8" IncludedColumns="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14">
+      <dxl:Index Mdid="0.2697.1.0" Name="pg_tablespace_oid_index" IsClustered="false" KeyColumns="8" IncludedColumns="" ReturnableColumns="8">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.3027.1.0"/>
         </dxl:Opfamilies>
       </dxl:Index>
-      <dxl:Index Mdid="0.2671.1.0" Name="pg_database_datname_index" IsClustered="false" KeyColumns="0" IncludedColumns="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18">
+      <dxl:Index Mdid="0.2671.1.0" Name="pg_database_datname_index" IsClustered="false" KeyColumns="0" IncludedColumns="" ReturnableColumns="0">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.1986.1.0"/>
         </dxl:Opfamilies>
@@ -396,157 +397,107 @@
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.1260.1.1" Name="pg_authid" Rows="1.000000"/>
       <dxl:RelationStatistics Mdid="2.1262.1.1" Name="pg_database" Rows="3.000000"/>
-      <dxl:Relation Mdid="0.1260.1.1" Name="pg_authid" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="MasterOnly" Keys="24,17">
+      <dxl:Relation Mdid="6.1260.1.1" Name="pg_authid" IsTemporary="false" Rows="1.000000" StorageType="Heap" DistributionPolicy="CoordinatorOnly" Keys="24,17">
         <dxl:Columns>
           <dxl:Column Name="rolname" Attno="1" Mdid="0.19.1.0" Nullable="false" ColWidth="64">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolsuper" Attno="2" Mdid="0.16.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolinherit" Attno="3" Mdid="0.16.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolcreaterole" Attno="4" Mdid="0.16.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolcreatedb" Attno="5" Mdid="0.16.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolcatupdate" Attno="6" Mdid="0.16.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolcanlogin" Attno="7" Mdid="0.16.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolconnlimit" Attno="8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolpassword" Attno="9" Mdid="0.25.1.0" Nullable="true" ColWidth="0">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolvaliduntil" Attno="10" Mdid="0.1184.1.0" Nullable="true" ColWidth="0">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolconfig" Attno="11" Mdid="0.1009.1.0" Nullable="true" ColWidth="0">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolresqueue" Attno="12" Mdid="0.26.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolcreaterextgpfd" Attno="13" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolcreaterexthttp" Attno="14" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolcreatewextgpfd" Attno="15" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolcreaterexthdfs" Attno="16" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="rolcreatewexthdfs" Attno="17" Mdid="0.16.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="oid" Attno="-2" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers>
-          <dxl:Trigger Mdid="0.10307.1.0"/>
-        </dxl:Triggers>
         <dxl:CheckConstraints/>
       </dxl:Relation>
-      <dxl:Relation Mdid="0.1262.1.1" Name="pg_database" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="MasterOnly" Keys="18,11">
+      <dxl:Relation Mdid="6.1262.1.1" Name="pg_database" IsTemporary="false" Rows="3.000000" StorageType="Heap" DistributionPolicy="CoordinatorOnly" Keys="18,11">
         <dxl:Columns>
           <dxl:Column Name="datname" Attno="1" Mdid="0.19.1.0" Nullable="false" ColWidth="64">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="datdba" Attno="2" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="encoding" Attno="3" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="datistemplate" Attno="4" Mdid="0.16.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="datallowconn" Attno="5" Mdid="0.16.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="datconnlimit" Attno="6" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="datlastsysoid" Attno="7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="datfrozenxid" Attno="8" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="dattablespace" Attno="9" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="datconfig" Attno="10" Mdid="0.1009.1.0" Nullable="true" ColWidth="0">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="datacl" Attno="11" Mdid="0.1034.1.0" Nullable="true" ColWidth="0">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="oid" Attno="-2" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.2671.1.0" IsPartial="false"/>
           <dxl:IndexInfo Mdid="0.2672.1.0" IsPartial="false"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers>
-          <dxl:Trigger Mdid="0.10306.1.0"/>
-        </dxl:Triggers>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.1213.1.1.13" Name="tableoid" Width="4.000000"/>
@@ -596,59 +547,43 @@
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.1213.1.1" Name="pg_tablespace" Rows="2.000000"/>
-      <dxl:Relation Mdid="0.1213.1.1" Name="pg_tablespace" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="MasterOnly" Keys="14,7">
+      <dxl:Relation Mdid="6.1213.1.1" Name="pg_tablespace" IsTemporary="false" Rows="2.000000" StorageType="Heap" DistributionPolicy="CoordinatorOnly" Keys="14,7">
         <dxl:Columns>
           <dxl:Column Name="spcname" Attno="1" Mdid="0.19.1.0" Nullable="false" ColWidth="64">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="spcowner" Attno="2" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="spclocation" Attno="3" Mdid="0.25.1.0" Nullable="true" ColWidth="0">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="spcacl" Attno="4" Mdid="0.1034.1.0" Nullable="true" ColWidth="0">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="spcprilocations" Attno="5" Mdid="0.1009.1.0" Nullable="true" ColWidth="0">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="spcmirlocations" Attno="6" Mdid="0.1009.1.0" Nullable="true" ColWidth="0">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="spcfsoid" Attno="7" Mdid="0.26.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="oid" Attno="-2" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.2697.1.0" IsPartial="false"/>
           <dxl:IndexInfo Mdid="0.2698.1.0" IsPartial="false"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
     </dxl:Metadata>
@@ -685,7 +620,7 @@
                             <dxl:ConstValue TypeMdid="0.19.1.0" Value="dGVtcGxhdGUwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#10;AAAAAAAAAAAAAAAAAAAAAAAAAA=="/>
                           </dxl:Comparison>
                           <dxl:LogicalGet>
-                            <dxl:TableDescriptor Mdid="0.1262.1.1" TableName="pg_database">
+                            <dxl:TableDescriptor Mdid="6.1262.1.1" TableName="pg_database">
                               <dxl:Columns>
                                 <dxl:Column ColId="70" Attno="1" ColName="datname" TypeMdid="0.19.1.0"/>
                                 <dxl:Column ColId="71" Attno="2" ColName="datdba" TypeMdid="0.26.1.0"/>
@@ -713,7 +648,7 @@
                       </dxl:ScalarSubquery>
                     </dxl:Comparison>
                     <dxl:LogicalGet>
-                      <dxl:TableDescriptor Mdid="0.1260.1.1" TableName="pg_authid">
+                      <dxl:TableDescriptor Mdid="6.1260.1.1" TableName="pg_authid">
                         <dxl:Columns>
                           <dxl:Column ColId="45" Attno="1" ColName="rolname" TypeMdid="0.19.1.0"/>
                           <dxl:Column ColId="46" Attno="2" ColName="rolsuper" TypeMdid="0.16.1.0"/>
@@ -760,7 +695,7 @@
                     <dxl:Ident ColId="9" ColName="dattablespace" TypeMdid="0.26.1.0"/>
                   </dxl:Comparison>
                   <dxl:LogicalGet>
-                    <dxl:TableDescriptor Mdid="0.1213.1.1" TableName="pg_tablespace">
+                    <dxl:TableDescriptor Mdid="6.1213.1.1" TableName="pg_tablespace">
                       <dxl:Columns>
                         <dxl:Column ColId="91" Attno="1" ColName="spcname" TypeMdid="0.19.1.0"/>
                         <dxl:Column ColId="92" Attno="2" ColName="spcowner" TypeMdid="0.26.1.0"/>
@@ -788,7 +723,7 @@
             <dxl:Ident ColId="5" ColName="datallowconn" TypeMdid="0.16.1.0"/>
             <dxl:LogicalJoin JoinType="Left">
               <dxl:LogicalGet>
-                <dxl:TableDescriptor Mdid="0.1262.1.1" TableName="pg_database">
+                <dxl:TableDescriptor Mdid="6.1262.1.1" TableName="pg_database">
                   <dxl:Columns>
                     <dxl:Column ColId="1" Attno="1" ColName="datname" TypeMdid="0.19.1.0"/>
                     <dxl:Column ColId="2" Attno="2" ColName="datdba" TypeMdid="0.26.1.0"/>
@@ -813,7 +748,7 @@
                 </dxl:TableDescriptor>
               </dxl:LogicalGet>
               <dxl:LogicalGet>
-                <dxl:TableDescriptor Mdid="0.1260.1.1" TableName="pg_authid">
+                <dxl:TableDescriptor Mdid="6.1260.1.1" TableName="pg_authid">
                   <dxl:Columns>
                     <dxl:Column ColId="20" Attno="1" ColName="rolname" TypeMdid="0.19.1.0"/>
                     <dxl:Column ColId="21" Attno="2" ColName="rolsuper" TypeMdid="0.16.1.0"/>
@@ -852,10 +787,10 @@
         </dxl:LogicalProject>
       </dxl:LogicalLimit>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="5302">
+    <dxl:Plan Id="0" SpaceSize="4186">
       <dxl:Result>
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="282440.388516" Rows="4.000000" Width="269"/>
+          <dxl:Cost StartupCost="0" TotalCost="38915.798285" Rows="4.000000" Width="269"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="datname">
@@ -889,7 +824,7 @@
               </dxl:ParamList>
               <dxl:TableScan>
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="2.140625" Rows="1.000000" Width="64"/>
+                  <dxl:Cost StartupCost="0" TotalCost="431.001303" Rows="1.000000" Width="64"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="90" Alias="spcname">
@@ -902,7 +837,7 @@
                     <dxl:Ident ColId="8" ColName="dattablespace" TypeMdid="0.26.1.0"/>
                   </dxl:Comparison>
                 </dxl:Filter>
-                <dxl:TableDescriptor Mdid="0.1213.1.1" TableName="pg_tablespace">
+                <dxl:TableDescriptor Mdid="6.1213.1.1" TableName="pg_tablespace">
                   <dxl:Columns>
                     <dxl:Column ColId="90" Attno="1" ColName="spcname" TypeMdid="0.19.1.0"/>
                     <dxl:Column ColId="97" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
@@ -923,7 +858,7 @@
         <dxl:OneTimeFilter/>
         <dxl:NestedLoopJoin JoinType="Left" IndexNestedLoopJoin="false" OuterRefAsParam="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="72514.146328" Rows="8.000000" Width="205"/>
+            <dxl:Cost StartupCost="0" TotalCost="6920.082238" Rows="8.000000" Width="205"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="datname">
@@ -957,7 +892,7 @@
           </dxl:JoinFilter>
           <dxl:Sort SortDiscardDuplicates="false">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="315.603516" Rows="4.000000" Width="141"/>
+              <dxl:Cost StartupCost="0" TotalCost="862.011733" Rows="4.000000" Width="141"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="0" Alias="datname">
@@ -990,7 +925,7 @@
             <dxl:LimitOffset/>
             <dxl:HashJoin JoinType="Left">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="3.962891" Rows="4.000000" Width="141"/>
+                <dxl:Cost StartupCost="0" TotalCost="862.005337" Rows="4.000000" Width="141"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="0" Alias="datname">
@@ -1025,7 +960,7 @@
               </dxl:HashCondList>
               <dxl:TableScan>
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="1.714844" Rows="3.000000" Width="81"/>
+                  <dxl:Cost StartupCost="0" TotalCost="431.000761" Rows="3.000000" Width="81"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="0" Alias="datname">
@@ -1053,7 +988,7 @@
                 <dxl:Filter>
                   <dxl:Ident ColId="4" ColName="datallowconn" TypeMdid="0.16.1.0"/>
                 </dxl:Filter>
-                <dxl:TableDescriptor Mdid="0.1262.1.1" TableName="pg_database">
+                <dxl:TableDescriptor Mdid="6.1262.1.1" TableName="pg_database">
                   <dxl:Columns>
                     <dxl:Column ColId="0" Attno="1" ColName="datname" TypeMdid="0.19.1.0"/>
                     <dxl:Column ColId="1" Attno="2" ColName="datdba" TypeMdid="0.26.1.0"/>
@@ -1076,7 +1011,7 @@
               </dxl:TableScan>
               <dxl:TableScan>
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="0.070312" Rows="1.000000" Width="72"/>
+                  <dxl:Cost StartupCost="0" TotalCost="431.000064" Rows="1.000000" Width="72"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="19" Alias="rolname">
@@ -1087,7 +1022,7 @@
                   </dxl:ProjElem>
                 </dxl:ProjList>
                 <dxl:Filter/>
-                <dxl:TableDescriptor Mdid="0.1260.1.1" TableName="pg_authid">
+                <dxl:TableDescriptor Mdid="6.1260.1.1" TableName="pg_authid">
                   <dxl:Columns>
                     <dxl:Column ColId="19" Attno="1" ColName="rolname" TypeMdid="0.19.1.0"/>
                     <dxl:Column ColId="36" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
@@ -1105,7 +1040,7 @@
           </dxl:Sort>
           <dxl:Assert ErrorCode="P0003">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="5.542813" Rows="1.000000" Width="64"/>
+              <dxl:Cost StartupCost="0" TotalCost="437.001650" Rows="1.000000" Width="64"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="44" Alias="rolname">
@@ -1124,7 +1059,7 @@
             </dxl:AssertConstraintList>
             <dxl:Window PartitionColumns="">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="4.417813" Rows="1.000000" Width="72"/>
+                <dxl:Cost StartupCost="0" TotalCost="437.001586" Rows="1.000000" Width="72"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="107" Alias="row_number">
@@ -1137,7 +1072,7 @@
               <dxl:Filter/>
               <dxl:HashJoin JoinType="Inner">
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="3.417813" Rows="1.000000" Width="64"/>
+                  <dxl:Cost StartupCost="0" TotalCost="437.001586" Rows="1.000000" Width="64"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="44" Alias="rolname">
@@ -1154,7 +1089,7 @@
                 </dxl:HashCondList>
                 <dxl:TableScan>
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="0.070312" Rows="1.000000" Width="72"/>
+                    <dxl:Cost StartupCost="0" TotalCost="431.000064" Rows="1.000000" Width="72"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="44" Alias="rolname">
@@ -1165,7 +1100,7 @@
                     </dxl:ProjElem>
                   </dxl:ProjList>
                   <dxl:Filter/>
-                  <dxl:TableDescriptor Mdid="0.1260.1.1" TableName="pg_authid">
+                  <dxl:TableDescriptor Mdid="6.1260.1.1" TableName="pg_authid">
                     <dxl:Columns>
                       <dxl:Column ColId="44" Attno="1" ColName="rolname" TypeMdid="0.19.1.0"/>
                       <dxl:Column ColId="61" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
@@ -1181,7 +1116,7 @@
                 </dxl:TableScan>
                 <dxl:Assert ErrorCode="P0003">
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="2.167813" Rows="1.000000" Width="4"/>
+                    <dxl:Cost StartupCost="0" TotalCost="6.000756" Rows="1.000000" Width="4"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="70" Alias="datdba">
@@ -1200,7 +1135,7 @@
                   </dxl:AssertConstraintList>
                   <dxl:Window PartitionColumns="">
                     <dxl:Properties>
-                      <dxl:Cost StartupCost="0" TotalCost="1.160000" Rows="1.200000" Width="12"/>
+                      <dxl:Cost StartupCost="0" TotalCost="6.000752" Rows="1.200000" Width="12"/>
                     </dxl:Properties>
                     <dxl:ProjList>
                       <dxl:ProjElem ColId="106" Alias="row_number">
@@ -1213,7 +1148,7 @@
                     <dxl:Filter/>
                     <dxl:IndexScan IndexScanDirection="Forward">
                       <dxl:Properties>
-                        <dxl:Cost StartupCost="0" TotalCost="0.160000" Rows="1.200000" Width="4"/>
+                        <dxl:Cost StartupCost="0" TotalCost="6.000743" Rows="1.200000" Width="4"/>
                       </dxl:Properties>
                       <dxl:ProjList>
                         <dxl:ProjElem ColId="70" Alias="datdba">
@@ -1227,8 +1162,9 @@
                           <dxl:ConstValue TypeMdid="0.19.1.0" Value="dGVtcGxhdGUwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA&#10;AAAAAAAAAAAAAAAAAAAAAAAAAA=="/>
                         </dxl:Comparison>
                       </dxl:IndexCondList>
+	<dxl:Partitions/>
                       <dxl:IndexDescriptor Mdid="0.2671.1.0" IndexName="pg_database_datname_index"/>
-                      <dxl:TableDescriptor Mdid="0.1262.1.1" TableName="pg_database">
+                      <dxl:TableDescriptor Mdid="6.1262.1.1" TableName="pg_database">
                         <dxl:Columns>
                           <dxl:Column ColId="69" Attno="1" ColName="datname" TypeMdid="0.19.1.0"/>
                           <dxl:Column ColId="70" Attno="2" ColName="datdba" TypeMdid="0.26.1.0"/>

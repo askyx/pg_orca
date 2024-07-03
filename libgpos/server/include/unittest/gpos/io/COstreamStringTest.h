@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		COstreamStringTest
@@ -23,18 +22,17 @@ namespace gpos
 //		Static unit tests for messages
 //
 //---------------------------------------------------------------------------
-class COstreamStringTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
+class COstreamStringTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
 #ifdef GPOS_DEBUG
-	static GPOS_RESULT EresUnittest_EndlAssert();
+  static GPOS_RESULT EresUnittest_EndlAssert();
 #endif
 };
 }  // namespace gpos
 
-#endif	// !GPOS_COstreamStringTest_H
+#endif  // !GPOS_COstreamStringTest_H
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementTVF.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,39 +26,27 @@ using namespace gpos;
 //		Implement TVF with no arguments
 //
 //---------------------------------------------------------------------------
-class CXformImplementTVFNoArgs : public CXformImplementTVF
-{
-private:
-	// private copy ctor
-	CXformImplementTVFNoArgs(const CXformImplementTVFNoArgs &);
+class CXformImplementTVFNoArgs : public CXformImplementTVF {
+ private:
+ public:
+  CXformImplementTVFNoArgs(const CXformImplementTVFNoArgs &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementTVFNoArgs(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementTVFNoArgs(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformImplementTVFNoArgs()
-	{
-	}
+  // dtor
+  ~CXformImplementTVFNoArgs() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementTVFNoArgs;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementTVFNoArgs; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementTVFNoArgs";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformImplementTVFNoArgs"; }
 
-};	// class CXformImplementTVFNoArgs
+};  // class CXformImplementTVFNoArgs
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementTVFNoArgs_H
+#endif  // !GPOPT_CXformImplementTVFNoArgs_H
 
 // EOF

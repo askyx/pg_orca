@@ -28,16 +28,14 @@ using namespace gpopt;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CScalarSubquery::CScalarSubquery(CMemoryPool *mp, const CColRef *colref,
-								 BOOL fGeneratedByExist,
-								 BOOL fGeneratedByQuantified)
-	: CScalar(mp),
-	  m_pcr(colref),
-	  m_fGeneratedByExist(fGeneratedByExist),
-	  m_fGeneratedByQuantified(fGeneratedByQuantified)
-{
-	GPOS_ASSERT(NULL != colref);
-	GPOS_ASSERT(!(fGeneratedByExist && fGeneratedByQuantified));
+CScalarSubquery::CScalarSubquery(CMemoryPool *mp, const CColRef *colref, BOOL fGeneratedByExist,
+                                 BOOL fGeneratedByQuantified)
+    : CScalar(mp),
+      m_pcr(colref),
+      m_fGeneratedByExist(fGeneratedByExist),
+      m_fGeneratedByQuantified(fGeneratedByQuantified) {
+  GPOS_ASSERT(nullptr != colref);
+  GPOS_ASSERT(!(fGeneratedByExist && fGeneratedByQuantified));
 }
 
 //---------------------------------------------------------------------------
@@ -48,9 +46,7 @@ CScalarSubquery::CScalarSubquery(CMemoryPool *mp, const CColRef *colref,
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CScalarSubquery::~CScalarSubquery()
-{
-}
+CScalarSubquery::~CScalarSubquery() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -60,10 +56,8 @@ CScalarSubquery::~CScalarSubquery()
 //		Type of scalar's value
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarSubquery::MdidType() const
-{
-	return m_pcr->RetrieveType()->MDId();
+IMDId *CScalarSubquery::MdidType() const {
+  return m_pcr->RetrieveType()->MDId();
 }
 
 //---------------------------------------------------------------------------
@@ -75,12 +69,9 @@ CScalarSubquery::MdidType() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarSubquery::HashValue() const
-{
-	return gpos::CombineHashes(COperator::HashValue(),
-							   gpos::HashPtr<CColRef>(m_pcr));
+CScalarSubquery::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(), gpos::HashPtr<CColRef>(m_pcr));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -90,23 +81,18 @@ CScalarSubquery::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarSubquery::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarSubquery *popScalarSubquery = CScalarSubquery::PopConvert(pop);
+BOOL CScalarSubquery::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarSubquery *popScalarSubquery = CScalarSubquery::PopConvert(pop);
 
-		// match if computed columns are identical
-		return popScalarSubquery->Pcr() == m_pcr &&
-			   popScalarSubquery->FGeneratedByQuantified() ==
-				   m_fGeneratedByQuantified &&
-			   popScalarSubquery->FGeneratedByExist() == m_fGeneratedByExist;
-	}
+    // match if computed columns are identical
+    return popScalarSubquery->Pcr() == m_pcr &&
+           popScalarSubquery->FGeneratedByQuantified() == m_fGeneratedByQuantified &&
+           popScalarSubquery->FGeneratedByExist() == m_fGeneratedByExist;
+  }
 
-	return false;
+  return false;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -116,17 +102,12 @@ CScalarSubquery::Matches(COperator *pop) const
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CScalarSubquery::PopCopyWithRemappedColumns(CMemoryPool *mp,
-											UlongToColRefMap *colref_mapping,
-											BOOL must_exist)
-{
-	CColRef *colref = CUtils::PcrRemap(m_pcr, colref_mapping, must_exist);
+COperator *CScalarSubquery::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
+                                                       BOOL must_exist) {
+  CColRef *colref = CUtils::PcrRemap(m_pcr, colref_mapping, must_exist);
 
-	return GPOS_NEW(mp) CScalarSubquery(mp, colref, m_fGeneratedByExist,
-										m_fGeneratedByQuantified);
+  return GPOS_NEW(mp) CScalarSubquery(mp, colref, m_fGeneratedByExist, m_fGeneratedByQuantified);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -136,23 +117,19 @@ CScalarSubquery::PopCopyWithRemappedColumns(CMemoryPool *mp,
 //		Locally used columns
 //
 //---------------------------------------------------------------------------
-CColRefSet *
-CScalarSubquery::PcrsUsed(CMemoryPool *mp, CExpressionHandle &exprhdl)
-{
-	GPOS_ASSERT(1 == exprhdl.Arity());
+CColRefSet *CScalarSubquery::PcrsUsed(CMemoryPool *mp, CExpressionHandle &exprhdl) {
+  GPOS_ASSERT(1 == exprhdl.Arity());
 
-	// used columns is an empty set unless subquery column is an outer reference
-	CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
+  // used columns is an empty set unless subquery column is an outer reference
+  CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
 
-	CColRefSet *pcrsChildOutput =
-		exprhdl.DeriveOutputColumns(0 /* child_index */);
-	if (!pcrsChildOutput->FMember(m_pcr))
-	{
-		// subquery column is not produced by relational child, add it to used columns
-		pcrs->Include(m_pcr);
-	}
+  CColRefSet *pcrsChildOutput = exprhdl.DeriveOutputColumns(0 /* child_index */);
+  if (!pcrsChildOutput->FMember(m_pcr)) {
+    // subquery column is not produced by relational child, add it to used columns
+    pcrs->Include(m_pcr);
+  }
 
-	return pcrs;
+  return pcrs;
 }
 
 //---------------------------------------------------------------------------
@@ -163,14 +140,12 @@ CScalarSubquery::PcrsUsed(CMemoryPool *mp, CExpressionHandle &exprhdl)
 //		Derive partition consumers
 //
 //---------------------------------------------------------------------------
-CPartInfo *
-CScalarSubquery::PpartinfoDerive(CMemoryPool *,	 // mp,
-								 CExpressionHandle &exprhdl) const
-{
-	CPartInfo *ppartinfoChild = exprhdl.DerivePartitionInfo(0);
-	GPOS_ASSERT(NULL != ppartinfoChild);
-	ppartinfoChild->AddRef();
-	return ppartinfoChild;
+CPartInfo *CScalarSubquery::PpartinfoDerive(CMemoryPool *,  // mp,
+                                            CExpressionHandle &exprhdl) const {
+  CPartInfo *ppartinfoChild = exprhdl.DerivePartitionInfo(0);
+  GPOS_ASSERT(nullptr != ppartinfoChild);
+  ppartinfoChild->AddRef();
+  return ppartinfoChild;
 }
 
 //---------------------------------------------------------------------------
@@ -181,23 +156,18 @@ CScalarSubquery::PpartinfoDerive(CMemoryPool *,	 // mp,
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarSubquery::OsPrint(IOstream &os) const
-{
-	os << SzId() << "[";
-	m_pcr->OsPrint(os);
-	os << "]";
+IOstream &CScalarSubquery::OsPrint(IOstream &os) const {
+  os << SzId() << "[";
+  m_pcr->OsPrint(os);
+  os << "]";
 
-	if (m_fGeneratedByExist)
-	{
-		os << " generated by Exist SQ";
-	}
-	if (m_fGeneratedByQuantified)
-	{
-		os << " generated by Quantified SQ";
-	}
-	return os;
+  if (m_fGeneratedByExist) {
+    os << " generated by Exist SQ";
+  }
+  if (m_fGeneratedByQuantified) {
+    os << " generated by Quantified SQ";
+  }
+  return os;
 }
-
 
 // EOF

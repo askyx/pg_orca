@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLScalarBitmapIndexProbe.cpp
@@ -19,7 +19,6 @@
 
 using namespace gpdxl;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CDXLScalarBitmapIndexProbe::CDXLScalarBitmapIndexProbe
@@ -28,11 +27,9 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarBitmapIndexProbe::CDXLScalarBitmapIndexProbe(
-	CMemoryPool *mp, CDXLIndexDescr *dxl_index_descr)
-	: CDXLScalar(mp), m_dxl_index_descr(dxl_index_descr)
-{
-	GPOS_ASSERT(NULL != m_dxl_index_descr);
+CDXLScalarBitmapIndexProbe::CDXLScalarBitmapIndexProbe(CMemoryPool *mp, CDXLIndexDescr *dxl_index_descr)
+    : CDXLScalar(mp), m_dxl_index_descr(dxl_index_descr) {
+  GPOS_ASSERT(nullptr != m_dxl_index_descr);
 }
 
 //---------------------------------------------------------------------------
@@ -43,9 +40,8 @@ CDXLScalarBitmapIndexProbe::CDXLScalarBitmapIndexProbe(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLScalarBitmapIndexProbe::~CDXLScalarBitmapIndexProbe()
-{
-	m_dxl_index_descr->Release();
+CDXLScalarBitmapIndexProbe::~CDXLScalarBitmapIndexProbe() {
+  m_dxl_index_descr->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -56,10 +52,8 @@ CDXLScalarBitmapIndexProbe::~CDXLScalarBitmapIndexProbe()
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarBitmapIndexProbe::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBitmapIndexProbe);
+const CWStringConst *CDXLScalarBitmapIndexProbe::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBitmapIndexProbe);
 }
 
 //---------------------------------------------------------------------------
@@ -70,22 +64,17 @@ CDXLScalarBitmapIndexProbe::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarBitmapIndexProbe::SerializeToDXL(CXMLSerializer *xml_serializer,
-										   const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+void CDXLScalarBitmapIndexProbe::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	// serialize children
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
+  // serialize children
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
 
-	// serialize index descriptor
-	m_dxl_index_descr->SerializeToDXL(xml_serializer);
+  // serialize index descriptor
+  m_dxl_index_descr->SerializeToDXL(xml_serializer);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -97,26 +86,20 @@ CDXLScalarBitmapIndexProbe::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarBitmapIndexProbe::AssertValid(const CDXLNode *dxlnode,
-										BOOL validate_children) const
-{
-	// bitmap index probe has 1 child: the index condition list
-	GPOS_ASSERT(1 == dxlnode->Arity());
+void CDXLScalarBitmapIndexProbe::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  // bitmap index probe has 1 child: the index condition list
+  GPOS_ASSERT(1 == dxlnode->Arity());
 
-	if (validate_children)
-	{
-		CDXLNode *pdxlnIndexCondList = (*dxlnode)[0];
-		GPOS_ASSERT(EdxlopScalarIndexCondList ==
-					pdxlnIndexCondList->GetOperator()->GetDXLOperator());
-		pdxlnIndexCondList->GetOperator()->AssertValid(pdxlnIndexCondList,
-													   validate_children);
-	}
+  if (validate_children) {
+    CDXLNode *pdxlnIndexCondList = (*dxlnode)[0];
+    GPOS_ASSERT(EdxlopScalarIndexCondList == pdxlnIndexCondList->GetOperator()->GetDXLOperator());
+    pdxlnIndexCondList->GetOperator()->AssertValid(pdxlnIndexCondList, validate_children);
+  }
 
-	// assert validity of index descriptor
-	GPOS_ASSERT(NULL != m_dxl_index_descr->MdName());
-	GPOS_ASSERT(m_dxl_index_descr->MdName()->GetMDName()->IsValid());
+  // assert validity of index descriptor
+  GPOS_ASSERT(nullptr != m_dxl_index_descr->MdName());
+  GPOS_ASSERT(m_dxl_index_descr->MdName()->GetMDName()->IsValid());
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

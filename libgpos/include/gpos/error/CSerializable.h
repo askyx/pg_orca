@@ -15,8 +15,7 @@
 #include "gpos/base.h"
 #include "gpos/common/CList.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CSerializable
@@ -25,28 +24,26 @@ namespace gpos
 //		Interface for serializable objects;
 //
 //---------------------------------------------------------------------------
-class CSerializable : CStackObject
-{
-private:
-	// private copy ctor
-	CSerializable(const CSerializable &);
+class CSerializable : CStackObject {
+ private:
+ public:
+  CSerializable(const CSerializable &) = delete;
 
-public:
-	// ctor
-	CSerializable();
+  // ctor
+  CSerializable();
 
-	// dtor
-	virtual ~CSerializable();
+  // dtor
+  virtual ~CSerializable();
 
-	// serialize object to passed stream
-	virtual void Serialize(COstream &oos) = 0;
+  // serialize object to passed stream
+  virtual void Serialize(COstream &oos) = 0;
 
-	// link for list in error context
-	SLink m_err_ctxt_link;
+  // link for list in error context
+  SLink m_err_ctxt_link;
 
-};	// class CSerializable
+};  // class CSerializable
 }  // namespace gpos
 
-#endif	// !GPOS_CSerializable_H
+#endif  // !GPOS_CSerializable_H
 
 // EOF

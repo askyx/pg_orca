@@ -15,10 +15,10 @@
 
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdPropScalar.h"
+#include "gpopt/base/COptCtxt.h"
 #include "gpopt/mdcache/CMDAccessorUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "naucrates/md/IMDFunction.h"
-
 
 using namespace gpopt;
 using namespace gpmd;
@@ -32,18 +32,15 @@ using namespace gpmd;
 //
 //---------------------------------------------------------------------------
 CScalarFunc::CScalarFunc(CMemoryPool *mp)
-	: CScalar(mp),
-	  m_func_mdid(NULL),
-	  m_return_type_mdid(NULL),
-	  m_return_type_modifier(default_type_modifier),
-	  m_pstrFunc(NULL),
-	  m_efs(IMDFunction::EfsSentinel),
-	  m_efda(IMDFunction::EfdaSentinel),
-	  m_returns_set(false),
-	  m_returns_null_on_null_input(false),
-	  m_fBoolReturnType(false)
-{
-}
+    : CScalar(mp),
+      m_func_mdid(nullptr),
+      m_return_type_mdid(nullptr),
+      m_return_type_modifier(default_type_modifier),
+      m_pstrFunc(nullptr),
+      m_efs(IMDFunction::EfsSentinel),
+      m_returns_set(false),
+      m_returns_null_on_null_input(false),
+      m_fBoolReturnType(false) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,33 +50,29 @@ CScalarFunc::CScalarFunc(CMemoryPool *mp)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarFunc::CScalarFunc(CMemoryPool *mp, IMDId *mdid_func,
-						 IMDId *mdid_return_type, INT return_type_modifier,
-						 const CWStringConst *pstrFunc)
-	: CScalar(mp),
-	  m_func_mdid(mdid_func),
-	  m_return_type_mdid(mdid_return_type),
-	  m_return_type_modifier(return_type_modifier),
-	  m_pstrFunc(pstrFunc),
-	  m_returns_set(false),
-	  m_returns_null_on_null_input(false),
-	  m_fBoolReturnType(false)
-{
-	GPOS_ASSERT(mdid_func->IsValid());
-	GPOS_ASSERT(mdid_return_type->IsValid());
+CScalarFunc::CScalarFunc(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, INT return_type_modifier,
+                         const CWStringConst *pstrFunc, BOOL funcvariadic)
+    : CScalar(mp),
+      m_func_mdid(mdid_func),
+      m_return_type_mdid(mdid_return_type),
+      m_return_type_modifier(return_type_modifier),
+      m_pstrFunc(pstrFunc),
+      m_returns_set(false),
+      m_returns_null_on_null_input(false),
+      m_fBoolReturnType(false),
+      m_funcvariadic(funcvariadic) {
+  GPOS_ASSERT(mdid_func->IsValid());
+  GPOS_ASSERT(mdid_return_type->IsValid());
 
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	const IMDFunction *pmdfunc = md_accessor->RetrieveFunc(m_func_mdid);
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  const IMDFunction *pmdfunc = md_accessor->RetrieveFunc(m_func_mdid);
 
-	m_efs = pmdfunc->GetFuncStability();
-	m_efda = pmdfunc->GetFuncDataAccess();
-	m_returns_set = pmdfunc->ReturnsSet();
+  m_efs = pmdfunc->GetFuncStability();
+  m_returns_set = pmdfunc->ReturnsSet();
 
-	m_returns_null_on_null_input = pmdfunc->IsStrict();
-	m_fBoolReturnType =
-		CMDAccessorUtils::FBoolType(md_accessor, m_return_type_mdid);
+  m_returns_null_on_null_input = pmdfunc->IsStrict();
+  m_fBoolReturnType = CMDAccessorUtils::FBoolType(md_accessor, m_return_type_mdid);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -89,11 +82,10 @@ CScalarFunc::CScalarFunc(CMemoryPool *mp, IMDId *mdid_func,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarFunc::~CScalarFunc()
-{
-	CRefCount::SafeRelease(m_func_mdid);
-	CRefCount::SafeRelease(m_return_type_mdid);
-	GPOS_DELETE(m_pstrFunc);
+CScalarFunc::~CScalarFunc() {
+  CRefCount::SafeRelease(m_func_mdid);
+  CRefCount::SafeRelease(m_return_type_mdid);
+  GPOS_DELETE(m_pstrFunc);
 }
 
 //---------------------------------------------------------------------------
@@ -104,10 +96,8 @@ CScalarFunc::~CScalarFunc()
 //		Function name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CScalarFunc::PstrFunc() const
-{
-	return m_pstrFunc;
+const CWStringConst *CScalarFunc::PstrFunc() const {
+  return m_pstrFunc;
 }
 
 //---------------------------------------------------------------------------
@@ -118,10 +108,8 @@ CScalarFunc::PstrFunc() const
 //		Func id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarFunc::FuncMdId() const
-{
-	return m_func_mdid;
+IMDId *CScalarFunc::FuncMdId() const {
+  return m_func_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -132,10 +120,8 @@ CScalarFunc::FuncMdId() const
 //		Function stability enum
 //
 //---------------------------------------------------------------------------
-IMDFunction::EFuncStbl
-CScalarFunc::EfsGetFunctionStability() const
-{
-	return m_efs;
+IMDFunction::EFuncStbl CScalarFunc::EfsGetFunctionStability() const {
+  return m_efs;
 }
 
 //---------------------------------------------------------------------------
@@ -148,14 +134,10 @@ CScalarFunc::EfsGetFunctionStability() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarFunc::HashValue() const
-{
-	return gpos::CombineHashes(
-		COperator::HashValue(),
-		gpos::CombineHashes(m_func_mdid->HashValue(),
-							m_return_type_mdid->HashValue()));
+CScalarFunc::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(),
+                             gpos::CombineHashes(m_func_mdid->HashValue(), m_return_type_mdid->HashValue()));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -165,18 +147,14 @@ CScalarFunc::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarFunc::Matches(COperator *pop) const
-{
-	if (pop->Eopid() != Eopid())
-	{
-		return false;
-	}
-	CScalarFunc *popScFunc = CScalarFunc::PopConvert(pop);
+BOOL CScalarFunc::Matches(COperator *pop) const {
+  if (pop->Eopid() != Eopid()) {
+    return false;
+  }
+  CScalarFunc *popScFunc = CScalarFunc::PopConvert(pop);
 
-	// match if func ids are identical
-	return popScFunc->FuncMdId()->Equals(m_func_mdid) &&
-		   popScFunc->MdidType()->Equals(m_return_type_mdid);
+  // match if func ids are identical
+  return popScFunc->FuncMdId()->Equals(m_func_mdid) && popScFunc->MdidType()->Equals(m_return_type_mdid);
 }
 
 //---------------------------------------------------------------------------
@@ -187,16 +165,12 @@ CScalarFunc::Matches(COperator *pop) const
 //		Expression type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarFunc::MdidType() const
-{
-	return m_return_type_mdid;
+IMDId *CScalarFunc::MdidType() const {
+  return m_return_type_mdid;
 }
 
-INT
-CScalarFunc::TypeModifier() const
-{
-	return m_return_type_modifier;
+INT CScalarFunc::TypeModifier() const {
+  return m_return_type_modifier;
 }
 
 //---------------------------------------------------------------------------
@@ -207,13 +181,9 @@ CScalarFunc::TypeModifier() const
 //		Derive existence of non-scalar functions from expression handle
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarFunc::FHasNonScalarFunction(CExpressionHandle &	//exprhdl
-)
-{
-	return m_returns_set;
+BOOL CScalarFunc::FHasNonScalarFunction(CExpressionHandle &exprhdl) {
+  return m_returns_set || CScalar::FHasNonScalarFunction(exprhdl);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -223,14 +193,12 @@ CScalarFunc::FHasNonScalarFunction(CExpressionHandle &	//exprhdl
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarFunc::OsPrint(IOstream &os) const
-{
-	os << SzId() << " (";
-	os << PstrFunc()->GetBuffer();
-	os << ")";
+IOstream &CScalarFunc::OsPrint(IOstream &os) const {
+  os << SzId() << " (";
+  os << PstrFunc()->GetBuffer();
+  os << ")";
 
-	return os;
+  return os;
 }
 
 //---------------------------------------------------------------------------
@@ -241,16 +209,15 @@ CScalarFunc::OsPrint(IOstream &os) const
 //		Perform boolean expression evaluation
 //
 //---------------------------------------------------------------------------
-CScalar::EBoolEvalResult
-CScalarFunc::Eber(ULongPtrArray *pdrgpulChildren) const
-{
-	if (m_returns_null_on_null_input)
-	{
-		return EberNullOnAnyNullChild(pdrgpulChildren);
-	}
+CScalar::EBoolEvalResult CScalarFunc::Eber(ULongPtrArray *pdrgpulChildren) const {
+  if (m_returns_null_on_null_input) {
+    return EberNullOnAnyNullChild(pdrgpulChildren);
+  }
 
-	return EberAny;
+  return EberAny;
 }
-
+BOOL CScalarFunc::IsFuncVariadic() const {
+  return m_funcvariadic;
+}
 
 // EOF

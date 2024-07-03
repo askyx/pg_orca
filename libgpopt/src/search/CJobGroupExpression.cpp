@@ -22,7 +22,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CJobGroupExpression::Init
@@ -31,19 +30,16 @@ using namespace gpopt;
 //		Initialize job
 //
 //---------------------------------------------------------------------------
-void
-CJobGroupExpression::Init(CGroupExpression *pgexpr)
-{
-	GPOS_ASSERT(!FInit());
-	GPOS_ASSERT(NULL != pgexpr);
-	GPOS_ASSERT(NULL != pgexpr->Pgroup());
-	GPOS_ASSERT(NULL != pgexpr->Pop());
+void CJobGroupExpression::Init(CGroupExpression *pgexpr) {
+  GPOS_ASSERT(!FInit());
+  GPOS_ASSERT(nullptr != pgexpr);
+  GPOS_ASSERT(nullptr != pgexpr->Pgroup());
+  GPOS_ASSERT(nullptr != pgexpr->Pop());
 
-	m_fChildrenScheduled = false;
-	m_fXformsScheduled = false;
-	m_pgexpr = pgexpr;
+  m_fChildrenScheduled = false;
+  m_fXformsScheduled = false;
+  m_pgexpr = pgexpr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,18 +49,13 @@ CJobGroupExpression::Init(CGroupExpression *pgexpr)
 //		Schedule transformation jobs for the given set of xforms
 //
 //---------------------------------------------------------------------------
-void
-CJobGroupExpression::ScheduleTransformations(CSchedulerContext *psc,
-											 CXformSet *xform_set)
-{
-	// iterate on xforms
-	CXformSetIter xsi(*(xform_set));
-	while (xsi.Advance())
-	{
-		CXform *pxform = CXformFactory::Pxff()->Pxf(xsi.TBit());
-		CJobTransformation::ScheduleJob(psc, m_pgexpr, pxform, this);
-	}
+void CJobGroupExpression::ScheduleTransformations(CSchedulerContext *psc, CXformSet *xform_set) {
+  // iterate on xforms
+  CXformSetIter xsi(*(xform_set));
+  while (xsi.Advance()) {
+    CXform *pxform = CXformFactory::Pxff()->Pxf(xsi.TBit());
+    CJobTransformation::ScheduleJob(psc, m_pgexpr, pxform, this);
+  }
 }
-
 
 // EOF

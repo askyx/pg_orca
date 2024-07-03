@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLScalarAssertConstraint.cpp
@@ -26,11 +26,9 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarAssertConstraint::CDXLScalarAssertConstraint(CMemoryPool *mp,
-													   CWStringBase *error_msg)
-	: CDXLScalar(mp), m_error_msg(error_msg)
-{
-	GPOS_ASSERT(NULL != error_msg);
+CDXLScalarAssertConstraint::CDXLScalarAssertConstraint(CMemoryPool *mp, CWStringBase *error_msg)
+    : CDXLScalar(mp), m_error_msg(error_msg) {
+  GPOS_ASSERT(nullptr != error_msg);
 }
 
 //---------------------------------------------------------------------------
@@ -41,9 +39,8 @@ CDXLScalarAssertConstraint::CDXLScalarAssertConstraint(CMemoryPool *mp,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLScalarAssertConstraint::~CDXLScalarAssertConstraint()
-{
-	GPOS_DELETE(m_error_msg);
+CDXLScalarAssertConstraint::~CDXLScalarAssertConstraint() {
+  GPOS_DELETE(m_error_msg);
 }
 
 //---------------------------------------------------------------------------
@@ -54,10 +51,8 @@ CDXLScalarAssertConstraint::~CDXLScalarAssertConstraint()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarAssertConstraint::GetDXLOperator() const
-{
-	return EdxlopScalarAssertConstraint;
+Edxlopid CDXLScalarAssertConstraint::GetDXLOperator() const {
+  return EdxlopScalarAssertConstraint;
 }
 
 //---------------------------------------------------------------------------
@@ -68,10 +63,8 @@ CDXLScalarAssertConstraint::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarAssertConstraint::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarAssertConstraint);
+const CWStringConst *CDXLScalarAssertConstraint::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarAssertConstraint);
 }
 
 //---------------------------------------------------------------------------
@@ -82,10 +75,8 @@ CDXLScalarAssertConstraint::GetOpNameStr() const
 //		Error message
 //
 //---------------------------------------------------------------------------
-CWStringBase *
-CDXLScalarAssertConstraint::GetErrorMsgStr() const
-{
-	return m_error_msg;
+CWStringBase *CDXLScalarAssertConstraint::GetErrorMsgStr() const {
+  return m_error_msg;
 }
 
 //---------------------------------------------------------------------------
@@ -96,22 +87,15 @@ CDXLScalarAssertConstraint::GetErrorMsgStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarAssertConstraint::SerializeToDXL(CXMLSerializer *xml_serializer,
-										   const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarAssertConstraint::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenErrorMessage), m_error_msg);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenErrorMessage), m_error_msg);
 
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
-
 
 #ifdef GPOS_DEBUG
 //---------------------------------------------------------------------------
@@ -122,23 +106,17 @@ CDXLScalarAssertConstraint::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarAssertConstraint::AssertValid(const CDXLNode *dxlnode,
-										BOOL validate_children) const
-{
-	GPOS_ASSERT(1 == dxlnode->Arity());
+void CDXLScalarAssertConstraint::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  GPOS_ASSERT(1 == dxlnode->Arity());
 
-	CDXLNode *child_dxlnode = (*dxlnode)[0];
-	GPOS_ASSERT(EdxloptypeScalar ==
-				child_dxlnode->GetOperator()->GetDXLOperatorType());
+  CDXLNode *child_dxlnode = (*dxlnode)[0];
+  GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-	if (validate_children)
-	{
-		child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-												  validate_children);
-	}
+  if (validate_children) {
+    child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+  }
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

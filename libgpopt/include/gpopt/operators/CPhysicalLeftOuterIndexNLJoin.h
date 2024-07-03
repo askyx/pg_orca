@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2017 Pivotal, Inc.
+//	Copyright (C) 2017 VMware, Inc. or its affiliates.
 //
 //	Left outer index nested-loops join operator
 //---------------------------------------------------------------------------
@@ -11,77 +11,65 @@
 
 #include "gpopt/operators/CPhysicalLeftOuterNLJoin.h"
 
-namespace gpopt
-{
-class CPhysicalLeftOuterIndexNLJoin : public CPhysicalLeftOuterNLJoin
-{
-private:
-	// columns from outer child used for index lookup in inner child
-	CColRefArray *m_pdrgpcrOuterRefs;
+namespace gpopt {
+class CPhysicalLeftOuterIndexNLJoin : public CPhysicalLeftOuterNLJoin {
+ private:
+  // columns from outer child used for index lookup in inner child
+  CColRefArray *m_pdrgpcrOuterRefs;
 
-	// private copy ctor
-	CPhysicalLeftOuterIndexNLJoin(const CPhysicalLeftOuterIndexNLJoin &);
+  // a copy of the original join predicate that has been pushed down to the inner side
+  CExpression *m_origJoinPred;
 
-public:
-	// ctor
-	CPhysicalLeftOuterIndexNLJoin(CMemoryPool *mp, CColRefArray *colref_array);
+ public:
+  CPhysicalLeftOuterIndexNLJoin(const CPhysicalLeftOuterIndexNLJoin &) = delete;
 
-	// dtor
-	virtual ~CPhysicalLeftOuterIndexNLJoin();
+  // ctor
+  CPhysicalLeftOuterIndexNLJoin(CMemoryPool *mp, CColRefArray *colref_array, CExpression *origJoinPred);
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPhysicalLeftOuterIndexNLJoin;
-	}
+  // dtor
+  ~CPhysicalLeftOuterIndexNLJoin() override;
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPhysicalLeftOuterIndexNLJoin";
-	}
+  CEnfdProp::EPropEnforcingType EpetDistribution(CExpressionHandle &exprhdl,
+                                                 const CEnfdDistribution *ped) const override;
 
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPhysicalLeftOuterIndexNLJoin; }
 
-	// outer column references accessor
-	CColRefArray *
-	PdrgPcrOuterRefs() const
-	{
-		return m_pdrgpcrOuterRefs;
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CPhysicalLeftOuterIndexNLJoin"; }
 
-	// compute required distribution of the n-th child
-	virtual CDistributionSpec *PdsRequired(CMemoryPool *mp,
-										   CExpressionHandle &exprhdl,
-										   CDistributionSpec *pdsRequired,
-										   ULONG child_index,
-										   CDrvdPropArray *pdrgpdpCtxt,
-										   ULONG ulOptReq) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// execution order of children
-	virtual EChildExecOrder
-	Eceo() const
-	{
-		// we optimize inner (right) child first to be able to match child hashed distributions
-		return EceoRightToLeft;
-	}
+  // outer column references accessor
+  CColRefArray *PdrgPcrOuterRefs() const { return m_pdrgpcrOuterRefs; }
 
-	// conversion function
-	static CPhysicalLeftOuterIndexNLJoin *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(EopPhysicalLeftOuterIndexNLJoin == pop->Eopid());
+  // compute required distribution of the n-th child
+  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
+                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-		return dynamic_cast<CPhysicalLeftOuterIndexNLJoin *>(pop);
-	}
+  CEnfdDistribution *Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput, ULONG child_index,
+                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulDistrReq) override;
 
-};	// class CPhysicalLeftOuterIndexNLJoin
+  // execution order of children
+  EChildExecOrder Eceo() const override {
+    // we optimize inner (right) child first to be able to match child hashed distributions
+    return EceoRightToLeft;
+  }
+
+  // conversion function
+  static CPhysicalLeftOuterIndexNLJoin *PopConvert(COperator *pop) {
+    GPOS_ASSERT(EopPhysicalLeftOuterIndexNLJoin == pop->Eopid());
+
+    return dynamic_cast<CPhysicalLeftOuterIndexNLJoin *>(pop);
+  }
+
+  CExpression *OrigJoinPred() { return m_origJoinPred; }
+
+};  // class CPhysicalLeftOuterIndexNLJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPhysicalLeftOuterIndexNLJoin_H
+#endif  // !GPOPT_CPhysicalLeftOuterIndexNLJoin_H
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations.h
@@ -14,12 +14,9 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
 #include "gpopt/xforms/CXformLeftSemiApply2LeftSemiJoinNoCorrelations.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -30,53 +27,32 @@ using namespace gpos;
 //		Transform Apply into Join by decorrelating the inner side
 //
 //---------------------------------------------------------------------------
-class CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations
-	: public CXformLeftSemiApply2LeftSemiJoinNoCorrelations
-{
-private:
-	// private copy ctor
-	CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations(
-		const CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations &);
+class CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations : public CXformLeftSemiApply2LeftSemiJoinNoCorrelations {
+ private:
+ public:
+  CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations(const CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations &) = delete;
 
-public:
-	// ctor
-	explicit CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations(CMemoryPool *mp)
-		: CXformLeftSemiApply2LeftSemiJoinNoCorrelations(
-			  mp, GPOS_NEW(mp) CExpression(
-					  mp, GPOS_NEW(mp) CLogicalLeftSemiApplyIn(mp),
-					  GPOS_NEW(mp) CExpression(
-						  mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
-					  GPOS_NEW(mp) CExpression(
-						  mp, GPOS_NEW(mp) CPatternTree(mp)),  // right child
-					  GPOS_NEW(mp) CExpression(
-						  mp, GPOS_NEW(mp) CPatternTree(mp))  // predicate
-					  ))
-	{
-	}
+  // ctor
+  explicit CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations(CMemoryPool *mp)
+      : CXformLeftSemiApply2LeftSemiJoinNoCorrelations(
+            mp, GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalLeftSemiApplyIn(mp),
+                                         GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
+                                         GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp)),  // right child
+                                         GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // predicate
+                                         )) {}
 
-	// dtor
-	virtual ~CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations()
-	{
-	}
+  // dtor
+  ~CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfLeftSemiApplyIn2LeftSemiJoinNoCorrelations;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfLeftSemiApplyIn2LeftSemiJoinNoCorrelations; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations";
-	}
+  const CHAR *SzId() const override { return "CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations"; }
 
-
-};	// class CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations
+};  // class CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations_H
+#endif  // !GPOPT_CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations_H
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformSubqueryUnnest.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,39 +27,27 @@ using namespace gpos;
 //		to a Project expression with subqueries in its scalar project list
 //
 //---------------------------------------------------------------------------
-class CXformProject2Apply : public CXformSubqueryUnnest
-{
-private:
-	// private copy ctor
-	CXformProject2Apply(const CXformProject2Apply &);
+class CXformProject2Apply : public CXformSubqueryUnnest {
+ private:
+ public:
+  CXformProject2Apply(const CXformProject2Apply &) = delete;
 
-public:
-	// ctor
-	explicit CXformProject2Apply(CMemoryPool *mp);
+  // ctor
+  explicit CXformProject2Apply(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformProject2Apply()
-	{
-	}
+  // dtor
+  ~CXformProject2Apply() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfProject2Apply;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfProject2Apply; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformProject2Apply";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformProject2Apply"; }
 
-};	// class CXformProject2Apply
+};  // class CXformProject2Apply
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformProject2Apply_H
+#endif  // !GPOPT_CXformProject2Apply_H
 
 // EOF

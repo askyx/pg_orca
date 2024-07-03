@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CScalarSubqueryExistential.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,50 +26,34 @@ using namespace gpos;
 //		Scalar subquery NOT EXISTS.
 //
 //---------------------------------------------------------------------------
-class CScalarSubqueryNotExists : public CScalarSubqueryExistential
-{
-private:
-	// private copy ctor
-	CScalarSubqueryNotExists(const CScalarSubqueryNotExists &);
+class CScalarSubqueryNotExists : public CScalarSubqueryExistential {
+ private:
+ public:
+  CScalarSubqueryNotExists(const CScalarSubqueryNotExists &) = delete;
 
-public:
-	// ctor
-	CScalarSubqueryNotExists(CMemoryPool *mp) : CScalarSubqueryExistential(mp)
-	{
-	}
+  // ctor
+  CScalarSubqueryNotExists(CMemoryPool *mp) : CScalarSubqueryExistential(mp) {}
 
-	// dtor
-	virtual ~CScalarSubqueryNotExists()
-	{
-	}
+  // dtor
+  ~CScalarSubqueryNotExists() override = default;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopScalarSubqueryNotExists;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopScalarSubqueryNotExists; }
 
-	// return a string for scalar subquery
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CScalarSubqueryNotExists";
-	}
+  // return a string for scalar subquery
+  const CHAR *SzId() const override { return "CScalarSubqueryNotExists"; }
 
-	// conversion function
-	static CScalarSubqueryNotExists *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarSubqueryNotExists == pop->Eopid());
+  // conversion function
+  static CScalarSubqueryNotExists *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarSubqueryNotExists == pop->Eopid());
 
-		return reinterpret_cast<CScalarSubqueryNotExists *>(pop);
-	}
+    return dynamic_cast<CScalarSubqueryNotExists *>(pop);
+  }
 
-};	// class CScalarSubqueryNotExists
+};  // class CScalarSubqueryNotExists
 }  // namespace gpopt
 
-#endif	// !GPOPT_CScalarSubqueryNotExists_H
+#endif  // !GPOPT_CScalarSubqueryNotExists_H
 
 // EOF

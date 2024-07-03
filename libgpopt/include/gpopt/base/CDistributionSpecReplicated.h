@@ -15,76 +15,81 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CDistributionSpec.h"
-#include "gpopt/base/CDistributionSpecSingleton.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
-//---------------------------------------------------------------------------
-//	@class:
-//		CDistributionSpecReplicated
-//
-//	@doc:
-//		Class for representing replicated distribution specification.
-//
-//---------------------------------------------------------------------------
-class CDistributionSpecReplicated : public CDistributionSpec
-{
-private:
-	// private copy ctor
-	CDistributionSpecReplicated(const CDistributionSpecReplicated &);
+class CDistributionSpecReplicated : public CDistributionSpec {
+ private:
+  // replicated support
+  CDistributionSpec::EDistributionType m_replicated;
 
-public:
-	// ctor
-	CDistributionSpecReplicated()
-	{
-	}
+  BOOL m_ignore_broadcast_threshold;
 
-	// accessor
-	virtual EDistributionType
-	Edt() const
-	{
-		return CDistributionSpec::EdtReplicated;
-	}
+ public:
+  CDistributionSpecReplicated(const CDistributionSpecReplicated &) = delete;
 
-	// does this distribution satisfy the given one
-	virtual BOOL FSatisfies(const CDistributionSpec *pds) const;
+  // ctor
+  CDistributionSpecReplicated(CDistributionSpec::EDistributionType replicated_type)
+      : m_replicated(replicated_type), m_ignore_broadcast_threshold(false) {
+    GPOS_ASSERT(replicated_type == CDistributionSpec::EdtReplicated ||
+                replicated_type == CDistributionSpec::EdtTaintedReplicated ||
+                replicated_type == CDistributionSpec::EdtStrictReplicated);
+  }
 
-	// append enforcers to dynamic array for the given plan properties
-	virtual void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								 CReqdPropPlan *prpp,
-								 CExpressionArray *pdrgpexpr,
-								 CExpression *pexpr);
+  // ctor
+  CDistributionSpecReplicated(CDistributionSpec::EDistributionType replicated_type, BOOL ignore_broadcast_threshold)
+      : m_replicated(replicated_type), m_ignore_broadcast_threshold(ignore_broadcast_threshold) {
+    GPOS_ASSERT(replicated_type == CDistributionSpec::EdtReplicated ||
+                replicated_type == CDistributionSpec::EdtTaintedReplicated ||
+                replicated_type == CDistributionSpec::EdtStrictReplicated);
+  }
 
-	// return distribution partitioning type
-	virtual EDistributionPartitioningType
-	Edpt() const
-	{
-		return EdptNonPartitioned;
-	}
+  // accessor
+  EDistributionType Edt() const override { return m_replicated; }
 
-	// print
-	virtual IOstream &
-	OsPrint(IOstream &os) const
-	{
-		return os << "REPLICATED ";
-	}
+  // does this distribution satisfy the given one
+  BOOL FSatisfies(const CDistributionSpec *pds) const override;
 
-	// conversion function
-	static CDistributionSpecReplicated *
-	PdsConvert(CDistributionSpec *pds)
-	{
-		GPOS_ASSERT(NULL != pds);
-		GPOS_ASSERT(EdtReplicated == pds->Edt());
+  // append enforcers to dynamic array for the given plan properties
+  void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpp, CExpressionArray *pdrgpexpr,
+                       CExpression *pexpr) override;
 
-		return dynamic_cast<CDistributionSpecReplicated *>(pds);
-	}
+  // return distribution partitioning type
+  EDistributionPartitioningType Edpt() const override { return EdptNonPartitioned; }
 
-};	// class CDistributionSpecReplicated
+  // print
+  IOstream &OsPrint(IOstream &os) const override {
+    switch (Edt()) {
+      case CDistributionSpec::EdtReplicated:
+        os << "REPLICATED";
+        break;
+      case CDistributionSpec::EdtTaintedReplicated:
+        os << "TAINTED REPLICATED";
+        break;
+      case CDistributionSpec::EdtStrictReplicated:
+        os << "STRICT REPLICATED";
+        break;
+      default:
+        GPOS_ASSERT(!"Replicated type must be General, Tainted, or Strict");
+    }
+    return os;
+  }
+
+  // conversion function
+  static CDistributionSpecReplicated *PdsConvert(CDistributionSpec *pds) {
+    GPOS_ASSERT(nullptr != pds);
+    GPOS_ASSERT(EdtStrictReplicated == pds->Edt() || EdtReplicated == pds->Edt() || EdtTaintedReplicated == pds->Edt());
+
+    return dynamic_cast<CDistributionSpecReplicated *>(pds);
+  }
+
+  BOOL FIgnoreBroadcastThreshold() const { return m_ignore_broadcast_threshold; }
+
+};  // class CDistributionSpecReplicated
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CDistributionSpecReplicated_H
+#endif  // !GPOPT_CDistributionSpecReplicated_H
 
 // EOF

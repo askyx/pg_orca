@@ -40,14 +40,9 @@ XERCES_CPP_NAMESPACE_USE
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CParseHandlerDynamicIndexScan::CParseHandlerDynamicIndexScan(
-	CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
-	: CParseHandlerIndexScan(mp, parse_handler_mgr, parse_handler_root),
-	  m_part_index_id(0),
-	  m_part_index_id_printable(0)
-{
-}
+CParseHandlerDynamicIndexScan::CParseHandlerDynamicIndexScan(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                                             CParseHandlerBase *parse_handler_root)
+    : CParseHandlerIndexScan(mp, parse_handler_mgr, parse_handler_root) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -57,24 +52,14 @@ CParseHandlerDynamicIndexScan::CParseHandlerDynamicIndexScan(
 //		Invoked by Xerces to process an opening tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerDynamicIndexScan::StartElement(
-	const XMLCh *const,	 // element_uri,
-	const XMLCh *const element_local_name,
-	const XMLCh *const,	 // element_qname
-	const Attributes &attrs)
-{
-	StartElementHelper(element_local_name, attrs,
-					   EdxltokenPhysicalDynamicIndexScan);
+void CParseHandlerDynamicIndexScan::StartElement(const XMLCh *const,  // element_uri,
+                                                 const XMLCh *const element_local_name,
+                                                 const XMLCh *const,  // element_qname
+                                                 const Attributes &attrs) {
+  StartElementHelper(element_local_name, attrs, EdxltokenPhysicalDynamicIndexScan);
 
-	m_part_index_id = CDXLOperatorFactory::ExtractConvertAttrValueToUlong(
-		m_parse_handler_mgr->GetDXLMemoryManager(), attrs, EdxltokenPartIndexId,
-		EdxltokenPhysicalDynamicIndexScan);
-	m_part_index_id_printable =
-		CDXLOperatorFactory::ExtractConvertAttrValueToUlong(
-			m_parse_handler_mgr->GetDXLMemoryManager(), attrs,
-			EdxltokenPartIndexIdPrintable, EdxltokenPhysicalDynamicIndexScan,
-			true /*is_optional*/, m_part_index_id);
+  m_selector_ids = CDXLOperatorFactory::ExtractConvertValuesToArray(
+      m_parse_handler_mgr->GetDXLMemoryManager(), attrs, EdxltokenSelectorIds, EdxltokenPhysicalDynamicIndexScan);
 }
 
 //---------------------------------------------------------------------------
@@ -85,15 +70,11 @@ CParseHandlerDynamicIndexScan::StartElement(
 //		Invoked by Xerces to process a closing tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerDynamicIndexScan::EndElement(const XMLCh *const,  // element_uri,
-										  const XMLCh *const element_local_name,
-										  const XMLCh *const  // element_qname
-)
-{
-	EndElementHelper(element_local_name, EdxltokenPhysicalDynamicIndexScan,
-					 m_part_index_id, m_part_index_id_printable);
+void CParseHandlerDynamicIndexScan::EndElement(const XMLCh *const,  // element_uri,
+                                               const XMLCh *const element_local_name,
+                                               const XMLCh *const  // element_qname
+) {
+  EndElementHelper(element_local_name, EdxltokenPhysicalDynamicIndexScan, m_selector_ids /*m_selector_ids*/);
 }
-
 
 // EOF

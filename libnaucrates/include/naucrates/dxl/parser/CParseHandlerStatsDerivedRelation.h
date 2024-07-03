@@ -17,8 +17,7 @@
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 #include "naucrates/md/CDXLStatsDerivedRelation.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 using namespace gpnaucrates;
@@ -33,55 +32,51 @@ XERCES_CPP_NAMESPACE_USE
 //		Base parse handler class for derived relation statistics
 //
 //---------------------------------------------------------------------------
-class CParseHandlerStatsDerivedRelation : public CParseHandlerBase
-{
-private:
-	// number of rows in the relation
-	CDouble m_rows;
+class CParseHandlerStatsDerivedRelation : public CParseHandlerBase {
+ private:
+  // number of rows in the relation
+  CDouble m_rows;
 
-	// flag to express that the statistics is on an empty input
-	BOOL m_empty;
+  // flag to express that the statistics is on an empty input
+  BOOL m_empty;
 
-	// relation stats
-	CDXLStatsDerivedRelation *m_dxl_stats_derived_relation;
+  // number of blocks in the relation (not always up to-to-date)
+  ULONG m_relpages;
 
-	// private copy ctor
-	CParseHandlerStatsDerivedRelation(
-		const CParseHandlerStatsDerivedRelation &);
+  // number of all-visible blocks in the relation (not always up-to-date)
+  ULONG m_relallvisible;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // relation stats
+  CDXLStatsDerivedRelation *m_dxl_stats_derived_relation;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-public:
-	// ctor
-	CParseHandlerStatsDerivedRelation(CMemoryPool *mp,
-									  CParseHandlerManager *parse_handler_mgr,
-									  CParseHandlerBase *parse_handler_root);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// dtor
-	virtual ~CParseHandlerStatsDerivedRelation();
+ public:
+  CParseHandlerStatsDerivedRelation(const CParseHandlerStatsDerivedRelation &) = delete;
 
-	// the derived relation stats
-	CDXLStatsDerivedRelation *
-	GetDxlStatsDrvdRelation() const
-	{
-		return m_dxl_stats_derived_relation;
-	}
+  // ctor
+  CParseHandlerStatsDerivedRelation(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                    CParseHandlerBase *parse_handler_root);
+
+  // dtor
+  ~CParseHandlerStatsDerivedRelation() override;
+
+  // the derived relation stats
+  CDXLStatsDerivedRelation *GetDxlStatsDrvdRelation() const { return m_dxl_stats_derived_relation; }
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerStatsDerivedRelation_H
+#endif  // !GPDXL_CParseHandlerStatsDerivedRelation_H
 
 // EOF

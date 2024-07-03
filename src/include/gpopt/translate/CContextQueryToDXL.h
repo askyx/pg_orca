@@ -22,9 +22,9 @@
 
 #define GPDXL_CTE_ID_START 1
 #define GPDXL_COL_ID_START 1
+#define GPDXL_QUERY_ID_START 1
 
-namespace gpdxl
-{
+namespace gpdxl {
 // fwd declarations
 class CTranslatorQueryToDXL;
 class CTranslatorScalarToDXL;
@@ -38,35 +38,39 @@ class CTranslatorScalarToDXL;
 //		recursively translating a Query tree to DXL tree.
 //
 //---------------------------------------------------------------------------
-class CContextQueryToDXL
-{
-	friend class CTranslatorQueryToDXL;
-	friend class CTranslatorScalarToDXL;
+class CContextQueryToDXL {
+  friend class CTranslatorQueryToDXL;
+  friend class CTranslatorScalarToDXL;
 
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+ private:
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// counter for generating unique column ids
-	CIdGenerator *m_colid_counter;
+  // counter for generating unique column ids
+  CIdGenerator *m_colid_counter;
 
-	// counter for generating unique CTE ids
-	CIdGenerator *m_cte_id_counter;
+  // counter for generating unique CTE ids
+  CIdGenerator *m_cte_id_counter;
 
-	// does the query have any distributed tables?
-	BOOL m_has_distributed_tables;
+  // counter for upper-level query and its subqueries
+  CIdGenerator *m_queryid_counter;
 
-	// What operator classes are used in the distribution keys?
-	DistributionHashOpsKind m_distribution_hashops;
+  // does the query have any distributed tables?
+  BOOL m_has_distributed_tables;
 
-public:
-	// ctor
-	CContextQueryToDXL(CMemoryPool *mp);
+  // What operator classes are used in the distribution keys?
+  DistributionHashOpsKind m_distribution_hashops;
 
-	// dtor
-	~CContextQueryToDXL();
+ public:
+  // ctor
+  CContextQueryToDXL(CMemoryPool *mp);
+
+  // dtor
+  ~CContextQueryToDXL();
+
+  ULONG GetNextQueryId();
 };
 }  // namespace gpdxl
-#endif	// GPDXL_CContextQueryToDXL_H
+#endif  // GPDXL_CContextQueryToDXL_H
 
-//EOF
+// EOF

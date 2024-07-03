@@ -14,9 +14,7 @@
 #include "gpopt/search/CJob.h"
 #include "gpopt/search/CJobStateMachine.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // prototypes
@@ -32,101 +30,88 @@ class CXform;
 //		Runs the given transformation (XForm) rule.
 //
 //---------------------------------------------------------------------------
-class CJobTransformation : public CJob
-{
-public:
-	// transition events of a transformation
-	enum EEvent
-	{
-		eevCompleted,
+class CJobTransformation : public CJob {
+ public:
+  // transition events of a transformation
+  enum EEvent {
+    eevCompleted,
 
-		eevSentinel
-	};
+    eevSentinel
+  };
 
-	// states of a transformation
-	enum EState
-	{
-		estInitialized = 0,
-		estCompleted,
+  // states of a transformation
+  enum EState {
+    estInitialized = 0,
+    estCompleted,
 
-		estSentinel
-	};
+    estSentinel
+  };
 
-private:
-	// shorthand for job state machine
-	typedef CJobStateMachine<EState, estSentinel, EEvent, eevSentinel> JSM;
+ private:
+  // shorthand for job state machine
+  using JSM = CJobStateMachine<EState, estSentinel, EEvent, eevSentinel>;
 
-	// target group expression
-	CGroupExpression *m_pgexpr;
+  // target group expression
+  CGroupExpression *m_pgexpr;
 
-	// xform to apply to group expression
-	CXform *m_xform;
+  // xform to apply to group expression
+  CXform *m_xform;
 
-	// job state machine
-	JSM m_jsm;
+  // job state machine
+  JSM m_jsm;
 
-	// apply transformation action
-	static EEvent EevtTransform(CSchedulerContext *psc, CJob *pj);
+  // apply transformation action
+  static EEvent EevtTransform(CSchedulerContext *psc, CJob *pj);
 
-	// private copy ctor
-	CJobTransformation(const CJobTransformation &);
+ public:
+  CJobTransformation(const CJobTransformation &) = delete;
 
-public:
-	// ctor
-	CJobTransformation();
+  // ctor
+  CJobTransformation();
 
-	// dtor
-	virtual ~CJobTransformation();
+  // dtor
+  ~CJobTransformation() override;
 
-	// initialize job
-	void Init(CGroupExpression *pgexpr, CXform *pxform);
+  // initialize job
+  void Init(CGroupExpression *pgexpr, CXform *pxform);
 
-	// schedule a new transformation job
-	static void ScheduleJob(CSchedulerContext *psc, CGroupExpression *pgexpr,
-							CXform *pxform, CJob *pjParent);
+  // schedule a new transformation job
+  static void ScheduleJob(CSchedulerContext *psc, CGroupExpression *pgexpr, CXform *pxform, CJob *pjParent);
 
-	// job's main function
-	virtual BOOL FExecute(CSchedulerContext *psc);
+  // job's main function
+  BOOL FExecute(CSchedulerContext *psc) override;
 
 #ifdef GPOS_DEBUG
 
-	// print function
-	virtual IOstream &OsPrint(IOstream &os);
+  // print function
+  IOstream &OsPrint(IOstream &os) const override;
 
-	// dump state machine diagram in graphviz format
-	virtual IOstream &
-	OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os,
-						const WCHAR *wszTitle) const
-	{
-		(void) m_jsm.OsDiagramToGraphviz(mp, os, wszTitle);
+  // dump state machine diagram in graphviz format
+  virtual IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const WCHAR *wszTitle) const {
+    (void)m_jsm.OsDiagramToGraphviz(mp, os, wszTitle);
 
-		return os;
-	}
+    return os;
+  }
 
-	// compute unreachable states
-	void
-	Unreachable(CMemoryPool *mp, EState **ppestate, ULONG *pulSize) const
-	{
-		m_jsm.Unreachable(mp, ppestate, pulSize);
-	}
+  // compute unreachable states
+  void Unreachable(CMemoryPool *mp, EState **ppestate, ULONG *pulSize) const {
+    m_jsm.Unreachable(mp, ppestate, pulSize);
+  }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-	// conversion function
-	static CJobTransformation *
-	PjConvert(CJob *pj)
-	{
-		GPOS_ASSERT(NULL != pj);
-		GPOS_ASSERT(EjtTransformation == pj->Ejt());
+  // conversion function
+  static CJobTransformation *PjConvert(CJob *pj) {
+    GPOS_ASSERT(nullptr != pj);
+    GPOS_ASSERT(EjtTransformation == pj->Ejt());
 
-		return dynamic_cast<CJobTransformation *>(pj);
-	}
+    return dynamic_cast<CJobTransformation *>(pj);
+  }
 
-};	// class CJobTransformation
+};  // class CJobTransformation
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CJobTransformation_H
-
+#endif  // !GPOPT_CJobTransformation_H
 
 // EOF

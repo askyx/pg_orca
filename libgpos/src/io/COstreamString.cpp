@@ -16,7 +16,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		COstreamString::COstreamString
@@ -25,9 +24,8 @@ using namespace gpos;
 //		ctor
 //
 //---------------------------------------------------------------------------
-COstreamString::COstreamString(CWString *pws) : COstream(), m_string(pws)
-{
-	GPOS_ASSERT(m_string && "Backing string cannot be NULL");
+COstreamString::COstreamString(CWString *pws) : COstream(), m_string(pws) {
+  GPOS_ASSERT(m_string && "Backing string cannot be NULL");
 }
 
 //---------------------------------------------------------------------------
@@ -38,12 +36,10 @@ COstreamString::COstreamString(CWString *pws) : COstream(), m_string(pws)
 //		WCHAR array write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &
-COstreamString::operator<<(const WCHAR *wc_array)
-{
-	m_string->AppendWideCharArray(wc_array);
+IOstream &COstreamString::operator<<(const WCHAR *wc_array) {
+  m_string->AppendWideCharArray(wc_array);
 
-	return *this;
+  return *this;
 }
 
 //---------------------------------------------------------------------------
@@ -54,14 +50,11 @@ COstreamString::operator<<(const WCHAR *wc_array)
 //		CHAR array write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &
-COstreamString::operator<<(const CHAR *c)
-{
-	m_string->AppendCharArray(c);
+IOstream &COstreamString::operator<<(const CHAR *c) {
+  m_string->AppendCharArray(c);
 
-	return *this;
+  return *this;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -71,17 +64,14 @@ COstreamString::operator<<(const CHAR *c)
 //		WCHAR write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &
-COstreamString::operator<<(const WCHAR wc)
-{
-	WCHAR wc_array[2];
-	wc_array[0] = wc;
-	wc_array[1] = L'\0';
-	m_string->AppendWideCharArray(wc_array);
+IOstream &COstreamString::operator<<(const WCHAR wc) {
+  WCHAR wc_array[2];
+  wc_array[0] = wc;
+  wc_array[1] = L'\0';
+  m_string->AppendWideCharArray(wc_array);
 
-	return *this;
+  return *this;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -91,16 +81,13 @@ COstreamString::operator<<(const WCHAR wc)
 //		CHAR write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &
-COstreamString::operator<<(const CHAR c)
-{
-	CHAR char_array[2];
-	char_array[0] = c;
-	char_array[1] = '\0';
-	m_string->AppendCharArray(char_array);
+IOstream &COstreamString::operator<<(const CHAR c) {
+  CHAR char_array[2];
+  char_array[0] = c;
+  char_array[1] = '\0';
+  m_string->AppendCharArray(char_array);
 
-	return *this;
+  return *this;
 }
-
 
 // EOF

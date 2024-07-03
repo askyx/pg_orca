@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerPhysicalOp.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -30,35 +29,30 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing a physical CTE Consumer operator
 //
 //---------------------------------------------------------------------------
-class CParseHandlerPhysicalCTEConsumer : public CParseHandlerPhysicalOp
-{
-private:
-	// private copy ctor
-	CParseHandlerPhysicalCTEConsumer(const CParseHandlerPhysicalCTEConsumer &);
+class CParseHandlerPhysicalCTEConsumer : public CParseHandlerPhysicalOp {
+ private:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	virtual void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	virtual void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerPhysicalCTEConsumer(const CParseHandlerPhysicalCTEConsumer &) = delete;
 
-public:
-	// ctor
-	CParseHandlerPhysicalCTEConsumer(CMemoryPool *mp,
-									 CParseHandlerManager *parse_handler_mgr,
-									 CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerPhysicalCTEConsumer(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                   CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerPhysicalCTEConsumer_H
+#endif  // !GPDXL_CParseHandlerPhysicalCTEConsumer_H
 
 // EOF

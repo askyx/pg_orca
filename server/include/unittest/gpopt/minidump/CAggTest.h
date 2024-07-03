@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CAggTest.h
@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CAggTest
@@ -23,21 +22,20 @@ namespace gpopt
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CAggTest
-{
-private:
-	// counter used to mark last successful test
-	static gpos::ULONG m_ulAggTestCounter;
+class CAggTest {
+ private:
+  // counter used to mark last successful test
+  static gpos::ULONG m_ulAggTestCounter;
 
-public:
-	// unittests
-	static gpos::GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static gpos::GPOS_RESULT EresUnittest();
 
-	static gpos::GPOS_RESULT EresUnittest_RunTests();
+  static gpos::GPOS_RESULT EresUnittest_RunTests();
 
-};	// class CAggTest
+};  // class CAggTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CAggTest_H
+#endif  // !GPOPT_CAggTest_H
 
 // EOF

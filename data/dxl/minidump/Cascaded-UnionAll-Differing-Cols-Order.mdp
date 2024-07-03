@@ -18,7 +18,7 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="3">
@@ -26,6 +26,7 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
           <dxl:CostParam Name="NLJFactor" Value="1.000000" LowerBound="0.500000" UpperBound="1.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="103027,101013,102120,103001,103014,103015,103022,103023,105000"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
@@ -162,41 +163,30 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
       <dxl:ColumnStatistics Mdid="1.17297865.1.1.5" Name="cmin" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
       <dxl:ColumnStatistics Mdid="1.17297865.1.1.4" Name="xmin" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
       <dxl:RelationStatistics Mdid="2.17297839.1.1" Name="foo_a" Rows="10.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.17297839.1.1" Name="foo_a" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
+      <dxl:Relation Mdid="6.17297839.1.1" Name="foo_a" IsTemporary="false" Rows="10.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
         <dxl:Columns>
           <dxl:Column Name="a1" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="a2" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="a3" Attno="3" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.17297891.1.1.3" Name="ctid" Width="6.000000" NullFreq="0.000000" NdvRemain="10.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
@@ -292,41 +282,30 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.17297865.1.1" Name="foo_b" Rows="10.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.17297865.1.1" Name="foo_b" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
+      <dxl:Relation Mdid="6.17297865.1.1" Name="foo_b" IsTemporary="false" Rows="10.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
         <dxl:Columns>
           <dxl:Column Name="b1" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="b2" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="b3" Attno="3" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.17297865.1.1.9" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="2.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
@@ -368,41 +347,30 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.17297891.1.1" Name="foo_c" Rows="10.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.17297891.1.1" Name="foo_c" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
+      <dxl:Relation Mdid="6.17297891.1.1" Name="foo_c" IsTemporary="false" Rows="10.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
         <dxl:Columns>
           <dxl:Column Name="c1" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c2" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c3" Attno="3" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.17297891.1.1.7" Name="cmax" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
@@ -501,7 +469,7 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
           <dxl:Column ColId="2" Attno="2" ColName="a2" TypeMdid="0.23.1.0"/>
         </dxl:Columns>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.17297839.1.1" TableName="foo_a">
+          <dxl:TableDescriptor Mdid="6.17297839.1.1" TableName="foo_a">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="a1" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="2" Attno="2" ColName="a2" TypeMdid="0.23.1.0"/>
@@ -523,7 +491,7 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
             <dxl:Column ColId="11" Attno="3" ColName="b1" TypeMdid="0.23.1.0"/>
           </dxl:Columns>
           <dxl:LogicalGet>
-            <dxl:TableDescriptor Mdid="0.17297865.1.1" TableName="foo_b">
+            <dxl:TableDescriptor Mdid="6.17297865.1.1" TableName="foo_b">
               <dxl:Columns>
                 <dxl:Column ColId="11" Attno="1" ColName="b1" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="12" Attno="2" ColName="b2" TypeMdid="0.23.1.0"/>
@@ -539,7 +507,7 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
             </dxl:TableDescriptor>
           </dxl:LogicalGet>
           <dxl:LogicalGet>
-            <dxl:TableDescriptor Mdid="0.17297891.1.1" TableName="foo_c">
+            <dxl:TableDescriptor Mdid="6.17297891.1.1" TableName="foo_c">
               <dxl:Columns>
                 <dxl:Column ColId="21" Attno="1" ColName="c1" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="22" Attno="2" ColName="c2" TypeMdid="0.23.1.0"/>
@@ -557,7 +525,7 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
         </dxl:UnionAll>
       </dxl:UnionAll>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="1">
+    <dxl:Plan Id="0" SpaceSize="2">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="1293.001354" Rows="30.000000" Width="8"/>
@@ -598,7 +566,7 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:Filter/>
-            <dxl:TableDescriptor Mdid="0.17297839.1.1" TableName="foo_a">
+            <dxl:TableDescriptor Mdid="6.17297839.1.1" TableName="foo_a">
               <dxl:Columns>
                 <dxl:Column ColId="0" Attno="1" ColName="a1" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="1" Attno="2" ColName="a2" TypeMdid="0.23.1.0"/>
@@ -625,7 +593,7 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:Filter/>
-            <dxl:TableDescriptor Mdid="0.17297865.1.1" TableName="foo_b">
+            <dxl:TableDescriptor Mdid="6.17297865.1.1" TableName="foo_b">
               <dxl:Columns>
                 <dxl:Column ColId="10" Attno="1" ColName="b1" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="11" Attno="2" ColName="b2" TypeMdid="0.23.1.0"/>
@@ -653,7 +621,7 @@ select a1, a2 from foo_a UNION ALL (select x1, x2 FROM (select b3, b2, b1 from f
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:Filter/>
-            <dxl:TableDescriptor Mdid="0.17297891.1.1" TableName="foo_c">
+            <dxl:TableDescriptor Mdid="6.17297891.1.1" TableName="foo_c">
               <dxl:Columns>
                 <dxl:Column ColId="20" Attno="1" ColName="c1" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="21" Attno="2" ColName="c2" TypeMdid="0.23.1.0"/>

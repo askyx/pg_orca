@@ -16,8 +16,7 @@
 
 #include "naucrates/statistics/CPoint.h"
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 using namespace gpos;
 using namespace gpmd;
 
@@ -30,41 +29,30 @@ using namespace gpmd;
 //
 //---------------------------------------------------------------------------
 
-class IBucket
-{
-private:
-	// private copy constructor
-	IBucket(const IBucket &);
+class IBucket {
+ private:
+ public:
+  IBucket &operator=(const IBucket &) = delete;
 
-	// private assignment operator
-	IBucket &operator=(const IBucket &);
+  IBucket(const IBucket &) = delete;
 
-public:
-	// c'tor
-	IBucket()
-	{
-	}
+  // c'tor
+  IBucket() = default;
 
-	// lower point
-	virtual CPoint *GetLowerBound() const = 0;
+  // lower point
+  virtual CPoint *GetLowerBound() const = 0;
 
-	// upper point
-	virtual CPoint *GetUpperBound() const = 0;
+  // upper point
+  virtual CPoint *GetUpperBound() const = 0;
 
-	// is bucket singleton?
-	BOOL
-	IsSingleton() const
-	{
-		return GetLowerBound()->Equals(GetUpperBound());
-	}
+  // is bucket singleton?
+  BOOL IsSingleton() const { return GetLowerBound()->Equals(GetUpperBound()); }
 
-	// d'tor
-	virtual ~IBucket()
-	{
-	}
+  // d'tor
+  virtual ~IBucket() = default;
 };
 }  // namespace gpnaucrates
 
-#endif	// !GPNAUCRATES_IBucket_H
+#endif  // !GPNAUCRATES_IBucket_H
 
 // EOF

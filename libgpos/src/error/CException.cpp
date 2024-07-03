@@ -17,23 +17,19 @@
 
 using namespace gpos;
 
-const CHAR *CException::m_severity[] = {"INVALID", "PANIC",	 "FATAL", "ERROR",
-										"WARNING", "NOTICE", "TRACE"};
-
+const CHAR *CException::m_severity[] = {"INVALID", "ERROR", "WARNING", "NOTICE", "TRACE"};
 
 // invalid exception
-const CException CException::m_invalid_exception(CException::ExmaInvalid,
-												 CException::ExmiInvalid);
+const CException CException::m_invalid_exception(CException::ExmaInvalid, CException::ExmiInvalid);
 
 // standard SQL error codes
 const CException::ErrCodeElem CException::m_errcode[] = {
-	{ExmiSQLDefault, "XX000"},					 // internal error
-	{ExmiSQLNotNullViolation, "23502"},			 // not null violation
-	{ExmiSQLCheckConstraintViolation, "23514"},	 // check constraint violation
-	{ExmiSQLMaxOneRow, "P0003"},				 // max one row
-	{ExmiSQLTest, "XXXXX"}						 // test sql state
+    {ExmiSQLDefault, "XX000"},                   // internal error
+    {ExmiSQLNotNullViolation, "23502"},          // not null violation
+    {ExmiSQLCheckConstraintViolation, "23514"},  // check constraint violation
+    {ExmiSQLMaxOneRow, "P0003"},                 // max one row
+    {ExmiSQLTest, "XXXXX"}                       // test sql state
 };
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,27 +41,9 @@ const CException::ErrCodeElem CException::m_errcode[] = {
 //		dynamically
 //
 //---------------------------------------------------------------------------
-CException::CException(ULONG major, ULONG minor, const CHAR *filename,
-					   ULONG line)
-	: m_major(major),
-	  m_minor(minor),
-	  m_filename(const_cast<CHAR *>(filename)),
-	  m_line(line)
-{
-	m_severity_level = CException::ExsevSentinel;
-	m_sql_state = GetSQLState(major, minor);
-}
-
-// ctor
-CException::CException(ULONG major, ULONG minor, const CHAR *filename,
-					   ULONG line, ULONG severity_level)
-	: m_major(major),
-	  m_minor(minor),
-	  m_filename(const_cast<CHAR *>(filename)),
-	  m_line(line),
-	  m_severity_level(severity_level)
-{
-	m_sql_state = GetSQLState(major, minor);
+CException::CException(ULONG major, ULONG minor, const CHAR *filename, ULONG line)
+    : m_major(major), m_minor(minor), m_filename(const_cast<CHAR *>(filename)), m_line(line) {
+  m_sql_state = GetSQLState(major, minor);
 }
 
 //---------------------------------------------------------------------------
@@ -77,13 +55,9 @@ CException::CException(ULONG major, ULONG minor, const CHAR *filename,
 //		in lookup structures etc.
 //
 //---------------------------------------------------------------------------
-CException::CException(ULONG major, ULONG minor)
-	: m_major(major), m_minor(minor), m_filename(NULL), m_line(0)
-{
-	m_severity_level = CException::ExsevSentinel;
-	m_sql_state = GetSQLState(major, minor);
+CException::CException(ULONG major, ULONG minor) : m_major(major), m_minor(minor), m_filename(nullptr), m_line(0) {
+  m_sql_state = GetSQLState(major, minor);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -96,59 +70,27 @@ CException::CException(ULONG major, ULONG minor)
 //			at a later point in time
 //
 //---------------------------------------------------------------------------
-void
-CException::Raise(const CHAR *filename, ULONG line, ULONG major, ULONG minor,
-				  ...)
-{
-	// manufacture actual exception object
-	CException exc(major, minor, filename, line);
+void CException::Raise(const CHAR *filename, ULONG line, ULONG major, ULONG minor, ...) {
+  // manufacture actual exception object
+  CException exc(major, minor, filename, line);
 
-	// during bootstrap there's no context object otherwise, record
-	// all details in the context object
-	if (NULL != ITask::Self())
-	{
-		CErrorContext *err_ctxt = CTask::Self()->ConvertErrCtxt();
+  // during bootstrap there's no context object otherwise, record
+  // all details in the context object
+  if (nullptr != ITask::Self()) {
+    CErrorContext *err_ctxt = CTask::Self()->ConvertErrCtxt();
 
-		VA_LIST va_list;
-		VA_START(va_list, minor);
+    VA_LIST va_list;
+    VA_START(va_list, minor);
 
-		err_ctxt->Record(exc, va_list);
+    err_ctxt->Record(exc, va_list);
 
-		VA_END(va_list);
+    VA_END(va_list);
 
-		err_ctxt->Serialize();
-	}
+    err_ctxt->Serialize();
+  }
 
-	Raise(exc);
+  Raise(exc);
 }
-
-
-void
-CException::Raise(const CHAR *filename, ULONG line, ULONG major, ULONG minor,
-				  ULONG severity_level...)
-{
-	// manufacture actual exception object
-	CException exc(major, minor, filename, line, severity_level);
-
-	// during bootstrap there's no context object otherwise, record
-	// all details in the context object
-	if (NULL != ITask::Self())
-	{
-		CErrorContext *err_ctxt = CTask::Self()->ConvertErrCtxt();
-
-		VA_LIST va_list;
-		VA_START(va_list, severity_level);
-
-		err_ctxt->Record(exc, va_list);
-
-		VA_END(va_list);
-
-		err_ctxt->Serialize();
-	}
-
-	Raise(exc);
-}
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -159,28 +101,23 @@ CException::Raise(const CHAR *filename, ULONG line, ULONG major, ULONG minor,
 //		Wrapper that asserts there is a pending error;
 //
 //---------------------------------------------------------------------------
-void
-CException::Reraise(CException exc, BOOL propagate)
-{
-	if (NULL != ITask::Self())
-	{
-		CErrorContext *err_ctxt = CTask::Self()->ConvertErrCtxt();
-		GPOS_ASSERT(err_ctxt->IsPending());
+void CException::Reraise(CException exc, BOOL propagate) {
+  if (nullptr != ITask::Self()) {
+    CErrorContext *err_ctxt = CTask::Self()->ConvertErrCtxt();
+    GPOS_ASSERT(err_ctxt->IsPending());
 
-		err_ctxt->SetRethrow();
+    err_ctxt->SetRethrow();
 
-		// serialize registered objects when current task propagates
-		// an exception thrown by a child task
-		if (propagate)
-		{
-			err_ctxt->GetStackDescriptor()->BackTrace();
-			err_ctxt->Serialize();
-		}
-	}
+    // serialize registered objects when current task propagates
+    // an exception thrown by a child task
+    if (propagate) {
+      err_ctxt->GetStackDescriptor()->BackTrace();
+      err_ctxt->Serialize();
+    }
+  }
 
-	Raise(exc);
+  Raise(exc);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -190,20 +127,16 @@ CException::Reraise(CException exc, BOOL propagate)
 //		Throw/rethrow interface
 //
 //---------------------------------------------------------------------------
-void
-CException::Raise(CException exc)
-{
+void CException::Raise(CException exc) {
 #ifdef GPOS_DEBUG
-	if (NULL != ITask::Self())
-	{
-		IErrorContext *err_ctxt = ITask::Self()->GetErrCtxt();
-		GPOS_ASSERT_IMP(err_ctxt->IsPending(),
-						err_ctxt->GetException() == exc &&
-							"Rethrow inconsistent with current error context");
-	}
-#endif	// GPOS_DEBUG
+  if (nullptr != ITask::Self()) {
+    IErrorContext *err_ctxt = ITask::Self()->GetErrCtxt();
+    GPOS_ASSERT_IMP(err_ctxt->IsPending(),
+                    err_ctxt->GetException() == exc && "Rethrow inconsistent with current error context");
+  }
+#endif  // GPOS_DEBUG
 
-	throw exc;
+  throw exc;
 }
 
 //---------------------------------------------------------------------------
@@ -214,25 +147,20 @@ CException::Raise(CException exc)
 //		Get sql state code for exception
 //
 //---------------------------------------------------------------------------
-const CHAR *
-CException::GetSQLState(ULONG major, ULONG minor)
-{
-	const CHAR *sql_state = m_errcode[0].m_sql_state;
-	if (ExmaSQL == major)
-	{
-		ULONG sql_states = GPOS_ARRAY_SIZE(m_errcode);
-		for (ULONG ul = 0; ul < sql_states; ul++)
-		{
-			ErrCodeElem errcode = m_errcode[ul];
-			if (minor == errcode.m_exception_num)
-			{
-				sql_state = errcode.m_sql_state;
-				break;
-			}
-		}
-	}
+const CHAR *CException::GetSQLState(ULONG major, ULONG minor) {
+  const CHAR *sql_state = m_errcode[0].m_sql_state;
+  if (ExmaSQL == major) {
+    ULONG sql_states = GPOS_ARRAY_SIZE(m_errcode);
+    for (ULONG ul = 0; ul < sql_states; ul++) {
+      ErrCodeElem errcode = m_errcode[ul];
+      if (minor == errcode.m_exception_num) {
+        sql_state = errcode.m_sql_state;
+        break;
+      }
+    }
+  }
 
-	return sql_state;
+  return sql_state;
 }
 
 // EOF

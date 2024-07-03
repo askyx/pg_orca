@@ -14,8 +14,7 @@
 #include "gpos/assert.h"
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		COstreamBasicTest
@@ -24,17 +23,16 @@ namespace gpos
 //		Static unit tests for messages
 //
 //---------------------------------------------------------------------------
-class COstreamBasicTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
-	static GPOS_RESULT EresUnittest_Strings();
-	static GPOS_RESULT EresUnittest_Numbers();
+class COstreamBasicTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
+  static GPOS_RESULT EresUnittest_Strings();
+  static GPOS_RESULT EresUnittest_Numbers();
 };
 }  // namespace gpos
 
-#endif	// !GPOS_COstreamBasicTest_H
+#endif  // !GPOS_COstreamBasicTest_H
 
 // EOF

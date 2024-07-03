@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 Pivotal, Inc.
+//	Copyright (C) 2013 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformPushGbDedupBelowJoin.h
@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformPushGbBelowJoin.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,38 +26,26 @@ using namespace gpos;
 //		Push dedup group by below join transform
 //
 //---------------------------------------------------------------------------
-class CXformPushGbDedupBelowJoin : public CXformPushGbBelowJoin
-{
-private:
-	// private copy ctor
-	CXformPushGbDedupBelowJoin(const CXformPushGbDedupBelowJoin &);
+class CXformPushGbDedupBelowJoin : public CXformPushGbBelowJoin {
+ private:
+ public:
+  CXformPushGbDedupBelowJoin(const CXformPushGbDedupBelowJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformPushGbDedupBelowJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformPushGbDedupBelowJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformPushGbDedupBelowJoin()
-	{
-	}
+  // dtor
+  ~CXformPushGbDedupBelowJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfPushGbDedupBelowJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfPushGbDedupBelowJoin; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformPushGbDedupBelowJoin";
-	}
+  const CHAR *SzId() const override { return "CXformPushGbDedupBelowJoin"; }
 
-};	// class CXformPushGbDedupBelowJoin
+};  // class CXformPushGbDedupBelowJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformPushGbDedupBelowJoin_H
+#endif  // !GPOPT_CXformPushGbDedupBelowJoin_H
 
 // EOF

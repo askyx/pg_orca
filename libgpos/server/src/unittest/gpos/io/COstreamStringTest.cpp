@@ -31,18 +31,16 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-COstreamStringTest::EresUnittest()
-{
-	CUnittest rgut[] = {
-		GPOS_UNITTEST_FUNC(COstreamStringTest::EresUnittest_Basic),
+COstreamStringTest::EresUnittest() {
+  CUnittest rgut[] = {
+      GPOS_UNITTEST_FUNC(COstreamStringTest::EresUnittest_Basic),
 #if defined(GPOS_DEBUG) && defined(__GLIBCXX__)
-		GPOS_UNITTEST_FUNC_ASSERT(COstreamStringTest::EresUnittest_EndlAssert),
+      GPOS_UNITTEST_FUNC_ASSERT(COstreamStringTest::EresUnittest_EndlAssert),
 #endif
-	};
+  };
 
-	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
+  return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,33 +51,31 @@ COstreamStringTest::EresUnittest()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-COstreamStringTest::EresUnittest_Basic()
-{
-	// create memory pool of 128KB
-	CAutoMemoryPool amp;
-	CMemoryPool *mp = amp.Pmp();
+COstreamStringTest::EresUnittest_Basic() {
+  // create memory pool of 128KB
+  CAutoMemoryPool amp;
+  CMemoryPool *mp = amp.Pmp();
 
-	CWStringDynamic str(mp);
+  CWStringDynamic str(mp);
 
-	// define basic stream over wide char out stream
-	COstreamString osb(&str);
+  // define basic stream over wide char out stream
+  COstreamString osb(&str);
 
-	// non-string, non-number types
-	WCHAR wc = 'W';
-	CHAR c = 'C';
-	ULONG ul = 102;
-	INT i = -10;
-	WCHAR wc_array[] = GPOS_WSZ_LIT("some regular string");
-	INT hex = 0xdeadbeef;
+  // non-string, non-number types
+  WCHAR wc = 'W';
+  CHAR c = 'C';
+  ULONG ul = 102;
+  INT i = -10;
+  WCHAR wc_array[] = GPOS_WSZ_LIT("some regular string");
+  INT hex = 0xdeadbeef;
 
-	osb << wc << c << ul << i << wc_array << COstream::EsmHex << hex;
+  osb << wc << c << ul << i << wc_array << COstream::EsmHex << hex;
 
-	CWStringConst sexp(GPOS_WSZ_LIT("WC102-10some regular stringdeadbeef"));
+  CWStringConst sexp(GPOS_WSZ_LIT("WC102-10some regular stringdeadbeef"));
 
-	GPOS_ASSERT(str.Equals(&sexp) &&
-				"Constructed string does not match expected output");
+  GPOS_UNITTEST_ASSERT(str.Equals(&sexp) && "Constructed string does not match expected output");
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
 
 #if defined(GPOS_DEBUG) && defined(__GLIBCXX__)
@@ -92,20 +88,19 @@ COstreamStringTest::EresUnittest_Basic()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-COstreamStringTest::EresUnittest_EndlAssert()
-{
-	// create memory pool of 1KB
-	CAutoMemoryPool amp;
-	CMemoryPool *mp = amp.Pmp();
+COstreamStringTest::EresUnittest_EndlAssert() {
+  // create memory pool of 1KB
+  CAutoMemoryPool amp;
+  CMemoryPool *mp = amp.Pmp();
 
-	CWStringDynamic str(mp);
+  CWStringDynamic str(mp);
 
-	// define basic stream over wide char out stream
-	COstreamString osb(&str);
+  // define basic stream over wide char out stream
+  COstreamString osb(&str);
 
-	osb << std::ends;
+  osb << std::ends;
 
-	return GPOS_FAILED;
+  return GPOS_FAILED;
 }
 #endif
 

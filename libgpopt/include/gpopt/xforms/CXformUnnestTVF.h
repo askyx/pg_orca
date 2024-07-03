@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,55 +26,39 @@ using namespace gpos;
 //		Unnest TVF with subquery arguments
 //
 //---------------------------------------------------------------------------
-class CXformUnnestTVF : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformUnnestTVF(const CXformUnnestTVF &);
+class CXformUnnestTVF : public CXformExploration {
+ private:
+  // helper for mapping subquery function arguments into columns
+  static CColRefArray *PdrgpcrSubqueries(CMemoryPool *mp, CExpression *pexprCTEProducer, CExpression *pexprCTEConsumer);
 
-	// helper for mapping subquery function arguments into columns
-	static CColRefArray *PdrgpcrSubqueries(CMemoryPool *mp,
-										   CExpression *pexprCTEProducer,
-										   CExpression *pexprCTEConsumer);
+  //	collect subquery arguments and return a Project expression
+  static CExpression *PexprProjectSubqueries(CMemoryPool *mp, CExpression *pexprTVF);
 
-	//	collect subquery arguments and return a Project expression
-	static CExpression *PexprProjectSubqueries(CMemoryPool *mp,
-											   CExpression *pexprTVF);
+ public:
+  CXformUnnestTVF(const CXformUnnestTVF &) = delete;
 
-public:
-	// ctor
-	explicit CXformUnnestTVF(CMemoryPool *mp);
+  // ctor
+  explicit CXformUnnestTVF(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformUnnestTVF()
-	{
-	}
+  // dtor
+  ~CXformUnnestTVF() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfUnnestTVF;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfUnnestTVF; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformUnnestTVF";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformUnnestTVF"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformUnnestTVF
+};  // class CXformUnnestTVF
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformUnnestTVF_H
+#endif  // !GPOPT_CXformUnnestTVF_H
 
 // EOF

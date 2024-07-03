@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformCollapseProject.h
@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformSubqueryUnnest.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,45 +26,33 @@ using namespace gpos;
 //		Transform that collapses two cascaded project nodes
 //
 //---------------------------------------------------------------------------
-class CXformCollapseProject : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformCollapseProject(const CXformCollapseProject &);
+class CXformCollapseProject : public CXformExploration {
+ private:
+ public:
+  CXformCollapseProject(const CXformCollapseProject &) = delete;
 
-public:
-	// ctor
-	explicit CXformCollapseProject(CMemoryPool *mp);
+  // ctor
+  explicit CXformCollapseProject(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformCollapseProject()
-	{
-	}
+  // dtor
+  ~CXformCollapseProject() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfCollapseProject;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfCollapseProject; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformCollapseProject";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformCollapseProject"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *, CXformResult *, CExpression *) const;
+  // actual transform
+  void Transform(CXformContext *, CXformResult *, CExpression *) const override;
 
-};	// class CXformCollapseProject
+};  // class CXformCollapseProject
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformCollapseProject_H
+#endif  // !GPOPT_CXformCollapseProject_H
 
 // EOF

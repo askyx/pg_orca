@@ -15,7 +15,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CPattern::PdpCreate
@@ -25,14 +24,11 @@ using namespace gpopt;
 //		expression has to take care of this on a higher level
 //
 //---------------------------------------------------------------------------
-CDrvdProp *
-CPattern::PdpCreate(CMemoryPool *  // mp
-) const
-{
-	GPOS_ASSERT(!"Cannot derive properties on pattern");
-	return NULL;
+CDrvdProp *CPattern::PdpCreate(CMemoryPool *  // mp
+) const {
+  GPOS_ASSERT(!"Cannot derive properties on pattern");
+  return nullptr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -43,14 +39,11 @@ CPattern::PdpCreate(CMemoryPool *  // mp
 //		expression has to take care of this on a higher level
 //
 //---------------------------------------------------------------------------
-CReqdProp *
-CPattern::PrpCreate(CMemoryPool *  // mp
-) const
-{
-	GPOS_ASSERT(!"Cannot compute required properties on pattern");
-	return NULL;
+CReqdProp *CPattern::PrpCreate(CMemoryPool *  // mp
+) const {
+  GPOS_ASSERT(!"Cannot compute required properties on pattern");
+  return nullptr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -60,12 +53,9 @@ CPattern::PrpCreate(CMemoryPool *  // mp
 //		match against an operator
 //
 //---------------------------------------------------------------------------
-BOOL
-CPattern::Matches(COperator *pop) const
-{
-	return Eopid() == pop->Eopid();
+BOOL CPattern::Matches(COperator *pop) const {
+  return Eopid() == pop->Eopid();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -75,11 +65,9 @@ CPattern::Matches(COperator *pop) const
 //		By default patterns are leaves; no need to call this function ever
 //
 //---------------------------------------------------------------------------
-BOOL
-CPattern::FInputOrderSensitive() const
-{
-	GPOS_ASSERT(!"Unexpected call to function FInputOrderSensitive");
-	return true;
+BOOL CPattern::FInputOrderSensitive() const {
+  GPOS_ASSERT(!"Unexpected call to function FInputOrderSensitive");
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -90,15 +78,12 @@ CPattern::FInputOrderSensitive() const
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CPattern::PopCopyWithRemappedColumns(CMemoryPool *,		  //mp,
-									 UlongToColRefMap *,  //colref_mapping,
-									 BOOL				  //must_exist
-)
-{
-	GPOS_ASSERT(
-		!"PopCopyWithRemappedColumns should not be called for a pattern");
-	return NULL;
+COperator *CPattern::PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
+                                                UlongToColRefMap *,  // colref_mapping,
+                                                BOOL                 // must_exist
+) {
+  GPOS_ASSERT(!"PopCopyWithRemappedColumns should not be called for a pattern");
+  return nullptr;
 }
 
 // EOF

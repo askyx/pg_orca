@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformSubqueryUnnest.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -29,39 +28,27 @@ using namespace gpos;
 //		have subquery arguments
 //
 //---------------------------------------------------------------------------
-class CXformSequenceProject2Apply : public CXformSubqueryUnnest
-{
-private:
-	// private copy ctor
-	CXformSequenceProject2Apply(const CXformSequenceProject2Apply &);
+class CXformSequenceProject2Apply : public CXformSubqueryUnnest {
+ private:
+ public:
+  CXformSequenceProject2Apply(const CXformSequenceProject2Apply &) = delete;
 
-public:
-	// ctor
-	explicit CXformSequenceProject2Apply(CMemoryPool *mp);
+  // ctor
+  explicit CXformSequenceProject2Apply(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformSequenceProject2Apply()
-	{
-	}
+  // dtor
+  ~CXformSequenceProject2Apply() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSequenceProject2Apply;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfSequenceProject2Apply; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSequenceProject2Apply";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformSequenceProject2Apply"; }
 
-};	// class CXformSequenceProject2Apply
+};  // class CXformSequenceProject2Apply
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSequenceProject2Apply_H
+#endif  // !GPOPT_CXformSequenceProject2Apply_H
 
 // EOF

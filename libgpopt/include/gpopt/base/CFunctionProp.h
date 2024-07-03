@@ -16,8 +16,7 @@
 
 #include "naucrates/md/IMDFunction.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 using namespace gpmd;
 
@@ -29,70 +28,46 @@ using namespace gpmd;
 //		Representation of function properties
 //
 //---------------------------------------------------------------------------
-class CFunctionProp : public CRefCount
-{
-private:
-	// function stability
-	IMDFunction::EFuncStbl m_efs;
+class CFunctionProp : public CRefCount, public DbgPrintMixin<CFunctionProp> {
+ private:
+  // function stability
+  IMDFunction::EFuncStbl m_efs;
 
-	// function data access
-	IMDFunction::EFuncDataAcc m_efda;
+  // does this expression have a volatile Function Scan
+  BOOL m_fHasVolatileFunctionScan;
 
-	// does this expression have a volatile Function Scan
-	BOOL m_fHasVolatileFunctionScan;
+  // is this function used as a scan operator
+  BOOL m_fScan;
 
-	// is this function used as a scan operator
-	BOOL m_fScan;
+ public:
+  CFunctionProp(const CFunctionProp &) = delete;
 
-	// hidden copy ctor
-	CFunctionProp(const CFunctionProp &);
+  // ctor
+  CFunctionProp(IMDFunction::EFuncStbl func_stability, BOOL fHasVolatileFunctionScan, BOOL fScan);
 
-public:
-	// ctor
-	CFunctionProp(IMDFunction::EFuncStbl func_stability,
-				  IMDFunction::EFuncDataAcc func_data_access,
-				  BOOL fHasVolatileFunctionScan, BOOL fScan);
+  // dtor
+  ~CFunctionProp() override;
 
-	// dtor
-	virtual ~CFunctionProp();
+  // function stability
+  IMDFunction::EFuncStbl Efs() const { return m_efs; }
 
-	// function stability
-	IMDFunction::EFuncStbl
-	Efs() const
-	{
-		return m_efs;
-	}
+  // does this expression have a volatile Function Scan
+  virtual BOOL FHasVolatileFunctionScan() const { return m_fHasVolatileFunctionScan; }
 
-	// function data access
-	virtual IMDFunction::EFuncDataAcc
-	Efda() const
-	{
-		return m_efda;
-	}
+  // check if must execute on a single host
+  BOOL NeedsSingletonExecution() const;
 
-	// does this expression have a volatile Function Scan
-	virtual BOOL
-	FHasVolatileFunctionScan() const
-	{
-		return m_fHasVolatileFunctionScan;
-	}
+  // print
+  IOstream &OsPrint(IOstream &os) const;
 
-	// check if must execute on a single host
-	BOOL NeedsSingletonExecution() const;
-
-	// print
-	IOstream &OsPrint(IOstream &os) const;
-
-};	// class CFunctionProp
+};  // class CFunctionProp
 
 // shorthand for printing
-inline IOstream &
-operator<<(IOstream &os, CFunctionProp &fp)
-{
-	return fp.OsPrint(os);
+inline IOstream &operator<<(IOstream &os, CFunctionProp &fp) {
+  return fp.OsPrint(os);
 }
 }  // namespace gpopt
 
-#endif	// !GPOPT_CFunctionProp_H
+#endif  // !GPOPT_CFunctionProp_H
 
 // EOF

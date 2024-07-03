@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Software, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CUnittestTest.h
@@ -14,9 +14,7 @@
 #include "gpos/base.h"
 #include "gpos/types.h"
 
-
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CUnittestTest
@@ -25,15 +23,14 @@ namespace gpos
 //		Unit test with parameter denoting subtest
 //
 //---------------------------------------------------------------------------
-class CUnittestTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresSubtest(ULONG ulSubtest);
+class CUnittestTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresSubtest(ULONG ulSubtest);
 
-};	// CAutoMutexTest
+};  // CAutoMutexTest
 }  // namespace gpos
 
-#endif	// !GPOS_CUnittestTest_H
+#endif  // !GPOS_CUnittestTest_H
 
 // EOF

@@ -3,10 +3,11 @@
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.000000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
-      <dxl:TraceFlags Value="103027,103001"/>
+      <dxl:PlanHint/>
+      <dxl:TraceFlags Value="102001,102002,102003,102144,103001,103027,103033"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:Type Mdid="0.26.1.0" Name="oid" IsRedistributable="true" IsHashable="true" IsMergeJoinable="true" IsComposite="false" IsFixedLength="true" Length="4" PassByValue="true">
@@ -870,35 +871,26 @@
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.281939.1.1" Name="hsdss__mgrs_coord" Rows="66979000.000000"/>
-      <dxl:Relation Mdid="0.281939.1.1" Name="hsdss__mgrs_coord" IsTemporary="false" HasOids="false" StorageType="AppendOnly, Column-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="7,5">
+      <dxl:Relation Mdid="6.281939.1.1" Name="hsdss__mgrs_coord" IsTemporary="false" Rows="66979000.000000" StorageType="AppendOnly, Column-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="7,5">
         <dxl:Columns>
           <dxl:Column Name="mgrs_coord" Attno="1" Mdid="0.1042.1.0" Nullable="false" ColWidth="15">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="prcs_lvl_id" Attno="2" Mdid="0.21.1.0" Nullable="true" ColWidth="2">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="sw_latit_coord" Attno="3" Mdid="0.1700.1.0" Nullable="false" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="sw_longit_coord" Attno="4" Mdid="0.1700.1.0" Nullable="false" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="load_ts" Attno="5" Mdid="0.1184.1.0" Nullable="false" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
     </dxl:Metadata>
@@ -917,7 +909,7 @@
           <dxl:ConstValue TypeMdid="0.23.1.0" Value="3"/>
         </dxl:Comparison>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.281939.1.1" TableName="hsdss__mgrs_coord">
+          <dxl:TableDescriptor Mdid="6.281939.1.1" TableName="hsdss__mgrs_coord">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="mgrs_coord" TypeMdid="0.1042.1.0" ColWidth="15"/>
               <dxl:Column ColId="2" Attno="2" ColName="prcs_lvl_id" TypeMdid="0.21.1.0"/>
@@ -935,7 +927,7 @@
     <dxl:Plan Id="0" SpaceSize="1">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="5894620.302042" Rows="65153219.439000" Width="46"/>
+          <dxl:Cost StartupCost="0" TotalCost="18863.539496" Rows="65153219.439000" Width="46"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="mgrs_coord">
@@ -958,7 +950,7 @@
         <dxl:SortingColumnList/>
         <dxl:TableScan>
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="4431216.912299" Rows="65153219.439000" Width="46"/>
+            <dxl:Cost StartupCost="0" TotalCost="5406.793553" Rows="65153219.439000" Width="46"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="mgrs_coord">
@@ -983,7 +975,7 @@
               <dxl:ConstValue TypeMdid="0.23.1.0" Value="3"/>
             </dxl:Comparison>
           </dxl:Filter>
-          <dxl:TableDescriptor Mdid="0.281939.1.1" TableName="hsdss__mgrs_coord">
+          <dxl:TableDescriptor Mdid="6.281939.1.1" TableName="hsdss__mgrs_coord">
             <dxl:Columns>
               <dxl:Column ColId="0" Attno="1" ColName="mgrs_coord" TypeMdid="0.1042.1.0" ColWidth="15"/>
               <dxl:Column ColId="1" Attno="2" ColName="prcs_lvl_id" TypeMdid="0.21.1.0"/>

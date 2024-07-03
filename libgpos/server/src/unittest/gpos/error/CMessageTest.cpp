@@ -16,7 +16,6 @@
 #include "gpos/memory/CAutoMemoryPool.h"
 #include "gpos/test/CUnittest.h"
 
-
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -29,15 +28,13 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMessageTest::EresUnittest()
-{
-	CUnittest rgut[] = {
-		GPOS_UNITTEST_FUNC(CMessageTest::EresUnittest_BasicWrapper),
-	};
+CMessageTest::EresUnittest() {
+  CUnittest rgut[] = {
+      GPOS_UNITTEST_FUNC(CMessageTest::EresUnittest_BasicWrapper),
+  };
 
-	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
+  return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -48,17 +45,15 @@ CMessageTest::EresUnittest()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMessageTest::EresUnittest_BasicWrapper()
-{
-	// create memory pool of 128KB
-	CAutoMemoryPool amp;
-	CMemoryPool *mp = amp.Pmp();
+CMessageTest::EresUnittest_BasicWrapper() {
+  // create memory pool of 128KB
+  CAutoMemoryPool amp;
+  CMemoryPool *mp = amp.Pmp();
 
-	return EresUnittest_Basic(mp,
-							  // parameters to Assert message
-							  __FILE__, __LINE__, GPOS_WSZ_LIT("!true"));
+  return EresUnittest_Basic(mp,
+                            // parameters to Assert message
+                            __FILE__, __LINE__, GPOS_WSZ_LIT("!true"));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -68,35 +63,33 @@ CMessageTest::EresUnittest_BasicWrapper()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMessageTest::EresUnittest_Basic(const void *pv, ...)
-{
-	const ULONG size = 2048;
+CMessageTest::EresUnittest_Basic(const void *pv, ...) {
+  const ULONG size = 2048;
 
-	CMemoryPool *mp = (CMemoryPool *) pv;
+  CMemoryPool *mp = (CMemoryPool *)pv;
 
-	// take pre-defined assertion exc message
-	CMessage *pmsg = CMessage::GetMessage(CException::ExmiAssert);
+  // take pre-defined assertion exc message
+  CMessage *pmsg = CMessage::GetMessage(CException::ExmiAssert);
 
-	GPOS_ASSERT(GPOS_MATCH_EX(pmsg->m_exception, CException::ExmaSystem,
-							  CException::ExmiAssert));
+  GPOS_UNITTEST_ASSERT(GPOS_MATCH_EX(pmsg->m_exception, CException::ExmaSystem, CException::ExmiAssert));
 
-	// target buffer for format test
-	WCHAR *wsz = GPOS_NEW_ARRAY(mp, WCHAR, size);
-	CWStringStatic wss(wsz, size);
+  // target buffer for format test
+  WCHAR *wsz = GPOS_NEW_ARRAY(mp, WCHAR, size);
+  CWStringStatic wss(wsz, size);
 
-	VA_LIST vl;
-	VA_START(vl, pv);
+  VA_LIST vl;
+  VA_START(vl, pv);
 
-	// manufacture an OOM message (no additional parameters)
-	pmsg->Format(&wss, vl);
+  // manufacture an OOM message (no additional parameters)
+  pmsg->Format(&wss, vl);
 
-	VA_END(vl);
+  VA_END(vl);
 
-	GPOS_TRACE(wsz);
+  GPOS_TRACE(wsz);
 
-	GPOS_DELETE_ARRAY(wsz);
+  GPOS_DELETE_ARRAY(wsz);
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
 
 // EOF

@@ -14,8 +14,7 @@
 #include "gpos/types.h"
 #include "gpos/utils.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		ITimer
@@ -24,40 +23,31 @@ namespace gpos
 //		Timer interface;
 //
 //---------------------------------------------------------------------------
-class ITimer
-{
-private:
-	// private copy ctor
-	ITimer(const ITimer &);
+class ITimer {
+ private:
+ public:
+  ITimer(const ITimer &) = delete;
 
-public:
-	// ctor
-	ITimer()
-	{
-	}
+  // ctor
+  ITimer() = default;
 
-	// dtor
-	virtual ~ITimer()
-	{
-	}
+  // dtor
+  virtual ~ITimer() = default;
 
-	// retrieve elapsed time in micro-seconds
-	virtual ULONG ElapsedUS() const = 0;
+  // retrieve elapsed time in micro-seconds
+  virtual ULONG ElapsedUS() const = 0;
 
-	// retrieve elapsed time in milli-seconds
-	ULONG
-	ElapsedMS() const
-	{
-		return ElapsedUS() / GPOS_USEC_IN_MSEC;
-	}
+  // retrieve elapsed time in milli-seconds
+  ULONG
+  ElapsedMS() const { return ElapsedUS() / GPOS_USEC_IN_MSEC; }
 
-	// restart timer
-	virtual void Restart() = 0;
+  // restart timer
+  virtual void Restart() = 0;
 
-};	// class ITimer
+};  // class ITimer
 
 }  // namespace gpos
 
-#endif	// !GPOS_ITimer_H
+#endif  // !GPOS_ITimer_H
 
 // EOF

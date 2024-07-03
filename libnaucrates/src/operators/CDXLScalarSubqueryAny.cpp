@@ -28,13 +28,9 @@ using namespace gpmd;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarSubqueryAny::CDXLScalarSubqueryAny(CMemoryPool *mp,
-											 IMDId *scalar_op_mdid,
-											 CMDName *scalar_op_mdname,
-											 ULONG colid)
-	: CDXLScalarSubqueryQuantified(mp, scalar_op_mdid, scalar_op_mdname, colid)
-{
-}
+CDXLScalarSubqueryAny::CDXLScalarSubqueryAny(CMemoryPool *mp, IMDId *scalar_op_mdid, CMDName *scalar_op_mdname,
+                                             ULONG colid)
+    : CDXLScalarSubqueryQuantified(mp, scalar_op_mdid, scalar_op_mdname, colid) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,10 +40,8 @@ CDXLScalarSubqueryAny::CDXLScalarSubqueryAny(CMemoryPool *mp,
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarSubqueryAny::GetDXLOperator() const
-{
-	return EdxlopScalarSubqueryAny;
+Edxlopid CDXLScalarSubqueryAny::GetDXLOperator() const {
+  return EdxlopScalarSubqueryAny;
 }
 
 //---------------------------------------------------------------------------
@@ -58,10 +52,8 @@ CDXLScalarSubqueryAny::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarSubqueryAny::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarSubqueryAny);
+const CWStringConst *CDXLScalarSubqueryAny::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarSubqueryAny);
 }
 
 // EOF

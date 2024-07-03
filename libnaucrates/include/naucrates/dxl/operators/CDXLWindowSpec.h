@@ -19,8 +19,7 @@
 #include "naucrates/dxl/operators/CDXLWindowFrame.h"
 #include "naucrates/md/CMDName.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -33,73 +32,55 @@ using namespace gpmd;
 //		representation of the logical query tree
 //
 //---------------------------------------------------------------------------
-class CDXLWindowSpec : public CRefCount
-{
-private:
-	// memory pool;
-	CMemoryPool *m_mp;
+class CDXLWindowSpec : public CRefCount {
+ private:
+  // memory pool;
+  CMemoryPool *m_mp;
 
-	// partition-by column identifiers
-	ULongPtrArray *m_partition_by_colid_array;
+  // partition-by column identifiers
+  ULongPtrArray *m_partition_by_colid_array;
 
-	// name of window specification
-	CMDName *m_mdname;
+  // name of window specification
+  CMDName *m_mdname;
 
-	// sorting columns
-	CDXLNode *m_sort_col_list_dxlnode;
+  // sorting columns
+  CDXLNode *m_sort_col_list_dxlnode;
 
-	// window frame associated with the window key
-	CDXLWindowFrame *m_window_frame;
+  // window frame associated with the window key
+  CDXLWindowFrame *m_window_frame;
 
-	// private copy ctor
-	CDXLWindowSpec(const CDXLWindowSpec &);
+  // private copy ctor
+  CDXLWindowSpec(const CDXLWindowSpec &);
 
-public:
-	// ctor
-	CDXLWindowSpec(CMemoryPool *mp, ULongPtrArray *partition_by_colid_array,
-				   CMDName *mdname, CDXLNode *sort_col_list_dxlnode,
-				   CDXLWindowFrame *window_frame);
+ public:
+  // ctor
+  CDXLWindowSpec(CMemoryPool *mp, ULongPtrArray *partition_by_colid_array, CMDName *mdname,
+                 CDXLNode *sort_col_list_dxlnode, CDXLWindowFrame *window_frame);
 
-	// dtor
-	virtual ~CDXLWindowSpec();
+  // dtor
+  ~CDXLWindowSpec() override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *) const;
+  // serialize operator in DXL format
+  virtual void SerializeToDXL(CXMLSerializer *) const;
 
-	// set window frame definition
-	void SetWindowFrame(CDXLWindowFrame *window_frame);
+  // set window frame definition
+  void SetWindowFrame(CDXLWindowFrame *window_frame);
 
-	// return window frame
-	CDXLWindowFrame *
-	GetWindowFrame() const
-	{
-		return m_window_frame;
-	}
+  // return window frame
+  CDXLWindowFrame *GetWindowFrame() const { return m_window_frame; }
 
-	// partition-by column identifiers
-	ULongPtrArray *
-	GetPartitionByColIdArray() const
-	{
-		return m_partition_by_colid_array;
-	}
+  // partition-by column identifiers
+  ULongPtrArray *GetPartitionByColIdArray() const { return m_partition_by_colid_array; }
 
-	// sort columns
-	CDXLNode *
-	GetSortColListDXL() const
-	{
-		return m_sort_col_list_dxlnode;
-	}
+  // sort columns
+  CDXLNode *GetSortColListDXL() const { return m_sort_col_list_dxlnode; }
 
-	// window specification name
-	CMDName *
-	MdName() const
-	{
-		return m_mdname;
-	}
+  // window specification name
+  CMDName *MdName() const { return m_mdname; }
 };
 
-typedef CDynamicPtrArray<CDXLWindowSpec, CleanupRelease> CDXLWindowSpecArray;
+using CDXLWindowSpecArray = CDynamicPtrArray<CDXLWindowSpec, CleanupRelease>;
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLWindowSpec_H
+#endif  // !GPDXL_CDXLWindowSpec_H
 
 // EOF

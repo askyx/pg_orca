@@ -3,10 +3,11 @@
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
-      <dxl:TraceFlags Value="103027,102007,103001"/>
+      <dxl:PlanHint/>
+      <dxl:TraceFlags Value="102001,102002,102003,102007,102144,103001,103027,103033"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:Type Mdid="0.16.1.0" Name="bool" IsRedistributable="true" IsHashable="true" IsMergeJoinable="true" IsComposite="false" IsFixedLength="true" Length="1" PassByValue="true">
@@ -1712,86 +1713,60 @@
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.504088.1.1" Name="customer" Rows="998706.000000"/>
-      <dxl:Relation Mdid="0.504088.1.1" Name="customer" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="24,18">
+      <dxl:Relation Mdid="6.504088.1.1" Name="customer" IsTemporary="false" Rows="998706.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="24,18">
         <dxl:Columns>
           <dxl:Column Name="c_customer_sk" Attno="1" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_customer_id" Attno="2" Mdid="0.1042.1.0" Nullable="false" ColWidth="16">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_current_cdemo_sk" Attno="3" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_current_hdemo_sk" Attno="4" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_current_addr_sk" Attno="5" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_first_shipto_date_sk" Attno="6" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_first_sales_date_sk" Attno="7" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_salutation" Attno="8" Mdid="0.1042.1.0" Nullable="true" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_first_name" Attno="9" Mdid="0.1042.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_last_name" Attno="10" Mdid="0.1042.1.0" Nullable="true" ColWidth="30">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_preferred_cust_flag" Attno="11" Mdid="0.1042.1.0" Nullable="true" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_birth_day" Attno="12" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_birth_month" Attno="13" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_birth_year" Attno="14" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_birth_country" Attno="15" Mdid="0.1043.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_login" Attno="16" Mdid="0.1042.1.0" Nullable="true" ColWidth="13">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_email_address" Attno="17" Mdid="0.1042.1.0" Nullable="true" ColWidth="50">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c_last_review_date" Attno="18" Mdid="0.1042.1.0" Nullable="true" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
     </dxl:Metadata>
@@ -1816,7 +1791,7 @@
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:LogicalGet>
-              <dxl:TableDescriptor Mdid="0.504088.1.1" TableName="customer">
+              <dxl:TableDescriptor Mdid="6.504088.1.1" TableName="customer">
                 <dxl:Columns>
                   <dxl:Column ColId="1" Attno="1" ColName="c_customer_sk" TypeMdid="0.23.1.0"/>
                   <dxl:Column ColId="2" Attno="2" ColName="c_customer_id" TypeMdid="0.1042.1.0" ColWidth="16"/>
@@ -1854,7 +1829,7 @@
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:LogicalGet>
-              <dxl:TableDescriptor Mdid="0.504088.1.1" TableName="customer">
+              <dxl:TableDescriptor Mdid="6.504088.1.1" TableName="customer">
                 <dxl:Columns>
                   <dxl:Column ColId="27" Attno="1" ColName="c_customer_sk" TypeMdid="0.23.1.0"/>
                   <dxl:Column ColId="28" Attno="2" ColName="c_customer_id" TypeMdid="0.1042.1.0" ColWidth="16"/>
@@ -1888,10 +1863,10 @@
         </dxl:UnionAll>
       </dxl:LogicalSelect>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="1">
+    <dxl:Plan Id="0" SpaceSize="6">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="36092.076172" Rows="998707.000000" Width="8"/>
+          <dxl:Cost StartupCost="0" TotalCost="1074.205091" Rows="998707.000000" Width="8"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="25" Alias="sale_type">
@@ -1902,7 +1877,7 @@
         <dxl:SortingColumnList/>
         <dxl:Append IsTarget="false" IsZapped="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="32189.876953" Rows="998707.000000" Width="8"/>
+            <dxl:Cost StartupCost="0" TotalCost="1038.331535" Rows="998707.000000" Width="8"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="25" Alias="sale_type">
@@ -1912,7 +1887,7 @@
           <dxl:Filter/>
           <dxl:Result>
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="16094.430664" Rows="998706.000000" Width="8"/>
+              <dxl:Cost StartupCost="0" TotalCost="517.168354" Rows="998706.000000" Width="8"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="25" Alias="sale_type">
@@ -1928,7 +1903,7 @@
             <dxl:OneTimeFilter/>
             <dxl:Result>
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="8291.040039" Rows="998706.000000" Width="8"/>
+                <dxl:Cost StartupCost="0" TotalCost="500.739640" Rows="998706.000000" Width="8"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="25" Alias="sale_type">
@@ -1939,11 +1914,11 @@
               <dxl:OneTimeFilter/>
               <dxl:TableScan>
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="487.649414" Rows="998706.000000" Width="1"/>
+                  <dxl:Cost StartupCost="0" TotalCost="495.816019" Rows="998706.000000" Width="1"/>
                 </dxl:Properties>
                 <dxl:ProjList/>
                 <dxl:Filter/>
-                <dxl:TableDescriptor Mdid="0.504088.1.1" TableName="customer">
+                <dxl:TableDescriptor Mdid="6.504088.1.1" TableName="customer">
                   <dxl:Columns>
                     <dxl:Column ColId="0" Attno="1" ColName="c_customer_sk" TypeMdid="0.23.1.0"/>
                     <dxl:Column ColId="18" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
@@ -1960,7 +1935,7 @@
           </dxl:Result>
           <dxl:Result>
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="8292.047852" Rows="1.000000" Width="8"/>
+              <dxl:Cost StartupCost="0" TotalCost="517.168354" Rows="1.000000" Width="8"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="51" Alias="sale_type">
@@ -1976,7 +1951,7 @@
             <dxl:OneTimeFilter/>
             <dxl:Result>
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="8291.040039" Rows="998706.000000" Width="8"/>
+                <dxl:Cost StartupCost="0" TotalCost="500.739640" Rows="998706.000000" Width="8"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="51" Alias="sale_type">
@@ -1987,11 +1962,11 @@
               <dxl:OneTimeFilter/>
               <dxl:TableScan>
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="487.649414" Rows="998706.000000" Width="1"/>
+                  <dxl:Cost StartupCost="0" TotalCost="495.816019" Rows="998706.000000" Width="1"/>
                 </dxl:Properties>
                 <dxl:ProjList/>
                 <dxl:Filter/>
-                <dxl:TableDescriptor Mdid="0.504088.1.1" TableName="customer">
+                <dxl:TableDescriptor Mdid="6.504088.1.1" TableName="customer">
                   <dxl:Columns>
                     <dxl:Column ColId="26" Attno="1" ColName="c_customer_sk" TypeMdid="0.23.1.0"/>
                     <dxl:Column ColId="44" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerScalarExpr.h
@@ -14,8 +14,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -28,48 +27,43 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing a top level scalar expression.
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarExpr : public CParseHandlerBase
-{
-private:
-	// the root of the parsed DXL tree constructed by the parse handler
-	CDXLNode *m_dxl_node;
+class CParseHandlerScalarExpr : public CParseHandlerBase {
+ private:
+  // the root of the parsed DXL tree constructed by the parse handler
+  CDXLNode *m_dxl_node;
 
-	// private copy ctor
-	CParseHandlerScalarExpr(const CParseHandlerScalarExpr &);
+ protected:
+  // returns the parse handler type
+  EDxlParseHandlerType GetParseHandlerType() const override;
 
-protected:
-	// returns the parse handler type
-	virtual EDxlParseHandlerType GetParseHandlerType() const;
+  // process notification of the beginning of an element.
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process notification of the beginning of an element.
-	virtual void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process notification of the end of an element.
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process notification of the end of an element.
-	virtual void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerScalarExpr(const CParseHandlerScalarExpr &) = delete;
 
-public:
-	// ctor
-	CParseHandlerScalarExpr(CMemoryPool *mp,
-							CParseHandlerManager *parse_handler_mgr,
-							CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerScalarExpr(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                          CParseHandlerBase *parse_handler_root);
 
-	// dtor
-	virtual ~CParseHandlerScalarExpr();
+  // dtor
+  ~CParseHandlerScalarExpr() override;
 
-	// root of constructed DXL expression
-	CDXLNode *CreateDXLNode() const;
+  // root of constructed DXL expression
+  CDXLNode *CreateDXLNode() const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerScalarExpr_H
+#endif  // !GPDXL_CParseHandlerScalarExpr_H
 
 // EOF

@@ -34,15 +34,7 @@ ULONG_PTR CJobTest::m_ulpCnt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CJobTest::CJobTest()
-	: CJob(),
-	  m_ett(EttSpawn),
-	  m_ulRounds(gpos::ulong_max),
-	  m_ulFanout(gpos::ulong_max),
-	  m_ulIters(gpos::ulong_max)
-{
-}
-
+CJobTest::CJobTest() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -52,10 +44,7 @@ CJobTest::CJobTest()
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CJobTest::~CJobTest()
-{
-}
-
+CJobTest::~CJobTest() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -65,29 +54,25 @@ CJobTest::~CJobTest()
 //		Execution of test job
 //
 //---------------------------------------------------------------------------
-BOOL
-CJobTest::FExecute(CSchedulerContext *psc)
-{
-	BOOL fRes = false;
+BOOL CJobTest::FExecute(CSchedulerContext *psc) {
+  BOOL fRes = false;
 
-	switch (m_ett)
-	{
-		case EttSpawn:
-			fRes = FSpawn(psc);
-			break;
+  switch (m_ett) {
+    case EttSpawn:
+      fRes = FSpawn(psc);
+      break;
 
-		case EttQueueu:
-			fRes = FQueue(psc);
-			break;
+    case EttQueueu:
+      fRes = FQueue(psc);
+      break;
 
-		case EttStartQueue:
-			fRes = FStartQueue(psc);
-			break;
-	}
+    case EttStartQueue:
+      fRes = FStartQueue(psc);
+      break;
+  }
 
-	return fRes;
+  return fRes;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -97,50 +82,44 @@ CJobTest::FExecute(CSchedulerContext *psc)
 //		Test job spawning
 //
 //---------------------------------------------------------------------------
-BOOL
-CJobTest::FSpawn(CSchedulerContext *psc)
-{
-	ULONG_PTR ulpOffset = m_ulpCnt++;
+BOOL CJobTest::FSpawn(CSchedulerContext *psc) {
+  ULONG_PTR ulpOffset = m_ulpCnt++;
 
 #ifdef GPOS_DEBUG
-	if (10 == ulpOffset && psc->Psched()->FTrackingJobs())
-	{
-		CWStringDynamic str(psc->GetGlobalMemoryPool());
-		COstreamString oss(&str);
+  if (10 == ulpOffset && psc->Psched()->FTrackingJobs()) {
+    CWStringDynamic str(psc->GetGlobalMemoryPool());
+    COstreamString oss(&str);
 
-		psc->Psched()->OsPrintActiveJobs(oss);
+    psc->Psched()->OsPrintActiveJobs(oss);
 
-		GPOS_TRACE(str.GetBuffer());
-	}
-#endif	// GPOS_DEBUG
+    GPOS_TRACE(str.GetBuffer());
+  }
+#endif  // GPOS_DEBUG
 
-	if (m_ulRounds > ulpOffset)
-	{
-		for (ULONG i = 0; i < m_ulFanout; i++)
-		{
-			// get new job from factory
-			CJob *pj = psc->Pjf()->PjCreate(CJob::EjtTest);
+  if (m_ulRounds > ulpOffset) {
+    for (ULONG i = 0; i < m_ulFanout; i++) {
+      // get new job from factory
+      CJob *pj = psc->Pjf()->PjCreate(CJob::EjtTest);
 
-			// initialize test job
-			CJobTest *pjt = PjConvert(pj);
-			pjt->Init(this);
+      // initialize test job
+      CJobTest *pjt = PjConvert(pj);
+      pjt->Init(this);
 
-			// schedule new job for execution as child
-			psc->Psched()->Add(pj, this);
+      // schedule new job for execution as child
+      psc->Psched()->Add(pj, this);
 
-			GPOS_CHECK_ABORT;
-		}
+      GPOS_CHECK_ABORT;
+    }
 
-		// after forking jobs burn a few CPU cycles
-		// to simulate an actual transformation
-		Loop();
+    // after forking jobs burn a few CPU cycles
+    // to simulate an actual transformation
+    Loop();
 
-		return false;
-	}
+    return false;
+  }
 
-	return true;
+  return true;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -150,35 +129,29 @@ CJobTest::FSpawn(CSchedulerContext *psc)
 //		Start jobs to be queued
 //
 //---------------------------------------------------------------------------
-BOOL
-CJobTest::FStartQueue(CSchedulerContext *psc)
-{
-	ULONG_PTR ulpOffset = m_ulpCnt++;
+BOOL CJobTest::FStartQueue(CSchedulerContext *psc) {
+  ULONG_PTR ulpOffset = m_ulpCnt++;
 
-	if (0 == ulpOffset)
-	{
-		for (ULONG i = 0; i < m_ulFanout; i++)
-		{
-			// get new job from factory
-			CJob *pj = psc->Pjf()->PjCreate(CJob::EjtTest);
+  if (0 == ulpOffset) {
+    for (ULONG i = 0; i < m_ulFanout; i++) {
+      // get new job from factory
+      CJob *pj = psc->Pjf()->PjCreate(CJob::EjtTest);
 
-			// initialize test job
-			CJobTest *pjt = PjConvert(pj);
-			pjt->Init(CJobTest::EttQueueu, m_ulRounds, m_ulFanout, m_ulIters,
-					  m_pjq);
+      // initialize test job
+      CJobTest *pjt = PjConvert(pj);
+      pjt->Init(CJobTest::EttQueueu, m_ulRounds, m_ulFanout, m_ulIters, m_pjq);
 
-			// schedule new job for execution as child
-			psc->Psched()->Add(pj, this);
+      // schedule new job for execution as child
+      psc->Psched()->Add(pj, this);
 
-			GPOS_CHECK_ABORT;
-		}
+      GPOS_CHECK_ABORT;
+    }
 
-		return false;
-	}
+    return false;
+  }
 
-	return true;
+  return true;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -188,52 +161,44 @@ CJobTest::FStartQueue(CSchedulerContext *psc)
 //		Test job queueing
 //
 //---------------------------------------------------------------------------
-BOOL
-CJobTest::FQueue(CSchedulerContext *psc)
-{
-	BOOL fCompleted = true;
+BOOL CJobTest::FQueue(CSchedulerContext *psc) {
+  BOOL fCompleted = true;
 
-	switch (m_pjq->EjqrAdd(this))
-	{
-		case CJobQueue::EjqrMain:
-			if (10 > m_ulFanout)
-			{
-				GPOS_TRACE(GPOS_WSZ_LIT("Queued job is not executing -> run"));
-			}
-			Loop();
+  switch (m_pjq->EjqrAdd(this)) {
+    case CJobQueue::EjqrMain:
+      if (10 > m_ulFanout) {
+        GPOS_TRACE(GPOS_WSZ_LIT("Queued job is not executing -> run"));
+      }
+      Loop();
 #ifdef GPOS_DEBUG
-			if (10 > m_ulFanout)
-			{
-				CWStringDynamic str(psc->GetGlobalMemoryPool());
-				COstreamString oss(&str);
-				m_pjq->OsPrintQueuedJobs(oss);
+      if (10 > m_ulFanout) {
+        CWStringDynamic str(psc->GetGlobalMemoryPool());
+        COstreamString oss(&str);
+        m_pjq->OsPrintQueuedJobs(oss);
 
-				GPOS_TRACE(str.GetBuffer());
-			}
-#endif	// GPOS_DEBUG
-			m_pjq->NotifyCompleted(psc);
-			break;
-			;
+        GPOS_TRACE(str.GetBuffer());
+      }
+#endif  // GPOS_DEBUG
+      m_pjq->NotifyCompleted(psc);
+      break;
+      ;
 
-		case CJobQueue::EjqrQueued:
-			if (10 > m_ulFanout)
-			{
-				GPOS_TRACE(GPOS_WSZ_LIT("Queued job is executing -> wait"));
-			}
-			fCompleted = false;
-			break;
+    case CJobQueue::EjqrQueued:
+      if (10 > m_ulFanout) {
+        GPOS_TRACE(GPOS_WSZ_LIT("Queued job is executing -> wait"));
+      }
+      fCompleted = false;
+      break;
 
-		case CJobQueue::EjqrCompleted:
-			if (10 > m_ulFanout)
-			{
-				GPOS_TRACE(GPOS_WSZ_LIT("Queued job has already completed"));
-			}
-			break;
-	}
+    case CJobQueue::EjqrCompleted:
+      if (10 > m_ulFanout) {
+        GPOS_TRACE(GPOS_WSZ_LIT("Queued job has already completed"));
+      }
+      break;
+  }
 
-	return fCompleted;
+  return fCompleted;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -243,25 +208,19 @@ CJobTest::FQueue(CSchedulerContext *psc)
 //		Burn some CPU to simulate actual work
 //
 //---------------------------------------------------------------------------
-void
-CJobTest::Loop()
-{
-	ULONG ulOuter = 0;
-	while (ulOuter < m_ulIters)
-	{
-		for (ULONG ulInner = ulOuter; ulInner > 0; ulInner--)
-		{
-			if (0 < ulOuter * (ulOuter + GPOPT_JOB_TEST_DUMMY_CONST))
-			{
-				ulOuter++;
-			}
-		}
-		ulOuter++;
+void CJobTest::Loop() const {
+  ULONG ulOuter = 0;
+  while (ulOuter < m_ulIters) {
+    for (ULONG ulInner = ulOuter; ulInner > 0; ulInner--) {
+      if (0 < ulOuter * (ulOuter + GPOPT_JOB_TEST_DUMMY_CONST)) {
+        ulOuter++;
+      }
+    }
+    ulOuter++;
 
-		GPOS_CHECK_ABORT;
-	}
+    GPOS_CHECK_ABORT;
+  }
 }
-
 
 #ifdef GPOS_DEBUG
 
@@ -273,13 +232,11 @@ CJobTest::Loop()
 //		Print job
 //
 //---------------------------------------------------------------------------
-IOstream &
-CJobTest::OsPrint(IOstream &os)
-{
-	os << "Test job, ";
-	return CJob::OsPrint(os);
+IOstream &CJobTest::OsPrint(IOstream &os) const {
+  os << "Test job, ";
+  return CJob::OsPrint(os);
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

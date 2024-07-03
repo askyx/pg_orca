@@ -16,14 +16,10 @@
 #include "gpopt/base/CReqdPropPlan.h"
 #include "gpopt/operators/CPhysicalSpool.h"
 
-
 using namespace gpopt;
 
-
 // initialization of static variables
-const CHAR *CEnfdRewindability::m_szRewindabilityMatching[ErmSentinel] = {
-	"satisfy"};
-
+const CHAR *CEnfdRewindability::m_szRewindabilityMatching[ErmSentinel] = {"satisfy"};
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -33,14 +29,10 @@ const CHAR *CEnfdRewindability::m_szRewindabilityMatching[ErmSentinel] = {
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CEnfdRewindability::CEnfdRewindability(CRewindabilitySpec *prs,
-									   ERewindabilityMatching erm)
-	: m_prs(prs), m_erm(erm)
-{
-	GPOS_ASSERT(NULL != prs);
-	GPOS_ASSERT(ErmSentinel > erm);
+CEnfdRewindability::CEnfdRewindability(CRewindabilitySpec *prs, ERewindabilityMatching erm) : m_prs(prs), m_erm(erm) {
+  GPOS_ASSERT(nullptr != prs);
+  GPOS_ASSERT(ErmSentinel > erm);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -50,11 +42,9 @@ CEnfdRewindability::CEnfdRewindability(CRewindabilitySpec *prs,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CEnfdRewindability::~CEnfdRewindability()
-{
-	CRefCount::SafeRelease(m_prs);
+CEnfdRewindability::~CEnfdRewindability() {
+  CRefCount::SafeRelease(m_prs);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -66,23 +56,19 @@ CEnfdRewindability::~CEnfdRewindability()
 //		specified matching type
 //
 //---------------------------------------------------------------------------
-BOOL
-CEnfdRewindability::FCompatible(CRewindabilitySpec *prs) const
-{
-	GPOS_ASSERT(NULL != prs);
+BOOL CEnfdRewindability::FCompatible(CRewindabilitySpec *prs) const {
+  GPOS_ASSERT(nullptr != prs);
 
-	switch (m_erm)
-	{
-		case ErmSatisfy:
-			return prs->FSatisfies(m_prs);
+  switch (m_erm) {
+    case ErmSatisfy:
+      return prs->FSatisfies(m_prs);
 
-		case ErmSentinel:
-			GPOS_ASSERT("invalid matching type");
-	}
+    case ErmSentinel:
+      GPOS_ASSERT("invalid matching type");
+  }
 
-	return false;
+  return false;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -93,11 +79,9 @@ CEnfdRewindability::FCompatible(CRewindabilitySpec *prs) const
 //
 //---------------------------------------------------------------------------
 ULONG
-CEnfdRewindability::HashValue() const
-{
-	return gpos::CombineHashes(m_erm + 1, m_prs->HashValue());
+CEnfdRewindability::HashValue() const {
+  return gpos::CombineHashes(m_erm + 1, m_prs->HashValue());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -107,18 +91,14 @@ CEnfdRewindability::HashValue() const
 // 		Get rewindability enforcing type for the given operator
 //
 //---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType
-CEnfdRewindability::Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical,
-						 BOOL fRewindabilityReqd) const
-{
-	if (fRewindabilityReqd)
-	{
-		return popPhysical->EpetRewindability(exprhdl, this);
-	}
+CEnfdProp::EPropEnforcingType CEnfdRewindability::Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical,
+                                                       BOOL fRewindabilityReqd) const {
+  if (fRewindabilityReqd) {
+    return popPhysical->EpetRewindability(exprhdl, this);
+  }
 
-	return EpetUnnecessary;
+  return EpetUnnecessary;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -128,13 +108,10 @@ CEnfdRewindability::Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical,
 //		Print function
 //
 //---------------------------------------------------------------------------
-IOstream &
-CEnfdRewindability::OsPrint(IOstream &os) const
-{
-	(void) m_prs->OsPrint(os);
+IOstream &CEnfdRewindability::OsPrint(IOstream &os) const {
+  (void)m_prs->OsPrint(os);
 
-	return os << " match: " << m_szRewindabilityMatching[m_erm];
+  return os << " match: " << m_szRewindabilityMatching[m_erm];
 }
-
 
 // EOF

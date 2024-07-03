@@ -22,7 +22,6 @@
 #include "gpopt/search/CSchedulerContext.h"
 #include "gpopt/xforms/CXformFactory.h"
 
-
 using namespace gpopt;
 
 // State transition diagram for group expression implementation job state machine;
@@ -55,51 +54,36 @@ using namespace gpopt;
 // +-------------------------+
 //
 const CJobGroupExpressionImplementation::EEvent
-	rgeev[CJobGroupExpressionImplementation::estSentinel]
-		 [CJobGroupExpressionImplementation::estSentinel] = {
-			 {// estInitialized
-			  CJobGroupExpressionImplementation::eevImplementingChildren,
-			  CJobGroupExpressionImplementation::eevChildrenImplemented,
-			  CJobGroupExpressionImplementation::eevSentinel,
-			  CJobGroupExpressionImplementation::eevSentinel},
-			 {// estChildrenImplemented
-			  CJobGroupExpressionImplementation::eevSentinel,
-			  CJobGroupExpressionImplementation::eevImplementingSelf,
-			  CJobGroupExpressionImplementation::eevSelfImplemented,
-			  CJobGroupExpressionImplementation::eevSentinel},
-			 {// estSelfImplemented
-			  CJobGroupExpressionImplementation::eevSentinel,
-			  CJobGroupExpressionImplementation::eevSentinel,
-			  CJobGroupExpressionImplementation::eevSentinel,
-			  CJobGroupExpressionImplementation::eevFinalized},
-			 {// estCompleted
-			  CJobGroupExpressionImplementation::eevSentinel,
-			  CJobGroupExpressionImplementation::eevSentinel,
-			  CJobGroupExpressionImplementation::eevSentinel,
-			  CJobGroupExpressionImplementation::eevSentinel},
+    rgeev[CJobGroupExpressionImplementation::estSentinel][CJobGroupExpressionImplementation::estSentinel] = {
+        {// estInitialized
+         CJobGroupExpressionImplementation::eevImplementingChildren,
+         CJobGroupExpressionImplementation::eevChildrenImplemented, CJobGroupExpressionImplementation::eevSentinel,
+         CJobGroupExpressionImplementation::eevSentinel},
+        {// estChildrenImplemented
+         CJobGroupExpressionImplementation::eevSentinel, CJobGroupExpressionImplementation::eevImplementingSelf,
+         CJobGroupExpressionImplementation::eevSelfImplemented, CJobGroupExpressionImplementation::eevSentinel},
+        {// estSelfImplemented
+         CJobGroupExpressionImplementation::eevSentinel, CJobGroupExpressionImplementation::eevSentinel,
+         CJobGroupExpressionImplementation::eevSentinel, CJobGroupExpressionImplementation::eevFinalized},
+        {// estCompleted
+         CJobGroupExpressionImplementation::eevSentinel, CJobGroupExpressionImplementation::eevSentinel,
+         CJobGroupExpressionImplementation::eevSentinel, CJobGroupExpressionImplementation::eevSentinel},
 };
 
 #ifdef GPOS_DEBUG
 
 // names for states
-const WCHAR rgwszStates[CJobGroupExpressionImplementation::estSentinel]
-					   [GPOPT_FSM_NAME_LENGTH] = {
-						   GPOS_WSZ_LIT("initialized"),
-						   GPOS_WSZ_LIT("children implemented"),
-						   GPOS_WSZ_LIT("self implemented"),
-						   GPOS_WSZ_LIT("completed")};
+const WCHAR rgwszStates[CJobGroupExpressionImplementation::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
+    GPOS_WSZ_LIT("initialized"), GPOS_WSZ_LIT("children implemented"), GPOS_WSZ_LIT("self implemented"),
+    GPOS_WSZ_LIT("completed")};
 
 // names for events
-const WCHAR rgwszEvents[CJobGroupExpressionImplementation::eevSentinel]
-					   [GPOPT_FSM_NAME_LENGTH] = {
-						   GPOS_WSZ_LIT("implementing child groups"),
-						   GPOS_WSZ_LIT("implemented children groups"),
-						   GPOS_WSZ_LIT("applying implementation xforms"),
-						   GPOS_WSZ_LIT("applied implementation xforms"),
-						   GPOS_WSZ_LIT("finalized")};
+const WCHAR rgwszEvents[CJobGroupExpressionImplementation::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
+    GPOS_WSZ_LIT("implementing child groups"), GPOS_WSZ_LIT("implemented children groups"),
+    GPOS_WSZ_LIT("applying implementation xforms"), GPOS_WSZ_LIT("applied implementation xforms"),
+    GPOS_WSZ_LIT("finalized")};
 
-#endif	// GPOS_DEBUG
-
+#endif  // GPOS_DEBUG
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -109,10 +93,7 @@ const WCHAR rgwszEvents[CJobGroupExpressionImplementation::eevSentinel]
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CJobGroupExpressionImplementation::CJobGroupExpressionImplementation()
-{
-}
-
+CJobGroupExpressionImplementation::CJobGroupExpressionImplementation() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -122,10 +103,7 @@ CJobGroupExpressionImplementation::CJobGroupExpressionImplementation()
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CJobGroupExpressionImplementation::~CJobGroupExpressionImplementation()
-{
-}
-
+CJobGroupExpressionImplementation::~CJobGroupExpressionImplementation() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -135,27 +113,24 @@ CJobGroupExpressionImplementation::~CJobGroupExpressionImplementation()
 //		Initialize job
 //
 //---------------------------------------------------------------------------
-void
-CJobGroupExpressionImplementation::Init(CGroupExpression *pgexpr)
-{
-	CJobGroupExpression::Init(pgexpr);
-	GPOS_ASSERT(pgexpr->Pop()->FLogical());
+void CJobGroupExpressionImplementation::Init(CGroupExpression *pgexpr) {
+  CJobGroupExpression::Init(pgexpr);
+  GPOS_ASSERT(pgexpr->Pop()->FLogical());
 
-	m_jsm.Init(rgeev
+  m_jsm.Init(rgeev
 #ifdef GPOS_DEBUG
-			   ,
-			   rgwszStates, rgwszEvents
-#endif	// GPOS_DEBUG
-	);
+             ,
+             rgwszStates, rgwszEvents
+#endif  // GPOS_DEBUG
+  );
 
-	// set job actions
-	m_jsm.SetAction(estInitialized, EevtImplementChildren);
-	m_jsm.SetAction(estChildrenImplemented, EevtImplementSelf);
-	m_jsm.SetAction(estSelfImplemented, EevtFinalize);
+  // set job actions
+  m_jsm.SetAction(estInitialized, EevtImplementChildren);
+  m_jsm.SetAction(estChildrenImplemented, EevtImplementSelf);
+  m_jsm.SetAction(estSelfImplemented, EevtFinalize);
 
-	CJob::SetInit();
+  CJob::SetInit();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -165,26 +140,21 @@ CJobGroupExpressionImplementation::Init(CGroupExpression *pgexpr)
 //		Schedule transformation jobs for all applicable xforms
 //
 //---------------------------------------------------------------------------
-void
-CJobGroupExpressionImplementation::ScheduleApplicableTransformations(
-	CSchedulerContext *psc)
-{
-	GPOS_ASSERT(!FXformsScheduled());
+void CJobGroupExpressionImplementation::ScheduleApplicableTransformations(CSchedulerContext *psc) {
+  GPOS_ASSERT(!FXformsScheduled());
 
-	// get all applicable xforms
-	COperator *pop = m_pgexpr->Pop();
-	CXformSet *xform_set =
-		CLogical::PopConvert(pop)->PxfsCandidates(psc->GetGlobalMemoryPool());
+  // get all applicable xforms
+  COperator *pop = m_pgexpr->Pop();
+  CXformSet *xform_set = CLogical::PopConvert(pop)->PxfsCandidates(psc->GetGlobalMemoryPool());
 
-	// intersect them with required xforms and schedule jobs
-	xform_set->Intersection(CXformFactory::Pxff()->PxfsImplementation());
-	xform_set->Intersection(psc->Peng()->PxfsCurrentStage());
-	ScheduleTransformations(psc, xform_set);
-	xform_set->Release();
+  // intersect them with required xforms and schedule jobs
+  xform_set->Intersection(CXformFactory::Pxff()->PxfsImplementation());
+  xform_set->Intersection(psc->Peng()->PxfsCurrentStage());
+  ScheduleTransformations(psc, xform_set);
+  xform_set->Release();
 
-	SetXformsScheduled();
+  SetXformsScheduled();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -194,22 +164,17 @@ CJobGroupExpressionImplementation::ScheduleApplicableTransformations(
 //		Schedule implementation jobs for all child groups
 //
 //---------------------------------------------------------------------------
-void
-CJobGroupExpressionImplementation::ScheduleChildGroupsJobs(
-	CSchedulerContext *psc)
-{
-	GPOS_ASSERT(!FChildrenScheduled());
+void CJobGroupExpressionImplementation::ScheduleChildGroupsJobs(CSchedulerContext *psc) {
+  GPOS_ASSERT(!FChildrenScheduled());
 
-	ULONG arity = m_pgexpr->Arity();
+  ULONG arity = m_pgexpr->Arity();
 
-	for (ULONG i = 0; i < arity; i++)
-	{
-		CJobGroupImplementation::ScheduleJob(psc, (*(m_pgexpr))[i], this);
-	}
+  for (ULONG i = 0; i < arity; i++) {
+    CJobGroupImplementation::ScheduleJob(psc, (*(m_pgexpr))[i], this);
+  }
 
-	SetChildrenScheduled();
+  SetChildrenScheduled();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -219,27 +184,21 @@ CJobGroupExpressionImplementation::ScheduleChildGroupsJobs(
 //		Implement child groups
 //
 //---------------------------------------------------------------------------
-CJobGroupExpressionImplementation::EEvent
-CJobGroupExpressionImplementation::EevtImplementChildren(CSchedulerContext *psc,
-														 CJob *pjOwner)
-{
-	// get a job pointer
-	CJobGroupExpressionImplementation *pjgei = PjConvert(pjOwner);
-	GPOS_ASSERT(pjgei->m_pgexpr->FExplored());
+CJobGroupExpressionImplementation::EEvent CJobGroupExpressionImplementation::EevtImplementChildren(
+    CSchedulerContext *psc, CJob *pjOwner) {
+  // get a job pointer
+  CJobGroupExpressionImplementation *pjgei = PjConvert(pjOwner);
+  GPOS_ASSERT(pjgei->m_pgexpr->FExplored());
 
-	if (!pjgei->FChildrenScheduled())
-	{
-		pjgei->m_pgexpr->SetState(CGroupExpression::estImplementing);
-		pjgei->ScheduleChildGroupsJobs(psc);
+  if (!pjgei->FChildrenScheduled()) {
+    pjgei->m_pgexpr->SetState(CGroupExpression::estImplementing);
+    pjgei->ScheduleChildGroupsJobs(psc);
 
-		return eevImplementingChildren;
-	}
-	else
-	{
-		return eevChildrenImplemented;
-	}
+    return eevImplementingChildren;
+  } else {
+    return eevChildrenImplemented;
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -249,23 +208,17 @@ CJobGroupExpressionImplementation::EevtImplementChildren(CSchedulerContext *psc,
 //		Implement group expression
 //
 //---------------------------------------------------------------------------
-CJobGroupExpressionImplementation::EEvent
-CJobGroupExpressionImplementation::EevtImplementSelf(CSchedulerContext *psc,
-													 CJob *pjOwner)
-{
-	// get a job pointer
-	CJobGroupExpressionImplementation *pjgei = PjConvert(pjOwner);
-	if (!pjgei->FXformsScheduled())
-	{
-		pjgei->ScheduleApplicableTransformations(psc);
-		return eevImplementingSelf;
-	}
-	else
-	{
-		return eevSelfImplemented;
-	}
+CJobGroupExpressionImplementation::EEvent CJobGroupExpressionImplementation::EevtImplementSelf(CSchedulerContext *psc,
+                                                                                               CJob *pjOwner) {
+  // get a job pointer
+  CJobGroupExpressionImplementation *pjgei = PjConvert(pjOwner);
+  if (!pjgei->FXformsScheduled()) {
+    pjgei->ScheduleApplicableTransformations(psc);
+    return eevImplementingSelf;
+  } else {
+    return eevSelfImplemented;
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -275,17 +228,14 @@ CJobGroupExpressionImplementation::EevtImplementSelf(CSchedulerContext *psc,
 //		Finalize implementation
 //
 //---------------------------------------------------------------------------
-CJobGroupExpressionImplementation::EEvent
-CJobGroupExpressionImplementation::EevtFinalize(CSchedulerContext *,  //psc
-												CJob *pjOwner)
-{
-	// get a job pointer
-	CJobGroupExpressionImplementation *pjgei = PjConvert(pjOwner);
-	pjgei->m_pgexpr->SetState(CGroupExpression::estImplemented);
+CJobGroupExpressionImplementation::EEvent CJobGroupExpressionImplementation::EevtFinalize(CSchedulerContext *,  // psc
+                                                                                          CJob *pjOwner) {
+  // get a job pointer
+  CJobGroupExpressionImplementation *pjgei = PjConvert(pjOwner);
+  pjgei->m_pgexpr->SetState(CGroupExpression::estImplemented);
 
-	return eevFinalized;
+  return eevFinalized;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -295,14 +245,11 @@ CJobGroupExpressionImplementation::EevtFinalize(CSchedulerContext *,  //psc
 //		Main job function
 //
 //---------------------------------------------------------------------------
-BOOL
-CJobGroupExpressionImplementation::FExecute(CSchedulerContext *psc)
-{
-	GPOS_ASSERT(FInit());
+BOOL CJobGroupExpressionImplementation::FExecute(CSchedulerContext *psc) {
+  GPOS_ASSERT(FInit());
 
-	return m_jsm.FRun(psc, this);
+  return m_jsm.FRun(psc, this);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -312,17 +259,13 @@ CJobGroupExpressionImplementation::FExecute(CSchedulerContext *psc)
 //		Schedule a new group expression implementation job
 //
 //---------------------------------------------------------------------------
-void
-CJobGroupExpressionImplementation::ScheduleJob(CSchedulerContext *psc,
-											   CGroupExpression *pgexpr,
-											   CJob *pjParent)
-{
-	CJob *pj = psc->Pjf()->PjCreate(CJob::EjtGroupExpressionImplementation);
+void CJobGroupExpressionImplementation::ScheduleJob(CSchedulerContext *psc, CGroupExpression *pgexpr, CJob *pjParent) {
+  CJob *pj = psc->Pjf()->PjCreate(CJob::EjtGroupExpressionImplementation);
 
-	// initialize job
-	CJobGroupExpressionImplementation *pjige = PjConvert(pj);
-	pjige->Init(pgexpr);
-	psc->Psched()->Add(pjige, pjParent);
+  // initialize job
+  CJobGroupExpressionImplementation *pjige = PjConvert(pj);
+  pjige->Init(pgexpr);
+  psc->Psched()->Add(pjige, pjParent);
 }
 
 #ifdef GPOS_DEBUG
@@ -335,12 +278,10 @@ CJobGroupExpressionImplementation::ScheduleJob(CSchedulerContext *psc,
 //		Print function
 //
 //---------------------------------------------------------------------------
-IOstream &
-CJobGroupExpressionImplementation::OsPrint(IOstream &os)
-{
-	return m_jsm.OsHistory(os);
+IOstream &CJobGroupExpressionImplementation::OsPrint(IOstream &os) const {
+  return m_jsm.OsHistory(os);
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

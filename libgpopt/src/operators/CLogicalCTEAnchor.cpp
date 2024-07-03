@@ -27,9 +27,8 @@ using namespace gpopt;
 //		Ctor - for pattern
 //
 //---------------------------------------------------------------------------
-CLogicalCTEAnchor::CLogicalCTEAnchor(CMemoryPool *mp) : CLogical(mp), m_id(0)
-{
-	m_fPattern = true;
+CLogicalCTEAnchor::CLogicalCTEAnchor(CMemoryPool *mp) : CLogical(mp), m_id(0) {
+  m_fPattern = true;
 }
 
 //---------------------------------------------------------------------------
@@ -40,10 +39,7 @@ CLogicalCTEAnchor::CLogicalCTEAnchor(CMemoryPool *mp) : CLogical(mp), m_id(0)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalCTEAnchor::CLogicalCTEAnchor(CMemoryPool *mp, ULONG id)
-	: CLogical(mp), m_id(id)
-{
-}
+CLogicalCTEAnchor::CLogicalCTEAnchor(CMemoryPool *mp, ULONG id) : CLogical(mp), m_id(id) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,11 +49,9 @@ CLogicalCTEAnchor::CLogicalCTEAnchor(CMemoryPool *mp, ULONG id)
 //		Derive output columns
 //
 //---------------------------------------------------------------------------
-CColRefSet *
-CLogicalCTEAnchor::DeriveOutputColumns(CMemoryPool *,  // mp
-									   CExpressionHandle &exprhdl)
-{
-	return PcrsDeriveOutputPassThru(exprhdl);
+CColRefSet *CLogicalCTEAnchor::DeriveOutputColumns(CMemoryPool *,  // mp
+                                                   CExpressionHandle &exprhdl) {
+  return PcrsDeriveOutputPassThru(exprhdl);
 }
 
 //---------------------------------------------------------------------------
@@ -68,11 +62,9 @@ CLogicalCTEAnchor::DeriveOutputColumns(CMemoryPool *,  // mp
 //		Derive key collection
 //
 //---------------------------------------------------------------------------
-CKeyCollection *
-CLogicalCTEAnchor::DeriveKeyCollection(CMemoryPool *,  // mp
-									   CExpressionHandle &exprhdl) const
-{
-	return PkcDeriveKeysPassThru(exprhdl, 0 /* ulChild */);
+CKeyCollection *CLogicalCTEAnchor::DeriveKeyCollection(CMemoryPool *,  // mp
+                                                       CExpressionHandle &exprhdl) const {
+  return PkcDeriveKeysPassThru(exprhdl, 0 /* ulChild */);
 }
 
 //---------------------------------------------------------------------------
@@ -83,20 +75,15 @@ CLogicalCTEAnchor::DeriveKeyCollection(CMemoryPool *,  // mp
 //		Derive part consumer
 //
 //---------------------------------------------------------------------------
-CPartInfo *
-CLogicalCTEAnchor::DerivePartitionInfo(CMemoryPool *mp,
-									   CExpressionHandle &exprhdl) const
-{
-	CPartInfo *ppartinfoChild = exprhdl.DerivePartitionInfo(0);
-	GPOS_ASSERT(NULL != ppartinfoChild);
+CPartInfo *CLogicalCTEAnchor::DerivePartitionInfo(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
+  CPartInfo *ppartinfoChild = exprhdl.DerivePartitionInfo(0);
+  GPOS_ASSERT(nullptr != ppartinfoChild);
 
-	CExpression *pexprProducer =
-		COptCtxt::PoctxtFromTLS()->Pcteinfo()->PexprCTEProducer(m_id);
-	GPOS_ASSERT(NULL != pexprProducer);
-	CPartInfo *ppartinfoCTEProducer = pexprProducer->DerivePartitionInfo();
+  CExpression *pexprProducer = COptCtxt::PoctxtFromTLS()->Pcteinfo()->PexprCTEProducer(m_id);
+  GPOS_ASSERT(nullptr != pexprProducer);
+  CPartInfo *ppartinfoCTEProducer = pexprProducer->DerivePartitionInfo();
 
-	return CPartInfo::PpartinfoCombine(mp, ppartinfoChild,
-									   ppartinfoCTEProducer);
+  return CPartInfo::PpartinfoCombine(mp, ppartinfoChild, ppartinfoCTEProducer);
 }
 
 //---------------------------------------------------------------------------
@@ -107,12 +94,10 @@ CLogicalCTEAnchor::DerivePartitionInfo(CMemoryPool *mp,
 //		Derive max card
 //
 //---------------------------------------------------------------------------
-CMaxCard
-CLogicalCTEAnchor::DeriveMaxCard(CMemoryPool *,	 // mp
-								 CExpressionHandle &exprhdl) const
-{
-	// pass on max card of first child
-	return exprhdl.DeriveMaxCard(0);
+CMaxCard CLogicalCTEAnchor::DeriveMaxCard(CMemoryPool *,  // mp
+                                          CExpressionHandle &exprhdl) const {
+  // pass on max card of first child
+  return exprhdl.DeriveMaxCard(0);
 }
 
 //---------------------------------------------------------------------------
@@ -123,17 +108,14 @@ CLogicalCTEAnchor::DeriveMaxCard(CMemoryPool *,	 // mp
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL
-CLogicalCTEAnchor::Matches(COperator *pop) const
-{
-	if (pop->Eopid() != Eopid())
-	{
-		return false;
-	}
+BOOL CLogicalCTEAnchor::Matches(COperator *pop) const {
+  if (pop->Eopid() != Eopid()) {
+    return false;
+  }
 
-	CLogicalCTEAnchor *popCTEAnchor = CLogicalCTEAnchor::PopConvert(pop);
+  CLogicalCTEAnchor *popCTEAnchor = CLogicalCTEAnchor::PopConvert(pop);
 
-	return m_id == popCTEAnchor->Id();
+  return m_id == popCTEAnchor->Id();
 }
 
 //---------------------------------------------------------------------------
@@ -145,9 +127,8 @@ CLogicalCTEAnchor::Matches(COperator *pop) const
 //
 //---------------------------------------------------------------------------
 ULONG
-CLogicalCTEAnchor::HashValue() const
-{
-	return gpos::CombineHashes(COperator::HashValue(), m_id);
+CLogicalCTEAnchor::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(), m_id);
 }
 
 //---------------------------------------------------------------------------
@@ -158,13 +139,11 @@ CLogicalCTEAnchor::HashValue() const
 //		Get candidate xforms
 //
 //---------------------------------------------------------------------------
-CXformSet *
-CLogicalCTEAnchor::PxfsCandidates(CMemoryPool *mp) const
-{
-	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	(void) xform_set->ExchangeSet(CXform::ExfCTEAnchor2Sequence);
-	(void) xform_set->ExchangeSet(CXform::ExfCTEAnchor2TrivialSelect);
-	return xform_set;
+CXformSet *CLogicalCTEAnchor::PxfsCandidates(CMemoryPool *mp) const {
+  CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
+  (void)xform_set->ExchangeSet(CXform::ExfCTEAnchor2Sequence);
+  (void)xform_set->ExchangeSet(CXform::ExfCTEAnchor2TrivialSelect);
+  return xform_set;
 }
 
 //---------------------------------------------------------------------------
@@ -175,14 +154,12 @@ CLogicalCTEAnchor::PxfsCandidates(CMemoryPool *mp) const
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CLogicalCTEAnchor::OsPrint(IOstream &os) const
-{
-	os << SzId() << " (";
-	os << m_id;
-	os << ")";
+IOstream &CLogicalCTEAnchor::OsPrint(IOstream &os) const {
+  os << SzId() << " (";
+  os << m_id;
+  os << ")";
 
-	return os;
+  return os;
 }
 
 // EOF

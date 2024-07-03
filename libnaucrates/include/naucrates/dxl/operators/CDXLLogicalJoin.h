@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDXLLogicalJoin
@@ -26,49 +25,44 @@ namespace gpdxl
 //		Class for representing DXL logical Join operators
 //
 //---------------------------------------------------------------------------
-class CDXLLogicalJoin : public CDXLLogical
-{
-private:
-	// private copy ctor
-	CDXLLogicalJoin(CDXLLogicalJoin &);
+class CDXLLogicalJoin : public CDXLLogical {
+ private:
+  // join type (inner, outer, ...)
+  EdxlJoinType m_join_type;
 
-	// join type (inner, outer, ...)
-	EdxlJoinType m_join_type;
+ public:
+  CDXLLogicalJoin(CDXLLogicalJoin &) = delete;
 
-public:
-	// ctor/dtor
-	CDXLLogicalJoin(CMemoryPool *, EdxlJoinType);
+  // ctor/dtor
+  CDXLLogicalJoin(CMemoryPool *, EdxlJoinType);
 
-	// accessors
-	Edxlopid GetDXLOperator() const;
+  // accessors
+  Edxlopid GetDXLOperator() const override;
 
-	const CWStringConst *GetOpNameStr() const;
+  const CWStringConst *GetOpNameStr() const override;
 
-	// join type
-	EdxlJoinType GetJoinType() const;
+  // join type
+  EdxlJoinType GetJoinType() const;
 
-	const CWStringConst *GetJoinTypeNameStr() const;
+  const CWStringConst *GetJoinTypeNameStr() const;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *node) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
-	// conversion function
-	static CDXLLogicalJoin *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopLogicalJoin == dxl_op->GetDXLOperator());
-		return dynamic_cast<CDXLLogicalJoin *>(dxl_op);
-	}
+  // conversion function
+  static CDXLLogicalJoin *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopLogicalJoin == dxl_op->GetDXLOperator());
+    return dynamic_cast<CDXLLogicalJoin *>(dxl_op);
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLLogicalJoin_H
+#endif  // !GPDXL_CDXLLogicalJoin_H
 
 // EOF

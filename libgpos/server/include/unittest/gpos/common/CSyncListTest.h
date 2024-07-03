@@ -16,8 +16,7 @@
 #include "gpos/task/CAutoTaskProxy.h"
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CSyncListTest
@@ -27,57 +26,47 @@ namespace gpos
 //		regarding instantiation with sample parameters;
 //
 //---------------------------------------------------------------------------
-class CSyncListTest
-{
-private:
-	// list element;
-	struct SElem
-	{
-		// object id
-		ULONG m_id;
+class CSyncListTest {
+ private:
+  // list element;
+  struct SElem {
+    // object id
+    ULONG m_id{0};
 
-		// generic link for list
-		SLink m_link;
+    // generic link for list
+    SLink m_link;
 
-		// ctor
-		SElem() : m_id(0)
-		{
-		}
-	};
+    // ctor
+    SElem() = default;
+  };
 
-	// collection of parameters for parallel tasks
-	struct SArg
-	{
-		// pointer to list
-		CSyncList<SElem> *m_plist;
+  // collection of parameters for parallel tasks
+  struct SArg {
+    // pointer to list
+    CSyncList<SElem> *m_plist{nullptr};
 
-		// pool of elements to insert
-		CSyncPool<SElem> *m_psp;
+    // pool of elements to insert
+    CSyncPool<SElem> *m_psp{nullptr};
 
-		// number of tasks
-		ULONG m_ulCount;
+    // number of tasks
+    ULONG m_ulCount{0};
 
-		// ctor
-		SArg(CSyncList<SElem> *pstack, CSyncPool<SElem> *psp, ULONG count)
-			: m_plist(pstack), m_psp(psp), m_ulCount(count)
-		{
-		}
+    // ctor
+    SArg(CSyncList<SElem> *pstack, CSyncPool<SElem> *psp, ULONG count)
+        : m_plist(pstack), m_psp(psp), m_ulCount(count) {}
 
-		// ctor
-		SArg() : m_plist(NULL), m_psp(NULL), m_ulCount(0)
-		{
-		}
-	};
+    // ctor
+    SArg() = default;
+  };
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
 
-};	// class CSyncListTest
+};  // class CSyncListTest
 }  // namespace gpos
 
-
-#endif	// !GPOS_CSyncListTest_H
+#endif  // !GPOS_CSyncListTest_H
 
 // EOF

@@ -1,4 +1,4 @@
-# Copyright (c) 2015, Pivotal Software, Inc. All Rights Reserved.
+# Copyright (c) 2015, VMware, Inc. or its affiliates. All Rights Reserved.
 
 # Include path for unit test headers.
 include_directories(include)
@@ -50,10 +50,6 @@ function(add_gpos_custom_alloc_test TEST_NAME)
   add_test(NAME gpos_custom_alloc_test_${TEST_NAME}
            COMMAND gpos_test -U ${TEST_NAME} "-c")
 endfunction()
-
-option(ENABLE_EXTENDED_TESTS
-       "Enable extended tests for fault-injection and timing that may take a long time to run."
-       OFF)
 
 # Individual unit tests are added here in the same order they appear in
 # src/startup/main.cpp
@@ -112,15 +108,3 @@ add_gpos_test(CTaskLocalStorageTest)
 add_gpos_test(CUnittestTest_1)
 add_gpos_test(CUnittestTest_2)
 add_gpos_test(CUnittestTest_3)
-
-if (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-  # fault-simulation
-  add_gpos_test(CFSimulatorTest)
-  if (ENABLE_EXTENDED_TESTS)
-    # fault-simulation while running other tests
-    add_gpos_test(CFSimulatorTestExt)
-
-    # time-slicing
-    add_gpos_test(CTimeSliceTest)
-  endif()
-endif()

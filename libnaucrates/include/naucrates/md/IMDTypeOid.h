@@ -17,16 +17,13 @@
 #include "naucrates/md/IMDType.h"
 
 // fwd decl
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 class IDatumOid;
 }
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 using namespace gpnaucrates;
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -36,28 +33,18 @@ using namespace gpnaucrates;
 //		Interface for OID types in the metadata cache
 //
 //---------------------------------------------------------------------------
-class IMDTypeOid : public IMDType
-{
-public:
-	// type id
-	static ETypeInfo
-	GetTypeInfo()
-	{
-		return EtiOid;
-	}
+class IMDTypeOid : public IMDType {
+ public:
+  // type id
+  static ETypeInfo GetTypeInfo() { return EtiOid; }
 
-	virtual ETypeInfo
-	GetDatumType() const
-	{
-		return IMDTypeOid::GetTypeInfo();
-	}
+  ETypeInfo GetDatumType() const override { return IMDTypeOid::GetTypeInfo(); }
 
-	// factory function for OID datums
-	virtual IDatumOid *CreateOidDatum(CMemoryPool *mp, OID oid_value,
-									  BOOL is_null) const = 0;
+  // factory function for OID datums
+  virtual IDatumOid *CreateOidDatum(CMemoryPool *mp, OID oid_value, BOOL is_null) const = 0;
 };
 }  // namespace gpmd
 
-#endif	// !GPMD_IMDTypeOid_H
+#endif  // !GPMD_IMDTypeOid_H
 
 // EOF

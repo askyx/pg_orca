@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLPhysicalPartitionSelector.h
@@ -13,22 +13,21 @@
 #define GPDXL_CDXLPhysicalPartitionSelector_H
 
 #include "gpos/base.h"
+#include "gpos/common/CBitSet.h"
 
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 // indices of partition selector elements in the children array
-enum Edxlps
-{
-	EdxlpsIndexProjList = 0,
-	EdxlpsIndexEqFilters,
-	EdxlpsIndexFilters,
-	EdxlpsIndexResidualFilter,
-	EdxlpsIndexPropExpr,
-	EdxlpsIndexPrintableFilter,
-	EdxlpsIndexChild,
-	EdxlpsIndexSentinel
+enum Edxlps {
+  EdxlpsIndexProjList = 0,
+  EdxlpsIndexEqFilters,
+  EdxlpsIndexFilters,
+  EdxlpsIndexResidualFilter,
+  EdxlpsIndexPropExpr,
+  EdxlpsIndexPrintableFilter,
+  EdxlpsIndexChild,
+  EdxlpsIndexSentinel
 };
 
 //---------------------------------------------------------------------------
@@ -39,78 +38,66 @@ enum Edxlps
 //		Class for representing DXL partition selector
 //
 //---------------------------------------------------------------------------
-class CDXLPhysicalPartitionSelector : public CDXLPhysical
-{
-private:
-	// table id
-	IMDId *m_rel_mdid;
+class CDXLPhysicalPartitionSelector : public CDXLPhysical {
+ private:
+  // table id
+  IMDId *m_rel_mdid;
 
-	// number of partitioning levels
-	ULONG m_num_of_part_levels;
+  // selector id
+  ULONG m_selector_id;
 
-	// scan id
-	ULONG m_scan_id;
+  // scan id
+  ULONG m_scan_id;
 
-	// private copy ctor
-	CDXLPhysicalPartitionSelector(CDXLPhysicalPartitionSelector &);
+  ULongPtrArray *m_parts;
 
-public:
-	// ctor
-	CDXLPhysicalPartitionSelector(CMemoryPool *mp, IMDId *mdid_rel,
-								  ULONG num_of_part_levels, ULONG scan_id);
+ public:
+  CDXLPhysicalPartitionSelector(CDXLPhysicalPartitionSelector &) = delete;
 
-	// dtor
-	virtual ~CDXLPhysicalPartitionSelector();
+  // ctor
+  CDXLPhysicalPartitionSelector(CMemoryPool *mp, IMDId *mdid_rel, ULONG selector_id, ULONG scan_id,
+                                ULongPtrArray *parts);
 
-	// operator type
-	virtual Edxlopid GetDXLOperator() const;
+  // dtor
+  ~CDXLPhysicalPartitionSelector() override;
 
-	// operator name
-	virtual const CWStringConst *GetOpNameStr() const;
+  // operator type
+  Edxlopid GetDXLOperator() const override;
 
-	// table id
-	IMDId *
-	GetRelMdId() const
-	{
-		return m_rel_mdid;
-	}
+  // operator name
+  const CWStringConst *GetOpNameStr() const override;
 
-	// number of partitioning levels
-	ULONG
-	GetPartitioningLevel() const
-	{
-		return m_num_of_part_levels;
-	}
+  // table id
+  IMDId *GetRelMdId() const { return m_rel_mdid; }
 
-	// scan id
-	ULONG
-	ScanId() const
-	{
-		return m_scan_id;
-	}
+  // number of partitioning levels
+  ULONG
+  SelectorId() const { return m_selector_id; }
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // scan id
+  ULONG
+  ScanId() const { return m_scan_id; }
+
+  ULongPtrArray *Partitions() const { return m_parts; }
+
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	virtual void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 
-	// conversion function
-	static CDXLPhysicalPartitionSelector *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopPhysicalPartitionSelector ==
-					dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLPhysicalPartitionSelector *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopPhysicalPartitionSelector == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLPhysicalPartitionSelector *>(dxl_op);
-	}
+    return dynamic_cast<CDXLPhysicalPartitionSelector *>(dxl_op);
+  }
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLPhysicalPartitionSelector_H
+#endif  // !GPDXL_CDXLPhysicalPartitionSelector_H
 
 // EOF

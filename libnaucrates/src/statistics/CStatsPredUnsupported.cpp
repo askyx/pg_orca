@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CStatsPredUnsupported.cpp
@@ -24,15 +24,10 @@ using namespace gpnaucrates;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CStatsPredUnsupported::CStatsPredUnsupported(
-	ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type)
-	: CStatsPred(colid),
-	  m_stats_cmp_type(stats_cmp_type),
-	  m_default_scale_factor(0.0)
-{
-	m_default_scale_factor = InitScaleFactor();
+CStatsPredUnsupported::CStatsPredUnsupported(ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type)
+    : CStatsPred(colid), m_stats_cmp_type(stats_cmp_type), m_default_scale_factor(0.0) {
+  m_default_scale_factor = InitScaleFactor();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -42,16 +37,11 @@ CStatsPredUnsupported::CStatsPredUnsupported(
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CStatsPredUnsupported::CStatsPredUnsupported(
-	ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type,
-	CDouble default_scale_factor)
-	: CStatsPred(colid),
-	  m_stats_cmp_type(stats_cmp_type),
-	  m_default_scale_factor(default_scale_factor)
-{
-	GPOS_ASSERT(CStatistics::Epsilon < default_scale_factor);
+CStatsPredUnsupported::CStatsPredUnsupported(ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type,
+                                             CDouble default_scale_factor)
+    : CStatsPred(colid), m_stats_cmp_type(stats_cmp_type), m_default_scale_factor(default_scale_factor) {
+  GPOS_ASSERT(CStatistics::Epsilon < default_scale_factor);
 }
-
 
 //---------------------------------------------------------------------------
 //		CStatsPredUnsupported::InitScaleFactor
@@ -59,10 +49,8 @@ CStatsPredUnsupported::CStatsPredUnsupported(
 //	@doc:
 //		Initialize the scale factor of the unknown predicate
 //---------------------------------------------------------------------------
-CDouble
-CStatsPredUnsupported::InitScaleFactor()
-{
-	return (1 / CHistogram::DefaultSelectivity).Get();
+CDouble CStatsPredUnsupported::InitScaleFactor() {
+  return (1 / CHistogram::DefaultSelectivity).Get();
 }
 
 // EOF

@@ -11,17 +11,10 @@
 #ifndef GPOPT_errorcodes_H
 #define GPOPT_errorcodes_H
 
-namespace gpdxl
-{
-enum EErrorCode
-{
-	EerrcNotNullViolation,
-	EerrcCheckConstraintViolation,
-	EerrcTest,
-	EerrcSentinel
-};
+namespace gpdxl {
+enum EErrorCode { EerrcNotNullViolation, EerrcCheckConstraintViolation, EerrcTest, EerrcSentinel };
 }
 
-#endif	// ! GPOPT_errorcodes_H
+#endif  // ! GPOPT_errorcodes_H
 
 // EOF

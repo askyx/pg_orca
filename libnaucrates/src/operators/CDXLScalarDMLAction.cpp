@@ -28,10 +28,7 @@ using namespace gpdxl;
 //		Constructs an action expression
 //
 //---------------------------------------------------------------------------
-CDXLScalarDMLAction::CDXLScalarDMLAction(CMemoryPool *mp) : CDXLScalar(mp)
-{
-}
-
+CDXLScalarDMLAction::CDXLScalarDMLAction(CMemoryPool *mp) : CDXLScalar(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -41,12 +38,9 @@ CDXLScalarDMLAction::CDXLScalarDMLAction(CMemoryPool *mp) : CDXLScalar(mp)
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarDMLAction::GetDXLOperator() const
-{
-	return EdxlopScalarDMLAction;
+Edxlopid CDXLScalarDMLAction::GetDXLOperator() const {
+  return EdxlopScalarDMLAction;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -56,12 +50,9 @@ CDXLScalarDMLAction::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarDMLAction::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarDMLAction);
+const CWStringConst *CDXLScalarDMLAction::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarDMLAction);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -71,17 +62,13 @@ CDXLScalarDMLAction::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarDMLAction::SerializeToDXL(CXMLSerializer *xml_serializer,
-									const CDXLNode *  // node
-) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarDMLAction::SerializeToDXL(CXMLSerializer *xml_serializer,
+                                         const CDXLNode *  // node
+) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------
@@ -92,11 +79,9 @@ CDXLScalarDMLAction::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLScalarDMLAction::HasBoolResult(CMDAccessor *  // md_accessor
-) const
-{
-	return false;
+BOOL CDXLScalarDMLAction::HasBoolResult(CMDAccessor *  // md_accessor
+) const {
+  return false;
 }
 
 #ifdef GPOS_DEBUG
@@ -108,13 +93,11 @@ CDXLScalarDMLAction::HasBoolResult(CMDAccessor *  // md_accessor
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarDMLAction::AssertValid(const CDXLNode *node,
-								 BOOL  // validate_children
-) const
-{
-	GPOS_ASSERT(0 == node->Arity());
+void CDXLScalarDMLAction::AssertValid(const CDXLNode *node,
+                                      BOOL  // validate_children
+) const {
+  GPOS_ASSERT(0 == node->Arity());
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

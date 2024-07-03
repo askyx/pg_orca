@@ -24,9 +24,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLLogical::CDXLLogical(CMemoryPool *mp) : CDXLOperator(mp)
-{
-}
+CDXLLogical::CDXLLogical(CMemoryPool *mp) : CDXLOperator(mp) {}
 
 //---------------------------------------------------------------------------
 //      @function:
@@ -36,12 +34,8 @@ CDXLLogical::CDXLLogical(CMemoryPool *mp) : CDXLOperator(mp)
 //              Operator Type
 //
 //---------------------------------------------------------------------------
-Edxloptype
-CDXLLogical::GetDXLOperatorType() const
-{
-	return EdxloptypeLogical;
+Edxloptype CDXLLogical::GetDXLOperatorType() const {
+  return EdxloptypeLogical;
 }
-
-
 
 // EOF

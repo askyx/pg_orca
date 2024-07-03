@@ -17,9 +17,7 @@
 
 #include "gpopt/base/CColRefSet.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -30,73 +28,62 @@ using namespace gpos;
 //		Captures sets of keys for a relation
 //
 //---------------------------------------------------------------------------
-class CKeyCollection : public CRefCount
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CKeyCollection : public CRefCount, public DbgPrintMixin<CKeyCollection> {
+ private:
+  // array of key sets
+  CColRefSetArray *m_pdrgpcrs;
 
-	// array of key sets
-	CColRefSetArray *m_pdrgpcrs;
+ public:
+  CKeyCollection(const CKeyCollection &) = delete;
 
-	// private copy ctor
-	CKeyCollection(const CKeyCollection &);
+  // ctors
+  explicit CKeyCollection(CMemoryPool *mp);
+  CKeyCollection(CMemoryPool *mp, CColRefSet *pcrs);
+  CKeyCollection(CMemoryPool *mp, CColRefArray *colref_array);
 
-public:
-	// ctors
-	explicit CKeyCollection(CMemoryPool *mp);
-	CKeyCollection(CMemoryPool *mp, CColRefSet *pcrs);
-	CKeyCollection(CMemoryPool *mp, CColRefArray *colref_array);
+  // dtor
+  ~CKeyCollection() override;
 
-	// dtor
-	virtual ~CKeyCollection();
+  // add individual set -- takes ownership
+  void Add(CColRefSet *pcrs);
 
-	// add individual set -- takes ownership
-	void Add(CColRefSet *pcrs);
+  // check if set forms a key
+  BOOL FKey(const CColRefSet *pcrs, BOOL fExactMatch = true) const;
 
-	// check if set forms a key
-	BOOL FKey(const CColRefSet *pcrs, BOOL fExactMatch = true) const;
+  // check if an array of columns constitutes a key
+  BOOL FKey(CMemoryPool *mp, const CColRefArray *colref_array) const;
 
-	// check if an array of columns constitutes a key
-	BOOL FKey(CMemoryPool *mp, const CColRefArray *colref_array) const;
+  // trim off non-key columns
+  CColRefArray *PdrgpcrTrim(CMemoryPool *mp, const CColRefArray *colref_array) const;
 
-	// trim off non-key columns
-	CColRefArray *PdrgpcrTrim(CMemoryPool *mp,
-							  const CColRefArray *colref_array) const;
+  // extract a key
+  CColRefArray *PdrgpcrKey(CMemoryPool *mp) const;
 
-	// extract a key
-	CColRefArray *PdrgpcrKey(CMemoryPool *mp) const;
+  // extract a hashable key
+  CColRefArray *PdrgpcrHashableKey(CMemoryPool *mp) const;
 
-	// extract a hashable key
-	CColRefArray *PdrgpcrHashableKey(CMemoryPool *mp) const;
+  // extract key at given position
+  CColRefArray *PdrgpcrKey(CMemoryPool *mp, ULONG ul) const;
 
-	// extract key at given position
-	CColRefArray *PdrgpcrKey(CMemoryPool *mp, ULONG ul) const;
+  // extract key at given position
+  CColRefSet *PcrsKey(CMemoryPool *mp, ULONG ul) const;
 
-	// extract key at given position
-	CColRefSet *PcrsKey(CMemoryPool *mp, ULONG ul) const;
+  // number of keys
+  ULONG
+  Keys() const { return m_pdrgpcrs->Size(); }
 
-	// number of keys
-	ULONG
-	Keys() const
-	{
-		return m_pdrgpcrs->Size();
-	}
+  // print
+  IOstream &OsPrint(IOstream &os) const;
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
-
-};	// class CKeyCollection
+};  // class CKeyCollection
 
 // shorthand for printing
-inline IOstream &
-operator<<(IOstream &os, CKeyCollection &kc)
-{
-	return kc.OsPrint(os);
+inline IOstream &operator<<(IOstream &os, CKeyCollection &kc) {
+  return kc.OsPrint(os);
 }
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CKeyCollection_H
+#endif  // !GPOPT_CKeyCollection_H
 
 // EOF

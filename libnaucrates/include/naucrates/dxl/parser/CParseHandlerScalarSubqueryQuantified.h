@@ -17,9 +17,7 @@
 #include "naucrates/dxl/operators/CDXLScalarSubqueryAny.h"
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -32,39 +30,33 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing scalar subquery ALL and ANY operators
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarSubqueryQuantified : public CParseHandlerScalarOp
-{
-private:
-	// scalar subquery operator
-	CDXLScalar *m_dxl_op;
+class CParseHandlerScalarSubqueryQuantified : public CParseHandlerScalarOp {
+ private:
+  // scalar subquery operator
+  CDXLScalar *m_dxl_op;
 
-	// private copy ctor
-	CParseHandlerScalarSubqueryQuantified(
-		const CParseHandlerScalarSubqueryQuantified &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerScalarSubqueryQuantified(const CParseHandlerScalarSubqueryQuantified &) = delete;
 
-public:
-	// ctor/dtor
-	CParseHandlerScalarSubqueryQuantified(
-		CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-		CParseHandlerBase *parse_handler_root);
+  // ctor/dtor
+  CParseHandlerScalarSubqueryQuantified(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                        CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerScalarSubqueryAny_H
+#endif  // !GPDXL_CParseHandlerScalarSubqueryAny_H
 
 // EOF

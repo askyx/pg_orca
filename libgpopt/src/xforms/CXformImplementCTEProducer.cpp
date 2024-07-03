@@ -13,11 +13,11 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/metadata/CTableDescriptor.h"
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalCTEProducer.h"
+#include "gpopt/operators/CPatternLeaf.h"
+#include "gpopt/operators/CPhysicalCTEProducer.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -28,13 +28,10 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformImplementCTEProducer::CXformImplementCTEProducer(CMemoryPool *mp)
-	: CXformImplementation(
-		  // pattern
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CLogicalCTEProducer(mp),
-			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))))
-{
-}
+    : CXformImplementation(
+          // pattern
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalCTEProducer(mp),
+                                   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)))) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,13 +41,10 @@ CXformImplementCTEProducer::CXformImplementCTEProducer(CMemoryPool *mp)
 //		Compute promise of xform
 //
 //---------------------------------------------------------------------------
-CXform::EXformPromise
-CXformImplementCTEProducer::Exfp(CExpressionHandle &  // exprhdl
-) const
-{
-	return CXform::ExfpHigh;
+CXform::EXformPromise CXformImplementCTEProducer::Exfp(CExpressionHandle &  // exprhdl
+) const {
+  return CXform::ExfpHigh;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -60,36 +54,30 @@ CXformImplementCTEProducer::Exfp(CExpressionHandle &  // exprhdl
 //		Actual transformation
 //
 //---------------------------------------------------------------------------
-void
-CXformImplementCTEProducer::Transform(CXformContext *pxfctxt,
-									  CXformResult *pxfres,
-									  CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformImplementCTEProducer::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CLogicalCTEProducer *popCTEProducer =
-		CLogicalCTEProducer::PopConvert(pexpr->Pop());
-	CMemoryPool *mp = pxfctxt->Pmp();
+  CLogicalCTEProducer *popCTEProducer = CLogicalCTEProducer::PopConvert(pexpr->Pop());
+  CMemoryPool *mp = pxfctxt->Pmp();
 
-	// extract components for alternative
-	ULONG id = popCTEProducer->UlCTEId();
+  // extract components for alternative
+  ULONG id = popCTEProducer->UlCTEId();
 
-	CColRefArray *colref_array = popCTEProducer->Pdrgpcr();
-	colref_array->AddRef();
+  CColRefArray *colref_array = popCTEProducer->Pdrgpcr();
+  colref_array->AddRef();
 
-	// child of CTEProducer operator
-	CExpression *pexprChild = (*pexpr)[0];
-	pexprChild->AddRef();
+  // child of CTEProducer operator
+  CExpression *pexprChild = (*pexpr)[0];
+  pexprChild->AddRef();
 
-	// create physical CTE Producer
-	CExpression *pexprAlt = GPOS_NEW(mp)
-		CExpression(mp, GPOS_NEW(mp) CPhysicalCTEProducer(mp, id, colref_array),
-					pexprChild);
+  // create physical CTE Producer
+  CExpression *pexprAlt =
+      GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPhysicalCTEProducer(mp, id, colref_array), pexprChild);
 
-	// add alternative to transformation result
-	pxfres->Add(pexprAlt);
+  // add alternative to transformation result
+  pxfres->Add(pexprAlt);
 }
 
 // EOF

@@ -17,8 +17,7 @@
 #include "naucrates/dxl/operators/CDXLPhysicalMergeJoin.h"
 #include "naucrates/dxl/parser/CParseHandlerPhysicalOp.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -31,38 +30,33 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for merge join operators
 //
 //---------------------------------------------------------------------------
-class CParseHandlerMergeJoin : public CParseHandlerPhysicalOp
-{
-private:
-	// the merge join operator
-	CDXLPhysicalMergeJoin *m_dxl_op;
+class CParseHandlerMergeJoin : public CParseHandlerPhysicalOp {
+ private:
+  // the merge join operator
+  CDXLPhysicalMergeJoin *m_dxl_op;
 
-	// private copy ctor
-	CParseHandlerMergeJoin(const CParseHandlerMergeJoin &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerMergeJoin(const CParseHandlerMergeJoin &) = delete;
 
-public:
-	// ctor/dtor
-	CParseHandlerMergeJoin(CMemoryPool *mp,
-						   CParseHandlerManager *parse_handler_mgr,
-						   CParseHandlerBase *parse_handler_root);
+  // ctor/dtor
+  CParseHandlerMergeJoin(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                         CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerMergeJoin_H
+#endif  // !GPDXL_CParseHandlerMergeJoin_H
 
 // EOF

@@ -14,11 +14,10 @@
 
 #include "gpos/base.h"
 
+#include "naucrates/dxl/operators/CDXLPhysicalDML.h"
 #include "naucrates/dxl/parser/CParseHandlerPhysicalOp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -31,65 +30,51 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing a physical DML operator
 //
 //---------------------------------------------------------------------------
-class CParseHandlerPhysicalDML : public CParseHandlerPhysicalOp
-{
-private:
-	// operator type
-	EdxlDmlType m_dxl_dml_type;
+class CParseHandlerPhysicalDML : public CParseHandlerPhysicalOp {
+ private:
+  // operator type
+  EdxlDmlType m_dxl_dml_type;
 
-	// source col ids
-	ULongPtrArray *m_src_colids_array;
+  // source col ids
+  ULongPtrArray *m_src_colids_array;
 
-	// action column id
-	ULONG m_action_colid;
+  // action column id
+  ULONG m_action_colid;
 
-	// oid column id
-	ULONG m_oid_colid;
+  // ctid column id
+  ULONG m_ctid_colid;
 
-	// ctid column id
-	ULONG m_ctid_colid;
+  // segmentId column id
+  ULONG m_segid_colid;
 
-	// segmentId column id
-	ULONG m_segid_colid;
+  // Split Update
+  BOOL m_fSplit;
 
-	// does update preserve oids
-	BOOL m_preserve_oids;
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// tuple oid column id
-	ULONG m_tuple_oid_col_oid;
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// needs data to be sorted
-	BOOL m_input_sort_req;
+  // parse the dml type from the attribute value
+  static EdxlDmlType GetDmlOpType(const XMLCh *xmlszDmlType);
 
-	// private copy ctor
-	CParseHandlerPhysicalDML(const CParseHandlerPhysicalDML &);
+ public:
+  CParseHandlerPhysicalDML(const CParseHandlerPhysicalDML &) = delete;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
-
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
-
-	// parse the dml type from the attribute value
-	static EdxlDmlType GetDmlOpType(const XMLCh *xmlszDmlType);
-
-public:
-	// ctor
-	CParseHandlerPhysicalDML(CMemoryPool *mp,
-							 CParseHandlerManager *parse_handler_mgr,
-							 CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerPhysicalDML(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                           CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerPhysicalDML_H
+#endif  // !GPDXL_CParseHandlerPhysicalDML_H
 
 // EOF

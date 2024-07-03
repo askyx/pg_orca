@@ -10,7 +10,6 @@
 //		of a subclass of CTaskLocalStorageObject by an enum index;
 //		no restrictions as to where the actual data is allocated,
 
-
 //		e.g. Task's memory pool, global memory etc.
 //---------------------------------------------------------------------------
 #ifndef GPOS_CTaskLocalStorage_H
@@ -19,8 +18,7 @@
 #include "gpos/base.h"
 #include "gpos/common/CSyncHashtable.h"
 
-namespace gpos
-{
+namespace gpos {
 // fwd declaration
 class CTaskLocalStorageObject;
 
@@ -33,65 +31,55 @@ class CTaskLocalStorageObject;
 //		and destroyed during task setup/tear down
 //
 //---------------------------------------------------------------------------
-class CTaskLocalStorage
-{
-public:
-	enum Etlsidx
-	{
-		EtlsidxTest,	 // unittest slot
-		EtlsidxOptCtxt,	 // optimizer context
-		EtlsidxInvalid,	 // used only for hashtable iteration
+class CTaskLocalStorage {
+ public:
+  CTaskLocalStorage(const CTaskLocalStorage &) = delete;
 
-		EtlsidxSentinel
-	};
+  enum Etlsidx {
+    EtlsidxTest,     // unittest slot
+    EtlsidxOptCtxt,  // optimizer context
+    EtlsidxInvalid,  // used only for hashtable iteration
 
-	// ctor
-	CTaskLocalStorage()
-	{
-	}
+    EtlsidxSentinel
+  };
 
-	// dtor
-	~CTaskLocalStorage();
+  // ctor
+  CTaskLocalStorage() = default;
 
-	// reset
-	void Reset(CMemoryPool *mp);
+  // dtor
+  ~CTaskLocalStorage();
 
-	// accessors
-	void Store(CTaskLocalStorageObject *);
-	CTaskLocalStorageObject *Get(const Etlsidx);
+  // reset
+  void Reset(CMemoryPool *mp);
 
-	// delete object
-	void Remove(CTaskLocalStorageObject *);
+  // accessors
+  void Store(CTaskLocalStorageObject *);
+  CTaskLocalStorageObject *Get(const Etlsidx);
 
-	// equality function -- used for hashtable
-	static BOOL
-	Equals(const CTaskLocalStorage::Etlsidx &idx,
-		   const CTaskLocalStorage::Etlsidx &idx_other)
-	{
-		return idx == idx_other;
-	}
+  // delete object
+  void Remove(CTaskLocalStorageObject *);
 
-	// hash function
-	static ULONG
-	HashIdx(const CTaskLocalStorage::Etlsidx &idx)
-	{
-		// keys are unique
-		return static_cast<ULONG>(idx);
-	}
+  // equality function -- used for hashtable
+  static BOOL Equals(const CTaskLocalStorage::Etlsidx &idx, const CTaskLocalStorage::Etlsidx &idx_other) {
+    return idx == idx_other;
+  }
 
-	// invalid Etlsidx
-	static const Etlsidx m_invalid_idx;
+  // hash function
+  static ULONG HashIdx(const CTaskLocalStorage::Etlsidx &idx) {
+    // keys are unique
+    return static_cast<ULONG>(idx);
+  }
 
-private:
-	// hash table
-	CSyncHashtable<CTaskLocalStorageObject, Etlsidx> m_hash_table;
+  // invalid Etlsidx
+  static const Etlsidx m_invalid_idx;
 
-	// private copy ctor
-	CTaskLocalStorage(const CTaskLocalStorage &);
+ private:
+  // hash table
+  CSyncHashtable<CTaskLocalStorageObject, Etlsidx> m_hash_table;
 
-};	// class CTaskLocalStorage
+};  // class CTaskLocalStorage
 }  // namespace gpos
 
-#endif	// !GPOS_CTaskLocalStorage_H
+#endif  // !GPOS_CTaskLocalStorage_H
 
 // EOF

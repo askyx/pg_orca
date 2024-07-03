@@ -16,8 +16,7 @@
 
 #include "gpopt/metadata/CName.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CColumnDescriptorTest
@@ -26,16 +25,15 @@ namespace gpopt
 //		Static unit tests
 //
 //---------------------------------------------------------------------------
-class CColumnDescriptorTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
+class CColumnDescriptorTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
 
-};	// class CColumnDescriptorTest
+};  // class CColumnDescriptorTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CColumnDescriptorTest_H
+#endif  // !GPOPT_CColumnDescriptorTest_H
 
 // EOF

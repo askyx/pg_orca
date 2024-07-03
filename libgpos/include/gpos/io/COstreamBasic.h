@@ -13,8 +13,7 @@
 
 #include "gpos/io/COstream.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		COstreamBasic
@@ -24,35 +23,31 @@ namespace gpos
 //
 //---------------------------------------------------------------------------
 
-class COstreamBasic : public COstream
-{
-private:
-	// underlying stream
-	WOSTREAM *m_ostream;
+class COstreamBasic : public COstream {
+ private:
+  // underlying stream
+  WOSTREAM *m_ostream;
 
-	// private copy ctor
-	COstreamBasic(const COstreamBasic &);
+ public:
+  COstreamBasic(const COstreamBasic &) = delete;
 
-public:
-	// please see comments in COstream.h for an explanation
-	using COstream::operator<<;
+  // please see comments in COstream.h for an explanation
+  using COstream::operator<<;
 
-	// ctor
-	explicit COstreamBasic(WOSTREAM *ostream);
+  // ctor
+  explicit COstreamBasic(WOSTREAM *ostream);
 
-	virtual ~COstreamBasic()
-	{
-	}
+  ~COstreamBasic() override = default;
 
-	// implement << operator
-	virtual IOstream &operator<<(const WCHAR *);
+  // implement << operator
+  IOstream &operator<<(const WCHAR *) override;
 
-	// implement << operator
-	virtual IOstream &operator<<(const WCHAR);
+  // implement << operator
+  IOstream &operator<<(const WCHAR) override;
 };
 
 }  // namespace gpos
 
-#endif	// !GPOS_COstreamBasic_H
+#endif  // !GPOS_COstreamBasic_H
 
 // EOF

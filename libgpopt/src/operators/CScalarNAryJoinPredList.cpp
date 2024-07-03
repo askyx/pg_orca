@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2019 Pivotal Inc.
+//	Copyright (C) 2019 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarNAryJoinPredList.cpp
@@ -13,9 +13,7 @@
 
 #include "gpos/base.h"
 
-
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -25,10 +23,7 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CScalarNAryJoinPredList::CScalarNAryJoinPredList(CMemoryPool *mp) : CScalar(mp)
-{
-}
-
+CScalarNAryJoinPredList::CScalarNAryJoinPredList(CMemoryPool *mp) : CScalar(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -38,12 +33,9 @@ CScalarNAryJoinPredList::CScalarNAryJoinPredList(CMemoryPool *mp) : CScalar(mp)
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarNAryJoinPredList::Matches(COperator *pop) const
-{
-	return (pop->Eopid() == Eopid());
+BOOL CScalarNAryJoinPredList::Matches(COperator *pop) const {
+  return (pop->Eopid() == Eopid());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,11 +45,8 @@ CScalarNAryJoinPredList::Matches(COperator *pop) const
 //		Join predicate lists are sensitive to order
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarNAryJoinPredList::FInputOrderSensitive() const
-{
-	return true;
+BOOL CScalarNAryJoinPredList::FInputOrderSensitive() const {
+  return true;
 }
-
 
 // EOF

@@ -13,10 +13,11 @@
 
 #include "gpos/base.h"
 
+#include "gpopt/operators/CLogicalInnerCorrelatedApply.h"
+#include "gpopt/operators/CPhysicalCorrelatedInnerNLJoin.h"
 #include "gpopt/xforms/CXformImplementCorrelatedApply.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //-------------------------------------------------------------------------
@@ -28,44 +29,27 @@ using namespace gpos;
 //
 //-------------------------------------------------------------------------
 class CXformImplementInnerCorrelatedApply
-	: public CXformImplementCorrelatedApply<CLogicalInnerCorrelatedApply,
-											CPhysicalCorrelatedInnerNLJoin>
-{
-private:
-	// private copy ctor
-	CXformImplementInnerCorrelatedApply(
-		const CXformImplementInnerCorrelatedApply &);
+    : public CXformImplementCorrelatedApply<CLogicalInnerCorrelatedApply, CPhysicalCorrelatedInnerNLJoin> {
+ private:
+ public:
+  CXformImplementInnerCorrelatedApply(const CXformImplementInnerCorrelatedApply &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementInnerCorrelatedApply(CMemoryPool *mp)
-		: CXformImplementCorrelatedApply<CLogicalInnerCorrelatedApply,
-										 CPhysicalCorrelatedInnerNLJoin>(mp)
-	{
-	}
+  // ctor
+  explicit CXformImplementInnerCorrelatedApply(CMemoryPool *mp)
+      : CXformImplementCorrelatedApply<CLogicalInnerCorrelatedApply, CPhysicalCorrelatedInnerNLJoin>(mp) {}
 
-	// dtor
-	virtual ~CXformImplementInnerCorrelatedApply()
-	{
-	}
+  // dtor
+  ~CXformImplementInnerCorrelatedApply() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementInnerCorrelatedApply;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementInnerCorrelatedApply; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementInnerCorrelatedApply";
-	}
+  const CHAR *SzId() const override { return "CXformImplementInnerCorrelatedApply"; }
 
-};	// class CXformImplementInnerCorrelatedApply
+};  // class CXformImplementInnerCorrelatedApply
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementInnerCorrelatedApply_H
+#endif  // !GPOPT_CXformImplementInnerCorrelatedApply_H
 
 // EOF

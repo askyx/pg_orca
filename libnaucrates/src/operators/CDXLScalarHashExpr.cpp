@@ -12,6 +12,7 @@
 
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/traceflags/traceflags.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -24,10 +25,8 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarHashExpr::CDXLScalarHashExpr(CMemoryPool *mp, IMDId *mdid_type)
-	: CDXLScalar(mp), m_mdid_type(mdid_type)
-{
-	GPOS_ASSERT(m_mdid_type->IsValid());
+CDXLScalarHashExpr::CDXLScalarHashExpr(CMemoryPool *mp, IMDId *opfamily) : CDXLScalar(mp), m_mdid_opfamily(opfamily) {
+  GPOS_ASSERT_IMP(GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution), m_mdid_opfamily->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -38,9 +37,8 @@ CDXLScalarHashExpr::CDXLScalarHashExpr(CMemoryPool *mp, IMDId *mdid_type)
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarHashExpr::~CDXLScalarHashExpr()
-{
-	m_mdid_type->Release();
+CDXLScalarHashExpr::~CDXLScalarHashExpr() {
+  CRefCount::SafeRelease(m_mdid_opfamily);
 }
 
 //---------------------------------------------------------------------------
@@ -51,12 +49,9 @@ CDXLScalarHashExpr::~CDXLScalarHashExpr()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarHashExpr::GetDXLOperator() const
-{
-	return EdxlopScalarHashExpr;
+Edxlopid CDXLScalarHashExpr::GetDXLOperator() const {
+  return EdxlopScalarHashExpr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -66,10 +61,8 @@ CDXLScalarHashExpr::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarHashExpr::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarHashExpr);
+const CWStringConst *CDXLScalarHashExpr::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarHashExpr);
 }
 
 //---------------------------------------------------------------------------
@@ -80,10 +73,8 @@ CDXLScalarHashExpr::GetOpNameStr() const
 //		Hash expression type from the catalog
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLScalarHashExpr::MdidType() const
-{
-	return m_mdid_type;
+IMDId *CDXLScalarHashExpr::MdidOpfamily() const {
+  return m_mdid_opfamily;
 }
 
 //---------------------------------------------------------------------------
@@ -94,20 +85,16 @@ CDXLScalarHashExpr::MdidType() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarHashExpr::SerializeToDXL(CXMLSerializer *xml_serializer,
-								   const CDXLNode *node) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+void CDXLScalarHashExpr::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
+  const CWStringConst *element_name = GetOpNameStr();
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	m_mdid_type->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  if (nullptr != m_mdid_opfamily) {
+    m_mdid_opfamily->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenOpfamily));
+  }
 
-	node->SerializeChildrenToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  node->SerializeChildrenToDXL(xml_serializer);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -119,24 +106,17 @@ CDXLScalarHashExpr::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarHashExpr::AssertValid(const CDXLNode *node,
-								BOOL validate_children) const
-{
-	GPOS_ASSERT(1 == node->Arity());
-	CDXLNode *child_dxlnode = (*node)[0];
+void CDXLScalarHashExpr::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+  GPOS_ASSERT(1 == node->Arity());
+  CDXLNode *child_dxlnode = (*node)[0];
 
-	GPOS_ASSERT(EdxloptypeScalar ==
-				child_dxlnode->GetOperator()->GetDXLOperatorType());
+  GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-	if (validate_children)
-	{
-		child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-												  validate_children);
-	}
+  if (validate_children) {
+    child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+  }
 }
 
-#endif	// GPOS_DEBUG
-
+#endif  // GPOS_DEBUG
 
 // EOF

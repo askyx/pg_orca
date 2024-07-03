@@ -17,26 +17,19 @@
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
-enum EdxlFrameSpec
-{
-	EdxlfsRow = 0,
-	EdxlfsRange,
-	EdxlfsSentinel
-};
+enum EdxlFrameSpec { EdxlfsRow = 0, EdxlfsRange, EdxlfsGroups, EdxlfsSentinel };
 
-enum EdxlFrameExclusionStrategy
-{
-	EdxlfesNone = 0,
-	EdxlfesNulls,
-	EdxlfesCurrentRow,
-	EdxlfesGroup,
-	EdxlfesTies,
-	EdxlfesSentinel
+enum EdxlFrameExclusionStrategy {
+  EdxlfesNone = 0,
+  EdxlfesNulls,
+  EdxlfesCurrentRow,
+  EdxlfesGroup,
+  EdxlfesTies,
+  EdxlfesSentinel
 };
 
 //---------------------------------------------------------------------------
@@ -47,74 +40,78 @@ enum EdxlFrameExclusionStrategy
 //		Class for representing DXL window frame
 //
 //---------------------------------------------------------------------------
-class CDXLWindowFrame : public CRefCount
-{
-private:
-	// memory pool;
-	CMemoryPool *m_mp;
+class CDXLWindowFrame : public CRefCount {
+ private:
+  // row or range based window specification method
+  EdxlFrameSpec m_dxl_win_frame_spec;
 
-	// row or range based window specification method
-	EdxlFrameSpec m_dxl_win_frame_spec;
+  // exclusion strategy
+  EdxlFrameExclusionStrategy m_dxl_frame_exclusion_strategy;
 
-	// exclusion strategy
-	EdxlFrameExclusionStrategy m_dxl_frame_exclusion_strategy;
+  // scalar value representing the boundary leading
+  CDXLNode *m_dxlnode_leading;
 
-	// private copy ctor
-	CDXLWindowFrame(const CDXLWindowFrame &);
+  // scalar value representing the boundary trailing
+  CDXLNode *m_dxlnode_trailing;
 
-	// scalar value representing the boundary leading
-	CDXLNode *m_dxlnode_leading;
+  // in_range function for startOffset
+  OID m_start_in_range_func;
 
-	// scalar value representing the boundary trailing
-	CDXLNode *m_dxlnode_trailing;
+  // in_range function for endOffset
+  OID m_end_in_range_func;
 
-public:
-	// ctor
-	CDXLWindowFrame(CMemoryPool *mp, EdxlFrameSpec edxlfs,
-					EdxlFrameExclusionStrategy frame_exc_strategy,
-					CDXLNode *pdxlnLeading, CDXLNode *pdxlnTrailing);
+  // collation for in_range tests
+  OID m_in_range_coll;
 
-	//dtor
-	virtual ~CDXLWindowFrame();
+  // use ASC sort order for in_range tests
+  BOOL m_in_range_asc;
 
-	EdxlFrameSpec
-	ParseDXLFrameSpec() const
-	{
-		return m_dxl_win_frame_spec;
-	}
+  // nulls sort first for in_range tests
+  BOOL m_in_range_nulls_first;
 
-	// exclusion strategy
-	EdxlFrameExclusionStrategy
-	ParseFrameExclusionStrategy() const
-	{
-		return m_dxl_frame_exclusion_strategy;
-	}
+ public:
+  CDXLWindowFrame(const CDXLWindowFrame &) = delete;
 
-	// return window boundary trailing
-	CDXLNode *
-	PdxlnTrailing() const
-	{
-		return m_dxlnode_trailing;
-	}
+  // ctor
+  CDXLWindowFrame(EdxlFrameSpec edxlfs, EdxlFrameExclusionStrategy frame_exc_strategy, CDXLNode *dxlnode_leading,
+                  CDXLNode *dxlnode_trailing, OID start_in_range_func, OID end_in_range_func, OID in_range_coll,
+                  bool in_range_asc, bool in_range_nulls_first);
 
-	// return window boundary leading
-	CDXLNode *
-	PdxlnLeading() const
-	{
-		return m_dxlnode_leading;
-	}
+  // dtor
+  ~CDXLWindowFrame() override;
 
-	// return the string representation of the exclusion strategy
-	const CWStringConst *PstrES(EdxlFrameExclusionStrategy edxles) const;
+  EdxlFrameSpec ParseDXLFrameSpec() const { return m_dxl_win_frame_spec; }
 
-	// return the string representation of the frame specification (row or range)
-	const CWStringConst *PstrFS(EdxlFrameSpec edxlfs) const;
+  // exclusion strategy
+  EdxlFrameExclusionStrategy ParseFrameExclusionStrategy() const { return m_dxl_frame_exclusion_strategy; }
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer) const;
+  // return window boundary trailing
+  CDXLNode *PdxlnTrailing() const { return m_dxlnode_trailing; }
+
+  // return window boundary leading
+  CDXLNode *PdxlnLeading() const { return m_dxlnode_leading; }
+
+  OID PdxlnStartInRangeFunc() const { return m_start_in_range_func; }
+
+  OID PdxlnEndInRangeFunc() const { return m_end_in_range_func; }
+
+  OID PdxlnInRangeColl() const { return m_in_range_coll; }
+
+  BOOL PdxlnInRangeAsc() const { return m_in_range_asc; }
+
+  BOOL PdxlnInRangeNullsFirst() const { return m_in_range_nulls_first; }
+
+  // return the string representation of the exclusion strategy
+  static const CWStringConst *PstrES(EdxlFrameExclusionStrategy edxles);
+
+  // return the string representation of the frame specification (row or range)
+  static const CWStringConst *PstrFS(EdxlFrameSpec edxlfs);
+
+  // serialize operator in DXL format
+  virtual void SerializeToDXL(CXMLSerializer *xml_serializer) const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLWindowFrame_H
+#endif  // !GPDXL_CDXLWindowFrame_H
 
 // EOF

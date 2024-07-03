@@ -14,9 +14,9 @@
 #include "gpos/base.h"
 
 #include "gpopt/operators/CLogical.h"
+#include "naucrates/statistics/CStatistics.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalApply
@@ -26,163 +26,116 @@ namespace gpopt
 //		in subquery transformations
 //
 //---------------------------------------------------------------------------
-class CLogicalApply : public CLogical
-{
-private:
-	// private copy ctor
-	CLogicalApply(const CLogicalApply &);
+class CLogicalApply : public CLogical {
+ private:
+ protected:
+  // columns used from Apply's inner child
+  CColRefArray *m_pdrgpcrInner;
 
-protected:
-	// columns used from Apply's inner child
-	CColRefArray *m_pdrgpcrInner;
+  // origin subquery id
+  EOperatorId m_eopidOriginSubq;
 
-	// origin subquery id
-	EOperatorId m_eopidOriginSubq;
+  // ctor
+  explicit CLogicalApply(CMemoryPool *mp);
 
-	// ctor
-	explicit CLogicalApply(CMemoryPool *mp);
+  // ctor
+  CLogicalApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq);
 
-	// ctor
-	CLogicalApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner,
-				  EOperatorId eopidOriginSubq);
+  // dtor
+  ~CLogicalApply() override;
 
-	// dtor
-	virtual ~CLogicalApply();
+ public:
+  CLogicalApply(const CLogicalApply &) = delete;
 
-public:
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// sensitivity to order of inputs
-	virtual BOOL
-	FInputOrderSensitive() const
-	{
-		return true;
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return true; }
 
-	// inner column references accessor
-	CColRefArray *
-	PdrgPcrInner() const
-	{
-		return m_pdrgpcrInner;
-	}
+  // inner column references accessor
+  CColRefArray *PdrgPcrInner() const { return m_pdrgpcrInner; }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *
-	PopCopyWithRemappedColumns(CMemoryPool *,		//mp,
-							   UlongToColRefMap *,	//colref_mapping,
-							   BOOL					//must_exist
-	)
-	{
-		return PopCopyDefault();
-	}
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
+                                        UlongToColRefMap *,  // colref_mapping,
+                                        BOOL                 // must_exist
+                                        ) override {
+    return PopCopyDefault();
+  }
 
-	// derive partition consumer info
-	virtual CPartInfo *
-	DerivePartitionInfo(CMemoryPool *mp, CExpressionHandle &exprhdl) const
-	{
-		return PpartinfoDeriveCombine(mp, exprhdl);
-	}
+  // derive partition consumer info
+  CPartInfo *DerivePartitionInfo(CMemoryPool *mp, CExpressionHandle &exprhdl) const override {
+    return PpartinfoDeriveCombine(mp, exprhdl);
+  }
 
-	// derive keys
-	CKeyCollection *
-	DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const
-	{
-		return PkcCombineKeys(mp, exprhdl);
-	}
+  // derive keys
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override {
+    return PkcCombineKeys(mp, exprhdl);
+  }
 
-	// derive function properties
-	virtual CFunctionProp *
-	DeriveFunctionProperties(CMemoryPool *mp, CExpressionHandle &exprhdl) const
-	{
-		return PfpDeriveFromScalar(mp, exprhdl, 2 /*ulScalarIndex*/);
-	}
+  // derive function properties
+  CFunctionProp *DeriveFunctionProperties(CMemoryPool *mp, CExpressionHandle &exprhdl) const override {
+    return PfpDeriveFromScalar(mp, exprhdl);
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Derived Stats
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Derived Stats
+  //-------------------------------------------------------------------------------------
 
-	// derive statistics
-	virtual IStatistics *
-	PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
-				 IStatisticsArray *	 // stats_ctxt
-	) const
-	{
-		// we should use stats from the corresponding Join tree if decorrelation succeeds
-		return PstatsDeriveDummy(mp, exprhdl, CStatistics::DefaultRelationRows);
-	}
+  // derive statistics
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                            IStatisticsArray *  // stats_ctxt
+  ) const override {
+    // we should use stats from the corresponding Join tree if decorrelation succeeds
+    return PstatsDeriveDummy(mp, exprhdl, CStatistics::DefaultRelationRows);
+  }
 
-	// promise level for stat derivation
-	virtual EStatPromise
-	Esp(CExpressionHandle &	 // exprhdl
-	) const
-	{
-		// whenever we can decorrelate an Apply tree, we should use the corresponding Join tree
-		return EspLow;
-	}
+  // promise level for stat derivation
+  EStatPromise Esp(CExpressionHandle &  // exprhdl
+  ) const override {
+    // whenever we can decorrelate an Apply tree, we should use the corresponding Join tree
+    return EspLow;
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Required Relational Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Required Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// compute required stat columns of the n-th child
-	virtual CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								 CColRefSet *pcrsInput,
-								 ULONG child_index) const;
+  // compute required stat columns of the n-th child
+  CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
+                       ULONG child_index) const override;
 
-	// return true if operator is a correlated apply
-	virtual BOOL
-	FCorrelated() const
-	{
-		return false;
-	}
+  // return true if operator is a correlated apply
+  virtual BOOL FCorrelated() const { return false; }
 
-	// return true if operator is a left semi apply
-	virtual BOOL
-	FLeftSemiApply() const
-	{
-		return false;
-	}
+  // return true if operator is a left semi apply
+  virtual BOOL FLeftSemiApply() const { return false; }
 
-	// return true if operator is a left anti semi apply
-	virtual BOOL
-	FLeftAntiSemiApply() const
-	{
-		return false;
-	}
+  // return true if operator is a left anti semi apply
+  virtual BOOL FLeftAntiSemiApply() const { return false; }
 
-	// return true if operator can select a subset of input tuples based on some predicate
-	virtual BOOL
-	FSelectionOp() const
-	{
-		return true;
-	}
+  // return true if operator can select a subset of input tuples based on some predicate
+  BOOL FSelectionOp() const override { return true; }
 
-	// origin subquery id
-	EOperatorId
-	EopidOriginSubq() const
-	{
-		return m_eopidOriginSubq;
-	}
+  // origin subquery id
+  EOperatorId EopidOriginSubq() const { return m_eopidOriginSubq; }
 
-	// print function
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // print function
+  IOstream &OsPrint(IOstream &os) const override;
 
-	// conversion function
-	static CLogicalApply *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(CUtils::FApply(pop));
+  // conversion function
+  static CLogicalApply *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(CUtils::FApply(pop));
 
-		return dynamic_cast<CLogicalApply *>(pop);
-	}
+    return dynamic_cast<CLogicalApply *>(pop);
+  }
 
-};	// class CLogicalApply
+};  // class CLogicalApply
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CLogicalApply_H
+#endif  // !GPOPT_CLogicalApply_H
 
 // EOF

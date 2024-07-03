@@ -32,10 +32,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CSerializableStackTrace::CSerializableStackTrace() : CSerializable()
-{
-}
-
+CSerializableStackTrace::CSerializableStackTrace() : CSerializable() {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,9 +42,7 @@ CSerializableStackTrace::CSerializableStackTrace() : CSerializable()
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CSerializableStackTrace::~CSerializableStackTrace()
-{
-}
+CSerializableStackTrace::~CSerializableStackTrace() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -57,25 +52,22 @@ CSerializableStackTrace::~CSerializableStackTrace()
 //		Serialize contents into provided stream
 //
 //---------------------------------------------------------------------------
-void
-CSerializableStackTrace::Serialize(COstream &oos)
-{
-	if (!ITask::Self()->HasPendingExceptions())
-	{
-		// no pending exception: no need to serialize stack trace
-		return;
-	}
-	WCHAR wszStackBuffer[GPOPT_MINIDUMP_BUF_SIZE];
-	CWStringStatic str(wszStackBuffer, GPOS_ARRAY_SIZE(wszStackBuffer));
+void CSerializableStackTrace::Serialize(COstream &oos) {
+  if (!ITask::Self()->HasPendingExceptions()) {
+    // no pending exception: no need to serialize stack trace
+    return;
+  }
+  WCHAR wszStackBuffer[GPOPT_MINIDUMP_BUF_SIZE];
+  CWStringStatic str(wszStackBuffer, GPOS_ARRAY_SIZE(wszStackBuffer));
 
-	str.AppendFormat(CDXLSections::m_wszStackTraceHeader);
+  str.AppendFormat(CDXLSections::m_wszStackTraceHeader);
 
-	CErrorContext *perrctxt = CTask::Self()->ConvertErrCtxt();
-	perrctxt->GetStackDescriptor()->AppendTrace(&str);
+  CErrorContext *perrctxt = CTask::Self()->ConvertErrCtxt();
+  perrctxt->GetStackDescriptor()->AppendTrace(&str);
 
-	str.AppendFormat(CDXLSections::m_wszStackTraceFooter);
+  str.AppendFormat(CDXLSections::m_wszStackTraceFooter);
 
-	oos << wszStackBuffer;
+  oos << wszStackBuffer;
 }
 
 // EOF

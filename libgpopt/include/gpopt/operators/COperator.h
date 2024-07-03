@@ -20,10 +20,9 @@
 #include "gpopt/base/CFunctionProp.h"
 #include "gpopt/base/CReqdPropPlan.h"
 #include "gpopt/base/CReqdPropRelational.h"
-#include "naucrates/statistics/CStatistics.h"
+#include "gpopt/metadata/CTableDescriptor.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // forward declarations
@@ -32,12 +31,11 @@ class CReqdPropPlan;
 class CReqdPropRelational;
 
 // dynamic array for operators
-typedef CDynamicPtrArray<COperator, CleanupRelease> COperatorArray;
+using COperatorArray = CDynamicPtrArray<COperator, CleanupRelease>;
 
 // hash map mapping CColRef -> CColRef
-typedef CHashMap<CColRef, CColRef, CColRef::HashValue, CColRef::Equals,
-				 CleanupNULL<CColRef>, CleanupNULL<CColRef> >
-	ColRefToColRefMap;
+using ColRefToColRefMap =
+    CHashMap<CColRef, CColRef, CColRef::HashValue, CColRef::Equals, CleanupNULL<CColRef>, CleanupNULL<CColRef>>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -47,319 +45,299 @@ typedef CHashMap<CColRef, CColRef, CColRef::HashValue, CColRef::Equals,
 //		base class for all operators
 //
 //---------------------------------------------------------------------------
-class COperator : public CRefCount
-{
-private:
-	// private copy ctor
-	COperator(COperator &);
+class COperator : public CRefCount, public DbgPrintMixin<COperator> {
+ private:
+ protected:
+  // operator id that is unique over all instances of all operator types
+  // for the current query
+  ULONG m_ulOpId;
 
-protected:
-	// operator id that is unique over all instances of all operator types
-	// for the current query
-	ULONG m_ulOpId;
+  // memory pool for internal allocations
+  CMemoryPool *m_mp;
 
-	// memory pool for internal allocations
-	CMemoryPool *m_mp;
+  // is pattern of xform
+  BOOL m_fPattern;
 
-	// is pattern of xform
-	BOOL m_fPattern;
+  // return an addref'ed copy of the operator
+  virtual COperator *PopCopyDefault();
 
-	// return an addref'ed copy of the operator
-	virtual COperator *PopCopyDefault();
+  // derive stability function property from children
+  static IMDFunction::EFuncStbl EfsDeriveFromChildren(CExpressionHandle &exprhdl, IMDFunction::EFuncStbl efsDefault);
 
-	// derive data access function property from children
-	static IMDFunction::EFuncDataAcc EfdaDeriveFromChildren(
-		CExpressionHandle &exprhdl, IMDFunction::EFuncDataAcc efdaDefault);
+  // derive function properties from children
+  static CFunctionProp *PfpDeriveFromChildren(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                              IMDFunction::EFuncStbl efsDefault, BOOL fHasVolatileFunctionScan,
+                                              BOOL fScan);
 
-	// derive stability function property from children
-	static IMDFunction::EFuncStbl EfsDeriveFromChildren(
-		CExpressionHandle &exprhdl, IMDFunction::EFuncStbl efsDefault);
+  // generate unique operator ids
+  static ULONG m_aulOpIdCounter;
 
-	// derive function properties from children
-	static CFunctionProp *PfpDeriveFromChildren(
-		CMemoryPool *mp, CExpressionHandle &exprhdl,
-		IMDFunction::EFuncStbl efsDefault,
-		IMDFunction::EFuncDataAcc efdaDefault, BOOL fHasVolatileFunctionScan,
-		BOOL fScan);
+ public:
+  COperator(COperator &) = delete;
 
-	// generate unique operator ids
-	static ULONG m_aulOpIdCounter;
+  // identification
+  enum EOperatorId {
+    EopLogicalGet,
+    EopLogicalForeignGet,
+    EopLogicalIndexGet,
+    EopLogicalBitmapTableGet,
+    EopLogicalSelect,
+    EopLogicalUnion,
+    EopLogicalUnionAll,
+    EopLogicalIntersect,
+    EopLogicalIntersectAll,
+    EopLogicalDifference,
+    EopLogicalDifferenceAll,
+    EopLogicalInnerJoin,
+    EopLogicalNAryJoin,
+    EopLogicalLeftOuterJoin,
+    EopLogicalLeftSemiJoin,
+    EopLogicalLeftAntiSemiJoin,
+    EopLogicalLeftAntiSemiJoinNotIn,
+    EopLogicalFullOuterJoin,
+    EopLogicalGbAgg,
+    EopLogicalGbAggDeduplicate,
+    EopLogicalLimit,
+    EopLogicalProject,
+    EopLogicalRename,
+    EopLogicalInnerApply,
+    EopLogicalInnerCorrelatedApply,
+    EopLogicalIndexApply,
+    EopLogicalLeftOuterApply,
+    EopLogicalLeftOuterCorrelatedApply,
+    EopLogicalLeftSemiApply,
+    EopLogicalLeftSemiCorrelatedApply,
+    EopLogicalLeftSemiApplyIn,
+    EopLogicalLeftSemiCorrelatedApplyIn,
+    EopLogicalLeftAntiSemiApply,
+    EopLogicalLeftAntiSemiCorrelatedApply,
+    EopLogicalLeftAntiSemiApplyNotIn,
+    EopLogicalLeftAntiSemiCorrelatedApplyNotIn,
+    EopLogicalRightOuterJoin,
+    EopLogicalConstTableGet,
+    EopLogicalDynamicGet,
+    EopLogicalDynamicIndexGet,
+    EopLogicalSequence,
+    EopLogicalTVF,
+    EopLogicalCTEAnchor,
+    EopLogicalCTEProducer,
+    EopLogicalCTEConsumer,
+    EopLogicalSequenceProject,
+    EopLogicalInsert,
+    EopLogicalDelete,
+    EopLogicalUpdate,
+    EopLogicalDML,
+    EopLogicalSplit,
+    EopLogicalPartitionSelector,
+    EopLogicalAssert,
+    EopLogicalMaxOneRow,
 
-public:
-	// identification
-	enum EOperatorId
-	{
-		EopLogicalGet,
-		EopLogicalExternalGet,
-		EopLogicalIndexGet,
-		EopLogicalBitmapTableGet,
-		EopLogicalSelect,
-		EopLogicalUnion,
-		EopLogicalUnionAll,
-		EopLogicalIntersect,
-		EopLogicalIntersectAll,
-		EopLogicalDifference,
-		EopLogicalDifferenceAll,
-		EopLogicalInnerJoin,
-		EopLogicalNAryJoin,
-		EopLogicalLeftOuterJoin,
-		EopLogicalLeftSemiJoin,
-		EopLogicalLeftAntiSemiJoin,
-		EopLogicalLeftAntiSemiJoinNotIn,
-		EopLogicalFullOuterJoin,
-		EopLogicalGbAgg,
-		EopLogicalGbAggDeduplicate,
-		EopLogicalLimit,
-		EopLogicalProject,
-		EopLogicalRename,
-		EopLogicalInnerApply,
-		EopLogicalInnerCorrelatedApply,
-		EopLogicalIndexApply,
-		EopLogicalLeftOuterApply,
-		EopLogicalLeftOuterCorrelatedApply,
-		EopLogicalLeftSemiApply,
-		EopLogicalLeftSemiCorrelatedApply,
-		EopLogicalLeftSemiApplyIn,
-		EopLogicalLeftSemiCorrelatedApplyIn,
-		EopLogicalLeftAntiSemiApply,
-		EopLogicalLeftAntiSemiCorrelatedApply,
-		EopLogicalLeftAntiSemiApplyNotIn,
-		EopLogicalLeftAntiSemiCorrelatedApplyNotIn,
-		EopLogicalConstTableGet,
-		EopLogicalDynamicGet,
-		EopLogicalDynamicIndexGet,
-		EopLogicalSequence,
-		EopLogicalTVF,
-		EopLogicalCTEAnchor,
-		EopLogicalCTEProducer,
-		EopLogicalCTEConsumer,
-		EopLogicalSequenceProject,
-		EopLogicalInsert,
-		EopLogicalDelete,
-		EopLogicalUpdate,
-		EopLogicalDML,
-		EopLogicalSplit,
-		EopLogicalRowTrigger,
-		EopLogicalPartitionSelector,
-		EopLogicalAssert,
-		EopLogicalMaxOneRow,
+    EopScalarCmp,
+    EopScalarIsDistinctFrom,
+    EopScalarIdent,
+    EopScalarParam,
+    EopScalarProjectElement,
+    EopScalarProjectList,
+    EopScalarNAryJoinPredList,
+    EopScalarConst,
+    EopScalarBoolOp,
+    EopScalarFunc,
+    EopScalarMinMax,
+    EopScalarAggFunc,
+    EopScalarWindowFunc,
+    EopScalarOp,
+    EopScalarNullIf,
+    EopScalarNullTest,
+    EopScalarBooleanTest,
+    EopScalarIf,
+    EopScalarSwitch,
+    EopScalarSwitchCase,
+    EopScalarCaseTest,
+    EopScalarCast,
+    EopScalarCoerceToDomain,
+    EopScalarCoerceViaIO,
+    EopScalarArrayCoerceExpr,
+    EopScalarCoalesce,
+    EopScalarArray,
+    EopScalarArrayCmp,
+    EopScalarArrayRef,
+    EopScalarArrayRefIndexList,
+    EopScalarValuesList,
 
-		EopScalarCmp,
-		EopScalarIsDistinctFrom,
-		EopScalarIdent,
-		EopScalarProjectElement,
-		EopScalarProjectList,
-		EopScalarNAryJoinPredList,
-		EopScalarConst,
-		EopScalarBoolOp,
-		EopScalarFunc,
-		EopScalarMinMax,
-		EopScalarAggFunc,
-		EopScalarWindowFunc,
-		EopScalarOp,
-		EopScalarNullIf,
-		EopScalarNullTest,
-		EopScalarBooleanTest,
-		EopScalarIf,
-		EopScalarSwitch,
-		EopScalarSwitchCase,
-		EopScalarCaseTest,
-		EopScalarCast,
-		EopScalarCoerceToDomain,
-		EopScalarCoerceViaIO,
-		EopScalarArrayCoerceExpr,
-		EopScalarCoalesce,
-		EopScalarArray,
-		EopScalarArrayCmp,
-		EopScalarArrayRef,
-		EopScalarArrayRefIndexList,
+    EopScalarAssertConstraintList,
+    EopScalarAssertConstraint,
 
-		EopScalarAssertConstraintList,
-		EopScalarAssertConstraint,
+    EopScalarSortGroupClause,
+    EopScalarSubquery,
+    EopScalarSubqueryAny,
+    EopScalarSubqueryAll,
+    EopScalarSubqueryExists,
+    EopScalarSubqueryNotExists,
 
-		EopScalarSubquery,
-		EopScalarSubqueryAny,
-		EopScalarSubqueryAll,
-		EopScalarSubqueryExists,
-		EopScalarSubqueryNotExists,
+    EopScalarDMLAction,
 
-		EopScalarDMLAction,
+    EopScalarBitmapIndexProbe,
+    EopScalarBitmapBoolOp,
 
-		EopScalarBitmapIndexProbe,
-		EopScalarBitmapBoolOp,
+    EopScalarFieldSelect,
 
-		EopPhysicalTableScan,
-		EopPhysicalExternalScan,
-		EopPhysicalIndexScan,
-		EopPhysicalBitmapTableScan,
-		EopPhysicalFilter,
-		EopPhysicalInnerNLJoin,
-		EopPhysicalInnerIndexNLJoin,
-		EopPhysicalCorrelatedInnerNLJoin,
-		EopPhysicalLeftOuterNLJoin,
-		EopPhysicalLeftOuterIndexNLJoin,
-		EopPhysicalCorrelatedLeftOuterNLJoin,
-		EopPhysicalLeftSemiNLJoin,
-		EopPhysicalCorrelatedLeftSemiNLJoin,
-		EopPhysicalCorrelatedInLeftSemiNLJoin,
-		EopPhysicalLeftAntiSemiNLJoin,
-		EopPhysicalCorrelatedLeftAntiSemiNLJoin,
-		EopPhysicalLeftAntiSemiNLJoinNotIn,
-		EopPhysicalCorrelatedNotInLeftAntiSemiNLJoin,
-		EopPhysicalFullMergeJoin,
-		EopPhysicalDynamicTableScan,
-		EopPhysicalSequence,
-		EopPhysicalTVF,
-		EopPhysicalCTEProducer,
-		EopPhysicalCTEConsumer,
-		EopPhysicalSequenceProject,
-		EopPhysicalDynamicIndexScan,
+    EopPhysicalTableScan,
+    EopPhysicalForeignScan,
+    EopPhysicalIndexScan,
+    EopPhysicalIndexOnlyScan,
+    EopPhysicalBitmapTableScan,
+    EopPhysicalFilter,
+    EopPhysicalInnerNLJoin,
+    EopPhysicalInnerIndexNLJoin,
+    EopPhysicalCorrelatedInnerNLJoin,
+    EopPhysicalLeftOuterNLJoin,
+    EopPhysicalLeftOuterIndexNLJoin,
+    EopPhysicalCorrelatedLeftOuterNLJoin,
+    EopPhysicalLeftSemiNLJoin,
+    EopPhysicalCorrelatedLeftSemiNLJoin,
+    EopPhysicalCorrelatedInLeftSemiNLJoin,
+    EopPhysicalLeftAntiSemiNLJoin,
+    EopPhysicalCorrelatedLeftAntiSemiNLJoin,
+    EopPhysicalLeftAntiSemiNLJoinNotIn,
+    EopPhysicalCorrelatedNotInLeftAntiSemiNLJoin,
+    EopPhysicalFullMergeJoin,
+    EopPhysicalDynamicTableScan,
+    EopPhysicalSequence,
+    EopPhysicalTVF,
+    EopPhysicalCTEProducer,
+    EopPhysicalCTEConsumer,
+    EopPhysicalSequenceProject,
+    EopPhysicalDynamicIndexScan,
 
-		EopPhysicalInnerHashJoin,
-		EopPhysicalLeftOuterHashJoin,
-		EopPhysicalLeftSemiHashJoin,
-		EopPhysicalLeftAntiSemiHashJoin,
-		EopPhysicalLeftAntiSemiHashJoinNotIn,
+    EopPhysicalInnerHashJoin,
+    EopPhysicalLeftOuterHashJoin,
+    EopPhysicalLeftSemiHashJoin,
+    EopPhysicalLeftAntiSemiHashJoin,
+    EopPhysicalLeftAntiSemiHashJoinNotIn,
+    EopPhysicalRightOuterHashJoin,
+    EopPhysicalFullHashJoin,
 
-		EopPhysicalMotionGather,
-		EopPhysicalMotionBroadcast,
-		EopPhysicalMotionHashDistribute,
-		EopPhysicalMotionRoutedDistribute,
-		EopPhysicalMotionRandom,
+    EopPhysicalMotionGather,
+    EopPhysicalMotionBroadcast,
+    EopPhysicalMotionHashDistribute,
+    EopPhysicalMotionRoutedDistribute,
+    EopPhysicalMotionRandom,
 
-		EopPhysicalHashAgg,
-		EopPhysicalHashAggDeduplicate,
-		EopPhysicalStreamAgg,
-		EopPhysicalStreamAggDeduplicate,
-		EopPhysicalScalarAgg,
+    EopPhysicalHashAgg,
+    EopPhysicalHashAggDeduplicate,
+    EopPhysicalStreamAgg,
+    EopPhysicalStreamAggDeduplicate,
+    EopPhysicalScalarAgg,
 
-		EopPhysicalSerialUnionAll,
-		EopPhysicalParallelUnionAll,
+    EopPhysicalSerialUnionAll,
+    EopPhysicalParallelUnionAll,
 
-		EopPhysicalSort,
-		EopPhysicalLimit,
-		EopPhysicalComputeScalar,
-		EopPhysicalSpool,
-		EopPhysicalPartitionSelector,
-		EopPhysicalPartitionSelectorDML,
+    EopPhysicalSort,
+    EopPhysicalLimit,
+    EopPhysicalComputeScalar,
+    EopPhysicalSpool,
+    EopPhysicalPartitionSelector,
 
-		EopPhysicalConstTableGet,
+    EopPhysicalConstTableGet,
 
-		EopPhysicalDML,
-		EopPhysicalSplit,
-		EopPhysicalRowTrigger,
+    EopPhysicalDML,
+    EopPhysicalSplit,
 
-		EopPhysicalAssert,
+    EopPhysicalAssert,
 
-		EopPatternTree,
-		EopPatternLeaf,
-		EopPatternMultiLeaf,
-		EopPatternMultiTree,
+    EopPatternTree,
+    EopPatternLeaf,
+    EopPatternMultiLeaf,
+    EopPatternMultiTree,
+    EopPatternNode,
 
-		EopLogicalDynamicBitmapTableGet,
-		EopPhysicalDynamicBitmapTableScan,
+    EopLogicalDynamicBitmapTableGet,
+    EopPhysicalDynamicBitmapTableScan,
 
-		EopSentinel
-	};
+    EopLogicalDynamicForeignGet,
+    EopPhysicalDynamicForeignScan,
+    EopPhysicalDynamicIndexOnlyScan,
 
-	// aggregate type
-	enum EGbAggType
-	{
-		EgbaggtypeGlobal,		 // global group by aggregate
-		EgbaggtypeLocal,		 // local group by aggregate
-		EgbaggtypeIntermediate,	 // intermediate group by aggregate
+    EopLogicalIndexOnlyGet,
+    EopLogicalDynamicIndexOnlyGet,
+    EopSentinel
+  };
 
-		EgbaggtypeSentinel
-	};
+  // aggregate type
+  enum EGbAggType {
+    EgbaggtypeGlobal,        // global group by aggregate
+    EgbaggtypeLocal,         // local group by aggregate
+    EgbaggtypeIntermediate,  // intermediate group by aggregate
 
-	// coercion form
-	enum ECoercionForm
-	{
-		EcfExplicitCall,  // display as a function call
-		EcfExplicitCast,  // display as an explicit cast
-		EcfImplicitCast,  // implicit cast, so hide it
-		EcfDontCare		  // don't care about display
-	};
+    EgbaggtypeSentinel
+  };
 
-	// ctor
-	explicit COperator(CMemoryPool *mp);
+  // coercion form
+  enum ECoercionForm {
+    EcfExplicitCall,  // display as a function call
+    EcfExplicitCast,  // display as an explicit cast
+    EcfImplicitCast,  // implicit cast, so hide it
+    EcfDontCare       // don't care about display
+  };
 
-	// dtor
-	virtual ~COperator()
-	{
-	}
+  // ctor
+  explicit COperator(CMemoryPool *mp);
 
-	// the id of the operator
-	ULONG
-	UlOpId() const
-	{
-		return m_ulOpId;
-	}
+  // dtor
+  ~COperator() override = default;
 
-	// ident accessors
-	virtual EOperatorId Eopid() const = 0;
+  // the id of the operator
+  ULONG
+  UlOpId() const { return m_ulOpId; }
 
-	// return a string for operator name
-	virtual const CHAR *SzId() const = 0;
+  // ident accessors
+  virtual EOperatorId Eopid() const = 0;
 
-	// the following functions check operator's type
+  // return a string for operator name
+  virtual const CHAR *SzId() const = 0;
 
-	// is operator logical?
-	virtual BOOL
-	FLogical() const
-	{
-		return false;
-	}
+  // the following functions check operator's type
 
-	// is operator physical?
-	virtual BOOL
-	FPhysical() const
-	{
-		return false;
-	}
+  // is operator logical?
+  virtual BOOL FLogical() const { return false; }
 
-	// is operator scalar?
-	virtual BOOL
-	FScalar() const
-	{
-		return false;
-	}
+  // is operator physical?
+  virtual BOOL FPhysical() const { return false; }
 
-	// is operator pattern?
-	virtual BOOL
-	FPattern() const
-	{
-		return false;
-	}
+  // is operator scalar?
+  virtual BOOL FScalar() const { return false; }
 
-	// hash function
-	virtual ULONG HashValue() const;
+  // is operator pattern?
+  virtual BOOL FPattern() const { return false; }
 
-	// sensitivity to order of inputs
-	virtual BOOL FInputOrderSensitive() const = 0;
+  // hash function
+  virtual ULONG HashValue() const;
 
-	// match function;
-	// abstract to enforce an implementation for each new operator
-	virtual BOOL Matches(COperator *pop) const = 0;
+  // sensitivity to order of inputs
+  virtual BOOL FInputOrderSensitive() const = 0;
 
-	// create container for derived properties
-	virtual CDrvdProp *PdpCreate(CMemoryPool *mp) const = 0;
+  // match function;
+  // abstract to enforce an implementation for each new operator
+  virtual BOOL Matches(COperator *pop) const = 0;
 
-	// create container for required properties
-	virtual CReqdProp *PrpCreate(CMemoryPool *mp) const = 0;
+  // create container for derived properties
+  virtual CDrvdProp *PdpCreate(CMemoryPool *mp) const = 0;
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) = 0;
+  // create container for required properties
+  virtual CReqdProp *PrpCreate(CMemoryPool *mp) const = 0;
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // return a copy of the operator with remapped columns
+  virtual COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) = 0;
 
-};	// class COperator
+  virtual CTableDescriptorHashSet *DeriveTableDescriptor(CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+
+  // print
+  virtual IOstream &OsPrint(IOstream &os) const;
+
+};  // class COperator
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_COperator_H
+#endif  // !GPOPT_COperator_H
 
 // EOF

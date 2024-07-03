@@ -16,8 +16,7 @@
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/operators/CLogical.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalTVF
@@ -26,203 +25,149 @@ namespace gpopt
 //		Table-valued function
 //
 //---------------------------------------------------------------------------
-class CLogicalTVF : public CLogical
-{
-private:
-	// function mdid
-	IMDId *m_func_mdid;
+class CLogicalTVF : public CLogical {
+ private:
+  // function mdid
+  IMDId *m_func_mdid;
 
-	// return type
-	IMDId *m_return_type_mdid;
+  // return type
+  IMDId *m_return_type_mdid;
 
-	// function name
-	CWStringConst *m_pstr;
+  // function name
+  CWStringConst *m_pstr;
 
-	// array of column descriptors: the schema of the function result
-	CColumnDescriptorArray *m_pdrgpcoldesc;
+  // array of column descriptors: the schema of the function result
+  CColumnDescriptorArray *m_pdrgpcoldesc;
 
-	// output columns
-	CColRefArray *m_pdrgpcrOutput;
+  // output columns
+  CColRefArray *m_pdrgpcrOutput;
 
-	// function stability
-	IMDFunction::EFuncStbl m_efs;
+  // function stability
+  IMDFunction::EFuncStbl m_efs;
 
-	// function data access
-	IMDFunction::EFuncDataAcc m_efda;
+  // does this function return a set of rows
+  BOOL m_returns_set;
 
-	// does this function return a set of rows
-	BOOL m_returns_set;
+ public:
+  CLogicalTVF(const CLogicalTVF &) = delete;
 
-	// private copy ctor
-	CLogicalTVF(const CLogicalTVF &);
+  // ctors
+  explicit CLogicalTVF(CMemoryPool *mp);
 
-public:
-	// ctors
-	explicit CLogicalTVF(CMemoryPool *mp);
+  CLogicalTVF(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, CWStringConst *str,
+              CColumnDescriptorArray *pdrgpcoldesc);
 
-	CLogicalTVF(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type,
-				CWStringConst *str, CColumnDescriptorArray *pdrgpcoldesc);
+  CLogicalTVF(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, CWStringConst *str,
+              CColumnDescriptorArray *pdrgpcoldesc, CColRefArray *pdrgpcrOutput);
 
-	CLogicalTVF(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type,
-				CWStringConst *str, CColumnDescriptorArray *pdrgpcoldesc,
-				CColRefArray *pdrgpcrOutput);
+  // dtor
+  ~CLogicalTVF() override;
 
-	// dtor
-	virtual ~CLogicalTVF();
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalTVF; }
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalTVF;
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalTVF"; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalTVF";
-	}
+  // function mdid
+  IMDId *FuncMdId() const { return m_func_mdid; }
 
-	// function mdid
-	IMDId *
-	FuncMdId() const
-	{
-		return m_func_mdid;
-	}
+  // return type
+  IMDId *ReturnTypeMdId() const { return m_return_type_mdid; }
 
-	// return type
-	IMDId *
-	ReturnTypeMdId() const
-	{
-		return m_return_type_mdid;
-	}
+  // function name
+  const CWStringConst *Pstr() const { return m_pstr; }
 
-	// function name
-	const CWStringConst *
-	Pstr() const
-	{
-		return m_pstr;
-	}
+  // col descr accessor
+  CColumnDescriptorArray *Pdrgpcoldesc() const { return m_pdrgpcoldesc; }
 
-	// col descr accessor
-	CColumnDescriptorArray *
-	Pdrgpcoldesc() const
-	{
-		return m_pdrgpcoldesc;
-	}
+  // accessors
+  CColRefArray *PdrgpcrOutput() const { return m_pdrgpcrOutput; }
 
-	// accessors
-	CColRefArray *
-	PdrgpcrOutput() const
-	{
-		return m_pdrgpcrOutput;
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override;
 
-	// sensitivity to order of inputs
-	BOOL FInputOrderSensitive() const;
+  // operator specific hash function
+  ULONG HashValue() const override;
 
-	// operator specific hash function
-	virtual ULONG HashValue() const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  // derive output columns
+  CColRefSet *DeriveOutputColumns(CMemoryPool *, CExpressionHandle &) override;
 
-	// derive output columns
-	virtual CColRefSet *DeriveOutputColumns(CMemoryPool *, CExpressionHandle &);
+  // derive partition consumer info
+  CPartInfo *DerivePartitionInfo(CMemoryPool *mp,
+                                 CExpressionHandle &  // exprhdl
+  ) const override {
+    return GPOS_NEW(mp) CPartInfo(mp);
+  }
 
-	// derive partition consumer info
-	virtual CPartInfo *
-	DerivePartitionInfo(CMemoryPool *mp,
-						CExpressionHandle &	 //exprhdl
-	) const
-	{
-		return GPOS_NEW(mp) CPartInfo(mp);
-	}
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *mp,
+                                            CExpressionHandle &  // exprhdl
+  ) const override {
+    return GPOS_NEW(mp) CPropConstraint(mp, GPOS_NEW(mp) CColRefSetArray(mp), nullptr /*pcnstr*/);
+  }
 
-	// derive constraint property
-	virtual CPropConstraint *
-	DerivePropertyConstraint(CMemoryPool *mp,
-							 CExpressionHandle &  //exprhdl
-	) const
-	{
-		return GPOS_NEW(mp) CPropConstraint(
-			mp, GPOS_NEW(mp) CColRefSetArray(mp), NULL /*pcnstr*/);
-	}
+  // derive function properties
+  CFunctionProp *DeriveFunctionProperties(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive function properties
-	virtual CFunctionProp *DeriveFunctionProperties(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  // derive max card
+  CMaxCard DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive max card
-	virtual CMaxCard DeriveMaxCard(CMemoryPool *mp,
-								   CExpressionHandle &exprhdl) const;
+  //-------------------------------------------------------------------------------------
+  // Required Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	// Required Relational Properties
-	//-------------------------------------------------------------------------------------
+  // compute required stat columns of the n-th child
+  CColRefSet *PcrsStat(CMemoryPool *,        // mp
+                       CExpressionHandle &,  // exprhdl
+                       CColRefSet *,         // pcrsInput
+                       ULONG                 // child_index
+  ) const override {
+    return nullptr;
+  }
 
-	// compute required stat columns of the n-th child
-	virtual CColRefSet *
-	PcrsStat(CMemoryPool *,		   // mp
-			 CExpressionHandle &,  // exprhdl
-			 CColRefSet *,		   // pcrsInput
-			 ULONG				   // child_index
-	) const
-	{
-		return NULL;
-	}
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	// candidate set of xforms
-	virtual CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // stat promise
+  EStatPromise Esp(CExpressionHandle &) const override { return CLogical::EspLow; }
 
-	// stat promise
-	virtual EStatPromise
-	Esp(CExpressionHandle &) const
-	{
-		return CLogical::EspLow;
-	}
+  // derive statistics
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
-	// derive statistics
-	virtual IStatistics *PstatsDerive(CMemoryPool *mp,
-									  CExpressionHandle &exprhdl,
-									  IStatisticsArray *stats_ctxt) const;
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  // conversion function
+  static CLogicalTVF *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalTVF == pop->Eopid());
 
-	// conversion function
-	static CLogicalTVF *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalTVF == pop->Eopid());
+    return dynamic_cast<CLogicalTVF *>(pop);
+  }
 
-		return dynamic_cast<CLogicalTVF *>(pop);
-	}
+  // debug print
+  IOstream &OsPrint(IOstream &) const override;
 
-
-	// debug print
-	virtual IOstream &OsPrint(IOstream &) const;
-
-};	// class CLogicalTVF
+};  // class CLogicalTVF
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CLogicalTVF_H
+#endif  // !GPOPT_CLogicalTVF_H
 
 // EOF

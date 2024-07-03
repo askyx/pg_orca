@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CMinidumpWithConstExprEvaluatorTest.h
@@ -20,8 +20,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -32,21 +31,20 @@ using namespace gpos;
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CMinidumpWithConstExprEvaluatorTest
-{
-private:
-	// counter used to mark last successful test
-	static ULONG m_ulTestCounter;
+class CMinidumpWithConstExprEvaluatorTest {
+ private:
+  // counter used to mark last successful test
+  static ULONG m_ulTestCounter;
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
 
-	static GPOS_RESULT EresUnittest_RunMinidumpTestsWithConstExprEvaluatorOn();
+  static GPOS_RESULT EresUnittest_RunMinidumpTestsWithConstExprEvaluatorOn();
 
-};	// class CMinidumpWithConstExprEvaluatorTest
+};  // class CMinidumpWithConstExprEvaluatorTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CMinidumpWithConstExprEvaluatorTest_H
+#endif  // !GPOPT_CMinidumpWithConstExprEvaluatorTest_H
 
 // EOF

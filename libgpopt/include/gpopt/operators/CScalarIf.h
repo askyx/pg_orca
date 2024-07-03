@@ -14,11 +14,9 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CDrvdProp.h"
-#include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CScalar.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -39,96 +37,66 @@ using namespace gpos;
 //								  |------- 15
 //
 //---------------------------------------------------------------------------
-class CScalarIf : public CScalar
-{
-private:
-	// metadata id in the catalog
-	IMDId *m_mdid_type;
+class CScalarIf : public CScalar {
+ private:
+  // metadata id in the catalog
+  IMDId *m_mdid_type;
 
-	// is operator return type BOOL?
-	BOOL m_fBoolReturnType;
+  // is operator return type BOOL?
+  BOOL m_fBoolReturnType;
 
-	// private copy ctor
-	CScalarIf(const CScalarIf &);
+ public:
+  CScalarIf(const CScalarIf &) = delete;
 
-public:
-	// ctor
-	CScalarIf(CMemoryPool *mp, IMDId *mdid);
+  // ctor
+  CScalarIf(CMemoryPool *mp, IMDId *mdid);
 
-	// dtor
-	virtual ~CScalarIf()
-	{
-		m_mdid_type->Release();
-	}
+  // dtor
+  ~CScalarIf() override { m_mdid_type->Release(); }
 
+  // ident accessors
+  EOperatorId Eopid() const override { return EopScalarIf; }
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopScalarIf;
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CScalarIf"; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CScalarIf";
-	}
+  // the type of the scalar expression
+  IMDId *MdidType() const override { return m_mdid_type; }
 
-	// the type of the scalar expression
-	virtual IMDId *
-	MdidType() const
-	{
-		return m_mdid_type;
-	}
+  // operator specific hash function
+  ULONG HashValue() const override;
 
-	// operator specific hash function
-	virtual ULONG HashValue() const;
+  // match function
+  BOOL Matches(COperator *) const override;
 
-	// match function
-	virtual BOOL Matches(COperator *) const;
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return true; }
 
-	// sensitivity to order of inputs
-	virtual BOOL
-	FInputOrderSensitive() const
-	{
-		return true;
-	}
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
+                                        UlongToColRefMap *,  // colref_mapping,
+                                        BOOL                 // must_exist
+                                        ) override {
+    return PopCopyDefault();
+  }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *
-	PopCopyWithRemappedColumns(CMemoryPool *,		//mp,
-							   UlongToColRefMap *,	//colref_mapping,
-							   BOOL					//must_exist
-	)
-	{
-		return PopCopyDefault();
-	}
+  // boolean expression evaluation
+  EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const override {
+    return EberNullOnAllNullChildren(pdrgpulChildren);
+  }
 
+  // conversion function
+  static CScalarIf *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarIf == pop->Eopid());
 
-	// boolean expression evaluation
-	virtual EBoolEvalResult
-	Eber(ULongPtrArray *pdrgpulChildren) const
-	{
-		return EberNullOnAllNullChildren(pdrgpulChildren);
-	}
+    return dynamic_cast<CScalarIf *>(pop);
+  }
 
-	// conversion function
-	static CScalarIf *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarIf == pop->Eopid());
-
-		return dynamic_cast<CScalarIf *>(pop);
-	}
-
-};	// class CScalarIf
+};  // class CScalarIf
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CScalarIf_H
+#endif  // !GPOPT_CScalarIf_H
 
 // EOF

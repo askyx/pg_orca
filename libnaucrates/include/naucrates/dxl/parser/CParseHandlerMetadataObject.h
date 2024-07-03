@@ -17,8 +17,7 @@
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 #include "naucrates/md/IMDCacheObject.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -33,30 +32,26 @@ XERCES_CPP_NAMESPACE_USE
 //
 //
 //---------------------------------------------------------------------------
-class CParseHandlerMetadataObject : public CParseHandlerBase
-{
-private:
-	// private copy ctor
-	CParseHandlerMetadataObject(const CParseHandlerMetadataObject &);
+class CParseHandlerMetadataObject : public CParseHandlerBase {
+ private:
+ protected:
+  // the metadata object constructed by the parse handler
+  IMDCacheObject *m_imd_obj;
 
+ public:
+  CParseHandlerMetadataObject(const CParseHandlerMetadataObject &) = delete;
 
-protected:
-	// the metadata object constructed by the parse handler
-	IMDCacheObject *m_imd_obj;
+  // ctor/dtor
+  CParseHandlerMetadataObject(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                              CParseHandlerBase *parse_handler_root);
 
-public:
-	// ctor/dtor
-	CParseHandlerMetadataObject(CMemoryPool *mp,
-								CParseHandlerManager *parse_handler_mgr,
-								CParseHandlerBase *parse_handler_root);
+  ~CParseHandlerMetadataObject() override;
 
-	virtual ~CParseHandlerMetadataObject();
-
-	// returns constructed metadata object
-	IMDCacheObject *GetImdObj() const;
+  // returns constructed metadata object
+  IMDCacheObject *GetImdObj() const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerMetadataObject_H
+#endif  // !GPDXL_CParseHandlerMetadataObject_H
 
 // EOF

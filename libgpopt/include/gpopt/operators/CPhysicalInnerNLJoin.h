@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CPhysicalNLJoin.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CPhysicalInnerNLJoin
@@ -25,55 +24,41 @@ namespace gpopt
 //		Inner nested-loops join operator
 //
 //---------------------------------------------------------------------------
-class CPhysicalInnerNLJoin : public CPhysicalNLJoin
-{
-private:
-	// private copy ctor
-	CPhysicalInnerNLJoin(const CPhysicalInnerNLJoin &);
+class CPhysicalInnerNLJoin : public CPhysicalNLJoin {
+ private:
+ public:
+  CPhysicalInnerNLJoin(const CPhysicalInnerNLJoin &) = delete;
 
-public:
-	// ctor
-	explicit CPhysicalInnerNLJoin(CMemoryPool *mp);
+  // ctor
+  explicit CPhysicalInnerNLJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CPhysicalInnerNLJoin();
+  // dtor
+  ~CPhysicalInnerNLJoin() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPhysicalInnerNLJoin;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPhysicalInnerNLJoin; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPhysicalInnerNLJoin";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CPhysicalInnerNLJoin"; }
 
-	// compute required distribution of the n-th child
-	virtual CDistributionSpec *PdsRequired(CMemoryPool *mp,
-										   CExpressionHandle &exprhdl,
-										   CDistributionSpec *pdsRequired,
-										   ULONG child_index,
-										   CDrvdPropArray *pdrgpdpCtxt,
-										   ULONG ulOptReq) const;
+  // compute required distribution of the n-th child
+  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
+                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-	// conversion function
-	static CPhysicalInnerNLJoin *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(EopPhysicalInnerNLJoin == pop->Eopid());
+  CEnfdDistribution *Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput, ULONG child_index,
+                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulDistrReq) override;
 
-		return dynamic_cast<CPhysicalInnerNLJoin *>(pop);
-	}
+  // conversion function
+  static CPhysicalInnerNLJoin *PopConvert(COperator *pop) {
+    GPOS_ASSERT(EopPhysicalInnerNLJoin == pop->Eopid());
 
+    return dynamic_cast<CPhysicalInnerNLJoin *>(pop);
+  }
 
-};	// class CPhysicalInnerNLJoin
+};  // class CPhysicalInnerNLJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPhysicalInnerNLJoin_H
+#endif  // !GPOPT_CPhysicalInnerNLJoin_H
 
 // EOF

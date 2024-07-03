@@ -18,17 +18,17 @@
 #include "gpopt/base/CColRefTable.h"
 #include "gpopt/base/CConstraintInterval.h"
 #include "gpopt/base/COptCtxt.h"
-#include "gpopt/base/CPartIndexMap.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/metadata/CName.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpopt/operators/CLogicalDynamicGet.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "naucrates/statistics/CFilterStatsProcessor.h"
+#include "naucrates/statistics/CStatistics.h"
 #include "naucrates/statistics/CStatsPredUtils.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -39,21 +39,15 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CLogicalDynamicGetBase::CLogicalDynamicGetBase(CMemoryPool *mp)
-	: CLogical(mp),
-	  m_pnameAlias(NULL),
-	  m_ptabdesc(NULL),
-	  m_scan_id(0),
-	  m_pdrgpcrOutput(NULL),
-	  m_pdrgpdrgpcrPart(NULL),
-	  m_ulSecondaryScanId(0),
-	  m_is_partial(false),
-	  m_part_constraint(NULL),
-	  m_ppartcnstrRel(NULL),
-	  m_pcrsDist(NULL)
-{
-	m_fPattern = true;
+    : CLogical(mp),
+      m_pnameAlias(nullptr),
+      m_ptabdesc(GPOS_NEW(mp) CTableDescriptorHashSet(mp)),
+      m_scan_id(0),
+      m_pdrgpcrOutput(nullptr),
+      m_pdrgpdrgpcrPart(nullptr),
+      m_pcrsDist(nullptr) {
+  m_fPattern = true;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -63,38 +57,29 @@ CLogicalDynamicGetBase::CLogicalDynamicGetBase(CMemoryPool *mp)
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalDynamicGetBase::CLogicalDynamicGetBase(
-	CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc,
-	ULONG scan_id, CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrPart,
-	ULONG ulSecondaryScanId, BOOL is_partial, CPartConstraint *ppartcnstr,
-	CPartConstraint *ppartcnstrRel)
-	: CLogical(mp),
-	  m_pnameAlias(pnameAlias),
-	  m_ptabdesc(ptabdesc),
-	  m_scan_id(scan_id),
-	  m_pdrgpcrOutput(pdrgpcrOutput),
-	  m_pdrgpdrgpcrPart(pdrgpdrgpcrPart),
-	  m_ulSecondaryScanId(ulSecondaryScanId),
-	  m_is_partial(is_partial),
-	  m_part_constraint(ppartcnstr),
-	  m_ppartcnstrRel(ppartcnstrRel),
-	  m_pcrsDist(NULL)
+CLogicalDynamicGetBase::CLogicalDynamicGetBase(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc,
+                                               ULONG scan_id, CColRefArray *pdrgpcrOutput,
+                                               CColRef2dArray *pdrgpdrgpcrPart, IMdIdArray *partition_mdids)
+    : CLogical(mp),
+      m_pnameAlias(pnameAlias),
+      m_ptabdesc(GPOS_NEW(mp) CTableDescriptorHashSet(mp)),
+      m_scan_id(scan_id),
+      m_pdrgpcrOutput(pdrgpcrOutput),
+      m_pdrgpdrgpcrPart(pdrgpdrgpcrPart),
+      m_pcrsDist(nullptr),
+      m_partition_mdids(partition_mdids)
+
 {
-	GPOS_ASSERT(NULL != ptabdesc);
-	GPOS_ASSERT(NULL != pnameAlias);
-	GPOS_ASSERT(NULL != pdrgpcrOutput);
-	GPOS_ASSERT(NULL != pdrgpdrgpcrPart);
-	GPOS_ASSERT(NULL != ppartcnstr);
-	GPOS_ASSERT(NULL != ppartcnstrRel);
+  GPOS_ASSERT(nullptr != ptabdesc);
+  GPOS_ASSERT(nullptr != pnameAlias);
+  GPOS_ASSERT(nullptr != pdrgpcrOutput);
+  GPOS_ASSERT(nullptr != pdrgpdrgpcrPart);
 
-	GPOS_ASSERT_IMP(scan_id != ulSecondaryScanId, NULL != ppartcnstr);
-	GPOS_ASSERT_IMP(is_partial,
-					NULL != m_part_constraint->PcnstrCombined() &&
-						"Partial scan with unsupported constraint type");
+  m_ptabdesc->Insert(ptabdesc);
 
-	m_pcrsDist = CLogical::PcrsDist(mp, m_ptabdesc, m_pdrgpcrOutput);
+  m_pcrsDist = CLogical::PcrsDist(mp, Ptabdesc(), m_pdrgpcrOutput);
+  m_root_col_mapping_per_part = ConstructRootColMappingPerPart(mp, m_pdrgpcrOutput, m_partition_mdids);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -104,42 +89,26 @@ CLogicalDynamicGetBase::CLogicalDynamicGetBase(
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalDynamicGetBase::CLogicalDynamicGetBase(CMemoryPool *mp,
-											   const CName *pnameAlias,
-											   CTableDescriptor *ptabdesc,
-											   ULONG scan_id)
-	: CLogical(mp),
-	  m_pnameAlias(pnameAlias),
-	  m_ptabdesc(ptabdesc),
-	  m_scan_id(scan_id),
-	  m_pdrgpcrOutput(NULL),
-	  m_ulSecondaryScanId(scan_id),
-	  m_is_partial(false),
-	  m_part_constraint(NULL),
-	  m_ppartcnstrRel(NULL),
-	  m_pcrsDist(NULL)
-{
-	GPOS_ASSERT(NULL != ptabdesc);
-	GPOS_ASSERT(NULL != pnameAlias);
+CLogicalDynamicGetBase::CLogicalDynamicGetBase(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc,
+                                               ULONG scan_id, IMdIdArray *partition_mdids)
+    : CLogical(mp),
+      m_pnameAlias(pnameAlias),
+      m_ptabdesc(GPOS_NEW(mp) CTableDescriptorHashSet(mp)),
+      m_scan_id(scan_id),
+      m_pdrgpcrOutput(nullptr),
+      m_pcrsDist(nullptr),
+      m_partition_mdids(partition_mdids) {
+  GPOS_ASSERT(nullptr != ptabdesc);
+  GPOS_ASSERT(nullptr != pnameAlias);
 
-	// generate a default column set for the table descriptor
-	m_pdrgpcrOutput = PdrgpcrCreateMapping(mp, m_ptabdesc->Pdrgpcoldesc(),
-										   UlOpId(), m_ptabdesc->MDId());
-	m_pdrgpdrgpcrPart = PdrgpdrgpcrCreatePartCols(mp, m_pdrgpcrOutput,
-												  m_ptabdesc->PdrgpulPart());
+  m_ptabdesc->Insert(ptabdesc);
 
-	// generate a constraint "true"
-	UlongToConstraintMap *phmulcnstr = CUtils::PhmulcnstrBoolConstOnPartKeys(
-		mp, m_pdrgpdrgpcrPart, true /*value*/);
-	CBitSet *pbsDefaultParts = CUtils::PbsAllSet(mp, m_pdrgpdrgpcrPart->Size());
-	m_pdrgpdrgpcrPart->AddRef();
-	m_part_constraint =
-		GPOS_NEW(mp) CPartConstraint(mp, phmulcnstr, pbsDefaultParts,
-									 true /*is_unbounded*/, m_pdrgpdrgpcrPart);
-	m_part_constraint->AddRef();
-	m_ppartcnstrRel = m_part_constraint;
+  // generate a default column set for the table descriptor
+  m_pdrgpcrOutput = PdrgpcrCreateMapping(mp, Ptabdesc()->Pdrgpcoldesc(), UlOpId(), Ptabdesc()->MDId());
+  m_pdrgpdrgpcrPart = PdrgpdrgpcrCreatePartCols(mp, m_pdrgpcrOutput, Ptabdesc()->PdrgpulPart());
+  m_pcrsDist = CLogical::PcrsDist(mp, Ptabdesc(), m_pdrgpcrOutput);
 
-	m_pcrsDist = CLogical::PcrsDist(mp, m_ptabdesc, m_pdrgpcrOutput);
+  m_root_col_mapping_per_part = ConstructRootColMappingPerPart(mp, m_pdrgpcrOutput, m_partition_mdids);
 }
 
 //---------------------------------------------------------------------------
@@ -150,18 +119,16 @@ CLogicalDynamicGetBase::CLogicalDynamicGetBase(CMemoryPool *mp,
 //		dtor
 //
 //---------------------------------------------------------------------------
-CLogicalDynamicGetBase::~CLogicalDynamicGetBase()
-{
-	CRefCount::SafeRelease(m_ptabdesc);
-	CRefCount::SafeRelease(m_pdrgpcrOutput);
-	CRefCount::SafeRelease(m_pdrgpdrgpcrPart);
-	CRefCount::SafeRelease(m_part_constraint);
-	CRefCount::SafeRelease(m_ppartcnstrRel);
-	CRefCount::SafeRelease(m_pcrsDist);
+CLogicalDynamicGetBase::~CLogicalDynamicGetBase() {
+  CRefCount::SafeRelease(m_ptabdesc);
+  CRefCount::SafeRelease(m_pdrgpcrOutput);
+  CRefCount::SafeRelease(m_pdrgpdrgpcrPart);
+  CRefCount::SafeRelease(m_partition_mdids);
+  CRefCount::SafeRelease(m_root_col_mapping_per_part);
+  CRefCount::SafeRelease(m_pcrsDist);
 
-	GPOS_DELETE(m_pnameAlias);
+  GPOS_DELETE(m_pnameAlias);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -171,15 +138,13 @@ CLogicalDynamicGetBase::~CLogicalDynamicGetBase()
 //		Derive output columns
 //
 //---------------------------------------------------------------------------
-CColRefSet *
-CLogicalDynamicGetBase::DeriveOutputColumns(CMemoryPool *mp,
-											CExpressionHandle &	 // exprhdl
-)
-{
-	CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
-	pcrs->Include(m_pdrgpcrOutput);
+CColRefSet *CLogicalDynamicGetBase::DeriveOutputColumns(CMemoryPool *mp,
+                                                        CExpressionHandle &  // exprhdl
+) {
+  CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
+  pcrs->Include(m_pdrgpcrOutput);
 
-	return pcrs;
+  return pcrs;
 }
 
 //---------------------------------------------------------------------------
@@ -190,16 +155,13 @@ CLogicalDynamicGetBase::DeriveOutputColumns(CMemoryPool *mp,
 //		Derive key collection
 //
 //---------------------------------------------------------------------------
-CKeyCollection *
-CLogicalDynamicGetBase::DeriveKeyCollection(CMemoryPool *mp,
-											CExpressionHandle &	 // exprhdl
-) const
-{
-	const CBitSetArray *pdrgpbs = m_ptabdesc->PdrgpbsKeys();
+CKeyCollection *CLogicalDynamicGetBase::DeriveKeyCollection(CMemoryPool *mp,
+                                                            CExpressionHandle &  // exprhdl
+) const {
+  const CBitSetArray *pdrgpbs = Ptabdesc()->PdrgpbsKeys();
 
-	return CLogical::PkcKeysBaseTable(mp, pdrgpbs, m_pdrgpcrOutput);
+  return CLogical::PkcKeysBaseTable(mp, pdrgpbs, m_pdrgpcrOutput);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -209,12 +171,10 @@ CLogicalDynamicGetBase::DeriveKeyCollection(CMemoryPool *mp,
 //		Derive constraint property
 //
 //---------------------------------------------------------------------------
-CPropConstraint *
-CLogicalDynamicGetBase::DerivePropertyConstraint(CMemoryPool *mp,
-												 CExpressionHandle &  // exprhdl
-) const
-{
-	return PpcDeriveConstraintFromTable(mp, m_ptabdesc, m_pdrgpcrOutput);
+CPropConstraint *CLogicalDynamicGetBase::DerivePropertyConstraint(CMemoryPool *mp,
+                                                                  CExpressionHandle &  // exprhdl
+) const {
+  return PpcDeriveConstraintFromTable(mp, Ptabdesc(), m_pdrgpcrOutput);
 }
 
 //---------------------------------------------------------------------------
@@ -225,146 +185,68 @@ CLogicalDynamicGetBase::DerivePropertyConstraint(CMemoryPool *mp,
 //		Derive partition consumer info
 //
 //---------------------------------------------------------------------------
-CPartInfo *
-CLogicalDynamicGetBase::DerivePartitionInfo(CMemoryPool *mp,
-											CExpressionHandle &	 // exprhdl
-) const
-{
-	IMDId *mdid = m_ptabdesc->MDId();
-	mdid->AddRef();
-	m_pdrgpdrgpcrPart->AddRef();
-	m_ppartcnstrRel->AddRef();
+CPartInfo *CLogicalDynamicGetBase::DerivePartitionInfo(CMemoryPool *mp,
+                                                       CExpressionHandle &  // exprhdl
+) const {
+  IMDId *mdid = Ptabdesc()->MDId();
+  mdid->AddRef();
+  m_pdrgpdrgpcrPart->AddRef();
 
-	CPartInfo *ppartinfo = GPOS_NEW(mp) CPartInfo(mp);
-	ppartinfo->AddPartConsumer(mp, m_scan_id, mdid, m_pdrgpdrgpcrPart,
-							   m_ppartcnstrRel);
+  CPartInfo *ppartinfo = GPOS_NEW(mp) CPartInfo(mp);
+  ppartinfo->AddPartConsumer(mp, m_scan_id, mdid, m_pdrgpdrgpcrPart);
 
-	return ppartinfo;
+  return ppartinfo;
 }
 
+// Construct a mapping from each column in root table to an index in each child
+// partition's table descr by matching column names For each partition, this
+// iterates over each child partition and compares the column names and creates
+// a mapping. In the common case, the root and child partition's columns have
+// the same colref. However, if they've been dropped/swapped, the mapping will
+// be different. This method is fairly expensive, as it's building multiple hashmaps
+// and ends up getting called from a few different places in the codebase.
+ColRefToUlongMapArray *CLogicalDynamicGetBase::ConstructRootColMappingPerPart(CMemoryPool *mp, CColRefArray *root_cols,
+                                                                              IMdIdArray *partition_mdids) {
+  CMDAccessor *mda = COptCtxt::PoctxtFromTLS()->Pmda();
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CLogicalDynamicGetBase::SetPartConstraint
-//
-//	@doc:
-//		Set part constraint
-//
-//---------------------------------------------------------------------------
-void
-CLogicalDynamicGetBase::SetPartConstraint(CPartConstraint *ppartcnstr)
-{
-	GPOS_ASSERT(NULL != ppartcnstr);
-	GPOS_ASSERT(NULL != m_part_constraint);
+  ColRefToUlongMapArray *part_maps = GPOS_NEW(mp) ColRefToUlongMapArray(mp);
 
-	m_part_constraint->Release();
-	m_part_constraint = ppartcnstr;
+  // Build hashmap of colname to the index
+  ColNameToIndexMap *root_mapping = GPOS_NEW(mp) ColNameToIndexMap(mp);
+  for (ULONG i = 0; i < root_cols->Size(); ++i) {
+    CColRef *root_colref = (*root_cols)[i];
+    root_mapping->Insert(root_colref->Name().Pstr(), GPOS_NEW(mp) ULONG(i));
+  }
 
-	m_ppartcnstrRel->Release();
-	ppartcnstr->AddRef();
-	m_ppartcnstrRel = ppartcnstr;
+  for (ULONG ul = 0; ul < partition_mdids->Size(); ++ul) {
+    IMDId *part_mdid = (*partition_mdids)[ul];
+    const IMDRelation *partrel = mda->RetrieveRel(part_mdid);
+
+    GPOS_ASSERT(nullptr != partrel);
+
+    ColRefToUlongMap *mapping = GPOS_NEW(mp) ColRefToUlongMap(mp);
+    // The root mapping cannot contain dropped columns, but may be
+    // in a different order than the child cols.Iterate through each of the child
+    // cols, and retrieve the corresponding index in the parent table
+    for (ULONG j = 0; j < partrel->ColumnCount(); ++j) {
+      const IMDColumn *coldesc = partrel->GetMdCol(j);
+      const CWStringConst *colname = coldesc->Mdname().GetMDName();
+
+      if (coldesc->IsDropped()) {
+        continue;
+      }
+
+      ULONG *root_idx = root_mapping->Find(colname);
+      if (nullptr != root_idx) {
+        mapping->Insert((*root_cols)[*root_idx], GPOS_NEW(mp) ULONG(*root_idx));
+      } else {
+        root_mapping->Release();
+        GPOS_RAISE(CException::ExmaInvalid, CException::ExmiInvalid,
+                   GPOS_WSZ_LIT("Cannot generate root to child partition column mapping"));
+      }
+    }
+    part_maps->Append(mapping);
+  }
+  root_mapping->Release();
+  return part_maps;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CLogicalDynamicGetBase::SetSecondaryScanId
-//
-//	@doc:
-//		Set secondary scan id
-//
-//---------------------------------------------------------------------------
-void
-CLogicalDynamicGetBase::SetSecondaryScanId(ULONG scan_id)
-{
-	m_ulSecondaryScanId = scan_id;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CLogicalDynamicGetBase::SetPartial
-//
-//	@doc:
-//		Set partial to true
-//
-//---------------------------------------------------------------------------
-void
-CLogicalDynamicGetBase::SetPartial()
-{
-	GPOS_ASSERT(!IsPartial());
-	GPOS_ASSERT(NULL != m_part_constraint->PcnstrCombined() &&
-				"Partial scan with unsupported constraint type");
-	m_is_partial = true;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CLogicalDynamicGetBase::PstatsDeriveFilter
-//
-//	@doc:
-//		Derive stats from base table using filters on partition and/or index columns
-//
-//---------------------------------------------------------------------------
-IStatistics *
-CLogicalDynamicGetBase::PstatsDeriveFilter(CMemoryPool *mp,
-										   CExpressionHandle &exprhdl,
-										   CExpression *pexprFilter) const
-{
-	CExpression *pexprFilterNew = NULL;
-	CConstraint *pcnstr = m_part_constraint->PcnstrCombined();
-	if (m_is_partial && NULL != pcnstr && !pcnstr->IsConstraintUnbounded())
-	{
-		if (NULL == pexprFilter)
-		{
-			pexprFilterNew = pcnstr->PexprScalar(mp);
-			pexprFilterNew->AddRef();
-		}
-		else
-		{
-			pexprFilterNew = CPredicateUtils::PexprConjunction(
-				mp, pexprFilter, pcnstr->PexprScalar(mp));
-		}
-	}
-	else if (NULL != pexprFilter)
-	{
-		pexprFilterNew = pexprFilter;
-		pexprFilterNew->AddRef();
-	}
-
-	CColRefSet *pcrsStat = GPOS_NEW(mp) CColRefSet(mp);
-
-	if (NULL != pexprFilterNew)
-	{
-		pcrsStat->Include(pexprFilterNew->DeriveUsedColumns());
-	}
-
-	// requesting statistics on distribution columns to estimate data skew
-	if (NULL != m_pcrsDist)
-	{
-		pcrsStat->Include(m_pcrsDist);
-	}
-
-
-	CStatistics *pstatsFullTable = dynamic_cast<CStatistics *>(
-		PstatsBaseTable(mp, exprhdl, m_ptabdesc, pcrsStat));
-
-	pcrsStat->Release();
-
-	if (NULL == pexprFilterNew || pexprFilterNew->DeriveHasSubquery())
-	{
-		return pstatsFullTable;
-	}
-
-	CStatsPred *pred_stats = CStatsPredUtils::ExtractPredStats(
-		mp, pexprFilterNew, NULL /*outer_refs*/
-	);
-	pexprFilterNew->Release();
-
-	IStatistics *result_stats = CFilterStatsProcessor::MakeStatsFilter(
-		mp, pstatsFullTable, pred_stats, true /* do_cap_NDVs */);
-	pred_stats->Release();
-	pstatsFullTable->Release();
-
-	return result_stats;
-}
-
-// EOF

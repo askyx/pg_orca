@@ -16,10 +16,10 @@
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpopt/optimizer/COptimizerConfig.h"
 #include "naucrates/statistics/CStatsPredUtils.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,12 +29,10 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalLeftAntiSemiJoin::CLogicalLeftAntiSemiJoin(CMemoryPool *mp)
-	: CLogicalJoin(mp)
-{
-	GPOS_ASSERT(NULL != mp);
+CLogicalLeftAntiSemiJoin::CLogicalLeftAntiSemiJoin(CMemoryPool *mp, CXform::EXformId origin_xform)
+    : CLogicalJoin(mp, origin_xform) {
+  GPOS_ASSERT(nullptr != mp);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,14 +42,11 @@ CLogicalLeftAntiSemiJoin::CLogicalLeftAntiSemiJoin(CMemoryPool *mp)
 //		Derive max card
 //
 //---------------------------------------------------------------------------
-CMaxCard
-CLogicalLeftAntiSemiJoin::MaxCard(CMemoryPool *,  // mp
-								  CExpressionHandle &exprhdl) const
-{
-	// pass on max card of first child
-	return exprhdl.DeriveMaxCard(0);
+CMaxCard CLogicalLeftAntiSemiJoin::MaxCard(CMemoryPool *,  // mp
+                                           CExpressionHandle &exprhdl) const {
+  // pass on max card of first child
+  return exprhdl.DeriveMaxCard(0);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -61,21 +56,18 @@ CLogicalLeftAntiSemiJoin::MaxCard(CMemoryPool *,  // mp
 //		Get candidate xforms
 //
 //---------------------------------------------------------------------------
-CXformSet *
-CLogicalLeftAntiSemiJoin::PxfsCandidates(CMemoryPool *mp) const
-{
-	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
+CXformSet *CLogicalLeftAntiSemiJoin::PxfsCandidates(CMemoryPool *mp) const {
+  CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
 
-	(void) xform_set->ExchangeSet(CXform::ExfAntiSemiJoinAntiSemiJoinSwap);
-	(void) xform_set->ExchangeSet(CXform::ExfAntiSemiJoinAntiSemiJoinNotInSwap);
-	(void) xform_set->ExchangeSet(CXform::ExfAntiSemiJoinSemiJoinSwap);
-	(void) xform_set->ExchangeSet(CXform::ExfAntiSemiJoinInnerJoinSwap);
-	(void) xform_set->ExchangeSet(CXform::ExfLeftAntiSemiJoin2CrossProduct);
-	(void) xform_set->ExchangeSet(CXform::ExfLeftAntiSemiJoin2NLJoin);
-	(void) xform_set->ExchangeSet(CXform::ExfLeftAntiSemiJoin2HashJoin);
-	return xform_set;
+  (void)xform_set->ExchangeSet(CXform::ExfAntiSemiJoinAntiSemiJoinSwap);
+  (void)xform_set->ExchangeSet(CXform::ExfAntiSemiJoinAntiSemiJoinNotInSwap);
+  (void)xform_set->ExchangeSet(CXform::ExfAntiSemiJoinSemiJoinSwap);
+  (void)xform_set->ExchangeSet(CXform::ExfAntiSemiJoinInnerJoinSwap);
+  (void)xform_set->ExchangeSet(CXform::ExfLeftAntiSemiJoin2CrossProduct);
+  (void)xform_set->ExchangeSet(CXform::ExfLeftAntiSemiJoin2NLJoin);
+  (void)xform_set->ExchangeSet(CXform::ExfLeftAntiSemiJoin2HashJoin);
+  return xform_set;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -85,15 +77,12 @@ CLogicalLeftAntiSemiJoin::PxfsCandidates(CMemoryPool *mp) const
 //		Derive output columns
 //
 //---------------------------------------------------------------------------
-CColRefSet *
-CLogicalLeftAntiSemiJoin::DeriveOutputColumns(CMemoryPool *,  // mp
-											  CExpressionHandle &exprhdl)
-{
-	GPOS_ASSERT(3 == exprhdl.Arity());
+CColRefSet *CLogicalLeftAntiSemiJoin::DeriveOutputColumns(CMemoryPool *,  // mp
+                                                          CExpressionHandle &exprhdl) {
+  GPOS_ASSERT(3 == exprhdl.Arity());
 
-	return PcrsDeriveOutputPassThru(exprhdl);
+  return PcrsDeriveOutputPassThru(exprhdl);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -103,11 +92,9 @@ CLogicalLeftAntiSemiJoin::DeriveOutputColumns(CMemoryPool *,  // mp
 //		Derive key collection
 //
 //---------------------------------------------------------------------------
-CKeyCollection *
-CLogicalLeftAntiSemiJoin::DeriveKeyCollection(CMemoryPool *,  // mp
-											  CExpressionHandle &exprhdl) const
-{
-	return PkcDeriveKeysPassThru(exprhdl, 0 /* ulChild */);
+CKeyCollection *CLogicalLeftAntiSemiJoin::DeriveKeyCollection(CMemoryPool *,  // mp
+                                                              CExpressionHandle &exprhdl) const {
+  return PkcDeriveKeysPassThru(exprhdl, 0 /* ulChild */);
 }
 
 //---------------------------------------------------------------------------
@@ -118,26 +105,31 @@ CLogicalLeftAntiSemiJoin::DeriveKeyCollection(CMemoryPool *,  // mp
 //		Derive statistics
 //
 //---------------------------------------------------------------------------
-IStatistics *
-CLogicalLeftAntiSemiJoin::PstatsDerive(CMemoryPool *mp,
-									   CExpressionHandle &exprhdl,
-									   IStatisticsArray *  // not used
-) const
-{
-	GPOS_ASSERT(Esp(exprhdl) > EspNone);
-	IStatistics *outer_stats = exprhdl.Pstats(0);
-	IStatistics *inner_side_stats = exprhdl.Pstats(1);
-	CStatsPredJoinArray *join_preds_stats =
-		CStatsPredUtils::ExtractJoinStatsFromExprHandle(mp, exprhdl,
-														true /*LASJ*/);
-	IStatistics *pstatsLASJoin =
-		outer_stats->CalcLASJoinStats(mp, inner_side_stats, join_preds_stats,
-									  true /* DoIgnoreLASJHistComputation */
-		);
+IStatistics *CLogicalLeftAntiSemiJoin::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                    IStatisticsArray *  // not used
+) const {
+  GPOS_ASSERT(Esp(exprhdl) > EspNone);
+  IStatistics *outer_stats = exprhdl.Pstats(0);
+  IStatistics *inner_side_stats = exprhdl.Pstats(1);
+  CStatsPredJoinArray *join_preds_stats = CStatsPredUtils::ExtractJoinStatsFromExprHandle(mp, exprhdl, true /*LASJ*/);
+  IStatistics *pstatsLASJoin =
+      outer_stats->CalcLASJoinStats(mp, inner_side_stats, join_preds_stats, true /* DoIgnoreLASJHistComputation */
+      );
 
-	// clean up
-	join_preds_stats->Release();
+  // Check whether a row plan hint exists for this join operators relations.
+  // And if one does exist, then evaluate the hint to overwrite the estimated
+  // rows.
+  CPlanHint *planhint = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint();
+  if (nullptr != planhint) {
+    CRowHint *rowhint = planhint->GetRowHint(exprhdl.DeriveTableDescriptor());
+    if (nullptr != rowhint) {
+      pstatsLASJoin->SetRows(rowhint->ComputeRows(pstatsLASJoin->Rows()));
+    }
+  }
 
-	return pstatsLASJoin;
+  // clean up
+  join_preds_stats->Release();
+
+  return pstatsLASJoin;
 }
 // EOF

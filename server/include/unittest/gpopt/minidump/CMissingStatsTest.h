@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CMissingStatsTest.h
@@ -17,8 +17,7 @@
 #include "naucrates/statistics/CHistogram.h"
 #include "naucrates/statistics/CStatistics.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CMissingStatsTest
@@ -27,31 +26,29 @@ namespace gpopt
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CMissingStatsTest
-{
-	struct SMissingStatsTestCase
-	{
-		// input stats dxl file
-		const CHAR *m_szInputFile;
+class CMissingStatsTest {
+  struct SMissingStatsTestCase {
+    // input stats dxl file
+    const CHAR *m_szInputFile;
 
-		// expected number of columns with missing statistics
-		ULONG m_ulExpectedMissingStats;
+    // expected number of columns with missing statistics
+    ULONG m_ulExpectedMissingStats;
 
-	};	// SMissingStatsTestCase
+  };  // SMissingStatsTestCase
 
-private:
-	// counter used to mark last successful test
-	static gpos::ULONG m_ulMissingStatsTestCounter;
+ private:
+  // counter used to mark last successful test
+  static gpos::ULONG m_ulMissingStatsTestCounter;
 
-public:
-	// unittests
-	static gpos::GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static gpos::GPOS_RESULT EresUnittest();
 
-	static gpos::GPOS_RESULT EresUnittest_RunTests();
+  static gpos::GPOS_RESULT EresUnittest_RunTests();
 
-};	// class CMissingStatsTest
+};  // class CMissingStatsTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CMissingStatsTest_H
+#endif  // !GPOPT_CMissingStatsTest_H
 
 // EOF

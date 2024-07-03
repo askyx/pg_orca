@@ -33,10 +33,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMiniDumperDXL::CMiniDumperDXL(CMemoryPool *mp) : CMiniDumper(mp)
-{
-}
-
+CMiniDumperDXL::CMiniDumperDXL() : CMiniDumper() {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -46,10 +43,7 @@ CMiniDumperDXL::CMiniDumperDXL(CMemoryPool *mp) : CMiniDumper(mp)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CMiniDumperDXL::~CMiniDumperDXL()
-{
-}
-
+CMiniDumperDXL::~CMiniDumperDXL() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -59,12 +53,9 @@ CMiniDumperDXL::~CMiniDumperDXL()
 //		Serialize minidump header
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumperDXL::SerializeHeader()
-{
-	*m_oos << CDXLSections::m_wszDocumentHeader;
+void CMiniDumperDXL::SerializeHeader() {
+  *m_oos << CDXLSections::m_wszDocumentHeader;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -74,12 +65,9 @@ CMiniDumperDXL::SerializeHeader()
 //		Serialize minidump footer
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumperDXL::SerializeFooter()
-{
-	*m_oos << CDXLSections::m_wszDocumentFooter;
+void CMiniDumperDXL::SerializeFooter() {
+  *m_oos << CDXLSections::m_wszDocumentFooter;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -89,19 +77,16 @@ CMiniDumperDXL::SerializeFooter()
 //		Serialize entry header
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumperDXL::SerializeEntryHeader()
-{
-	WCHAR wszBuffer[GPOPT_THREAD_HEADER_SIZE];
+void CMiniDumperDXL::SerializeEntryHeader() {
+  WCHAR wszBuffer[GPOPT_THREAD_HEADER_SIZE];
 
-	CWStringStatic str(wszBuffer, GPOS_ARRAY_SIZE(wszBuffer));
-	str.AppendFormat(CDXLSections::m_wszThreadHeaderTemplate,
-					 0	// thread id
-	);
+  CWStringStatic str(wszBuffer, GPOS_ARRAY_SIZE(wszBuffer));
+  str.AppendFormat(CDXLSections::m_wszThreadHeaderTemplate,
+                   0  // thread id
+  );
 
-	*m_oos << str.GetBuffer();
+  *m_oos << str.GetBuffer();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -111,10 +96,8 @@ CMiniDumperDXL::SerializeEntryHeader()
 //		Serialize entry footer
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumperDXL::SerializeEntryFooter()
-{
-	*m_oos << CDXLSections::m_wszThreadFooter;
+void CMiniDumperDXL::SerializeEntryFooter() {
+  *m_oos << CDXLSections::m_wszThreadFooter;
 }
 
 // EOF

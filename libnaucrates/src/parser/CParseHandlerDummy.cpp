@@ -17,7 +17,6 @@
 
 using namespace gpdxl;
 
-
 XERCES_CPP_NAMESPACE_USE
 
 //---------------------------------------------------------------------------
@@ -29,11 +28,7 @@ XERCES_CPP_NAMESPACE_USE
 //
 //---------------------------------------------------------------------------
 CParseHandlerDummy::CParseHandlerDummy(CDXLMemoryManager *dxl_memory_manager)
-	: m_dxl_memory_manager(dxl_memory_manager)
-{
-}
-
-
+    : m_dxl_memory_manager(dxl_memory_manager) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -43,12 +38,9 @@ CParseHandlerDummy::CParseHandlerDummy(CDXLMemoryManager *dxl_memory_manager)
 //		Invoked by Xerces to process an error
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerDummy::error(const SAXParseException &sax_parse_ex)
-{
-	CHAR *message =
-		XMLString::transcode(sax_parse_ex.getMessage(), m_dxl_memory_manager);
-	GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLValidationError, message);
+void CParseHandlerDummy::error(const SAXParseException &sax_parse_ex) {
+  CHAR *message = XMLString::transcode(sax_parse_ex.getMessage(), m_dxl_memory_manager);
+  GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLValidationError, message);
 }
 
 // EOF

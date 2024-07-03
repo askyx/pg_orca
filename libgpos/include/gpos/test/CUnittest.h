@@ -13,29 +13,25 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CMainArgs.h"
+#include "gpos/common/CStackObject.h"
+#include "gpos/task/ITask.h"
 
 // helper macros
 #define GPOS_UNITTEST_FUNC(x) gpos::CUnittest(#x, CUnittest::EttStandard, x)
 
-#define GPOS_UNITTEST_STD(x) \
-	gpos::CUnittest(#x, CUnittest::EttStandard, x::EresUnittest)
-#define GPOS_UNITTEST_EXT(x) \
-	gpos::CUnittest(#x, CUnittest::EttExtended, x::EresUnittest)
+#define GPOS_UNITTEST_STD(x) gpos::CUnittest(#x, CUnittest::EttStandard, x::EresUnittest)
+#define GPOS_UNITTEST_EXT(x) gpos::CUnittest(#x, CUnittest::EttExtended, x::EresUnittest)
 
 // helper for subtest identified by ULONG parameter
-#define GPOS_UNITTEST_STD_SUBTEST(x, i) \
-	gpos::CUnittest(#x "_" #i, CUnittest::EttStandard, x::EresSubtest, i)
+#define GPOS_UNITTEST_STD_SUBTEST(x, i) gpos::CUnittest(#x "_" #i, CUnittest::EttStandard, x::EresSubtest, i)
 
 // helpers for test that are expected to fail
-#define GPOS_UNITTEST_FUNC_THROW(x, major, minor) \
-	gpos::CUnittest(#x, CUnittest::EttStandard, x, major, minor)
-#define GPOS_UNITTEST_FUNC_ASSERT(x) \
-	GPOS_UNITTEST_FUNC_THROW(x, CException::ExmaSystem, CException::ExmiAssert)
+#define GPOS_UNITTEST_FUNC_THROW(x, major, minor) gpos::CUnittest(#x, CUnittest::EttStandard, x, major, minor)
+#define GPOS_UNITTEST_FUNC_ASSERT(x) GPOS_UNITTEST_FUNC_THROW(x, CException::ExmaSystem, CException::ExmiAssert)
 
 #define TEST_ASSERT(x) GPOS_RTL_ASSERT(x)
 
-namespace gpos
-{
+namespace gpos {
 class CMemoryPool;
 class CBitVector;
 class CTask;
@@ -49,159 +45,128 @@ class CTask;
 //		plus info about expected exceptions
 //
 //---------------------------------------------------------------------------
-class CUnittest
-{
-public:
-	// type of test
-	enum ETestType
-	{
-		EttStandard,
-		EttExtended
-	};
+class CUnittest {
+ public:
+  // type of test
+  enum ETestType { EttStandard, EttExtended };
 
+ private:
+  // internal auto class;
+  // ensures that calls to configuration and cleanup functions are not missed
+  class CAutoConfig : CStackObject {
+   private:
+    // unittest cleanup function; it's called after executing all unittests
+    void (*m_pfCleanup)();
 
-private:
-	// internal auto class;
-	// ensures that calls to configuration and cleanup functions are not missed
-	class CAutoConfig : CStackObject
-	{
-	private:
-		// unittest cleanup function; it's called after executing all unittests
-		void (*m_pfCleanup)();
+    // counter of nested calls to execute function
+    ULONG &m_ulNested;
 
-		// counter of nested calls to execute function
-		ULONG &m_ulNested;
+   public:
+    // ctor
+    CAutoConfig(void (*pfConfig)(), void (*pfCleanup)(), ULONG &ulNested)
+        : m_pfCleanup(pfCleanup), m_ulNested(ulNested) {
+      if (nullptr != pfConfig && 0 == m_ulNested++) {
+        pfConfig();
+      }
+    }
 
-	public:
-		// ctor
-		CAutoConfig(void (*pfConfig)(), void (*pfCleanup)(), ULONG &ulNested)
-			: m_pfCleanup(pfCleanup), m_ulNested(ulNested)
-		{
-			if (NULL != pfConfig && 0 == m_ulNested++)
-			{
-				pfConfig();
-			}
-		}
+    // dtor
+    ~CAutoConfig() {
+      if (nullptr != m_pfCleanup && 0 == --m_ulNested) {
+        m_pfCleanup();
+      }
+    }
+  };
 
-		// dtor
-		~CAutoConfig()
-		{
-			if (NULL != m_pfCleanup && 0 == --m_ulNested)
-			{
-				m_pfCleanup();
-			}
-		}
-	};
+  // name of unittest for display
+  const CHAR *m_szTitle;
 
-	// name of unittest for display
-	const CHAR *m_szTitle;
+  // test type
+  ETestType m_ett;
 
-	// test type
-	ETestType m_ett;
+  // test function
+  GPOS_RESULT (*m_pfunc)(void);
 
-	// test function
-	GPOS_RESULT (*m_pfunc)(void);
+  // subtest function
+  GPOS_RESULT (*m_pfuncSubtest)(ULONG);
+  ULONG m_ulSubtest;
 
-	// subtest function
-	GPOS_RESULT (*m_pfuncSubtest)(ULONG);
-	ULONG m_ulSubtest;
+  // flag whether to expect the test to throw
+  BOOL m_fExcep;
 
+  // expected exception, if any
+  ULONG m_ulMajor;
+  ULONG m_ulMinor;
 
-	// flag whether to expect the test to throw
-	BOOL m_fExcep;
+  // array of unittests to execute
+  static CUnittest *m_rgut;
 
-	// expected exception, if any
-	ULONG m_ulMajor;
-	ULONG m_ulMinor;
+  // number of unittests to execute
+  static ULONG m_ulTests;
 
-	// array of unittests to execute
-	static CUnittest *m_rgut;
+  // counter of nested calls to execute function
+  static ULONG m_ulNested;
 
-	// number of unittests to execute
-	static ULONG m_ulTests;
+  // unittest configuration function; it's called before executing any unittest
+  static void (*m_pfConfig)();
 
-	// counter of nested calls to execute function
-	static ULONG m_ulNested;
+  // unittest cleanup function; it's called after executing all unittests
+  static void (*m_pfCleanup)();
 
-	// unittest configuration function; it's called before executing any unittest
-	static void (*m_pfConfig)();
+  // execution of individual UT
+  static GPOS_RESULT EresExecTest(const CUnittest &ut);
 
-	// unittest cleanup function; it's called after executing all unittests
-	static void (*m_pfCleanup)();
+ public:
+  // ctors
+  CUnittest(const CHAR *szTitle, ETestType ett, GPOS_RESULT (*pfunc)(void));
 
-	// execution of individual UT
-	static GPOS_RESULT EresExecTest(const CUnittest &ut);
+  CUnittest(const CHAR *szTitle, ETestType ett, GPOS_RESULT (*pfunc)(void), ULONG major, ULONG minor);
 
-	// check if exception was injected by simulation
-	static BOOL FSimulated(CException ex);
+  CUnittest(const CHAR *szTitle, ETestType ett, GPOS_RESULT (*pfuncSubtest)(ULONG), ULONG ulSubtest);
 
-	// top-level loop around execution of individual UT;
-	// used for exception simulation;
-	static GPOS_RESULT EresExecLoop(const CUnittest &ut);
+  // copy ctor
+  CUnittest(const CUnittest &ut);
 
+  // determine whether this is expected to throw and if so whether the given exception is the right one
+  BOOL FThrows() const;
+  BOOL FThrows(ULONG major, ULONG minor) const;
 
-public:
-	// ctors
-	CUnittest(const CHAR *szTitle, ETestType ett, GPOS_RESULT (*pfunc)(void));
+  // test type
+  ETestType Ett() const { return m_ett; }
 
-	CUnittest(const CHAR *szTitle, ETestType ett, GPOS_RESULT (*pfunc)(void),
-			  ULONG major, ULONG minor);
+  // check if title equals given string
+  BOOL Equals(CHAR *sz) const;
 
-	CUnittest(const CHAR *szTitle, ETestType ett,
-			  GPOS_RESULT (*pfuncSubtest)(ULONG), ULONG ulSubtest);
+  // find test with given attributes and add to list
+  static void FindTest(CBitVector &bv, ETestType ett, CHAR *szTestName);
 
-	// copy ctor
-	CUnittest(const CUnittest &ut);
+  // parse and set a trace flag
+  static void SetTraceFlag(const CHAR *szTrace);
 
-	// determine whether this is expected to throw and if so whether the given exception is the right one
-	BOOL FThrows() const;
-	BOOL FThrows(ULONG major, ULONG minor) const;
+  // Parse plan id
+  static ULLONG UllParsePlanId(const CHAR *szPlanId);
 
-	// test type
-	ETestType
-	Ett() const
-	{
-		return m_ett;
-	}
+  // get number of unittests
+  static ULONG UlTests() { return m_ulTests; }
 
-	// check if title equals given string
-	BOOL Equals(CHAR *sz) const;
+  // driver routine for groups of UTs
+  static GPOS_RESULT EresExecute(const CUnittest *, const ULONG cSize);
 
-	// find test with given attributes and add to list
-	static void FindTest(CBitVector &bv, ETestType ett, CHAR *szTestName);
+  // driver routine; returns the number of failed tests
+  // (0 if all specified tests succeeded)
+  static ULONG Driver(CBitVector *pbv);
 
-	// parse and set a trace flag
-	static void SetTraceFlag(const CHAR *szTrace);
+  // driver routine parsing input arguments; returns the
+  // number of failed tests (0 if all specified tests
+  // succeeded)
+  static ULONG Driver(CMainArgs *pma);
 
-	// Parse plan id
-	static ULLONG UllParsePlanId(const CHAR *szPlanId);
+  // initialize unittest array
+  static void Init(CUnittest *rgut, ULONG ulUtCnt, void (*pfConfig)(), void (*pfCleanup)());
 
-	// get number of unittests
-	static ULONG
-	UlTests()
-	{
-		return m_ulTests;
-	}
-
-	// driver routine for groups of UTs
-	static GPOS_RESULT EresExecute(const CUnittest *, const ULONG cSize);
-
-	// driver routine; returns the number of failed tests
-	// (0 if all specified tests succeeded)
-	static ULONG Driver(CBitVector *pbv);
-
-	// driver routine parsing input arguments; returns the
-	// number of failed tests (0 if all specified tests
-	// succeeded)
-	static ULONG Driver(CMainArgs *pma);
-
-	// initialize unittest array
-	static void Init(CUnittest *rgut, ULONG ulUtCnt, void (*pfConfig)(),
-					 void (*pfCleanup)());
-
-};	// class CUnittest
+};  // class CUnittest
 }  // namespace gpos
 
-#endif	// GPOS_CUnittest_H
+#endif  // GPOS_CUnittest_H
 
 // EOF

@@ -21,7 +21,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="2">
@@ -29,6 +29,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
           <dxl:CostParam Name="NLJFactor" Value="1.000000" LowerBound="0.500000" UpperBound="1.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="102120,103001,103014,103015,103022,103023"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
@@ -428,22 +429,17 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
         <dxl:CountAgg Mdid="0.2147.15827.15828"/>
       </dxl:Type>
       <dxl:RelationStatistics Mdid="2.208131.15777.15778" Name="foo" Rows="30.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.208131.15777.15778" Name="foo" IsTemporary="false" HasOids="false" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="4,2">
+      <dxl:Relation Mdid="6.208131.15777.15778" Name="foo" IsTemporary="false" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="4,2">
         <dxl:Columns>
           <dxl:Column Name="a" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="b" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
@@ -451,22 +447,17 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:RelationStatistics Mdid="2.208136.15779.15780" Name="bar" Rows="30.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.208136.15779.15780" Name="bar" IsTemporary="false" HasOids="false" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="4,2">
+      <dxl:Relation Mdid="6.208136.15779.15780" Name="bar" IsTemporary="false" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="4,2">
         <dxl:Columns>
           <dxl:Column Name="a" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="b" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
@@ -1032,25 +1023,19 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
       <dxl:ColumnStatistics Mdid="1.208131.15777.15778.4" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="2.000000" FreqRemain="1.000000" ColStatsMissing="false"/>
       <dxl:MDCast Mdid="3.23.1.0;23.1.0" Name="int4" BinaryCoercible="true" SourceTypeId="0.23.1.0" DestinationTypeId="0.23.1.0" CastFuncId="0.0.0.0"/>
       <dxl:RelationStatistics Mdid="2.312123.14887.14888" Name="pt" Rows="90.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.312123.14887.14888" Name="pt" IsTemporary="false" HasOids="false" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="4,5,3" PartitionColumns="2,1" PartitionTypes="r,r">
+      <dxl:Relation Mdid="6.312123.14887.14888" Name="pt" IsTemporary="false" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="4,5,3" PartitionColumns="2,1" PartitionTypes="r,r">
         <dxl:Columns>
           <dxl:Column Name="i" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="j" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="k" Attno="3" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
@@ -1381,7 +1366,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
       <dxl:CTEList/>
       <dxl:LogicalJoin JoinType="Inner">
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.312123.14887.14888" TableName="pt">
+          <dxl:TableDescriptor Mdid="6.312123.14887.14888" TableName="pt">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="i" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="2" Attno="2" ColName="j" TypeMdid="0.23.1.0"/>
@@ -1393,7 +1378,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
           </dxl:TableDescriptor>
         </dxl:LogicalGet>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.208131.15777.15778" TableName="foo">
+          <dxl:TableDescriptor Mdid="6.208131.15777.15778" TableName="foo">
             <dxl:Columns>
               <dxl:Column ColId="7" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="8" Attno="2" ColName="b" TypeMdid="0.23.1.0"/>
@@ -1404,7 +1389,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
           </dxl:TableDescriptor>
         </dxl:LogicalGet>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.208136.15779.15780" TableName="bar">
+          <dxl:TableDescriptor Mdid="6.208136.15779.15780" TableName="bar">
             <dxl:Columns>
               <dxl:Column ColId="12" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="13" Attno="2" ColName="b" TypeMdid="0.23.1.0"/>
@@ -1520,7 +1505,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
                 <dxl:Ident ColId="6" ColName="a" TypeMdid="0.23.1.0"/>
               </dxl:Comparison>
             </dxl:HashCondList>
-            <dxl:DynamicTableScan PartIndexId="1">
+            <dxl:DynamicTableScan>
               <dxl:Properties>
                 <dxl:Cost StartupCost="0" TotalCost="431.000644" Rows="90.000000" Width="12"/>
               </dxl:Properties>
@@ -1536,7 +1521,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
                 </dxl:ProjElem>
               </dxl:ProjList>
               <dxl:Filter/>
-              <dxl:TableDescriptor Mdid="0.312123.14887.14888" TableName="pt">
+              <dxl:TableDescriptor Mdid="6.312123.14887.14888" TableName="pt">
                 <dxl:Columns>
                   <dxl:Column ColId="0" Attno="1" ColName="i" TypeMdid="0.23.1.0"/>
                   <dxl:Column ColId="1" Attno="2" ColName="j" TypeMdid="0.23.1.0"/>
@@ -1547,7 +1532,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
                 </dxl:Columns>
               </dxl:TableDescriptor>
             </dxl:DynamicTableScan>
-            <dxl:PartitionSelector RelationMdid="0.312123.14887.14888" PartitionLevels="2" ScanId="1">
+            <dxl:PartitionSelector RelationMdid="6.312123.14887.14888" PartitionLevels="2" ScanId="1">
               <dxl:Properties>
                 <dxl:Cost StartupCost="10" TotalCost="100" Rows="100" Width="4"/>
               </dxl:Properties>
@@ -1573,12 +1558,12 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
               <dxl:PropagationExpression>
                 <dxl:ConstValue TypeMdid="0.23.1.0" Value="1"/>
               </dxl:PropagationExpression>
-              <dxl:PrintableFilter>
+              <dxl:PartFilterExpr>
                 <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
                   <dxl:Ident ColId="2" ColName="k" TypeMdid="0.23.1.0"/>
                   <dxl:Ident ColId="6" ColName="a" TypeMdid="0.23.1.0"/>
                 </dxl:Comparison>
-              </dxl:PrintableFilter>
+              </dxl:PartFilterExpr>
               <dxl:BroadcastMotion InputSegments="0,1" OutputSegments="0,1">
                 <dxl:Properties>
                   <dxl:Cost StartupCost="0" TotalCost="431.006687" Rows="60.000000" Width="8"/>
@@ -1606,7 +1591,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
                     </dxl:ProjElem>
                   </dxl:ProjList>
                   <dxl:Filter/>
-                  <dxl:TableDescriptor Mdid="0.208131.15777.15778" TableName="foo">
+                  <dxl:TableDescriptor Mdid="6.208131.15777.15778" TableName="foo">
                     <dxl:Columns>
                       <dxl:Column ColId="6" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
                       <dxl:Column ColId="7" Attno="2" ColName="b" TypeMdid="0.23.1.0"/>
@@ -1619,7 +1604,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
               </dxl:BroadcastMotion>
             </dxl:PartitionSelector>
           </dxl:HashJoin>
-          <dxl:PartitionSelector RelationMdid="0.312123.14887.14888" PartitionLevels="2" ScanId="1">
+          <dxl:PartitionSelector RelationMdid="6.312123.14887.14888" PartitionLevels="2" ScanId="1">
             <dxl:Properties>
               <dxl:Cost StartupCost="10" TotalCost="100" Rows="100" Width="4"/>
             </dxl:Properties>
@@ -1645,12 +1630,12 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
             <dxl:PropagationExpression>
               <dxl:ConstValue TypeMdid="0.23.1.0" Value="1"/>
             </dxl:PropagationExpression>
-            <dxl:PrintableFilter>
+            <dxl:PartFilterExpr>
               <dxl:Comparison ComparisonOperator="=" OperatorMdid="0.96.1.0">
                 <dxl:Ident ColId="1" ColName="j" TypeMdid="0.23.1.0"/>
                 <dxl:Ident ColId="11" ColName="a" TypeMdid="0.23.1.0"/>
               </dxl:Comparison>
-            </dxl:PrintableFilter>
+            </dxl:PartFilterExpr>
             <dxl:BroadcastMotion InputSegments="0,1" OutputSegments="0,1">
               <dxl:Properties>
                 <dxl:Cost StartupCost="0" TotalCost="431.006687" Rows="60.000000" Width="8"/>
@@ -1678,7 +1663,7 @@ select * from pt, foo, bar where pt.k=foo.a and pt.j = bar.a;
                   </dxl:ProjElem>
                 </dxl:ProjList>
                 <dxl:Filter/>
-                <dxl:TableDescriptor Mdid="0.208136.15779.15780" TableName="bar">
+                <dxl:TableDescriptor Mdid="6.208136.15779.15780" TableName="bar">
                   <dxl:Columns>
                     <dxl:Column ColId="11" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
                     <dxl:Column ColId="12" Attno="2" ColName="b" TypeMdid="0.23.1.0"/>

@@ -22,7 +22,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CLoggerTest::EresUnittest
@@ -32,18 +31,16 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CLoggerTest::EresUnittest()
-{
-	CUnittest rgut[] = {
-		GPOS_UNITTEST_FUNC(CLoggerTest::EresUnittest_Basic),
-		GPOS_UNITTEST_FUNC(CLoggerTest::EresUnittest_LoggerSyslog),
-	};
+CLoggerTest::EresUnittest() {
+  CUnittest rgut[] = {
+      GPOS_UNITTEST_FUNC(CLoggerTest::EresUnittest_Basic),
+      GPOS_UNITTEST_FUNC(CLoggerTest::EresUnittest_LoggerSyslog),
+  };
 
-	GPOS_RESULT eres = CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
+  GPOS_RESULT eres = CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 
-	return eres;
+  return eres;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -54,25 +51,16 @@ CLoggerTest::EresUnittest()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CLoggerTest::EresUnittest_Basic()
-{
-	// log trace messages
-	GPOS_TRACE(GPOS_WSZ_LIT("Log trace message as built string"));
-	GPOS_TRACE_FORMAT("Log trace message as %s %s", "formatted", "string");
+CLoggerTest::EresUnittest_Basic() {
+  // log trace messages
+  GPOS_TRACE(GPOS_WSZ_LIT("Log trace message as built string"));
+  GPOS_TRACE_FORMAT("Log trace message as %s %s", "formatted", "string");
 
-	{
-		// disable Abort simulation;
-		// simulation leads to self-deadlock while trying to log injection
-		CAutoTraceFlag atfSet(EtraceSimulateAbort, false);
+  // log warning message
+  GPOS_WARNING(CException::ExmaSystem, CException::ExmiDummyWarning, "Foo");
 
-		// log warning message
-		GPOS_WARNING(CException::ExmaSystem, CException::ExmiDummyWarning,
-					 "Foo");
-	}
-
-	return GPOS_OK;
+  return GPOS_OK;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -83,14 +71,12 @@ CLoggerTest::EresUnittest_Basic()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CLoggerTest::EresUnittest_LoggerSyslog()
-{
-	GPOS_SYSLOG_ALERT("This is test message 1 from GPOS to syslog");
-	GPOS_SYSLOG_ALERT("This is test message 2 from GPOS to syslog");
-	GPOS_SYSLOG_ALERT("This is test message 3 from GPOS to syslog");
+CLoggerTest::EresUnittest_LoggerSyslog() {
+  GPOS_SYSLOG_ALERT("This is test message 1 from GPOS to syslog");
+  GPOS_SYSLOG_ALERT("This is test message 2 from GPOS to syslog");
+  GPOS_SYSLOG_ALERT("This is test message 3 from GPOS to syslog");
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
-
 
 // EOF

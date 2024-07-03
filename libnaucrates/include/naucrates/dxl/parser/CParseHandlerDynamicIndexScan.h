@@ -18,8 +18,7 @@
 #include "naucrates/dxl/parser/CParseHandlerIndexScan.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -32,41 +31,32 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for index scan operator nodes
 //
 //---------------------------------------------------------------------------
-class CParseHandlerDynamicIndexScan : public CParseHandlerIndexScan
-{
-private:
-	// part index id
-	ULONG m_part_index_id;
+class CParseHandlerDynamicIndexScan : public CParseHandlerIndexScan {
+ private:
+  ULongPtrArray *m_selector_ids;
 
-	// printable partition index id
-	ULONG m_part_index_id_printable;
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// private copy ctor
-	CParseHandlerDynamicIndexScan(const CParseHandlerDynamicIndexScan &);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+ public:
+  CParseHandlerDynamicIndexScan(const CParseHandlerDynamicIndexScan &) = delete;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
-
-public:
-	// ctor
-	CParseHandlerDynamicIndexScan(CMemoryPool *mp,
-								  CParseHandlerManager *parse_handler_mgr,
-								  CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerDynamicIndexScan(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerDynamicIndexScan_H
+#endif  // !GPDXL_CParseHandlerDynamicIndexScan_H
 
 // EOF

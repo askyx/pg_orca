@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CPartialPlan.h
@@ -23,8 +23,7 @@
 #include "gpopt/base/CReqdProp.h"
 #include "gpopt/cost/ICostModel.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 class CGroupExpression;
@@ -39,81 +38,58 @@ class CCostContext;
 //		Description of partial plans created during optimization
 //
 //---------------------------------------------------------------------------
-class CPartialPlan : public CRefCount
-{
-private:
-	// root group expression
-	CGroupExpression *m_pgexpr;
+class CPartialPlan : public CRefCount {
+ private:
+  // root group expression
+  CGroupExpression *m_pgexpr;
 
-	// required plan properties of root operator
-	CReqdPropPlan *m_prpp;
+  // required plan properties of root operator
+  CReqdPropPlan *m_prpp;
 
-	// cost context of known child plan -- can be null if no child plans are known
-	CCostContext *m_pccChild;
+  // cost context of known child plan -- can be null if no child plans are known
+  CCostContext *m_pccChild;
 
-	// index of known child plan
-	ULONG m_ulChildIndex;
+  // index of known child plan
+  ULONG m_ulChildIndex;
 
-	// private copy ctor
-	CPartialPlan(const CPartialPlan &);
+  // extract costing info from children
+  void ExtractChildrenCostingInfo(CMemoryPool *mp, ICostModel *pcm, CExpressionHandle &exprhdl,
+                                  ICostModel::SCostingInfo *pci);
 
-	// extract costing info from children
-	void ExtractChildrenCostingInfo(CMemoryPool *mp, ICostModel *pcm,
-									CExpressionHandle &exprhdl,
-									ICostModel::SCostingInfo *pci);
+ public:
+  CPartialPlan(const CPartialPlan &) = delete;
 
-	// raise exception if the stats object is NULL
-	void RaiseExceptionIfStatsNull(IStatistics *stats);
+  // ctor
+  CPartialPlan(CGroupExpression *pgexpr, CReqdPropPlan *prpp, CCostContext *pccChild, ULONG child_index);
 
-public:
-	// ctor
-	CPartialPlan(CGroupExpression *pgexpr, CReqdPropPlan *prpp,
-				 CCostContext *pccChild, ULONG child_index);
+  // dtor
+  ~CPartialPlan() override;
 
-	// dtor
-	virtual ~CPartialPlan();
+  // group expression accessor
+  CGroupExpression *Pgexpr() const { return m_pgexpr; }
 
-	// group expression accessor
-	CGroupExpression *
-	Pgexpr() const
-	{
-		return m_pgexpr;
-	}
+  // plan properties accessor
+  CReqdPropPlan *Prpp() const { return m_prpp; }
 
-	// plan properties accessor
-	CReqdPropPlan *
-	Prpp() const
-	{
-		return m_prpp;
-	}
+  // child cost context accessor
+  CCostContext *PccChild() const { return m_pccChild; }
 
-	// child cost context accessor
-	CCostContext *
-	PccChild() const
-	{
-		return m_pccChild;
-	}
+  // child index accessor
+  ULONG
+  UlChildIndex() const { return m_ulChildIndex; }
 
-	// child index accessor
-	ULONG
-	UlChildIndex() const
-	{
-		return m_ulChildIndex;
-	}
+  // compute partial plan cost
+  CCost CostCompute(CMemoryPool *mp);
 
-	// compute partial plan cost
-	CCost CostCompute(CMemoryPool *mp);
+  // hash function used for cost bounding
+  static ULONG HashValue(const CPartialPlan *ppp);
 
-	// hash function used for cost bounding
-	static ULONG HashValue(const CPartialPlan *ppp);
+  // equality function used for for cost bounding
+  static BOOL Equals(const CPartialPlan *pppFst, const CPartialPlan *pppSnd);
 
-	// equality function used for for cost bounding
-	static BOOL Equals(const CPartialPlan *pppFst, const CPartialPlan *pppSnd);
-
-};	// class CPartialPlan
+};  // class CPartialPlan
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CPartialPlan_H
+#endif  // !GPOPT_CPartialPlan_H
 
 // EOF

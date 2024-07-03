@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformImplementDynamicBitmapTableGet
@@ -22,8 +22,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CXformImplementDynamicBitmapTableGet
@@ -32,46 +31,32 @@ namespace gpopt
 //		Implement CLogicalDynamicBitmapTableGet as a CPhysicalDynamicBitmapTableScan
 //
 //---------------------------------------------------------------------------
-class CXformImplementDynamicBitmapTableGet : public CXformImplementation
-{
-private:
-	// disable copy ctor
-	CXformImplementDynamicBitmapTableGet(
-		const CXformImplementDynamicBitmapTableGet &);
+class CXformImplementDynamicBitmapTableGet : public CXformImplementation {
+ private:
+ public:
+  CXformImplementDynamicBitmapTableGet(const CXformImplementDynamicBitmapTableGet &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementDynamicBitmapTableGet(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementDynamicBitmapTableGet(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformImplementDynamicBitmapTableGet()
-	{
-	}
+  // dtor
+  ~CXformImplementDynamicBitmapTableGet() override = default;
 
-	// identifier
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementDynamicBitmapTableGet;
-	}
+  // identifier
+  EXformId Exfid() const override { return ExfImplementDynamicBitmapTableGet; }
 
-	// xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementDynamicBitmapTableGet";
-	}
+  // xform name
+  const CHAR *SzId() const override { return "CXformImplementDynamicBitmapTableGet"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformImplementDynamicBitmapTableGet
+};  // class CXformImplementDynamicBitmapTableGet
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementDynamicBitmapTableGet_H
+#endif  // !GPOPT_CXformImplementDynamicBitmapTableGet_H
 
 // EOF

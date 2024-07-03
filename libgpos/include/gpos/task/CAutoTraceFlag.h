@@ -16,9 +16,7 @@
 #include "gpos/task/ITask.h"
 #include "gpos/task/traceflags.h"
 
-
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CAutoTraceFlag
@@ -27,30 +25,27 @@ namespace gpos
 //		Auto wrapper;
 //
 //---------------------------------------------------------------------------
-class CAutoTraceFlag : public CStackObject
-{
-private:
-	// traceflag id
-	ULONG m_trace;
+class CAutoTraceFlag : public CStackObject {
+ private:
+  // traceflag id
+  ULONG m_trace;
 
-	// original value
-	BOOL m_orig;
+  // original value
+  BOOL m_orig;
 
-	// no copy ctor
-	CAutoTraceFlag(const CAutoTraceFlag &);
+ public:
+  CAutoTraceFlag(const CAutoTraceFlag &) = delete;
 
-public:
-	// ctor
-	CAutoTraceFlag(ULONG trace, BOOL orig);
+  // ctor
+  CAutoTraceFlag(ULONG trace, BOOL orig);
 
-	// dtor
-	virtual ~CAutoTraceFlag();
+  // dtor
+  virtual ~CAutoTraceFlag();
 
-};	// class CAutoTraceFlag
+};  // class CAutoTraceFlag
 
 }  // namespace gpos
 
-
-#endif	// !GPOS_CAutoTraceFlag_H
+#endif  // !GPOS_CAutoTraceFlag_H
 
 // EOF

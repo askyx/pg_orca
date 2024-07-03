@@ -28,14 +28,11 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarCast::CDXLScalarCast(CMemoryPool *mp, IMDId *mdid_type,
-							   IMDId *func_mdid)
-	: CDXLScalar(mp), m_mdid_type(mdid_type), m_func_mdid(func_mdid)
-{
-	GPOS_ASSERT(NULL != m_func_mdid);
-	GPOS_ASSERT(m_mdid_type->IsValid());
+CDXLScalarCast::CDXLScalarCast(CMemoryPool *mp, IMDId *mdid_type, IMDId *func_mdid)
+    : CDXLScalar(mp), m_mdid_type(mdid_type), m_func_mdid(func_mdid) {
+  GPOS_ASSERT(nullptr != m_func_mdid);
+  GPOS_ASSERT(m_mdid_type->IsValid());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,10 +42,9 @@ CDXLScalarCast::CDXLScalarCast(CMemoryPool *mp, IMDId *mdid_type,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLScalarCast::~CDXLScalarCast()
-{
-	m_mdid_type->Release();
-	m_func_mdid->Release();
+CDXLScalarCast::~CDXLScalarCast() {
+  m_mdid_type->Release();
+  m_func_mdid->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -59,10 +55,8 @@ CDXLScalarCast::~CDXLScalarCast()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarCast::GetDXLOperator() const
-{
-	return EdxlopScalarCast;
+Edxlopid CDXLScalarCast::GetDXLOperator() const {
+  return EdxlopScalarCast;
 }
 
 //---------------------------------------------------------------------------
@@ -73,10 +67,8 @@ CDXLScalarCast::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarCast::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarCast);
+const CWStringConst *CDXLScalarCast::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarCast);
 }
 
 //---------------------------------------------------------------------------
@@ -87,10 +79,8 @@ CDXLScalarCast::GetOpNameStr() const
 //		Return the oid of the type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLScalarCast::MdidType() const
-{
-	return m_mdid_type;
+IMDId *CDXLScalarCast::MdidType() const {
+  return m_mdid_type;
 }
 
 //---------------------------------------------------------------------------
@@ -101,10 +91,8 @@ CDXLScalarCast::MdidType() const
 //		Casting function id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLScalarCast::FuncMdId() const
-{
-	return m_func_mdid;
+IMDId *CDXLScalarCast::FuncMdId() const {
+  return m_func_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -115,23 +103,16 @@ CDXLScalarCast::FuncMdId() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarCast::SerializeToDXL(CXMLSerializer *xml_serializer,
-							   const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarCast::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	m_mdid_type->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-	m_func_mdid->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenFuncId));
+  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  m_func_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenFuncId));
 
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------
@@ -142,11 +123,8 @@ CDXLScalarCast::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLScalarCast::HasBoolResult(CMDAccessor *md_accessor) const
-{
-	return (IMDType::EtiBool ==
-			md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
+BOOL CDXLScalarCast::HasBoolResult(CMDAccessor *md_accessor) const {
+  return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
 }
 
 #ifdef GPOS_DEBUG
@@ -158,22 +136,16 @@ CDXLScalarCast::HasBoolResult(CMDAccessor *md_accessor) const
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarCast::AssertValid(const CDXLNode *dxlnode,
-							BOOL validate_children) const
-{
-	GPOS_ASSERT(1 == dxlnode->Arity());
+void CDXLScalarCast::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  GPOS_ASSERT(1 == dxlnode->Arity());
 
-	CDXLNode *child_dxlnode = (*dxlnode)[0];
-	GPOS_ASSERT(EdxloptypeScalar ==
-				child_dxlnode->GetOperator()->GetDXLOperatorType());
+  CDXLNode *child_dxlnode = (*dxlnode)[0];
+  GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-	if (validate_children)
-	{
-		child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-												  validate_children);
-	}
+  if (validate_children) {
+    child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

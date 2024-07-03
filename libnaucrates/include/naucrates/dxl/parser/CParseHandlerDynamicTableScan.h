@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerPhysicalOp.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -33,41 +32,31 @@ class CDXLPhysicalDynamicTableScan;
 //		Parse handler for parsing a dynamic table scan operator
 //
 //---------------------------------------------------------------------------
-class CParseHandlerDynamicTableScan : public CParseHandlerPhysicalOp
-{
-private:
-	// the id of the partition index structure
-	ULONG m_part_index_id;
+class CParseHandlerDynamicTableScan : public CParseHandlerPhysicalOp {
+ private:
+  ULongPtrArray *m_selector_ids;
 
-	// printable partition index id
-	ULONG m_part_index_id_printable;
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// private copy ctor
-	CParseHandlerDynamicTableScan(const CParseHandlerDynamicTableScan &);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the start of an element
-	virtual void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+ public:
+  CParseHandlerDynamicTableScan(const CParseHandlerDynamicTableScan &) = delete;
 
-	// process the end of an element
-	virtual void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
-
-public:
-	// ctor
-	CParseHandlerDynamicTableScan(CMemoryPool *mp,
-								  CParseHandlerManager *parse_handler_mgr,
-								  CParseHandlerBase *pph);
+  // ctor
+  CParseHandlerDynamicTableScan(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *pph);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerDynamicTableScan_H
+#endif  // !GPDXL_CParseHandlerDynamicTableScan_H
 
 // EOF

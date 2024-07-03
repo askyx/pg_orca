@@ -11,7 +11,7 @@ select * from pt;
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="2">
@@ -19,6 +19,7 @@ select * from pt;
           <dxl:CostParam Name="NLJFactor" Value="1.000000" LowerBound="0.500000" UpperBound="1.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="102120,103001,103014,103015"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
@@ -168,37 +169,27 @@ select * from pt;
         </dxl:Opfamilies>
       </dxl:GPDBScalarOp>
       <dxl:RelationStatistics Mdid="2.11482010.1.1" Name="pt" Rows="0.000000" EmptyRelation="true"/>
-      <dxl:Relation Mdid="0.11482010.1.1" Name="pt" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,9,3" PartitionColumns="2,1" PartitionTypes="r,r">
+      <dxl:Relation Mdid="6.11482010.1.1" Name="pt" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,9,3" PartitionColumns="2,1" PartitionTypes="r,r">
         <dxl:Columns>
           <dxl:Column Name="i" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="j" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="k" Attno="3" Mdid="0.1082.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
@@ -232,7 +223,7 @@ select * from pt;
       </dxl:OutputColumns>
       <dxl:CTEList/>
       <dxl:LogicalGet>
-        <dxl:TableDescriptor Mdid="0.11482010.1.1" TableName="pt">
+        <dxl:TableDescriptor Mdid="6.11482010.1.1" TableName="pt">
           <dxl:Columns>
             <dxl:Column ColId="1" Attno="1" ColName="i" TypeMdid="0.23.1.0"/>
             <dxl:Column ColId="2" Attno="2" ColName="j" TypeMdid="0.23.1.0"/>
@@ -281,7 +272,7 @@ select * from pt;
               <dxl:Ident ColId="2" ColName="k" TypeMdid="0.1082.1.0"/>
             </dxl:ProjElem>
           </dxl:ProjList>
-          <dxl:PartitionSelector RelationMdid="0.11482010.1.1" PartitionLevels="2" ScanId="1">
+          <dxl:PartitionSelector RelationMdid="6.11482010.1.1" PartitionLevels="2" ScanId="1">
             <dxl:Properties>
               <dxl:Cost StartupCost="10" TotalCost="100" Rows="100" Width="4"/>
             </dxl:Properties>
@@ -300,11 +291,11 @@ select * from pt;
             <dxl:PropagationExpression>
               <dxl:ConstValue TypeMdid="0.23.1.0" Value="1"/>
             </dxl:PropagationExpression>
-            <dxl:PrintableFilter>
+            <dxl:PartFilterExpr>
               <dxl:ConstValue TypeMdid="0.16.1.0" Value="true"/>
-            </dxl:PrintableFilter>
+            </dxl:PartFilterExpr>
           </dxl:PartitionSelector>
-          <dxl:DynamicTableScan PartIndexId="1">
+          <dxl:DynamicTableScan>
             <dxl:Properties>
               <dxl:Cost StartupCost="0" TotalCost="431.000013" Rows="1.000000" Width="20"/>
             </dxl:Properties>
@@ -320,7 +311,7 @@ select * from pt;
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:Filter/>
-            <dxl:TableDescriptor Mdid="0.11482010.1.1" TableName="pt">
+            <dxl:TableDescriptor Mdid="6.11482010.1.1" TableName="pt">
               <dxl:Columns>
                 <dxl:Column ColId="0" Attno="1" ColName="i" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="1" Attno="2" ColName="j" TypeMdid="0.23.1.0"/>

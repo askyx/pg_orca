@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarBitmapIndexProbe.h
@@ -20,10 +20,10 @@
 
 #include "gpos/base.h"
 
+#include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CScalar.h"
 
-namespace gpopt
-{
+namespace gpopt {
 // fwd declarations
 class CColRefSet;
 class CIndexDescriptor;
@@ -36,97 +36,78 @@ class CIndexDescriptor;
 //		Bitmap index probe scalar operator
 //
 //---------------------------------------------------------------------------
-class CScalarBitmapIndexProbe : public CScalar
-{
-private:
-	// index descriptor
-	CIndexDescriptor *m_pindexdesc;
+class CScalarBitmapIndexProbe : public CScalar {
+ private:
+  // index descriptor
+  CIndexDescriptor *m_pindexdesc;
 
-	// bitmap type id
-	IMDId *m_pmdidBitmapType;
+  // table descriptor
+  CTableDescriptor *m_ptabdesc;
 
-	// private copy ctor
-	CScalarBitmapIndexProbe(const CScalarBitmapIndexProbe &);
+  // bitmap type id
+  IMDId *m_pmdidBitmapType;
 
-public:
-	// ctor
-	CScalarBitmapIndexProbe(CMemoryPool *mp, CIndexDescriptor *pindexdesc,
-							IMDId *pmdidBitmapType);
+  // private copy ctor
+  CScalarBitmapIndexProbe(const CScalarBitmapIndexProbe &);
 
-	// ctor
-	// only for transforms
-	explicit CScalarBitmapIndexProbe(CMemoryPool *mp);
+ public:
+  // ctor
+  CScalarBitmapIndexProbe(CMemoryPool *mp, CIndexDescriptor *pindexdesc, CTableDescriptor *ptabdesc,
+                          IMDId *pmdidBitmapType);
 
-	// dtor
-	virtual ~CScalarBitmapIndexProbe();
+  // ctor
+  // only for transforms
+  explicit CScalarBitmapIndexProbe(CMemoryPool *mp);
 
-	// index descriptor
-	CIndexDescriptor *
-	Pindexdesc() const
-	{
-		return m_pindexdesc;
-	}
+  // dtor
+  ~CScalarBitmapIndexProbe() override;
 
-	// bitmap type id
-	virtual IMDId *
-	MdidType() const
-	{
-		return m_pmdidBitmapType;
-	}
+  // index descriptor
+  CIndexDescriptor *Pindexdesc() const { return m_pindexdesc; }
 
-	// identifier
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopScalarBitmapIndexProbe;
-	}
+  // return table's descriptor
+  CTableDescriptor *Ptabdesc() const { return m_ptabdesc; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CScalarBitmapIndexProbe";
-	}
+  // bitmap type id
+  IMDId *MdidType() const override { return m_pmdidBitmapType; }
 
-	// operator specific hash function
-	virtual ULONG HashValue() const;
+  // identifier
+  EOperatorId Eopid() const override { return EopScalarBitmapIndexProbe; }
 
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CScalarBitmapIndexProbe"; }
 
-	// sensitivity to order of inputs
-	virtual BOOL
-	FInputOrderSensitive() const
-	{
-		return false;
-	}
+  // operator specific hash function
+  ULONG HashValue() const override;
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *
-	PopCopyWithRemappedColumns(CMemoryPool *,		//mp,
-							   UlongToColRefMap *,	//colref_mapping,
-							   BOOL					//must_exist
-	)
-	{
-		return PopCopyDefault();
-	}
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// debug print
-	virtual IOstream &OsPrint(IOstream &) const;
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return false; }
 
-	// conversion
-	static CScalarBitmapIndexProbe *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarBitmapIndexProbe == pop->Eopid());
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
+                                        UlongToColRefMap *,  // colref_mapping,
+                                        BOOL                 // must_exist
+                                        ) override {
+    return PopCopyDefault();
+  }
 
-		return dynamic_cast<CScalarBitmapIndexProbe *>(pop);
-	}
+  // debug print
+  IOstream &OsPrint(IOstream &) const override;
 
-};	// class CScalarBitmapIndexProbe
+  // conversion
+  static CScalarBitmapIndexProbe *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarBitmapIndexProbe == pop->Eopid());
+
+    return dynamic_cast<CScalarBitmapIndexProbe *>(pop);
+  }
+
+};  // class CScalarBitmapIndexProbe
 }  // namespace gpopt
 
-#endif	// !GPOPT_CScalarBitmapIndexProbe_H
+#endif  // !GPOPT_CScalarBitmapIndexProbe_H
 
 // EOF

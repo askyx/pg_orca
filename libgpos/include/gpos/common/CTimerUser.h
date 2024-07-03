@@ -13,8 +13,7 @@
 
 #include "gpos/common/ITimer.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CTimerUser
@@ -23,27 +22,24 @@ namespace gpos
 //		Records user time;
 //
 //---------------------------------------------------------------------------
-class CTimerUser : public ITimer
-{
-private:
-	// actual timer
-	RUSAGE m_rusage;
+class CTimerUser : public ITimer {
+ private:
+  // actual timer
+  RUSAGE m_rusage;
 
-public:
-	// ctor
-	CTimerUser()
-	{
-	}
+ public:
+  // ctor
+  CTimerUser() = default;
 
-	// retrieve elapsed user time in micro-seconds
-	virtual ULONG ElapsedUS() const;
+  // retrieve elapsed user time in micro-seconds
+  ULONG ElapsedUS() const override;
 
-	// restart timer
-	virtual void Restart();
+  // restart timer
+  void Restart() override;
 
-};	// class CTimerUser
+};  // class CTimerUser
 }  // namespace gpos
 
-#endif	// !GPOS_CTimerUser_H
+#endif  // !GPOS_CTimerUser_H
 
 // EOF

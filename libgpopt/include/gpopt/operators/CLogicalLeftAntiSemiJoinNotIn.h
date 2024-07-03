@@ -22,8 +22,7 @@
 
 #include "gpopt/operators/CLogicalLeftAntiSemiJoin.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalLeftAntiSemiJoinNotIn
@@ -32,61 +31,46 @@ namespace gpopt
 //		Left anti semi join operator with the NotIn semantics
 //
 //---------------------------------------------------------------------------
-class CLogicalLeftAntiSemiJoinNotIn : public CLogicalLeftAntiSemiJoin
-{
-private:
-	// private copy ctor
-	CLogicalLeftAntiSemiJoinNotIn(const CLogicalLeftAntiSemiJoinNotIn &);
+class CLogicalLeftAntiSemiJoinNotIn : public CLogicalLeftAntiSemiJoin {
+ private:
+ public:
+  CLogicalLeftAntiSemiJoinNotIn(const CLogicalLeftAntiSemiJoinNotIn &) = delete;
 
-public:
-	// ctor
-	explicit CLogicalLeftAntiSemiJoinNotIn(CMemoryPool *mp);
+  // ctor
+  explicit CLogicalLeftAntiSemiJoinNotIn(CMemoryPool *mp, CXform::EXformId origin_xform = CXform::ExfSentinel);
 
-	// dtor
-	virtual ~CLogicalLeftAntiSemiJoinNotIn()
-	{
-	}
+  // dtor
+  ~CLogicalLeftAntiSemiJoinNotIn() override = default;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalLeftAntiSemiJoinNotIn;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalLeftAntiSemiJoinNotIn; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalLeftAntiSemiJoinNotIn";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalLeftAntiSemiJoinNotIn"; }
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// candidate set of xforms
-	CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// conversion function
-	static CLogicalLeftAntiSemiJoinNotIn *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalLeftAntiSemiJoinNotIn == pop->Eopid());
+  // conversion function
+  static CLogicalLeftAntiSemiJoinNotIn *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalLeftAntiSemiJoinNotIn == pop->Eopid());
 
-		return dynamic_cast<CLogicalLeftAntiSemiJoinNotIn *>(pop);
-	}
+    return dynamic_cast<CLogicalLeftAntiSemiJoinNotIn *>(pop);
+  }
 
-};	// class CLogicalLeftAntiSemiJoinNotIn
+};  // class CLogicalLeftAntiSemiJoinNotIn
 
 }  // namespace gpopt
 
-
-#endif	// !GPOS_CLogicalLeftAntiSemiJoinNotIn_H
+#endif  // !GPOS_CLogicalLeftAntiSemiJoinNotIn_H
 
 // EOF

@@ -26,7 +26,7 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="3">
@@ -34,7 +34,8 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
           <dxl:CostParam Name="NLJFactor" Value="1.000000" LowerBound="0.500000" UpperBound="1.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
-      <dxl:Hint MinNumOfPartsToRequireSortOnInsert="2147483647" JoinArityForAssociativityCommutativity="2147483647" ArrayExpansionThreshold="25" JoinOrderDynamicProgThreshold="10" BroadcastThreshold="10000000"/>
+      <dxl:Hint JoinArityForAssociativityCommutativity="2147483647" ArrayExpansionThreshold="25" JoinOrderDynamicProgThreshold="10" BroadcastThreshold="10000000"/>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="103027,102120,103001,103014,103015,103022,104003,104004,104005,105000"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
@@ -51,49 +52,36 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
         </dxl:Opfamilies>
       </dxl:GPDBScalarOp>
       <dxl:RelationStatistics Mdid="2.3747400.1.0" Name="date_parts" Rows="10.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.3747400.1.0" Name="date_parts" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="10,11,5" PartitionColumns="1,2,3" PartitionTypes="r,l,r" NumberLeafPartitions="16">
+      <dxl:Relation Mdid="6.3747400.1.0" Name="date_parts" IsTemporary="false" Rows="10.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="10,11,5" PartitionColumns="1,2,3" PartitionTypes="r,l,r">
         <dxl:Columns>
           <dxl:Column Name="id" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="year" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="month" Attno="3" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="day" Attno="4" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="region" Attno="5" Mdid="0.25.1.0" Nullable="true" ColWidth="0">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.3748065.1.0" IsPartial="false"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
         <dxl:PartConstraint DefaultPartition="" Unbounded="false">
           <dxl:Or>
@@ -1151,7 +1139,7 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
         <dxl:SumAgg Mdid="0.0.0.0"/>
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
-      <dxl:Index Mdid="0.3748065.1.0" Name="date_parts_ind_1_prt_1_2_prt_q1_3_prt_1" IsClustered="false" IndexType="Bitmap" IndexItemType="0.2283.1.0" KeyColumns="1" IncludedColumns="0,1,2,3,4,5,6,7,8,9,10,11">
+      <dxl:Index Mdid="0.3748065.1.0" Name="date_parts_ind_1_prt_1_2_prt_q1_3_prt_1" IsClustered="false" IndexType="Bitmap" IndexItemType="0.2283.1.0" KeyColumns="1" IncludedColumns="" ReturnableColumns="">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.3027.1.0"/>
         </dxl:Opfamilies>
@@ -2221,7 +2209,7 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
           </dxl:Comparison>
         </dxl:And>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.3747400.1.0" TableName="date_parts">
+          <dxl:TableDescriptor Mdid="6.3747400.1.0" TableName="date_parts">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="id" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="2" Attno="2" ColName="year" TypeMdid="0.23.1.0"/>
@@ -2243,7 +2231,7 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
     <dxl:Plan Id="0" SpaceSize="2">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="204.393208" Rows="10.000000" Width="16"/>
+          <dxl:Cost StartupCost="0" TotalCost="397.983325" Rows="10.000000" Width="16"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="id">
@@ -2266,7 +2254,7 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
         <dxl:SortingColumnList/>
         <dxl:Sequence>
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="204.392403" Rows="10.000000" Width="16"/>
+            <dxl:Cost StartupCost="0" TotalCost="397.982520" Rows="10.000000" Width="16"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="id">
@@ -2285,7 +2273,7 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
               <dxl:Ident ColId="4" ColName="region" TypeMdid="0.25.1.0"/>
             </dxl:ProjElem>
           </dxl:ProjList>
-          <dxl:PartitionSelector RelationMdid="0.3747400.1.0" PartitionLevels="3" ScanId="1">
+          <dxl:PartitionSelector RelationMdid="6.3747400.1.0" PartitionLevels="3" ScanId="1">
             <dxl:Properties>
               <dxl:Cost StartupCost="10" TotalCost="100" Rows="100" Width="4"/>
             </dxl:Properties>
@@ -2339,7 +2327,7 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
             <dxl:PropagationExpression>
               <dxl:ConstValue TypeMdid="0.23.1.0" Value="1"/>
             </dxl:PropagationExpression>
-            <dxl:PrintableFilter>
+            <dxl:PartFilterExpr>
               <dxl:And>
                 <dxl:Comparison ComparisonOperator="&gt;=" OperatorMdid="0.525.1.0">
                   <dxl:Ident ColId="1" ColName="year" TypeMdid="0.23.1.0"/>
@@ -2350,11 +2338,11 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
                   <dxl:ConstValue TypeMdid="0.23.1.0" Value="2003"/>
                 </dxl:Comparison>
               </dxl:And>
-            </dxl:PrintableFilter>
+            </dxl:PartFilterExpr>
           </dxl:PartitionSelector>
-          <dxl:DynamicBitmapTableScan PartIndexId="1">
+          <dxl:DynamicBitmapTableScan>
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="204.392403" Rows="10.000000" Width="16"/>
+              <dxl:Cost StartupCost="0" TotalCost="397.982520" Rows="10.000000" Width="16"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="0" Alias="id">
@@ -2399,7 +2387,7 @@ EXPLAIN SELECT * FROM date_parts WHERE year BETWEEN 2002 AND 2003;
               </dxl:IndexCondList>
               <dxl:IndexDescriptor Mdid="0.3748065.1.0" IndexName="date_parts_ind_1_prt_1_2_prt_q1_3_prt_1"/>
             </dxl:BitmapIndexProbe>
-            <dxl:TableDescriptor Mdid="0.3747400.1.0" TableName="date_parts">
+            <dxl:TableDescriptor Mdid="6.3747400.1.0" TableName="date_parts">
               <dxl:Columns>
                 <dxl:Column ColId="0" Attno="1" ColName="id" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="1" Attno="2" ColName="year" TypeMdid="0.23.1.0"/>

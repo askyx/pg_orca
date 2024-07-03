@@ -15,6 +15,8 @@
 
 using namespace gpopt;
 
+FORCE_GENERATE_DBGSTR(CFunctionProp);
+
 //---------------------------------------------------------------------------
 //	@function:
 //		CFunctionProp::CFunctionProp
@@ -23,18 +25,10 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CFunctionProp::CFunctionProp(IMDFunction::EFuncStbl func_stability,
-							 IMDFunction::EFuncDataAcc func_data_access,
-							 BOOL fHasVolatileFunctionScan, BOOL fScan)
-	: m_efs(func_stability),
-	  m_efda(func_data_access),
-	  m_fHasVolatileFunctionScan(fHasVolatileFunctionScan),
-	  m_fScan(fScan)
-{
-	GPOS_ASSERT(IMDFunction::EfsSentinel > func_stability);
-	GPOS_ASSERT(IMDFunction::EfdaSentinel > func_data_access);
-	GPOS_ASSERT_IMP(fScan && IMDFunction::EfsVolatile == func_stability,
-					fHasVolatileFunctionScan);
+CFunctionProp::CFunctionProp(IMDFunction::EFuncStbl func_stability, BOOL fHasVolatileFunctionScan, BOOL fScan)
+    : m_efs(func_stability), m_fHasVolatileFunctionScan(fHasVolatileFunctionScan), m_fScan(fScan) {
+  GPOS_ASSERT(IMDFunction::EfsSentinel > func_stability);
+  GPOS_ASSERT_IMP(fScan && IMDFunction::EfsVolatile == func_stability, fHasVolatileFunctionScan);
 }
 
 //---------------------------------------------------------------------------
@@ -45,9 +39,7 @@ CFunctionProp::CFunctionProp(IMDFunction::EFuncStbl func_stability,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CFunctionProp::~CFunctionProp()
-{
-}
+CFunctionProp::~CFunctionProp() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -57,19 +49,16 @@ CFunctionProp::~CFunctionProp()
 //		Check if must execute on a single host based on function properties
 //
 //---------------------------------------------------------------------------
-BOOL
-CFunctionProp::NeedsSingletonExecution() const
-{
-	// a function needs to execute on a single host if any of the following holds:
-	// a) it reads or modifies SQL data
-	// b) it is volatile and used as a scan operator (i.e. in the from clause)
+BOOL CFunctionProp::NeedsSingletonExecution() const {
+  // a function needs to execute on a single host if any of the following holds:
+  // a) it reads or modifies SQL data
+  // b) it is volatile and used as a scan operator (i.e. in the from clause)
 
-	// TODO:  - Feb 10, 2014; enable the following line instead of the
-	// current return statement once all function properties are fixed
-	//return (IMDFunction::EfdaContainsSQL < m_efda || (m_fScan && IMDFunction::EfsVolatile == m_efs));
+  // TODO:  - Feb 10, 2014; enable the following line instead of the
+  // current return statement once all function properties are fixed
+  // return (IMDFunction::EfdaContainsSQL < m_efda || (m_fScan && IMDFunction::EfsVolatile == m_efs));
 
-	return m_fScan && (IMDFunction::EfsVolatile == m_efs ||
-					   IMDFunction::EfsStable == m_efs);
+  return m_fScan && (IMDFunction::EfsVolatile == m_efs || IMDFunction::EfsStable == m_efs);
 }
 
 //---------------------------------------------------------------------------
@@ -80,15 +69,11 @@ CFunctionProp::NeedsSingletonExecution() const
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CFunctionProp::OsPrint(IOstream &os) const
-{
-	const CHAR *rgszStability[] = {"Immutable", "Stable", "Volatile"};
-	const CHAR *rgszDataAccess[] = {"NoSQL", "ContainsSQL", "ReadsSQLData",
-									"ModifiesSQLData"};
+IOstream &CFunctionProp::OsPrint(IOstream &os) const {
+  const CHAR *rgszStability[] = {"Immutable", "Stable", "Volatile"};
 
-	os << rgszStability[m_efs] << ", " << rgszDataAccess[m_efda];
-	return os;
+  os << rgszStability[m_efs];
+  return os;
 }
 
 // EOF

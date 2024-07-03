@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,45 +26,32 @@ using namespace gpos;
 //		Transform Logical CTE Consumer to Physical CTE Consumer
 //
 //---------------------------------------------------------------------------
-class CXformImplementCTEConsumer : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformImplementCTEConsumer(const CXformImplementCTEConsumer &);
+class CXformImplementCTEConsumer : public CXformImplementation {
+ private:
+ public:
+  CXformImplementCTEConsumer(const CXformImplementCTEConsumer &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementCTEConsumer(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementCTEConsumer(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformImplementCTEConsumer()
-	{
-	}
+  // dtor
+  ~CXformImplementCTEConsumer() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementCTEConsumer;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementCTEConsumer; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementCTEConsumer";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformImplementCTEConsumer"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformImplementCTEConsumer
+};  // class CXformImplementCTEConsumer
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementCTEConsumer_H
+#endif  // !GPOPT_CXformImplementCTEConsumer_H
 
 // EOF

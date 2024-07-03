@@ -17,8 +17,7 @@
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 #include "naucrates/md/CMDColumn.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -32,65 +31,57 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for column metadata
 //
 //---------------------------------------------------------------------------
-class CParseHandlerMetadataColumn : public CParseHandlerBase
-{
-private:
-	// the metadata column
-	CMDColumn *m_mdcol;
+class CParseHandlerMetadataColumn : public CParseHandlerBase {
+ private:
+  // the metadata column
+  CMDColumn *m_mdcol;
 
-	// column name
-	CMDName *m_mdname;
+  // column name
+  CMDName *m_mdname;
 
-	// attribute number
-	INT m_attno;
+  // attribute number
+  INT m_attno;
 
-	// attribute type oid
-	IMDId *m_mdid_type;
+  // attribute type oid
+  IMDId *m_mdid_type;
 
-	INT m_type_modifier;
+  INT m_type_modifier;
 
-	// are nulls allowed for this column
-	BOOL m_is_nullable;
+  // are nulls allowed for this column
+  BOOL m_is_nullable;
 
-	// is column dropped
-	BOOL m_is_dropped;
+  // is column dropped
+  BOOL m_is_dropped;
 
-	// default value expression if one exists
-	CDXLNode *m_dxl_default_val;
+  // width of the column
+  ULONG m_width;
 
-	// width of the column
-	ULONG m_width;
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// private copy ctor
-	CParseHandlerMetadataColumn(const CParseHandlerMetadataColumn &);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+ public:
+  CParseHandlerMetadataColumn(const CParseHandlerMetadataColumn &) = delete;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+  // ctor/dtor
+  CParseHandlerMetadataColumn(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                              CParseHandlerBase *parse_handler_root);
 
-public:
-	// ctor/dtor
-	CParseHandlerMetadataColumn(CMemoryPool *mp,
-								CParseHandlerManager *parse_handler_mgr,
-								CParseHandlerBase *parse_handler_root);
+  ~CParseHandlerMetadataColumn() override;
 
-	~CParseHandlerMetadataColumn();
-
-	CMDColumn *GetMdCol();
+  CMDColumn *GetMdCol();
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerMetadataColumn_H
+#endif  // !GPDXL_CParseHandlerMetadataColumn_H
 
 // EOF

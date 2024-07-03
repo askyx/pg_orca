@@ -13,9 +13,7 @@
 
 #include "gpos/base.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -26,20 +24,18 @@ using namespace gpos;
 //		unittest for optimization jobs
 //
 //---------------------------------------------------------------------------
-class COptimizationJobsTest
-{
-public:
-	// unittests driver
-	static GPOS_RESULT EresUnittest();
+class COptimizationJobsTest {
+ public:
+  // unittests driver
+  static GPOS_RESULT EresUnittest();
 
-	// test of optimization jobs state machines
-	static GPOS_RESULT EresUnittest_StateMachine();
+  // test of optimization jobs state machines
+  static GPOS_RESULT EresUnittest_StateMachine();
 
-};	// COptimizationJobsTest
+};  // COptimizationJobsTest
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_COptimizationJobsTest_H
-
+#endif  // !GPOPT_COptimizationJobsTest_H
 
 // EOF

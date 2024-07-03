@@ -25,13 +25,9 @@ using namespace gpdxl;
 //		Constructs a ScalarArrayComp node
 //
 //---------------------------------------------------------------------------
-CDXLScalarArrayComp::CDXLScalarArrayComp(CMemoryPool *mp, IMDId *mdid_op,
-										 const CWStringConst *str_opname,
-										 EdxlArrayCompType comparison_type)
-	: CDXLScalarComp(mp, mdid_op, str_opname),
-	  m_comparison_type(comparison_type)
-{
-}
+CDXLScalarArrayComp::CDXLScalarArrayComp(CMemoryPool *mp, IMDId *mdid_op, const CWStringConst *str_opname,
+                                         EdxlArrayCompType comparison_type)
+    : CDXLScalarComp(mp, mdid_op, str_opname), m_comparison_type(comparison_type) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -41,10 +37,8 @@ CDXLScalarArrayComp::CDXLScalarArrayComp(CMemoryPool *mp, IMDId *mdid_op,
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarArrayComp::GetDXLOperator() const
-{
-	return EdxlopScalarArrayComp;
+Edxlopid CDXLScalarArrayComp::GetDXLOperator() const {
+  return EdxlopScalarArrayComp;
 }
 
 //---------------------------------------------------------------------------
@@ -55,10 +49,8 @@ CDXLScalarArrayComp::GetDXLOperator() const
 //	 	Returns the array comparison operation type (ALL/ANY)
 //
 //---------------------------------------------------------------------------
-EdxlArrayCompType
-CDXLScalarArrayComp::GetDXLArrayCmpType() const
-{
-	return m_comparison_type;
+EdxlArrayCompType CDXLScalarArrayComp::GetDXLArrayCmpType() const {
+  return m_comparison_type;
 }
 
 //---------------------------------------------------------------------------
@@ -69,19 +61,16 @@ CDXLScalarArrayComp::GetDXLArrayCmpType() const
 //		AggRef AggStage
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarArrayComp::GetDXLStrArrayCmpType() const
-{
-	switch (m_comparison_type)
-	{
-		case Edxlarraycomptypeany:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenOpTypeAny);
-		case Edxlarraycomptypeall:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenOpTypeAll);
-		default:
-			GPOS_ASSERT(!"Unrecognized array operation type");
-			return NULL;
-	}
+const CWStringConst *CDXLScalarArrayComp::GetDXLStrArrayCmpType() const {
+  switch (m_comparison_type) {
+    case Edxlarraycomptypeany:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenOpTypeAny);
+    case Edxlarraycomptypeall:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenOpTypeAll);
+    default:
+      GPOS_ASSERT(!"Unrecognized array operation type");
+      return nullptr;
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -92,10 +81,8 @@ CDXLScalarArrayComp::GetDXLStrArrayCmpType() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarArrayComp::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayComp);
+const CWStringConst *CDXLScalarArrayComp::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayComp);
 }
 
 //---------------------------------------------------------------------------
@@ -106,24 +93,16 @@ CDXLScalarArrayComp::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarArrayComp::SerializeToDXL(CXMLSerializer *xml_serializer,
-									const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarArrayComp::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenOpName),
-								 m_comparison_operator_name);
-	m_mdid->Serialize(xml_serializer,
-					  CDXLTokens::GetDXLTokenStr(EdxltokenOpNo));
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenOpType),
-								 GetDXLStrArrayCmpType());
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenOpName), m_comparison_operator_name);
+  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenOpNo));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenOpType), GetDXLStrArrayCmpType());
 
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -135,27 +114,19 @@ CDXLScalarArrayComp::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarArrayComp::AssertValid(const CDXLNode *dxlnode,
-								 BOOL validate_children) const
-{
-	const ULONG arity = dxlnode->Arity();
-	GPOS_ASSERT(2 == arity);
+void CDXLScalarArrayComp::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  const ULONG arity = dxlnode->Arity();
+  GPOS_ASSERT(2 == arity);
 
-	for (ULONG ul = 0; ul < arity; ++ul)
-	{
-		CDXLNode *dxlnode_arg = (*dxlnode)[ul];
-		GPOS_ASSERT(EdxloptypeScalar ==
-					dxlnode_arg->GetOperator()->GetDXLOperatorType());
+  for (ULONG ul = 0; ul < arity; ++ul) {
+    CDXLNode *dxlnode_arg = (*dxlnode)[ul];
+    GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 
-		if (validate_children)
-		{
-			dxlnode_arg->GetOperator()->AssertValid(dxlnode_arg,
-													validate_children);
-		}
-	}
+    if (validate_children) {
+      dxlnode_arg->GetOperator()->AssertValid(dxlnode_arg, validate_children);
+    }
+  }
 }
-#endif	// GPOS_DEBUG
-
+#endif  // GPOS_DEBUG
 
 // EOF

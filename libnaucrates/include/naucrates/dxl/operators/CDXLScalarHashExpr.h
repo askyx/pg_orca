@@ -18,8 +18,7 @@
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpmd;
 
 //---------------------------------------------------------------------------
@@ -30,58 +29,51 @@ using namespace gpmd;
 //		Hash expressions list in Redistribute motion nodes
 //
 //---------------------------------------------------------------------------
-class CDXLScalarHashExpr : public CDXLScalar
-{
-private:
-	// catalog Oid of the expressions's data type
-	IMDId *m_mdid_type;
+class CDXLScalarHashExpr : public CDXLScalar {
+ private:
+  // catalog Oid of the distribution opfamily
+  IMDId *m_mdid_opfamily;
 
-	// private copy ctor
-	CDXLScalarHashExpr(CDXLScalarHashExpr &);
+ public:
+  CDXLScalarHashExpr(CDXLScalarHashExpr &) = delete;
 
-public:
-	// ctor/dtor
-	CDXLScalarHashExpr(CMemoryPool *mp, IMDId *mdid_type);
+  // ctor/dtor
+  CDXLScalarHashExpr(CMemoryPool *mp, IMDId *mdid_type);
 
-	virtual ~CDXLScalarHashExpr();
+  ~CDXLScalarHashExpr() override;
 
-	// ident accessors
-	Edxlopid GetDXLOperator() const;
+  // ident accessors
+  Edxlopid GetDXLOperator() const override;
 
-	// name of the operator
-	const CWStringConst *GetOpNameStr() const;
+  // name of the operator
+  const CWStringConst *GetOpNameStr() const override;
 
-	IMDId *MdidType() const;
+  IMDId *MdidOpfamily() const;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *node) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
-	// conversion function
-	static CDXLScalarHashExpr *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarHashExpr == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarHashExpr *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarHashExpr == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarHashExpr *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarHashExpr *>(dxl_op);
+  }
 
-	// does the operator return a boolean result
-	virtual BOOL
-	HasBoolResult(CMDAccessor *	 //md_accessor
-	) const
-	{
-		return true;
-	}
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  ) const override {
+    return true;
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure
-	void AssertValid(const CDXLNode *node, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure
+  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalarHashExpr_H
+#endif  // !GPDXL_CDXLScalarHashExpr_H
 
 // EOF

@@ -18,9 +18,7 @@
 #include "naucrates/dxl/operators/CDXLLogical.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDXLLogicalGet
@@ -29,52 +27,51 @@ namespace gpdxl
 //		Class for representing DXL logical get operators
 //
 //---------------------------------------------------------------------------
-class CDXLLogicalGet : public CDXLLogical
-{
-private:
-	// table descriptor for the scanned table
-	CDXLTableDescr *m_dxl_table_descr;
+class CDXLLogicalGet : public CDXLLogical {
+ private:
+  // table descriptor for the scanned table
+  CDXLTableDescr *m_dxl_table_descr;
 
-	// private copy ctor
-	CDXLLogicalGet(CDXLLogicalGet &);
+  // the table has row level security enabled and contains security quals
+  BOOL m_has_security_quals{false};
 
-public:
-	// ctor
-	CDXLLogicalGet(CMemoryPool *mp, CDXLTableDescr *table_descr);
+ public:
+  CDXLLogicalGet(CDXLLogicalGet &) = delete;
 
-	// dtor
-	virtual ~CDXLLogicalGet();
+  // ctor
+  CDXLLogicalGet(CMemoryPool *mp, CDXLTableDescr *table_descr, BOOL hasSecurityQuals = false);
 
-	// accessors
-	Edxlopid GetDXLOperator() const;
-	const CWStringConst *GetOpNameStr() const;
-	CDXLTableDescr *GetDXLTableDescr() const;
+  // dtor
+  ~CDXLLogicalGet() override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // accessors
+  Edxlopid GetDXLOperator() const override;
+  const CWStringConst *GetOpNameStr() const override;
+  CDXLTableDescr *GetDXLTableDescr() const;
 
-	// check if given column is defined by operator
-	virtual BOOL IsColDefined(ULONG colid) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// conversion function
-	static CDXLLogicalGet *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopLogicalGet == dxl_op->GetDXLOperator() ||
-					EdxlopLogicalExternalGet == dxl_op->GetDXLOperator());
+  // check if given column is defined by operator
+  BOOL IsColDefined(ULONG colid) const override;
 
-		return dynamic_cast<CDXLLogicalGet *>(dxl_op);
-	}
+  // conversion function
+  static CDXLLogicalGet *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopLogicalGet == dxl_op->GetDXLOperator() || EdxlopLogicalForeignGet == dxl_op->GetDXLOperator());
+
+    return dynamic_cast<CDXLLogicalGet *>(dxl_op);
+  }
+
+  BOOL HasSecurityQuals() const;
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLLogicalGet_H
+#endif  // !GPDXL_CDXLLogicalGet_H
 
 // EOF

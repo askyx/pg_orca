@@ -18,7 +18,6 @@
 
 using namespace gpdxl;
 
-
 XERCES_CPP_NAMESPACE_USE
 
 //---------------------------------------------------------------------------
@@ -29,13 +28,9 @@ XERCES_CPP_NAMESPACE_USE
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CParseHandlerScalarIdent::CParseHandlerScalarIdent(
-	CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
-	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root),
-	  m_dxl_op(NULL)
-{
-}
+CParseHandlerScalarIdent::CParseHandlerScalarIdent(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                                   CParseHandlerBase *parse_handler_root)
+    : CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root), m_dxl_op(nullptr) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,9 +40,7 @@ CParseHandlerScalarIdent::CParseHandlerScalarIdent(
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CParseHandlerScalarIdent::~CParseHandlerScalarIdent()
-{
-}
+CParseHandlerScalarIdent::~CParseHandlerScalarIdent() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -57,25 +50,19 @@ CParseHandlerScalarIdent::~CParseHandlerScalarIdent()
 //		Invoked by Xerces to process an opening tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerScalarIdent::StartElement(const XMLCh *const,	// element_uri,
-									   const XMLCh *const element_local_name,
-									   const XMLCh *const,	// element_qname
-									   const Attributes &attrs)
-{
-	if (0 !=
-		XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarIdent),
-								 element_local_name))
-	{
-		CWStringDynamic *str = CDXLUtils::CreateDynamicStringFromXMLChArray(
-			m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
-		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag,
-				   str->GetBuffer());
-	}
+void CParseHandlerScalarIdent::StartElement(const XMLCh *const,  // element_uri,
+                                            const XMLCh *const element_local_name,
+                                            const XMLCh *const,  // element_qname
+                                            const Attributes &attrs) {
+  if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarIdent), element_local_name)) {
+    CWStringDynamic *str =
+        CDXLUtils::CreateDynamicStringFromXMLChArray(m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
+    GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, str->GetBuffer());
+  }
 
-	// parse and create identifier operator
-	m_dxl_op = (CDXLScalarIdent *) CDXLOperatorFactory::MakeDXLScalarIdent(
-		m_parse_handler_mgr->GetDXLMemoryManager(), attrs);
+  // parse and create identifier operator
+  m_dxl_op =
+      (CDXLScalarIdent *)CDXLOperatorFactory::MakeDXLScalarIdent(m_parse_handler_mgr->GetDXLMemoryManager(), attrs);
 }
 
 //---------------------------------------------------------------------------
@@ -86,29 +73,23 @@ CParseHandlerScalarIdent::StartElement(const XMLCh *const,	// element_uri,
 //		Invoked by Xerces to process a closing tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerScalarIdent::EndElement(const XMLCh *const,  // element_uri,
-									 const XMLCh *const element_local_name,
-									 const XMLCh *const	 // element_qname
-)
-{
-	if (0 !=
-		XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarIdent),
-								 element_local_name))
-	{
-		CWStringDynamic *str = CDXLUtils::CreateDynamicStringFromXMLChArray(
-			m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
-		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag,
-				   str->GetBuffer());
-	}
+void CParseHandlerScalarIdent::EndElement(const XMLCh *const,  // element_uri,
+                                          const XMLCh *const element_local_name,
+                                          const XMLCh *const  // element_qname
+) {
+  if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarIdent), element_local_name)) {
+    CWStringDynamic *str =
+        CDXLUtils::CreateDynamicStringFromXMLChArray(m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
+    GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, str->GetBuffer());
+  }
 
-	// construct scalar ident node
-	GPOS_ASSERT(NULL != m_dxl_op);
-	m_dxl_node = GPOS_NEW(m_mp) CDXLNode(m_mp);
-	m_dxl_node->SetOperator(m_dxl_op);
+  // construct scalar ident node
+  GPOS_ASSERT(nullptr != m_dxl_op);
+  m_dxl_node = GPOS_NEW(m_mp) CDXLNode(m_mp);
+  m_dxl_node->SetOperator(m_dxl_op);
 
-	// deactivate handler
-	m_parse_handler_mgr->DeactivateHandler();
+  // deactivate handler
+  m_parse_handler_mgr->DeactivateHandler();
 }
 
 // EOF

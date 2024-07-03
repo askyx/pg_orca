@@ -6,7 +6,7 @@ explain select count(*) from (select generate_series(1, 10) i) t1, (select 1 j) 
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="3">
@@ -15,6 +15,7 @@ explain select count(*) from (select generate_series(1, 10) i) t1, (select 1 j) 
         </dxl:CostParams>
       </dxl:CostModelConfig>
       <dxl:Hint MinNumOfPartsToRequireSortOnInsert="1000000"/>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="103027,101013,102120,103001,103003,103014,103015,103022,104004,104005,105000"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
@@ -63,7 +64,7 @@ explain select count(*) from (select generate_series(1, 10) i) t1, (select 1 j) 
         <dxl:SumAgg Mdid="0.2108.1.0"/>
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
-      <dxl:GPDBFunc Mdid="0.1067.1.0" Name="generate_series" ReturnsSet="true" Stability="Volatile" DataAccess="NoSQL" IsStrict="true">
+      <dxl:GPDBFunc Mdid="0.1067.1.0" Name="generate_series" ReturnsSet="true" Stability="Volatile" IsStrict="true">
         <dxl:ResultType Mdid="0.23.1.0"/>
       </dxl:GPDBFunc>
       <dxl:GPDBAgg Mdid="0.2803.1.0" Name="count" IsSplittable="true" HashAggCapable="true">
@@ -80,7 +81,12 @@ explain select count(*) from (select generate_series(1, 10) i) t1, (select 1 j) 
         <dxl:GroupingColumns/>
         <dxl:ProjList>
           <dxl:ProjElem ColId="5" Alias="count">
-            <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Normal"/>
+            <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Normal" AggKind="n" AggArgTypes="">
+              <dxl:ValuesList ParamType="aggargs"/>
+              <dxl:ValuesList ParamType="aggdirectargs"/>
+              <dxl:ValuesList ParamType="aggorder"/>
+              <dxl:ValuesList ParamType="aggdistinct"/>
+            </dxl:AggFunc>
           </dxl:ProjElem>
         </dxl:ProjList>
         <dxl:LogicalJoin JoinType="Inner">
@@ -121,34 +127,44 @@ explain select count(*) from (select generate_series(1, 10) i) t1, (select 1 j) 
         </dxl:LogicalJoin>
       </dxl:LogicalGroupBy>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="3">
+    <dxl:Plan Id="0" SpaceSize="6">
       <dxl:Aggregate AggregationStrategy="Plain" StreamSafe="false">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="431.000010" Rows="1.000000" Width="8"/>
+          <dxl:Cost StartupCost="0" TotalCost="431.000110" Rows="1.000000" Width="8"/>
         </dxl:Properties>
         <dxl:GroupingColumns/>
         <dxl:ProjList>
           <dxl:ProjElem ColId="4" Alias="count">
-            <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Final">
-              <dxl:Ident ColId="5" ColName="ColRef_0005" TypeMdid="0.20.1.0"/>
+            <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Final" AggKind="n" AggArgTypes="">
+              <dxl:ValuesList ParamType="aggargs">
+                <dxl:Ident ColId="5" ColName="ColRef_0005" TypeMdid="0.20.1.0"/>
+              </dxl:ValuesList>
+              <dxl:ValuesList ParamType="aggdirectargs"/>
+              <dxl:ValuesList ParamType="aggorder"/>
+              <dxl:ValuesList ParamType="aggdistinct"/>
             </dxl:AggFunc>
           </dxl:ProjElem>
         </dxl:ProjList>
         <dxl:Filter/>
         <dxl:Aggregate AggregationStrategy="Plain" StreamSafe="false">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="431.000010" Rows="1.000000" Width="8"/>
+            <dxl:Cost StartupCost="0" TotalCost="431.000110" Rows="1.000000" Width="8"/>
           </dxl:Properties>
           <dxl:GroupingColumns/>
           <dxl:ProjList>
             <dxl:ProjElem ColId="5" Alias="ColRef_0005">
-              <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Partial"/>
+              <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Partial" AggKind="n" AggArgTypes="">
+                <dxl:ValuesList ParamType="aggargs"/>
+                <dxl:ValuesList ParamType="aggdirectargs"/>
+                <dxl:ValuesList ParamType="aggorder"/>
+                <dxl:ValuesList ParamType="aggdistinct"/>
+              </dxl:AggFunc>
             </dxl:ProjElem>
           </dxl:ProjList>
           <dxl:Filter/>
-          <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false">
+          <dxl:NestedLoopJoin JoinType="Inner" IndexNestedLoopJoin="false" OuterRefAsParam="false">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="431.000010" Rows="1.000000" Width="1"/>
+              <dxl:Cost StartupCost="0" TotalCost="431.000110" Rows="1.000000" Width="1"/>
             </dxl:Properties>
             <dxl:ProjList/>
             <dxl:Filter/>
@@ -157,7 +173,7 @@ explain select count(*) from (select generate_series(1, 10) i) t1, (select 1 j) 
             </dxl:JoinFilter>
             <dxl:Result>
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="0.000002" Rows="1.000000" Width="4"/>
+                <dxl:Cost StartupCost="0" TotalCost="0.000102" Rows="1.000000" Width="4"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="1" Alias="i">

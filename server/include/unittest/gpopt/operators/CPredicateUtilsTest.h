@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,20 +24,18 @@ using namespace gpos;
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CPredicateUtilsTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Conjunctions();
-	static GPOS_RESULT EresUnittest_Disjunctions();
-	static GPOS_RESULT EresUnittest_PlainEqualities();
-	static GPOS_RESULT EresUnittest_Implication();
+class CPredicateUtilsTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Conjunctions();
+  static GPOS_RESULT EresUnittest_Disjunctions();
+  static GPOS_RESULT EresUnittest_PlainEqualities();
+  static GPOS_RESULT EresUnittest_Implication();
 
-
-};	// class CPredicateUtilsTest
+};  // class CPredicateUtilsTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPredicateUtilsTest_H
+#endif  // !GPOPT_CPredicateUtilsTest_H
 
 // EOF

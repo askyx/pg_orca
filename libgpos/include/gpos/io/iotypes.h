@@ -14,13 +14,11 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-
-namespace gpos
-{
+namespace gpos {
 // file state structure
-typedef struct stat SFileStat;
+using SFileStat = struct stat;
 }  // namespace gpos
 
-#endif	// !GPOS_iotypes_H
+#endif  // !GPOS_iotypes_H
 
 // EOF

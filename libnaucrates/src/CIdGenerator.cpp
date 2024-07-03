@@ -16,9 +16,7 @@
 using namespace gpdxl;
 using namespace gpos;
 
-CIdGenerator::CIdGenerator(ULONG start_id) : id(start_id)
-{
-}
+CIdGenerator::CIdGenerator(ULONG start_id) : id(start_id) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,9 +27,8 @@ CIdGenerator::CIdGenerator(ULONG start_id) : id(start_id)
 //
 //---------------------------------------------------------------------------
 ULONG
-CIdGenerator::next_id()
-{
-	return id++;
+CIdGenerator::next_id() {
+  return id++;
 }
 
 //---------------------------------------------------------------------------
@@ -43,10 +40,8 @@ CIdGenerator::next_id()
 //
 //---------------------------------------------------------------------------
 ULONG
-CIdGenerator::current_id()
-{
-	return id;
+CIdGenerator::current_id() const {
+  return id;
 }
-
 
 // EOF

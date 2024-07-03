@@ -14,8 +14,7 @@
 #include "gpos/error/CLogger.h"
 #include "gpos/io/IOstream.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLoggerStream
@@ -25,40 +24,36 @@ namespace gpos
 //
 //---------------------------------------------------------------------------
 
-class CLoggerStream : public CLogger
-{
-private:
-	// log stream
-	IOstream &m_os;
+class CLoggerStream : public CLogger {
+ private:
+  // log stream
+  IOstream &m_os;
 
-	// write string to stream
-	void
-	Write(const WCHAR *log_entry,
-		  ULONG	 // severity
-	)
-	{
-		m_os = m_os << log_entry;
-	}
+  // write string to stream
+  void Write(const WCHAR *log_entry,
+             ULONG  // severity
+             ) override {
+    m_os = m_os << log_entry;
+  }
 
-	// no copy ctor
-	CLoggerStream(const CLoggerStream &);
+ public:
+  CLoggerStream(const CLoggerStream &) = delete;
 
-public:
-	// ctor
-	CLoggerStream(IOstream &os);
+  // ctor
+  CLoggerStream(IOstream &os);
 
-	// dtor
-	virtual ~CLoggerStream();
+  // dtor
+  ~CLoggerStream() override;
 
-	// wrapper for stdout
-	static CLoggerStream m_stdout_stream_logger;
+  // wrapper for stdout
+  static CLoggerStream m_stdout_stream_logger;
 
-	// wrapper for stderr
-	static CLoggerStream m_stderr_stream_logger;
+  // wrapper for stderr
+  static CLoggerStream m_stderr_stream_logger;
 
-};	// class CLoggerStream
+};  // class CLoggerStream
 }  // namespace gpos
 
-#endif	// !GPOS_CLoggerStream_H
+#endif  // !GPOS_CLoggerStream_H
 
 // EOF

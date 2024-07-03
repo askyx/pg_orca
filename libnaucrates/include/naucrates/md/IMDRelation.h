@@ -20,14 +20,12 @@
 #include "naucrates/md/IMDPartConstraint.h"
 #include "naucrates/statistics/IStatistics.h"
 
-namespace gpdxl
-{
-//fwd declaration
+namespace gpdxl {
+// fwd declaration
 class CXMLSerializer;
 }  // namespace gpdxl
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -38,177 +36,167 @@ using namespace gpos;
 //		Interface for relations in the metadata cache
 //
 //---------------------------------------------------------------------------
-class IMDRelation : public IMDCacheObject
-{
-public:
-	//-------------------------------------------------------------------
-	//	@doc:
-	//		Storage type of a relation
-	//-------------------------------------------------------------------
-	enum Erelstoragetype
-	{
-		ErelstorageHeap,
-		ErelstorageAppendOnlyCols,
-		ErelstorageAppendOnlyRows,
-		ErelstorageAppendOnlyParquet,
-		ErelstorageExternal,
-		ErelstorageVirtual,
-		ErelstorageSentinel
-	};
+class IMDRelation : public IMDCacheObject {
+ public:
+  //-------------------------------------------------------------------
+  //	@doc:
+  //		Storage type of a relation
+  //-------------------------------------------------------------------
+  enum Erelstoragetype {
+    ErelstorageHeap,
+    ErelstorageAppendOnlyCols,
+    ErelstorageAppendOnlyRows,
+    ErelstorageForeign,
+    ErelstorageMixedPartitioned,
+    ErelstorageCompositeType,
+    ErelstorageSentinel
+  };
 
-	//-------------------------------------------------------------------
-	//	@doc:
-	//		Distribution policy of a relation
-	//-------------------------------------------------------------------
-	enum Ereldistrpolicy
-	{
-		EreldistrMasterOnly,
-		EreldistrHash,
-		EreldistrRandom,
-		EreldistrReplicated,
-		EreldistrSentinel
-	};
+  //-------------------------------------------------------------------
+  //	@doc:
+  //		Append-only table version (if append-only table)
+  //-------------------------------------------------------------------
+  enum Erelaoversion { AORelationVersion_None, AORelationVersion_GP6, AORelationVersion_GP7, MaxAORelationVersion };
 
-	// Partition type of a partitioned relation
-	enum Erelpartitiontype
-	{
-		ErelpartitionRange = 'r',
-		ErelpartitionList = 'l'
-	};
+  //-------------------------------------------------------------------
+  //	@doc:
+  //		Distribution policy of a relation
+  //-------------------------------------------------------------------
+  enum Ereldistrpolicy {
+    EreldistrCoordinatorOnly,
+    EreldistrHash,
+    EreldistrRandom,
+    EreldistrReplicated,
+    EreldistrUniversal,
+    EreldistrSentinel
+  };
 
-protected:
-	// serialize an array of column ids into a comma-separated string
-	static CWStringDynamic *ColumnsToStr(CMemoryPool *mp,
-										 ULongPtrArray *colid_array);
+  // Partition type of a partitioned relation
+  enum Erelpartitiontype { ErelpartitionRange = 'r', ErelpartitionList = 'l' };
 
-public:
-	// object type
-	virtual Emdtype
-	MDType() const
-	{
-		return EmdtRel;
-	}
+ protected:
+  // serialize an array of column ids into a comma-separated string
+  static CWStringDynamic *ColumnsToStr(CMemoryPool *mp, ULongPtrArray *colid_array);
 
-	// is this a temp relation
-	virtual BOOL IsTemporary() const = 0;
+ public:
+  // object type
+  Emdtype MDType() const override { return EmdtRel; }
 
-	// storage type (heap, appendonly, ...)
-	virtual Erelstoragetype RetrieveRelStorageType() const = 0;
+  // Gets current cluster's append-only table version
+  static Erelaoversion GetCurrentAOVersion() { return static_cast<Erelaoversion>(MaxAORelationVersion - 1); }
 
-	// distribution policy (none, hash, random)
-	virtual Ereldistrpolicy GetRelDistribution() const = 0;
+  // is this a temp relation
+  virtual BOOL IsTemporary() const = 0;
 
-	// number of columns
-	virtual ULONG ColumnCount() const = 0;
+  // storage type (heap, appendonly, ...)
+  virtual Erelstoragetype RetrieveRelStorageType() const = 0;
 
-	// width of a column with regards to the position
-	virtual DOUBLE ColWidth(ULONG pos) const = 0;
+  // append only table version
+  virtual Erelaoversion GetRelAOVersion() const = 0;
 
-	// does relation have dropped columns
-	virtual BOOL HasDroppedColumns() const = 0;
+  // distribution policy (none, hash, random)
+  virtual Ereldistrpolicy GetRelDistribution() const = 0;
 
-	// number of non-dropped columns
-	virtual ULONG NonDroppedColsCount() const = 0;
+  // number of columns
+  virtual ULONG ColumnCount() const = 0;
 
-	// return the position of the given attribute position excluding dropped columns
-	virtual ULONG NonDroppedColAt(ULONG pos) const = 0;
+  // width of a column with regards to the position
+  virtual DOUBLE ColWidth(ULONG pos) const = 0;
 
-	// return the position of a column in the metadata object given the attribute number in the system catalog
-	virtual ULONG GetPosFromAttno(INT attno) const = 0;
+  // does relation have dropped columns
+  virtual BOOL HasDroppedColumns() const = 0;
 
-	// return the original positions of all the non-dropped columns
-	virtual ULongPtrArray *NonDroppedColsArray() const = 0;
+  // number of non-dropped columns
+  virtual ULONG NonDroppedColsCount() const = 0;
 
-	// number of system columns
-	virtual ULONG SystemColumnsCount() const = 0;
+  // return the position of the given attribute position excluding dropped columns
+  virtual ULONG NonDroppedColAt(ULONG pos) const = 0;
 
-	// retrieve the column at the given position
-	virtual const IMDColumn *GetMdCol(ULONG pos) const = 0;
+  // return the position of a column in the metadata object given the attribute number in the system catalog
+  virtual ULONG GetPosFromAttno(INT attno) const = 0;
 
-	// number of key sets
-	virtual ULONG KeySetCount() const = 0;
+  // return the original positions of all the non-dropped columns
+  virtual ULongPtrArray *NonDroppedColsArray() const = 0;
 
-	// key set at given position
-	virtual const ULongPtrArray *KeySetAt(ULONG pos) const = 0;
+  // number of system columns
+  virtual ULONG SystemColumnsCount() const = 0;
 
-	// number of distribution columns
-	virtual ULONG DistrColumnCount() const = 0;
+  // retrieve the column at the given position
+  virtual const IMDColumn *GetMdCol(ULONG pos) const = 0;
 
-	// retrieve the column at the given position in the distribution key for the relation
-	virtual const IMDColumn *GetDistrColAt(ULONG pos) const = 0;
+  // number of key sets
+  virtual ULONG KeySetCount() const = 0;
 
-	// return true if a hash distributed table needs to be considered as random
-	virtual BOOL ConvertHashToRandom() const = 0;
+  // key set at given position
+  virtual const ULongPtrArray *KeySetAt(ULONG pos) const = 0;
 
-	// does this table have oids
-	virtual BOOL HasOids() const = 0;
+  // number of distribution columns
+  virtual ULONG DistrColumnCount() const = 0;
 
-	// is this a partitioned table
-	virtual BOOL IsPartitioned() const = 0;
+  // retrieve the column at the given position in the distribution key for the relation
+  virtual const IMDColumn *GetDistrColAt(ULONG pos) const = 0;
 
-	// number of partition columns
-	virtual ULONG PartColumnCount() const = 0;
+  virtual IMDId *GetDistrOpfamilyAt(ULONG pos) const = 0;
 
-	// number of partitions
-	virtual ULONG PartitionCount() const = 0;
+  // return true if a hash distributed table needs to be considered as random
+  virtual BOOL ConvertHashToRandom() const = 0;
 
-	// retrieve the partition column at the given position
-	virtual const IMDColumn *PartColAt(ULONG pos) const = 0;
+  // is this a partitioned table
+  virtual BOOL IsPartitioned() const = 0;
 
-	// retrieve list of partition types
-	virtual CharPtrArray *GetPartitionTypes() const = 0;
+  // number of partition columns
+  virtual ULONG PartColumnCount() const = 0;
 
-	// retrieve the partition type of the given partition level
-	virtual CHAR PartTypeAtLevel(ULONG pos) const = 0;
+  // retrieve the partition column at the given position
+  virtual const IMDColumn *PartColAt(ULONG pos) const = 0;
 
-	// number of indices
-	virtual ULONG IndexCount() const = 0;
+  // retrieve list of partition types
+  virtual CharPtrArray *GetPartitionTypes() const = 0;
 
-	// number of triggers
-	virtual ULONG TriggerCount() const = 0;
+  // retrieve the partition type of the given partition level
+  virtual CHAR PartTypeAtLevel(ULONG pos) const = 0;
 
-	// retrieve the id of the metadata cache index at the given position
-	virtual IMDId *IndexMDidAt(ULONG pos) const = 0;
+  // number of indices
+  virtual ULONG IndexCount() const = 0;
 
-	// check if index is partial given its mdid
-	virtual BOOL IsPartialIndex(IMDId *mdid) const;
+  // retrieve the id of the metadata cache index at the given position
+  virtual IMDId *IndexMDidAt(ULONG pos) const = 0;
 
-	// retrieve the id of the metadata cache trigger at the given position
-	virtual IMDId *TriggerMDidAt(ULONG pos) const = 0;
+  // number of check constraints
+  virtual ULONG CheckConstraintCount() const = 0;
 
-	// number of check constraints
-	virtual ULONG CheckConstraintCount() const = 0;
+  // retrieve the id of the check constraint cache at the given position
+  virtual IMDId *CheckConstraintMDidAt(ULONG pos) const = 0;
 
-	// retrieve the id of the check constraint cache at the given position
-	virtual IMDId *CheckConstraintMDidAt(ULONG pos) const = 0;
+  // part constraint
+  virtual CDXLNode *MDPartConstraint() const = 0;
 
-	// part constraint
-	virtual IMDPartConstraint *MDPartConstraint() const = 0;
+  // child partition oids
+  virtual IMdIdArray *ChildPartitionMdids() const { return nullptr; }
 
-	// relation distribution policy as a string value
-	static const CWStringConst *GetDistrPolicyStr(
-		Ereldistrpolicy rel_distr_policy);
+  // relation distribution policy as a string value
+  static const CWStringConst *GetDistrPolicyStr(Ereldistrpolicy rel_distr_policy);
 
-	// name of storage type
-	static const CWStringConst *GetStorageTypeStr(
-		IMDRelation::Erelstoragetype rel_storage_type);
+  // name of storage type
+  static const CWStringConst *GetStorageTypeStr(IMDRelation::Erelstoragetype rel_storage_type);
 
-	BOOL
-	IsAORowOrColTable() const
-	{
-		Erelstoragetype st = RetrieveRelStorageType();
-		return st == ErelstorageAppendOnlyCols ||
-			   st == ErelstorageAppendOnlyRows;
-	}
+  BOOL IsAORowOrColTable() const {
+    Erelstoragetype st = RetrieveRelStorageType();
+    return st == ErelstorageAppendOnlyCols || st == ErelstorageAppendOnlyRows;
+  }
+
+  // get oid of foreign server for foreign table
+  virtual IMDId *ForeignServer() const = 0;
+
+  // rows
+  virtual CDouble Rows() const = 0;
 };
 
 // common structure over relation and external relation metadata for index info
-typedef CDynamicPtrArray<CMDIndexInfo, CleanupRelease> CMDIndexInfoArray;
+using CMDIndexInfoArray = CDynamicPtrArray<CMDIndexInfo, CleanupRelease>;
 
 }  // namespace gpmd
 
-
-
-#endif	// !GPMD_IMDRelation_H
+#endif  // !GPMD_IMDRelation_H
 
 // EOF

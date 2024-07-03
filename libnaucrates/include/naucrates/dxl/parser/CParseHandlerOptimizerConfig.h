@@ -17,13 +17,11 @@
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 
 // fwd decl
-namespace gpos
-{
+namespace gpos {
 class CBitSet;
 }
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -36,52 +34,47 @@ XERCES_CPP_NAMESPACE_USE
 //		SAX parse handler class for parsing optimizer config options
 //
 //---------------------------------------------------------------------------
-class CParseHandlerOptimizerConfig : public CParseHandlerBase
-{
-private:
-	// trace flag bitset
-	CBitSet *m_pbs;
+class CParseHandlerOptimizerConfig : public CParseHandlerBase {
+ private:
+  // trace flag bitset
+  CBitSet *m_pbs;
 
-	// optimizer configuration
-	COptimizerConfig *m_optimizer_config;
+  // optimizer configuration
+  COptimizerConfig *m_optimizer_config;
 
-	// private copy ctor
-	CParseHandlerOptimizerConfig(const CParseHandlerOptimizerConfig &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerOptimizerConfig(const CParseHandlerOptimizerConfig &) = delete;
 
-public:
-	// ctor/dtor
-	CParseHandlerOptimizerConfig(CMemoryPool *mp,
-								 CParseHandlerManager *parse_handler_mgr,
-								 CParseHandlerBase *parse_handler_root);
+  // ctor/dtor
+  CParseHandlerOptimizerConfig(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                               CParseHandlerBase *parse_handler_root);
 
-	virtual ~CParseHandlerOptimizerConfig();
+  ~CParseHandlerOptimizerConfig() override;
 
-	// type of the parse handler
-	EDxlParseHandlerType GetParseHandlerType() const;
+  // type of the parse handler
+  EDxlParseHandlerType GetParseHandlerType() const override;
 
-	// trace flags
-	CBitSet *Pbs() const;
+  // trace flags
+  CBitSet *Pbs() const;
 
-	// optimizer config
-	COptimizerConfig *GetOptimizerConfig() const;
+  // optimizer config
+  COptimizerConfig *GetOptimizerConfig() const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerOptimizerConfig_H
+#endif  // !GPDXL_CParseHandlerOptimizerConfig_H
 
 // EOF

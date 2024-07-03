@@ -14,11 +14,11 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalLeftOuterApply.h"
+#include "gpopt/operators/CLogicalLeftOuterJoin.h"
 #include "gpopt/xforms/CXformApply2Join.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -30,49 +30,33 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 class CXformLeftOuterApply2LeftOuterJoinNoCorrelations
-	: public CXformApply2Join<CLogicalLeftOuterApply, CLogicalLeftOuterJoin>
-{
-private:
-	// private copy ctor
-	CXformLeftOuterApply2LeftOuterJoinNoCorrelations(
-		const CXformLeftOuterApply2LeftOuterJoinNoCorrelations &);
+    : public CXformApply2Join<CLogicalLeftOuterApply, CLogicalLeftOuterJoin> {
+ private:
+ public:
+  CXformLeftOuterApply2LeftOuterJoinNoCorrelations(const CXformLeftOuterApply2LeftOuterJoinNoCorrelations &) = delete;
 
-public:
-	// ctor
-	explicit CXformLeftOuterApply2LeftOuterJoinNoCorrelations(CMemoryPool *mp)
-		: CXformApply2Join<CLogicalLeftOuterApply, CLogicalLeftOuterJoin>(mp)
-	{
-	}
+  // ctor
+  explicit CXformLeftOuterApply2LeftOuterJoinNoCorrelations(CMemoryPool *mp)
+      : CXformApply2Join<CLogicalLeftOuterApply, CLogicalLeftOuterJoin>(mp) {}
 
-	// dtor
-	virtual ~CXformLeftOuterApply2LeftOuterJoinNoCorrelations()
-	{
-	}
+  // dtor
+  ~CXformLeftOuterApply2LeftOuterJoinNoCorrelations() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfLeftOuterApply2LeftOuterJoinNoCorrelations;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfLeftOuterApply2LeftOuterJoinNoCorrelations; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformLeftOuterApply2LeftOuterJoinNoCorrelations";
-	}
+  const CHAR *SzId() const override { return "CXformLeftOuterApply2LeftOuterJoinNoCorrelations"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformLeftOuterApply2LeftOuterJoinNoCorrelations
+};  // class CXformLeftOuterApply2LeftOuterJoinNoCorrelations
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformLeftOuterApply2LeftOuterJoinNoCorrelations_H
+#endif  // !GPOPT_CXformLeftOuterApply2LeftOuterJoinNoCorrelations_H
 
 // EOF

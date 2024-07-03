@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarCoerceToDomain.h
@@ -22,8 +22,7 @@
 
 #include "gpopt/operators/CScalarCoerceBase.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -34,66 +33,47 @@ using namespace gpos;
 //		Scalar CoerceToDomain operator
 //
 //---------------------------------------------------------------------------
-class CScalarCoerceToDomain : public CScalarCoerceBase
-{
-private:
-	// does operator return NULL on NULL input?
-	BOOL m_returns_null_on_null_input;
+class CScalarCoerceToDomain : public CScalarCoerceBase {
+ private:
+  // does operator return NULL on NULL input?
+  BOOL m_returns_null_on_null_input;
 
-	// private copy ctor
-	CScalarCoerceToDomain(const CScalarCoerceToDomain &);
+ public:
+  CScalarCoerceToDomain(const CScalarCoerceToDomain &) = delete;
 
-public:
-	// ctor
-	CScalarCoerceToDomain(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier,
-						  ECoercionForm dxl_coerce_format, INT location);
+  // ctor
+  CScalarCoerceToDomain(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, ECoercionForm dxl_coerce_format,
+                        INT location);
 
-	// dtor
-	virtual ~CScalarCoerceToDomain()
-	{
-	}
+  // dtor
+  ~CScalarCoerceToDomain() override = default;
 
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopScalarCoerceToDomain;
-	}
+  EOperatorId Eopid() const override { return EopScalarCoerceToDomain; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CScalarCoerceToDomain";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CScalarCoerceToDomain"; }
 
-	// match function
-	virtual BOOL Matches(COperator *) const;
+  // match function
+  BOOL Matches(COperator *) const override;
 
-	// sensitivity to order of inputs
-	virtual BOOL
-	FInputOrderSensitive() const
-	{
-		return false;
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return false; }
 
-	// boolean expression evaluation
-	virtual EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const;
+  // boolean expression evaluation
+  EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const override;
 
-	// conversion function
-	static CScalarCoerceToDomain *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarCoerceToDomain == pop->Eopid());
+  // conversion function
+  static CScalarCoerceToDomain *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarCoerceToDomain == pop->Eopid());
 
-		return dynamic_cast<CScalarCoerceToDomain *>(pop);
-	}
+    return dynamic_cast<CScalarCoerceToDomain *>(pop);
+  }
 
-};	// class CScalarCoerceToDomain
+};  // class CScalarCoerceToDomain
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CScalarCoerceToDomain_H
+#endif  // !GPOPT_CScalarCoerceToDomain_H
 
 // EOF

@@ -13,8 +13,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif	// __cplusplus
-
+#endif  // __cplusplus
 
 // initialize DXL library support
 void InitDXL();
@@ -30,9 +29,8 @@ void gpdxl_terminate(void);
 
 #ifdef __cplusplus
 }
-#endif	// __cplusplus
+#endif  // __cplusplus
 
-#endif	// !GPDXL_init_H
-
+#endif  // !GPDXL_init_H
 
 // EOF

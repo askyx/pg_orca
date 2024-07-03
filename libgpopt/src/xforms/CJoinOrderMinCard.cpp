@@ -22,10 +22,8 @@
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CNormalizer.h"
 #include "gpopt/operators/CPredicateUtils.h"
-#include "gpopt/operators/ops.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -35,22 +33,15 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CJoinOrderMinCard::CJoinOrderMinCard(CMemoryPool *mp,
-									 CExpressionArray *pdrgpexprComponents,
-									 CExpressionArray *pdrgpexprConjuncts)
-	: CJoinOrder(mp, pdrgpexprComponents, pdrgpexprConjuncts,
-				 true /* m_include_loj_childs */),
-	  m_pcompResult(NULL)
-{
+CJoinOrderMinCard::CJoinOrderMinCard(CMemoryPool *mp, CExpressionArray *pdrgpexprComponents,
+                                     CExpressionArray *pdrgpexprConjuncts)
+    : CJoinOrder(mp, pdrgpexprComponents, pdrgpexprConjuncts, true /* m_include_loj_childs */), m_pcompResult(nullptr) {
 #ifdef GPOS_DEBUG
-	for (ULONG ul = 0; ul < m_ulComps; ul++)
-	{
-		GPOS_ASSERT(NULL != m_rgpcomp[ul]->m_pexpr->Pstats() &&
-					"stats were not derived on input component");
-	}
-#endif	// GPOS_DEBUG
+  for (ULONG ul = 0; ul < m_ulComps; ul++) {
+    GPOS_ASSERT(nullptr != m_rgpcomp[ul]->m_pexpr->Pstats() && "stats were not derived on input component");
+  }
+#endif  // GPOS_DEBUG
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -60,9 +51,8 @@ CJoinOrderMinCard::CJoinOrderMinCard(CMemoryPool *mp,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CJoinOrderMinCard::~CJoinOrderMinCard()
-{
-	CRefCount::SafeRelease(m_pcompResult);
+CJoinOrderMinCard::~CJoinOrderMinCard() {
+  CRefCount::SafeRelease(m_pcompResult);
 }
 
 //---------------------------------------------------------------------------
@@ -73,84 +63,71 @@ CJoinOrderMinCard::~CJoinOrderMinCard()
 //		Create join order
 //
 //---------------------------------------------------------------------------
-CExpression *
-CJoinOrderMinCard::PexprExpand()
-{
-	GPOS_ASSERT(NULL == m_pcompResult && "join order is already expanded");
+CExpression *CJoinOrderMinCard::PexprExpand() {
+  GPOS_ASSERT(nullptr == m_pcompResult && "join order is already expanded");
 
-	m_pcompResult = GPOS_NEW(m_mp) SComponent(m_mp, NULL /*pexpr*/);
-	ULONG ulCoveredComps = 0;
-	while (ulCoveredComps < m_ulComps)
-	{
-		CDouble dMinRows(0.0);
-		SComponent *pcompBest =
-			NULL;  // best component to be added to current result
-		SComponent *pcompBestResult =
-			NULL;  // result after adding best component
+  m_pcompResult = GPOS_NEW(m_mp) SComponent(m_mp, nullptr /*pexpr*/);
+  ULONG ulCoveredComps = 0;
+  while (ulCoveredComps < m_ulComps) {
+    CDouble dMinRows(0.0);
+    SComponent *pcompBest = nullptr;        // best component to be added to current result
+    SComponent *pcompBestResult = nullptr;  // result after adding best component
 
-		for (ULONG ul = 0; ul < m_ulComps; ul++)
-		{
-			SComponent *pcompCurrent = m_rgpcomp[ul];
-			if (pcompCurrent->m_fUsed)
-			{
-				// used components are already included in current result
-				continue;
-			}
+    for (ULONG ul = 0; ul < m_ulComps; ul++) {
+      SComponent *pcompCurrent = m_rgpcomp[ul];
+      if (pcompCurrent->m_fUsed) {
+        // used components are already included in current result
+        continue;
+      }
 
-			if (!IsValidJoinCombination(m_pcompResult, pcompCurrent))
-			{
-				continue;
-			}
+      if (!IsValidJoinCombination(m_pcompResult, pcompCurrent)) {
+        continue;
+      }
 
-			// combine component with current result and derive stats
-			CJoinOrder::SComponent *pcompTemp =
-				PcompCombine(m_pcompResult, pcompCurrent);
-			DeriveStats(pcompTemp->m_pexpr);
-			CDouble rows = pcompTemp->m_pexpr->Pstats()->Rows();
+      // combine component with current result and derive stats
+      CJoinOrder::SComponent *pcompTemp = PcompCombine(m_pcompResult, pcompCurrent);
+      DeriveStats(pcompTemp->m_pexpr);
+      CDouble rows = pcompTemp->m_pexpr->Pstats()->Rows();
 
-			if (NULL == pcompBestResult || rows < dMinRows)
-			{
-				pcompBest = pcompCurrent;
-				dMinRows = rows;
-				pcompTemp->AddRef();
-				CRefCount::SafeRelease(pcompBestResult);
-				pcompBestResult = pcompTemp;
-			}
-			pcompTemp->Release();
-		}
+      if (nullptr == pcompBestResult || rows < dMinRows) {
+        pcompBest = pcompCurrent;
+        dMinRows = rows;
+        pcompTemp->AddRef();
+        CRefCount::SafeRelease(pcompBestResult);
+        pcompBestResult = pcompTemp;
+      }
+      pcompTemp->Release();
+    }
 
 #ifndef GPOS_DEBUG
-		if (pcompBest == NULL)
-		{
-			// ideally we should never have the best result as null
-			GPOS_RAISE(CException::ExmaInvalid, CException::ExmiInvalid,
-					   GPOS_WSZ_LIT("Unable to find best join component"));
-		}
+    if (pcompBest == nullptr) {
+      // ideally we should never have the best result as null
+      GPOS_RAISE(CException::ExmaInvalid, CException::ExmiInvalid, GPOS_WSZ_LIT("Unable to find best join component"));
+    }
 #endif
 
-		GPOS_ASSERT(NULL != pcompBestResult);
+    GPOS_ASSERT(nullptr != pcompBestResult);
 
-		// mark best component as used.
-		// we will never have p_compBest as NULL, as
-		// we iterate over all the components to find the possible
-		// join alternative, thus there will be atleast one component
-		// marked as pcompBest
-		pcompBest->m_fUsed = true;
-		m_pcompResult->Release();
-		m_pcompResult = pcompBestResult;
+    // mark best component as used.
+    // we will never have p_compBest as NULL, as
+    // we iterate over all the components to find the possible
+    // join alternative, thus there will be atleast one component
+    // marked as pcompBest
+    pcompBest->m_fUsed = true;
+    m_pcompResult->Release();
+    m_pcompResult = pcompBestResult;
 
-		// mark used edges to avoid including them multiple times
-		MarkUsedEdges(m_pcompResult);
-		ulCoveredComps++;
-	}
-	GPOS_ASSERT(NULL != m_pcompResult->m_pexpr);
+    // mark used edges to avoid including them multiple times
+    MarkUsedEdges(m_pcompResult);
+    ulCoveredComps++;
+  }
+  GPOS_ASSERT(nullptr != m_pcompResult->m_pexpr);
 
-	CExpression *pexprResult = m_pcompResult->m_pexpr;
-	pexprResult->AddRef();
+  CExpression *pexprResult = m_pcompResult->m_pexpr;
+  pexprResult->AddRef();
 
-	return pexprResult;
+  return pexprResult;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -160,15 +137,12 @@ CJoinOrderMinCard::PexprExpand()
 //		Print created join order
 //
 //---------------------------------------------------------------------------
-IOstream &
-CJoinOrderMinCard::OsPrint(IOstream &os) const
-{
-	if (NULL != m_pcompResult->m_pexpr)
-	{
-		os << *m_pcompResult->m_pexpr;
-	}
+IOstream &CJoinOrderMinCard::OsPrint(IOstream &os) const {
+  if (nullptr != m_pcompResult->m_pexpr) {
+    os << *m_pcompResult->m_pexpr;
+  }
 
-	return os;
+  return os;
 }
 
 // EOF

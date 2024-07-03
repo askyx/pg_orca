@@ -26,14 +26,11 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLIndexDescr::CDXLIndexDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname)
-	: m_mp(mp), m_mdid(mdid), m_mdname(mdname)
-{
-	GPOS_ASSERT(m_mdid->IsValid());
-	GPOS_ASSERT(NULL != m_mdname);
-	GPOS_ASSERT(m_mdname->GetMDName()->IsValid());
+CDXLIndexDescr::CDXLIndexDescr(IMDId *mdid, CMDName *mdname) : m_mdid(mdid), m_mdname(mdname) {
+  GPOS_ASSERT(m_mdid->IsValid());
+  GPOS_ASSERT(nullptr != m_mdname);
+  GPOS_ASSERT(m_mdname->GetMDName()->IsValid());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -43,12 +40,10 @@ CDXLIndexDescr::CDXLIndexDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname)
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CDXLIndexDescr::~CDXLIndexDescr()
-{
-	m_mdid->Release();
-	GPOS_DELETE(m_mdname);
+CDXLIndexDescr::~CDXLIndexDescr() {
+  m_mdid->Release();
+  GPOS_DELETE(m_mdname);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -58,10 +53,8 @@ CDXLIndexDescr::~CDXLIndexDescr()
 //		Return the metadata id for the index
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLIndexDescr::MDId() const
-{
-	return m_mdid;
+IMDId *CDXLIndexDescr::MDId() const {
+  return m_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -72,10 +65,8 @@ CDXLIndexDescr::MDId() const
 //		Return index name
 //
 //---------------------------------------------------------------------------
-const CMDName *
-CDXLIndexDescr::MdName() const
-{
-	return m_mdname;
+const CMDName *CDXLIndexDescr::MdName() const {
+  return m_mdname;
 }
 
 //---------------------------------------------------------------------------
@@ -86,19 +77,13 @@ CDXLIndexDescr::MdName() const
 //		Serialize index descriptor in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLIndexDescr::SerializeToDXL(CXMLSerializer *xml_serializer) const
-{
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenIndexDescr));
-	m_mdid->Serialize(xml_serializer,
-					  CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexName),
-								 m_mdname->GetMDName());
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenIndexDescr));
+void CDXLIndexDescr::SerializeToDXL(CXMLSerializer *xml_serializer) const {
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                              CDXLTokens::GetDXLTokenStr(EdxltokenIndexDescr));
+  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexName), m_mdname->GetMDName());
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                               CDXLTokens::GetDXLTokenStr(EdxltokenIndexDescr));
 }
 
 // EOF

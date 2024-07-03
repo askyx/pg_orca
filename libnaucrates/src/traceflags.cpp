@@ -26,61 +26,38 @@ using namespace gpos;
 //		sets of old trace flags values
 //
 //---------------------------------------------------------------------------
-void
-SetTraceflags(
-	CMemoryPool *mp,
-	const CBitSet *pbsInput,  // set of trace flags to be enabled
-	CBitSet *
-		*ppbsEnabled,  // output: enabled trace flags before function is called
-	CBitSet *
-		*ppbsDisabled  // output: disabled trace flags before function is called
-)
-{
-	if (NULL == pbsInput)
-	{
-		// bail out if input set is null
-		return;
-	}
+void SetTraceflags(CMemoryPool *mp,
+                   const CBitSet *pbsInput,  // set of trace flags to be enabled
+                   CBitSet **ppbsEnabled,    // output: enabled trace flags before function is called
+                   CBitSet **ppbsDisabled    // output: disabled trace flags before function is called
+) {
+  if (nullptr == pbsInput) {
+    // bail out if input set is null
+    return;
+  }
 
-	GPOS_ASSERT(NULL != ppbsEnabled);
-	GPOS_ASSERT(NULL != ppbsDisabled);
+  GPOS_ASSERT(nullptr != ppbsEnabled);
+  GPOS_ASSERT(nullptr != ppbsDisabled);
 
-	// suppress error simulation while setting trace flags
-	CAutoTraceFlag atf1(EtraceSimulateAbort, false);
-	CAutoTraceFlag atf2(EtraceSimulateOOM, false);
-	CAutoTraceFlag atf3(EtraceSimulateNetError, false);
-	CAutoTraceFlag atf4(EtraceSimulateIOError, false);
+  *ppbsEnabled = GPOS_NEW(mp) CBitSet(mp, EopttraceSentinel);
+  *ppbsDisabled = GPOS_NEW(mp) CBitSet(mp, EopttraceSentinel);
+  CBitSetIter bsiter(*pbsInput);
+  while (bsiter.Advance()) {
+    ULONG ulTraceFlag = bsiter.Bit();
+    if (GPOS_FTRACE(ulTraceFlag)) {
+      // set trace flag in the enabled set
+      BOOL fSet GPOS_ASSERTS_ONLY = (*ppbsEnabled)->ExchangeSet(ulTraceFlag);
+      GPOS_ASSERT(!fSet);
+    } else {
+      // set trace flag in the disabled set
+      BOOL fSet GPOS_ASSERTS_ONLY = (*ppbsDisabled)->ExchangeSet(ulTraceFlag);
+      GPOS_ASSERT(!fSet);
+    }
 
-	*ppbsEnabled = GPOS_NEW(mp) CBitSet(mp, EopttraceSentinel);
-	*ppbsDisabled = GPOS_NEW(mp) CBitSet(mp, EopttraceSentinel);
-	CBitSetIter bsiter(*pbsInput);
-	while (bsiter.Advance())
-	{
-		ULONG ulTraceFlag = bsiter.Bit();
-		if (GPOS_FTRACE(ulTraceFlag))
-		{
-			// set trace flag in the enabled set
-#ifdef GPOS_DEBUG
-			BOOL fSet =
-#endif	// GPOS_DEBUG
-				(*ppbsEnabled)->ExchangeSet(ulTraceFlag);
-			GPOS_ASSERT(!fSet);
-		}
-		else
-		{
-			// set trace flag in the disabled set
-#ifdef GPOS_DEBUG
-			BOOL fSet =
-#endif	// GPOS_DEBUG
-				(*ppbsDisabled)->ExchangeSet(ulTraceFlag);
-			GPOS_ASSERT(!fSet);
-		}
-
-		// set trace flag
-		GPOS_SET_TRACE(ulTraceFlag);
-	}
+    // set trace flag
+    GPOS_SET_TRACE(ulTraceFlag);
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -90,37 +67,26 @@ SetTraceflags(
 //		Reset trace flags based on values given by input sets
 //
 //---------------------------------------------------------------------------
-void
-ResetTraceflags(CBitSet *pbsEnabled, CBitSet *pbsDisabled)
-{
-	if (NULL == pbsEnabled || NULL == pbsDisabled)
-	{
-		// bail out if input sets are null
-		return;
-	}
+void ResetTraceflags(CBitSet *pbsEnabled, CBitSet *pbsDisabled) {
+  if (nullptr == pbsEnabled || nullptr == pbsDisabled) {
+    // bail out if input sets are null
+    return;
+  }
 
-	GPOS_ASSERT(NULL != pbsEnabled);
-	GPOS_ASSERT(NULL != pbsDisabled);
+  GPOS_ASSERT(nullptr != pbsEnabled);
+  GPOS_ASSERT(nullptr != pbsDisabled);
 
-	// suppress error simulation while resetting trace flags
-	CAutoTraceFlag atf1(EtraceSimulateAbort, false);
-	CAutoTraceFlag atf2(EtraceSimulateOOM, false);
-	CAutoTraceFlag atf3(EtraceSimulateNetError, false);
-	CAutoTraceFlag atf4(EtraceSimulateIOError, false);
+  CBitSetIter bsiterEnabled(*pbsEnabled);
+  while (bsiterEnabled.Advance()) {
+    ULONG ulTraceFlag = bsiterEnabled.Bit();
+    GPOS_SET_TRACE(ulTraceFlag);
+  }
 
-	CBitSetIter bsiterEnabled(*pbsEnabled);
-	while (bsiterEnabled.Advance())
-	{
-		ULONG ulTraceFlag = bsiterEnabled.Bit();
-		GPOS_SET_TRACE(ulTraceFlag);
-	}
-
-	CBitSetIter bsiterDisabled(*pbsDisabled);
-	while (bsiterDisabled.Advance())
-	{
-		ULONG ulTraceFlag = bsiterDisabled.Bit();
-		GPOS_UNSET_TRACE(ulTraceFlag);
-	}
+  CBitSetIter bsiterDisabled(*pbsDisabled);
+  while (bsiterDisabled.Advance()) {
+    ULONG ulTraceFlag = bsiterDisabled.Bit();
+    GPOS_UNSET_TRACE(ulTraceFlag);
+  }
 }
 
 // EOF

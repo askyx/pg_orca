@@ -18,8 +18,7 @@
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/mdcache/CMDAccessor.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // forward declaration
@@ -37,29 +36,24 @@ class IConstExprEvaluator;
 //		for unittesting
 //
 //---------------------------------------------------------------------------
-class CAutoOptCtxt
-{
-private:
-	// private copy ctor
-	CAutoOptCtxt(CAutoOptCtxt &);
+class CAutoOptCtxt {
+ private:
+ public:
+  CAutoOptCtxt(CAutoOptCtxt &) = delete;
 
-public:
-	// ctor
-	CAutoOptCtxt(CMemoryPool *mp, CMDAccessor *md_accessor,
-				 IConstExprEvaluator *pceeval,
-				 COptimizerConfig *optimizer_config);
+  // ctor
+  CAutoOptCtxt(CMemoryPool *mp, CMDAccessor *md_accessor, IConstExprEvaluator *pceeval,
+               COptimizerConfig *optimizer_config);
 
-	// ctor
-	CAutoOptCtxt(CMemoryPool *mp, CMDAccessor *md_accessor,
-				 IConstExprEvaluator *pceeval, ICostModel *pcm);
+  // ctor
+  CAutoOptCtxt(CMemoryPool *mp, CMDAccessor *md_accessor, IConstExprEvaluator *pceeval, ICostModel *pcm);
 
-	// dtor
-	~CAutoOptCtxt();
+  // dtor
+  ~CAutoOptCtxt();
 
-};	// class CAutoOptCtxt
+};  // class CAutoOptCtxt
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CAutoOptCtxt_H
+#endif  // !GPOPT_CAutoOptCtxt_H
 
 // EOF

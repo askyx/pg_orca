@@ -17,9 +17,7 @@
 #include "gpos/common/CSyncHashtable.h"
 #include "gpos/common/CSyncHashtableIter.h"
 
-
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CSyncHashtableAccessorBase<T, K, S>
@@ -32,124 +30,96 @@ namespace gpos
 //
 //---------------------------------------------------------------------------
 template <class T, class K>
-class CSyncHashtableAccessorBase : public CStackObject
-{
-private:
-	// shorthand for buckets
-	typedef struct CSyncHashtable<T, K>::SBucket SBucket;
+class CSyncHashtableAccessorBase : public CStackObject {
+ private:
+  // shorthand for buckets
+  using SBucket = typename gpos::CSyncHashtable<T, K>::SBucket;
 
-	// target hashtable
-	CSyncHashtable<T, K> &m_ht;
+  // target hashtable
+  CSyncHashtable<T, K> &m_ht;
 
-	// bucket to operate on
-	SBucket &m_bucket;
+  // bucket to operate on
+  SBucket &m_bucket;
 
-	// no copy ctor
-	CSyncHashtableAccessorBase<T, K>(const CSyncHashtableAccessorBase<T, K> &);
+ protected:
+  // ctor - protected to restrict instantiation to children
+  CSyncHashtableAccessorBase(CSyncHashtable<T, K> &ht, ULONG bucket_idx)
+      : m_ht(ht), m_bucket(m_ht.GetBucket(bucket_idx)) {}
 
-protected:
-	// ctor - protected to restrict instantiation to children
-	CSyncHashtableAccessorBase<T, K>(CSyncHashtable<T, K> &ht, ULONG bucket_idx)
-		: m_ht(ht), m_bucket(m_ht.GetBucket(bucket_idx))
-	{
-	}
+  // dtor
+  virtual ~CSyncHashtableAccessorBase() = default;
 
-	// dtor
-	virtual ~CSyncHashtableAccessorBase<T, K>()
-	{
-	}
+  // accessor to hashtable
+  CSyncHashtable<T, K> &GetHashTable() const { return m_ht; }
 
-	// accessor to hashtable
-	CSyncHashtable<T, K> &
-	GetHashTable() const
-	{
-		return m_ht;
-	}
+  // accessor to maintained bucket
+  SBucket &GetBucket() const { return m_bucket; }
 
-	// accessor to maintained bucket
-	SBucket &
-	GetBucket() const
-	{
-		return m_bucket;
-	}
+  // returns the first element in the hash chain
+  T *First() const { return m_bucket.m_chain.First(); }
 
-	// returns the first element in the hash chain
-	T *
-	First() const
-	{
-		return m_bucket.m_chain.First();
-	}
+  // finds the element next to the given one
+  T *Next(T *value) const {
+    GPOS_ASSERT(nullptr != value);
 
-	// finds the element next to the given one
-	T *
-	Next(T *value) const
-	{
-		GPOS_ASSERT(NULL != value);
+    // make sure element is in this hash chain
+    GPOS_ASSERT(GPOS_OK == m_bucket.m_chain.Find(value));
 
-		// make sure element is in this hash chain
-		GPOS_ASSERT(GPOS_OK == m_bucket.m_chain.Find(value));
+    return m_bucket.m_chain.Next(value);
+  }
 
-		return m_bucket.m_chain.Next(value);
-	}
+  // inserts element at the head of hash chain
+  void Prepend(T *value) {
+    GPOS_ASSERT(nullptr != value);
 
-	// inserts element at the head of hash chain
-	void
-	Prepend(T *value)
-	{
-		GPOS_ASSERT(NULL != value);
+    m_bucket.m_chain.Prepend(value);
 
-		m_bucket.m_chain.Prepend(value);
+    // increase number of entries
+    m_ht.m_size++;
+  }
 
-		// increase number of entries
-		m_ht.m_size++;
-	}
+  // adds first element before second element
+  void Prepend(T *value, T *ptNext) {
+    GPOS_ASSERT(nullptr != value);
 
-	// adds first element before second element
-	void
-	Prepend(T *value, T *ptNext)
-	{
-		GPOS_ASSERT(NULL != value);
+    // make sure element is in this hash chain
+    GPOS_ASSERT(GPOS_OK == m_bucket.m_chain.Find(ptNext));
 
-		// make sure element is in this hash chain
-		GPOS_ASSERT(GPOS_OK == m_bucket.m_chain.Find(ptNext));
+    m_bucket.m_chain.Prepend(value, ptNext);
 
-		m_bucket.m_chain.Prepend(value, ptNext);
+    // increase number of entries
+    m_ht.m_size++;
+  }
 
-		// increase number of entries
-		m_ht.m_size++;
-	}
+  // adds first element after second element
+  void Append(T *value, T *ptPrev) {
+    GPOS_ASSERT(nullptr != value);
 
-	// adds first element after second element
-	void
-	Append(T *value, T *ptPrev)
-	{
-		GPOS_ASSERT(NULL != value);
+    // make sure element is in this hash chain
+    GPOS_ASSERT(GPOS_OK == m_bucket.m_chain.Find(ptPrev));
 
-		// make sure element is in this hash chain
-		GPOS_ASSERT(GPOS_OK == m_bucket.m_chain.Find(ptPrev));
+    m_bucket.m_chain.Append(value, ptPrev);
 
-		m_bucket.m_chain.Append(value, ptPrev);
+    // increase number of entries
+    m_ht.m_size++;
+  }
 
-		// increase number of entries
-		m_ht.m_size++;
-	}
+ public:
+  CSyncHashtableAccessorBase(const CSyncHashtableAccessorBase<T, K> &) = delete;
 
-public:
-	// unlinks element
-	void
-	Remove(T *value)
-	{
-		// not NULL and is-list-member checks are done in CList
-		m_bucket.m_chain.Remove(value);
+  // unlinks element
+  void Remove(T *value) {
+    // not NULL and is-list-member checks are done in CList
+    m_bucket.m_chain.Remove(value);
 
-		// decrease number of entries
-		m_ht.m_size--;
-	}
+    // decrease number of entries
+    m_ht.m_size--;
+  }
 
-};	// class CSyncHashtableAccessorBase
+};  // class CSyncHashtableAccessorBase
 
 }  // namespace gpos
 
-#endif	// GPOS_CSyncHashtableAccessorBase_H_
+#endif  // GPOS_CSyncHashtableAccessorBase_H_
 
 // EOF

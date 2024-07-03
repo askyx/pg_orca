@@ -16,7 +16,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CStackObject::CStackObject
@@ -25,9 +24,6 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CStackObject::CStackObject()
-{
-}
-
+CStackObject::CStackObject() = default;
 
 // EOF

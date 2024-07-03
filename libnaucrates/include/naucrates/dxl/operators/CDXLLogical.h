@@ -18,8 +18,7 @@
 #include "naucrates/dxl/operators/CDXLColRef.h"
 #include "naucrates/dxl/operators/CDXLOperator.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
@@ -33,21 +32,19 @@ class CXMLSerializer;
 //		Base class the DXL logical operators
 //
 //---------------------------------------------------------------------------
-class CDXLLogical : public CDXLOperator
-{
-private:
-	// private copy ctor
-	CDXLLogical(const CDXLLogical &);
+class CDXLLogical : public CDXLOperator {
+ private:
+ public:
+  CDXLLogical(const CDXLLogical &) = delete;
 
-public:
-	// ctor/dtor
-	explicit CDXLLogical(CMemoryPool *mp);
+  // ctor/dtor
+  explicit CDXLLogical(CMemoryPool *mp);
 
-	// Get operator type
-	Edxloptype GetDXLOperatorType() const;
+  // Get operator type
+  Edxloptype GetDXLOperatorType() const override;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLLogical_H
+#endif  // !GPDXL_CDXLLogical_H
 
 // EOF

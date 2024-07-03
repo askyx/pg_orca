@@ -14,8 +14,7 @@
 #include "gpos/assert.h"
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CMessageTest
@@ -24,16 +23,15 @@ namespace gpos
 //		Static unit tests for messages
 //
 //---------------------------------------------------------------------------
-class CMessageTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_BasicWrapper();
-	static GPOS_RESULT EresUnittest_Basic(const void *, ...);
+class CMessageTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_BasicWrapper();
+  static GPOS_RESULT EresUnittest_Basic(const void *, ...);
 };
 }  // namespace gpos
 
-#endif	// !GPOS_CMessageTest_H
+#endif  // !GPOS_CMessageTest_H
 
 // EOF

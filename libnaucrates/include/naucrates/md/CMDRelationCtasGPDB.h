@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CMDRelationCtasGPDB.h
@@ -20,18 +20,15 @@
 #include "naucrates/md/IMDColumn.h"
 #include "naucrates/md/IMDRelationCtas.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 // fwd decl
 class CXMLSerializer;
 class CDXLCtasStorageOptions;
 }  // namespace gpdxl
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 using namespace gpdxl;
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -41,240 +38,186 @@ using namespace gpdxl;
 //		Class representing MD CTAS relations
 //
 //---------------------------------------------------------------------------
-class CMDRelationCtasGPDB : public IMDRelationCtas
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CMDRelationCtasGPDB : public IMDRelationCtas {
+ private:
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// DXL for object
-	const CWStringDynamic *m_dxl_str;
+  // DXL for object
+  const CWStringDynamic *m_dxl_str = nullptr;
 
-	// relation mdid
-	IMDId *m_mdid;
+  // relation mdid
+  IMDId *m_mdid;
 
-	// schema name
-	CMDName *m_mdname_schema;
+  // schema name
+  CMDName *m_mdname_schema;
 
-	// table name
-	CMDName *m_mdname;
+  // table name
+  CMDName *m_mdname;
 
-	// is this a temporary relation
-	BOOL m_is_temp_table;
+  // is this a temporary relation
+  BOOL m_is_temp_table;
 
-	// does this table have oids
-	BOOL m_has_oids;
+  // storage type
+  Erelstoragetype m_rel_storage_type;
 
-	// storage type
-	Erelstoragetype m_rel_storage_type;
+  // distribution policy
+  Ereldistrpolicy m_rel_distr_policy;
 
-	// distribution policy
-	Ereldistrpolicy m_rel_distr_policy;
+  // columns
+  CMDColumnArray *m_md_col_array;
 
-	// columns
-	CMDColumnArray *m_md_col_array;
+  // indices of distribution columns
+  ULongPtrArray *m_distr_col_array;
 
-	// indices of distribution columns
-	ULongPtrArray *m_distr_col_array;
+  // distribution opfamilies
+  IMdIdArray *m_distr_opfamilies;
 
-	// array of key sets
-	ULongPtr2dArray *m_keyset_array;
+  // distribution opclasses
+  IMdIdArray *m_distr_opclasses;
 
-	// number of system columns
-	ULONG m_system_columns;
+  // array of key sets
+  ULongPtr2dArray *m_keyset_array;
 
-	// mapping of attribute number in the system catalog to the positions of
-	// the non dropped column in the metadata object
-	IntToUlongMap *m_attrno_nondrop_col_pos_map;
+  // number of system columns
+  ULONG m_system_columns;
 
-	// the original positions of all the non-dropped columns
-	ULongPtrArray *m_nondrop_col_pos_array;
+  // mapping of attribute number in the system catalog to the positions of
+  // the non dropped column in the metadata object
+  IntToUlongMap *m_attrno_nondrop_col_pos_map;
 
-	// storage options
-	CDXLCtasStorageOptions *m_dxl_ctas_storage_option;
+  // the original positions of all the non-dropped columns
+  ULongPtrArray *m_nondrop_col_pos_array;
 
-	// vartypemod list
-	IntPtrArray *m_vartypemod_array;
+  // storage options
+  CDXLCtasStorageOptions *m_dxl_ctas_storage_option;
 
-	// array of column widths
-	CDoubleArray *m_col_width_array;
+  // vartypemod list
+  IntPtrArray *m_vartypemod_array;
 
-	// private copy ctor
-	CMDRelationCtasGPDB(const CMDRelationCtasGPDB &);
+  // array of column widths
+  CDoubleArray *m_col_width_array;
 
-public:
-	// ctor
-	CMDRelationCtasGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname_schema,
-						CMDName *mdname, BOOL fTemporary, BOOL fHasOids,
-						Erelstoragetype rel_storage_type,
-						Ereldistrpolicy rel_distr_policy,
-						CMDColumnArray *mdcol_array,
-						ULongPtrArray *distr_col_array,
-						ULongPtr2dArray *keyset_array,
-						CDXLCtasStorageOptions *dxl_ctas_storage_options,
-						IntPtrArray *vartypemod_array);
+ public:
+  CMDRelationCtasGPDB(const CMDRelationCtasGPDB &) = delete;
 
-	// dtor
-	virtual ~CMDRelationCtasGPDB();
+  // ctor
+  CMDRelationCtasGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname_schema, CMDName *mdname, BOOL fTemporary,
+                      Erelstoragetype rel_storage_type, Ereldistrpolicy rel_distr_policy, CMDColumnArray *mdcol_array,
+                      ULongPtrArray *distr_col_array, IMdIdArray *distr_opfamilies, IMdIdArray *distr_opclasses,
+                      ULongPtr2dArray *keyset_array, CDXLCtasStorageOptions *dxl_ctas_storage_options,
+                      IntPtrArray *vartypemod_array);
 
-	// accessors
-	virtual const CWStringDynamic *
-	GetStrRepr() const
-	{
-		return m_dxl_str;
-	}
+  // dtor
+  ~CMDRelationCtasGPDB() override;
 
-	// the metadata id
-	virtual IMDId *MDId() const;
+  // accessors
+  const CWStringDynamic *GetStrRepr() override;
 
-	// schema name
-	virtual CMDName *GetMdNameSchema() const;
+  // the metadata id
+  IMDId *MDId() const override;
 
-	// relation name
-	virtual CMDName Mdname() const;
+  // schema name
+  CMDName *GetMdNameSchema() const override;
 
-	// distribution policy (none, hash, random)
-	virtual Ereldistrpolicy GetRelDistribution() const;
+  // relation name
+  CMDName Mdname() const override;
 
-	// does this table have oids
-	virtual BOOL
-	HasOids() const
-	{
-		return m_has_oids;
-	}
+  // distribution policy (none, hash, random)
+  Ereldistrpolicy GetRelDistribution() const override;
 
-	// is this a temp relation
-	virtual BOOL
-	IsTemporary() const
-	{
-		return m_is_temp_table;
-	}
+  // is this a temp relation
+  BOOL IsTemporary() const override { return m_is_temp_table; }
 
-	// storage type
-	virtual Erelstoragetype
-	RetrieveRelStorageType() const
-	{
-		return m_rel_storage_type;
-	}
+  // storage type
+  Erelstoragetype RetrieveRelStorageType() const override { return m_rel_storage_type; }
 
-	// CTAS storage options
-	virtual CDXLCtasStorageOptions *
-	GetDxlCtasStorageOption() const
-	{
-		return m_dxl_ctas_storage_option;
-	}
+  Erelaoversion GetRelAOVersion() const override { return IMDRelation::GetCurrentAOVersion(); }
 
-	// number of columns
-	virtual ULONG ColumnCount() const;
+  // CTAS storage options
+  CDXLCtasStorageOptions *GetDxlCtasStorageOption() const override { return m_dxl_ctas_storage_option; }
 
-	// width of a column with regards to the position
-	virtual DOUBLE ColWidth(ULONG pos) const;
+  // number of columns
+  ULONG ColumnCount() const override;
 
-	// does relation have dropped columns
-	virtual BOOL
-	HasDroppedColumns() const
-	{
-		return false;
-	}
+  // width of a column with regards to the position
+  DOUBLE ColWidth(ULONG pos) const override;
 
-	// number of non-dropped columns
-	virtual ULONG
-	NonDroppedColsCount() const
-	{
-		return ColumnCount();
-	}
+  // does relation have dropped columns
+  BOOL HasDroppedColumns() const override { return false; }
 
-	// return the original positions of all the non-dropped columns
-	virtual ULongPtrArray *
-	NonDroppedColsArray() const
-	{
-		return m_nondrop_col_pos_array;
-	}
+  // number of non-dropped columns
+  ULONG
+  NonDroppedColsCount() const override { return ColumnCount(); }
 
-	// number of system columns
-	virtual ULONG SystemColumnsCount() const;
+  // return the original positions of all the non-dropped columns
+  ULongPtrArray *NonDroppedColsArray() const override { return m_nondrop_col_pos_array; }
 
-	// retrieve the column at the given position
-	virtual const IMDColumn *GetMdCol(ULONG pos) const;
+  // number of system columns
+  ULONG SystemColumnsCount() const override;
 
-	// number of distribution columns
-	virtual ULONG DistrColumnCount() const;
+  // retrieve the column at the given position
+  const IMDColumn *GetMdCol(ULONG pos) const override;
 
-	// retrieve the column at the given position in the distribution columns list for the relation
-	virtual const IMDColumn *GetDistrColAt(ULONG pos) const;
+  // number of distribution columns
+  ULONG DistrColumnCount() const override;
 
-	// number of indices
-	virtual ULONG
-	IndexCount() const
-	{
-		return 0;
-	}
+  // retrieve the column at the given position in the distribution columns list for the relation
+  const IMDColumn *GetDistrColAt(ULONG pos) const override;
 
-	// number of triggers
-	virtual ULONG
-	TriggerCount() const
-	{
-		return 0;
-	}
+  IMDId *GetDistrOpfamilyAt(ULONG pos) const override;
 
-	// return the absolute position of the given attribute position excluding dropped columns
-	virtual ULONG
-	NonDroppedColAt(ULONG pos) const
-	{
-		return pos;
-	}
+  // number of indices
+  ULONG
+  IndexCount() const override { return 0; }
 
-	// return the position of a column in the metadata object given the attribute number in the system catalog
-	virtual ULONG GetPosFromAttno(INT attno) const;
+  // return the absolute position of the given attribute position excluding dropped columns
+  ULONG
+  NonDroppedColAt(ULONG pos) const override { return pos; }
 
-	// retrieve the id of the metadata cache index at the given position
-	virtual IMDId *IndexMDidAt(ULONG  // pos
-	) const
-	{
-		GPOS_ASSERT("CTAS tables have no indexes");
-		return 0;
-	}
+  // return the position of a column in the metadata object given the attribute number in the system catalog
+  ULONG GetPosFromAttno(INT attno) const override;
 
-	// retrieve the id of the metadata cache trigger at the given position
-	virtual IMDId *TriggerMDidAt(ULONG	// pos
-	) const
-	{
-		GPOS_ASSERT("CTAS tables have no triggers");
-		return 0;
-	}
+  virtual IMdIdArray *GetDistrOpClasses() const { return m_distr_opclasses; }
 
-	// serialize metadata relation in DXL format given a serializer object
-	virtual void Serialize(gpdxl::CXMLSerializer *) const;
+  // retrieve the id of the metadata cache index at the given position
+  IMDId *IndexMDidAt(ULONG  // pos
+  ) const override {
+    GPOS_ASSERT("CTAS tables have no indexes");
+    return nullptr;
+  }
 
-	// number of check constraints
-	virtual ULONG
-	CheckConstraintCount() const
-	{
-		return 0;
-	}
+  // serialize metadata relation in DXL format given a serializer object
+  void Serialize(gpdxl::CXMLSerializer *) const override;
 
-	// retrieve the id of the check constraint cache at the given position
-	virtual IMDId *CheckConstraintMDidAt(ULONG	// pos
-	) const
-	{
-		GPOS_ASSERT("CTAS tables have no constraints");
-		return 0;
-	}
+  // number of check constraints
+  ULONG
+  CheckConstraintCount() const override { return 0; }
 
-	// list of vartypmod for target expressions
-	IntPtrArray *
-	GetVarTypeModArray() const
-	{
-		return m_vartypemod_array;
-	}
+  // retrieve the id of the check constraint cache at the given position
+  IMDId *CheckConstraintMDidAt(ULONG  // pos
+  ) const override {
+    GPOS_ASSERT("CTAS tables have no constraints");
+    return nullptr;
+  }
+
+  // list of vartypmod for target expressions
+  IntPtrArray *GetVarTypeModArray() const { return m_vartypemod_array; }
+
+  IMDId *ForeignServer() const override { return nullptr; }
+
+  CDouble Rows() const override {
+    GPOS_ASSERT("Function should not be called for CTAS tables");
+    return 0;
+  }
 
 #ifdef GPOS_DEBUG
-	// debug print of the metadata relation
-	virtual void DebugPrint(IOstream &os) const;
+  // debug print of the metadata relation
+  void DebugPrint(IOstream &os) const override;
 #endif
 };
 }  // namespace gpmd
 
-#endif	// !GPMD_CMDRelationCTASGPDB_H
+#endif  // !GPMD_CMDRelationCTASGPDB_H
 
 // EOF

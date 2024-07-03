@@ -14,11 +14,8 @@
 #include "gpopt/search/CJobGroupExpression.h"
 #include "gpopt/search/CJobStateMachine.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -33,116 +30,101 @@ using namespace gpos;
 //		underlying group.
 //
 //---------------------------------------------------------------------------
-class CJobGroupExpressionImplementation : public CJobGroupExpression
-{
-public:
-	// transition events of group expression implementation
-	enum EEvent
-	{
-		eevImplementingChildren,  // child groups implementation is in progress
-		eevChildrenImplemented,	  // done with children implementation
-		eevImplementingSelf,	  // self implementation is in progress
-		eevSelfImplemented,		  // done with implementing group expression
-		eevFinalized,			  // done with implementation
+class CJobGroupExpressionImplementation : public CJobGroupExpression {
+ public:
+  // transition events of group expression implementation
+  enum EEvent {
+    eevImplementingChildren,  // child groups implementation is in progress
+    eevChildrenImplemented,   // done with children implementation
+    eevImplementingSelf,      // self implementation is in progress
+    eevSelfImplemented,       // done with implementing group expression
+    eevFinalized,             // done with implementation
 
-		eevSentinel
-	};
+    eevSentinel
+  };
 
-	// states of group expression implementation
-	enum EState
-	{
-		estInitialized = 0,		 // initial state
-		estChildrenImplemented,	 // child groups implemented
-		estSelfImplemented,		 // group expression implemented
-		estCompleted,			 // done implementation
+  // states of group expression implementation
+  enum EState {
+    estInitialized = 0,      // initial state
+    estChildrenImplemented,  // child groups implemented
+    estSelfImplemented,      // group expression implemented
+    estCompleted,            // done implementation
 
-		estSentinel
-	};
+    estSentinel
+  };
 
+ private:
+  // shorthand for job state machine
+  using JSM = CJobStateMachine<EState, estSentinel, EEvent, eevSentinel>;
 
-private:
-	// shorthand for job state machine
-	typedef CJobStateMachine<EState, estSentinel, EEvent, eevSentinel> JSM;
+  // job state machine
+  JSM m_jsm;
 
-	// job state machine
-	JSM m_jsm;
+  // implement child groups action
+  static EEvent EevtImplementChildren(CSchedulerContext *psc, CJob *pj);
 
-	// implement child groups action
-	static EEvent EevtImplementChildren(CSchedulerContext *psc, CJob *pj);
+  // implement group expression action
+  static EEvent EevtImplementSelf(CSchedulerContext *psc, CJob *pj);
 
-	// implement group expression action
-	static EEvent EevtImplementSelf(CSchedulerContext *psc, CJob *pj);
+  // finalize action
+  static EEvent EevtFinalize(CSchedulerContext *psc, CJob *pj);
 
-	// finalize action
-	static EEvent EevtFinalize(CSchedulerContext *psc, CJob *pj);
+ protected:
+  // schedule transformation jobs for applicable xforms
+  void ScheduleApplicableTransformations(CSchedulerContext *psc) override;
 
-	// private copy ctor
-	CJobGroupExpressionImplementation(
-		const CJobGroupExpressionImplementation &);
+  // schedule implementation jobs for all child groups
+  void ScheduleChildGroupsJobs(CSchedulerContext *psc) override;
 
-protected:
-	// schedule transformation jobs for applicable xforms
-	virtual void ScheduleApplicableTransformations(CSchedulerContext *psc);
+ public:
+  CJobGroupExpressionImplementation(const CJobGroupExpressionImplementation &) = delete;
 
-	// schedule implementation jobs for all child groups
-	virtual void ScheduleChildGroupsJobs(CSchedulerContext *psc);
+  // ctor
+  CJobGroupExpressionImplementation();
 
-public:
-	// ctor
-	CJobGroupExpressionImplementation();
+  // dtor
+  ~CJobGroupExpressionImplementation() override;
 
-	// dtor
-	virtual ~CJobGroupExpressionImplementation();
+  // initialize job
+  void Init(CGroupExpression *pgexpr);
 
-	// initialize job
-	void Init(CGroupExpression *pgexpr);
+  // schedule a new group expression implementation job
+  static void ScheduleJob(CSchedulerContext *psc, CGroupExpression *pgexpr, CJob *pjParent);
 
-	// schedule a new group expression implementation job
-	static void ScheduleJob(CSchedulerContext *psc, CGroupExpression *pgexpr,
-							CJob *pjParent);
-
-	// job's function
-	BOOL FExecute(CSchedulerContext *psc);
+  // job's function
+  BOOL FExecute(CSchedulerContext *psc) override;
 
 #ifdef GPOS_DEBUG
 
-	// print function
-	IOstream &OsPrint(IOstream &os);
+  // print function
+  IOstream &OsPrint(IOstream &os) const override;
 
-	// dump state machine diagram in graphviz format
-	virtual IOstream &
-	OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os,
-						const WCHAR *wszTitle) const
-	{
-		(void) m_jsm.OsDiagramToGraphviz(mp, os, wszTitle);
+  // dump state machine diagram in graphviz format
+  virtual IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const WCHAR *wszTitle) const {
+    (void)m_jsm.OsDiagramToGraphviz(mp, os, wszTitle);
 
-		return os;
-	}
+    return os;
+  }
 
-	// compute unreachable states
-	void
-	Unreachable(CMemoryPool *mp, EState **ppestate, ULONG *pulSize) const
-	{
-		m_jsm.Unreachable(mp, ppestate, pulSize);
-	}
+  // compute unreachable states
+  void Unreachable(CMemoryPool *mp, EState **ppestate, ULONG *pulSize) const {
+    m_jsm.Unreachable(mp, ppestate, pulSize);
+  }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-	// conversion function
-	static CJobGroupExpressionImplementation *
-	PjConvert(CJob *pj)
-	{
-		GPOS_ASSERT(NULL != pj);
-		GPOS_ASSERT(EjtGroupExpressionImplementation == pj->Ejt());
+  // conversion function
+  static CJobGroupExpressionImplementation *PjConvert(CJob *pj) {
+    GPOS_ASSERT(nullptr != pj);
+    GPOS_ASSERT(EjtGroupExpressionImplementation == pj->Ejt());
 
-		return dynamic_cast<CJobGroupExpressionImplementation *>(pj);
-	}
+    return dynamic_cast<CJobGroupExpressionImplementation *>(pj);
+  }
 
-};	// class CJobGroupExpressionImplementation
+};  // class CJobGroupExpressionImplementation
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CJobGroupExpressionImplementation_H
-
+#endif  // !GPOPT_CJobGroupExpressionImplementation_H
 
 // EOF

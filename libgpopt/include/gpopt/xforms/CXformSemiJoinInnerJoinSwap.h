@@ -13,11 +13,11 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalInnerJoin.h"
+#include "gpopt/operators/CLogicalLeftSemiJoin.h"
 #include "gpopt/xforms/CXformJoinSwap.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,42 +28,26 @@ using namespace gpos;
 //		Swap cascaded semi-join and inner join
 //
 //---------------------------------------------------------------------------
-class CXformSemiJoinInnerJoinSwap
-	: public CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalInnerJoin>
-{
-private:
-	// private copy ctor
-	CXformSemiJoinInnerJoinSwap(const CXformSemiJoinInnerJoinSwap &);
+class CXformSemiJoinInnerJoinSwap : public CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalInnerJoin> {
+ private:
+ public:
+  CXformSemiJoinInnerJoinSwap(const CXformSemiJoinInnerJoinSwap &) = delete;
 
-public:
-	// ctor
-	explicit CXformSemiJoinInnerJoinSwap(CMemoryPool *mp)
-		: CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalInnerJoin>(mp)
-	{
-	}
+  // ctor
+  explicit CXformSemiJoinInnerJoinSwap(CMemoryPool *mp) : CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalInnerJoin>(mp) {}
 
-	// dtor
-	virtual ~CXformSemiJoinInnerJoinSwap()
-	{
-	}
+  // dtor
+  ~CXformSemiJoinInnerJoinSwap() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSemiJoinInnerJoinSwap;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfSemiJoinInnerJoinSwap; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSemiJoinInnerJoinSwap";
-	}
+  const CHAR *SzId() const override { return "CXformSemiJoinInnerJoinSwap"; }
 
-};	// class CXformSemiJoinInnerJoinSwap
+};  // class CXformSemiJoinInnerJoinSwap
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSemiJoinInnerJoinSwap_H
+#endif  // !GPOPT_CXformSemiJoinInnerJoinSwap_H
 
 // EOF

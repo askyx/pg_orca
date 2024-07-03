@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2018 Pivotal, Inc.
+//	Copyright (C) 2018 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		COptimizerConfig.h
@@ -21,9 +21,9 @@
 #include "gpopt/engine/CEnumeratorConfig.h"
 #include "gpopt/engine/CHint.h"
 #include "gpopt/engine/CStatisticsConfig.h"
+#include "gpopt/hints/CPlanHint.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // forward decl
@@ -44,92 +44,69 @@ class ICostModel;
 //		<dxl:OptimizerConfig> element
 //
 //---------------------------------------------------------------------------
-class COptimizerConfig : public CRefCount
-{
-private:
-	// plan enumeration configuration
-	CEnumeratorConfig *m_enumerator_cfg;
+class COptimizerConfig : public CRefCount {
+ private:
+  // plan enumeration configuration
+  CEnumeratorConfig *m_enumerator_cfg;
 
-	// statistics configuration
-	CStatisticsConfig *m_stats_conf;
+  // statistics configuration
+  CStatisticsConfig *m_stats_conf;
 
-	// CTE configuration
-	CCTEConfig *m_cte_conf;
+  // CTE configuration
+  CCTEConfig *m_cte_conf;
 
-	// cost model configuration
-	ICostModel *m_cost_model;
+  // cost model configuration
+  ICostModel *m_cost_model;
 
-	// hint configuration
-	CHint *m_hint;
+  // hint configuration
+  CHint *m_hint;
 
-	// default window oids
-	CWindowOids *m_window_oids;
+  // optimizer plan hints
+  CPlanHint *m_plan_hint{nullptr};
 
-public:
-	// ctor
-	COptimizerConfig(CEnumeratorConfig *pec, CStatisticsConfig *stats_config,
-					 CCTEConfig *pcteconf, ICostModel *pcm, CHint *phint,
-					 CWindowOids *pdefoidsGPDB);
+  // default window oids
+  CWindowOids *m_window_oids;
 
-	// dtor
-	virtual ~COptimizerConfig();
+ public:
+  // ctor
+  COptimizerConfig(CEnumeratorConfig *pec, CStatisticsConfig *stats_config, CCTEConfig *pcteconf, ICostModel *pcm,
+                   CHint *phint, CPlanHint *pplanhint, CWindowOids *pdefoidsGPDB);
 
+  // dtor
+  ~COptimizerConfig() override;
 
-	// plan enumeration configuration
-	CEnumeratorConfig *
-	GetEnumeratorCfg() const
-	{
-		return m_enumerator_cfg;
-	}
+  // plan enumeration configuration
+  CEnumeratorConfig *GetEnumeratorCfg() const { return m_enumerator_cfg; }
 
-	// statistics configuration
-	CStatisticsConfig *
-	GetStatsConf() const
-	{
-		return m_stats_conf;
-	}
+  // statistics configuration
+  CStatisticsConfig *GetStatsConf() const { return m_stats_conf; }
 
-	// CTE configuration
-	CCTEConfig *
-	GetCteConf() const
-	{
-		return m_cte_conf;
-	}
+  // CTE configuration
+  CCTEConfig *GetCteConf() const { return m_cte_conf; }
 
-	// cost model configuration
-	ICostModel *
-	GetCostModel() const
-	{
-		return m_cost_model;
-	}
+  // cost model configuration
+  ICostModel *GetCostModel() const { return m_cost_model; }
 
-	// default window oids
-	CWindowOids *
-	GetWindowOids() const
-	{
-		return m_window_oids;
-	}
+  // default window oids
+  CWindowOids *GetWindowOids() const { return m_window_oids; }
 
-	// hint configuration
-	CHint *
-	GetHint() const
-	{
-		return m_hint;
-	}
+  // hint configuration
+  CHint *GetHint() const { return m_hint; }
 
-	// generate default optimizer configurations
-	static COptimizerConfig *PoconfDefault(CMemoryPool *mp);
+  CPlanHint *GetPlanHint() const { return m_plan_hint; }
 
-	// generate default optimizer configurations with the given cost model
-	static COptimizerConfig *PoconfDefault(CMemoryPool *mp, ICostModel *pcm);
+  // generate default optimizer configurations
+  static COptimizerConfig *PoconfDefault(CMemoryPool *mp);
 
-	void Serialize(CMemoryPool *mp, CXMLSerializer *xml_serializer,
-				   CBitSet *pbsTrace) const;
+  // generate default optimizer configurations with the given cost model
+  static COptimizerConfig *PoconfDefault(CMemoryPool *mp, ICostModel *pcm);
 
-};	// class COptimizerConfig
+  void Serialize(CMemoryPool *mp, CXMLSerializer *xml_serializer, CBitSet *pbsTrace) const;
+
+};  // class COptimizerConfig
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_COptimizerConfig_H
+#endif  // !GPOPT_COptimizerConfig_H
 
 // EOF

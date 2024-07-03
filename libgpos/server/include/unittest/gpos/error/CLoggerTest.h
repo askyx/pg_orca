@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLoggerTest
@@ -23,17 +22,16 @@ namespace gpos
 //		Unittests for log functionality
 //
 //---------------------------------------------------------------------------
-class CLoggerTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
-	static GPOS_RESULT EresUnittest_LoggerSyslog();
+class CLoggerTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
+  static GPOS_RESULT EresUnittest_LoggerSyslog();
 
-};	// CLoggerTest
+};  // CLoggerTest
 }  // namespace gpos
 
-#endif	// !GPOS_CLoggerTest_H
+#endif  // !GPOS_CLoggerTest_H
 
 // EOF

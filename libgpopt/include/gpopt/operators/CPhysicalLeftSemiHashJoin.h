@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CPhysicalHashJoin.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CPhysicalLeftSemiHashJoin
@@ -25,60 +24,45 @@ namespace gpopt
 //		Left semi hash join operator
 //
 //---------------------------------------------------------------------------
-class CPhysicalLeftSemiHashJoin : public CPhysicalHashJoin
-{
-private:
-	// private copy ctor
-	CPhysicalLeftSemiHashJoin(const CPhysicalLeftSemiHashJoin &);
+class CPhysicalLeftSemiHashJoin : public CPhysicalHashJoin {
+ private:
+ public:
+  CPhysicalLeftSemiHashJoin(const CPhysicalLeftSemiHashJoin &) = delete;
 
-public:
-	// ctor
-	CPhysicalLeftSemiHashJoin(CMemoryPool *mp,
-							  CExpressionArray *pdrgpexprOuterKeys,
-							  CExpressionArray *pdrgpexprInnerKeys);
+  // ctor
+  CPhysicalLeftSemiHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys, CExpressionArray *pdrgpexprInnerKeys,
+                            IMdIdArray *hash_opfamilies, BOOL is_null_aware = true,
+                            CXform::EXformId origin_xform = CXform::ExfSentinel);
 
-	// dtor
-	virtual ~CPhysicalLeftSemiHashJoin();
+  // dtor
+  ~CPhysicalLeftSemiHashJoin() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPhysicalLeftSemiHashJoin;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPhysicalLeftSemiHashJoin; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPhysicalLeftSemiHashJoin";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CPhysicalLeftSemiHashJoin"; }
 
-	// check if required columns are included in output columns
-	virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl,
-								   CColRefSet *pcrsRequired,
-								   ULONG ulOptReq) const;
+  CPartitionPropagationSpec *PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                          CPartitionPropagationSpec *pppsRequired, ULONG child_index,
+                                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-	// compute required partition propagation of the n-th child
-	virtual CPartitionPropagationSpec *PppsRequired(
-		CMemoryPool *mp, CExpressionHandle &exprhdl,
-		CPartitionPropagationSpec *pppsRequired, ULONG child_index,
-		CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq);
+  CPartitionPropagationSpec *PppsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// conversion function
-	static CPhysicalLeftSemiHashJoin *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(EopPhysicalLeftSemiHashJoin == pop->Eopid());
+  // check if required columns are included in output columns
+  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
 
-		return dynamic_cast<CPhysicalLeftSemiHashJoin *>(pop);
-	}
+  // conversion function
+  static CPhysicalLeftSemiHashJoin *PopConvert(COperator *pop) {
+    GPOS_ASSERT(EopPhysicalLeftSemiHashJoin == pop->Eopid());
 
+    return dynamic_cast<CPhysicalLeftSemiHashJoin *>(pop);
+  }
 
-};	// class CPhysicalLeftSemiHashJoin
+};  // class CPhysicalLeftSemiHashJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPhysicalLeftSemiHashJoin_H
+#endif  // !GPOPT_CPhysicalLeftSemiHashJoin_H
 
 // EOF

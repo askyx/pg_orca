@@ -32,12 +32,11 @@ using namespace gpmd;
 //
 //---------------------------------------------------------------------------
 CScalarCoalesce::CScalarCoalesce(CMemoryPool *mp, IMDId *mdid_type)
-	: CScalar(mp), m_mdid_type(mdid_type), m_fBoolReturnType(false)
-{
-	GPOS_ASSERT(mdid_type->IsValid());
+    : CScalar(mp), m_mdid_type(mdid_type), m_fBoolReturnType(false) {
+  GPOS_ASSERT(mdid_type->IsValid());
 
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	m_fBoolReturnType = CMDAccessorUtils::FBoolType(md_accessor, m_mdid_type);
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  m_fBoolReturnType = CMDAccessorUtils::FBoolType(md_accessor, m_mdid_type);
 }
 
 //---------------------------------------------------------------------------
@@ -48,9 +47,8 @@ CScalarCoalesce::CScalarCoalesce(CMemoryPool *mp, IMDId *mdid_type)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarCoalesce::~CScalarCoalesce()
-{
-	m_mdid_type->Release();
+CScalarCoalesce::~CScalarCoalesce() {
+  m_mdid_type->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -63,10 +61,8 @@ CScalarCoalesce::~CScalarCoalesce()
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarCoalesce::HashValue() const
-{
-	return gpos::CombineHashes(COperator::HashValue(),
-							   m_mdid_type->HashValue());
+CScalarCoalesce::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(), m_mdid_type->HashValue());
 }
 
 //---------------------------------------------------------------------------
@@ -77,19 +73,15 @@ CScalarCoalesce::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarCoalesce::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarCoalesce *popScCoalesce = CScalarCoalesce::PopConvert(pop);
+BOOL CScalarCoalesce::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarCoalesce *popScCoalesce = CScalarCoalesce::PopConvert(pop);
 
-		// match if return types are identical
-		return popScCoalesce->MdidType()->Equals(m_mdid_type);
-	}
+    // match if return types are identical
+    return popScCoalesce->MdidType()->Equals(m_mdid_type);
+  }
 
-	return false;
+  return false;
 }
-
 
 // EOF

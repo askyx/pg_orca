@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CConstExprEvaluatorDefault.h
@@ -22,8 +22,7 @@
 
 #include "gpopt/eval/IConstExprEvaluator.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CConstExprEvaluatorDefault
@@ -33,29 +32,25 @@ namespace gpopt
 //		no database instance is available
 //
 //---------------------------------------------------------------------------
-class CConstExprEvaluatorDefault : public IConstExprEvaluator
-{
-private:
-	// private copy ctor
-	CConstExprEvaluatorDefault(const CConstExprEvaluatorDefault &);
+class CConstExprEvaluatorDefault : public IConstExprEvaluator {
+ private:
+ public:
+  CConstExprEvaluatorDefault(const CConstExprEvaluatorDefault &) = delete;
 
-public:
-	// ctor
-	CConstExprEvaluatorDefault() : IConstExprEvaluator()
-	{
-	}
+  // ctor
+  CConstExprEvaluatorDefault() : IConstExprEvaluator() {}
 
-	// dtor
-	virtual ~CConstExprEvaluatorDefault();
+  // dtor
+  ~CConstExprEvaluatorDefault() override;
 
-	// Evaluate the given expression and return the result as a new expression
-	virtual CExpression *PexprEval(CExpression *pexpr);
+  // Evaluate the given expression and return the result as a new expression
+  CExpression *PexprEval(CExpression *pexpr) override;
 
-	// Returns true iff the evaluator can evaluate constant expressions
-	virtual BOOL FCanEvalExpressions();
+  // Returns true iff the evaluator can evaluate constant expressions
+  BOOL FCanEvalExpressions() override;
 };
 }  // namespace gpopt
 
-#endif	// !GPOPT_CConstExprEvaluatorGPDB_H
+#endif  // !GPOPT_CConstExprEvaluatorGPDB_H
 
 // EOF

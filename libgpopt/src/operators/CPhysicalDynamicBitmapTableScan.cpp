@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CPhysicalDynamicBitmapTableScan.cpp
@@ -20,7 +20,6 @@
 #include "gpopt/base/CDistributionSpec.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/metadata/CName.h"
-#include "gpopt/metadata/CPartConstraint.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPredicateUtils.h"
@@ -37,17 +36,14 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalDynamicBitmapTableScan::CPhysicalDynamicBitmapTableScan(
-	CMemoryPool *mp, BOOL is_partial, CTableDescriptor *ptabdesc,
-	ULONG ulOriginOpId, const CName *pnameAlias, ULONG scan_id,
-	CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrParts,
-	ULONG ulSecondaryScanId, CPartConstraint *ppartcnstr,
-	CPartConstraint *ppartcnstrRel)
-	: CPhysicalDynamicScan(mp, is_partial, ptabdesc, ulOriginOpId, pnameAlias,
-						   scan_id, pdrgpcrOutput, pdrgpdrgpcrParts,
-						   ulSecondaryScanId, ppartcnstr, ppartcnstrRel)
-{
-}
+CPhysicalDynamicBitmapTableScan::CPhysicalDynamicBitmapTableScan(CMemoryPool *mp, CTableDescriptor *ptabdesc,
+                                                                 ULONG ulOriginOpId, const CName *pnameAlias,
+                                                                 ULONG scan_id, CColRefArray *pdrgpcrOutput,
+                                                                 CColRef2dArray *pdrgpdrgpcrParts,
+                                                                 IMdIdArray *partition_mdids,
+                                                                 ColRefToUlongMapArray *root_col_mapping_per_part)
+    : CPhysicalDynamicScan(mp, ptabdesc, ulOriginOpId, pnameAlias, scan_id, pdrgpcrOutput, pdrgpdrgpcrParts,
+                           partition_mdids, root_col_mapping_per_part) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -57,10 +53,8 @@ CPhysicalDynamicBitmapTableScan::CPhysicalDynamicBitmapTableScan(
 //		match operator
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalDynamicBitmapTableScan::Matches(COperator *pop) const
-{
-	return CUtils::FMatchDynamicBitmapScan(this, pop);
+BOOL CPhysicalDynamicBitmapTableScan::Matches(COperator *pop) const {
+  return CUtils::FMatchDynamicBitmapScan(this, pop);
 }
 
 //---------------------------------------------------------------------------
@@ -71,36 +65,29 @@ CPhysicalDynamicBitmapTableScan::Matches(COperator *pop) const
 //		Statistics derivation during costing
 //
 //---------------------------------------------------------------------------
-IStatistics *
-CPhysicalDynamicBitmapTableScan::PstatsDerive(
-	CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpplan,
-	IStatisticsArray *stats_ctxt) const
-{
-	GPOS_ASSERT(NULL != prpplan);
+IStatistics *CPhysicalDynamicBitmapTableScan::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                           CReqdPropPlan *prpplan, IStatisticsArray *stats_ctxt) const {
+  GPOS_ASSERT(nullptr != prpplan);
 
-	IStatistics *pstatsBaseTable = CStatisticsUtils::DeriveStatsForDynamicScan(
-		mp, exprhdl, ScanId(), prpplan->Pepp()->PpfmDerived());
+  IStatistics *pstatsBaseTable =
+      CStatisticsUtils::DeriveStatsForDynamicScan(mp, exprhdl, ScanId(), prpplan->Pepp()->PppsRequired());
 
-	CExpression *pexprCondChild =
-		exprhdl.PexprScalarRepChild(0 /*ulChidIndex*/);
-	CExpression *local_expr = NULL;
-	CExpression *expr_with_outer_refs = NULL;
+  CExpression *pexprCondChild = exprhdl.PexprScalarRepChild(0 /*ulChidIndex*/);
+  CExpression *local_expr = nullptr;
+  CExpression *expr_with_outer_refs = nullptr;
 
-	// get outer references from expression handle
-	CColRefSet *outer_refs = exprhdl.DeriveOuterReferences();
+  // get outer references from expression handle
+  CColRefSet *outer_refs = exprhdl.DeriveOuterReferences();
 
-	CPredicateUtils::SeparateOuterRefs(mp, pexprCondChild, outer_refs,
-									   &local_expr, &expr_with_outer_refs);
+  CPredicateUtils::SeparateOuterRefs(mp, pexprCondChild, outer_refs, &local_expr, &expr_with_outer_refs);
 
-	IStatistics *stats = CFilterStatsProcessor::MakeStatsFilterForScalarExpr(
-		mp, exprhdl, pstatsBaseTable, local_expr, expr_with_outer_refs,
-		stats_ctxt);
+  IStatistics *stats = CFilterStatsProcessor::MakeStatsFilterForScalarExpr(mp, exprhdl, pstatsBaseTable, local_expr,
+                                                                           expr_with_outer_refs, stats_ctxt);
 
-	pstatsBaseTable->Release();
-	local_expr->Release();
-	expr_with_outer_refs->Release();
+  pstatsBaseTable->Release();
+  local_expr->Release();
+  expr_with_outer_refs->Release();
 
-	return stats;
+  return stats;
 }
-
 // EOF

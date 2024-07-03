@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarMinMax.cpp
@@ -31,18 +31,13 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarMinMax::CScalarMinMax(CMemoryPool *mp, IMDId *mdid_type,
-							 EScalarMinMaxType esmmt)
-	: CScalar(mp),
-	  m_mdid_type(mdid_type),
-	  m_esmmt(esmmt),
-	  m_fBoolReturnType(false)
-{
-	GPOS_ASSERT(mdid_type->IsValid());
-	GPOS_ASSERT(EsmmtSentinel > esmmt);
+CScalarMinMax::CScalarMinMax(CMemoryPool *mp, IMDId *mdid_type, EScalarMinMaxType esmmt)
+    : CScalar(mp), m_mdid_type(mdid_type), m_esmmt(esmmt), m_fBoolReturnType(false) {
+  GPOS_ASSERT(mdid_type->IsValid());
+  GPOS_ASSERT(EsmmtSentinel > esmmt);
 
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	m_fBoolReturnType = CMDAccessorUtils::FBoolType(md_accessor, m_mdid_type);
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  m_fBoolReturnType = CMDAccessorUtils::FBoolType(md_accessor, m_mdid_type);
 }
 
 //---------------------------------------------------------------------------
@@ -53,9 +48,8 @@ CScalarMinMax::CScalarMinMax(CMemoryPool *mp, IMDId *mdid_type,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarMinMax::~CScalarMinMax()
-{
-	m_mdid_type->Release();
+CScalarMinMax::~CScalarMinMax() {
+  m_mdid_type->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -68,14 +62,11 @@ CScalarMinMax::~CScalarMinMax()
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarMinMax::HashValue() const
-{
-	ULONG ulminmax = (ULONG) this->Esmmt();
+CScalarMinMax::HashValue() const {
+  ULONG ulminmax = (ULONG)this->Esmmt();
 
-	return gpos::CombineHashes(
-		m_mdid_type->HashValue(),
-		gpos::CombineHashes(COperator::HashValue(),
-							gpos::HashValue<ULONG>(&ulminmax)));
+  return gpos::CombineHashes(m_mdid_type->HashValue(),
+                             gpos::CombineHashes(COperator::HashValue(), gpos::HashValue<ULONG>(&ulminmax)));
 }
 
 //---------------------------------------------------------------------------
@@ -86,19 +77,15 @@ CScalarMinMax::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarMinMax::Matches(COperator *pop) const
-{
-	if (pop->Eopid() != Eopid())
-	{
-		return false;
-	}
+BOOL CScalarMinMax::Matches(COperator *pop) const {
+  if (pop->Eopid() != Eopid()) {
+    return false;
+  }
 
-	CScalarMinMax *popScMinMax = CScalarMinMax::PopConvert(pop);
+  CScalarMinMax *popScMinMax = CScalarMinMax::PopConvert(pop);
 
-	// match if return types are identical
-	return popScMinMax->Esmmt() == m_esmmt &&
-		   popScMinMax->MdidType()->Equals(m_mdid_type);
+  // match if return types are identical
+  return popScMinMax->Esmmt() == m_esmmt && popScMinMax->MdidType()->Equals(m_mdid_type);
 }
 
 //---------------------------------------------------------------------------
@@ -109,22 +96,17 @@ CScalarMinMax::Matches(COperator *pop) const
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarMinMax::OsPrint(IOstream &os) const
-{
-	os << SzId() << " (";
+IOstream &CScalarMinMax::OsPrint(IOstream &os) const {
+  os << SzId() << " (";
 
-	if (EsmmtMin == m_esmmt)
-	{
-		os << "Min";
-	}
-	else
-	{
-		os << "Max";
-	}
-	os << ")";
+  if (EsmmtMin == m_esmmt) {
+    os << "Min";
+  } else {
+    os << "Max";
+  }
+  os << ")";
 
-	return os;
+  return os;
 }
 
 // EOF

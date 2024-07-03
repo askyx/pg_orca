@@ -14,8 +14,7 @@
 
 #include "gpos/io/CFileDescriptor.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CFileWriter
@@ -25,43 +24,36 @@ namespace gpos
 //		does not provide thread-safety
 //
 //---------------------------------------------------------------------------
-class CFileWriter : public CFileDescriptor
-{
-private:
-	// file size
-	ULLONG m_file_size;
+class CFileWriter : public CFileDescriptor {
+ private:
+  // file size
+  ULLONG m_file_size{0};
 
-	// no copy ctor
-	CFileWriter(const CFileWriter &);
+ public:
+  CFileWriter(const CFileWriter &) = delete;
 
-public:
-	// ctor
-	CFileWriter();
+  // ctor
+  CFileWriter();
 
-	// dtor
-	virtual ~CFileWriter()
-	{
-	}
+  // dtor
+  ~CFileWriter() override = default;
 
-	ULLONG
-	FileSize() const
-	{
-		return m_file_size;
-	}
+  ULLONG
+  FileSize() const { return m_file_size; }
 
-	// open file for writing
-	void Open(const CHAR *file_path, ULONG permission_bits);
+  // open file for writing
+  void Open(const CHAR *file_path, ULONG permission_bits);
 
-	// close file
-	void Close();
+  // close file
+  void Close();
 
-	// write bytes to file
-	void Write(const BYTE *read_buffer, const ULONG_PTR write_size);
+  // write bytes to file
+  void Write(const BYTE *read_buffer, const ULONG_PTR write_size);
 
-};	// class CFileWriter
+};  // class CFileWriter
 
 }  // namespace gpos
 
-#endif	// !GPOS_CFileWriter_H
+#endif  // !GPOS_CFileWriter_H
 
 // EOF

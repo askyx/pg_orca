@@ -19,8 +19,7 @@
 
 #include "gpos/base.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -34,45 +33,35 @@ XERCES_CPP_NAMESPACE_USE
 //		Provides a wrapper around the GPOS CMemoryPool interface.
 //
 //---------------------------------------------------------------------------
-class CDXLMemoryManager : public MemoryManager
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CDXLMemoryManager : public MemoryManager {
+ private:
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// private copy ctor
-	CDXLMemoryManager(const CDXLMemoryManager &);
+ public:
+  CDXLMemoryManager(const CDXLMemoryManager &) = delete;
 
-public:
-	// ctor
-	CDXLMemoryManager(CMemoryPool *mp);
+  // ctor
+  CDXLMemoryManager(CMemoryPool *mp);
 
-	// MemoryManager interface functions
+  // MemoryManager interface functions
 
-	// allocates memory
-	void *allocate(XMLSize_t  // size
-	);
+  // allocates memory
+  void *allocate(XMLSize_t  // size
+                 ) override;
 
-	// deallocates memory
-	void deallocate(void *pv);
+  // deallocates memory
+  void deallocate(void *pv) override;
 
-	// accessor to the underlying memory pool
-	CMemoryPool *
-	Pmp()
-	{
-		return m_mp;
-	}
+  // accessor to the underlying memory pool
+  CMemoryPool *Pmp() { return m_mp; }
 
-	// returns the memory manager responsible for memory allocation
-	// during exceptions
-	MemoryManager *
-	getExceptionMemoryManager()
-	{
-		return (MemoryManager *) this;
-	}
+  // returns the memory manager responsible for memory allocation
+  // during exceptions
+  MemoryManager *getExceptionMemoryManager() override { return (MemoryManager *)this; }
 };
 }  // namespace gpdxl
 
-#endif	// GPDXL_CDXLMemoryManager_H
+#endif  // GPDXL_CDXLMemoryManager_H
 
 // EOF

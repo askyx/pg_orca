@@ -22,8 +22,7 @@
 
 #include "naucrates/dxl/operators/CDXLDatum.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
@@ -37,54 +36,39 @@ class CXMLSerializer;
 //		Class for representing DXL boolean datums
 //
 //---------------------------------------------------------------------------
-class CDXLDatumBool : public CDXLDatum
-{
-private:
-	// boolean value
-	BOOL m_value;
+class CDXLDatumBool : public CDXLDatum {
+ private:
+  // boolean value
+  BOOL m_value;
 
-	// private copy ctor
-	CDXLDatumBool(const CDXLDatumBool &);
+ public:
+  CDXLDatumBool(const CDXLDatumBool &) = delete;
 
-public:
-	// ctor
-	CDXLDatumBool(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, BOOL value);
+  // ctor
+  CDXLDatumBool(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, BOOL value);
 
-	// dtor
-	virtual ~CDXLDatumBool()
-	{
-	}
+  // dtor
+  ~CDXLDatumBool() override = default;
 
-	// serialize the datum as the given element
-	virtual void Serialize(CXMLSerializer *xml_serializer);
+  // serialize the datum as the given element
+  void Serialize(CXMLSerializer *xml_serializer) override;
 
-	// datum type
-	virtual EdxldatumType
-	GetDatumType() const
-	{
-		return CDXLDatum::EdxldatumBool;
-	}
+  // datum type
+  EdxldatumType GetDatumType() const override { return CDXLDatum::EdxldatumBool; }
 
-	// accessor of boolean value
-	BOOL
-	GetValue() const
-	{
-		return m_value;
-	}
+  // accessor of boolean value
+  BOOL GetValue() const { return m_value; }
 
-	// conversion function
-	static CDXLDatumBool *
-	Cast(CDXLDatum *dxl_datum)
-	{
-		GPOS_ASSERT(NULL != dxl_datum);
-		GPOS_ASSERT(CDXLDatum::CDXLDatum::EdxldatumBool ==
-					dxl_datum->GetDatumType());
+  // conversion function
+  static CDXLDatumBool *Cast(CDXLDatum *dxl_datum) {
+    GPOS_ASSERT(nullptr != dxl_datum);
+    GPOS_ASSERT(CDXLDatum::CDXLDatum::EdxldatumBool == dxl_datum->GetDatumType());
 
-		return dynamic_cast<CDXLDatumBool *>(dxl_datum);
-	}
+    return dynamic_cast<CDXLDatumBool *>(dxl_datum);
+  }
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLDatumBool_H
+#endif  // !GPDXL_CDXLDatumBool_H
 
 // EOF

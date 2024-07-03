@@ -14,10 +14,11 @@
 
 #include "gpos/base.h"
 
+#include "gpopt/operators/CLogicalLeftOuterCorrelatedApply.h"
+#include "gpopt/operators/CPhysicalCorrelatedLeftOuterNLJoin.h"
 #include "gpopt/xforms/CXformImplementCorrelatedApply.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //-------------------------------------------------------------------------
@@ -30,44 +31,27 @@ using namespace gpos;
 //
 //-------------------------------------------------------------------------
 class CXformImplementLeftOuterCorrelatedApply
-	: public CXformImplementCorrelatedApply<CLogicalLeftOuterCorrelatedApply,
-											CPhysicalCorrelatedLeftOuterNLJoin>
-{
-private:
-	// private copy ctor
-	CXformImplementLeftOuterCorrelatedApply(
-		const CXformImplementLeftOuterCorrelatedApply &);
+    : public CXformImplementCorrelatedApply<CLogicalLeftOuterCorrelatedApply, CPhysicalCorrelatedLeftOuterNLJoin> {
+ private:
+ public:
+  CXformImplementLeftOuterCorrelatedApply(const CXformImplementLeftOuterCorrelatedApply &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementLeftOuterCorrelatedApply(CMemoryPool *mp)
-		: CXformImplementCorrelatedApply<CLogicalLeftOuterCorrelatedApply,
-										 CPhysicalCorrelatedLeftOuterNLJoin>(mp)
-	{
-	}
+  // ctor
+  explicit CXformImplementLeftOuterCorrelatedApply(CMemoryPool *mp)
+      : CXformImplementCorrelatedApply<CLogicalLeftOuterCorrelatedApply, CPhysicalCorrelatedLeftOuterNLJoin>(mp) {}
 
-	// dtor
-	virtual ~CXformImplementLeftOuterCorrelatedApply()
-	{
-	}
+  // dtor
+  ~CXformImplementLeftOuterCorrelatedApply() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementLeftOuterCorrelatedApply;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementLeftOuterCorrelatedApply; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementLeftOuterCorrelatedApply";
-	}
+  const CHAR *SzId() const override { return "CXformImplementLeftOuterCorrelatedApply"; }
 
-};	// class CXformImplementLeftOuterCorrelatedApply
+};  // class CXformImplementLeftOuterCorrelatedApply
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementLeftOuterCorrelatedApply_H
+#endif  // !GPOPT_CXformImplementLeftOuterCorrelatedApply_H
 
 // EOF

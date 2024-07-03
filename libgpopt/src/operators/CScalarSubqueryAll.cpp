@@ -25,12 +25,9 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarSubqueryAll::CScalarSubqueryAll(CMemoryPool *mp, IMDId *scalar_op_mdid,
-									   const CWStringConst *pstrScalarOp,
-									   const CColRef *colref)
-	: CScalarSubqueryQuantified(mp, scalar_op_mdid, pstrScalarOp, colref)
-{
-}
+CScalarSubqueryAll::CScalarSubqueryAll(CMemoryPool *mp, IMDId *scalar_op_mdid, const CWStringConst *pstrScalarOp,
+                                       const CColRef *colref)
+    : CScalarSubqueryQuantified(mp, scalar_op_mdid, pstrScalarOp, colref) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -40,21 +37,16 @@ CScalarSubqueryAll::CScalarSubqueryAll(CMemoryPool *mp, IMDId *scalar_op_mdid,
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CScalarSubqueryAll::PopCopyWithRemappedColumns(CMemoryPool *mp,
-											   UlongToColRefMap *colref_mapping,
-											   BOOL must_exist)
-{
-	CColRef *colref = CUtils::PcrRemap(Pcr(), colref_mapping, must_exist);
+COperator *CScalarSubqueryAll::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
+                                                          BOOL must_exist) {
+  CColRef *colref = CUtils::PcrRemap(Pcr(), colref_mapping, must_exist);
 
-	IMDId *scalar_op_mdid = MdIdOp();
-	scalar_op_mdid->AddRef();
+  IMDId *scalar_op_mdid = MdIdOp();
+  scalar_op_mdid->AddRef();
 
-	CWStringConst *pstrScalarOp =
-		GPOS_NEW(mp) CWStringConst(mp, PstrOp()->GetBuffer());
+  CWStringConst *pstrScalarOp = GPOS_NEW(mp) CWStringConst(mp, PstrOp()->GetBuffer());
 
-	return GPOS_NEW(mp)
-		CScalarSubqueryAll(mp, scalar_op_mdid, pstrScalarOp, colref);
+  return GPOS_NEW(mp) CScalarSubqueryAll(mp, scalar_op_mdid, pstrScalarOp, colref);
 }
 
 // EOF

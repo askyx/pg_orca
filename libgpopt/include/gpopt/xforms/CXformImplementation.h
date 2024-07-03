@@ -13,11 +13,9 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
 #include "gpopt/xforms/CXform.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,32 +26,27 @@ using namespace gpos;
 //		base class for all implementations
 //
 //---------------------------------------------------------------------------
-class CXformImplementation : public CXform
-{
-private:
-	// private copy ctor
-	CXformImplementation(const CXformImplementation &);
+class CXformImplementation : public CXform {
+ private:
+ public:
+  CXformImplementation(const CXformImplementation &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementation(CExpression *);
+  // ctor
+  explicit CXformImplementation(CExpression *);
 
-	// dtor
-	virtual ~CXformImplementation();
+  // dtor
+  ~CXformImplementation() override;
 
-	// type of operator
-	virtual BOOL
-	FImplementation() const
-	{
-		GPOS_ASSERT(!FSubstitution() && !FExploration());
-		return true;
-	}
+  // type of operator
+  BOOL FImplementation() const override {
+    GPOS_ASSERT(!FSubstitution() && !FExploration());
+    return true;
+  }
 
-};	// class CXformImplementation
+};  // class CXformImplementation
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformImplementation_H
+#endif  // !GPOPT_CXformImplementation_H
 
 // EOF

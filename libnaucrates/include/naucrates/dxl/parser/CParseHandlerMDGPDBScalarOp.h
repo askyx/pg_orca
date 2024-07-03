@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerMetadataObject.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -30,71 +29,69 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for GPDB scalar operator metadata
 //
 //---------------------------------------------------------------------------
-class CParseHandlerMDGPDBScalarOp : public CParseHandlerMetadataObject
-{
-private:
-	// id and version
-	IMDId *m_mdid;
+class CParseHandlerMDGPDBScalarOp : public CParseHandlerMetadataObject {
+ private:
+  // id and version
+  IMDId *m_mdid;
 
-	// name
-	CMDName *m_mdname;
+  // name
+  CMDName *m_mdname;
 
-	// type of left operand
-	IMDId *m_mdid_type_left;
+  // type of left operand
+  IMDId *m_mdid_type_left;
 
-	// type of right operand
-	IMDId *m_mdid_type_right;
+  // type of right operand
+  IMDId *m_mdid_type_right;
 
-	// type of result operand
-	IMDId *m_mdid_type_result;
+  // type of result operand
+  IMDId *m_mdid_type_result;
 
-	// id of function which implements the operator
-	IMDId *m_func_mdid;
+  // id of function which implements the operator
+  IMDId *m_func_mdid;
 
-	// id of commute operator
-	IMDId *m_mdid_commute_opr;
+  // id of commute operator
+  IMDId *m_mdid_commute_opr;
 
-	// id of inverse operator
-	IMDId *m_mdid_inverse_opr;
+  // id of inverse operator
+  IMDId *m_mdid_inverse_opr;
 
-	// comparison type
-	IMDType::ECmpType m_comparision_type;
+  // comparison type
+  IMDType::ECmpType m_comparision_type;
 
-	// does operator return NULL on NULL input?
-	BOOL m_returns_null_on_null_input;
+  // does operator return NULL on NULL input?
+  BOOL m_returns_null_on_null_input;
 
-	// preserves NDVs of inputs
-	BOOL m_is_ndv_preserving;
+  IMDId *m_mdid_hash_opfamily;
+  IMDId *m_mdid_legacy_hash_opfamily;
 
-	// private copy ctor
-	CParseHandlerMDGPDBScalarOp(const CParseHandlerMDGPDBScalarOp &);
+  // preserves NDVs of inputs
+  BOOL m_is_ndv_preserving;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// is this a supported child elem of the scalar op
-	BOOL IsSupportedChildElem(const XMLCh *const xml_str);
+  // is this a supported child elem of the scalar op
+  static BOOL IsSupportedChildElem(const XMLCh *const xml_str);
 
-public:
-	// ctor
-	CParseHandlerMDGPDBScalarOp(CMemoryPool *mp,
-								CParseHandlerManager *parse_handler_mgr,
-								CParseHandlerBase *parse_handler_root);
+ public:
+  CParseHandlerMDGPDBScalarOp(const CParseHandlerMDGPDBScalarOp &) = delete;
+
+  // ctor
+  CParseHandlerMDGPDBScalarOp(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                              CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerMDGPDBScalarOp_H
+#endif  // !GPDXL_CParseHandlerMDGPDBScalarOp_H
 
 // EOF

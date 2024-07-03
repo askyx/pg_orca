@@ -17,8 +17,7 @@
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -32,50 +31,44 @@ XERCES_CPP_NAMESPACE_USE
 //		SAX parse handler class for parsing a list of metadata identifiers
 //
 //---------------------------------------------------------------------------
-class CParseHandlerMetadataIdList : public CParseHandlerBase
-{
-private:
-	// list of metadata identifiers
-	IMdIdArray *m_mdid_array;
+class CParseHandlerMetadataIdList : public CParseHandlerBase {
+ private:
+  // list of metadata identifiers
+  IMdIdArray *m_mdid_array;
 
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// private copy ctor
-	CParseHandlerMetadataIdList(const CParseHandlerMetadataIdList &);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // is this a supported element of a metadata list
+  static BOOL FSupportedElem(const XMLCh *const xml_str);
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+  // is this a supported metadata list type
+  static BOOL FSupportedListType(const XMLCh *const xml_str);
 
-	// is this a supported element of a metadata list
-	BOOL FSupportedElem(const XMLCh *const xml_str);
+ public:
+  CParseHandlerMetadataIdList(const CParseHandlerMetadataIdList &) = delete;
 
-	// is this a supported metadata list type
-	BOOL FSupportedListType(const XMLCh *const xml_str);
+  // ctor/dtor
+  CParseHandlerMetadataIdList(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                              CParseHandlerBase *parse_handler_root);
 
-public:
-	// ctor/dtor
-	CParseHandlerMetadataIdList(CMemoryPool *mp,
-								CParseHandlerManager *parse_handler_mgr,
-								CParseHandlerBase *parse_handler_root);
+  ~CParseHandlerMetadataIdList() override;
 
-	virtual ~CParseHandlerMetadataIdList();
-
-	// return the constructed list of metadata identifiers
-	IMdIdArray *GetMdIdArray();
+  // return the constructed list of metadata identifiers
+  IMdIdArray *GetMdIdArray();
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerMetadataIdList_H
+#endif  // !GPDXL_CParseHandlerMetadataIdList_H
 
 // EOF

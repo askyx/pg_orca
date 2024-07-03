@@ -9,7 +9,6 @@
 //		Implementation of DXL physical assert operator
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/dxl/operators/CDXLPhysicalAssert.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
@@ -26,13 +25,11 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalAssert::CDXLPhysicalAssert(CMemoryPool *mp, const CHAR *sql_state)
-	: CDXLPhysical(mp)
-{
-	GPOS_ASSERT(NULL != sql_state);
-	GPOS_ASSERT(GPOS_SQLSTATE_LENGTH == clib::Strlen(sql_state));
-	clib::Strncpy(m_sql_state, sql_state, GPOS_SQLSTATE_LENGTH);
-	m_sql_state[GPOS_SQLSTATE_LENGTH] = '\0';
+CDXLPhysicalAssert::CDXLPhysicalAssert(CMemoryPool *mp, const CHAR *sql_state) : CDXLPhysical(mp) {
+  GPOS_ASSERT(nullptr != sql_state);
+  GPOS_ASSERT(GPOS_SQLSTATE_LENGTH == clib::Strlen(sql_state));
+  clib::Strncpy(m_sql_state, sql_state, GPOS_SQLSTATE_LENGTH);
+  m_sql_state[GPOS_SQLSTATE_LENGTH] = '\0';
 }
 
 //---------------------------------------------------------------------------
@@ -43,9 +40,7 @@ CDXLPhysicalAssert::CDXLPhysicalAssert(CMemoryPool *mp, const CHAR *sql_state)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalAssert::~CDXLPhysicalAssert()
-{
-}
+CDXLPhysicalAssert::~CDXLPhysicalAssert() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -55,12 +50,9 @@ CDXLPhysicalAssert::~CDXLPhysicalAssert()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLPhysicalAssert::GetDXLOperator() const
-{
-	return EdxlopPhysicalAssert;
+Edxlopid CDXLPhysicalAssert::GetDXLOperator() const {
+  return EdxlopPhysicalAssert;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -70,12 +62,9 @@ CDXLPhysicalAssert::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLPhysicalAssert::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalAssert);
+const CWStringConst *CDXLPhysicalAssert::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalAssert);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -85,22 +74,16 @@ CDXLPhysicalAssert::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalAssert::SerializeToDXL(CXMLSerializer *xml_serializer,
-								   const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLPhysicalAssert::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenErrorCode),
-								 m_sql_state);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenErrorCode), m_sql_state);
 
-	dxlnode->SerializePropertiesToDXL(xml_serializer);
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
+  dxlnode->SerializePropertiesToDXL(xml_serializer);
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -112,35 +95,25 @@ CDXLPhysicalAssert::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalAssert::AssertValid(const CDXLNode *dxlnode,
-								BOOL validate_children) const
-{
-	GPOS_ASSERT(3 == dxlnode->Arity());
+void CDXLPhysicalAssert::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  GPOS_ASSERT(3 == dxlnode->Arity());
 
-	CDXLNode *proj_list_dxlnode = (*dxlnode)[EdxlassertIndexProjList];
-	GPOS_ASSERT(EdxlopScalarProjectList ==
-				proj_list_dxlnode->GetOperator()->GetDXLOperator());
+  CDXLNode *proj_list_dxlnode = (*dxlnode)[EdxlassertIndexProjList];
+  GPOS_ASSERT(EdxlopScalarProjectList == proj_list_dxlnode->GetOperator()->GetDXLOperator());
 
-	CDXLNode *predicate_dxlnode = (*dxlnode)[EdxlassertIndexFilter];
-	GPOS_ASSERT(EdxlopScalarAssertConstraintList ==
-				predicate_dxlnode->GetOperator()->GetDXLOperator());
+  CDXLNode *predicate_dxlnode = (*dxlnode)[EdxlassertIndexFilter];
+  GPOS_ASSERT(EdxlopScalarAssertConstraintList == predicate_dxlnode->GetOperator()->GetDXLOperator());
 
-	CDXLNode *physical_child_dxlnode = (*dxlnode)[EdxlassertIndexChild];
-	GPOS_ASSERT(EdxloptypePhysical ==
-				physical_child_dxlnode->GetOperator()->GetDXLOperatorType());
+  CDXLNode *physical_child_dxlnode = (*dxlnode)[EdxlassertIndexChild];
+  GPOS_ASSERT(EdxloptypePhysical == physical_child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-
-	if (validate_children)
-	{
-		for (ULONG ul = 0; ul < 3; ul++)
-		{
-			CDXLNode *child_dxlnode = (*dxlnode)[ul];
-			child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-													  validate_children);
-		}
-	}
+  if (validate_children) {
+    for (ULONG ul = 0; ul < 3; ul++) {
+      CDXLNode *child_dxlnode = (*dxlnode)[ul];
+      child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+    }
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CPartKeys.cpp
@@ -12,11 +12,14 @@
 #include "gpopt/base/CPartKeys.h"
 
 #include "gpos/base.h"
+#include "gpos/error/CAutoTrace.h"
 
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CUtils.h"
 
 using namespace gpopt;
+
+FORCE_GENERATE_DBGSTR(CPartKeys);
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -26,10 +29,9 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPartKeys::CPartKeys(CColRef2dArray *pdrgpdrgpcr) : m_pdrgpdrgpcr(pdrgpdrgpcr)
-{
-	GPOS_ASSERT(NULL != pdrgpdrgpcr);
-	m_num_of_part_levels = pdrgpdrgpcr->Size();
+CPartKeys::CPartKeys(CColRef2dArray *pdrgpdrgpcr) : m_pdrgpdrgpcr(pdrgpdrgpcr) {
+  GPOS_ASSERT(nullptr != pdrgpdrgpcr);
+  m_num_of_part_levels = pdrgpdrgpcr->Size();
 }
 
 //---------------------------------------------------------------------------
@@ -40,9 +42,8 @@ CPartKeys::CPartKeys(CColRef2dArray *pdrgpdrgpcr) : m_pdrgpdrgpcr(pdrgpdrgpcr)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CPartKeys::~CPartKeys()
-{
-	m_pdrgpdrgpcr->Release();
+CPartKeys::~CPartKeys() {
+  m_pdrgpdrgpcr->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -53,12 +54,10 @@ CPartKeys::~CPartKeys()
 //		Return key at a given level
 //
 //---------------------------------------------------------------------------
-CColRef *
-CPartKeys::PcrKey(ULONG ulLevel) const
-{
-	GPOS_ASSERT(ulLevel < m_num_of_part_levels);
-	CColRefArray *colref_array = (*m_pdrgpdrgpcr)[ulLevel];
-	return (*colref_array)[0];
+CColRef *CPartKeys::PcrKey(ULONG ulLevel) const {
+  GPOS_ASSERT(ulLevel < m_num_of_part_levels);
+  CColRefArray *colref_array = (*m_pdrgpdrgpcr)[ulLevel];
+  return (*colref_array)[0];
 }
 
 //---------------------------------------------------------------------------
@@ -69,19 +68,15 @@ CPartKeys::PcrKey(ULONG ulLevel) const
 //		Check whether the key columns overlap the given column
 //
 //---------------------------------------------------------------------------
-BOOL
-CPartKeys::FOverlap(CColRefSet *pcrs) const
-{
-	for (ULONG ul = 0; ul < m_num_of_part_levels; ul++)
-	{
-		CColRef *colref = PcrKey(ul);
-		if (pcrs->FMember(colref))
-		{
-			return true;
-		}
-	}
+BOOL CPartKeys::FOverlap(CColRefSet *pcrs) const {
+  for (ULONG ul = 0; ul < m_num_of_part_levels; ul++) {
+    CColRef *colref = PcrKey(ul);
+    if (pcrs->FMember(colref)) {
+      return true;
+    }
+  }
 
-	return false;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -92,25 +87,21 @@ CPartKeys::FOverlap(CColRefSet *pcrs) const
 //		Copy part key into the given memory pool
 //
 //---------------------------------------------------------------------------
-CPartKeys *
-CPartKeys::PpartkeysCopy(CMemoryPool *mp)
-{
-	CColRef2dArray *pdrgpdrgpcrCopy = GPOS_NEW(mp) CColRef2dArray(mp);
+CPartKeys *CPartKeys::PpartkeysCopy(CMemoryPool *mp) {
+  CColRef2dArray *pdrgpdrgpcrCopy = GPOS_NEW(mp) CColRef2dArray(mp);
 
-	const ULONG length = m_pdrgpdrgpcr->Size();
-	for (ULONG ul = 0; ul < length; ul++)
-	{
-		CColRefArray *colref_array = (*m_pdrgpdrgpcr)[ul];
-		CColRefArray *pdrgpcrCopy = GPOS_NEW(mp) CColRefArray(mp);
-		const ULONG num_cols = colref_array->Size();
-		for (ULONG ulCol = 0; ulCol < num_cols; ulCol++)
-		{
-			pdrgpcrCopy->Append((*colref_array)[ulCol]);
-		}
-		pdrgpdrgpcrCopy->Append(pdrgpcrCopy);
-	}
+  const ULONG length = m_pdrgpdrgpcr->Size();
+  for (ULONG ul = 0; ul < length; ul++) {
+    CColRefArray *colref_array = (*m_pdrgpdrgpcr)[ul];
+    CColRefArray *pdrgpcrCopy = GPOS_NEW(mp) CColRefArray(mp);
+    const ULONG num_cols = colref_array->Size();
+    for (ULONG ulCol = 0; ulCol < num_cols; ulCol++) {
+      pdrgpcrCopy->Append((*colref_array)[ulCol]);
+    }
+    pdrgpdrgpcrCopy->Append(pdrgpcrCopy);
+  }
 
-	return GPOS_NEW(mp) CPartKeys(pdrgpdrgpcrCopy);
+  return GPOS_NEW(mp) CPartKeys(pdrgpdrgpcrCopy);
 }
 
 //---------------------------------------------------------------------------
@@ -121,21 +112,16 @@ CPartKeys::PpartkeysCopy(CMemoryPool *mp)
 //		Copy array of part keys into given memory pool
 //
 //---------------------------------------------------------------------------
-CPartKeysArray *
-CPartKeys::PdrgppartkeysCopy(CMemoryPool *mp,
-							 const CPartKeysArray *pdrgppartkeys)
-{
-	GPOS_ASSERT(NULL != pdrgppartkeys);
+CPartKeysArray *CPartKeys::PdrgppartkeysCopy(CMemoryPool *mp, const CPartKeysArray *pdrgppartkeys) {
+  GPOS_ASSERT(nullptr != pdrgppartkeys);
 
-	CPartKeysArray *pdrgppartkeysCopy = GPOS_NEW(mp) CPartKeysArray(mp);
-	const ULONG length = pdrgppartkeys->Size();
-	for (ULONG ul = 0; ul < length; ul++)
-	{
-		pdrgppartkeysCopy->Append((*pdrgppartkeys)[ul]->PpartkeysCopy(mp));
-	}
-	return pdrgppartkeysCopy;
+  CPartKeysArray *pdrgppartkeysCopy = GPOS_NEW(mp) CPartKeysArray(mp);
+  const ULONG length = pdrgppartkeys->Size();
+  for (ULONG ul = 0; ul < length; ul++) {
+    pdrgppartkeysCopy->Append((*pdrgppartkeys)[ul]->PpartkeysCopy(mp));
+  }
+  return pdrgppartkeysCopy;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -146,25 +132,20 @@ CPartKeys::PdrgppartkeysCopy(CMemoryPool *mp,
 //		keys using the given hashmap
 //
 //---------------------------------------------------------------------------
-CPartKeys *
-CPartKeys::PpartkeysRemap(CMemoryPool *mp,
-						  UlongToColRefMap *colref_mapping) const
-{
-	GPOS_ASSERT(NULL != colref_mapping);
-	CColRef2dArray *pdrgpdrgpcr = GPOS_NEW(mp) CColRef2dArray(mp);
+CPartKeys *CPartKeys::PpartkeysRemap(CMemoryPool *mp, UlongToColRefMap *colref_mapping) const {
+  GPOS_ASSERT(nullptr != colref_mapping);
+  CColRef2dArray *pdrgpdrgpcr = GPOS_NEW(mp) CColRef2dArray(mp);
 
-	for (ULONG ul = 0; ul < m_num_of_part_levels; ul++)
-	{
-		CColRef *colref =
-			CUtils::PcrRemap(PcrKey(ul), colref_mapping, false /*must_exist*/);
+  for (ULONG ul = 0; ul < m_num_of_part_levels; ul++) {
+    CColRef *colref = CUtils::PcrRemap(PcrKey(ul), colref_mapping, false /*must_exist*/);
 
-		CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
-		colref_array->Append(colref);
+    CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
+    colref_array->Append(colref);
 
-		pdrgpdrgpcr->Append(colref_array);
-	}
+    pdrgpdrgpcr->Append(colref_array);
+  }
 
-	return GPOS_NEW(mp) CPartKeys(pdrgpdrgpcr);
+  return GPOS_NEW(mp) CPartKeys(pdrgpdrgpcr);
 }
 
 //---------------------------------------------------------------------------
@@ -175,22 +156,19 @@ CPartKeys::PpartkeysRemap(CMemoryPool *mp,
 //		Debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CPartKeys::OsPrint(IOstream &os) const
-{
-	os << "(";
-	for (ULONG ul = 0; ul < m_num_of_part_levels; ul++)
-	{
-		CColRef *colref = PcrKey(ul);
-		os << *colref;
+IOstream &CPartKeys::OsPrint(IOstream &os) const {
+  os << "(";
+  for (ULONG ul = 0; ul < m_num_of_part_levels; ul++) {
+    CColRef *colref = PcrKey(ul);
+    os << *colref;
 
-		// separator
-		os << (ul == m_num_of_part_levels - 1 ? "" : ", ");
-	}
+    // separator
+    os << (ul == m_num_of_part_levels - 1 ? "" : ", ");
+  }
 
-	os << ")";
+  os << ")";
 
-	return os;
+  return os;
 }
 
 // EOF

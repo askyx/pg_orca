@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,45 +26,32 @@ using namespace gpos;
 //		Transform logical CTE anchor to logical sequence over CTE producer
 //
 //---------------------------------------------------------------------------
-class CXformCTEAnchor2Sequence : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformCTEAnchor2Sequence(const CXformCTEAnchor2Sequence &);
+class CXformCTEAnchor2Sequence : public CXformExploration {
+ private:
+ public:
+  CXformCTEAnchor2Sequence(const CXformCTEAnchor2Sequence &) = delete;
 
-public:
-	// ctor
-	explicit CXformCTEAnchor2Sequence(CMemoryPool *mp);
+  // ctor
+  explicit CXformCTEAnchor2Sequence(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformCTEAnchor2Sequence()
-	{
-	}
+  // dtor
+  ~CXformCTEAnchor2Sequence() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfCTEAnchor2Sequence;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfCTEAnchor2Sequence; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformCTEAnchor2Sequence";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformCTEAnchor2Sequence"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformCTEAnchor2Sequence
+};  // class CXformCTEAnchor2Sequence
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformCTEAnchor2Sequence_H
+#endif  // !GPOPT_CXformCTEAnchor2Sequence_H
 
 // EOF

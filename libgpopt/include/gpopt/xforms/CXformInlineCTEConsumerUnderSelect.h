@@ -17,8 +17,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -31,46 +30,32 @@ using namespace gpos;
 //		push the selection down
 //
 //---------------------------------------------------------------------------
-class CXformInlineCTEConsumerUnderSelect : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformInlineCTEConsumerUnderSelect(
-		const CXformInlineCTEConsumerUnderSelect &);
+class CXformInlineCTEConsumerUnderSelect : public CXformExploration {
+ private:
+ public:
+  CXformInlineCTEConsumerUnderSelect(const CXformInlineCTEConsumerUnderSelect &) = delete;
 
-public:
-	// ctor
-	explicit CXformInlineCTEConsumerUnderSelect(CMemoryPool *mp);
+  // ctor
+  explicit CXformInlineCTEConsumerUnderSelect(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformInlineCTEConsumerUnderSelect()
-	{
-	}
+  // dtor
+  ~CXformInlineCTEConsumerUnderSelect() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfInlineCTEConsumerUnderSelect;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfInlineCTEConsumerUnderSelect; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformInlineCTEConsumerUnderSelect";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformInlineCTEConsumerUnderSelect"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformInlineCTEConsumerUnderSelect
+};  // class CXformInlineCTEConsumerUnderSelect
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformInlineCTEConsumerUnderSelect_H
+#endif  // !GPOPT_CXformInlineCTEConsumerUnderSelect_H
 
 // EOF

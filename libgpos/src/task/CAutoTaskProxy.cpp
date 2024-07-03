@@ -27,16 +27,13 @@ using namespace gpos;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CAutoTaskProxy::CAutoTaskProxy(CMemoryPool *mp, CWorkerPoolManager *pwpm,
-							   BOOL propagate_error)
-	: m_mp(mp), m_pwpm(pwpm), m_propagate_error(propagate_error)
-{
-	m_list.Init(GPOS_OFFSET(CTask, m_proxy_link));
+CAutoTaskProxy::CAutoTaskProxy(CMemoryPool *mp, CWorkerPoolManager *pwpm, BOOL propagate_error)
+    : m_mp(mp), m_pwpm(pwpm), m_propagate_error(propagate_error) {
+  m_list.Init(GPOS_OFFSET(CTask, m_proxy_link));
 
-	// register new ATP to worker pool
-	m_pwpm->AddRef();
+  // register new ATP to worker pool
+  m_pwpm->AddRef();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -46,21 +43,19 @@ CAutoTaskProxy::CAutoTaskProxy(CMemoryPool *mp, CWorkerPoolManager *pwpm,
 //		dtor
 //
 //---------------------------------------------------------------------------
-CAutoTaskProxy::~CAutoTaskProxy()
-{
-	// suspend cancellation - destructors should not throw
-	CAutoSuspendAbort asa;
+CAutoTaskProxy::~CAutoTaskProxy() {
+  // suspend cancellation - destructors should not throw
+  CAutoSuspendAbort asa;
 
-	// disable error propagation from sub-task
-	SetPropagateError(false);
+  // disable error propagation from sub-task
+  SetPropagateError(false);
 
-	// destroy all tasks
-	DestroyAll();
+  // destroy all tasks
+  DestroyAll();
 
-	// remove ATP from worker pool
-	m_pwpm->RemoveRef();
+  // remove ATP from worker pool
+  m_pwpm->RemoveRef();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -70,16 +65,12 @@ CAutoTaskProxy::~CAutoTaskProxy()
 //		Unregister and release all tasks
 //
 //---------------------------------------------------------------------------
-void
-CAutoTaskProxy::DestroyAll()
-{
-	// iterate task list
-	while (!m_list.IsEmpty())
-	{
-		Destroy(m_list.First());
-	}
+void CAutoTaskProxy::DestroyAll() {
+  // iterate task list
+  while (!m_list.IsEmpty()) {
+    Destroy(m_list.First());
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -89,27 +80,23 @@ CAutoTaskProxy::DestroyAll()
 //		Unregister and release task
 //
 //---------------------------------------------------------------------------
-void
-CAutoTaskProxy::Destroy(CTask *task)
-{
-	// cancel scheduled task
-	if (task->IsScheduled() && !task->IsReported())
-	{
-		Cancel(task);
-		task->SetReported();
-		CheckError(task);
-	}
+void CAutoTaskProxy::Destroy(CTask *task) {
+  // cancel scheduled task
+  if (task->IsScheduled() && !task->IsReported()) {
+    Cancel(task);
+    task->SetReported();
+    CheckError(task);
+  }
 
-	// unregister task from worker pool
-	m_pwpm->RemoveTask(task->GetTid());
+  // unregister task from worker pool
+  m_pwpm->RemoveTask(task->GetTid());
 
-	// remove task from list
-	m_list.Remove(task);
+  // remove task from list
+  m_list.Remove(task);
 
-	// delete task object
-	GPOS_DELETE(task);
+  // delete task object
+  GPOS_DELETE(task);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -121,68 +108,59 @@ CAutoTaskProxy::Destroy(CTask *task)
 //		If caller is a task, its task context is cloned and used by the new task;
 //
 //---------------------------------------------------------------------------
-CTask *
-CAutoTaskProxy::Create(void *(*pfunc)(void *), void *arg, BOOL *cancel)
-{
-	// create memory pool for task
-	CAutoMemoryPool amp(CAutoMemoryPool::ElcStrict);
-	CMemoryPool *mp = amp.Pmp();
+CTask *CAutoTaskProxy::Create(void *(*pfunc)(void *), void *arg, BOOL *cancel) {
+  // create memory pool for task
+  CAutoMemoryPool amp(CAutoMemoryPool::ElcStrict);
+  CMemoryPool *mp = amp.Pmp();
 
-	// auto pointer to hold new task context
-	CAutoP<CTaskContext> task_ctxt;
+  // auto pointer to hold new task context
+  CAutoP<CTaskContext> task_ctxt;
 
-	// check if caller is a task
-	ITask *task_parent = CWorker::Self()->GetTask();
-	if (NULL == task_parent)
-	{
-		// create new task context
-		task_ctxt = GPOS_NEW(mp) CTaskContext(mp);
-	}
-	else
-	{
-		// clone parent task's context
-		task_ctxt = GPOS_NEW(mp) CTaskContext(mp, *task_parent->GetTaskCtxt());
-	}
+  // check if caller is a task
+  ITask *task_parent = CWorker::Self()->GetTask();
+  if (nullptr == task_parent) {
+    // create new task context
+    task_ctxt = GPOS_NEW(mp) CTaskContext(mp);
+  } else {
+    // clone parent task's context
+    task_ctxt = GPOS_NEW(mp) CTaskContext(mp, *task_parent->GetTaskCtxt());
+  }
 
-	// auto pointer to hold error context
-	CAutoP<CErrorContext> err_ctxt;
-	err_ctxt = GPOS_NEW(mp) CErrorContext();
-	CTask *task = CTask::Self();
-	if (NULL != task)
-	{
-		err_ctxt.Value()->Register(task->ConvertErrCtxt()->GetMiniDumper());
-	}
+  // auto pointer to hold error context
+  CAutoP<CErrorContext> err_ctxt;
+  err_ctxt = GPOS_NEW(mp) CErrorContext();
+  CTask *task = CTask::Self();
+  if (nullptr != task) {
+    err_ctxt.Value()->Register(task->ConvertErrCtxt()->GetMiniDumper());
+  }
 
-	// auto pointer to hold new task
-	// task is created inside ATP's memory pool
-	CAutoP<CTask> new_task;
-	new_task =
-		GPOS_NEW(m_mp) CTask(mp, task_ctxt.Value(), err_ctxt.Value(), cancel);
+  // auto pointer to hold new task
+  // task is created inside ATP's memory pool
+  CAutoP<CTask> new_task;
+  new_task = GPOS_NEW(m_mp) CTask(mp, task_ctxt.Value(), err_ctxt.Value(), cancel);
 
-	// reset auto pointers - task now handles task and error context
-	(void) task_ctxt.Reset();
-	(void) err_ctxt.Reset();
+  // reset auto pointers - task now handles task and error context
+  (void)task_ctxt.Reset();
+  (void)err_ctxt.Reset();
 
-	// detach task's memory pool from auto memory pool
-	amp.Detach();
+  // detach task's memory pool from auto memory pool
+  amp.Detach();
 
-	// bind function and argument
-	task = new_task.Value();
-	task->Bind(pfunc, arg);
+  // bind function and argument
+  task = new_task.Value();
+  task->Bind(pfunc, arg);
 
-	// add to task list
-	m_list.Append(task);
+  // add to task list
+  m_list.Append(task);
 
-	// reset auto pointer - ATP now handles task
-	new_task.Reset();
+  // reset auto pointer - ATP now handles task
+  new_task.Reset();
 
-	// register task to worker pool
-	m_pwpm->RegisterTask(task);
+  // register task to worker pool
+  m_pwpm->RegisterTask(task);
 
-	return task;
+  return task;
 }
-
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -192,14 +170,11 @@ CAutoTaskProxy::Create(void *(*pfunc)(void *), void *arg, BOOL *cancel)
 //		Schedule task for execution
 //
 //---------------------------------------------------------------------------
-void
-CAutoTaskProxy::Schedule(CTask *task)
-{
-	GPOS_ASSERT(CTask::EtsInit == task->m_status && "Task already scheduled");
+void CAutoTaskProxy::Schedule(CTask *task) {
+  GPOS_ASSERT(CTask::EtsInit == task->m_status && "Task already scheduled");
 
-	m_pwpm->Schedule(task);
+  m_pwpm->Schedule(task);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -210,55 +185,48 @@ CAutoTaskProxy::Schedule(CTask *task)
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CAutoTaskProxy::FindFinished(CTask **task)
-{
-	*task = NULL;
+CAutoTaskProxy::FindFinished(CTask **task) {
+  *task = nullptr;
 
 #ifdef GPOS_DEBUG
-	// check if there is any task scheduled
-	BOOL scheduled = false;
+  // check if there is any task scheduled
+  BOOL scheduled = false;
 
-	// check if all tasks have been reported as finished
-	BOOL reported_all = true;
-#endif	// GPOS_DEBUG
+  // check if all tasks have been reported as finished
+  BOOL reported_all = true;
+#endif  // GPOS_DEBUG
 
-	// iterate task list
-	for (CTask *cur_task = m_list.First(); NULL != cur_task;
-		 cur_task = m_list.Next(cur_task))
-	{
+  // iterate task list
+  for (CTask *cur_task = m_list.First(); nullptr != cur_task; cur_task = m_list.Next(cur_task)) {
 #ifdef GPOS_DEBUG
-		// check if task has been scheduled
-		if (cur_task->IsScheduled())
-		{
-			scheduled = true;
-		}
-#endif	// GPOS_DEBUG
+    // check if task has been scheduled
+    if (cur_task->IsScheduled()) {
+      scheduled = true;
+    }
+#endif  // GPOS_DEBUG
 
-		// check if task has been reported as finished
-		if (!cur_task->IsReported())
-		{
+    // check if task has been reported as finished
+    if (!cur_task->IsReported()) {
 #ifdef GPOS_DEBUG
-			reported_all = false;
-#endif	// GPOS_DEBUG
+      reported_all = false;
+#endif  // GPOS_DEBUG
 
-			// check if task is finished
-			if (cur_task->IsFinished())
-			{
-				// mark task as reported
-				cur_task->SetReported();
-				*task = cur_task;
+      // check if task is finished
+      if (cur_task->IsFinished()) {
+        // mark task as reported
+        cur_task->SetReported();
+        *task = cur_task;
 
-				return GPOS_OK;
-			}
-		}
-	}
+        return GPOS_OK;
+      }
+    }
+  }
 
-	GPOS_ASSERT(scheduled && "No task scheduled yet");
-	GPOS_ASSERT(!reported_all && "All tasks have been reported as finished");
+  GPOS_ASSERT(scheduled && "No task scheduled yet");
+  GPOS_ASSERT(!reported_all && "All tasks have been reported as finished");
 
-	return GPOS_NOT_FOUND;
+  return GPOS_NOT_FOUND;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -268,52 +236,42 @@ CAutoTaskProxy::FindFinished(CTask **task)
 //		Execute task in thread owning ATP (synchronous execution);
 //
 //---------------------------------------------------------------------------
-void
-CAutoTaskProxy::Execute(CTask *task)
-{
-	GPOS_ASSERT(CTask::EtsInit == task->m_status && "Task already scheduled");
+void CAutoTaskProxy::Execute(CTask *task) const {
+  GPOS_ASSERT(CTask::EtsInit == task->m_status && "Task already scheduled");
 
-	// mark task as ready to execute
-	task->SetStatus(CTask::EtsDequeued);
+  // mark task as ready to execute
+  task->SetStatus(CTask::EtsDequeued);
 
-	GPOS_TRY
-	{
-		// get worker of current thread
-		CWorker *worker = CWorker::Self();
-		GPOS_ASSERT(NULL != worker);
+  GPOS_TRY {
+    // get worker of current thread
+    CWorker *worker = CWorker::Self();
+    GPOS_ASSERT(nullptr != worker);
 
-		// execute task
-		worker->Execute(task);
-	}
-	GPOS_CATCH_EX(ex)
-	{
-		// mark task as erroneous
-		task->SetStatus(CTask::EtsError);
+    // execute task
+    worker->Execute(task);
+  }
+  GPOS_CATCH_EX(ex) {
+    // mark task as erroneous
+    task->SetStatus(CTask::EtsError);
 
-		if (m_propagate_error)
-		{
-			GPOS_RETHROW(ex);
-		}
-	}
-	GPOS_CATCH_END;
+    if (m_propagate_error) {
+      GPOS_RETHROW(ex);
+    }
+  }
+  GPOS_CATCH_END;
 
-	// Raise exception if task encounters an exception
-	if (task->HasPendingExceptions())
-	{
-		if (m_propagate_error)
-		{
-			GPOS_RETHROW(task->GetErrCtxt()->GetException());
-		}
-		else
-		{
-			task->GetErrCtxt()->Reset();
-		}
-	}
+  // Raise exception if task encounters an exception
+  if (task->HasPendingExceptions()) {
+    if (m_propagate_error) {
+      GPOS_RETHROW(task->GetErrCtxt()->GetException());
+    } else {
+      task->GetErrCtxt()->Reset();
+    }
+  }
 
-	// mark task as reported
-	task->SetReported();
+  // mark task as reported
+  task->SetReported();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -323,15 +281,11 @@ CAutoTaskProxy::Execute(CTask *task)
 //		Cancel task
 //
 //---------------------------------------------------------------------------
-void
-CAutoTaskProxy::Cancel(CTask *task)
-{
-	if (!task->IsFinished())
-	{
-		m_pwpm->Cancel(task->GetTid());
-	}
+void CAutoTaskProxy::Cancel(CTask *task) {
+  if (!task->IsFinished()) {
+    m_pwpm->Cancel(task->GetTid());
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -341,37 +295,28 @@ CAutoTaskProxy::Cancel(CTask *task)
 //		Check error from sub-task
 //
 //---------------------------------------------------------------------------
-void
-CAutoTaskProxy::CheckError(CTask *sub_task)
-{
-	// sub-task has a pending error
-	if (sub_task->HasPendingExceptions())
-	{
-		// must be in error status
-		GPOS_ASSERT(ITask::EtsError == sub_task->GetStatus());
+void CAutoTaskProxy::CheckError(CTask *sub_task) const {
+  // sub-task has a pending error
+  if (sub_task->HasPendingExceptions()) {
+    // must be in error status
+    GPOS_ASSERT(ITask::EtsError == sub_task->GetStatus());
 
-		if (m_propagate_error)
-		{
-			// propagate error from sub task to current task
-			PropagateError(sub_task);
-		}
-		else
-		{
-			// ignore the pending error from sub task
-			// and reset its error context
-			sub_task->GetErrCtxt()->Reset();
-		}
-	}
+    if (m_propagate_error) {
+      // propagate error from sub task to current task
+      PropagateError(sub_task);
+    } else {
+      // ignore the pending error from sub task
+      // and reset its error context
+      sub_task->GetErrCtxt()->Reset();
+    }
+  }
 #ifdef GPOS_DEBUG
-	else if (ITask::EtsError == sub_task->GetStatus())
-	{
-		// sub-task was canceled without a pending error
-		GPOS_ASSERT(!sub_task->HasPendingExceptions() &&
-					sub_task->IsCanceled());
-	}
-#endif	// GPOS_DEBUG
+  else if (ITask::EtsError == sub_task->GetStatus()) {
+    // sub-task was canceled without a pending error
+    GPOS_ASSERT(!sub_task->HasPendingExceptions() && sub_task->IsCanceled());
+  }
+#endif  // GPOS_DEBUG
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -381,30 +326,25 @@ CAutoTaskProxy::CheckError(CTask *sub_task)
 //		Propagate the error from sub task to current task
 //
 //---------------------------------------------------------------------------
-void
-CAutoTaskProxy::PropagateError(CTask *sub_task)
-{
-	GPOS_ASSERT(m_propagate_error);
+void CAutoTaskProxy::PropagateError(CTask *sub_task) {
+  // sub-task must be in error status and have a pending exception
+  GPOS_ASSERT(ITask::EtsError == sub_task->GetStatus() && sub_task->HasPendingExceptions());
 
-	// sub-task must be in error status and have a pending exception
-	GPOS_ASSERT(ITask::EtsError == sub_task->GetStatus() &&
-				sub_task->HasPendingExceptions());
+  CTask *current_task = CTask::Self();
 
-	CTask *current_task = CTask::Self();
+  // current task must have no pending error
+  GPOS_ASSERT(nullptr != current_task && !current_task->HasPendingExceptions());
 
-	// current task must have no pending error
-	GPOS_ASSERT(NULL != current_task && !current_task->HasPendingExceptions());
+  IErrorContext *current_err_ctxt = current_task->GetErrCtxt();
 
-	IErrorContext *current_err_ctxt = current_task->GetErrCtxt();
+  // copy necessary error info for propagation
+  current_err_ctxt->CopyPropErrCtxt(sub_task->GetErrCtxt());
 
-	// copy necessary error info for propagation
-	current_err_ctxt->CopyPropErrCtxt(sub_task->GetErrCtxt());
+  // reset error of sub task
+  sub_task->GetErrCtxt()->Reset();
 
-	// reset error of sub task
-	sub_task->GetErrCtxt()->Reset();
-
-	// propagate the error
-	CException::Reraise(current_err_ctxt->GetException(), true /*propagate*/);
+  // propagate the error
+  CException::Reraise(current_err_ctxt->GetException(), true /*propagate*/);
 }
 
 // EOF

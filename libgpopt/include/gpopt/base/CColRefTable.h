@@ -19,9 +19,7 @@
 #include "gpopt/metadata/CColumnDescriptor.h"
 #include "gpopt/metadata/CName.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -32,93 +30,78 @@ using namespace gpos;
 //		Column reference for base table columns
 //
 //---------------------------------------------------------------------------
-class CColRefTable : public CColRef
-{
-private:
-	// private copy ctor
-	CColRefTable(const CColRefTable &);
+class CColRefTable : public CColRef {
+ private:
+  // attno from catalog
+  INT m_iAttno;
 
-	// attno from catalog
-	INT m_iAttno;
+  // does column allow null values
+  BOOL m_is_nullable;
 
-	// does column allow null values
-	BOOL m_is_nullable;
+  // id of the operator which is the source of this column reference
+  // not owned
+  ULONG m_ulSourceOpId;
 
-	// id of the operator which is the source of this column reference
-	// not owned
-	ULONG m_ulSourceOpId;
+  // is the column a distribution key
+  BOOL m_is_dist_col;
 
-	// width of the column, for instance  char(10) column has width 10
-	ULONG m_width;
+  // is the column a partition key
+  BOOL m_is_part_col;
 
-public:
-	// ctors
-	CColRefTable(const CColumnDescriptor *pcd, ULONG id, const CName *pname,
-				 ULONG ulOpSource);
+  // width of the column, for instance  char(10) column has width 10
+  ULONG m_width;
 
-	CColRefTable(const IMDType *pmdtype, INT type_modifier, INT attno,
-				 BOOL is_nullable, ULONG id, const CName *pname,
-				 ULONG ulOpSource, ULONG ulWidth = gpos::ulong_max);
+ public:
+  CColRefTable(const CColRefTable &) = delete;
 
-	// dtor
-	virtual ~CColRefTable();
+  // ctors
+  CColRefTable(const CColumnDescriptor *pcd, ULONG id, const CName *pname, ULONG ulOpSource);
 
-	// accessor of column reference type
-	virtual CColRef::Ecolreftype
-	Ecrt() const
-	{
-		return CColRef::EcrtTable;
-	}
+  CColRefTable(const IMDType *pmdtype, INT type_modifier, INT attno, BOOL is_nullable, ULONG id, const CName *pname,
+               ULONG ulOpSource, BOOL is_dist_col, ULONG ulWidth = gpos::ulong_max);
 
-	// accessor of attribute number
-	INT
-	AttrNum() const
-	{
-		return m_iAttno;
-	}
+  // dtor
+  ~CColRefTable() override;
 
-	// does column allow null values?
-	BOOL
-	IsNullable() const
-	{
-		return m_is_nullable;
-	}
+  // accessor of column reference type
+  CColRef::Ecolreftype Ecrt() const override { return CColRef::EcrtTable; }
 
-	// is column a system column?
-	BOOL
-	FSystemCol() const
-	{
-		// TODO-  04/13/2012, make this check system independent
-		// using MDAccessor
-		return 0 >= m_iAttno;
-	}
+  // accessor of attribute number
+  INT AttrNum() const { return m_iAttno; }
 
-	// width of the column
-	ULONG
-	Width() const
-	{
-		return m_width;
-	}
+  // does column allow null values?
+  BOOL IsNullable() const { return m_is_nullable; }
 
-	// id of source operator
-	ULONG
-	UlSourceOpId() const
-	{
-		return m_ulSourceOpId;
-	}
+  // is column a system column?
+  BOOL IsSystemCol() const override {
+    // TODO-  04/13/2012, make this check system independent
+    // using MDAccessor
+    return 0 >= m_iAttno;
+  }
 
-	// conversion
-	static CColRefTable *
-	PcrConvert(CColRef *cr)
-	{
-		GPOS_ASSERT(cr->Ecrt() == CColRef::EcrtTable);
-		return dynamic_cast<CColRefTable *>(cr);
-	}
+  // is column a distribution column?
+  BOOL IsDistCol() const override { return m_is_dist_col; }
 
+  // is column a partition column?
+  BOOL IsPartCol() const override { return m_is_part_col; }
 
-};	// class CColRefTable
+  // width of the column
+  ULONG
+  Width() const { return m_width; }
+
+  // id of source operator
+  ULONG
+  UlSourceOpId() const { return m_ulSourceOpId; }
+
+  // conversion
+  static CColRefTable *PcrConvert(CColRef *cr) {
+    GPOS_ASSERT(cr->Ecrt() == CColRef::EcrtTable);
+    return dynamic_cast<CColRefTable *>(cr);
+  }
+
+};  // class CColRefTable
 }  // namespace gpopt
 
-#endif	// !GPOS_CColRefTable_H
+#endif  // !GPOS_CColRefTable_H
 
 // EOF

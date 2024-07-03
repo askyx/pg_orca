@@ -33,15 +33,12 @@ extern "C" {
 #include "nodes/plannodes.h"
 }
 
-namespace gpdxl
-{
+namespace gpdxl {
 // fwd decl
 class CDXLTranslateContext;
 
-typedef CHashMap<ULONG, CDXLTranslateContext, gpos::HashValue<ULONG>,
-				 gpos::Equals<ULONG>, CleanupDelete<ULONG>,
-				 CleanupDelete<CDXLTranslateContext> >
-	HMUlDxltrctx;
+using HMUlDxltrctx = CHashMap<ULONG, CDXLTranslateContext, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
+                              CleanupDelete<ULONG>, CleanupDelete<CDXLTranslateContext>>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -53,207 +50,131 @@ typedef CHashMap<ULONG, CDXLTranslateContext, gpos::HashValue<ULONG>,
 //		generated so far during DXL-->PlStmt translation.
 //
 //---------------------------------------------------------------------------
-class CContextDXLToPlStmt
-{
-private:
-	// cte consumer information
-	struct SCTEConsumerInfo
-	{
-		// list of ShareInputScan represent cte consumers
-		List *m_cte_consumer_list;
+class CContextDXLToPlStmt {
+ private:
+  // cte consumer information
+  struct SCTEConsumerInfo {
+    // list of ShareInputScan represent cte consumers
+    List *m_cte_consumer_list;
 
-		// ctor
-		SCTEConsumerInfo(List *plan_cte) : m_cte_consumer_list(plan_cte)
-		{
-		}
+    // ctor
+    SCTEConsumerInfo(List *plan_cte) : m_cte_consumer_list(plan_cte) {}
 
-		void
-		AddCTEPlan(ShareInputScan *share_input_scan)
-		{
-			GPOS_ASSERT(NULL != share_input_scan);
-			m_cte_consumer_list =
-				gpdb::LAppend(m_cte_consumer_list, share_input_scan);
-		}
+    ~SCTEConsumerInfo() { gpdb::ListFree(m_cte_consumer_list); }
+  };
 
-		~SCTEConsumerInfo()
-		{
-			gpdb::ListFree(m_cte_consumer_list);
-		}
-	};
+  // hash maps mapping ULONG -> SCTEConsumerInfo
+  using HMUlCTEConsumerInfo = CHashMap<ULONG, SCTEConsumerInfo, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
+                                       CleanupDelete<ULONG>, CleanupDelete<SCTEConsumerInfo>>;
 
-	// hash maps mapping ULONG -> SCTEConsumerInfo
-	typedef CHashMap<ULONG, SCTEConsumerInfo, gpos::HashValue<ULONG>,
-					 gpos::Equals<ULONG>, CleanupDelete<ULONG>,
-					 CleanupDelete<SCTEConsumerInfo> >
-		HMUlCTEConsumerInfo;
+  using HMUlIndex =
+      CHashMap<ULONG, Index, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>, CleanupDelete<Index>>;
 
-	CMemoryPool *m_mp;
+  CMemoryPool *m_mp;
 
-	// counter for generating plan ids
-	CIdGenerator *m_plan_id_counter;
+  // counter for generating plan ids
+  CIdGenerator *m_plan_id_counter;
 
-	// counter for generating motion ids
-	CIdGenerator *m_motion_id_counter;
+  // counter for generating motion ids
+  CIdGenerator *m_motion_id_counter;
 
-	// counter for generating unique param ids
-	CIdGenerator *m_param_id_counter;
-	List *m_param_types_list;
+  // counter for generating unique param ids
+  CIdGenerator *m_param_id_counter;
+  List *m_param_types_list;
 
-	// What operator classes to use for distribution keys?
-	DistributionHashOpsKind m_distribution_hashops;
+  // What operator classes to use for distribution keys?
+  DistributionHashOpsKind m_distribution_hashops;
 
-	// list of all rtable entries
-	List *m_rtable_entries_list;
+  // list of all rtable entries
+  List *m_rtable_entries_list;
 
-	// list of oids of partitioned tables
-	List *m_partitioned_tables_list;
+  // list of all subplan entries
+  List *m_subplan_entries_list;
 
-	// number of partition selectors for each dynamic scan
-	ULongPtrArray *m_num_partition_selectors_array;
+  // List of PlanSlices
+  List *m_slices_list;
 
-	// list of all subplan entries
-	List *m_subplan_entries_list;
-	List *m_subplan_sliceids_list;
+  // index of the target relation in the rtable or 0 if not a DML statement
+  ULONG m_result_relation_index;
 
-	// List of PlanSlices
-	List *m_slices_list;
+  // hash map of the cte identifiers and the cte consumers with the same cte identifier
+  HMUlCTEConsumerInfo *m_cte_consumer_info;
 
-	PlanSlice *m_current_slice;
+  // into clause
+  IntoClause *m_into_clause;
 
-	// index of the target relation in the rtable or 0 if not a DML statement
-	ULONG m_result_relation_index;
+  UlongToUlongMap *m_part_selector_to_param_map;
 
-	// hash map of the cte identifiers and the cte consumers with the same cte identifier
-	HMUlCTEConsumerInfo *m_cte_consumer_info;
+  // hash map of the queryid (of DML query) and the target relation index
+  HMUlIndex *m_used_rte_indexes;
 
-	// into clause
-	IntoClause *m_into_clause;
+ public:
+  // ctor/dtor
+  CContextDXLToPlStmt(CMemoryPool *mp, CIdGenerator *plan_id_counter, CIdGenerator *motion_id_counter,
+                      CIdGenerator *param_id_counter, DistributionHashOpsKind distribution_hashops);
 
-	// CTAS distribution policy
-	GpPolicy *m_distribution_policy;
+  // dtor
+  ~CContextDXLToPlStmt();
 
-	// FXIME: this uses NEW/DELETE, should we use palloc/pfree/memory pool?
-	std::vector<List *> m_static_prune_results;
+  // retrieve the next plan id
+  ULONG GetNextPlanId();
 
-public:
-	// ctor/dtor
-	CContextDXLToPlStmt(CMemoryPool *mp, CIdGenerator *plan_id_counter,
-						CIdGenerator *motion_id_counter,
-						CIdGenerator *param_id_counter,
-						DistributionHashOpsKind distribution_hashops);
+  // retrieve the current motion id
+  ULONG GetCurrentMotionId();
 
-	// dtor
-	~CContextDXLToPlStmt();
+  // retrieve the next motion id
+  ULONG GetNextMotionId();
 
-	// retrieve the next plan id
-	ULONG GetNextPlanId();
+  // retrieve the current parameter type list
+  List *GetParamTypes();
 
-	// retrieve the current motion id
-	ULONG GetCurrentMotionId();
+  // retrieve the next parameter id
+  ULONG GetNextParamId(OID typeoid);
 
-	// retrieve the next motion id
-	ULONG GetNextMotionId();
+  // return the list of shared input scan plans representing the CTE consumers
+  List *GetCTEConsumerList(ULONG cte_id) const;
 
-	// retrieve the current parameter type list
-	List *GetParamTypes();
+  // return list of range table entries
+  List *GetRTableEntriesList() const { return m_rtable_entries_list; }
 
-	// retrieve the next parameter id
-	ULONG GetNextParamId(OID typeoid);
+  List *GetSubplanEntriesList() const { return m_subplan_entries_list; }
 
-	// add a newly found CTE consumer
-	void AddCTEConsumerInfo(ULONG cte_id, ShareInputScan *share_input_scan);
+  // index of result relation in the rtable
+  ULONG
+  GetResultRelationIndex() const { return m_result_relation_index; }
 
-	// return the list of shared input scan plans representing the CTE consumers
-	List *GetCTEConsumerList(ULONG cte_id) const;
+  // add a range table entry
+  void AddRTE(RangeTblEntry *rte, BOOL is_result_relation = false);
 
-	// return list of range table entries
-	List *
-	GetRTableEntriesList() const
-	{
-		return m_rtable_entries_list;
-	}
+  void InsertUsedRTEIndexes(ULONG assigned_query_id_for_target_rel, Index index);
 
-	// return list of partitioned table indexes
-	List *
-	GetPartitionedTablesList() const
-	{
-		return m_partitioned_tables_list;
-	}
+  void AddSubplan(Plan *);
 
-	// return list containing number of partition selectors for every scan id
-	List *GetNumPartitionSelectorsList() const;
+  // add CTAS information
+  void AddCtasInfo(IntoClause *into_clause);
 
-	List *
-	GetSubplanEntriesList() const
-	{
-		return m_subplan_entries_list;
-	}
+  // into clause
+  IntoClause *GetIntoClause() const { return m_into_clause; }
 
-	// index of result relation in the rtable
-	ULONG
-	GetResultRelationIndex() const
-	{
-		return m_result_relation_index;
-	}
+  // Get the hash opclass or hash function for given datatype,
+  // based on decision made by DetermineDistributionHashOpclasses()
+  Oid GetDistributionHashOpclassForType(Oid typid);
+  Oid GetDistributionHashFuncForType(Oid typid);
 
+  ULONG GetParamIdForSelector(OID oid_type, const ULONG selectorId);
 
-	int *GetSubplanSliceIdArray();
+  Index FindRTE(Oid reloid);
 
-	PlanSlice *GetSlices(int *numSlices_p);
+  // used by internal GPDB functions to build the RelOptInfo when creating foreign scans
+  Query *m_orig_query;
 
-	// add a range table entry
-	void AddRTE(RangeTblEntry *rte, BOOL is_result_relation = false);
+  // get rte from m_rtable_entries_list by given index
+  RangeTblEntry *GetRTEByIndex(Index index);
 
-	// add a partitioned table index
-	void AddPartitionedTable(OID oid);
-
-	// increment the number of partition selectors for the given scan id
-	void IncrementPartitionSelectors(ULONG scan_id);
-
-	void AddSubplan(Plan *);
-
-	// add a slice table entry
-	int AddSlice(PlanSlice *);
-
-	PlanSlice *
-	GetCurrentSlice() const
-	{
-		return m_current_slice;
-	}
-
-	void
-	SetCurrentSlice(PlanSlice *slice)
-	{
-		m_current_slice = slice;
-	}
-
-	// add CTAS information
-	void AddCtasInfo(IntoClause *into_clause, GpPolicy *distribution_policy);
-
-	// into clause
-	IntoClause *
-	GetIntoClause() const
-	{
-		return m_into_clause;
-	}
-
-	// CTAS distribution policy
-	GpPolicy *
-	GetDistributionPolicy() const
-	{
-		return m_distribution_policy;
-	}
-
-	// Get the hash opclass or hash function for given datatype,
-	// based on decision made by DetermineDistributionHashOpclasses()
-	Oid GetDistributionHashOpclassForType(Oid typid);
-	Oid GetDistributionHashFuncForType(Oid typid);
-
-	List *GetStaticPruneResult(ULONG scanId);
-	void SetStaticPruneResult(ULONG scanId, List *static_prune_result);
+  Index GetRTEIndexByAssignedQueryId(ULONG assigned_query_id_for_target_rel, BOOL *is_rte_exists);
 };
 
 }  // namespace gpdxl
-#endif	// !GPDXL_CContextDXLToPlStmt_H
+#endif  // !GPDXL_CContextDXLToPlStmt_H
 
-//EOF
+// EOF

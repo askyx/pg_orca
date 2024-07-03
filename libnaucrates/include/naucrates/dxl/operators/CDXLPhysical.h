@@ -9,7 +9,6 @@
 //		Base class for DXL physical operators.
 //---------------------------------------------------------------------------
 
-
 #ifndef GPDXL_CDXLPhysical_H
 #define GPDXL_CDXLPhysical_H
 
@@ -18,8 +17,7 @@
 #include "naucrates/dxl/operators/CDXLOperator.h"
 #include "naucrates/dxl/operators/CDXLPhysicalProperties.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
@@ -32,29 +30,27 @@ class CXMLSerializer;
 //		Base class the DXL physical operators
 //
 //---------------------------------------------------------------------------
-class CDXLPhysical : public CDXLOperator
-{
-private:
-	// private copy ctor
-	CDXLPhysical(const CDXLPhysical &);
+class CDXLPhysical : public CDXLOperator {
+ private:
+ public:
+  CDXLPhysical(const CDXLPhysical &) = delete;
 
-public:
-	// ctor/dtor
-	explicit CDXLPhysical(CMemoryPool *mp);
+  // ctor/dtor
+  explicit CDXLPhysical(CMemoryPool *mp);
 
-	virtual ~CDXLPhysical();
+  ~CDXLPhysical() override;
 
-	// Get operator type
-	Edxloptype GetDXLOperatorType() const;
+  // Get operator type
+  Edxloptype GetDXLOperatorType() const override;
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	virtual void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLPhysical_H
+#endif  // !GPDXL_CDXLPhysical_H
 
 // EOF

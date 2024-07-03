@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 Pivotal Inc.
+//	Copyright (C) 2013 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformIntersect2Join.h
@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,51 +26,36 @@ using namespace gpos;
 //		Class to transform of Intersect into a Join
 //
 //---------------------------------------------------------------------------
-class CXformIntersect2Join : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformIntersect2Join(const CXformIntersect2Join &);
+class CXformIntersect2Join : public CXformExploration {
+ private:
+ public:
+  CXformIntersect2Join(const CXformIntersect2Join &) = delete;
 
-public:
-	// ctor
-	explicit CXformIntersect2Join(CMemoryPool *mp);
+  // ctor
+  explicit CXformIntersect2Join(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformIntersect2Join()
-	{
-	}
+  // dtor
+  ~CXformIntersect2Join() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfIntersect2Join;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfIntersect2Join; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformIntersect2Join";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformIntersect2Join"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise
-	Exfp(CExpressionHandle &  // exprhdl
-	) const
-	{
-		return CXform::ExfpHigh;
-	}
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &  // exprhdl
+  ) const override {
+    return CXform::ExfpHigh;
+  }
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformIntersect2Join
+};  // class CXformIntersect2Join
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformIntersect2Join_H
+#endif  // !GPOPT_CXformIntersect2Join_H
 
 // EOF

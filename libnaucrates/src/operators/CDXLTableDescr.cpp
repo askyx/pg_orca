@@ -9,7 +9,6 @@
 //		Implementation of DXL table descriptors
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
 
 #include "gpos/string/CWStringDynamic.h"
@@ -20,6 +19,7 @@ using namespace gpos;
 using namespace gpdxl;
 
 #define GPDXL_DEFAULT_USERID 0
+#define GPDXL_INVALID_LOCKMODE -1
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,18 +29,18 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLTableDescr::CDXLTableDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
-							   ULONG ulExecuteAsUser)
-	: m_mp(mp),
-	  m_mdid(mdid),
-	  m_mdname(mdname),
-	  m_dxl_column_descr_array(NULL),
-	  m_execute_as_user_id(ulExecuteAsUser)
-{
-	GPOS_ASSERT(NULL != m_mdname);
-	m_dxl_column_descr_array = GPOS_NEW(mp) CDXLColDescrArray(mp);
+CDXLTableDescr::CDXLTableDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, ULONG ulExecuteAsUser, int lockmode,
+                               ULONG acl_mode, ULONG assigned_query_id_for_target_rel)
+    : m_mdid(mdid),
+      m_mdname(mdname),
+      m_dxl_column_descr_array(nullptr),
+      m_execute_as_user_id(ulExecuteAsUser),
+      m_lockmode(lockmode),
+      m_acl_mode(acl_mode),
+      m_assigned_query_id_for_target_rel(assigned_query_id_for_target_rel) {
+  GPOS_ASSERT(nullptr != m_mdname);
+  m_dxl_column_descr_array = GPOS_NEW(mp) CDXLColDescrArray(mp);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -50,13 +50,11 @@ CDXLTableDescr::CDXLTableDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLTableDescr::~CDXLTableDescr()
-{
-	m_mdid->Release();
-	GPOS_DELETE(m_mdname);
-	CRefCount::SafeRelease(m_dxl_column_descr_array);
+CDXLTableDescr::~CDXLTableDescr() {
+  m_mdid->Release();
+  GPOS_DELETE(m_mdname);
+  CRefCount::SafeRelease(m_dxl_column_descr_array);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -66,10 +64,8 @@ CDXLTableDescr::~CDXLTableDescr()
 //		Return the metadata id for the table
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLTableDescr::MDId() const
-{
-	return m_mdid;
+IMDId *CDXLTableDescr::MDId() const {
+  return m_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -80,10 +76,8 @@ CDXLTableDescr::MDId() const
 //		Return table name
 //
 //---------------------------------------------------------------------------
-const CMDName *
-CDXLTableDescr::MdName() const
-{
-	return m_mdname;
+const CMDName *CDXLTableDescr::MdName() const {
+  return m_mdname;
 }
 
 //---------------------------------------------------------------------------
@@ -95,11 +89,8 @@ CDXLTableDescr::MdName() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CDXLTableDescr::Arity() const
-{
-	return (m_dxl_column_descr_array == NULL)
-			   ? 0
-			   : m_dxl_column_descr_array->Size();
+CDXLTableDescr::Arity() const {
+  return (m_dxl_column_descr_array == nullptr) ? 0 : m_dxl_column_descr_array->Size();
 }
 
 //---------------------------------------------------------------------------
@@ -111,9 +102,17 @@ CDXLTableDescr::Arity() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CDXLTableDescr::GetExecuteAsUserId() const
-{
-	return m_execute_as_user_id;
+CDXLTableDescr::GetExecuteAsUserId() const {
+  return m_execute_as_user_id;
+}
+
+INT CDXLTableDescr::LockMode() const {
+  return m_lockmode;
+}
+
+ULONG
+CDXLTableDescr::GetAclMode() const {
+  return m_acl_mode;
 }
 
 //---------------------------------------------------------------------------
@@ -124,11 +123,9 @@ CDXLTableDescr::GetExecuteAsUserId() const
 //		Set the list of column descriptors
 //
 //---------------------------------------------------------------------------
-void
-CDXLTableDescr::SetColumnDescriptors(CDXLColDescrArray *dxl_column_descr_array)
-{
-	CRefCount::SafeRelease(m_dxl_column_descr_array);
-	m_dxl_column_descr_array = dxl_column_descr_array;
+void CDXLTableDescr::SetColumnDescriptors(CDXLColDescrArray *dxl_column_descr_array) {
+  CRefCount::SafeRelease(m_dxl_column_descr_array);
+  m_dxl_column_descr_array = dxl_column_descr_array;
 }
 
 //---------------------------------------------------------------------------
@@ -139,12 +136,10 @@ CDXLTableDescr::SetColumnDescriptors(CDXLColDescrArray *dxl_column_descr_array)
 //		Add a column to the list of column descriptors
 //
 //---------------------------------------------------------------------------
-void
-CDXLTableDescr::AddColumnDescr(CDXLColDescr *column_descr_dxl)
-{
-	GPOS_ASSERT(NULL != m_dxl_column_descr_array);
-	GPOS_ASSERT(NULL != column_descr_dxl);
-	m_dxl_column_descr_array->Append(column_descr_dxl);
+void CDXLTableDescr::AddColumnDescr(CDXLColDescr *column_descr_dxl) {
+  GPOS_ASSERT(nullptr != m_dxl_column_descr_array);
+  GPOS_ASSERT(nullptr != column_descr_dxl);
+  m_dxl_column_descr_array->Append(column_descr_dxl);
 }
 
 //---------------------------------------------------------------------------
@@ -155,12 +150,10 @@ CDXLTableDescr::AddColumnDescr(CDXLColDescr *column_descr_dxl)
 //		Get the column descriptor at the specified position from the col descr list
 //
 //---------------------------------------------------------------------------
-const CDXLColDescr *
-CDXLTableDescr::GetColumnDescrAt(ULONG idx) const
-{
-	GPOS_ASSERT(idx < Arity());
+const CDXLColDescr *CDXLTableDescr::GetColumnDescrAt(ULONG idx) const {
+  GPOS_ASSERT(idx < Arity());
 
-	return (*m_dxl_column_descr_array)[idx];
+  return (*m_dxl_column_descr_array)[idx];
 }
 
 //---------------------------------------------------------------------------
@@ -171,11 +164,8 @@ CDXLTableDescr::GetColumnDescrAt(ULONG idx) const
 //		Serialize the metadata id in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLTableDescr::SerializeMDId(CXMLSerializer *xml_serializer) const
-{
-	m_mdid->Serialize(xml_serializer,
-					  CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
+void CDXLTableDescr::SerializeMDId(CXMLSerializer *xml_serializer) const {
+  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
 }
 
 //---------------------------------------------------------------------------
@@ -186,45 +176,62 @@ CDXLTableDescr::SerializeMDId(CXMLSerializer *xml_serializer) const
 //		Serialize table descriptor in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLTableDescr::SerializeToDXL(CXMLSerializer *xml_serializer) const
-{
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenTableDescr));
+void CDXLTableDescr::SerializeToDXL(CXMLSerializer *xml_serializer) const {
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                              CDXLTokens::GetDXLTokenStr(EdxltokenTableDescr));
 
-	SerializeMDId(xml_serializer);
+  SerializeMDId(xml_serializer);
 
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTableName),
-								 m_mdname->GetMDName());
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTableName), m_mdname->GetMDName());
 
-	if (GPDXL_DEFAULT_USERID != m_execute_as_user_id)
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenExecuteAsUser),
-			m_execute_as_user_id);
-	}
+  if (GPDXL_DEFAULT_USERID != m_execute_as_user_id) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenExecuteAsUser), m_execute_as_user_id);
+  }
 
-	// serialize columns
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-	GPOS_ASSERT(NULL != m_dxl_column_descr_array);
+  if (GPDXL_INVALID_LOCKMODE != LockMode()) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenLockMode), LockMode());
+  }
 
-	const ULONG arity = Arity();
-	for (ULONG ul = 0; ul < arity; ul++)
-	{
-		CDXLColDescr *pdxlcd = (*m_dxl_column_descr_array)[ul];
-		pdxlcd->SerializeToDXL(xml_serializer);
-	}
+  if (GPDXL_ACL_UNDEFINED != GetAclMode()) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAclMode), GetAclMode());
+  }
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
+  if (UNASSIGNED_QUERYID != m_assigned_query_id_for_target_rel) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAssignedQueryIdForTargetRel),
+                                 m_assigned_query_id_for_target_rel);
+  }
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenTableDescr));
+  // serialize columns
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                              CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
+  GPOS_ASSERT(nullptr != m_dxl_column_descr_array);
+
+  const ULONG arity = Arity();
+  for (ULONG ul = 0; ul < arity; ul++) {
+    CDXLColDescr *pdxlcd = (*m_dxl_column_descr_array)[ul];
+    pdxlcd->SerializeToDXL(xml_serializer);
+  }
+
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                               CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
+
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                               CDXLTokens::GetDXLTokenStr(EdxltokenTableDescr));
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CDXLTableDescr::GetAssignedQueryIdForTargetRel
+//
+//	@doc:
+//		Return id of query, to which TableDescr belongs to
+//		(if this descriptor points to a result (target) entry,
+//		else UNASSIGNED_QUERYID returned)
+//
+//---------------------------------------------------------------------------
+ULONG
+CDXLTableDescr::GetAssignedQueryIdForTargetRel() const {
+  return m_assigned_query_id_for_target_rel;
 }
 
 // EOF

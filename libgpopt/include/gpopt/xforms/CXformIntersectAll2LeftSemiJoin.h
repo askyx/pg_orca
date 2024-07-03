@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,51 +26,36 @@ using namespace gpos;
 //		Class to transform of CLogicalIntersectAll into a left semi join
 //
 //---------------------------------------------------------------------------
-class CXformIntersectAll2LeftSemiJoin : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformIntersectAll2LeftSemiJoin(const CXformIntersectAll2LeftSemiJoin &);
+class CXformIntersectAll2LeftSemiJoin : public CXformExploration {
+ private:
+ public:
+  CXformIntersectAll2LeftSemiJoin(const CXformIntersectAll2LeftSemiJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformIntersectAll2LeftSemiJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformIntersectAll2LeftSemiJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformIntersectAll2LeftSemiJoin()
-	{
-	}
+  // dtor
+  ~CXformIntersectAll2LeftSemiJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfIntersectAll2LeftSemiJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfIntersectAll2LeftSemiJoin; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformIntersectAll2LeftSemiJoin";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformIntersectAll2LeftSemiJoin"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise
-	Exfp(CExpressionHandle &  // exprhdl
-	) const
-	{
-		return CXform::ExfpHigh;
-	}
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &  // exprhdl
+  ) const override {
+    return CXform::ExfpHigh;
+  }
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformIntersectAll2LeftSemiJoin
+};  // class CXformIntersectAll2LeftSemiJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformIntersectAll2LeftSemiJoin_H
+#endif  // !GPOPT_CXformIntersectAll2LeftSemiJoin_H
 
 // EOF

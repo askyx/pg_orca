@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,17 +24,15 @@ using namespace gpos;
 //		Static unit tests for column reference set
 //
 //---------------------------------------------------------------------------
-class CColRefSetTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
+class CColRefSetTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
 
-};	// class CColRefSetTest
+};  // class CColRefSetTest
 }  // namespace gpopt
 
-#endif	// !GPOS_CColRefSetTest_H
-
+#endif  // !GPOS_CColRefSetTest_H
 
 // EOF

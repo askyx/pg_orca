@@ -30,10 +30,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CSerializableMDAccessor::CSerializableMDAccessor(CMDAccessor *md_accessor)
-	: CSerializable(), m_pmda(md_accessor)
-{
-	GPOS_ASSERT(NULL != md_accessor);
+CSerializableMDAccessor::CSerializableMDAccessor(CMDAccessor *md_accessor) : CSerializable(), m_pmda(md_accessor) {
+  GPOS_ASSERT(nullptr != md_accessor);
 }
 
 //---------------------------------------------------------------------------
@@ -44,15 +42,13 @@ CSerializableMDAccessor::CSerializableMDAccessor(CMDAccessor *md_accessor)
 //		Serialize header into provided stream
 //
 //---------------------------------------------------------------------------
-void
-CSerializableMDAccessor::SerializeHeader(COstream &oos)
-{
-	oos << CDXLSections::m_wszMetadataHeaderPrefix;
+void CSerializableMDAccessor::SerializeHeader(COstream &oos) {
+  oos << CDXLSections::m_wszMetadataHeaderPrefix;
 
-	m_pmda->SerializeSysid(oos);
+  m_pmda->SerializeSysid(oos);
 
-	// serialize header suffix ">"
-	oos << CDXLSections::m_wszMetadataHeaderSuffix;
+  // serialize header suffix ">"
+  oos << CDXLSections::m_wszMetadataHeaderSuffix;
 }
 
 //---------------------------------------------------------------------------
@@ -63,10 +59,8 @@ CSerializableMDAccessor::SerializeHeader(COstream &oos)
 //		Serialize footer into provided stream
 //
 //---------------------------------------------------------------------------
-void
-CSerializableMDAccessor::SerializeFooter(COstream &oos)
-{
-	oos << CDXLSections::m_wszMetadataFooter;
+void CSerializableMDAccessor::SerializeFooter(COstream &oos) {
+  oos << CDXLSections::m_wszMetadataFooter;
 }
 
 //---------------------------------------------------------------------------
@@ -77,12 +71,10 @@ CSerializableMDAccessor::SerializeFooter(COstream &oos)
 //		Serialize contents into provided stream
 //
 //---------------------------------------------------------------------------
-void
-CSerializableMDAccessor::Serialize(COstream &oos)
-{
-	SerializeHeader(oos);
-	m_pmda->Serialize(oos);
-	SerializeFooter(oos);
+void CSerializableMDAccessor::Serialize(COstream &oos) {
+  SerializeHeader(oos);
+  m_pmda->Serialize(oos);
+  SerializeFooter(oos);
 }
 
 // EOF

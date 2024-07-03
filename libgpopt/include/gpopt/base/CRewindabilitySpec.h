@@ -17,11 +17,8 @@
 
 #include "gpopt/base/CPropSpec.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -31,171 +28,141 @@ using namespace gpos;
 //		Rewindability specification
 //
 //---------------------------------------------------------------------------
-class CRewindabilitySpec : public CPropSpec
-{
-public:
-	// From the perspective of the operator, the enum values mean the
-	// following (in required & derived contexts):
-	//
-	// 1. ErtMarkRestore:
-	//    require:
-	//      I require my child to be mark-restorable. This is required by MJ of
-	//      its inner child.
-	//    derive:
-	//      I am mark-restorable. (e.g Spool, Sort, Scan)
-	//    (NB: I cannot derive mark-restorable just because my child is mark-restorable.
-	//    	   However, I can derive rewindable.)
-	//
-	// 2. ErtRewindable:
-	//    require:
-	//      I require my child to be rewindable. This is required by NLJ of
-	//      its inner child.
-	//    derive:
-	//      I am rewindable. (e.g Spool, Sort, Scan)
-	//
-	// 3. ErtRescannable:
-	//    require:
-	//      I require my child to be rescannable, so that I can re-execute
-	//      the entire subtree if needed. This is required by correlated
-	//      joins of their inner child.
-	//    derive:
-	//      I am not rewindable, but I am rescannable. (e.g TVF containing a
-	//      volatile function)
-	//
-	// 4. ErtNone
-	//    require:
-	//      I do not require my child to be rewindable or rescannable. (e.g
-	//      Sort that is not on the inner side of a correlated join)
-	//    derive:
-	//      I am neither rewindable nor rescannable. (e.g Motions, External
-	//      table scans)
-	enum ERewindabilityType
-	{
-		ErtMarkRestore,	 // rewindability with mark & restore support
+class CRewindabilitySpec : public CPropSpec {
+ public:
+  // From the perspective of the operator, the enum values mean the
+  // following (in required & derived contexts):
+  //
+  // 1. ErtMarkRestore:
+  //    require:
+  //      I require my child to be mark-restorable. This is required by MJ of
+  //      its inner child.
+  //    derive:
+  //      I am mark-restorable. (e.g Spool, Sort, Scan)
+  //    (NB: I cannot derive mark-restorable just because my child is mark-restorable.
+  //    	   However, I can derive rewindable.)
+  //
+  // 2. ErtRewindable:
+  //    require:
+  //      I require my child to be rewindable. This is required by NLJ of
+  //      its inner child.
+  //    derive:
+  //      I am rewindable. (e.g Spool, Sort, Scan)
+  //
+  // 3. ErtRescannable:
+  //    require:
+  //      I require my child to be rescannable, so that I can re-execute
+  //      the entire subtree if needed. This is required by correlated
+  //      joins of their inner child.
+  //    derive:
+  //      I am not rewindable, but I am rescannable. (e.g TVF containing a
+  //      volatile function)
+  //
+  // 4. ErtNone
+  //    require:
+  //      I do not require my child to be rewindable or rescannable. (e.g
+  //      Sort that is not on the inner side of a correlated join)
+  //    derive:
+  //      I am neither rewindable nor rescannable. (e.g Motions, External
+  //      table scans)
+  enum ERewindabilityType {
+    ErtMarkRestore,  // rewindability with mark & restore support
 
-		ErtRewindable,	// rewindability of all intermediate query results
+    ErtRewindable,  // rewindability of all intermediate query results
 
-		ErtRescannable,	 // not rewindable, but can be reexecuted from scratch
+    ErtRescannable,  // not rewindable, but can be reexecuted from scratch
 
-		ErtNone,  // neither rewindability nor rescannable
+    ErtNone,  // neither rewindability nor rescannable
 
-		ErtSentinel
-	};
+    ErtSentinel
+  };
 
-	// From the perspective of the operator, the enum values mean the
-	// following (in required & derived contexts):
-	//
-	// 1. EmhtMotion:
-	//	  require:
-	//	    I require my child to handle motion hazard (if necessary)
-	//	  derive:
-	//	    I impose a motion hazard (for example, a streaming spool with a
-	//	    motion underneath it, will derive this)
-	//
-	// 2. EmhtNoMotion:
-	//	  require:
-	//	    Motion hazard handling is unnecessary.
-	//	  derive:
-	//	    I do not impose motion hazard (derived by a rewindable operator
-	//	    without no motion in its subtree or a blocking spool with or
-	//	    without a motion underneath it)
-	enum EMotionHazardType
-	{
-		EmhtMotion,	 // motion hazard in the tree
+  // From the perspective of the operator, the enum values mean the
+  // following (in required & derived contexts):
+  //
+  // 1. EmhtMotion:
+  //	  require:
+  //	    I require my child to handle motion hazard (if necessary)
+  //	  derive:
+  //	    I impose a motion hazard (for example, a streaming spool with a
+  //	    motion underneath it, will derive this)
+  //
+  // 2. EmhtNoMotion:
+  //	  require:
+  //	    Motion hazard handling is unnecessary.
+  //	  derive:
+  //	    I do not impose motion hazard (derived by a rewindable operator
+  //	    without no motion in its subtree or a blocking spool with or
+  //	    without a motion underneath it)
+  enum EMotionHazardType {
+    EmhtMotion,  // motion hazard in the tree
 
-		EmhtNoMotion,  // no motion hazard in the tree
+    EmhtNoMotion,  // no motion hazard in the tree
 
-		EmhtSentinel
-	};
+    EmhtSentinel
+  };
 
-private:
-	// rewindability support
-	ERewindabilityType m_rewindability;
+ private:
+  // rewindability support
+  ERewindabilityType m_rewindability;
 
-	// Motion Hazard
-	EMotionHazardType m_motion_hazard;
+  // Motion Hazard
+  EMotionHazardType m_motion_hazard;
 
-public:
-	// ctor
-	explicit CRewindabilitySpec(ERewindabilityType rewindability_type,
-								EMotionHazardType motion_hazard);
+  // Is NL Join
+  BOOL m_origin_nl_join;
 
-	// dtor
-	virtual ~CRewindabilitySpec();
+ public:
+  // ctor
+  explicit CRewindabilitySpec(ERewindabilityType rewindability_type, EMotionHazardType motion_hazard,
+                              BOOL origin_nl_join = false);
 
-	// check if rewindability specs match
-	BOOL Matches(const CRewindabilitySpec *prs) const;
+  // dtor
+  ~CRewindabilitySpec() override;
 
-	// check if rewindability spec satisfies a req'd rewindability spec
-	BOOL FSatisfies(const CRewindabilitySpec *prs) const;
+  // check if rewindability specs match
+  BOOL Matches(const CRewindabilitySpec *prs) const;
 
-	// append enforcers to dynamic array for the given plan properties
-	virtual void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								 CReqdPropPlan *prpp,
-								 CExpressionArray *pdrgpexpr,
-								 CExpression *pexpr);
+  // check if rewindability spec satisfies a req'd rewindability spec
+  BOOL FSatisfies(const CRewindabilitySpec *prs) const;
 
-	// hash function
-	virtual ULONG HashValue() const;
+  // append enforcers to dynamic array for the given plan properties
+  void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpp, CExpressionArray *pdrgpexpr,
+                       CExpression *pexpr) override;
 
-	// extract columns used by the rewindability spec
-	virtual CColRefSet *
-	PcrsUsed(CMemoryPool *mp) const
-	{
-		// return an empty set
-		return GPOS_NEW(mp) CColRefSet(mp);
-	}
+  // hash function
+  ULONG HashValue() const override;
 
-	// property type
-	virtual EPropSpecType
-	Epst() const
-	{
-		return EpstRewindability;
-	}
+  // extract columns used by the rewindability spec
+  CColRefSet *PcrsUsed(CMemoryPool *mp) const override {
+    // return an empty set
+    return GPOS_NEW(mp) CColRefSet(mp);
+  }
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // property type
+  EPropSpecType Epst() const override { return EpstRewindability; }
 
-	ERewindabilityType
-	Ert() const
-	{
-		return m_rewindability;
-	}
+  // print
+  IOstream &OsPrint(IOstream &os) const override;
 
-	EMotionHazardType
-	Emht() const
-	{
-		return m_motion_hazard;
-	}
+  ERewindabilityType Ert() const { return m_rewindability; }
 
-	BOOL
-	IsRewindable() const
-	{
-		return Ert() == ErtRewindable || Ert() == ErtMarkRestore;
-	}
+  EMotionHazardType Emht() const { return m_motion_hazard; }
 
-	BOOL
-	IsRescannable() const
-	{
-		return Ert() == ErtRescannable;
-	}
+  BOOL IsOriginNLJoin() const { return m_origin_nl_join; }
 
-	BOOL
-	IsCheckRequired() const
-	{
-		return Ert() != ErtNone;
-	}
+  BOOL IsRewindable() const { return Ert() == ErtRewindable || Ert() == ErtMarkRestore; }
 
-	BOOL
-	HasMotionHazard() const
-	{
-		return Emht() == EmhtMotion;
-	}
+  BOOL IsRescannable() const { return Ert() == ErtRescannable; }
 
-};	// class CRewindabilitySpec
+  BOOL IsCheckRequired() const { return Ert() != ErtNone; }
+
+  BOOL HasMotionHazard() const { return Emht() == EmhtMotion; }
+
+};  // class CRewindabilitySpec
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CRewindabilitySpec_H
+#endif  // !GPOPT_CRewindabilitySpec_H
 
 // EOF

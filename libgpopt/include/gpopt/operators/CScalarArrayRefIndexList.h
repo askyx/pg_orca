@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarArrayRefIndexList.h
@@ -16,8 +16,7 @@
 #include "gpopt/operators/CScalar.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 using namespace gpmd;
 
@@ -29,90 +28,64 @@ using namespace gpmd;
 //		Scalar arrayref index list
 //
 //---------------------------------------------------------------------------
-class CScalarArrayRefIndexList : public CScalar
-{
-public:
-	enum EIndexListType
-	{
-		EiltLower,	// lower index
-		EiltUpper,	// upper index
-		EiltSentinel
-	};
+class CScalarArrayRefIndexList : public CScalar {
+ public:
+  enum EIndexListType {
+    EiltLower,  // lower index
+    EiltUpper,  // upper index
+    EiltSentinel
+  };
 
-private:
-	// index list type
-	EIndexListType m_eilt;
+ private:
+  // index list type
+  EIndexListType m_eilt;
 
-	// private copy ctor
-	CScalarArrayRefIndexList(const CScalarArrayRefIndexList &);
+ public:
+  CScalarArrayRefIndexList(const CScalarArrayRefIndexList &) = delete;
 
-public:
-	// ctor
-	CScalarArrayRefIndexList(CMemoryPool *mp, EIndexListType eilt);
+  // ctor
+  CScalarArrayRefIndexList(CMemoryPool *mp, EIndexListType eilt);
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopScalarArrayRefIndexList;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopScalarArrayRefIndexList; }
 
-	// operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CScalarArrayRefIndexList";
-	}
+  // operator name
+  const CHAR *SzId() const override { return "CScalarArrayRefIndexList"; }
 
-	// index list type
-	EIndexListType
-	Eilt() const
-	{
-		return m_eilt;
-	}
+  // index list type
+  EIndexListType Eilt() const { return m_eilt; }
 
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// sensitivity to order of inputs
-	virtual BOOL
-	FInputOrderSensitive() const
-	{
-		return true;
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return true; }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *
-	PopCopyWithRemappedColumns(CMemoryPool *,		//mp,
-							   UlongToColRefMap *,	//colref_mapping,
-							   BOOL					//must_exist
-	)
-	{
-		return PopCopyDefault();
-	}
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
+                                        UlongToColRefMap *,  // colref_mapping,
+                                        BOOL                 // must_exist
+                                        ) override {
+    return PopCopyDefault();
+  }
 
-	// type of expression's result
-	virtual IMDId *
-	MdidType() const
-	{
-		GPOS_ASSERT(
-			!"Invalid function call: CScalarArrayRefIndexList::MdidType()");
-		return NULL;
-	}
+  // type of expression's result
+  IMDId *MdidType() const override {
+    GPOS_ASSERT(!"Invalid function call: CScalarArrayRefIndexList::MdidType()");
+    return nullptr;
+  }
 
-	// conversion function
-	static CScalarArrayRefIndexList *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarArrayRefIndexList == pop->Eopid());
+  // conversion function
+  static CScalarArrayRefIndexList *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarArrayRefIndexList == pop->Eopid());
 
-		return dynamic_cast<CScalarArrayRefIndexList *>(pop);
-	}
+    return dynamic_cast<CScalarArrayRefIndexList *>(pop);
+  }
 
-};	// class CScalarArrayRefIndexList
+};  // class CScalarArrayRefIndexList
 }  // namespace gpopt
 
-#endif	// !GPOPT_CScalarArrayRefIndexList_H
+#endif  // !GPOPT_CScalarArrayRefIndexList_H
 
 // EOF

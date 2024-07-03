@@ -21,30 +21,27 @@
 
 #include "gpos/types.h"
 
-namespace gpos
-{
-class CRandom
-{
-private:
-	// no copy c'tor
-	CRandom(const CRandom &);
+namespace gpos {
+class CRandom {
+ private:
+  // seed
+  ULONG m_seed;  // NOLINT(modernize-use-default-member-init)
 
-	// seed
-	ULONG m_seed;
+ public:
+  CRandom(const CRandom &) = delete;
 
-public:
-	// no seed
-	CRandom();
+  // no seed
+  CRandom();
 
-	// c'tor with seed
-	CRandom(ULONG seed);
+  // c'tor with seed
+  CRandom(ULONG seed);
 
-	// next random number
-	ULONG Next();
+  // next random number
+  ULONG Next();
 
-	// d'tor
-	~CRandom();
-};	//class CRandom
+  // d'tor
+  ~CRandom();
+};  // class CRandom
 }  // namespace gpos
 #endif /* CRANDOM_H_ */
 

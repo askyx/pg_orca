@@ -13,9 +13,9 @@
 
 #include "gpos/base.h"
 #include "gpos/io/ioutils.h"
+#include "gpos/task/IWorker.h"
 
 using namespace gpos;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -25,11 +25,7 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CFileReader::CFileReader()
-	: CFileDescriptor(), m_file_size(0), m_file_read_size(0)
-{
-}
-
+CFileReader::CFileReader() : CFileDescriptor() {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -39,10 +35,7 @@ CFileReader::CFileReader()
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CFileReader::~CFileReader()
-{
-}
-
+CFileReader::~CFileReader() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -52,16 +45,13 @@ CFileReader::~CFileReader()
 //		Open file for reading
 //
 //---------------------------------------------------------------------------
-void
-CFileReader::Open(const CHAR *file_path, const ULONG permission_bits)
-{
-	GPOS_ASSERT(NULL != file_path);
+void CFileReader::Open(const CHAR *file_path, const ULONG permission_bits) {
+  GPOS_ASSERT(nullptr != file_path);
 
-	OpenFile(file_path, O_RDONLY, permission_bits);
+  OpenFile(file_path, O_RDONLY, permission_bits);
 
-	m_file_size = ioutils::FileSize(file_path);
+  m_file_size = ioutils::FileSize(file_path);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -71,13 +61,10 @@ CFileReader::Open(const CHAR *file_path, const ULONG permission_bits)
 //		Close file after reading
 //
 //---------------------------------------------------------------------------
-void
-CFileReader::Close()
-{
-	CloseFile();
-	m_file_size = 0;
+void CFileReader::Close() {
+  CloseFile();
+  m_file_size = 0;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -88,52 +75,42 @@ CFileReader::Close()
 //
 //---------------------------------------------------------------------------
 ULONG_PTR
-CFileReader::ReadBytesToBuffer(BYTE *read_buffer,
-							   const ULONG_PTR file_read_size)
-{
-	GPOS_ASSERT(CFileDescriptor::IsFileOpen() &&
-				"Attempt to read from invalid file descriptor");
-	GPOS_ASSERT(0 < file_read_size);
-	GPOS_ASSERT(NULL != read_buffer);
+CFileReader::ReadBytesToBuffer(BYTE *read_buffer, const ULONG_PTR file_read_size) {
+  GPOS_ASSERT(CFileDescriptor::IsFileOpen() && "Attempt to read from invalid file descriptor");
+  GPOS_ASSERT(0 < file_read_size);
+  GPOS_ASSERT(nullptr != read_buffer);
 
-	ULONG_PTR bytes_to_read = file_read_size;
+  ULONG_PTR bytes_to_read = file_read_size;
 
-	while (0 < bytes_to_read)
-	{
-		INT_PTR current_byte = -1;
+  while (0 < bytes_to_read) {
+    INT_PTR current_byte;
 
-		// read from file and check to simulate I/O error
-		GPOS_CHECK_SIM_IO_ERR(
-			&current_byte,
-			ioutils::Read(GetFileDescriptor(), read_buffer, bytes_to_read));
+    // read from file
+    current_byte = ioutils::Read(GetFileDescriptor(), read_buffer, bytes_to_read);
 
-		// reach the end of file
-		if (0 == current_byte)
-		{
-			break;
-		}
+    // reach the end of file
+    if (0 == current_byte) {
+      break;
+    }
 
-		// check for error
-		if (-1 == current_byte)
-		{
-			// in case an interrupt was received we retry
-			if (EINTR == errno)
-			{
-				GPOS_CHECK_ABORT;
-				continue;
-			}
+    // check for error
+    if (-1 == current_byte) {
+      // in case an interrupt was received we retry
+      if (EINTR == errno) {
+        GPOS_CHECK_ABORT;
+        continue;
+      }
 
-			GPOS_RAISE(CException::ExmaSystem, CException::ExmiIOError, errno);
-		}
+      GPOS_RAISE(CException::ExmaSystem, CException::ExmiIOError, errno);
+    }
 
-		bytes_to_read -= current_byte;
-		read_buffer += current_byte;
-		m_file_read_size += current_byte;
-	};
+    bytes_to_read -= current_byte;
+    read_buffer += current_byte;
+    m_file_read_size += current_byte;
+  };
 
-	return file_read_size - bytes_to_read;
+  return file_read_size - bytes_to_read;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -144,11 +121,9 @@ CFileReader::ReadBytesToBuffer(BYTE *read_buffer,
 //
 //---------------------------------------------------------------------------
 ULLONG
-CFileReader::FileSize() const
-{
-	return m_file_size;
+CFileReader::FileSize() const {
+  return m_file_size;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -159,9 +134,8 @@ CFileReader::FileSize() const
 //
 //---------------------------------------------------------------------------
 ULLONG
-CFileReader::FileReadSize() const
-{
-	return m_file_read_size;
+CFileReader::FileReadSize() const {
+  return m_file_read_size;
 }
 
 // EOF

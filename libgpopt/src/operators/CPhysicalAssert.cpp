@@ -14,12 +14,10 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CRewindabilitySpec.h"
-#include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPredicateUtils.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,19 +27,16 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalAssert::CPhysicalAssert(CMemoryPool *mp, CException *pexc)
-	: CPhysical(mp), m_pexc(pexc)
-{
-	GPOS_ASSERT(NULL != pexc);
+CPhysicalAssert::CPhysicalAssert(CMemoryPool *mp, CException *pexc) : CPhysical(mp), m_pexc(pexc) {
+  GPOS_ASSERT(nullptr != pexc);
 
-	// when Assert includes outer references, correlated execution has to be enforced,
-	// in this case, we create two optimization requests to guarantee correct evaluation of parameters
-	// (1) Broadcast
-	// (2) Singleton
+  // when Assert includes outer references, correlated execution has to be enforced,
+  // in this case, we create two optimization requests to guarantee correct evaluation of parameters
+  // (1) Broadcast
+  // (2) Singleton
 
-	SetDistrRequests(2);
+  SetDistrRequests(2);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -51,11 +46,9 @@ CPhysicalAssert::CPhysicalAssert(CMemoryPool *mp, CException *pexc)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CPhysicalAssert::~CPhysicalAssert()
-{
-	GPOS_DELETE(m_pexc);
+CPhysicalAssert::~CPhysicalAssert() {
+  GPOS_DELETE(m_pexc);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -65,21 +58,15 @@ CPhysicalAssert::~CPhysicalAssert()
 //		Compute required output columns of the n-th child
 //
 //---------------------------------------------------------------------------
-CColRefSet *
-CPhysicalAssert::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-							  CColRefSet *pcrsRequired, ULONG child_index,
-							  CDrvdPropArray *,	 // pdrgpdpCtxt
-							  ULONG				 // ulOptReq
-)
-{
-	GPOS_ASSERT(
-		0 == child_index &&
-		"Required properties can only be computed on the relational child");
+CColRefSet *CPhysicalAssert::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                          ULONG child_index,
+                                          CDrvdPropArray *,  // pdrgpdpCtxt
+                                          ULONG              // ulOptReq
+) {
+  GPOS_ASSERT(0 == child_index && "Required properties can only be computed on the relational child");
 
-	return PcrsChildReqd(mp, exprhdl, pcrsRequired, child_index,
-						 1 /*ulScalarIndex*/);
+  return PcrsChildReqd(mp, exprhdl, pcrsRequired, child_index, 1 /*ulScalarIndex*/);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -89,18 +76,15 @@ CPhysicalAssert::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Compute required sort order of the n-th child
 //
 //---------------------------------------------------------------------------
-COrderSpec *
-CPhysicalAssert::PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-							 COrderSpec *posRequired, ULONG child_index,
-							 CDrvdPropArray *,	// pdrgpdpCtxt
-							 ULONG				// ulOptReq
-) const
-{
-	GPOS_ASSERT(0 == child_index);
+COrderSpec *CPhysicalAssert::PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired,
+                                         ULONG child_index,
+                                         CDrvdPropArray *,  // pdrgpdpCtxt
+                                         ULONG              // ulOptReq
+) const {
+  GPOS_ASSERT(0 == child_index);
 
-	return PosPassThru(mp, exprhdl, posRequired, child_index);
+  return PosPassThru(mp, exprhdl, posRequired, child_index);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -110,26 +94,21 @@ CPhysicalAssert::PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Compute required distribution of the n-th child
 //
 //---------------------------------------------------------------------------
-CDistributionSpec *
-CPhysicalAssert::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-							 CDistributionSpec *pdsRequired, ULONG child_index,
-							 CDrvdPropArray *,	// pdrgpdpCtxt
-							 ULONG ulOptReq) const
-{
-	CDistributionSpec::EDistributionType edt = pdsRequired->Edt();
+CDistributionSpec *CPhysicalAssert::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                CDistributionSpec *pdsRequired, ULONG child_index,
+                                                CDrvdPropArray *,  // pdrgpdpCtxt
+                                                ULONG ulOptReq) const {
+  CDistributionSpec::EDistributionType edt = pdsRequired->Edt();
 
-	// pass through singleton and broadcast requests
-	if (CDistributionSpec::EdtSingleton == edt ||
-		CDistributionSpec::EdtStrictSingleton == edt ||
-		CDistributionSpec::EdtReplicated == edt)
-	{
-		pdsRequired->AddRef();
-		return pdsRequired;
-	}
+  // pass through singleton and broadcast requests
+  if (CDistributionSpec::EdtSingleton == edt || CDistributionSpec::EdtStrictSingleton == edt ||
+      CDistributionSpec::EdtReplicated == edt || CDistributionSpec::EdtStrictReplicated == edt) {
+    pdsRequired->AddRef();
+    return pdsRequired;
+  }
 
-	return CPhysical::PdsUnary(mp, exprhdl, pdsRequired, child_index, ulOptReq);
+  return CPhysical::PdsUnary(mp, exprhdl, pdsRequired, child_index, ulOptReq);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -139,40 +118,14 @@ CPhysicalAssert::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Compute required rewindability of the n-th child
 //
 //---------------------------------------------------------------------------
-CRewindabilitySpec *
-CPhysicalAssert::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-							 CRewindabilitySpec *prsRequired, ULONG child_index,
-							 CDrvdPropArray *,	// pdrgpdpCtxt
-							 ULONG				// ulOptReq
-) const
-{
-	GPOS_ASSERT(0 == child_index);
+CRewindabilitySpec *CPhysicalAssert::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                 CRewindabilitySpec *prsRequired, ULONG child_index,
+                                                 CDrvdPropArray *,  // pdrgpdpCtxt
+                                                 ULONG              // ulOptReq
+) const {
+  GPOS_ASSERT(0 == child_index);
 
-	return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalAssert::PppsRequired
-//
-//	@doc:
-//		Compute required partition propagation of the n-th child
-//
-//---------------------------------------------------------------------------
-CPartitionPropagationSpec *
-CPhysicalAssert::PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-							  CPartitionPropagationSpec *pppsRequired,
-							  ULONG child_index,
-							  CDrvdPropArray *,	 //pdrgpdpCtxt,
-							  ULONG				 //ulOptReq
-)
-{
-	GPOS_ASSERT(0 == child_index);
-	GPOS_ASSERT(NULL != pppsRequired);
-
-	return CPhysical::PppsRequiredPushThru(mp, exprhdl, pppsRequired,
-										   child_index);
+  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
 }
 
 //---------------------------------------------------------------------------
@@ -183,21 +136,19 @@ CPhysicalAssert::PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Compute required CTE map of the n-th child
 //
 //---------------------------------------------------------------------------
-CCTEReq *
-CPhysicalAssert::PcteRequired(CMemoryPool *,		//mp,
-							  CExpressionHandle &,	//exprhdl,
-							  CCTEReq *pcter,
-							  ULONG
+CCTEReq *CPhysicalAssert::PcteRequired(CMemoryPool *,        // mp,
+                                       CExpressionHandle &,  // exprhdl,
+                                       CCTEReq *pcter,
+                                       ULONG
 #ifdef GPOS_DEBUG
-								  child_index
+                                           child_index
 #endif
-							  ,
-							  CDrvdPropArray *,	 //pdrgpdpCtxt,
-							  ULONG				 //ulOptReq
-) const
-{
-	GPOS_ASSERT(0 == child_index);
-	return PcterPushThru(pcter);
+                                       ,
+                                       CDrvdPropArray *,  // pdrgpdpCtxt,
+                                       ULONG              // ulOptReq
+) const {
+  GPOS_ASSERT(0 == child_index);
+  return PcterPushThru(pcter);
 }
 
 //---------------------------------------------------------------------------
@@ -208,13 +159,10 @@ CPhysicalAssert::PcteRequired(CMemoryPool *,		//mp,
 //		Derive sort order
 //
 //---------------------------------------------------------------------------
-COrderSpec *
-CPhysicalAssert::PosDerive(CMemoryPool *,  // mp
-						   CExpressionHandle &exprhdl) const
-{
-	return PosDerivePassThruOuter(exprhdl);
+COrderSpec *CPhysicalAssert::PosDerive(CMemoryPool *,  // mp
+                                       CExpressionHandle &exprhdl) const {
+  return PosDerivePassThruOuter(exprhdl);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -224,13 +172,10 @@ CPhysicalAssert::PosDerive(CMemoryPool *,  // mp
 //		Derive distribution
 //
 //---------------------------------------------------------------------------
-CDistributionSpec *
-CPhysicalAssert::PdsDerive(CMemoryPool *,  // mp
-						   CExpressionHandle &exprhdl) const
-{
-	return PdsDerivePassThruOuter(exprhdl);
+CDistributionSpec *CPhysicalAssert::PdsDerive(CMemoryPool *,  // mp
+                                              CExpressionHandle &exprhdl) const {
+  return PdsDerivePassThruOuter(exprhdl);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -240,12 +185,9 @@ CPhysicalAssert::PdsDerive(CMemoryPool *,  // mp
 //		Derive rewindability
 //
 //---------------------------------------------------------------------------
-CRewindabilitySpec *
-CPhysicalAssert::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const
-{
-	return PrsDerivePassThruOuter(mp, exprhdl);
+CRewindabilitySpec *CPhysicalAssert::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
+  return PrsDerivePassThruOuter(mp, exprhdl);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -255,18 +197,14 @@ CPhysicalAssert::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalAssert::Matches(COperator *pop) const
-{
-	if (Eopid() != pop->Eopid())
-	{
-		return false;
-	}
+BOOL CPhysicalAssert::Matches(COperator *pop) const {
+  if (Eopid() != pop->Eopid()) {
+    return false;
+  }
 
-	CPhysicalAssert *popAssert = CPhysicalAssert::PopConvert(pop);
-	return CException::Equals(*(popAssert->Pexc()), *m_pexc);
+  CPhysicalAssert *popAssert = CPhysicalAssert::PopConvert(pop);
+  return CException::Equals(*(popAssert->Pexc()), *m_pexc);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -276,15 +214,11 @@ CPhysicalAssert::Matches(COperator *pop) const
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalAssert::FProvidesReqdCols(CExpressionHandle &exprhdl,
-								   CColRefSet *pcrsRequired,
-								   ULONG  // ulOptReq
-) const
-{
-	return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
+BOOL CPhysicalAssert::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                        ULONG  // ulOptReq
+) const {
+  return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -294,21 +228,18 @@ CPhysicalAssert::FProvidesReqdCols(CExpressionHandle &exprhdl,
 //		Return the enforcing type for order property based on this operator
 //
 //---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType
-CPhysicalAssert::EpetOrder(CExpressionHandle &,	 // exprhdl
-						   const CEnfdOrder *
+CEnfdProp::EPropEnforcingType CPhysicalAssert::EpetOrder(CExpressionHandle &,  // exprhdl
+                                                         const CEnfdOrder *
 #ifdef GPOS_DEBUG
-							   peo
-#endif	// GPOS_DEBUG
-) const
-{
-	GPOS_ASSERT(NULL != peo);
-	GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
+                                                             peo
+#endif  // GPOS_DEBUG
+) const {
+  GPOS_ASSERT(nullptr != peo);
+  GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
 
-	// always force sort to be on top of assert
-	return CEnfdProp::EpetRequired;
+  // always force sort to be on top of assert
+  return CEnfdProp::EpetRequired;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -318,22 +249,18 @@ CPhysicalAssert::EpetOrder(CExpressionHandle &,	 // exprhdl
 //		Return the enforcing type for rewindability property based on this operator
 //
 //---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType
-CPhysicalAssert::EpetRewindability(CExpressionHandle &exprhdl,
-								   const CEnfdRewindability *per) const
-{
-	// get rewindability delivered by the assert node
-	CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-	if (per->FCompatible(prs))
-	{
-		// required rewindability is already provided
-		return CEnfdProp::EpetUnnecessary;
-	}
+CEnfdProp::EPropEnforcingType CPhysicalAssert::EpetRewindability(CExpressionHandle &exprhdl,
+                                                                 const CEnfdRewindability *per) const {
+  // get rewindability delivered by the assert node
+  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
+  if (per->FCompatible(prs)) {
+    // required rewindability is already provided
+    return CEnfdProp::EpetUnnecessary;
+  }
 
-	// always force spool to be on top of assert
-	return CEnfdProp::EpetRequired;
+  // always force spool to be on top of assert
+  return CEnfdProp::EpetRequired;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -343,16 +270,13 @@ CPhysicalAssert::EpetRewindability(CExpressionHandle &exprhdl,
 //		Debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CPhysicalAssert::OsPrint(IOstream &os) const
-{
-	if (m_fPattern)
-	{
-		return COperator::OsPrint(os);
-	}
+IOstream &CPhysicalAssert::OsPrint(IOstream &os) const {
+  if (m_fPattern) {
+    return COperator::OsPrint(os);
+  }
 
-	os << SzId() << " (Error code: " << m_pexc->GetSQLState() << ")";
-	return os;
+  os << SzId() << " (Error code: " << m_pexc->GetSQLState() << ")";
+  return os;
 }
 
 // EOF

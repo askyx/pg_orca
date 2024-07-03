@@ -18,8 +18,7 @@
 #include "gpos/task/CTask.h"
 #include "gpos/task/IWorker.h"
 
-namespace gpos
-{
+namespace gpos {
 class CTask;
 
 //---------------------------------------------------------------------------
@@ -32,74 +31,55 @@ class CTask;
 //
 //---------------------------------------------------------------------------
 
-class CWorker : public IWorker
-{
-	friend class CAutoTaskProxy;
+class CWorker : public IWorker {
+  friend class CAutoTaskProxy;
 
-private:
-	// current task
-	CTask *m_task;
+ private:
+  // current task
+  CTask *m_task;
 
-	// available stack
-	ULONG m_stack_size;
+  // available stack
+  ULONG m_stack_size;
 
-	// start address of current thread's stack
-	const ULONG_PTR m_stack_start;
+  // start address of current thread's stack
+  const ULONG_PTR m_stack_start;
 
-	// execute single task
-	void Execute(CTask *task);
+  // execute single task
+  void Execute(CTask *task);
 
-	// check for abort request
-	void CheckForAbort(const CHAR *file, ULONG line_num);
+  // check for abort request
+  void CheckForAbort(const CHAR *file, ULONG line_num) override;
 
-#ifdef GPOS_FPSIMULATOR
-	// simulate abort request, log abort injection
-	void SimulateAbort(const CHAR *file, ULONG line_num);
-#endif	// GPOS_FPSIMULATOR
+ public:
+  CWorker(const CWorker &) = delete;
 
-	// no copy ctor
-	CWorker(const CWorker &);
+  // ctor
+  CWorker(ULONG stack_size, ULONG_PTR stack_start);
 
-public:
-	// ctor
-	CWorker(ULONG stack_size, ULONG_PTR stack_start);
+  // dtor
+  ~CWorker() override;
 
-	// dtor
-	virtual ~CWorker();
+  // stack start accessor
+  inline ULONG_PTR GetStackStart() const override { return m_stack_start; }
 
-	// stack start accessor
-	inline ULONG_PTR
-	GetStackStart() const
-	{
-		return m_stack_start;
-	}
+  // stack check
+  BOOL CheckStackSize(ULONG request = 0) const override;
 
-	// stack check
-	BOOL CheckStackSize(ULONG request = 0) const;
+  // accessor
+  inline CTask *GetTask() override { return m_task; }
 
-	// accessor
-	inline CTask *
-	GetTask()
-	{
-		return m_task;
-	}
+  // slink for hashtable
+  SLink m_link;
 
-	// slink for hashtable
-	SLink m_link;
+  // lookup worker in worker pool manager
+  static CWorker *Self() { return dynamic_cast<CWorker *>(IWorker::Self()); }
 
-	// lookup worker in worker pool manager
-	static CWorker *
-	Self()
-	{
-		return dynamic_cast<CWorker *>(IWorker::Self());
-	}
+  // host system callback function to report abort requests
+  static bool (*abort_requested_by_system)(void);
 
-	// host system callback function to report abort requests
-	static bool (*abort_requested_by_system)(void);
-
-};	// class CWorker
+};  // class CWorker
 }  // namespace gpos
 
-#endif	// !GPOS_CWorker_H
+#endif  // !GPOS_CWorker_H
 
 // EOF

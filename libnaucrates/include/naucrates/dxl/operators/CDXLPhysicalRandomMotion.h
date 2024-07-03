@@ -9,8 +9,6 @@
 //		Class for representing DXL random motion operators.
 //---------------------------------------------------------------------------
 
-
-
 #ifndef GPDXL_CDXLPhysicalRandomMotion_H
 #define GPDXL_CDXLPhysicalRandomMotion_H
 
@@ -18,16 +16,14 @@
 
 #include "naucrates/dxl/operators/CDXLPhysicalMotion.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 // indexes of random motion elements in the children array
-enum Edxlrandomm
-{
-	EdxlrandommIndexProjList = 0,
-	EdxlrandommIndexFilter,
-	EdxlrandommIndexSortColList,
-	EdxlrandommIndexChild,
-	EdxlrandommIndexSentinel
+enum Edxlrandomm {
+  EdxlrandommIndexProjList = 0,
+  EdxlrandommIndexFilter,
+  EdxlrandommIndexSortColList,
+  EdxlrandommIndexChild,
+  EdxlrandommIndexSentinel
 };
 
 //---------------------------------------------------------------------------
@@ -38,57 +34,45 @@ enum Edxlrandomm
 //		Class for representing DXL random motion operators
 //
 //---------------------------------------------------------------------------
-class CDXLPhysicalRandomMotion : public CDXLPhysicalMotion
-{
-private:
-	// is distribution duplicate sensitive
-	BOOL m_is_duplicate_sensitive;
+class CDXLPhysicalRandomMotion : public CDXLPhysicalMotion {
+ private:
+  // is distribution duplicate sensitive
+  BOOL m_is_duplicate_sensitive;
 
-	// private copy ctor
-	CDXLPhysicalRandomMotion(const CDXLPhysicalRandomMotion &);
+ public:
+  CDXLPhysicalRandomMotion(const CDXLPhysicalRandomMotion &) = delete;
 
-public:
-	// ctor
-	CDXLPhysicalRandomMotion(CMemoryPool *mp, BOOL is_duplicate_sensitive);
+  // ctor
+  CDXLPhysicalRandomMotion(CMemoryPool *mp, BOOL is_duplicate_sensitive);
 
-	// accessors
-	Edxlopid GetDXLOperator() const;
-	const CWStringConst *GetOpNameStr() const;
+  // accessors
+  Edxlopid GetDXLOperator() const override;
+  const CWStringConst *GetOpNameStr() const override;
 
-	// is operator duplicate sensitive
-	BOOL
-	IsDuplicateSensitive() const
-	{
-		return m_is_duplicate_sensitive;
-	}
+  // is operator duplicate sensitive
+  BOOL IsDuplicateSensitive() const { return m_is_duplicate_sensitive; }
 
-	// index of relational child node in the children array
-	virtual ULONG
-	GetRelationChildIdx() const
-	{
-		return EdxlrandommIndexChild;
-	}
+  // index of relational child node in the children array
+  ULONG
+  GetRelationChildIdx() const override { return EdxlrandommIndexChild; }
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// conversion function
-	static CDXLPhysicalRandomMotion *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopPhysicalMotionRandom == dxl_op->GetDXLOperator());
-		return dynamic_cast<CDXLPhysicalRandomMotion *>(dxl_op);
-	}
+  // conversion function
+  static CDXLPhysicalRandomMotion *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopPhysicalMotionRandom == dxl_op->GetDXLOperator());
+    return dynamic_cast<CDXLPhysicalRandomMotion *>(dxl_op);
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLPhysicalRandomMotion_H
+#endif  // !GPDXL_CDXLPhysicalRandomMotion_H
 
 // EOF

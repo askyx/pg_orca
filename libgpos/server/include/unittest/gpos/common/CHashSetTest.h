@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CHashSetTest.h
@@ -20,8 +20,7 @@
 
 #include "gpos/base.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CHashSetTest
@@ -30,17 +29,16 @@ namespace gpos
 //		Static unit tests
 //
 //---------------------------------------------------------------------------
-class CHashSetTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
-	static GPOS_RESULT EresUnittest_Ownership();
+class CHashSetTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
+  static GPOS_RESULT EresUnittest_Ownership();
 
-};	// class CHashSetTest
+};  // class CHashSetTest
 }  // namespace gpos
 
-#endif	// !GPOS_CHashSetTest_H
+#endif  // !GPOS_CHashSetTest_H
 
 // EOF

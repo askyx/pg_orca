@@ -22,9 +22,12 @@
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/COperator.h"
 
+// forward declarations
+namespace gpdxl {
+using IntPtrArray = CDynamicPtrArray<INT, CleanupDelete>;
+}
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CCorrelatedExecutionTest
@@ -33,21 +36,19 @@ namespace gpopt
 //		Tests for converting Apply expressions into NL expressions
 //
 //---------------------------------------------------------------------------
-class CCorrelatedExecutionTest
-{
-private:
-	// counter used to mark last successful test
-	static ULONG m_ulTestCounter;
+class CCorrelatedExecutionTest {
+ private:
+  // counter used to mark last successful test
+  static ULONG m_ulTestCounter;
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_RunAllPositiveTests();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_RunAllPositiveTests();
 
-};	// class CCorrelatedExecutionTest
+};  // class CCorrelatedExecutionTest
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CCorrelatedExecutionTest_H
+#endif  // !GPOPT_CCorrelatedExecutionTest_H
 
 // EOF

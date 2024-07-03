@@ -13,9 +13,7 @@
 
 #include "gpos/base.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -26,25 +24,24 @@ using namespace gpos;
 //		Unittests for costing
 //
 //---------------------------------------------------------------------------
-class CCostTest
-{
-private:
-	// test cost model parameters
-	static void TestParams(CMemoryPool *mp, BOOL fCalibrated);
+class CCostTest {
+ private:
+  // test cost model parameters
+  static void TestParams(CMemoryPool *mp);
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Arithmetic();
-	static GPOS_RESULT EresUnittest_Bool();
-	static GPOS_RESULT EresUnittest_Params();
-	static GPOS_RESULT EresUnittest_Parsing();
-	static GPOS_RESULT EresUnittest_ParsingWithException();
-	static GPOS_RESULT EresUnittest_SetParams();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Arithmetic();
+  static GPOS_RESULT EresUnittest_Bool();
+  static GPOS_RESULT EresUnittest_Params();
+  static GPOS_RESULT EresUnittest_Parsing();
+  static GPOS_RESULT EresUnittest_ParsingWithException();
+  static GPOS_RESULT EresUnittest_SetParams();
 
-};	// class CCostTest
+};  // class CCostTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CCostTest_H
+#endif  // !GPOPT_CCostTest_H
 
 // EOF

@@ -3,9 +3,10 @@
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="103027,101013,103001"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
@@ -120,7 +121,7 @@
       <dxl:ColumnStatistics Mdid="1.1119916.1.1.8" Name="gp_segment_id" Width="4.000000"/>
       <dxl:ColumnStatistics Mdid="1.1119916.1.1.1" Name="b" Width="8.000000"/>
       <dxl:ColumnStatistics Mdid="1.1119916.1.1.0" Name="a" Width="8.000000"/>
-      <dxl:Index Mdid="0.1119939.1.0" Name="t_a" IsClustered="false" KeyColumns="0" IncludedColumns="0,1,2,3,4,5,6,7,8">
+      <dxl:Index Mdid="0.1119939.1.0" Name="t_a" IsClustered="false" KeyColumns="0" IncludedColumns="" ReturnableColumns="0">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.3027.1.0"/>
         </dxl:Opfamilies>
@@ -128,77 +129,57 @@
       <dxl:ColumnStatistics Mdid="1.1077075.1.1.5" Name="xmax" Width="4.000000"/>
       <dxl:ColumnStatistics Mdid="1.1077075.1.1.4" Name="cmin" Width="4.000000"/>
       <dxl:RelationStatistics Mdid="2.1077075.1.1" Name="r" Rows="0.000000"/>
-      <dxl:Relation Mdid="0.1077075.1.1" Name="r" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,2">
+      <dxl:Relation Mdid="6.1077075.1.1" Name="r" IsTemporary="false" Rows="0.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,2">
         <dxl:Columns>
           <dxl:Column Name="a" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="b" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.1119916.1.1.7" Name="tableoid" Width="4.000000"/>
       <dxl:ColumnStatistics Mdid="1.1119916.1.1.6" Name="cmax" Width="4.000000"/>
       <dxl:RelationStatistics Mdid="2.1119916.1.1" Name="t" Rows="0.000000"/>
-      <dxl:Relation Mdid="0.1119916.1.1" Name="t" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,2">
+      <dxl:Relation Mdid="6.1119916.1.1" Name="t" IsTemporary="false" Rows="0.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,2">
         <dxl:Columns>
           <dxl:Column Name="a" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="b" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.1119939.1.0" IsPartial="false"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.1077075.1.1.3" Name="xmin" Width="4.000000"/>
@@ -219,7 +200,7 @@
       <dxl:CTEList/>
       <dxl:LogicalJoin JoinType="Inner">
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.1119916.1.1" TableName="t">
+          <dxl:TableDescriptor Mdid="6.1119916.1.1" TableName="t">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="2" Attno="2" ColName="b" TypeMdid="0.23.1.0"/>
@@ -234,7 +215,7 @@
           </dxl:TableDescriptor>
         </dxl:LogicalGet>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.1077075.1.1" TableName="r">
+          <dxl:TableDescriptor Mdid="6.1077075.1.1" TableName="r">
             <dxl:Columns>
               <dxl:Column ColId="10" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="11" Attno="2" ColName="b" TypeMdid="0.23.1.0"/>
@@ -260,10 +241,10 @@
         </dxl:And>
       </dxl:LogicalJoin>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="40">
+    <dxl:Plan Id="0" SpaceSize="24">
       <dxl:HashJoin JoinType="Inner">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="3.477604" Rows="1.000000" Width="32"/>
+          <dxl:Cost StartupCost="0" TotalCost="437.001095" Rows="1.000000" Width="32"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="a">
@@ -289,7 +270,7 @@
         </dxl:HashCondList>
         <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="1.274479" Rows="1.000000" Width="16"/>
+            <dxl:Cost StartupCost="0" TotalCost="6.000239" Rows="1.000000" Width="16"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="a">
@@ -303,7 +284,7 @@
           <dxl:SortingColumnList/>
           <dxl:IndexScan IndexScanDirection="Forward">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="0.266667" Rows="1.000000" Width="16"/>
+              <dxl:Cost StartupCost="0" TotalCost="6.000152" Rows="1.000000" Width="16"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="0" Alias="a">
@@ -320,8 +301,9 @@
                 <dxl:ConstValue TypeMdid="0.23.1.0" Value="1"/>
               </dxl:Comparison>
             </dxl:IndexCondList>
+            <dxl:Partitions/>
             <dxl:IndexDescriptor Mdid="0.1119939.1.0" IndexName="t_a"/>
-            <dxl:TableDescriptor Mdid="0.1119916.1.1" TableName="t">
+            <dxl:TableDescriptor Mdid="6.1119916.1.1" TableName="t">
               <dxl:Columns>
                 <dxl:Column ColId="0" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="1" Attno="2" ColName="b" TypeMdid="0.23.1.0"/>
@@ -338,7 +320,7 @@
         </dxl:GatherMotion>
         <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="1.015625" Rows="1.000000" Width="16"/>
+            <dxl:Cost StartupCost="0" TotalCost="431.000097" Rows="1.000000" Width="16"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="9" Alias="a">
@@ -352,7 +334,7 @@
           <dxl:SortingColumnList/>
           <dxl:TableScan>
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="0.007812" Rows="1.000000" Width="16"/>
+              <dxl:Cost StartupCost="0" TotalCost="431.000010" Rows="1.000000" Width="16"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="9" Alias="a">
@@ -363,7 +345,7 @@
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:Filter/>
-            <dxl:TableDescriptor Mdid="0.1077075.1.1" TableName="r">
+            <dxl:TableDescriptor Mdid="6.1077075.1.1" TableName="r">
               <dxl:Columns>
                 <dxl:Column ColId="9" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="10" Attno="2" ColName="b" TypeMdid="0.23.1.0"/>

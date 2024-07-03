@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CLogical.h"
 
-namespace gpopt
-{
+namespace gpopt {
 // fwd declarations
 class CTableDescriptor;
 class CName;
@@ -30,190 +29,116 @@ class CColRefSet;
 //		Dynamic table accessor base class
 //
 //---------------------------------------------------------------------------
-class CLogicalDynamicGetBase : public CLogical
-{
-protected:
-	// alias for table
-	const CName *m_pnameAlias;
+class CLogicalDynamicGetBase : public CLogical {
+ protected:
+  // alias for table
+  const CName *m_pnameAlias;
 
-	// table descriptor
-	CTableDescriptor *m_ptabdesc;
+  // table descriptor
+  CTableDescriptorHashSet *m_ptabdesc;
 
-	// dynamic scan id
-	ULONG m_scan_id;
+  // dynamic scan id
+  ULONG m_scan_id;
 
-	// output columns
-	CColRefArray *m_pdrgpcrOutput;
+  // output columns
+  CColRefArray *m_pdrgpcrOutput;
 
-	// partition keys
-	CColRef2dArray *m_pdrgpdrgpcrPart;
+  // partition keys
+  CColRef2dArray *m_pdrgpdrgpcrPart;
 
-	// secondary scan id in case of a partial scan
-	ULONG m_ulSecondaryScanId;
+  // distribution columns (empty for coordinator only tables)
+  CColRefSet *m_pcrsDist;
 
-	// is scan partial -- only used with heterogeneous indexes defined on a subset of partitions
-	BOOL m_is_partial;
+  // private copy ctor
+  CLogicalDynamicGetBase(const CLogicalDynamicGetBase &);
 
-	// dynamic get part constraint
-	CPartConstraint *m_part_constraint;
+  // given a colrefset from a table, get colids and attno
+  void ExtractColIdsAttno(CMemoryPool *mp, CColRefSet *pcrs, ULongPtrArray *colids, ULongPtrArray *pdrgpulPos) const;
 
-	// relation part constraint
-	CPartConstraint *m_ppartcnstrRel;
+  // Child partitions
+  IMdIdArray *m_partition_mdids = nullptr;
+  // Map of Root colref -> col index in child tabledesc
+  // per child partition in m_partition_mdid
+  ColRefToUlongMapArray *m_root_col_mapping_per_part = nullptr;
 
-	// distribution columns (empty for master only tables)
-	CColRefSet *m_pcrsDist;
+  // Construct a mapping from each column in root table to an index in each
+  // child partition's table descr by matching column names$
+  static ColRefToUlongMapArray *ConstructRootColMappingPerPart(CMemoryPool *mp, CColRefArray *root_cols,
+                                                               IMdIdArray *partition_mdids);
 
-	// private copy ctor
-	CLogicalDynamicGetBase(const CLogicalDynamicGetBase &);
+  using ColNameToIndexMap = CHashMap<const CWStringConst, ULONG, CWStringConst::HashValue, CWStringConst::Equals,
+                                     CleanupNULL<const CWStringConst>, CleanupDelete<ULONG>>;
 
-	// given a colrefset from a table, get colids and attno
-	void ExtractColIdsAttno(CMemoryPool *mp, CColRefSet *pcrs,
-							ULongPtrArray *colids,
-							ULongPtrArray *pdrgpulPos) const;
+ public:
+  // ctors
+  explicit CLogicalDynamicGetBase(CMemoryPool *mp);
 
-	// derive stats from base table using filters on partition and/or index columns
-	IStatistics *PstatsDeriveFilter(CMemoryPool *mp, CExpressionHandle &exprhdl,
-									CExpression *pexprFilter) const;
+  CLogicalDynamicGetBase(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc, ULONG scan_id,
+                         CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrPart, IMdIdArray *partition_mdids);
 
-public:
-	// ctors
-	explicit CLogicalDynamicGetBase(CMemoryPool *mp);
+  CLogicalDynamicGetBase(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc, ULONG scan_id,
+                         IMdIdArray *partition_mdids);
 
-	CLogicalDynamicGetBase(CMemoryPool *mp, const CName *pnameAlias,
-						   CTableDescriptor *ptabdesc, ULONG scan_id,
-						   CColRefArray *colref_array,
-						   CColRef2dArray *pdrgpdrgpcrPart,
-						   ULONG ulSecondaryScanId, BOOL is_partial,
-						   CPartConstraint *ppartcnstr,
-						   CPartConstraint *ppartcnstrRel);
+  // dtor
+  ~CLogicalDynamicGetBase() override;
 
-	CLogicalDynamicGetBase(CMemoryPool *mp, const CName *pnameAlias,
-						   CTableDescriptor *ptabdesc, ULONG scan_id);
+  // accessors
+  virtual CColRefArray *PdrgpcrOutput() const { return m_pdrgpcrOutput; }
 
-	// dtor
-	virtual ~CLogicalDynamicGetBase();
+  // return table's name
+  virtual const CName &Name() const { return *m_pnameAlias; }
 
-	// accessors
-	virtual CColRefArray *
-	PdrgpcrOutput() const
-	{
-		return m_pdrgpcrOutput;
-	}
+  // distribution columns
+  virtual const CColRefSet *PcrsDist() const { return m_pcrsDist; }
 
-	// return table's name
-	virtual const CName &
-	Name() const
-	{
-		return *m_pnameAlias;
-	}
+  // return table's descriptor
+  virtual CTableDescriptor *Ptabdesc() const { return m_ptabdesc->First(); }
 
-	// distribution columns
-	virtual const CColRefSet *
-	PcrsDist() const
-	{
-		return m_pcrsDist;
-	}
+  // return scan id
+  virtual ULONG ScanId() const { return m_scan_id; }
 
-	// return table's descriptor
-	virtual CTableDescriptor *
-	Ptabdesc() const
-	{
-		return m_ptabdesc;
-	}
+  // return the partition columns
+  virtual CColRef2dArray *PdrgpdrgpcrPart() const { return m_pdrgpdrgpcrPart; }
 
-	// return scan id
-	virtual ULONG
-	ScanId() const
-	{
-		return m_scan_id;
-	}
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// return the partition columns
-	virtual CColRef2dArray *
-	PdrgpdrgpcrPart() const
-	{
-		return m_pdrgpdrgpcrPart;
-	}
+  // derive output columns
+  CColRefSet *DeriveOutputColumns(CMemoryPool *, CExpressionHandle &) override;
 
-	// return secondary scan id
-	virtual ULONG
-	UlSecondaryScanId() const
-	{
-		return m_ulSecondaryScanId;
-	}
+  // derive keys
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// is this a partial scan -- true if the scan operator corresponds to heterogeneous index
-	virtual BOOL
-	IsPartial() const
-	{
-		return m_is_partial;
-	}
+  // derive partition consumer info
+  CPartInfo *DerivePartitionInfo(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// return dynamic get part constraint
-	virtual CPartConstraint *
-	Ppartcnstr() const
-	{
-		return m_part_constraint;
-	}
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// return relation part constraint
-	virtual CPartConstraint *
-	PpartcnstrRel() const
-	{
-		return m_ppartcnstrRel;
-	}
+  // derive join depth
+  ULONG
+  DeriveJoinDepth(CMemoryPool *,       // mp
+                  CExpressionHandle &  // exprhdl
+  ) const override {
+    return 1;
+  }
 
-	// set part constraint
-	virtual void SetPartConstraint(CPartConstraint *ppartcnstr);
+  // derive table descriptor
+  CTableDescriptorHashSet *DeriveTableDescriptor(CMemoryPool *mp GPOS_UNUSED,
+                                                 CExpressionHandle &  // exprhdl
+  ) const override {
+    m_ptabdesc->AddRef();
+    return m_ptabdesc;
+  }
 
-	// set secondary scan id
-	virtual void SetSecondaryScanId(ULONG scan_id);
+  IMdIdArray *GetPartitionMdids() const { return m_partition_mdids; }
 
-	// set scan to partial
-	virtual void SetPartial();
-
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
-
-	// derive output columns
-	virtual CColRefSet *DeriveOutputColumns(CMemoryPool *, CExpressionHandle &);
-
-	// derive keys
-	virtual CKeyCollection *DeriveKeyCollection(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
-
-	// derive partition consumer info
-	virtual CPartInfo *DerivePartitionInfo(CMemoryPool *mp,
-										   CExpressionHandle &exprhdl) const;
-
-	// derive constraint property
-	virtual CPropConstraint *DerivePropertyConstraint(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
-
-	// derive join depth
-	virtual ULONG
-	DeriveJoinDepth(CMemoryPool *,		 // mp
-					CExpressionHandle &	 // exprhdl
-	) const
-	{
-		return 1;
-	}
-
-	// derive table descriptor
-	virtual CTableDescriptor *
-	DeriveTableDescriptor(CMemoryPool *,	   // mp
-						  CExpressionHandle &  // exprhdl
-	) const
-	{
-		return m_ptabdesc;
-	}
-
-};	// class CLogicalDynamicGetBase
+  ColRefToUlongMapArray *GetRootColMappingPerPart() const { return m_root_col_mapping_per_part; }
+};  // class CLogicalDynamicGetBase
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CLogicalDynamicGetBase_H
+#endif  // !GPOPT_CLogicalDynamicGetBase_H
 
 // EOF

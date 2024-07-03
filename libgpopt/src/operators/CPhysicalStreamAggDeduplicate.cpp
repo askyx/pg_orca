@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 Pivotal, Inc.
+//	Copyright (C) 2013 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CPhysicalStreamAggDeduplicate.cpp
@@ -18,7 +18,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CPhysicalStreamAggDeduplicate::CPhysicalStreamAggDeduplicate
@@ -28,18 +27,15 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CPhysicalStreamAggDeduplicate::CPhysicalStreamAggDeduplicate(
-	CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal,
-	COperator::EGbAggType egbaggtype, CColRefArray *pdrgpcrKeys,
-	BOOL fGeneratesDuplicates, BOOL fMultiStage, BOOL isAggFromSplitDQA,
-	CLogicalGbAgg::EAggStage aggStage, BOOL should_enforce_distribution)
-	: CPhysicalStreamAgg(mp, colref_array, pdrgpcrMinimal, egbaggtype,
-						 fGeneratesDuplicates, NULL /*pdrgpcrGbMinusDistinct*/,
-						 fMultiStage, isAggFromSplitDQA, aggStage,
-						 should_enforce_distribution),
-	  m_pdrgpcrKeys(pdrgpcrKeys)
-{
-	GPOS_ASSERT(NULL != pdrgpcrKeys);
-	InitOrderSpec(mp, m_pdrgpcrKeys);
+    CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal, COperator::EGbAggType egbaggtype,
+    CColRefArray *pdrgpcrKeys, BOOL fGeneratesDuplicates, BOOL fMultiStage, BOOL isAggFromSplitDQA,
+    CLogicalGbAgg::EAggStage aggStage, BOOL should_enforce_distribution)
+    : CPhysicalStreamAgg(mp, colref_array, pdrgpcrMinimal, egbaggtype, fGeneratesDuplicates,
+                         nullptr /*pdrgpcrGbMinusDistinct*/, fMultiStage, isAggFromSplitDQA, aggStage,
+                         should_enforce_distribution),
+      m_pdrgpcrKeys(pdrgpcrKeys) {
+  GPOS_ASSERT(nullptr != pdrgpcrKeys);
+  InitOrderSpec(mp, m_pdrgpcrKeys);
 }
 
 //---------------------------------------------------------------------------
@@ -50,9 +46,8 @@ CPhysicalStreamAggDeduplicate::CPhysicalStreamAggDeduplicate(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CPhysicalStreamAggDeduplicate::~CPhysicalStreamAggDeduplicate()
-{
-	m_pdrgpcrKeys->Release();
+CPhysicalStreamAggDeduplicate::~CPhysicalStreamAggDeduplicate() {
+  m_pdrgpcrKeys->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -63,28 +58,23 @@ CPhysicalStreamAggDeduplicate::~CPhysicalStreamAggDeduplicate()
 //		Debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CPhysicalStreamAggDeduplicate::OsPrint(IOstream &os) const
-{
-	if (m_fPattern)
-	{
-		return COperator::OsPrint(os);
-	}
+IOstream &CPhysicalStreamAggDeduplicate::OsPrint(IOstream &os) const {
+  if (m_fPattern) {
+    return COperator::OsPrint(os);
+  }
 
-	os << SzId() << "( ";
-	CLogicalGbAgg::OsPrintGbAggType(os, Egbaggtype());
-	os << " )"
-	   << " Grp Cols: [";
+  os << SzId() << "( ";
+  CLogicalGbAgg::OsPrintGbAggType(os, Egbaggtype());
+  os << " )" << " Grp Cols: [";
 
-	CUtils::OsPrintDrgPcr(os, PdrgpcrGroupingCols());
-	os << "]"
-	   << ", Key Cols:[";
-	CUtils::OsPrintDrgPcr(os, m_pdrgpcrKeys);
-	os << "]";
+  CUtils::OsPrintDrgPcr(os, PdrgpcrGroupingCols());
+  os << "]" << ", Key Cols:[";
+  CUtils::OsPrintDrgPcr(os, m_pdrgpcrKeys);
+  os << "]";
 
-	os << ", Generates Duplicates :[ " << FGeneratesDuplicates() << " ] ";
+  os << ", Generates Duplicates :[ " << FGeneratesDuplicates() << " ] ";
 
-	return os;
+  return os;
 }
 
 // EOF

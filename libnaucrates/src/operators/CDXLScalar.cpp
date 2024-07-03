@@ -21,9 +21,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalar::CDXLScalar(CMemoryPool *mp) : CDXLOperator(mp)
-{
-}
+CDXLScalar::CDXLScalar(CMemoryPool *mp) : CDXLOperator(mp) {}
 
 //---------------------------------------------------------------------------
 //      @function:
@@ -33,11 +31,8 @@ CDXLScalar::CDXLScalar(CMemoryPool *mp) : CDXLOperator(mp)
 //              Operator Type
 //
 //---------------------------------------------------------------------------
-Edxloptype
-CDXLScalar::GetDXLOperatorType() const
-{
-	return EdxloptypeScalar;
+Edxloptype CDXLScalar::GetDXLOperatorType() const {
+  return EdxloptypeScalar;
 }
-
 
 // EOF

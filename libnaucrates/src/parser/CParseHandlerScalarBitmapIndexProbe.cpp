@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerScalarBitmapIndexProbe.cpp
@@ -33,12 +33,10 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CParseHandlerScalarBitmapIndexProbe::CParseHandlerScalarBitmapIndexProbe(
-	CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
-	: CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root)
-{
-}
+CParseHandlerScalarBitmapIndexProbe::CParseHandlerScalarBitmapIndexProbe(CMemoryPool *mp,
+                                                                         CParseHandlerManager *parse_handler_mgr,
+                                                                         CParseHandlerBase *parse_handler_root)
+    : CParseHandlerScalarOp(mp, parse_handler_mgr, parse_handler_root) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -48,44 +46,33 @@ CParseHandlerScalarBitmapIndexProbe::CParseHandlerScalarBitmapIndexProbe(
 //		Invoked by Xerces to process an opening tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerScalarBitmapIndexProbe::StartElement(
-	const XMLCh *const,	 // element_uri
-	const XMLCh *const element_local_name,
-	const XMLCh *const,	 // element_qname
-	const Attributes &	 // attrs
-)
-{
-	if (0 != XMLString::compareString(
-				 CDXLTokens::XmlstrToken(EdxltokenScalarBitmapIndexProbe),
-				 element_local_name))
-	{
-		CWStringDynamic *str = CDXLUtils::CreateDynamicStringFromXMLChArray(
-			m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
-		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag,
-				   str->GetBuffer());
-	}
+void CParseHandlerScalarBitmapIndexProbe::StartElement(const XMLCh *const,  // element_uri
+                                                       const XMLCh *const element_local_name,
+                                                       const XMLCh *const,  // element_qname
+                                                       const Attributes &   // attrs
+) {
+  if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarBitmapIndexProbe), element_local_name)) {
+    CWStringDynamic *str =
+        CDXLUtils::CreateDynamicStringFromXMLChArray(m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
+    GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, str->GetBuffer());
+  }
 
-	// create and activate the parse handler for the children nodes in reverse
-	// order of their expected appearance
+  // create and activate the parse handler for the children nodes in reverse
+  // order of their expected appearance
 
-	// parse handler for the index descriptor
-	CParseHandlerBase *index_descr_parse_handler =
-		CParseHandlerFactory::GetParseHandler(
-			m_mp, CDXLTokens::XmlstrToken(EdxltokenIndexDescr),
-			m_parse_handler_mgr, this);
-	m_parse_handler_mgr->ActivateParseHandler(index_descr_parse_handler);
+  // parse handler for the index descriptor
+  CParseHandlerBase *index_descr_parse_handler = CParseHandlerFactory::GetParseHandler(
+      m_mp, CDXLTokens::XmlstrToken(EdxltokenIndexDescr), m_parse_handler_mgr, this);
+  m_parse_handler_mgr->ActivateParseHandler(index_descr_parse_handler);
 
-	// parse handler for the index condition list
-	CParseHandlerBase *index_cond_list_parse_handler =
-		CParseHandlerFactory::GetParseHandler(
-			m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarIndexCondList),
-			m_parse_handler_mgr, this);
-	m_parse_handler_mgr->ActivateParseHandler(index_cond_list_parse_handler);
+  // parse handler for the index condition list
+  CParseHandlerBase *index_cond_list_parse_handler = CParseHandlerFactory::GetParseHandler(
+      m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarIndexCondList), m_parse_handler_mgr, this);
+  m_parse_handler_mgr->ActivateParseHandler(index_cond_list_parse_handler);
 
-	// store parse handlers
-	this->Append(index_cond_list_parse_handler);
-	this->Append(index_descr_parse_handler);
+  // store parse handlers
+  this->Append(index_cond_list_parse_handler);
+  this->Append(index_descr_parse_handler);
 }
 
 //---------------------------------------------------------------------------
@@ -96,42 +83,31 @@ CParseHandlerScalarBitmapIndexProbe::StartElement(
 //		Invoked by Xerces to process a closing tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerScalarBitmapIndexProbe::EndElement(
-	const XMLCh *const,	 // element_uri
-	const XMLCh *const element_local_name,
-	const XMLCh *const	// element_qname
-)
-{
-	if (0 != XMLString::compareString(
-				 CDXLTokens::XmlstrToken(EdxltokenScalarBitmapIndexProbe),
-				 element_local_name))
-	{
-		CWStringDynamic *str = CDXLUtils::CreateDynamicStringFromXMLChArray(
-			m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
-		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag,
-				   str->GetBuffer());
-	}
+void CParseHandlerScalarBitmapIndexProbe::EndElement(const XMLCh *const,  // element_uri
+                                                     const XMLCh *const element_local_name,
+                                                     const XMLCh *const  // element_qname
+) {
+  if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenScalarBitmapIndexProbe), element_local_name)) {
+    CWStringDynamic *str =
+        CDXLUtils::CreateDynamicStringFromXMLChArray(m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
+    GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, str->GetBuffer());
+  }
 
-	// construct node from the created child nodes
-	CParseHandlerIndexCondList *index_cond_list_parse_handler =
-		dynamic_cast<CParseHandlerIndexCondList *>((*this)[0]);
-	CParseHandlerIndexDescr *index_descr_parse_handler =
-		dynamic_cast<CParseHandlerIndexDescr *>((*this)[1]);
+  // construct node from the created child nodes
+  CParseHandlerIndexCondList *index_cond_list_parse_handler = dynamic_cast<CParseHandlerIndexCondList *>((*this)[0]);
+  CParseHandlerIndexDescr *index_descr_parse_handler = dynamic_cast<CParseHandlerIndexDescr *>((*this)[1]);
 
-	CDXLIndexDescr *dxl_index_descr =
-		index_descr_parse_handler->GetDXLIndexDescr();
-	dxl_index_descr->AddRef();
+  CDXLIndexDescr *dxl_index_descr = index_descr_parse_handler->GetDXLIndexDescr();
+  dxl_index_descr->AddRef();
 
-	CDXLScalar *dxl_op =
-		GPOS_NEW(m_mp) CDXLScalarBitmapIndexProbe(m_mp, dxl_index_descr);
-	m_dxl_node = GPOS_NEW(m_mp) CDXLNode(m_mp, dxl_op);
+  CDXLScalar *dxl_op = GPOS_NEW(m_mp) CDXLScalarBitmapIndexProbe(m_mp, dxl_index_descr);
+  m_dxl_node = GPOS_NEW(m_mp) CDXLNode(m_mp, dxl_op);
 
-	// add children
-	AddChildFromParseHandler(index_cond_list_parse_handler);
+  // add children
+  AddChildFromParseHandler(index_cond_list_parse_handler);
 
-	// deactivate handler
-	m_parse_handler_mgr->DeactivateHandler();
+  // deactivate handler
+  m_parse_handler_mgr->DeactivateHandler();
 }
 
 // EOF

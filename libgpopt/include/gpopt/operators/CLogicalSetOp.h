@@ -16,8 +16,7 @@
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/operators/CLogical.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalSetOp
@@ -26,138 +25,119 @@ namespace gpopt
 //		Base for all set operations
 //
 //---------------------------------------------------------------------------
-class CLogicalSetOp : public CLogical
-{
-protected:
-	// output column array
-	CColRefArray *m_pdrgpcrOutput;
+class CLogicalSetOp : public CLogical {
+ protected:
+  // output column array
+  CColRefArray *m_pdrgpcrOutput;
 
-	// input column array
-	CColRef2dArray *m_pdrgpdrgpcrInput;
+  // input column array
+  CColRef2dArray *m_pdrgpdrgpcrInput;
 
-	// set representation of output columns
-	CColRefSet *m_pcrsOutput;
+  // set representation of output columns
+  CColRefSet *m_pcrsOutput;
 
-	// set representation of input columns
-	CColRefSetArray *m_pdrgpcrsInput;
+  // set representation of input columns
+  CColRefSetArray *m_pdrgpcrsInput;
 
-	// private copy ctor
-	CLogicalSetOp(const CLogicalSetOp &);
+  // private copy ctor
+  CLogicalSetOp(const CLogicalSetOp &);
 
-	// build set representation of input/output columns for faster set operations
-	void BuildColumnSets(CMemoryPool *mp);
+  // build set representation of input/output columns for faster set operations
+  void BuildColumnSets(CMemoryPool *mp);
 
-	// output equivalence classes
-	CColRefSetArray *PdrgpcrsOutputEquivClasses(CMemoryPool *mp,
-												CExpressionHandle &exprhdl,
-												BOOL fIntersect) const;
+  // output equivalence classes
+  CColRefSetArray *PdrgpcrsOutputEquivClasses(CMemoryPool *mp, CExpressionHandle &exprhdl, BOOL fIntersect) const;
 
-	// equivalence classes from one input child, mapped to output columns
-	CColRefSetArray *PdrgpcrsInputMapped(CMemoryPool *mp,
-										 CExpressionHandle &exprhdl,
-										 ULONG ulChild) const;
+  // equivalence classes from one input child, mapped to output columns
+  CColRefSetArray *PdrgpcrsInputMapped(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulChild) const;
 
-	// constraints for a given output column from all children
-	CConstraintArray *PdrgpcnstrColumn(CMemoryPool *mp,
-									   CExpressionHandle &exprhdl,
-									   ULONG ulColIndex, ULONG ulStart) const;
+  // constraints for a given output column from all children
+  CConstraintArray *PdrgpcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulColIndex,
+                                     ULONG ulStart) const;
 
-	// get constraint for a given output column from a given children
-	CConstraint *PcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl,
-							  ULONG ulColIndex, ULONG ulChild) const;
+  // get constraint for a given output column from a given children
+  CConstraint *PcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulColIndex, ULONG ulChild) const;
 
-	// derive constraint property for intersect and union operators
-	CPropConstraint *PpcDeriveConstraintIntersectUnion(
-		CMemoryPool *mp, CExpressionHandle &exprhdl, BOOL fIntersect) const;
+  // derive constraint property for difference, intersect, and union
+  // operators
+  CPropConstraint *PpcDeriveConstraintSetop(CMemoryPool *mp, CExpressionHandle &exprhdl, BOOL fIntersect) const;
 
-public:
-	// ctor
-	explicit CLogicalSetOp(CMemoryPool *mp);
+ public:
+  // ctor
+  explicit CLogicalSetOp(CMemoryPool *mp);
 
-	CLogicalSetOp(CMemoryPool *mp, CColRefArray *pdrgOutput,
-				  CColRefArray *pdrgpcrLeft, CColRefArray *pdrgpcrRight);
+  CLogicalSetOp(CMemoryPool *mp, CColRefArray *pdrgOutput, CColRefArray *pdrgpcrLeft, CColRefArray *pdrgpcrRight);
 
-	CLogicalSetOp(CMemoryPool *mp, CColRefArray *pdrgpcrOutput,
-				  CColRef2dArray *pdrgpdrgpcrInput);
+  CLogicalSetOp(CMemoryPool *mp, CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrInput);
 
-	// dtor
-	virtual ~CLogicalSetOp();
+  // dtor
+  ~CLogicalSetOp() override;
 
-	// ident accessors
-	virtual EOperatorId Eopid() const = 0;
+  // ident accessors
+  EOperatorId Eopid() const override = 0;
 
-	// return a string for operator name
-	virtual const CHAR *SzId() const = 0;
+  // return a string for operator name
+  const CHAR *SzId() const override = 0;
 
-	// accessor of output column array
-	CColRefArray *
-	PdrgpcrOutput() const
-	{
-		GPOS_ASSERT(NULL != m_pdrgpcrOutput);
-		return m_pdrgpcrOutput;
-	}
+  // accessor of output column array
+  CColRefArray *PdrgpcrOutput() const {
+    GPOS_ASSERT(nullptr != m_pdrgpcrOutput);
+    return m_pdrgpcrOutput;
+  }
 
-	// accessor of input column array
-	CColRef2dArray *
-	PdrgpdrgpcrInput() const
-	{
-		GPOS_ASSERT(NULL != m_pdrgpdrgpcrInput);
-		return m_pdrgpdrgpcrInput;
-	}
+  // accessor of input column array
+  CColRef2dArray *PdrgpdrgpcrInput() const {
+    GPOS_ASSERT(nullptr != m_pdrgpdrgpcrInput);
+    return m_pdrgpdrgpcrInput;
+  }
 
-	// return true if we can pull projections up past this operator from its given child
-	virtual BOOL FCanPullProjectionsUp(ULONG  //child_index
-	) const
-	{
-		return false;
-	}
+  // return true if we can pull projections up past this operator from its given child
+  BOOL FCanPullProjectionsUp(ULONG  // child_index
+  ) const override {
+    return false;
+  }
 
-	// match function
-	BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	virtual IOstream &OsPrint(IOstream &os) const;
+  IOstream &OsPrint(IOstream &os) const override;
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive output columns
-	virtual CColRefSet *DeriveOutputColumns(CMemoryPool *, CExpressionHandle &);
+  // derive output columns
+  CColRefSet *DeriveOutputColumns(CMemoryPool *, CExpressionHandle &) override;
 
-	// derive key collections
-	virtual CKeyCollection *DeriveKeyCollection(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  // derive key collections
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive partition consumer info
-	virtual CPartInfo *DerivePartitionInfo(CMemoryPool *mp,
-										   CExpressionHandle &exprhdl) const;
+  // derive partition consumer info
+  CPartInfo *DerivePartitionInfo(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	//-------------------------------------------------------------------------------------
-	// Required Relational Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Required Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// compute required stat columns of the n-th child
-	virtual CColRefSet *PcrsStat(CMemoryPool *,		   // mp
-								 CExpressionHandle &,  // exprhdl
-								 CColRefSet *pcrsInput,
-								 ULONG	// child_index
-	) const;
+  // compute required stat columns of the n-th child
+  CColRefSet *PcrsStat(CMemoryPool *,        // mp
+                       CExpressionHandle &,  // exprhdl
+                       CColRefSet *pcrsInput,
+                       ULONG  // child_index
+  ) const override;
 
-	// conversion function
-	static CLogicalSetOp *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(CUtils::FLogicalSetOp(pop));
+  // conversion function
+  static CLogicalSetOp *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(CUtils::FLogicalSetOp(pop));
 
-		return dynamic_cast<CLogicalSetOp *>(pop);
-	}
+    return dynamic_cast<CLogicalSetOp *>(pop);
+  }
 
-};	// class CLogicalSetOp
+};  // class CLogicalSetOp
 
 }  // namespace gpopt
 
-
-#endif	// !GPOS_CLogicalSetOp_H
+#endif  // !GPOS_CLogicalSetOp_H
 
 // EOF

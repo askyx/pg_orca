@@ -16,8 +16,7 @@
 
 #include "gpopt/operators/CExpression.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // prototypes
@@ -31,63 +30,55 @@ class CReqdPropPlan;
 //		Property specification
 //
 //---------------------------------------------------------------------------
-class CPropSpec : public CRefCount
-{
-public:
-	// property type
-	enum EPropSpecType
-	{
-		EpstOrder,
-		EpstDistribution,
-		EpstRewindability,
-		EpstPartPropagation,
+class CPropSpec : public CRefCount, public DbgPrintMixin<CPropSpec> {
+ public:
+  // property type
+  enum EPropSpecType {
+    EpstOrder,
+    EpstDistribution,
+    EpstRewindability,
+    EpstPartPropagation,
 
-		EpstSentinel
-	};
+    EpstSentinel
+  };
 
-private:
-	// private copy ctor
-	CPropSpec(const CPropSpec &);
+ private:
+ protected:
+  // ctor
+  CPropSpec() = default;
 
-protected:
-	// ctor
-	CPropSpec()
-	{
-	}
+  // dtor
+  ~CPropSpec() override = default;
 
-	// dtor
-	~CPropSpec()
-	{
-	}
+ public:
+  CPropSpec(const CPropSpec &) = delete;
 
-public:
-	// append enforcers to dynamic array for the given plan properties
-	virtual void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								 CReqdPropPlan *prpp,
-								 CExpressionArray *pdrgpexpr,
-								 CExpression *pexpr) = 0;
+  // append enforcers to dynamic array for the given plan properties
+  virtual void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpp,
+                               CExpressionArray *pdrgpexpr, CExpression *pexpr) = 0;
 
-	// hash function
-	virtual ULONG HashValue() const = 0;
+  // hash function
+  virtual ULONG HashValue() const = 0;
 
-	// extract columns used by the property
-	virtual CColRefSet *PcrsUsed(CMemoryPool *mp) const = 0;
+  // extract columns used by the property
+  virtual CColRefSet *PcrsUsed(CMemoryPool *mp) const = 0;
 
-	// property type
-	virtual EPropSpecType Epst() const = 0;
+  // property type
+  virtual EPropSpecType Epst() const = 0;
 
-};	// class CPropSpec
+  virtual gpos::IOstream &OsPrint(gpos::IOstream &os) const = 0;
 
+};  // class CPropSpec
 
 // shorthand for printing
-inline IOstream &
-operator<<(IOstream &os, const CPropSpec &ospec)
-{
-	return ospec.OsPrint(os);
+inline IOstream &operator<<(IOstream &os, const CPropSpec &ospec) {
+  return ospec.OsPrint(os);
 }
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPropSpec_H
+FORCE_GENERATE_DBGSTR(gpopt::CPropSpec);
+
+#endif  // !GPOPT_CPropSpec_H
 
 // EOF

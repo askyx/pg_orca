@@ -16,8 +16,7 @@
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalApply.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalLeftOuterApply
@@ -26,108 +25,82 @@ namespace gpopt
 //		Logical left outer Apply operator used in subquery transformations
 //
 //---------------------------------------------------------------------------
-class CLogicalLeftOuterApply : public CLogicalApply
-{
-private:
-	// private copy ctor
-	CLogicalLeftOuterApply(const CLogicalLeftOuterApply &);
+class CLogicalLeftOuterApply : public CLogicalApply {
+ private:
+ public:
+  CLogicalLeftOuterApply(const CLogicalLeftOuterApply &) = delete;
 
-public:
-	// ctor for patterns
-	explicit CLogicalLeftOuterApply(CMemoryPool *mp);
+  // ctor for patterns
+  explicit CLogicalLeftOuterApply(CMemoryPool *mp);
 
-	// ctor
-	CLogicalLeftOuterApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner,
-						   EOperatorId eopidOriginSubq);
+  // ctor
+  CLogicalLeftOuterApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq);
 
-	// dtor
-	virtual ~CLogicalLeftOuterApply();
+  // dtor
+  ~CLogicalLeftOuterApply() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalLeftOuterApply;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalLeftOuterApply; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalLeftOuterApply";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalLeftOuterApply"; }
 
-	// return true if we can pull projections up past this operator from its given child
-	virtual BOOL
-	FCanPullProjectionsUp(ULONG child_index) const
-	{
-		return (0 == child_index);
-	}
+  // return true if we can pull projections up past this operator from its given child
+  BOOL FCanPullProjectionsUp(ULONG child_index) const override { return (0 == child_index); }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive output columns
-	virtual CColRefSet *
-	DeriveOutputColumns(CMemoryPool *mp, CExpressionHandle &exprhdl)
-	{
-		GPOS_ASSERT(3 == exprhdl.Arity());
+  // derive output columns
+  CColRefSet *DeriveOutputColumns(CMemoryPool *mp, CExpressionHandle &exprhdl) override {
+    GPOS_ASSERT(3 == exprhdl.Arity());
 
-		return PcrsDeriveOutputCombineLogical(mp, exprhdl);
-	}
+    return PcrsDeriveOutputCombineLogical(mp, exprhdl);
+  }
 
-	// derive not nullable output columns
-	virtual CColRefSet *
-	DeriveNotNullColumns(CMemoryPool *,	 // mp
-						 CExpressionHandle &exprhdl) const
-	{
-		// left outer apply passes through not null columns from outer child only
-		return PcrsDeriveNotNullPassThruOuter(exprhdl);
-	}
+  // derive not nullable output columns
+  CColRefSet *DeriveNotNullColumns(CMemoryPool *,  // mp
+                                   CExpressionHandle &exprhdl) const override {
+    // left outer apply passes through not null columns from outer child only
+    return PcrsDeriveNotNullPassThruOuter(exprhdl);
+  }
 
-	// derive max card
-	virtual CMaxCard DeriveMaxCard(CMemoryPool *mp,
-								   CExpressionHandle &exprhdl) const;
+  // derive max card
+  CMaxCard DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive constraint property
-	virtual CPropConstraint *
-	DerivePropertyConstraint(CMemoryPool *,	 //mp,
-							 CExpressionHandle &exprhdl) const
-	{
-		return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
-	}
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *,  // mp,
+                                            CExpressionHandle &exprhdl) const override {
+    return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// candidate set of xforms
-	virtual CXformSet *PxfsCandidates(CMemoryPool *) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// conversion function
-	static CLogicalLeftOuterApply *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalLeftOuterApply == pop->Eopid());
+  // conversion function
+  static CLogicalLeftOuterApply *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalLeftOuterApply == pop->Eopid());
 
-		return dynamic_cast<CLogicalLeftOuterApply *>(pop);
-	}
+    return dynamic_cast<CLogicalLeftOuterApply *>(pop);
+  }
 
-};	// class CLogicalLeftOuterApply
+};  // class CLogicalLeftOuterApply
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CLogicalLeftOuterApply_H
+#endif  // !GPOPT_CLogicalLeftOuterApply_H
 
 // EOF

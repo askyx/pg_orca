@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
-//	Pivotal Software, Inc
-//	Copyright (C) 2017 Pivotal Software, Inc
+//	VMware, Inc. or its affiliates
+//	Copyright (C) 2017 VMware, Inc. or its affiliates
 //---------------------------------------------------------------------------
 
 #ifndef GPOPT_CEquivalenceClassesTest_H
@@ -10,26 +10,21 @@
 
 #include "gpopt/base/CColRefSet.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // Static unit tests for equivalence classes
-class CEquivalenceClassesTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_NotDisjointEquivalanceClasses();
-	static GPOS_RESULT EresUnittest_IntersectEquivalanceClasses();
-	static CColRefSetArray *createEquivalenceClasses(CMemoryPool *mp,
-													 CColRefSet *pcrs,
-													 int breakpoints[]);
+class CEquivalenceClassesTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_NotDisjointEquivalanceClasses();
+  static GPOS_RESULT EresUnittest_IntersectEquivalanceClasses();
+  static CColRefSetArray *createEquivalenceClasses(CMemoryPool *mp, CColRefSet *pcrs, int breakpoints[]);
 
-};	// class CEquivalenceClassesTest
+};  // class CEquivalenceClassesTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CEquivalenceClassesTest_H
-
+#endif  // !GPOPT_CEquivalenceClassesTest_H
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CPattern.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,49 +26,30 @@ using namespace gpos;
 //		Pattern that matches entire expression trees, e.g. scalar expressions
 //
 //---------------------------------------------------------------------------
-class CPatternTree : public CPattern
-{
-private:
-	// private copy ctor
-	CPatternTree(const CPatternTree &);
+class CPatternTree : public CPattern {
+ private:
+ public:
+  CPatternTree(const CPatternTree &) = delete;
 
-public:
-	// ctor
-	explicit CPatternTree(CMemoryPool *mp) : CPattern(mp)
-	{
-	}
+  // ctor
+  explicit CPatternTree(CMemoryPool *mp) : CPattern(mp) {}
 
-	// dtor
-	virtual ~CPatternTree()
-	{
-	}
+  // dtor
+  ~CPatternTree() override = default;
 
-	// check if operator is a pattern leaf
-	virtual BOOL
-	FLeaf() const
-	{
-		return false;
-	}
+  // check if operator is a pattern leaf
+  BOOL FLeaf() const override { return false; }
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPatternTree;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPatternTree; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPatternTree";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CPatternTree"; }
 
-};	// class CPatternTree
+};  // class CPatternTree
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CPatternTree_H
+#endif  // !GPOPT_CPatternTree_H
 
 // EOF

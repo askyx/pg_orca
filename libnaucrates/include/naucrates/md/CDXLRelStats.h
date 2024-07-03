@@ -9,8 +9,6 @@
 //		Class representing relation stats
 //---------------------------------------------------------------------------
 
-
-
 #ifndef GPMD_CDXLRelStats_H
 #define GPMD_CDXLRelStats_H
 
@@ -21,13 +19,11 @@
 #include "naucrates/md/CMDIdRelStats.h"
 #include "naucrates/md/IMDRelStats.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 class CXMLSerializer;
 }
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 using namespace gpdxl;
 
@@ -39,71 +35,77 @@ using namespace gpdxl;
 //		Class representing relation stats
 //
 //---------------------------------------------------------------------------
-class CDXLRelStats : public IMDRelStats
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CDXLRelStats : public IMDRelStats {
+ private:
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// metadata id of the object
-	CMDIdRelStats *m_rel_stats_mdid;
+  // metadata id of the object
+  CMDIdRelStats *m_rel_stats_mdid;
 
-	// table name
-	CMDName *m_mdname;
+  // table name
+  CMDName *m_mdname;
 
-	// number of rows
-	CDouble m_rows;
+  // number of rows
+  CDouble m_rows;
 
-	// flag to indicate if input relation is empty
-	BOOL m_empty;
+  // flag to indicate if input relation is empty
+  BOOL m_empty;
 
-	// DXL string for object
-	CWStringDynamic *m_dxl_str;
+  // DXL string for object
+  CWStringDynamic *m_dxl_str = nullptr;
 
-	// private copy ctor
-	CDXLRelStats(const CDXLRelStats &);
+  // number of blocks (not always up to-to-date)
+  ULONG m_relpages;
 
-public:
-	CDXLRelStats(CMemoryPool *mp, CMDIdRelStats *rel_stats_mdid,
-				 CMDName *mdname, CDouble rows, BOOL is_empty);
+  // number of all-visible blocks (not always up-to-date)
+  ULONG m_relallvisible;
 
-	virtual ~CDXLRelStats();
+ public:
+  CDXLRelStats(const CDXLRelStats &) = delete;
 
-	// the metadata id
-	virtual IMDId *MDId() const;
+  CDXLRelStats(CMemoryPool *mp, CMDIdRelStats *rel_stats_mdid, CMDName *mdname, CDouble rows, BOOL is_empty,
+               ULONG relpages, ULONG relallvisible);
 
-	// relation name
-	virtual CMDName Mdname() const;
+  ~CDXLRelStats() override;
 
-	// DXL string representation of cache object
-	virtual const CWStringDynamic *GetStrRepr() const;
+  // the metadata id
+  IMDId *MDId() const override;
 
-	// number of rows
-	virtual CDouble Rows() const;
+  // relation name
+  CMDName Mdname() const override;
 
-	// is statistics on an empty input
-	virtual BOOL
-	IsEmpty() const
-	{
-		return m_empty;
-	}
+  // DXL string representation of cache object
+  const CWStringDynamic *GetStrRepr() override;
 
-	// serialize relation stats in DXL format given a serializer object
-	virtual void Serialize(gpdxl::CXMLSerializer *) const;
+  // number of rows
+  CDouble Rows() const override;
+
+  // number of blocks (not always up to-to-date)
+  ULONG
+  RelPages() const override { return m_relpages; }
+
+  // number of all-visible blocks (not always up-to-date)
+  ULONG
+  RelAllVisible() const override { return m_relallvisible; }
+
+  // is statistics on an empty input
+  BOOL IsEmpty() const override { return m_empty; }
+
+  // serialize relation stats in DXL format given a serializer object
+  void Serialize(gpdxl::CXMLSerializer *) const override;
 
 #ifdef GPOS_DEBUG
-	// debug print of the metadata relation
-	virtual void DebugPrint(IOstream &os) const;
+  // debug print of the metadata relation
+  void DebugPrint(IOstream &os) const override;
 #endif
 
-	// dummy relstats
-	static CDXLRelStats *CreateDXLDummyRelStats(CMemoryPool *mp, IMDId *mdid);
+  // dummy relstats
+  static CDXLRelStats *CreateDXLDummyRelStats(CMemoryPool *mp, IMDId *mdid);
 };
 
 }  // namespace gpmd
 
-
-
-#endif	// !GPMD_CDXLRelStats_H
+#endif  // !GPMD_CDXLRelStats_H
 
 // EOF

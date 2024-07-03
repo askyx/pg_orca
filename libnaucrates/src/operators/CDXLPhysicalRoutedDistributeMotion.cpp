@@ -9,7 +9,6 @@
 //		Implementation of DXL physical routed redistribute motion operator
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/dxl/operators/CDXLPhysicalRoutedDistributeMotion.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
@@ -26,12 +25,8 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalRoutedDistributeMotion::CDXLPhysicalRoutedDistributeMotion(
-	CMemoryPool *mp, ULONG segment_id_col)
-	: CDXLPhysicalMotion(mp), m_segment_id_col(segment_id_col)
-{
-}
-
+CDXLPhysicalRoutedDistributeMotion::CDXLPhysicalRoutedDistributeMotion(CMemoryPool *mp, ULONG segment_id_col)
+    : CDXLPhysicalMotion(mp), m_segment_id_col(segment_id_col) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -41,12 +36,9 @@ CDXLPhysicalRoutedDistributeMotion::CDXLPhysicalRoutedDistributeMotion(
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLPhysicalRoutedDistributeMotion::GetDXLOperator() const
-{
-	return EdxlopPhysicalMotionRoutedDistribute;
+Edxlopid CDXLPhysicalRoutedDistributeMotion::GetDXLOperator() const {
+  return EdxlopPhysicalMotionRoutedDistribute;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -56,10 +48,8 @@ CDXLPhysicalRoutedDistributeMotion::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLPhysicalRoutedDistributeMotion::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalRoutedDistributeMotion);
+const CWStringConst *CDXLPhysicalRoutedDistributeMotion::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalRoutedDistributeMotion);
 }
 
 //---------------------------------------------------------------------------
@@ -70,30 +60,23 @@ CDXLPhysicalRoutedDistributeMotion::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalRoutedDistributeMotion::SerializeToDXL(
-	CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLPhysicalRoutedDistributeMotion::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenSegmentIdCol), m_segment_id_col);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSegmentIdCol), m_segment_id_col);
 
-	SerializeSegmentInfoToDXL(xml_serializer);
+  SerializeSegmentInfoToDXL(xml_serializer);
 
-	// serialize properties
-	dxlnode->SerializePropertiesToDXL(xml_serializer);
+  // serialize properties
+  dxlnode->SerializePropertiesToDXL(xml_serializer);
 
-	// serialize children
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
+  // serialize children
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
-
 
 #ifdef GPOS_DEBUG
 //---------------------------------------------------------------------------
@@ -104,31 +87,25 @@ CDXLPhysicalRoutedDistributeMotion::SerializeToDXL(
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalRoutedDistributeMotion::AssertValid(const CDXLNode *dxlnode,
-												BOOL validate_children) const
-{
-	// assert proj list and filter are valid
-	CDXLPhysical::AssertValid(dxlnode, validate_children);
+void CDXLPhysicalRoutedDistributeMotion::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  // assert proj list and filter are valid
+  CDXLPhysical::AssertValid(dxlnode, validate_children);
 
-	GPOS_ASSERT(m_input_segids_array != NULL);
-	GPOS_ASSERT(0 < m_input_segids_array->Size());
-	GPOS_ASSERT(m_output_segids_array != NULL);
-	GPOS_ASSERT(0 < m_output_segids_array->Size());
+  GPOS_ASSERT(m_input_segids_array != nullptr);
+  GPOS_ASSERT(0 < m_input_segids_array->Size());
+  GPOS_ASSERT(m_output_segids_array != nullptr);
+  GPOS_ASSERT(0 < m_output_segids_array->Size());
 
-	GPOS_ASSERT(EdxlroutedmIndexSentinel == dxlnode->Arity());
+  GPOS_ASSERT(EdxlroutedmIndexSentinel == dxlnode->Arity());
 
-	CDXLNode *child_dxlnode = (*dxlnode)[EdxlroutedmIndexChild];
+  CDXLNode *child_dxlnode = (*dxlnode)[EdxlroutedmIndexChild];
 
-	GPOS_ASSERT(EdxloptypePhysical ==
-				child_dxlnode->GetOperator()->GetDXLOperatorType());
+  GPOS_ASSERT(EdxloptypePhysical == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-	if (validate_children)
-	{
-		child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-												  validate_children);
-	}
+  if (validate_children) {
+    child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

@@ -35,14 +35,13 @@ using namespace gpmd;
 //		Constructs a file-based metadata provider
 //
 //---------------------------------------------------------------------------
-CMDProviderGeneric::CMDProviderGeneric(CMemoryPool *mp)
-{
-	// TODO:  - Jan 25, 2012; those should not be tied to a particular system
-	m_mdid_int2 = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT2);
-	m_mdid_int4 = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4);
-	m_mdid_int8 = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT8);
-	m_mdid_bool = GPOS_NEW(mp) CMDIdGPDB(GPDB_BOOL);
-	m_mdid_oid = GPOS_NEW(mp) CMDIdGPDB(GPDB_OID);
+CMDProviderGeneric::CMDProviderGeneric(CMemoryPool *mp) {
+  // TODO:  - Jan 25, 2012; those should not be tied to a particular system
+  m_mdid_int2 = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT2);
+  m_mdid_int4 = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4);
+  m_mdid_int8 = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT8);
+  m_mdid_bool = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_BOOL);
+  m_mdid_oid = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_OID);
 }
 
 //---------------------------------------------------------------------------
@@ -53,13 +52,12 @@ CMDProviderGeneric::CMDProviderGeneric(CMemoryPool *mp)
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CMDProviderGeneric::~CMDProviderGeneric()
-{
-	m_mdid_int2->Release();
-	m_mdid_int4->Release();
-	m_mdid_int8->Release();
-	m_mdid_bool->Release();
-	m_mdid_oid->Release();
+CMDProviderGeneric::~CMDProviderGeneric() {
+  m_mdid_int2->Release();
+  m_mdid_int4->Release();
+  m_mdid_int8->Release();
+  m_mdid_bool->Release();
+  m_mdid_oid->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -70,31 +68,28 @@ CMDProviderGeneric::~CMDProviderGeneric()
 //		return the mdid of a requested type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDProviderGeneric::MDId(IMDType::ETypeInfo type_info) const
-{
-	GPOS_ASSERT(IMDType::EtiGeneric > type_info);
+IMDId *CMDProviderGeneric::MDId(IMDType::ETypeInfo type_info) const {
+  GPOS_ASSERT(IMDType::EtiGeneric > type_info);
 
-	switch (type_info)
-	{
-		case IMDType::EtiInt2:
-			return m_mdid_int2;
+  switch (type_info) {
+    case IMDType::EtiInt2:
+      return m_mdid_int2;
 
-		case IMDType::EtiInt4:
-			return m_mdid_int4;
+    case IMDType::EtiInt4:
+      return m_mdid_int4;
 
-		case IMDType::EtiInt8:
-			return m_mdid_int8;
+    case IMDType::EtiInt8:
+      return m_mdid_int8;
 
-		case IMDType::EtiBool:
-			return m_mdid_bool;
+    case IMDType::EtiBool:
+      return m_mdid_bool;
 
-		case IMDType::EtiOid:
-			return m_mdid_oid;
+    case IMDType::EtiOid:
+      return m_mdid_oid;
 
-		default:
-			return NULL;
-	}
+    default:
+      return nullptr;
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -105,10 +100,8 @@ CMDProviderGeneric::MDId(IMDType::ETypeInfo type_info) const
 //		Get the default system id of the MD provider
 //
 //---------------------------------------------------------------------------
-CSystemId
-CMDProviderGeneric::SysidDefault() const
-{
-	return CSystemId(IMDId::EmdidGPDB, GPMD_GPDB_SYSID);
+CSystemId CMDProviderGeneric::SysidDefault() {
+  return CSystemId(IMDId::EmdidGeneral, GPMD_GPDB_SYSID);
 }
 
 // EOF

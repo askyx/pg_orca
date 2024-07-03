@@ -12,12 +12,9 @@
 #ifndef GPOS_CSyncHashtableAccessByKey_H
 #define GPOS_CSyncHashtableAccessByKey_H
 
-
 #include "gpos/common/CSyncHashtableAccessorBase.h"
 
-
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CSyncHashtableAccessByKey<T, K, S>
@@ -30,98 +27,76 @@ namespace gpos
 //
 //---------------------------------------------------------------------------
 template <class T, class K>
-class CSyncHashtableAccessByKey : public CSyncHashtableAccessorBase<T, K>
-{
-private:
-	// shorthand for accessor's base class
-	typedef class CSyncHashtableAccessorBase<T, K> Base;
+class CSyncHashtableAccessByKey : public CSyncHashtableAccessorBase<T, K> {
+ private:
+  // shorthand for accessor's base class
+  using Base = class CSyncHashtableAccessorBase<T, K>;
 
-	// target key
-	const K &m_key;
+  // target key
+  const K &m_key;
 
-	// no copy ctor
-	CSyncHashtableAccessByKey<T, K>(const CSyncHashtableAccessByKey<T, K> &);
+  // finds the first element matching target key starting from
+  // the given element
+  T *NextMatch(T *value) const {
+    T *curr = value;
 
-	// finds the first element matching target key starting from
-	// the given element
-	T *
-	NextMatch(T *value) const
-	{
-		T *curr = value;
+    while (nullptr != curr && !Base::GetHashTable().m_eqfn(Base::GetHashTable().Key(curr), m_key)) {
+      curr = Base::Next(curr);
+    }
 
-		while (NULL != curr && !Base::GetHashTable().m_eqfn(
-								   Base::GetHashTable().Key(curr), m_key))
-		{
-			curr = Base::Next(curr);
-		}
-
-		return curr;
-	}
+    return curr;
+  }
 
 #ifdef GPOS_DEBUG
-	// returns true if current bucket matches key
-	BOOL
-	CurrentBucketMatchesKey(const K &key) const
-	{
-		ULONG bucket_idx = Base::GetHashTable().GetBucketIndex(key);
+  // returns true if current bucket matches key
+  BOOL CurrentBucketMatchesKey(const K &key) const {
+    ULONG bucket_idx = Base::GetHashTable().GetBucketIndex(key);
 
-		return &(Base::GetHashTable().GetBucket(bucket_idx)) ==
-			   &(Base::GetBucket());
-	}
-#endif	// GPOS_DEBUG
+    return &(Base::GetHashTable().GetBucket(bucket_idx)) == &(Base::GetBucket());
+  }
+#endif  // GPOS_DEBUG
 
-public:
-	// ctor
-	CSyncHashtableAccessByKey<T, K>(CSyncHashtable<T, K> &ht, const K &key)
-		: Base(ht, ht.GetBucketIndex(key)), m_key(key)
-	{
-	}
+ public:
+  CSyncHashtableAccessByKey(const CSyncHashtableAccessByKey<T, K> &) = delete;
 
-	// dtor
-	virtual ~CSyncHashtableAccessByKey()
-	{
-	}
+  // ctor
+  CSyncHashtableAccessByKey(CSyncHashtable<T, K> &ht, const K &key) : Base(ht, ht.GetBucketIndex(key)), m_key(key) {}
 
-	// finds the first bucket's element with a matching key
-	T *
-	Find() const
-	{
-		return NextMatch(Base::First());
-	}
+  // dtor
+  ~CSyncHashtableAccessByKey() override = default;
 
-	// finds the next element with a matching key
-	T *
-	Next(T *value) const
-	{
-		GPOS_ASSERT(NULL != value);
+  // finds the first bucket's element with a matching key
+  T *Find() const { return NextMatch(Base::First()); }
 
-		return NextMatch(Base::Next(value));
-	}
+  // finds the next element with a matching key
+  T *Next(T *value) const {
+    GPOS_ASSERT(nullptr != value);
 
-	// insert at head of target bucket's hash chain
-	void
-	Insert(T *value)
-	{
-		GPOS_ASSERT(NULL != value);
+    return NextMatch(Base::Next(value));
+  }
+
+  // insert at head of target bucket's hash chain
+  void Insert(T *value) {
+    GPOS_ASSERT(nullptr != value);
 
 #ifdef GPOS_DEBUG
-		K &key = Base::GetHashTable().Key(value);
-#endif	// GPOS_DEBUG
+    K &key = Base::GetHashTable().Key(value);
+#endif  // GPOS_DEBUG
 
-		// make sure this is a valid key
-		GPOS_ASSERT(Base::GetHashTable().IsValid(key));
+    // make sure this is a valid key
+    GPOS_ASSERT(Base::GetHashTable().IsValid(key));
 
-		// make sure this is the right bucket
-		GPOS_ASSERT(CurrentBucketMatchesKey(key));
+    // make sure this is the right bucket
+    GPOS_ASSERT(CurrentBucketMatchesKey(key));
 
-		// inserting at bucket's head is required by hashtable iteration
-		Base::Prepend(value);
-	}
+    // inserting at bucket's head is required by hashtable iteration
+    Base::Prepend(value);
+  }
 
-};	// class CSyncHashtableAccessByKey
+};  // class CSyncHashtableAccessByKey
 
 }  // namespace gpos
 
-#endif	// !GPOS_CSyncHashtableAccessByKey_H
+#endif  // !GPOS_CSyncHashtableAccessByKey_H
 
 // EOF

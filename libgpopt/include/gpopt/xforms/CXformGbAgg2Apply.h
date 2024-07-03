@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformSubqueryUnnest.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -29,42 +28,30 @@ using namespace gpos;
 //		arguments
 //
 //---------------------------------------------------------------------------
-class CXformGbAgg2Apply : public CXformSubqueryUnnest
-{
-private:
-	// private copy ctor
-	CXformGbAgg2Apply(const CXformGbAgg2Apply &);
+class CXformGbAgg2Apply : public CXformSubqueryUnnest {
+ private:
+ public:
+  CXformGbAgg2Apply(const CXformGbAgg2Apply &) = delete;
 
-public:
-	// ctor
-	explicit CXformGbAgg2Apply(CMemoryPool *mp);
+  // ctor
+  explicit CXformGbAgg2Apply(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformGbAgg2Apply()
-	{
-	}
+  // dtor
+  ~CXformGbAgg2Apply() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfGbAgg2Apply;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfGbAgg2Apply; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformGbAgg2Apply";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformGbAgg2Apply"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-};	// class CXformGbAgg2Apply
+};  // class CXformGbAgg2Apply
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformGbAgg2Apply_H
+#endif  // !GPOPT_CXformGbAgg2Apply_H
 
 // EOF

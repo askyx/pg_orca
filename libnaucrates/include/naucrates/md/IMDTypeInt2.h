@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		IMDTypeInt2.h
@@ -17,16 +17,13 @@
 #include "naucrates/md/IMDType.h"
 
 // fwd decl
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 class IDatumInt2;
 }
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 using namespace gpnaucrates;
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -36,29 +33,19 @@ using namespace gpnaucrates;
 //		Interface for INT2 types in the metadata cache
 //
 //---------------------------------------------------------------------------
-class IMDTypeInt2 : public IMDType
-{
-public:
-	// type id
-	static ETypeInfo
-	GetTypeInfo()
-	{
-		return EtiInt2;
-	}
+class IMDTypeInt2 : public IMDType {
+ public:
+  // type id
+  static ETypeInfo GetTypeInfo() { return EtiInt2; }
 
-	virtual ETypeInfo
-	GetDatumType() const
-	{
-		return IMDTypeInt2::GetTypeInfo();
-	}
+  ETypeInfo GetDatumType() const override { return IMDTypeInt2::GetTypeInfo(); }
 
-	// factory function for INT2 datums
-	virtual IDatumInt2 *CreateInt2Datum(CMemoryPool *mp, SINT value,
-										BOOL is_null) const = 0;
+  // factory function for INT2 datums
+  virtual IDatumInt2 *CreateInt2Datum(CMemoryPool *mp, SINT value, BOOL is_null) const = 0;
 };
 
 }  // namespace gpmd
 
-#endif	// !GPMD_IMDTypeInt2_H
+#endif  // !GPMD_IMDTypeInt2_H
 
 // EOF

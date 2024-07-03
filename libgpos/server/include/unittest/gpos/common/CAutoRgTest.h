@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CAutoRgTest
@@ -23,17 +22,16 @@ namespace gpos
 //		Static unit tests for auto range
 //
 //---------------------------------------------------------------------------
-class CAutoRgTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
+class CAutoRgTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
 
-};	// class CAutoRgTest
+};  // class CAutoRgTest
 
 }  // namespace gpos
 
-#endif	// !GPOS_CAutoRgTest_H
+#endif  // !GPOS_CAutoRgTest_H
 
 // EOF

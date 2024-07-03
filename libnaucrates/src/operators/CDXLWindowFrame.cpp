@@ -29,21 +29,22 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLWindowFrame::CDXLWindowFrame(CMemoryPool *mp, EdxlFrameSpec edxlfs,
-								 EdxlFrameExclusionStrategy frame_exc_strategy,
-								 CDXLNode *dxlnode_leading,
-								 CDXLNode *dxlnode_trailing)
-	: m_mp(mp),
-	  m_dxl_win_frame_spec(edxlfs),
-	  m_dxl_frame_exclusion_strategy(frame_exc_strategy),
-	  m_dxlnode_leading(dxlnode_leading),
-	  m_dxlnode_trailing(dxlnode_trailing)
-{
-	GPOS_ASSERT(NULL != m_mp);
-	GPOS_ASSERT(EdxlfsSentinel > m_dxl_win_frame_spec);
-	GPOS_ASSERT(EdxlfesSentinel > m_dxl_frame_exclusion_strategy);
-	GPOS_ASSERT(NULL != dxlnode_leading);
-	GPOS_ASSERT(NULL != dxlnode_trailing);
+CDXLWindowFrame::CDXLWindowFrame(EdxlFrameSpec edxlfs, EdxlFrameExclusionStrategy frame_exc_strategy,
+                                 CDXLNode *dxlnode_leading, CDXLNode *dxlnode_trailing, OID start_in_range_func,
+                                 OID end_in_range_func, OID in_range_coll, bool in_range_asc, bool in_range_nulls_first)
+    : m_dxl_win_frame_spec(edxlfs),
+      m_dxl_frame_exclusion_strategy(frame_exc_strategy),
+      m_dxlnode_leading(dxlnode_leading),
+      m_dxlnode_trailing(dxlnode_trailing),
+      m_start_in_range_func(start_in_range_func),
+      m_end_in_range_func(end_in_range_func),
+      m_in_range_coll(in_range_coll),
+      m_in_range_asc(in_range_asc),
+      m_in_range_nulls_first(in_range_nulls_first) {
+  GPOS_ASSERT(EdxlfsSentinel > m_dxl_win_frame_spec);
+  GPOS_ASSERT(EdxlfesSentinel > m_dxl_frame_exclusion_strategy);
+  GPOS_ASSERT(nullptr != dxlnode_leading);
+  GPOS_ASSERT(nullptr != dxlnode_trailing);
 }
 
 //---------------------------------------------------------------------------
@@ -54,10 +55,9 @@ CDXLWindowFrame::CDXLWindowFrame(CMemoryPool *mp, EdxlFrameSpec edxlfs,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLWindowFrame::~CDXLWindowFrame()
-{
-	m_dxlnode_leading->Release();
-	m_dxlnode_trailing->Release();
+CDXLWindowFrame::~CDXLWindowFrame() {
+  m_dxlnode_leading->Release();
+  m_dxlnode_trailing->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -68,32 +68,26 @@ CDXLWindowFrame::~CDXLWindowFrame()
 //		Return the string representation of the window frame exclusion strategy
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLWindowFrame::PstrES(EdxlFrameExclusionStrategy edxles) const
-{
-	GPOS_ASSERT(EdxlfesSentinel > edxles);
-	ULONG window_frame_boundary_to_frame_boundary_mapping[][2] = {
-		{EdxlfesNone, EdxltokenWindowESNone},
-		{EdxlfesNulls, EdxltokenWindowESNulls},
-		{EdxlfesCurrentRow, EdxltokenWindowESCurrentRow},
-		{EdxlfesGroup, EdxltokenWindowESGroup},
-		{EdxlfesTies, EdxltokenWindowESTies}};
+const CWStringConst *CDXLWindowFrame::PstrES(EdxlFrameExclusionStrategy edxles) {
+  GPOS_ASSERT(EdxlfesSentinel > edxles);
+  ULONG window_frame_boundary_to_frame_boundary_mapping[][2] = {{EdxlfesNone, EdxltokenWindowESNone},
+                                                                {EdxlfesNulls, EdxltokenWindowESNulls},
+                                                                {EdxlfesCurrentRow, EdxltokenWindowESCurrentRow},
+                                                                {EdxlfesGroup, EdxltokenWindowESGroup},
+                                                                {EdxlfesTies, EdxltokenWindowESTies}};
 
-	const ULONG arity =
-		GPOS_ARRAY_SIZE(window_frame_boundary_to_frame_boundary_mapping);
-	for (ULONG ul = 0; ul < arity; ul++)
-	{
-		ULONG *pulElem = window_frame_boundary_to_frame_boundary_mapping[ul];
-		if ((ULONG) edxles == pulElem[0])
-		{
-			Edxltoken edxltk = (Edxltoken) pulElem[1];
-			return CDXLTokens::GetDXLTokenStr(edxltk);
-			break;
-		}
-	}
+  const ULONG arity = GPOS_ARRAY_SIZE(window_frame_boundary_to_frame_boundary_mapping);
+  for (ULONG ul = 0; ul < arity; ul++) {
+    ULONG *pulElem = window_frame_boundary_to_frame_boundary_mapping[ul];
+    if ((ULONG)edxles == pulElem[0]) {
+      Edxltoken edxltk = (Edxltoken)pulElem[1];
+      return CDXLTokens::GetDXLTokenStr(edxltk);
+      break;
+    }
+  }
 
-	GPOS_ASSERT(!"Unrecognized window frame exclusion strategy");
-	return NULL;
+  GPOS_ASSERT(!"Unrecognized window frame exclusion strategy");
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -104,18 +98,16 @@ CDXLWindowFrame::PstrES(EdxlFrameExclusionStrategy edxles) const
 //		Return the string representation of the window frame specification
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLWindowFrame::PstrFS(EdxlFrameSpec edxlfs) const
-{
-	GPOS_ASSERT(EdxlfsSentinel > edxlfs &&
-				"Unrecognized window frame specification");
+const CWStringConst *CDXLWindowFrame::PstrFS(EdxlFrameSpec edxlfs) {
+  GPOS_ASSERT(EdxlfsSentinel > edxlfs && "Unrecognized window frame specification");
 
-	if (EdxlfsRow == edxlfs)
-	{
-		return CDXLTokens::GetDXLTokenStr(EdxltokenWindowFSRow);
-	}
+  if (EdxlfsRow == edxlfs) {
+    return CDXLTokens::GetDXLTokenStr(EdxltokenWindowFSRow);
+  } else if (EdxlfsGroups == edxlfs) {
+    return CDXLTokens::GetDXLTokenStr(EdxltokenWindowFSGroups);
+  }
 
-	return CDXLTokens::GetDXLTokenStr(EdxltokenWindowFSRange);
+  return CDXLTokens::GetDXLTokenStr(EdxltokenWindowFSRange);
 }
 
 //---------------------------------------------------------------------------
@@ -126,28 +118,26 @@ CDXLWindowFrame::PstrFS(EdxlFrameSpec edxlfs) const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLWindowFrame::SerializeToDXL(CXMLSerializer *xml_serializer) const
-{
-	const CWStringConst *element_name =
-		CDXLTokens::GetDXLTokenStr(EdxltokenWindowFrame);
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+void CDXLWindowFrame::SerializeToDXL(CXMLSerializer *xml_serializer) const {
+  const CWStringConst *element_name = CDXLTokens::GetDXLTokenStr(EdxltokenWindowFrame);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	// add attributes
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenWindowFrameSpec),
-		PstrFS(m_dxl_win_frame_spec));
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenWindowExclusionStrategy),
-		PstrES(m_dxl_frame_exclusion_strategy));
+  // add attributes
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowFrameSpec), PstrFS(m_dxl_win_frame_spec));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowExclusionStrategy),
+                               PstrES(m_dxl_frame_exclusion_strategy));
 
-	// add the values representing the window boundary
-	m_dxlnode_trailing->SerializeToDXL(xml_serializer);
-	m_dxlnode_leading->SerializeToDXL(xml_serializer);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowStartInRangeOid), m_start_in_range_func);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowEndInRangeOid), m_end_in_range_func);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowInRangeColl), m_in_range_coll);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowInRangeAsc), m_in_range_asc);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowInRangeNullsFirst), m_in_range_nulls_first);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  // add the values representing the window boundary
+  m_dxlnode_trailing->SerializeToDXL(xml_serializer);
+  m_dxlnode_leading->SerializeToDXL(xml_serializer);
+
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 // EOF

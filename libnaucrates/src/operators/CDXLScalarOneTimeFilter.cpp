@@ -9,7 +9,6 @@
 //		Implementation of DXL physical one-time filter operator
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/dxl/operators/CDXLScalarOneTimeFilter.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
@@ -26,12 +25,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarOneTimeFilter::CDXLScalarOneTimeFilter(CMemoryPool *mp)
-	: CDXLScalarFilter(mp)
-{
-}
-
-
+CDXLScalarOneTimeFilter::CDXLScalarOneTimeFilter(CMemoryPool *mp) : CDXLScalarFilter(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -41,12 +35,9 @@ CDXLScalarOneTimeFilter::CDXLScalarOneTimeFilter(CMemoryPool *mp)
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarOneTimeFilter::GetDXLOperator() const
-{
-	return EdxlopScalarOneTimeFilter;
+Edxlopid CDXLScalarOneTimeFilter::GetDXLOperator() const {
+  return EdxlopScalarOneTimeFilter;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -56,10 +47,8 @@ CDXLScalarOneTimeFilter::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarOneTimeFilter::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarOneTimeFilter);
+const CWStringConst *CDXLScalarOneTimeFilter::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarOneTimeFilter);
 }
 
 //---------------------------------------------------------------------------
@@ -70,22 +59,15 @@ CDXLScalarOneTimeFilter::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarOneTimeFilter::SerializeToDXL(CXMLSerializer *xml_serializer,
-										const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarOneTimeFilter::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	// serilize children
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
+  // serilize children
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
-
-
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2017 Pivotal Inc.
+//	Copyright (C) 2017 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarCoerceBase.cpp
@@ -22,7 +22,6 @@
 using namespace gpopt;
 using namespace gpmd;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CScalarCoerceBase::CScalarCoerceBase
@@ -31,19 +30,12 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarCoerceBase::CScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type,
-									 INT type_modifier, ECoercionForm ecf,
-									 INT location)
-	: CScalar(mp),
-	  m_result_type_mdid(mdid_type),
-	  m_type_modifier(type_modifier),
-	  m_ecf(ecf),
-	  m_location(location)
-{
-	GPOS_ASSERT(NULL != mdid_type);
-	GPOS_ASSERT(mdid_type->IsValid());
+CScalarCoerceBase::CScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, ECoercionForm ecf,
+                                     INT location)
+    : CScalar(mp), m_result_type_mdid(mdid_type), m_type_modifier(type_modifier), m_ecf(ecf), m_location(location) {
+  GPOS_ASSERT(nullptr != mdid_type);
+  GPOS_ASSERT(mdid_type->IsValid());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,11 +45,9 @@ CScalarCoerceBase::CScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarCoerceBase::~CScalarCoerceBase()
-{
-	m_result_type_mdid->Release();
+CScalarCoerceBase::~CScalarCoerceBase() {
+  m_result_type_mdid->Release();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -67,12 +57,9 @@ CScalarCoerceBase::~CScalarCoerceBase()
 //		Return type of the scalar expression
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarCoerceBase::MdidType() const
-{
-	return m_result_type_mdid;
+IMDId *CScalarCoerceBase::MdidType() const {
+  return m_result_type_mdid;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -82,12 +69,9 @@ CScalarCoerceBase::MdidType() const
 //		Return type modifier
 //
 //---------------------------------------------------------------------------
-INT
-CScalarCoerceBase::TypeModifier() const
-{
-	return m_type_modifier;
+INT CScalarCoerceBase::TypeModifier() const {
+  return m_type_modifier;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -97,12 +81,9 @@ CScalarCoerceBase::TypeModifier() const
 //		Return coercion form
 //
 //---------------------------------------------------------------------------
-CScalar::ECoercionForm
-CScalarCoerceBase::Ecf() const
-{
-	return m_ecf;
+CScalar::ECoercionForm CScalarCoerceBase::Ecf() const {
+  return m_ecf;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -112,12 +93,9 @@ CScalarCoerceBase::Ecf() const
 //		Return token location
 //
 //---------------------------------------------------------------------------
-INT
-CScalarCoerceBase::Location() const
-{
-	return m_location;
+INT CScalarCoerceBase::Location() const {
+  return m_location;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -127,14 +105,11 @@ CScalarCoerceBase::Location() const
 //		return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CScalarCoerceBase::PopCopyWithRemappedColumns(
-	CMemoryPool *,		 //mp,
-	UlongToColRefMap *,	 //colref_mapping,
-	BOOL				 //must_exist
-)
-{
-	return PopCopyDefault();
+COperator *CScalarCoerceBase::PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
+                                                         UlongToColRefMap *,  // colref_mapping,
+                                                         BOOL                 // must_exist
+) {
+  return PopCopyDefault();
 }
 
 // EOF

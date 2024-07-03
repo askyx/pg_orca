@@ -18,76 +18,53 @@
 #include "naucrates/statistics/CStatsPred.h"
 
 // fwd declarations
-namespace gpopt
-{
+namespace gpopt {
 class CColRef;
 }
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 using namespace gpos;
 using namespace gpmd;
 using namespace gpopt;
 
-class CStatsPredArrayCmp : public CStatsPred
-{
-private:
-	// private copy ctor
-	CStatsPredArrayCmp(const CStatsPredArrayCmp &);
+class CStatsPredArrayCmp : public CStatsPred {
+ private:
+  // comparison type
+  CStatsPred::EStatsCmpType m_stats_cmp_type;
 
-	// private assignment operator
-	CStatsPredArrayCmp &operator=(CStatsPredArrayCmp &);
+  CPointArray *m_points;
 
-	// comparison type
-	CStatsPred::EStatsCmpType m_stats_cmp_type;
+ public:
+  CStatsPredArrayCmp &operator=(CStatsPredArrayCmp &) = delete;
 
-	CPointArray *m_points;
+  CStatsPredArrayCmp(const CStatsPredArrayCmp &) = delete;
 
-public:
-	// ctor
-	CStatsPredArrayCmp(ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type,
-					   CPointArray *points);
+  // ctor
+  CStatsPredArrayCmp(ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type, CPointArray *points);
 
-	// dtor
-	virtual ~CStatsPredArrayCmp()
-	{
-		m_points->Release();
-	}
+  // dtor
+  ~CStatsPredArrayCmp() override { m_points->Release(); }
 
-	// comparison types for stats computation
-	virtual CStatsPred::EStatsCmpType
-	GetCmpType() const
-	{
-		return m_stats_cmp_type;
-	}
+  // comparison types for stats computation
+  virtual CStatsPred::EStatsCmpType GetCmpType() const { return m_stats_cmp_type; }
 
-	// filter type id
-	virtual EStatsPredType
-	GetPredStatsType() const
-	{
-		return CStatsPred::EsptArrayCmp;
-	}
+  // filter type id
+  EStatsPredType GetPredStatsType() const override { return CStatsPred::EsptArrayCmp; }
 
-	virtual CPointArray *
-	GetPoints() const
-	{
-		return m_points;
-	}
+  virtual CPointArray *GetPoints() const { return m_points; }
 
-	// conversion function
-	static CStatsPredArrayCmp *
-	ConvertPredStats(CStatsPred *pred_stats)
-	{
-		GPOS_ASSERT(NULL != pred_stats);
-		GPOS_ASSERT(CStatsPred::EsptArrayCmp == pred_stats->GetPredStatsType());
+  // conversion function
+  static CStatsPredArrayCmp *ConvertPredStats(CStatsPred *pred_stats) {
+    GPOS_ASSERT(nullptr != pred_stats);
+    GPOS_ASSERT(CStatsPred::EsptArrayCmp == pred_stats->GetPredStatsType());
 
-		return dynamic_cast<CStatsPredArrayCmp *>(pred_stats);
-	}
+    return dynamic_cast<CStatsPredArrayCmp *>(pred_stats);
+  }
 
-};	// class CStatsPredArrayCmp
+};  // class CStatsPredArrayCmp
 
 }  // namespace gpnaucrates
 
-#endif	// !GPNAUCRATES_CStatsPredArrayCmp_H
+#endif  // !GPNAUCRATES_CStatsPredArrayCmp_H
 
 // EOF

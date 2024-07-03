@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CConstExprEvaluatorDXL.h
@@ -28,13 +28,11 @@
 #include "naucrates/md/CMDName.h"
 
 // forward declaration
-namespace gpos
-{
+namespace gpos {
 class CMemoryPool;
 }
 
-namespace gpopt
-{
+namespace gpopt {
 class CExpression;
 class CMDAccessor;
 class IConstDXLNodeEvaluator;
@@ -47,38 +45,35 @@ class IConstDXLNodeEvaluator;
 //		Constant expression evaluator implementation that delegates to a DXL evaluator
 //
 //---------------------------------------------------------------------------
-class CConstExprEvaluatorDXL : public IConstExprEvaluator
-{
-private:
-	// evaluates expressions represented as DXL, not owned
-	IConstDXLNodeEvaluator *m_pconstdxleval;
+class CConstExprEvaluatorDXL : public IConstExprEvaluator {
+ private:
+  // evaluates expressions represented as DXL, not owned
+  IConstDXLNodeEvaluator *m_pconstdxleval;
 
-	// translates CExpression's to DXL which can then be sent to the evaluator
-	CTranslatorExprToDXL m_trexpr2dxl;
+  // translates CExpression's to DXL which can then be sent to the evaluator
+  CTranslatorExprToDXL m_trexpr2dxl;
 
-	// translates DXL coming from the evaluator back to CExpression
-	CTranslatorDXLToExpr m_trdxl2expr;
+  // translates DXL coming from the evaluator back to CExpression
+  CTranslatorDXLToExpr m_trdxl2expr;
 
-	// private copy ctor
-	CConstExprEvaluatorDXL(const CConstExprEvaluatorDXL &);
+ public:
+  CConstExprEvaluatorDXL(const CConstExprEvaluatorDXL &) = delete;
 
-public:
-	// ctor
-	CConstExprEvaluatorDXL(CMemoryPool *mp, CMDAccessor *md_accessor,
-						   IConstDXLNodeEvaluator *pconstdxleval);
+  // ctor
+  CConstExprEvaluatorDXL(CMemoryPool *mp, CMDAccessor *md_accessor, IConstDXLNodeEvaluator *pconstdxleval);
 
-	// dtor
-	virtual ~CConstExprEvaluatorDXL();
+  // dtor
+  ~CConstExprEvaluatorDXL() override;
 
-	// evaluate the given expression and return the result as a new expression
-	// caller takes ownership of returned expression
-	virtual CExpression *PexprEval(CExpression *pexpr);
+  // evaluate the given expression and return the result as a new expression
+  // caller takes ownership of returned expression
+  CExpression *PexprEval(CExpression *pexpr) override;
 
-	// Returns true iff the evaluator can evaluate expressions
-	virtual BOOL FCanEvalExpressions();
+  // Returns true iff the evaluator can evaluate expressions
+  BOOL FCanEvalExpressions() override;
 };
 }  // namespace gpopt
 
-#endif	// !GPOPT_CConstExprEvaluatorDXL_H
+#endif  // !GPOPT_CConstExprEvaluatorDXL_H
 
 // EOF

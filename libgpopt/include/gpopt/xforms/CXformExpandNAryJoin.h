@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,47 +26,33 @@ using namespace gpos;
 //		Expand n-ary join into series of binary joins
 //
 //---------------------------------------------------------------------------
-class CXformExpandNAryJoin : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformExpandNAryJoin(const CXformExpandNAryJoin &);
+class CXformExpandNAryJoin : public CXformExploration {
+ private:
+ public:
+  CXformExpandNAryJoin(const CXformExpandNAryJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformExpandNAryJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformExpandNAryJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformExpandNAryJoin()
-	{
-	}
+  // dtor
+  ~CXformExpandNAryJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfExpandNAryJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfExpandNAryJoin; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformExpandNAryJoin";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformExpandNAryJoin"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformExpandNAryJoin
+};  // class CXformExpandNAryJoin
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformExpandNAryJoin_H
+#endif  // !GPOPT_CXformExpandNAryJoin_H
 
 // EOF

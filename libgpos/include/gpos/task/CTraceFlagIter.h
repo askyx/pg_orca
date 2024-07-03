@@ -15,9 +15,7 @@
 #include "gpos/common/CBitSetIter.h"
 #include "gpos/task/CTask.h"
 
-
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CTraceFlagIter
@@ -26,28 +24,21 @@ namespace gpos
 //		Trace flag iterator for the currently executing task
 //
 //---------------------------------------------------------------------------
-class CTraceFlagIter : public CBitSetIter
-{
-private:
-	// no copy ctor
-	CTraceFlagIter(const CTraceFlagIter &);
+class CTraceFlagIter : public CBitSetIter {
+ private:
+ public:
+  CTraceFlagIter(const CTraceFlagIter &) = delete;
 
-public:
-	// ctor
-	CTraceFlagIter() : CBitSetIter(*CTask::Self()->GetTaskCtxt()->m_bitset)
-	{
-	}
+  // ctor
+  CTraceFlagIter() : CBitSetIter(*CTask::Self()->GetTaskCtxt()->m_bitset) {}
 
-	// dtor
-	virtual ~CTraceFlagIter()
-	{
-	}
+  // dtor
+  virtual ~CTraceFlagIter() = default;
 
-};	// class CTraceFlagIter
+};  // class CTraceFlagIter
 
 }  // namespace gpos
 
-
-#endif	// !GPOS_CTraceFlagIter_H
+#endif  // !GPOS_CTraceFlagIter_H
 
 // EOF

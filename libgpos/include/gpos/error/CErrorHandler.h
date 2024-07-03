@@ -15,8 +15,7 @@
 #include "gpos/error/CException.h"
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 // fwd declarations
 class CMemoryPool;
 
@@ -28,29 +27,23 @@ class CMemoryPool;
 //		Error handler to be installed inside a worker;
 //
 //---------------------------------------------------------------------------
-class CErrorHandler
-{
-private:
-	// private copy ctor
-	CErrorHandler(const CErrorHandler &);
+class CErrorHandler {
+ private:
+ public:
+  CErrorHandler(const CErrorHandler &) = delete;
 
-public:
-	// ctor
-	CErrorHandler()
-	{
-	}
+  // ctor
+  CErrorHandler() = default;
 
-	// dtor
-	virtual ~CErrorHandler()
-	{
-	}
+  // dtor
+  virtual ~CErrorHandler() = default;
 
-	// process error
-	virtual void Process(CException exception) = 0;
+  // process error
+  virtual void Process(CException exception) = 0;
 
-};	// class CErrorHandler
+};  // class CErrorHandler
 }  // namespace gpos
 
-#endif	// !GPOS_CErrorHandler_H
+#endif  // !GPOS_CErrorHandler_H
 
 // EOF

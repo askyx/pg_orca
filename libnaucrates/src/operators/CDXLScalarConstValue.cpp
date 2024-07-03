@@ -28,11 +28,8 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarConstValue::CDXLScalarConstValue(CMemoryPool *mp,
-										   CDXLDatum *dxl_datum)
-	: CDXLScalar(mp), m_dxl_datum(dxl_datum)
-{
-}
+CDXLScalarConstValue::CDXLScalarConstValue(CMemoryPool *mp, CDXLDatum *dxl_datum)
+    : CDXLScalar(mp), m_dxl_datum(dxl_datum) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -42,11 +39,9 @@ CDXLScalarConstValue::CDXLScalarConstValue(CMemoryPool *mp,
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarConstValue::~CDXLScalarConstValue()
-{
-	m_dxl_datum->Release();
+CDXLScalarConstValue::~CDXLScalarConstValue() {
+  m_dxl_datum->Release();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -56,12 +51,9 @@ CDXLScalarConstValue::~CDXLScalarConstValue()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarConstValue::GetDXLOperator() const
-{
-	return EdxlopScalarConstValue;
+Edxlopid CDXLScalarConstValue::GetDXLOperator() const {
+  return EdxlopScalarConstValue;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -71,11 +63,9 @@ CDXLScalarConstValue::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarConstValue::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarConstValue);
-	;
+const CWStringConst *CDXLScalarConstValue::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarConstValue);
+  ;
 }
 
 //---------------------------------------------------------------------------
@@ -86,13 +76,11 @@ CDXLScalarConstValue::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarConstValue::SerializeToDXL(CXMLSerializer *xml_serializer,
-									 const CDXLNode *  //node
-) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
-	m_dxl_datum->Serialize(xml_serializer, element_name);
+void CDXLScalarConstValue::SerializeToDXL(CXMLSerializer *xml_serializer,
+                                          const CDXLNode *  // node
+) const {
+  const CWStringConst *element_name = GetOpNameStr();
+  m_dxl_datum->Serialize(xml_serializer, element_name);
 }
 
 //---------------------------------------------------------------------------
@@ -103,11 +91,8 @@ CDXLScalarConstValue::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Does the operator return boolean result
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLScalarConstValue::HasBoolResult(CMDAccessor *md_accessor) const
-{
-	return (IMDType::EtiBool ==
-			md_accessor->RetrieveType(m_dxl_datum->MDId())->GetDatumType());
+BOOL CDXLScalarConstValue::HasBoolResult(CMDAccessor *md_accessor) const {
+  return (IMDType::EtiBool == md_accessor->RetrieveType(m_dxl_datum->MDId())->GetDatumType());
 }
 
 #ifdef GPOS_DEBUG
@@ -119,14 +104,12 @@ CDXLScalarConstValue::HasBoolResult(CMDAccessor *md_accessor) const
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarConstValue::AssertValid(const CDXLNode *node,
-								  BOOL	// validate_children
-) const
-{
-	GPOS_ASSERT(0 == node->Arity());
-	GPOS_ASSERT(m_dxl_datum->MDId()->IsValid());
+void CDXLScalarConstValue::AssertValid(const CDXLNode *node,
+                                       BOOL  // validate_children
+) const {
+  GPOS_ASSERT(0 == node->Arity());
+  GPOS_ASSERT(m_dxl_datum->MDId()->IsValid());
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

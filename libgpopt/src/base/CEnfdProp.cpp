@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Software, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CEnfdProp.cpp
@@ -17,14 +17,13 @@
 #include "gpos/error/CAutoTrace.h"
 
 #include "gpopt/base/COptCtxt.h"
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-namespace gpopt
-{
-IOstream &
-operator<<(IOstream &os, CEnfdProp &efdprop)
-{
-	return efdprop.OsPrint(os);
+FORCE_GENERATE_DBGSTR(gpopt::CEnfdProp);
+
+namespace gpopt {
+IOstream &operator<<(IOstream &os, CEnfdProp &efdprop) {
+  return efdprop.OsPrint(os);
 }
 
 }  // namespace gpopt

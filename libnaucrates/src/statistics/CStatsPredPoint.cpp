@@ -27,12 +27,9 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CStatsPredPoint::CStatsPredPoint(ULONG colid,
-								 CStatsPred::EStatsCmpType stats_cmp_type,
-								 CPoint *point)
-	: CStatsPred(colid), m_stats_cmp_type(stats_cmp_type), m_pred_point(point)
-{
-	GPOS_ASSERT(NULL != point);
+CStatsPredPoint::CStatsPredPoint(ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type, CPoint *point)
+    : CStatsPred(colid), m_stats_cmp_type(stats_cmp_type), m_pred_point(point) {
+  GPOS_ASSERT(nullptr != point);
 }
 
 //---------------------------------------------------------------------------
@@ -43,20 +40,16 @@ CStatsPredPoint::CStatsPredPoint(ULONG colid,
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CStatsPredPoint::CStatsPredPoint(CMemoryPool *mp, const CColRef *colref,
-								 CStatsPred::EStatsCmpType stats_cmp_type,
-								 IDatum *datum)
-	: CStatsPred(gpos::ulong_max),
-	  m_stats_cmp_type(stats_cmp_type),
-	  m_pred_point(NULL)
-{
-	GPOS_ASSERT(NULL != colref);
-	GPOS_ASSERT(NULL != datum);
+CStatsPredPoint::CStatsPredPoint(CMemoryPool *mp, const CColRef *colref, CStatsPred::EStatsCmpType stats_cmp_type,
+                                 IDatum *datum)
+    : CStatsPred(gpos::ulong_max), m_stats_cmp_type(stats_cmp_type), m_pred_point(nullptr) {
+  GPOS_ASSERT(nullptr != colref);
+  GPOS_ASSERT(nullptr != datum);
 
-	m_colid = colref->Id();
-	IDatum *padded_datum = PreprocessDatum(mp, colref, datum);
+  m_colid = colref->Id();
+  IDatum *padded_datum = PreprocessDatum(mp, colref, datum);
 
-	m_pred_point = GPOS_NEW(mp) CPoint(padded_datum);
+  m_pred_point = GPOS_NEW(mp) CPoint(padded_datum);
 }
 
 //---------------------------------------------------------------------------
@@ -65,25 +58,19 @@ CStatsPredPoint::CStatsPredPoint(CMemoryPool *mp, const CColRef *colref,
 //	@doc:
 //		Add padding to datums when needed
 //---------------------------------------------------------------------------
-IDatum *
-CStatsPredPoint::PreprocessDatum(CMemoryPool *mp, const CColRef *colref,
-								 IDatum *datum)
-{
-	GPOS_ASSERT(NULL != colref);
-	GPOS_ASSERT(NULL != datum);
+IDatum *CStatsPredPoint::PreprocessDatum(CMemoryPool *mp, const CColRef *colref, IDatum *datum) {
+  GPOS_ASSERT(nullptr != colref);
+  GPOS_ASSERT(nullptr != datum);
 
-	if (!datum->NeedsPadding() || CColRef::EcrtTable != colref->Ecrt() ||
-		datum->IsNull())
-	{
-		// we do not pad datum for comparison against computed columns
-		datum->AddRef();
-		return datum;
-	}
+  if (!datum->NeedsPadding() || CColRef::EcrtTable != colref->Ecrt() || datum->IsNull()) {
+    // we do not pad datum for comparison against computed columns
+    datum->AddRef();
+    return datum;
+  }
 
-	const CColRefTable *colref_table =
-		CColRefTable::PcrConvert(const_cast<CColRef *>(colref));
+  const CColRefTable *colref_table = CColRefTable::PcrConvert(const_cast<CColRef *>(colref));
 
-	return datum->MakePaddedDatum(mp, colref_table->Width());
+  return datum->MakePaddedDatum(mp, colref_table->Width());
 }
 
 // EOF

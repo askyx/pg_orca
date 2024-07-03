@@ -17,8 +17,7 @@
 
 #include "gpopt/base/CDistributionSpec.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -30,77 +29,65 @@ using namespace gpos;
 //		imposes no requirements.
 //
 //---------------------------------------------------------------------------
-class CDistributionSpecNonSingleton : public CDistributionSpec
-{
-private:
-	// should Replicated distribution satisfy current distribution
-	BOOL m_fAllowReplicated;
+class CDistributionSpecNonSingleton : public CDistributionSpec {
+ private:
+  // should Replicated distribution satisfy current distribution
+  BOOL m_fAllowReplicated{true};
 
-	// private copy ctor
-	CDistributionSpecNonSingleton(const CDistributionSpecNonSingleton &);
+ public:
+  CDistributionSpecNonSingleton(const CDistributionSpecNonSingleton &) = delete;
 
-public:
-	//ctor
-	CDistributionSpecNonSingleton();
+  // ctor
+  CDistributionSpecNonSingleton();
 
-	//ctor
-	explicit CDistributionSpecNonSingleton(BOOL fAllowReplicated);
+  // ctor
+  explicit CDistributionSpecNonSingleton(BOOL fAllowReplicated);
 
-	// should Replicated distribution satisfy current distribution
-	BOOL
-	FAllowReplicated() const
-	{
-		return m_fAllowReplicated;
-	}
+  // should Replicated distribution satisfy current distribution
+  BOOL FAllowReplicated() const { return m_fAllowReplicated; }
 
-	// accessor
-	virtual EDistributionType
-	Edt() const
-	{
-		return CDistributionSpec::EdtNonSingleton;
-	}
+  // accessor
+  EDistributionType Edt() const override { return CDistributionSpec::EdtNonSingleton; }
 
-	// does current distribution satisfy the given one
-	virtual BOOL FSatisfies(const CDistributionSpec *pds) const;
+  // does current distribution satisfy the given one
+  BOOL FSatisfies(const CDistributionSpec *pds) const override;
 
-	// append enforcers to dynamic array for the given plan properties
-	virtual void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								 CReqdPropPlan *prpp,
-								 CExpressionArray *pdrgpexpr,
-								 CExpression *pexpr);
+  // append enforcers to dynamic array for the given plan properties
+  void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpp, CExpressionArray *pdrgpexpr,
+                       CExpression *pexpr) override;
 
-	// return distribution partitioning type
-	virtual EDistributionPartitioningType
-	Edpt() const
-	{
-		// a non-singleton distribution could be replicated to all segments, or partitioned across segments
-		return EdptUnknown;
-	}
+  // return distribution partitioning type
+  EDistributionPartitioningType Edpt() const override {
+    // a non-singleton distribution could be replicated to all segments, or partitioned across segments
+    return EdptUnknown;
+  }
 
-	// return true if distribution spec can be derived
-	virtual BOOL
-	FDerivable() const
-	{
-		return false;
-	}
+  // return true if distribution spec can be derived
+  BOOL FDerivable() const override { return false; }
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // print
+  IOstream &OsPrint(IOstream &os) const override;
 
-	// conversion function
-	static CDistributionSpecNonSingleton *
-	PdsConvert(CDistributionSpec *pds)
-	{
-		GPOS_ASSERT(NULL != pds);
-		GPOS_ASSERT(EdtNonSingleton == pds->Edt());
+  // conversion function
+  static CDistributionSpecNonSingleton *PdsConvert(CDistributionSpec *pds) {
+    GPOS_ASSERT(nullptr != pds);
+    GPOS_ASSERT(EdtNonSingleton == pds->Edt());
 
-		return dynamic_cast<CDistributionSpecNonSingleton *>(pds);
-	}
+    return dynamic_cast<CDistributionSpecNonSingleton *>(pds);
+  }
 
-};	// class CDistributionSpecNonSingleton
+  // conversion function
+  static const CDistributionSpecNonSingleton *PdsConvert(const CDistributionSpec *pds) {
+    GPOS_ASSERT(nullptr != pds);
+    GPOS_ASSERT(EdtNonSingleton == pds->Edt());
+
+    return dynamic_cast<const CDistributionSpecNonSingleton *>(pds);
+  }
+
+};  // class CDistributionSpecNonSingleton
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CDistributionSpecNonSingleton_H
+#endif  // !GPOPT_CDistributionSpecNonSingleton_H
 
 // EOF

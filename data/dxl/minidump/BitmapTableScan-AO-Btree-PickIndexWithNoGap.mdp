@@ -12,6 +12,7 @@
     create index idx_abc on t1 using btree(a, b, c);
     create index idx_ac on t1 using btree(a,c);
     analyze t1;
+    set optimizer_enable_indexonlyscan=off;
      explain select * from t1 where a= 4 and c = 20;
 
                                         QUERY PLAN
@@ -27,7 +28,7 @@
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/>
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="3">
@@ -35,8 +36,9 @@
           <dxl:CostParam Name="NLJFactor" Value="1024.000000" LowerBound="1023.500000" UpperBound="1024.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
-      <dxl:Hint MinNumOfPartsToRequireSortOnInsert="2147483647" JoinArityForAssociativityCommutativity="18" ArrayExpansionThreshold="100" JoinOrderDynamicProgThreshold="10" BroadcastThreshold="100000" EnforceConstraintsOnDML="false" PushGroupByBelowSetopThreshold="10"/>
-      <dxl:TraceFlags Value="102074,102113,102120,102146,102147,103001,103014,103015,103022,103027,103029,104003,104004,104005,104006,105000"/>
+      <dxl:Hint JoinArityForAssociativityCommutativity="18" ArrayExpansionThreshold="100" JoinOrderDynamicProgThreshold="10" BroadcastThreshold="100000" EnforceConstraintsOnDML="false" PushGroupByBelowSetopThreshold="10"/>
+      <dxl:PlanHint/>
+      <dxl:TraceFlags Value="102001,102002,102003,102074,102113,102120,102144,102147,103001,103014,103015,103022,103027,103029,103033,104003,104004,104005,104006,105000,102152"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:ColumnStatistics Mdid="1.55591.1.0.2" Name="c" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="false">
@@ -502,25 +504,19 @@
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
       <dxl:RelationStatistics Mdid="2.55591.1.0" Name="t1" Rows="10000000.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.55591.1.0" Name="t1" IsTemporary="false" HasOids="false" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="5,3" NumberLeafPartitions="0">
+      <dxl:Relation Mdid="6.55591.1.0" Name="t1" IsTemporary="false" Rows="10000000.000000" StorageType="AppendOnly, Row-oriented" DistributionPolicy="Hash" DistributionColumns="0" Keys="5,3">
         <dxl:Columns>
           <dxl:Column Name="a" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="b" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="c" Attno="3" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
@@ -528,10 +524,9 @@
           <dxl:IndexInfo Mdid="0.55602.1.0" IsPartial="false"/>
           <dxl:IndexInfo Mdid="0.55603.1.0" IsPartial="false"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
-      <dxl:Index Mdid="0.55598.1.0" Name="idx_a" IsClustered="false" IndexType="B-tree" IndexItemType="0.2283.1.0" KeyColumns="0" IncludedColumns="0,1,2,3,4,5">
+      <dxl:Index Mdid="0.55598.1.0" Name="idx_a" IsClustered="false" AmCanOrder="true" IndexType="B-tree" IndexItemType="0.2283.1.0" KeyColumns="0" IncludedColumns="" ReturnableColumns="0">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.1976.1.0"/>
         </dxl:Opfamilies>
@@ -558,13 +553,13 @@
           <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="4"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
-      <dxl:Index Mdid="0.55603.1.0" Name="idx_ac" IsClustered="false" IndexType="B-tree" IndexItemType="0.2283.1.0" KeyColumns="0,2" IncludedColumns="0,1,2,3,4,5">
+      <dxl:Index Mdid="0.55603.1.0" Name="idx_ac" IsClustered="false" AmCanOrder="true" IndexType="B-tree" IndexItemType="0.2283.1.0" KeyColumns="0,2" IncludedColumns="" ReturnableColumns="0,2">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.1976.1.0"/>
           <dxl:Opfamily Mdid="0.1976.1.0"/>
         </dxl:Opfamilies>
       </dxl:Index>
-      <dxl:Index Mdid="0.55602.1.0" Name="idx_abc" IsClustered="false" IndexType="B-tree" IndexItemType="0.2283.1.0" KeyColumns="0,1,2" IncludedColumns="0,1,2,3,4,5">
+      <dxl:Index Mdid="0.55602.1.0" Name="idx_abc" IsClustered="false" AmCanOrder="true" IndexType="B-tree" IndexItemType="0.2283.1.0" KeyColumns="0,1,2" IncludedColumns="" ReturnableColumns="0,1,2">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.1976.1.0"/>
           <dxl:Opfamily Mdid="0.1976.1.0"/>
@@ -604,7 +599,7 @@
           </dxl:Comparison>
         </dxl:And>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.55591.1.0" TableName="t1">
+          <dxl:TableDescriptor Mdid="6.55591.1.0" TableName="t1">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="a" TypeMdid="0.23.1.0" ColWidth="4"/>
               <dxl:Column ColId="2" Attno="2" ColName="b" TypeMdid="0.23.1.0" ColWidth="4"/>
@@ -676,7 +671,7 @@
             </dxl:IndexCondList>
             <dxl:IndexDescriptor Mdid="0.55603.1.0" IndexName="idx_ac"/>
           </dxl:BitmapIndexProbe>
-          <dxl:TableDescriptor Mdid="0.55591.1.0" TableName="t1">
+          <dxl:TableDescriptor Mdid="6.55591.1.0" TableName="t1">
             <dxl:Columns>
               <dxl:Column ColId="0" Attno="1" ColName="a" TypeMdid="0.23.1.0" ColWidth="4"/>
               <dxl:Column ColId="1" Attno="2" ColName="b" TypeMdid="0.23.1.0" ColWidth="4"/>

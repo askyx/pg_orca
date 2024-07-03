@@ -24,7 +24,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CMiniDumperTest::EresUnittest
@@ -34,14 +33,11 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMiniDumperTest::EresUnittest()
-{
-	CUnittest rgut[] = {
-		GPOS_UNITTEST_FUNC(CMiniDumperTest::EresUnittest_Basic)};
+CMiniDumperTest::EresUnittest() {
+  CUnittest rgut[] = {GPOS_UNITTEST_FUNC(CMiniDumperTest::EresUnittest_Basic)};
 
-	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
+  return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -52,34 +48,30 @@ CMiniDumperTest::EresUnittest()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMiniDumperTest::EresUnittest_Basic()
-{
-	CAutoMemoryPool amp;
-	CMemoryPool *mp = amp.Pmp();
+CMiniDumperTest::EresUnittest_Basic() {
+  CAutoMemoryPool amp;
+  CMemoryPool *mp = amp.Pmp();
 
-	CMiniDumperStream mdrs(mp);
+  CMiniDumperStream mdrs;
 
-	CWStringDynamic wstrMinidump(mp);
-	COstreamString oss(&wstrMinidump);
-	mdrs.Init(&oss);
+  CWStringDynamic wstrMinidump(mp);
+  COstreamString oss(&wstrMinidump);
+  mdrs.Init(&oss);
 
-	GPOS_TRY
-	{
-		(void) PvRaise(NULL);
-	}
-	GPOS_CATCH_EX(ex)
-	{
-		mdrs.Finalize();
+  GPOS_TRY {
+    (void)PvRaise(nullptr);
+  }
+  GPOS_CATCH_EX(ex) {
+    mdrs.Finalize();
 
-		GPOS_RESET_EX;
+    GPOS_RESET_EX;
 
-		GPOS_TRACE(wstrMinidump.GetBuffer());
-	}
-	GPOS_CATCH_END;
+    GPOS_TRACE(wstrMinidump.GetBuffer());
+  }
+  GPOS_CATCH_END;
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -89,21 +81,18 @@ CMiniDumperTest::EresUnittest_Basic()
 //		Function raising an exception
 //
 //---------------------------------------------------------------------------
-void *
-CMiniDumperTest::PvRaise(void *	 // pv
-)
-{
-	// register stack serializer with error context
-	CSerializableStack ss;
+void *CMiniDumperTest::PvRaise(void *  // pv
+) {
+  // register stack serializer with error context
+  CSerializableStack ss;
 
-	clib::USleep(1000);
+  clib::USleep(1000);
 
-	// raise exception to trigger minidump
-	GPOS_OOM_CHECK(NULL);
+  // raise exception to trigger minidump
+  GPOS_OOM_CHECK(nullptr);
 
-	return NULL;
+  return nullptr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -113,11 +102,7 @@ CMiniDumperTest::PvRaise(void *	 // pv
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMiniDumperTest::CMiniDumperStream::CMiniDumperStream(CMemoryPool *mp)
-	: CMiniDumper(mp)
-{
-}
-
+CMiniDumperTest::CMiniDumperStream::CMiniDumperStream() : CMiniDumper() {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -127,10 +112,7 @@ CMiniDumperTest::CMiniDumperStream::CMiniDumperStream(CMemoryPool *mp)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CMiniDumperTest::CMiniDumperStream::~CMiniDumperStream()
-{
-}
-
+CMiniDumperTest::CMiniDumperStream::~CMiniDumperStream() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -140,12 +122,9 @@ CMiniDumperTest::CMiniDumperStream::~CMiniDumperStream()
 //		Serialize minidump header
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumperTest::CMiniDumperStream::SerializeHeader()
-{
-	*m_oos << "\n<MINIDUMP_TEST>\n";
+void CMiniDumperTest::CMiniDumperStream::SerializeHeader() {
+  *m_oos << "\n<MINIDUMP_TEST>\n";
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -155,12 +134,9 @@ CMiniDumperTest::CMiniDumperStream::SerializeHeader()
 //		Serialize minidump footer
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumperTest::CMiniDumperStream::SerializeFooter()
-{
-	*m_oos << "</MINIDUMP_TEST>\n";
+void CMiniDumperTest::CMiniDumperStream::SerializeFooter() {
+  *m_oos << "</MINIDUMP_TEST>\n";
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -170,16 +146,13 @@ CMiniDumperTest::CMiniDumperStream::SerializeFooter()
 //		Serialize entry header
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumperTest::CMiniDumperStream::SerializeEntryHeader()
-{
-	WCHAR wszBuffer[GPOS_MINIDUMP_BUF_SIZE];
-	CWStringStatic wstr(wszBuffer, GPOS_ARRAY_SIZE(wszBuffer));
-	wstr.AppendFormat(GPOS_WSZ_LIT("<THREAD ID=%d>\n"), 0);
+void CMiniDumperTest::CMiniDumperStream::SerializeEntryHeader() {
+  WCHAR wszBuffer[GPOS_MINIDUMP_BUF_SIZE];
+  CWStringStatic wstr(wszBuffer, GPOS_ARRAY_SIZE(wszBuffer));
+  wstr.AppendFormat(GPOS_WSZ_LIT("<THREAD ID=%d>\n"), 0);
 
-	*m_oos << wstr.GetBuffer();
+  *m_oos << wstr.GetBuffer();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -189,12 +162,9 @@ CMiniDumperTest::CMiniDumperStream::SerializeEntryHeader()
 //		Serialize entry footer
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumperTest::CMiniDumperStream::SerializeEntryFooter()
-{
-	*m_oos << "</THREAD>\n";
+void CMiniDumperTest::CMiniDumperStream::SerializeEntryFooter() {
+  *m_oos << "</THREAD>\n";
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -204,10 +174,7 @@ CMiniDumperTest::CMiniDumperStream::SerializeEntryFooter()
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMiniDumperTest::CSerializableStack::CSerializableStack() : CSerializable()
-{
-}
-
+CMiniDumperTest::CSerializableStack::CSerializableStack() : CSerializable() {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -218,10 +185,7 @@ CMiniDumperTest::CSerializableStack::CSerializableStack() : CSerializable()
 //
 //---------------------------------------------------------------------------
 
-CMiniDumperTest::CSerializableStack::~CSerializableStack()
-{
-}
-
+CMiniDumperTest::CSerializableStack::~CSerializableStack() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -231,21 +195,18 @@ CMiniDumperTest::CSerializableStack::~CSerializableStack()
 //		Serialize object to passed stream
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumperTest::CSerializableStack::Serialize(COstream &oos)
-{
-	WCHAR wszStackBuffer[GPOS_MINIDUMP_BUF_SIZE];
-	CWStringStatic wstr(wszStackBuffer, GPOS_ARRAY_SIZE(wszStackBuffer));
+void CMiniDumperTest::CSerializableStack::Serialize(COstream &oos) {
+  WCHAR wszStackBuffer[GPOS_MINIDUMP_BUF_SIZE];
+  CWStringStatic wstr(wszStackBuffer, GPOS_ARRAY_SIZE(wszStackBuffer));
 
-	wstr.AppendFormat(GPOS_WSZ_LIT("<STACK_TRACE>\n"));
+  wstr.AppendFormat(GPOS_WSZ_LIT("<STACK_TRACE>\n"));
 
-	CErrorContext *perrctxt = CTask::Self()->ConvertErrCtxt();
-	perrctxt->GetStackDescriptor()->AppendTrace(&wstr);
+  CErrorContext *perrctxt = CTask::Self()->ConvertErrCtxt();
+  perrctxt->GetStackDescriptor()->AppendTrace(&wstr);
 
-	wstr.AppendFormat(GPOS_WSZ_LIT("</STACK_TRACE>\n"));
+  wstr.AppendFormat(GPOS_WSZ_LIT("</STACK_TRACE>\n"));
 
-	oos << wstr.GetBuffer();
+  oos << wstr.GetBuffer();
 }
-
 
 // EOF

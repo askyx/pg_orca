@@ -13,10 +13,10 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalGbAgg.h"
+#include "gpopt/operators/CPatternLeaf.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -27,16 +27,12 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformGbAgg2Apply::CXformGbAgg2Apply(CMemoryPool *mp)
-	:  // pattern
-	  CXformSubqueryUnnest(GPOS_NEW(mp) CExpression(
-		  mp, GPOS_NEW(mp) CLogicalGbAgg(mp),
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // relational child
-		  GPOS_NEW(mp)
-			  CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))  // project list
-		  ))
-{
-}
+    :  // pattern
+      CXformSubqueryUnnest(GPOS_NEW(mp) CExpression(
+          mp, GPOS_NEW(mp) CLogicalGbAgg(mp),
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // relational child
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // project list
+          )) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -47,17 +43,13 @@ CXformGbAgg2Apply::CXformGbAgg2Apply(CMemoryPool *mp)
 //		scalar child must have subquery
 //
 //---------------------------------------------------------------------------
-CXform::EXformPromise
-CXformGbAgg2Apply::Exfp(CExpressionHandle &exprhdl) const
-{
-	CLogicalGbAgg *popGbAgg = CLogicalGbAgg::PopConvert(exprhdl.Pop());
-	if (popGbAgg->FGlobal() && exprhdl.DeriveHasSubquery(1))
-	{
-		return CXform::ExfpHigh;
-	}
+CXform::EXformPromise CXformGbAgg2Apply::Exfp(CExpressionHandle &exprhdl) const {
+  CLogicalGbAgg *popGbAgg = CLogicalGbAgg::PopConvert(exprhdl.Pop());
+  if (popGbAgg->FGlobal() && exprhdl.DeriveHasSubquery(1)) {
+    return CXform::ExfpHigh;
+  }
 
-	return CXform::ExfpNone;
+  return CXform::ExfpNone;
 }
-
 
 // EOF

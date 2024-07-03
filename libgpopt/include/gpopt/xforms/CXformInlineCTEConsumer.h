@@ -16,8 +16,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -29,45 +28,32 @@ using namespace gpos;
 //		corresponding producer
 //
 //---------------------------------------------------------------------------
-class CXformInlineCTEConsumer : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformInlineCTEConsumer(const CXformInlineCTEConsumer &);
+class CXformInlineCTEConsumer : public CXformExploration {
+ private:
+ public:
+  CXformInlineCTEConsumer(const CXformInlineCTEConsumer &) = delete;
 
-public:
-	// ctor
-	explicit CXformInlineCTEConsumer(CMemoryPool *mp);
+  // ctor
+  explicit CXformInlineCTEConsumer(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformInlineCTEConsumer()
-	{
-	}
+  // dtor
+  ~CXformInlineCTEConsumer() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfInlineCTEConsumer;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfInlineCTEConsumer; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformInlineCTEConsumer";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformInlineCTEConsumer"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformInlineCTEConsumer
+};  // class CXformInlineCTEConsumer
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformInlineCTEConsumer_H
+#endif  // !GPOPT_CXformInlineCTEConsumer_H
 
 // EOF

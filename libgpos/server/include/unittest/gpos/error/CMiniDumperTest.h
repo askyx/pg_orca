@@ -17,8 +17,7 @@
 
 #define GPOS_MINIDUMP_BUF_SIZE (1024 * 8)
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CMiniDumperTest
@@ -27,73 +26,70 @@ namespace gpos
 //		Static unit tests for minidump handler
 //
 //---------------------------------------------------------------------------
-class CMiniDumperTest
-{
-private:
-	//---------------------------------------------------------------------------
-	//	@class:
-	//		CMiniDumperStream
-	//
-	//	@doc:
-	//		Local minidump handler
-	//
-	//---------------------------------------------------------------------------
-	class CMiniDumperStream : public CMiniDumper
-	{
-	public:
-		// ctor
-		CMiniDumperStream(CMemoryPool *mp);
+class CMiniDumperTest {
+ private:
+  //---------------------------------------------------------------------------
+  //	@class:
+  //		CMiniDumperStream
+  //
+  //	@doc:
+  //		Local minidump handler
+  //
+  //---------------------------------------------------------------------------
+  class CMiniDumperStream : public CMiniDumper {
+   public:
+    // ctor
+    CMiniDumperStream();
 
-		// dtor
-		virtual ~CMiniDumperStream();
+    // dtor
+    ~CMiniDumperStream() override;
 
-		// serialize minidump header
-		virtual void SerializeHeader();
+    // serialize minidump header
+    void SerializeHeader() override;
 
-		// serialize minidump footer
-		virtual void SerializeFooter();
+    // serialize minidump footer
+    void SerializeFooter() override;
 
-		// serialize entry header
-		virtual void SerializeEntryHeader();
+    // serialize entry header
+    void SerializeEntryHeader() override;
 
-		// serialize entry footer
-		virtual void SerializeEntryFooter();
+    // serialize entry footer
+    void SerializeEntryFooter() override;
 
-	};	// class CMiniDumperStream
+  };  // class CMiniDumperStream
 
-	//---------------------------------------------------------------------------
-	//	@class:
-	//		CSerializableStack
-	//
-	//	@doc:
-	//		Stack serializer
-	//
-	//---------------------------------------------------------------------------
-	class CSerializableStack : public CSerializable
-	{
-	public:
-		// ctor
-		CSerializableStack();
+  //---------------------------------------------------------------------------
+  //	@class:
+  //		CSerializableStack
+  //
+  //	@doc:
+  //		Stack serializer
+  //
+  //---------------------------------------------------------------------------
+  class CSerializableStack : public CSerializable {
+   public:
+    // ctor
+    CSerializableStack();
 
-		// dtor
-		virtual ~CSerializableStack();
+    // dtor
+    ~CSerializableStack() override;
 
-		// serialize object to passed stream
-		virtual void Serialize(COstream &oos);
+    // serialize object to passed stream
+    void Serialize(COstream &oos) override;
 
-	};	// class CSerializableStack
+  };  // class CSerializableStack
 
-	// helper functions
-	static void *PvRaise(void *);
+  // helper functions
+  static void *PvRaise(void *);
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
 
-};	// class CMiniDumperTest
+};  // class CMiniDumperTest
 }  // namespace gpos
 
-#endif	// !GPOS_CMiniDumperTest_H
+#endif  // !GPOS_CMiniDumperTest_H
 
 // EOF

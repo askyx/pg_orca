@@ -18,10 +18,8 @@
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
-
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -33,45 +31,40 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for column descriptor lists
 //
 //---------------------------------------------------------------------------
-class CParseHandlerColDescr : public CParseHandlerBase
-{
-private:
-	// array of column descriptors to build
-	CDXLColDescrArray *m_dxl_column_descr_array;
+class CParseHandlerColDescr : public CParseHandlerBase {
+ private:
+  // array of column descriptors to build
+  CDXLColDescrArray *m_dxl_column_descr_array;
 
-	// current column descriptor being parsed
-	CDXLColDescr *m_current_column_descr;
+  // current column descriptor being parsed
+  CDXLColDescr *m_current_column_descr;
 
-	// private copy ctor
-	CParseHandlerColDescr(const CParseHandlerColDescr &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerColDescr(const CParseHandlerColDescr &) = delete;
 
-public:
-	// ctor/dtor
-	CParseHandlerColDescr(CMemoryPool *m_mp,
-						  CParseHandlerManager *parse_handler_mgr,
-						  CParseHandlerBase *parse_handler_base);
+  // ctor/dtor
+  CParseHandlerColDescr(CMemoryPool *m_mp, CParseHandlerManager *parse_handler_mgr,
+                        CParseHandlerBase *parse_handler_base);
 
-	virtual ~CParseHandlerColDescr();
+  ~CParseHandlerColDescr() override;
 
-	CDXLColDescrArray *GetDXLColumnDescrArray();
+  CDXLColDescrArray *GetDXLColumnDescrArray();
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerColumnDescriptor_H
+#endif  // !GPDXL_CParseHandlerColumnDescriptor_H
 
 // EOF

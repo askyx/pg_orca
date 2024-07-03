@@ -25,12 +25,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLDatumBool::CDXLDatumBool(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null,
-							 BOOL value)
-	: CDXLDatum(mp, mdid_type, default_type_modifier, is_null, 1 /*length*/),
-	  m_value(value)
-{
-}
+CDXLDatumBool::CDXLDatumBool(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, BOOL value)
+    : CDXLDatum(mp, mdid_type, default_type_modifier, is_null, 1 /*length*/), m_value(value) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -40,32 +36,20 @@ CDXLDatumBool::CDXLDatumBool(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null,
 //		Serialize datum in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLDatumBool::Serialize(CXMLSerializer *xml_serializer)
-{
-	m_mdid_type->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+void CDXLDatumBool::Serialize(CXMLSerializer *xml_serializer) {
+  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
 
-	if (!m_is_null)
-	{
-		if (m_value)
-		{
-			xml_serializer->AddAttribute(
-				CDXLTokens::GetDXLTokenStr(EdxltokenValue),
-				CDXLTokens::GetDXLTokenStr(EdxltokenTrue));
-		}
-		else
-		{
-			xml_serializer->AddAttribute(
-				CDXLTokens::GetDXLTokenStr(EdxltokenValue),
-				CDXLTokens::GetDXLTokenStr(EdxltokenFalse));
-		}
-	}
-	else
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
-	}
+  if (!m_is_null) {
+    if (m_value) {
+      xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue),
+                                   CDXLTokens::GetDXLTokenStr(EdxltokenTrue));
+    } else {
+      xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue),
+                                   CDXLTokens::GetDXLTokenStr(EdxltokenFalse));
+    }
+  } else {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
+  }
 }
 
 // EOF

@@ -39,19 +39,17 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMemoryPoolBasicTest::EresUnittest()
-{
-	CUnittest rgut[] = {
+CMemoryPoolBasicTest::EresUnittest() {
+  CUnittest rgut[] = {
 #ifdef GPOS_DEBUG
-		GPOS_UNITTEST_FUNC(CMemoryPoolBasicTest::EresUnittest_Print),
-#endif	// GPOS_DEBUG
-		GPOS_UNITTEST_FUNC(CMemoryPoolBasicTest::EresUnittest_TestTracker)};
+      GPOS_UNITTEST_FUNC(CMemoryPoolBasicTest::EresUnittest_Print),
+#endif  // GPOS_DEBUG
+      GPOS_UNITTEST_FUNC(CMemoryPoolBasicTest::EresUnittest_TestTracker)};
 
-	CAutoTraceFlag atf(EtraceTestMemoryPools, true /*value*/);
+  CAutoTraceFlag atf(EtraceTestMemoryPools, true /*value*/);
 
-	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
+  return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 }
-
 
 #ifdef GPOS_DEBUG
 
@@ -64,23 +62,21 @@ CMemoryPoolBasicTest::EresUnittest()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMemoryPoolBasicTest::EresUnittest_Print()
-{
-	CAutoTraceFlag atfStackTrace(EtracePrintMemoryLeakStackTrace, true);
+CMemoryPoolBasicTest::EresUnittest_Print() {
+  CAutoTraceFlag atfStackTrace(EtracePrintMemoryLeakStackTrace, true);
 
-	const ULONG ulBufferSize = 4096;
-	WCHAR wsz[ulBufferSize];
-	CWStringStatic str(wsz, GPOS_ARRAY_SIZE(wsz));
-	COstreamString os(&str);
+  const ULONG ulBufferSize = 4096;
+  WCHAR wsz[ulBufferSize];
+  CWStringStatic str(wsz, GPOS_ARRAY_SIZE(wsz));
+  COstreamString os(&str);
 
-	(void) CMemoryPoolManager::GetMemoryPoolMgr()->OsPrint(os);
-	GPOS_TRACE(str.GetBuffer());
+  (void)CMemoryPoolManager::GetMemoryPoolMgr()->OsPrint(os);
+  GPOS_TRACE(str.GetBuffer());
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
 
-#endif	// GPOS_DEBUG
-
+#endif  // GPOS_DEBUG
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -91,11 +87,9 @@ CMemoryPoolBasicTest::EresUnittest_Print()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMemoryPoolBasicTest::EresUnittest_TestTracker()
-{
-	return EresTestType();
+CMemoryPoolBasicTest::EresUnittest_TestTracker() {
+  return EresTestType();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -106,24 +100,18 @@ CMemoryPoolBasicTest::EresUnittest_TestTracker()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMemoryPoolBasicTest::EresTestType()
-{
-	if (GPOS_OK != EresNewDelete() ||
-		GPOS_OK != EresTestExpectedError(EresThrowingCtor, CException::ExmiOOM)
-
+CMemoryPoolBasicTest::EresTestType() {
+  if (GPOS_OK != EresNewDelete() || GPOS_OK != EresTestExpectedError(EresThrowingCtor, CException::ExmiOOM)
 #ifdef GPOS_DEBUG
-		|| GPOS_OK != EresTestExpectedError(EresLeak, CException::ExmiAssert) ||
-		GPOS_OK !=
-			EresTestExpectedError(EresLeakByException, CException::ExmiAssert)
-#endif	// GPOS_DEBUG
-	)
-	{
-		return GPOS_FAILED;
-	}
+      || GPOS_OK != EresTestExpectedError(EresLeak, CException::ExmiAssert) ||
+      GPOS_OK != EresTestExpectedError(EresLeakByException, CException::ExmiAssert)
+#endif  // GPOS_DEBUG
+  ) {
+    return GPOS_FAILED;
+  }
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -134,29 +122,24 @@ CMemoryPoolBasicTest::EresTestType()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMemoryPoolBasicTest::EresTestExpectedError(GPOS_RESULT (*pfunc)(), ULONG minor)
-{
-	CErrorHandlerStandard errhdl;
-	GPOS_TRY_HDL(&errhdl)
-	{
-		pfunc();
-	}
-	GPOS_CATCH_EX(ex)
-	{
-		if (CException::ExmaSystem == ex.Major() && minor == ex.Minor())
-		{
-			GPOS_RESET_EX;
+CMemoryPoolBasicTest::EresTestExpectedError(GPOS_RESULT (*pfunc)(), ULONG minor) {
+  CErrorHandlerStandard errhdl;
+  GPOS_TRY_HDL(&errhdl) {
+    pfunc();
+  }
+  GPOS_CATCH_EX(ex) {
+    if (CException::ExmaSystem == ex.Major() && minor == ex.Minor()) {
+      GPOS_RESET_EX;
 
-			return GPOS_OK;
-		}
+      return GPOS_OK;
+    }
 
-		GPOS_RETHROW(ex);
-	}
-	GPOS_CATCH_END;
+    GPOS_RETHROW(ex);
+  }
+  GPOS_CATCH_END;
 
-	return GPOS_FAILED;
+  return GPOS_FAILED;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -167,49 +150,45 @@ CMemoryPoolBasicTest::EresTestExpectedError(GPOS_RESULT (*pfunc)(), ULONG minor)
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMemoryPoolBasicTest::EresNewDelete()
-{
-	// create memory pool
-	CAutoTimer at("NewDelete test", true /*fPrint*/);
-	CAutoMemoryPool amp(CAutoMemoryPool::ElcExc);
-	CMemoryPool *mp = amp.Pmp();
+CMemoryPoolBasicTest::EresNewDelete() {
+  // create memory pool
+  CAutoTimer at("NewDelete test", true /*fPrint*/);
+  CAutoMemoryPool amp(CAutoMemoryPool::ElcExc);
+  CMemoryPool *mp = amp.Pmp();
 
-	WCHAR rgwszText[] = GPOS_WSZ_LIT(
-		"This is a lengthy test string. "
-		"Nothing serious just to demonstrate that "
-		"you can allocate using New and free using "
-		"delete. That's all. Special characters anybody? "
-		"Sure thing: \x07 \xAB \xFF!. End of string.");
+  WCHAR rgwszText[] = GPOS_WSZ_LIT(
+      "This is a lengthy test string. "
+      "Nothing serious just to demonstrate that "
+      "you can allocate using New and free using "
+      "delete. That's all. Special characters anybody? "
+      "Sure thing: \x07 \xAB \xFF!. End of string.");
 
-	// use overloaded New operator
-	WCHAR *wsz = GPOS_NEW_ARRAY(mp, WCHAR, GPOS_ARRAY_SIZE(rgwszText));
-	(void) clib::Wmemcpy(wsz, rgwszText, GPOS_ARRAY_SIZE(rgwszText));
+  // use overloaded New operator
+  WCHAR *wsz = GPOS_NEW_ARRAY(mp, WCHAR, GPOS_ARRAY_SIZE(rgwszText));
+  (void)clib::Wmemcpy(wsz, rgwszText, GPOS_ARRAY_SIZE(rgwszText));
 
 #ifdef GPOS_DEBUG
 
-	WCHAR rgBuffer[8 * 1024];
-	CWStringStatic str(rgBuffer, GPOS_ARRAY_SIZE(rgBuffer));
-	COstreamString os(&str);
+  WCHAR rgBuffer[8 * 1024];
+  CWStringStatic str(rgBuffer, GPOS_ARRAY_SIZE(rgBuffer));
+  COstreamString os(&str);
 
-	// dump allocations
-	if (mp->SupportsLiveObjectWalk())
-	{
-		CMemoryVisitorPrint movp(os);
-		mp->WalkLiveObjects(&movp);
-	}
-	else
-	{
-		os << "Memory dump unavailable";
-	}
-	os << std::endl;
+  // dump allocations
+  if (mp->SupportsLiveObjectWalk()) {
+    CMemoryVisitorPrint movp(os);
+    mp->WalkLiveObjects(&movp);
+  } else {
+    os << "Memory dump unavailable";
+  }
+  os << std::endl;
 
-	GPOS_TRACE(str.GetBuffer());
+  GPOS_TRACE(str.GetBuffer());
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-	GPOS_DELETE_ARRAY(wsz);
+  GPOS_DELETE_ARRAY(wsz);
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
 
 //---------------------------------------------------------------------------
@@ -221,32 +200,28 @@ CMemoryPoolBasicTest::EresNewDelete()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMemoryPoolBasicTest::EresThrowingCtor()
-{
-	CAutoTimer at("ThrowingCtor test", true /*fPrint*/);
+CMemoryPoolBasicTest::EresThrowingCtor() {
+  CAutoTimer at("ThrowingCtor test", true /*fPrint*/);
 
-	// create memory pool
-	CAutoMemoryPool amp(CAutoMemoryPool::ElcExc);
-	CMemoryPool *mp = amp.Pmp();
+  // create memory pool
+  CAutoMemoryPool amp(CAutoMemoryPool::ElcExc);
+  CMemoryPool *mp = amp.Pmp();
 
-	// malicious test class
-	class CMyTestClass
-	{
-	public:
-		CMyTestClass()
-		{
-			// throw in ctor
-			GPOS_RAISE(CException::ExmaSystem, CException::ExmiOOM);
-		}
-	};
+  // malicious test class
+  class CMyTestClass {
+   public:
+    CMyTestClass() {
+      // throw in ctor
+      GPOS_RAISE(CException::ExmaSystem, CException::ExmiOOM);
+    }
+  };
 
-	// try instantiating the class
-	GPOS_NEW(mp) CMyTestClass();
+  // try instantiating the class
+  GPOS_NEW(mp) CMyTestClass();
 
-	// doesn't reach this line
-	return GPOS_FAILED;
+  // doesn't reach this line
+  return GPOS_FAILED;
 }
-
 
 #ifdef GPOS_DEBUG
 
@@ -259,33 +234,29 @@ CMemoryPoolBasicTest::EresThrowingCtor()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMemoryPoolBasicTest::EresLeak()
-{
-	CAutoTraceFlag atfDump(EtracePrintMemoryLeakDump, true);
-	CAutoTraceFlag atfStackTrace(EtracePrintMemoryLeakStackTrace, true);
-	CAutoTimer at("Leak test", true /*fPrint*/);
+CMemoryPoolBasicTest::EresLeak() {
+  CAutoTraceFlag atfDump(EtracePrintMemoryLeakDump, true);
+  CAutoTraceFlag atfStackTrace(EtracePrintMemoryLeakStackTrace, true);
+  CAutoTimer at("Leak test", true /*fPrint*/);
 
-	// scope for pool
-	{
-		CAutoMemoryPool amp(CAutoMemoryPool::ElcStrict);
-		CMemoryPool *mp = amp.Pmp();
+  // scope for pool
+  {
+    CAutoMemoryPool amp(CAutoMemoryPool::ElcStrict);
+    CMemoryPool *mp = amp.Pmp();
 
-		for (ULONG i = 0; i < 10; i++)
-		{
-			// use overloaded New operator
-			ULONG *rgul = GPOS_NEW_ARRAY(mp, ULONG, 10);
-			rgul[2] = 1;
+    for (ULONG i = 0; i < 10; i++) {
+      // use overloaded New operator
+      ULONG *rgul = GPOS_NEW_ARRAY(mp, ULONG, 10);
+      rgul[2] = 1;
 
-			if (i < 8)
-			{
-				GPOS_DELETE_ARRAY(rgul);
-			}
-		}
-	}
+      if (i < 8) {
+        GPOS_DELETE_ARRAY(rgul);
+      }
+    }
+  }
 
-	return GPOS_FAILED;
+  return GPOS_FAILED;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -296,33 +267,30 @@ CMemoryPoolBasicTest::EresLeak()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CMemoryPoolBasicTest::EresLeakByException()
-{
-	CAutoTraceFlag atfDump(EtracePrintMemoryLeakDump, true);
-	CAutoTraceFlag atfStackTrace(EtracePrintMemoryLeakStackTrace, true);
-	CAutoTimer at("LeakByException test", true /*fPrint*/);
+CMemoryPoolBasicTest::EresLeakByException() {
+  CAutoTraceFlag atfDump(EtracePrintMemoryLeakDump, true);
+  CAutoTraceFlag atfStackTrace(EtracePrintMemoryLeakStackTrace, true);
+  CAutoTimer at("LeakByException test", true /*fPrint*/);
 
-	// scope for pool
-	{
-		// create memory pool
-		CAutoMemoryPool amp(CAutoMemoryPool::ElcExc);
-		CMemoryPool *mp = amp.Pmp();
+  // scope for pool
+  {
+    // create memory pool
+    CAutoMemoryPool amp(CAutoMemoryPool::ElcExc);
+    CMemoryPool *mp = amp.Pmp();
 
-		for (ULONG i = 0; i < 10; i++)
-		{
-			// use overloaded New operator
-			ULONG *rgul = GPOS_NEW_ARRAY(mp, ULONG, 3);
-			rgul[2] = 1;
-		}
+    for (ULONG i = 0; i < 10; i++) {
+      // use overloaded New operator
+      ULONG *rgul = GPOS_NEW_ARRAY(mp, ULONG, 3);
+      rgul[2] = 1;
+    }
 
-		GPOS_ASSERT(!"Trigger leak with exception");
-	}
+    GPOS_UNITTEST_ASSERT(!"Trigger leak with exception");
+  }
 
-	return GPOS_FAILED;
+  return GPOS_FAILED;
 }
 
-#endif	// GPOS_DEBUG
-
+#endif  // GPOS_DEBUG
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -333,13 +301,11 @@ CMemoryPoolBasicTest::EresLeakByException()
 //
 //---------------------------------------------------------------------------
 ULONG
-CMemoryPoolBasicTest::Size(ULONG offset)
-{
-	if (0 == (offset & 1))
-	{
-		return GPOS_MEM_TEST_ALLOC_SMALL;
-	}
-	return GPOS_MEM_TEST_ALLOC_LARGE;
+CMemoryPoolBasicTest::Size(ULONG offset) {
+  if (0 == (offset & 1)) {
+    return GPOS_MEM_TEST_ALLOC_SMALL;
+  }
+  return GPOS_MEM_TEST_ALLOC_LARGE;
 }
 
 // EOF

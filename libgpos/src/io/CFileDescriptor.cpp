@@ -9,15 +9,14 @@
 //		File descriptor abstraction
 //---------------------------------------------------------------------------
 
-
 #include "gpos/io/CFileDescriptor.h"
 
 #include "gpos/base.h"
 #include "gpos/io/ioutils.h"
 #include "gpos/string/CStringStatic.h"
+#include "gpos/task/IWorker.h"
 
 using namespace gpos;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -27,10 +26,7 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CFileDescriptor::CFileDescriptor() : m_file_descriptor(GPOS_FILE_DESCR_INVALID)
-{
-}
-
+CFileDescriptor::CFileDescriptor() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -40,41 +36,32 @@ CFileDescriptor::CFileDescriptor() : m_file_descriptor(GPOS_FILE_DESCR_INVALID)
 //		Open file descriptor
 //
 //---------------------------------------------------------------------------
-void
-CFileDescriptor::OpenFile(const CHAR *file_path, ULONG mode,
-						  ULONG permission_bits)
-{
-	GPOS_ASSERT(!IsFileOpen());
+void CFileDescriptor::OpenFile(const CHAR *file_path, ULONG mode, ULONG permission_bits) {
+  GPOS_ASSERT(!IsFileOpen());
 
-	BOOL fOpened = false;
+  BOOL fOpened = false;
 
-	while (!fOpened)
-	{
-		m_file_descriptor = GPOS_FILE_DESCR_INVALID;
+  while (!fOpened) {
+    m_file_descriptor = GPOS_FILE_DESCR_INVALID;
 
-		// create file with given mode and permissions and check to simulate I/O error
-		GPOS_CHECK_SIM_IO_ERR(
-			&m_file_descriptor,
-			ioutils::OpenFile(file_path, mode, permission_bits));
+    // create file with given mode and permissions.
+    m_file_descriptor = ioutils::OpenFile(file_path, mode, permission_bits);
 
-		// check for error
-		if (GPOS_FILE_DESCR_INVALID == m_file_descriptor)
-		{
-			// in case an interrupt was received we retry
-			if (EINTR == errno)
-			{
-				GPOS_CHECK_ABORT;
+    // check for error
+    if (GPOS_FILE_DESCR_INVALID == m_file_descriptor) {
+      // in case an interrupt was received we retry
+      if (EINTR == errno) {
+        GPOS_CHECK_ABORT;
 
-				continue;
-			}
+        continue;
+      }
 
-			GPOS_RAISE(CException::ExmaSystem, CException::ExmiIOError, errno);
-		}
+      GPOS_RAISE(CException::ExmaSystem, CException::ExmiIOError, errno);
+    }
 
-		fOpened = true;
-	}
+    fOpened = true;
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -84,14 +71,11 @@ CFileDescriptor::OpenFile(const CHAR *file_path, ULONG mode,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CFileDescriptor::~CFileDescriptor()
-{
-	if (IsFileOpen())
-	{
-		CloseFile();
-	}
+CFileDescriptor::~CFileDescriptor() {
+  if (IsFileOpen()) {
+    CloseFile();
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -101,33 +85,28 @@ CFileDescriptor::~CFileDescriptor()
 //		Close file
 //
 //---------------------------------------------------------------------------
-void
-CFileDescriptor::CloseFile()
-{
-	GPOS_ASSERT(IsFileOpen());
+void CFileDescriptor::CloseFile() {
+  GPOS_ASSERT(IsFileOpen());
 
-	BOOL fClosed = false;
+  BOOL fClosed = false;
 
-	while (!fClosed)
-	{
-		INT res = ioutils::CloseFile(m_file_descriptor);
+  while (!fClosed) {
+    INT res = ioutils::CloseFile(m_file_descriptor);
 
-		// check for error
-		if (0 != res)
-		{
-			GPOS_ASSERT(EINTR == errno || EIO == errno);
+    // check for error
+    if (0 != res) {
+      GPOS_ASSERT(EINTR == errno || EIO == errno);
 
-			// in case an interrupt was received we retry
-			if (EINTR == errno)
-			{
-				continue;
-			}
-		}
+      // in case an interrupt was received we retry
+      if (EINTR == errno) {
+        continue;
+      }
+    }
 
-		fClosed = true;
-	}
+    fClosed = true;
+  }
 
-	m_file_descriptor = GPOS_FILE_DESCR_INVALID;
+  m_file_descriptor = GPOS_FILE_DESCR_INVALID;
 }
 
 // EOF

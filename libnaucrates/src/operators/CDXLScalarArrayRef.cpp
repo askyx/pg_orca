@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLScalarArrayRef.cpp
@@ -26,21 +26,17 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarArrayRef::CDXLScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid,
-									   INT type_modifier,
-									   IMDId *array_type_mdid,
-									   IMDId *return_type_mdid)
-	: CDXLScalar(mp),
-	  m_elem_type_mdid(elem_type_mdid),
-	  m_type_modifier(type_modifier),
-	  m_array_type_mdid(array_type_mdid),
-	  m_return_type_mdid(return_type_mdid)
-{
-	GPOS_ASSERT(m_elem_type_mdid->IsValid());
-	GPOS_ASSERT(m_array_type_mdid->IsValid());
-	GPOS_ASSERT(m_return_type_mdid->IsValid());
-	GPOS_ASSERT(m_return_type_mdid->Equals(m_elem_type_mdid) ||
-				m_return_type_mdid->Equals(m_array_type_mdid));
+CDXLScalarArrayRef::CDXLScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid, INT type_modifier,
+                                       IMDId *array_type_mdid, IMDId *return_type_mdid)
+    : CDXLScalar(mp),
+      m_elem_type_mdid(elem_type_mdid),
+      m_type_modifier(type_modifier),
+      m_array_type_mdid(array_type_mdid),
+      m_return_type_mdid(return_type_mdid) {
+  GPOS_ASSERT(m_elem_type_mdid->IsValid());
+  GPOS_ASSERT(m_array_type_mdid->IsValid());
+  GPOS_ASSERT(m_return_type_mdid->IsValid());
+  GPOS_ASSERT(m_return_type_mdid->Equals(m_elem_type_mdid) || m_return_type_mdid->Equals(m_array_type_mdid));
 }
 
 //---------------------------------------------------------------------------
@@ -51,11 +47,10 @@ CDXLScalarArrayRef::CDXLScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLScalarArrayRef::~CDXLScalarArrayRef()
-{
-	m_elem_type_mdid->Release();
-	m_array_type_mdid->Release();
-	m_return_type_mdid->Release();
+CDXLScalarArrayRef::~CDXLScalarArrayRef() {
+  m_elem_type_mdid->Release();
+  m_array_type_mdid->Release();
+  m_return_type_mdid->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -66,10 +61,8 @@ CDXLScalarArrayRef::~CDXLScalarArrayRef()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarArrayRef::GetDXLOperator() const
-{
-	return EdxlopScalarArrayRef;
+Edxlopid CDXLScalarArrayRef::GetDXLOperator() const {
+  return EdxlopScalarArrayRef;
 }
 
 //---------------------------------------------------------------------------
@@ -80,16 +73,12 @@ CDXLScalarArrayRef::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarArrayRef::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayRef);
+const CWStringConst *CDXLScalarArrayRef::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayRef);
 }
 
-INT
-CDXLScalarArrayRef::TypeModifier() const
-{
-	return m_type_modifier;
+INT CDXLScalarArrayRef::TypeModifier() const {
+  return m_type_modifier;
 }
 
 //---------------------------------------------------------------------------
@@ -100,57 +89,40 @@ CDXLScalarArrayRef::TypeModifier() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarArrayRef::SerializeToDXL(CXMLSerializer *xml_serializer,
-								   const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarArrayRef::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	m_elem_type_mdid->Serialize(
-		xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenArrayElementType));
-	if (default_type_modifier != TypeModifier())
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
-	}
-	m_array_type_mdid->Serialize(
-		xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenArrayType));
-	m_return_type_mdid->Serialize(xml_serializer,
-								  CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  m_elem_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenArrayElementType));
+  if (default_type_modifier != TypeModifier()) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
+  }
+  m_array_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenArrayType));
+  m_return_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
 
-	// serialize child nodes
-	const ULONG arity = dxlnode->Arity();
-	GPOS_ASSERT(3 == arity || 4 == arity);
+  // serialize child nodes
+  const ULONG arity = dxlnode->Arity();
+  GPOS_ASSERT(3 == arity || 4 == arity);
 
-	// first 2 children are index lists
-	(*dxlnode)[0]->SerializeToDXL(xml_serializer);
-	(*dxlnode)[1]->SerializeToDXL(xml_serializer);
+  // first 2 children are index lists
+  (*dxlnode)[0]->SerializeToDXL(xml_serializer);
+  (*dxlnode)[1]->SerializeToDXL(xml_serializer);
 
-	// 3rd child is the ref expression
-	const CWStringConst *pstrRefExpr =
-		CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayRefExpr);
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrRefExpr);
-	(*dxlnode)[2]->SerializeToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrRefExpr);
+  // 3rd child is the ref expression
+  const CWStringConst *pstrRefExpr = CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayRefExpr);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrRefExpr);
+  (*dxlnode)[2]->SerializeToDXL(xml_serializer);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrRefExpr);
 
-	// 4th child is the optional assign expression
-	const CWStringConst *pstrAssignExpr =
-		CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayRefAssignExpr);
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrAssignExpr);
-	if (4 == arity)
-	{
-		(*dxlnode)[3]->SerializeToDXL(xml_serializer);
-	}
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrAssignExpr);
+  // 4th child is the optional assign expression
+  const CWStringConst *pstrAssignExpr = CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayRefAssignExpr);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrAssignExpr);
+  if (4 == arity) {
+    (*dxlnode)[3]->SerializeToDXL(xml_serializer);
+  }
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrAssignExpr);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------
@@ -161,11 +133,8 @@ CDXLScalarArrayRef::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Does the operator return boolean result
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLScalarArrayRef::HasBoolResult(CMDAccessor *md_accessor) const
-{
-	return (IMDType::EtiBool ==
-			md_accessor->RetrieveType(m_return_type_mdid)->GetDatumType());
+BOOL CDXLScalarArrayRef::HasBoolResult(CMDAccessor *md_accessor) const {
+  return (IMDType::EtiBool == md_accessor->RetrieveType(m_return_type_mdid)->GetDatumType());
 }
 
 #ifdef GPOS_DEBUG
@@ -177,24 +146,17 @@ CDXLScalarArrayRef::HasBoolResult(CMDAccessor *md_accessor) const
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarArrayRef::AssertValid(const CDXLNode *dxlnode,
-								BOOL validate_children) const
-{
-	const ULONG arity = dxlnode->Arity();
-	for (ULONG ul = 0; ul < arity; ++ul)
-	{
-		CDXLNode *child_dxlnode = (*dxlnode)[ul];
-		GPOS_ASSERT(EdxloptypeScalar ==
-					child_dxlnode->GetOperator()->GetDXLOperatorType());
+void CDXLScalarArrayRef::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  const ULONG arity = dxlnode->Arity();
+  for (ULONG ul = 0; ul < arity; ++ul) {
+    CDXLNode *child_dxlnode = (*dxlnode)[ul];
+    GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-		if (validate_children)
-		{
-			child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-													  validate_children);
-		}
-	}
+    if (validate_children) {
+      child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+    }
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

@@ -20,9 +20,7 @@
 using namespace gpos;
 using namespace gpdxl;
 
-
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CSerializableStackTrace
@@ -31,21 +29,20 @@ namespace gpopt
 //		Serializable stacktrace object
 //
 //---------------------------------------------------------------------------
-class CSerializableStackTrace : public CSerializable
-{
-public:
-	// ctor
-	CSerializableStackTrace();
+class CSerializableStackTrace : public CSerializable {
+ public:
+  // ctor
+  CSerializableStackTrace();
 
-	// dtor
-	virtual ~CSerializableStackTrace();
+  // dtor
+  ~CSerializableStackTrace() override;
 
-	// serialize object to passed stream
-	virtual void Serialize(COstream &oos);
+  // serialize object to passed stream
+  void Serialize(COstream &oos) override;
 
-};	// class CSerializableStackTrace
+};  // class CSerializableStackTrace
 }  // namespace gpopt
 
-#endif	// !GPOPT_CSerializableStackTrace_H
+#endif  // !GPOPT_CSerializableStackTrace_H
 
 // EOF

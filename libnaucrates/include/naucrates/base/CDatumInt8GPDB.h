@@ -16,8 +16,7 @@
 #include "naucrates/base/IDatumInt8.h"
 #include "naucrates/md/CMDTypeInt8GPDB.h"
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDatumInt8GPDB
@@ -26,62 +25,58 @@ namespace gpnaucrates
 //		GPDB-specific Int8 representation
 //
 //---------------------------------------------------------------------------
-class CDatumInt8GPDB : public IDatumInt8
-{
-private:
-	// type information
-	IMDId *m_mdid;
+class CDatumInt8GPDB : public IDatumInt8 {
+ private:
+  // type information
+  IMDId *m_mdid;
 
-	// integer value
-	LINT m_val;
+  // integer value
+  LINT m_val;
 
-	// is null
-	BOOL m_is_null;
+  // is null
+  BOOL m_is_null;
 
+ public:
+  CDatumInt8GPDB(const CDatumInt8GPDB &) = delete;
 
-	// private copy ctor
-	CDatumInt8GPDB(const CDatumInt8GPDB &);
+  // ctors
+  CDatumInt8GPDB(CSystemId sysid, LINT val, BOOL is_null = false);
+  CDatumInt8GPDB(IMDId *mdid, LINT val, BOOL is_null = false);
 
-public:
-	// ctors
-	CDatumInt8GPDB(CSystemId sysid, LINT val, BOOL is_null = false);
-	CDatumInt8GPDB(IMDId *mdid, LINT val, BOOL is_null = false);
+  // dtor
+  ~CDatumInt8GPDB() override;
 
-	// dtor
-	virtual ~CDatumInt8GPDB();
+  // accessor of metadata type id
+  IMDId *MDId() const override;
 
-	// accessor of metadata type id
-	virtual IMDId *MDId() const;
+  // accessor of size
+  ULONG Size() const override;
 
-	// accessor of size
-	virtual ULONG Size() const;
+  // accessor of integer value
+  LINT Value() const override;
 
-	// accessor of integer value
-	virtual LINT Value() const;
+  // accessor of is null
+  BOOL IsNull() const override;
 
-	// accessor of is null
-	virtual BOOL IsNull() const;
+  // return string representation
+  const CWStringConst *GetStrRepr(CMemoryPool *mp) const override;
 
-	// return string representation
-	virtual const CWStringConst *GetStrRepr(CMemoryPool *mp) const;
+  // hash function
+  ULONG HashValue() const override;
 
-	// hash function
-	virtual ULONG HashValue() const;
+  // match function for datums
+  BOOL Matches(const IDatum *) const override;
 
-	// match function for datums
-	virtual BOOL Matches(const IDatum *) const;
+  // copy datum
+  IDatum *MakeCopy(CMemoryPool *mp) const override;
 
-	// copy datum
-	virtual IDatum *MakeCopy(CMemoryPool *mp) const;
+  // print function
+  IOstream &OsPrint(IOstream &os) const override;
 
-	// print function
-	virtual IOstream &OsPrint(IOstream &os) const;
-
-};	// class CDatumInt8GPDB
+};  // class CDatumInt8GPDB
 
 }  // namespace gpnaucrates
 
-
-#endif	// !GPNAUCRATES_CDatumInt8GPDB_H
+#endif  // !GPNAUCRATES_CDatumInt8GPDB_H
 
 // EOF

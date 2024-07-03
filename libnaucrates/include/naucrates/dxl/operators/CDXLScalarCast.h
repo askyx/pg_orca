@@ -23,8 +23,7 @@
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -36,58 +35,53 @@ using namespace gpmd;
 //		Class for representing DXL casting operator
 //
 //---------------------------------------------------------------------------
-class CDXLScalarCast : public CDXLScalar
-{
-private:
-	// catalog MDId of the column's type
-	IMDId *m_mdid_type;
+class CDXLScalarCast : public CDXLScalar {
+ private:
+  // catalog MDId of the column's type
+  IMDId *m_mdid_type;
 
-	// catalog MDId of the function implementing the casting
-	IMDId *m_func_mdid;
+  // catalog MDId of the function implementing the casting
+  IMDId *m_func_mdid;
 
-	// private copy ctor
-	CDXLScalarCast(const CDXLScalarCast &);
+ public:
+  CDXLScalarCast(const CDXLScalarCast &) = delete;
 
-public:
-	// ctor/dtor
-	CDXLScalarCast(CMemoryPool *mp, IMDId *mdid_type, IMDId *func_mdid);
+  // ctor/dtor
+  CDXLScalarCast(CMemoryPool *mp, IMDId *mdid_type, IMDId *func_mdid);
 
-	virtual ~CDXLScalarCast();
+  ~CDXLScalarCast() override;
 
-	// ident accessors
-	Edxlopid GetDXLOperator() const;
+  // ident accessors
+  Edxlopid GetDXLOperator() const override;
 
-	IMDId *MdidType() const;
-	IMDId *FuncMdId() const;
+  IMDId *MdidType() const;
+  IMDId *FuncMdId() const;
 
-	// name of the DXL operator name
-	const CWStringConst *GetOpNameStr() const;
+  // name of the DXL operator name
+  const CWStringConst *GetOpNameStr() const override;
 
-	// conversion function
-	static CDXLScalarCast *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarCast == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarCast *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarCast == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarCast *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarCast *>(dxl_op);
+  }
 
-	// does the operator return a boolean result
-	virtual BOOL HasBoolResult(CMDAccessor *md_accessor) const;
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalarCast_H
+#endif  // !GPDXL_CDXLScalarCast_H
 
 // EOF

@@ -17,11 +17,11 @@
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdPropScalar.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpopt/operators/CScalarWindowFunc.h"
 #include "gpopt/xforms/CXformUtils.h"
-
+#include "naucrates/md/CMDTypeInt4GPDB.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -31,10 +31,7 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CScalarProjectList::CScalarProjectList(CMemoryPool *mp) : CScalar(mp)
-{
-}
-
+CScalarProjectList::CScalarProjectList(CMemoryPool *mp) : CScalar(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,12 +41,9 @@ CScalarProjectList::CScalarProjectList(CMemoryPool *mp) : CScalar(mp)
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarProjectList::Matches(COperator *pop) const
-{
-	return (pop->Eopid() == Eopid());
+BOOL CScalarProjectList::Matches(COperator *pop) const {
+  return (pop->Eopid() == Eopid());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -60,10 +54,8 @@ CScalarProjectList::Matches(COperator *pop) const
 //		elements;
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarProjectList::FInputOrderSensitive() const
-{
-	return false;
+BOOL CScalarProjectList::FInputOrderSensitive() const {
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -75,48 +67,64 @@ CScalarProjectList::FInputOrderSensitive() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarProjectList::UlDistinctAggs(CExpressionHandle &exprhdl)
-{
-	// We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
-	// knowing that at this time, aggregate functions are accurately contained in it. What's not
-	// exact are subqueries. This is better than just returning 0 for project lists with subqueries.
-	CExpression *pexprPrjList = exprhdl.PexprScalarRep();
+CScalarProjectList::UlDistinctAggs(CExpressionHandle &exprhdl) {
+  // We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
+  // knowing that at this time, aggregate functions are accurately contained in it. What's not
+  // exact are subqueries. This is better than just returning 0 for project lists with subqueries.
+  CExpression *pexprPrjList = exprhdl.PexprScalarRep();
 
-	GPOS_ASSERT(NULL != pexprPrjList);
-	GPOS_ASSERT(COperator::EopScalarProjectList ==
-				pexprPrjList->Pop()->Eopid());
+  GPOS_ASSERT(nullptr != pexprPrjList);
+  GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
 
-	ULONG ulDistinctAggs = 0;
-	const ULONG arity = pexprPrjList->Arity();
-	for (ULONG ul = 0; ul < arity; ul++)
-	{
-		CExpression *pexprPrjEl = (*pexprPrjList)[ul];
-		CExpression *pexprChild = (*pexprPrjEl)[0];
-		COperator::EOperatorId eopidChild = pexprChild->Pop()->Eopid();
+  ULONG ulDistinctAggs = 0;
+  const ULONG arity = pexprPrjList->Arity();
+  for (ULONG ul = 0; ul < arity; ul++) {
+    CExpression *pexprPrjEl = (*pexprPrjList)[ul];
+    CExpression *pexprChild = (*pexprPrjEl)[0];
+    COperator::EOperatorId eopidChild = pexprChild->Pop()->Eopid();
 
-		if (COperator::EopScalarAggFunc == eopidChild)
-		{
-			CScalarAggFunc *popScAggFunc =
-				CScalarAggFunc::PopConvert(pexprChild->Pop());
-			if (popScAggFunc->IsDistinct())
-			{
-				ulDistinctAggs++;
-			}
-		}
-		else if (COperator::EopScalarWindowFunc == eopidChild)
-		{
-			CScalarWindowFunc *popScWinFunc =
-				CScalarWindowFunc::PopConvert(pexprChild->Pop());
-			if (popScWinFunc->IsDistinct() && popScWinFunc->FAgg())
-			{
-				ulDistinctAggs++;
-			}
-		}
-	}
+    if (COperator::EopScalarAggFunc == eopidChild) {
+      CScalarAggFunc *popScAggFunc = CScalarAggFunc::PopConvert(pexprChild->Pop());
+      if (popScAggFunc->IsDistinct()) {
+        ulDistinctAggs++;
+      }
+    } else if (COperator::EopScalarWindowFunc == eopidChild) {
+      CScalarWindowFunc *popScWinFunc = CScalarWindowFunc::PopConvert(pexprChild->Pop());
+      if (popScWinFunc->IsDistinct() && popScWinFunc->FAgg()) {
+        ulDistinctAggs++;
+      }
+    }
+  }
 
-	return ulDistinctAggs;
+  return ulDistinctAggs;
 }
 
+ULONG
+CScalarProjectList::UlOrderedAggs(CExpressionHandle &exprhdl) {
+  // We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
+  // knowing that at this time, aggregate functions are accurately contained in it. What's not
+  // exact are subqueries. This is better than just returning 0 for project lists with subqueries.
+  CExpression *pexprPrjList = exprhdl.PexprScalarRep();
+
+  GPOS_ASSERT(nullptr != pexprPrjList);
+  GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
+
+  ULONG ulOrderedAggs = 0;
+  const ULONG arity = pexprPrjList->Arity();
+  for (ULONG ul = 0; ul < arity; ul++) {
+    CExpression *pexprPrjEl = (*pexprPrjList)[ul];
+    CExpression *pexprChild = (*pexprPrjEl)[0];
+    COperator::EOperatorId eopidChild = pexprChild->Pop()->Eopid();
+
+    if (COperator::EopScalarAggFunc == eopidChild) {
+      if (CUtils::FHasOrderedAggToSplit(pexprChild)) {
+        ulOrderedAggs++;
+      }
+    }
+  }
+
+  return ulOrderedAggs;
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -129,30 +137,90 @@ CScalarProjectList::UlDistinctAggs(CExpressionHandle &exprhdl)
 //			select count(distinct a) over(), sum(distinct b) over() from T;
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarProjectList::FHasMultipleDistinctAggs(CExpressionHandle &exprhdl)
-{
-	// We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
-	// knowing that at this time, aggregate functions are accurately contained in it. What's not
-	// exact are subqueries. This is better than just returning false for project lists with subqueries.
-	CExpression *pexprPrjList = exprhdl.PexprScalarRep();
+BOOL CScalarProjectList::FHasMultipleDistinctAggs(CExpressionHandle &exprhdl) {
+  // We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
+  // knowing that at this time, aggregate functions are accurately contained in it. What's not
+  // exact are subqueries. This is better than just returning false for project lists with subqueries.
+  CExpression *pexprPrjList = exprhdl.PexprScalarRep();
 
-	GPOS_ASSERT(COperator::EopScalarProjectList ==
-				pexprPrjList->Pop()->Eopid());
-	if (0 == UlDistinctAggs(exprhdl))
-	{
-		return false;
-	}
+  GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
+  if (0 == UlDistinctAggs(exprhdl)) {
+    return false;
+  }
 
-	CAutoMemoryPool amp;
-	ExprToExprArrayMap *phmexprdrgpexpr = NULL;
-	ULONG ulDifferentDQAs = 0;
-	CXformUtils::MapPrjElemsWithDistinctAggs(
-		amp.Pmp(), pexprPrjList, &phmexprdrgpexpr, &ulDifferentDQAs);
-	phmexprdrgpexpr->Release();
+  CAutoMemoryPool amp;
+  ExprToExprArrayMap *phmexprdrgpexpr = nullptr;
+  ULONG ulDifferentDQAs = 0;
+  CXformUtils::MapPrjElemsWithDistinctAggs(amp.Pmp(), pexprPrjList, &phmexprdrgpexpr, &ulDifferentDQAs);
+  phmexprdrgpexpr->Release();
 
-	return (1 < ulDifferentDQAs);
+  return (1 < ulDifferentDQAs);
 }
 
+//---------------------------------------------------------------------------
+//	@function:
+//		CScalarProjectList::FHasScalarFunc
+//
+//	@doc:
+//		Check if given project list has a scalar func, for example:
+//			select random() from T;
+//
+//---------------------------------------------------------------------------
+BOOL CScalarProjectList::FHasScalarFunc(CExpressionHandle &exprhdl) {
+  // We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
+  // knowing that at this time, aggregate functions are accurately contained in it. What's not
+  // exact are subqueries. This is better than just returning 0 for project lists with subqueries.
+  CExpression *pexprPrjList = exprhdl.PexprScalarRep();
+
+  GPOS_ASSERT(nullptr != pexprPrjList);
+  GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
+
+  const ULONG arity = pexprPrjList->Arity();
+  for (ULONG ul = 0; ul < arity; ul++) {
+    CExpression *pexprPrjEl = (*pexprPrjList)[ul];
+    CExpression *pexprChild = (*pexprPrjEl)[0];
+    COperator::EOperatorId eopidChild = pexprChild->Pop()->Eopid();
+
+    if (COperator::EopScalarFunc == eopidChild) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		CScalarProjectList::FContainsOnlyReplicationSafeAggFuncs
+//
+//	@doc:
+//		Check if given project list contains only replication safe agg funcs,
+//      which allows it to be executed safely on replicated slices.
+//
+//---------------------------------------------------------------------------
+BOOL CScalarProjectList::FContainsOnlyReplicationSafeAggFuncs(CExpressionHandle &exprhdl) {
+  // We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
+  // knowing that at this time, aggregate functions are accurately contained in it. What's not
+  // exact are subqueries. This is better than just returning 0 for project lists with subqueries.
+  CExpression *pexprPrjList = exprhdl.PexprScalarRep();
+
+  GPOS_ASSERT(nullptr != pexprPrjList);
+  GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
+
+  const ULONG arity = pexprPrjList->Arity();
+  for (ULONG ul = 0; ul < arity; ul++) {
+    CExpression *pexprPrjEl = (*pexprPrjList)[ul];
+    CExpression *pexprAggFunc = (*pexprPrjEl)[0];
+    if (EopScalarAggFunc != pexprAggFunc->Pop()->Eopid()) {
+      continue;
+    }
+    CScalarAggFunc *popScAggFunc = CScalarAggFunc::PopConvert(pexprAggFunc->Pop());
+    if (!popScAggFunc->FRepSafe()) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 // EOF

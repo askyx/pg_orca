@@ -24,12 +24,21 @@ and ei.entity_id  = i.ad_id;
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="103027,102024,102025,102045,102046,102115,102116,102117,102119,102121,103017"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
+      <dxl:GPDBScalarOp Mdid="0.97.1.0" Name="&lt;" ComparisonType="LT">
+        <dxl:LeftType Mdid="0.23.1.0"/>
+        <dxl:RightType Mdid="0.23.1.0"/>
+        <dxl:ResultType Mdid="0.16.1.0"/>
+        <dxl:OpFunc Mdid="0.66.1.0"/>
+        <dxl:Commutator Mdid="0.521.1.0"/>
+        <dxl:InverseOp Mdid="0.525.1.0"/>
+      </dxl:GPDBScalarOp>
       <dxl:ColumnStatistics Mdid="1.17279045.1.1.9" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
       <dxl:ColumnStatistics Mdid="1.17279045.1.1.8" Name="tableoid" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
       <dxl:ColumnStatistics Mdid="1.17279045.1.1.1" Name="entity_id" Width="8.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
@@ -131,41 +140,30 @@ and ei.entity_id  = i.ad_id;
       <dxl:ColumnStatistics Mdid="1.17279071.1.1.7" Name="tableoid" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
       <dxl:ColumnStatistics Mdid="1.17279071.1.1.6" Name="cmax" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
       <dxl:RelationStatistics Mdid="2.17279045.1.1" Name="events_inprocess" Rows="0.000000" EmptyRelation="true"/>
-      <dxl:Relation Mdid="0.17279045.1.1" Name="events_inprocess" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
+      <dxl:Relation Mdid="6.17279045.1.1" Name="events_inprocess" IsTemporary="false" Rows="0.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
         <dxl:Columns>
           <dxl:Column Name="user_id" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="entity_id" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="event_time" Attno="3" Mdid="0.1114.1.0" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.17279045.1.1.5" Name="cmin" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
@@ -187,38 +185,28 @@ and ei.entity_id  = i.ad_id;
         <dxl:SumAgg Mdid="0.0.0.0"/>
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
-      <dxl:Relation Mdid="0.17279071.1.1" Name="impressions_raw" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,2">
+      <dxl:Relation Mdid="6.17279071.1.1" Name="impressions_raw" IsTemporary="false" Rows="0.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,2">
         <dxl:Columns>
           <dxl:Column Name="user_id" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ad_id" Attno="2" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.17279071.1.1.8" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
@@ -251,7 +239,7 @@ and ei.entity_id  = i.ad_id;
       <dxl:CTEList/>
       <dxl:LogicalJoin JoinType="Left">
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.17279045.1.1" TableName="events_inprocess">
+          <dxl:TableDescriptor Mdid="6.17279045.1.1" TableName="events_inprocess">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="user_id" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="2" Attno="2" ColName="entity_id" TypeMdid="0.23.1.0"/>
@@ -267,7 +255,7 @@ and ei.entity_id  = i.ad_id;
           </dxl:TableDescriptor>
         </dxl:LogicalGet>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.17279071.1.1" TableName="impressions_raw">
+          <dxl:TableDescriptor Mdid="6.17279071.1.1" TableName="impressions_raw">
             <dxl:Columns>
               <dxl:Column ColId="11" Attno="1" ColName="user_id" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="12" Attno="2" ColName="ad_id" TypeMdid="0.23.1.0"/>
@@ -293,10 +281,10 @@ and ei.entity_id  = i.ad_id;
         </dxl:And>
       </dxl:LogicalJoin>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="3472">
+    <dxl:Plan Id="0" SpaceSize="6334">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="11.008789" Rows="2.000000" Width="24"/>
+          <dxl:Cost StartupCost="0" TotalCost="2586.003186" Rows="2.000000" Width="24"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="user_id">
@@ -313,7 +301,7 @@ and ei.entity_id  = i.ad_id;
         <dxl:SortingColumnList/>
         <dxl:Sequence>
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="9.985352" Rows="2.000000" Width="24"/>
+            <dxl:Cost StartupCost="0" TotalCost="2586.002971" Rows="2.000000" Width="24"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="user_id">
@@ -328,7 +316,7 @@ and ei.entity_id  = i.ad_id;
           </dxl:ProjList>
           <dxl:CTEProducer CTEId="0" Columns="19,20,21,22,23,24,25,26,27,28">
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="1.025391" Rows="1.000000" Width="1"/>
+              <dxl:Cost StartupCost="0" TotalCost="431.000060" Rows="1.000000" Width="1"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="19" Alias="user_id">
@@ -364,7 +352,7 @@ and ei.entity_id  = i.ad_id;
             </dxl:ProjList>
             <dxl:TableScan>
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="0.024414" Rows="1.000000" Width="50"/>
+                <dxl:Cost StartupCost="0" TotalCost="431.000013" Rows="1.000000" Width="50"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="19" Alias="user_id">
@@ -399,7 +387,7 @@ and ei.entity_id  = i.ad_id;
                 </dxl:ProjElem>
               </dxl:ProjList>
               <dxl:Filter/>
-              <dxl:TableDescriptor Mdid="0.17279045.1.1" TableName="events_inprocess">
+              <dxl:TableDescriptor Mdid="6.17279045.1.1" TableName="events_inprocess">
                 <dxl:Columns>
                   <dxl:Column ColId="19" Attno="1" ColName="user_id" TypeMdid="0.23.1.0"/>
                   <dxl:Column ColId="20" Attno="2" ColName="entity_id" TypeMdid="0.23.1.0"/>
@@ -417,7 +405,7 @@ and ei.entity_id  = i.ad_id;
           </dxl:CTEProducer>
           <dxl:Sequence>
             <dxl:Properties>
-              <dxl:Cost StartupCost="0" TotalCost="7.913086" Rows="2.000000" Width="20"/>
+              <dxl:Cost StartupCost="0" TotalCost="2155.002887" Rows="2.000000" Width="16"/>
             </dxl:Properties>
             <dxl:ProjList>
               <dxl:ProjElem ColId="0" Alias="user_id">
@@ -432,7 +420,7 @@ and ei.entity_id  = i.ad_id;
             </dxl:ProjList>
             <dxl:CTEProducer CTEId="1" Columns="29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="2.641602" Rows="1.000000" Width="1"/>
+                <dxl:Cost StartupCost="0" TotalCost="862.002037" Rows="1.000000" Width="1"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="29" Alias="user_id">
@@ -495,7 +483,7 @@ and ei.entity_id  = i.ad_id;
               </dxl:ProjList>
               <dxl:HashJoin JoinType="Inner">
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="1.640625" Rows="1.000000" Width="96"/>
+                  <dxl:Cost StartupCost="0" TotalCost="862.002036" Rows="1.000000" Width="100"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="29" Alias="user_id">
@@ -570,7 +558,7 @@ and ei.entity_id  = i.ad_id;
                 </dxl:HashCondList>
                 <dxl:CTEConsumer CTEId="0" Columns="29,30,31,32,33,34,35,36,37,38">
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="0.048828" Rows="1.000000" Width="50"/>
+                    <dxl:Cost StartupCost="0" TotalCost="431.000130" Rows="1.000000" Width="54"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="29" Alias="user_id">
@@ -607,7 +595,7 @@ and ei.entity_id  = i.ad_id;
                 </dxl:CTEConsumer>
                 <dxl:TableScan>
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="0.044922" Rows="1.000000" Width="46"/>
+                    <dxl:Cost StartupCost="0" TotalCost="431.000021" Rows="1.000000" Width="46"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="39" Alias="user_id">
@@ -639,7 +627,7 @@ and ei.entity_id  = i.ad_id;
                     </dxl:ProjElem>
                   </dxl:ProjList>
                   <dxl:Filter/>
-                  <dxl:TableDescriptor Mdid="0.17279071.1.1" TableName="impressions_raw">
+                  <dxl:TableDescriptor Mdid="6.17279071.1.1" TableName="impressions_raw">
                     <dxl:Columns>
                       <dxl:Column ColId="39" Attno="1" ColName="user_id" TypeMdid="0.23.1.0"/>
                       <dxl:Column ColId="40" Attno="2" ColName="ad_id" TypeMdid="0.23.1.0"/>
@@ -657,7 +645,7 @@ and ei.entity_id  = i.ad_id;
             </dxl:CTEProducer>
             <dxl:Append IsTarget="false" IsZapped="false">
               <dxl:Properties>
-                <dxl:Cost StartupCost="0" TotalCost="4.232422" Rows="2.000000" Width="20"/>
+                <dxl:Cost StartupCost="0" TotalCost="1293.000834" Rows="2.000000" Width="16"/>
               </dxl:Properties>
               <dxl:ProjList>
                 <dxl:ProjElem ColId="0" Alias="user_id">
@@ -673,7 +661,7 @@ and ei.entity_id  = i.ad_id;
               <dxl:Filter/>
               <dxl:Result>
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="0.019531" Rows="1.000000" Width="20"/>
+                  <dxl:Cost StartupCost="0" TotalCost="431.000029" Rows="1.000000" Width="24"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="0" Alias="user_id">
@@ -690,7 +678,7 @@ and ei.entity_id  = i.ad_id;
                 <dxl:OneTimeFilter/>
                 <dxl:CTEConsumer CTEId="1" Columns="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18">
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="0.019531" Rows="1.000000" Width="20"/>
+                    <dxl:Cost StartupCost="0" TotalCost="431.000029" Rows="1.000000" Width="24"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="0" Alias="user_id">
@@ -755,7 +743,7 @@ and ei.entity_id  = i.ad_id;
               </dxl:Result>
               <dxl:Result>
                 <dxl:Properties>
-                  <dxl:Cost StartupCost="0" TotalCost="3.173828" Rows="1.000000" Width="20"/>
+                  <dxl:Cost StartupCost="0" TotalCost="862.000789" Rows="1.000000" Width="16"/>
                 </dxl:Properties>
                 <dxl:ProjList>
                   <dxl:ProjElem ColId="48" Alias="user_id">
@@ -765,14 +753,14 @@ and ei.entity_id  = i.ad_id;
                     <dxl:Ident ColId="50" ColName="event_time" TypeMdid="0.1114.1.0"/>
                   </dxl:ProjElem>
                   <dxl:ProjElem ColId="78" Alias="ad_id">
-                    <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true" IsByValue="true"/>
+                    <dxl:ConstValue TypeMdid="0.23.1.0" IsNull="true"/>
                   </dxl:ProjElem>
                 </dxl:ProjList>
                 <dxl:Filter/>
                 <dxl:OneTimeFilter/>
                 <dxl:HashJoin JoinType="LeftAntiSemiJoin">
                   <dxl:Properties>
-                    <dxl:Cost StartupCost="0" TotalCost="2.134766" Rows="1.000000" Width="16"/>
+                    <dxl:Cost StartupCost="0" TotalCost="862.000781" Rows="1.000000" Width="16"/>
                   </dxl:Properties>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="48" Alias="user_id">
@@ -800,7 +788,7 @@ and ei.entity_id  = i.ad_id;
                   </dxl:HashCondList>
                   <dxl:CTEConsumer CTEId="0" Columns="48,49,50,51,52,53,54,55,56,57">
                     <dxl:Properties>
-                      <dxl:Cost StartupCost="0" TotalCost="0.019531" Rows="1.000000" Width="20"/>
+                      <dxl:Cost StartupCost="0" TotalCost="431.000058" Rows="1.000000" Width="24"/>
                     </dxl:Properties>
                     <dxl:ProjList>
                       <dxl:ProjElem ColId="48" Alias="user_id">
@@ -837,7 +825,7 @@ and ei.entity_id  = i.ad_id;
                   </dxl:CTEConsumer>
                   <dxl:Aggregate AggregationStrategy="Hashed" StreamSafe="false">
                     <dxl:Properties>
-                      <dxl:Cost StartupCost="0" TotalCost="1.037109" Rows="1.000000" Width="8"/>
+                      <dxl:Cost StartupCost="0" TotalCost="431.000142" Rows="1.000000" Width="8"/>
                     </dxl:Properties>
                     <dxl:GroupingColumns>
                       <dxl:GroupingColumn ColId="58"/>
@@ -854,7 +842,7 @@ and ei.entity_id  = i.ad_id;
                     <dxl:Filter/>
                     <dxl:CTEConsumer CTEId="1" Columns="58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76">
                       <dxl:Properties>
-                        <dxl:Cost StartupCost="0" TotalCost="0.005859" Rows="1.000000" Width="12"/>
+                        <dxl:Cost StartupCost="0" TotalCost="431.000019" Rows="1.000000" Width="16"/>
                       </dxl:Properties>
                       <dxl:ProjList>
                         <dxl:ProjElem ColId="58" Alias="user_id">

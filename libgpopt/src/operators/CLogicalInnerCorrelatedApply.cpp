@@ -23,10 +23,7 @@ using namespace gpopt;
 //		Ctor - for patterns
 //
 //---------------------------------------------------------------------------
-CLogicalInnerCorrelatedApply::CLogicalInnerCorrelatedApply(CMemoryPool *mp)
-	: CLogicalInnerApply(mp)
-{
-}
+CLogicalInnerCorrelatedApply::CLogicalInnerCorrelatedApply(CMemoryPool *mp) : CLogicalInnerApply(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -36,11 +33,9 @@ CLogicalInnerCorrelatedApply::CLogicalInnerCorrelatedApply(CMemoryPool *mp)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalInnerCorrelatedApply::CLogicalInnerCorrelatedApply(
-	CMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq)
-	: CLogicalInnerApply(mp, pdrgpcrInner, eopidOriginSubq)
-{
-}
+CLogicalInnerCorrelatedApply::CLogicalInnerCorrelatedApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner,
+                                                           EOperatorId eopidOriginSubq)
+    : CLogicalInnerApply(mp, pdrgpcrInner, eopidOriginSubq) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -50,13 +45,11 @@ CLogicalInnerCorrelatedApply::CLogicalInnerCorrelatedApply(
 //		Get candidate xforms
 //
 //---------------------------------------------------------------------------
-CXformSet *
-CLogicalInnerCorrelatedApply::PxfsCandidates(CMemoryPool *mp) const
-{
-	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	(void) xform_set->ExchangeSet(CXform::ExfImplementInnerCorrelatedApply);
+CXformSet *CLogicalInnerCorrelatedApply::PxfsCandidates(CMemoryPool *mp) const {
+  CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
+  (void)xform_set->ExchangeSet(CXform::ExfImplementInnerCorrelatedApply);
 
-	return xform_set;
+  return xform_set;
 }
 
 //---------------------------------------------------------------------------
@@ -67,16 +60,12 @@ CLogicalInnerCorrelatedApply::PxfsCandidates(CMemoryPool *mp) const
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL
-CLogicalInnerCorrelatedApply::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		return m_pdrgpcrInner->Equals(
-			CLogicalInnerCorrelatedApply::PopConvert(pop)->PdrgPcrInner());
-	}
+BOOL CLogicalInnerCorrelatedApply::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    return m_pdrgpcrInner->Equals(CLogicalInnerCorrelatedApply::PopConvert(pop)->PdrgPcrInner());
+  }
 
-	return false;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -87,15 +76,11 @@ CLogicalInnerCorrelatedApply::Matches(COperator *pop) const
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CLogicalInnerCorrelatedApply::PopCopyWithRemappedColumns(
-	CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist)
-{
-	CColRefArray *pdrgpcrInner =
-		CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
+COperator *CLogicalInnerCorrelatedApply::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
+                                                                    BOOL must_exist) {
+  CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
-	return GPOS_NEW(mp)
-		CLogicalInnerCorrelatedApply(mp, pdrgpcrInner, m_eopidOriginSubq);
+  return GPOS_NEW(mp) CLogicalInnerCorrelatedApply(mp, pdrgpcrInner, m_eopidOriginSubq);
 }
 
 // EOF

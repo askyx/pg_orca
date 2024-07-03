@@ -13,8 +13,7 @@
 
 #include "gpos/common/ITimer.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CWallClock
@@ -23,28 +22,24 @@ namespace gpos
 //		Records wall clock time;
 //
 //---------------------------------------------------------------------------
-class CWallClock : public ITimer
-{
-private:
-	// actual timer
-	TIMEVAL m_time;
+class CWallClock : public ITimer {
+ private:
+  // actual timer
+  TIMEVAL m_time;
 
-public:
-	// ctor
-	CWallClock()
-	{
-		Restart();
-	}
+ public:
+  // ctor
+  CWallClock() { Restart(); }
 
-	// retrieve elapsed wall-clock time in micro-seconds
-	virtual ULONG ElapsedUS() const;
+  // retrieve elapsed wall-clock time in micro-seconds
+  ULONG ElapsedUS() const override;
 
-	// restart timer
-	virtual void Restart();
+  // restart timer
+  void Restart() override;
 };
 
 }  // namespace gpos
 
-#endif	// !GPOS_CWallClock_H
+#endif  // !GPOS_CWallClock_H
 
 // EOF

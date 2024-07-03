@@ -28,14 +28,11 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CAutoExceptionStack::CAutoExceptionStack(void **global_exception_stack,
-										 void **global_error_context_stack)
-	: m_global_exception_stack(global_exception_stack),
-	  m_exception_stack(*global_exception_stack),
-	  m_global_error_context_stack(global_error_context_stack),
-	  m_error_context_stack(*global_error_context_stack)
-{
-}
+CAutoExceptionStack::CAutoExceptionStack(void **global_exception_stack, void **global_error_context_stack)
+    : m_global_exception_stack(global_exception_stack),
+      m_exception_stack(*global_exception_stack),
+      m_global_error_context_stack(global_error_context_stack),
+      m_error_context_stack(*global_error_context_stack) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,10 +42,9 @@ CAutoExceptionStack::CAutoExceptionStack(void **global_exception_stack,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CAutoExceptionStack::~CAutoExceptionStack()
-{
-	*m_global_exception_stack = m_exception_stack;
-	*m_global_error_context_stack = m_error_context_stack;
+CAutoExceptionStack::~CAutoExceptionStack() {
+  *m_global_exception_stack = m_exception_stack;
+  *m_global_error_context_stack = m_error_context_stack;
 }
 
 //---------------------------------------------------------------------------
@@ -59,10 +55,8 @@ CAutoExceptionStack::~CAutoExceptionStack()
 //		Set the exception stack to the given address
 //
 //---------------------------------------------------------------------------
-void
-CAutoExceptionStack::SetLocalJmp(void *local_jump)
-{
-	*m_global_exception_stack = local_jump;
+void CAutoExceptionStack::SetLocalJmp(void *local_jump) {
+  *m_global_exception_stack = local_jump;
 }
 
 // EOF

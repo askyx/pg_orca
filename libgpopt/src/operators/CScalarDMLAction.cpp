@@ -15,12 +15,12 @@
 
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdPropScalar.h"
+#include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "naucrates/md/IMDTypeInt4.h"
 
 using namespace gpopt;
 using namespace gpmd;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -30,10 +30,8 @@ using namespace gpmd;
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarDMLAction::Matches(COperator *pop) const
-{
-	return pop->Eopid() == Eopid();
+BOOL CScalarDMLAction::Matches(COperator *pop) const {
+  return pop->Eopid() == Eopid();
 }
 
 //---------------------------------------------------------------------------
@@ -44,10 +42,8 @@ CScalarDMLAction::Matches(COperator *pop) const
 //		Operator type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarDMLAction::MdidType() const
-{
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	return md_accessor->PtMDType<IMDTypeInt4>()->MDId();
+IMDId *CScalarDMLAction::MdidType() const {
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  return md_accessor->PtMDType<IMDTypeInt4>()->MDId();
 }
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (c) 2004-2015 Pivotal Software, Inc.
+//	Copyright (c) 2004-2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //	       	clibwrapper.h
@@ -19,32 +19,13 @@
 
 #include <unistd.h>
 
+#include "gpos/attributes.h"
 #include "gpos/common/clibtypes.h"
 #include "gpos/types.h"
 
-namespace gpos
-{
-namespace clib
-{
-typedef INT (*Comparator)(const void *, const void *);
-
-#ifdef GPOS_sparc
-
-#include <ucontext.h>
-
-typedef INT (*Callback)(ULONG_PTR, INT, void *);
-
-// get current user context
-INT GetContext(ucontext_t *user_ctxt);
-
-// call the user-supplied function callback for each routine found on
-// the call stack and each signal handler invoked
-INT WalkContext(const ucontext_t *user_ctxt, Callback callback, void *arg);
-
-#endif
-
-// get an environment variable
-CHAR *GetEnv(const CHAR *name);
+namespace gpos {
+namespace clib {
+using Comparator = INT (*)(const void *, const void *);
 
 // compare a specified number of bytes of two regions of memory
 INT Memcmp(const void *left, const void *right, SIZE_T num_bytes);
@@ -104,11 +85,10 @@ DOUBLE Strtod(const CHAR *str);
 ULONG Rand(ULONG *seed);
 
 // format wide character output conversion
-INT Vswprintf(WCHAR *wcstr, SIZE_T max_len, const WCHAR *format,
-			  VA_LIST vaArgs);
+INT Vswprintf(WCHAR *wcstr, SIZE_T max_len, const WCHAR *format, VA_LIST vaArgs);
 
 // format string
-INT Vsnprintf(CHAR *src, SIZE_T size, const CHAR *format, VA_LIST vaArgs);
+INT Vsnprintf(CHAR *src, SIZE_T size, const CHAR *format, VA_LIST vaArgs) GPOS_ATTRIBUTE_PRINTF(3, 0);
 
 // return string describing error number
 void Strerror_r(INT errnum, CHAR *buf, SIZE_T buf_len);
@@ -137,9 +117,9 @@ CHAR *Demangle(const CHAR *symbol, CHAR *buf, SIZE_T *len, INT *status);
 // resolve symbol information from its address
 void Dladdr(void *addr, DL_INFO *info);
 
-}  //namespace clib
+}  // namespace clib
 }  // namespace gpos
 
-#endif	// !GPOS_clibwrapper_H
+#endif  // !GPOS_clibwrapper_H
 
 // EOF

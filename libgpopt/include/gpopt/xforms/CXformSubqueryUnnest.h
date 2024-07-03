@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,50 +26,38 @@ using namespace gpos;
 //		Base class for subquery unnesting xforms
 //
 //---------------------------------------------------------------------------
-class CXformSubqueryUnnest : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformSubqueryUnnest(const CXformSubqueryUnnest &);
+class CXformSubqueryUnnest : public CXformExploration {
+ private:
+ protected:
+  // helper for subquery unnesting
+  static CExpression *PexprSubqueryUnnest(CMemoryPool *mp, CExpression *pexpr, BOOL fEnforceCorrelatedApply);
 
-protected:
-	// helper for subquery unnesting
-	static CExpression *PexprSubqueryUnnest(CMemoryPool *mp, CExpression *pexpr,
-											BOOL fEnforceCorrelatedApply);
+  // actual transform
+  virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr,
+                         BOOL fEnforceCorrelatedApply) const;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr,
-						   BOOL fEnforceCorrelatedApply) const;
+ public:
+  CXformSubqueryUnnest(const CXformSubqueryUnnest &) = delete;
 
-public:
-	// ctor
-	explicit CXformSubqueryUnnest(CExpression *pexprPattern)
-		: CXformExploration(pexprPattern){};
+  // ctor
+  explicit CXformSubqueryUnnest(CExpression *pexprPattern) : CXformExploration(pexprPattern) {}
 
-	// dtor
-	virtual ~CXformSubqueryUnnest()
-	{
-	}
+  // dtor
+  ~CXformSubqueryUnnest() override = default;
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-	// is transformation a subquery unnesting (Subquery To Apply) xform?
-	virtual BOOL
-	FSubqueryUnnesting() const
-	{
-		return true;
-	}
+  // is transformation a subquery unnesting (Subquery To Apply) xform?
+  BOOL FSubqueryUnnesting() const override { return true; }
 
-};	// class CXformSubqueryUnnest
+};  // class CXformSubqueryUnnest
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSubqueryUnnest_H
+#endif  // !GPOPT_CXformSubqueryUnnest_H
 
 // EOF

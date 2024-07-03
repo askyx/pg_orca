@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformSubqueryUnnest.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,39 +27,27 @@ using namespace gpos;
 //		to a Select expression with subqueries in its scalar predicate
 //
 //---------------------------------------------------------------------------
-class CXformSelect2Apply : public CXformSubqueryUnnest
-{
-private:
-	// private copy ctor
-	CXformSelect2Apply(const CXformSelect2Apply &);
+class CXformSelect2Apply : public CXformSubqueryUnnest {
+ private:
+ public:
+  CXformSelect2Apply(const CXformSelect2Apply &) = delete;
 
-public:
-	// ctor
-	explicit CXformSelect2Apply(CMemoryPool *mp);
+  // ctor
+  explicit CXformSelect2Apply(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformSelect2Apply()
-	{
-	}
+  // dtor
+  ~CXformSelect2Apply() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSelect2Apply;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfSelect2Apply; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSelect2Apply";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformSelect2Apply"; }
 
-};	// class CXformSelect2Apply
+};  // class CXformSelect2Apply
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSelect2Apply_H
+#endif  // !GPOPT_CXformSelect2Apply_H
 
 // EOF

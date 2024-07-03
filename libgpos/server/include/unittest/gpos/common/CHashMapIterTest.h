@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CHashMapIterTest
@@ -23,16 +22,15 @@ namespace gpos
 //		Static unit tests
 //
 //---------------------------------------------------------------------------
-class CHashMapIterTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
+class CHashMapIterTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
 
-};	// class CHashMapIterTest
+};  // class CHashMapIterTest
 }  // namespace gpos
 
-#endif	// !GPOS_CHashMapIterTest_H
+#endif  // !GPOS_CHashMapIterTest_H
 
 // EOF

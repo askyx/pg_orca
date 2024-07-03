@@ -17,9 +17,8 @@ using namespace gpos;
 using namespace gpmd;
 using namespace gpopt;
 
-
 // global instance of metadata cache
-CMDAccessor::MDCache *CMDCache::m_pcache = NULL;
+CMDAccessor::MDCache *CMDCache::m_pcache = nullptr;
 
 // maximum size of the cache
 ULLONG CMDCache::m_ullCacheQuota = UNLIMITED_CACHE_QUOTA;
@@ -32,16 +31,12 @@ ULLONG CMDCache::m_ullCacheQuota = UNLIMITED_CACHE_QUOTA;
 //		Initializes global instance
 //
 //---------------------------------------------------------------------------
-void
-CMDCache::Init()
-{
-	GPOS_ASSERT(NULL == m_pcache && "Metadata cache was already created");
+void CMDCache::Init() {
+  GPOS_ASSERT(nullptr == m_pcache && "Metadata cache was already created");
 
-	m_pcache = CCacheFactory::CreateCache<IMDCacheObject *, CMDKey *>(
-		true /*fUnique*/, m_ullCacheQuota, CMDKey::UlHashMDKey,
-		CMDKey::FEqualMDKey);
+  m_pcache = CCacheFactory::CreateCache<IMDCacheObject *, CMDKey *>(true /*fUnique*/, m_ullCacheQuota,
+                                                                    CMDKey::UlHashMDKey, CMDKey::FEqualMDKey);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -51,13 +46,10 @@ CMDCache::Init()
 //		Cleans up the underlying cache
 //
 //---------------------------------------------------------------------------
-void
-CMDCache::Shutdown()
-{
-	GPOS_DELETE(m_pcache);
-	m_pcache = NULL;
+void CMDCache::Shutdown() {
+  GPOS_DELETE(m_pcache);
+  m_pcache = nullptr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -67,12 +59,10 @@ CMDCache::Shutdown()
 //		Set the maximum size of the cache
 //
 //---------------------------------------------------------------------------
-void
-CMDCache::SetCacheQuota(ULLONG ullCacheQuota)
-{
-	GPOS_ASSERT(NULL != m_pcache && "Metadata cache was not created");
-	m_ullCacheQuota = ullCacheQuota;
-	m_pcache->SetCacheQuota(ullCacheQuota);
+void CMDCache::SetCacheQuota(ULLONG ullCacheQuota) {
+  GPOS_ASSERT(nullptr != m_pcache && "Metadata cache was not created");
+  m_ullCacheQuota = ullCacheQuota;
+  m_pcache->SetCacheQuota(ullCacheQuota);
 }
 
 //---------------------------------------------------------------------------
@@ -84,12 +74,10 @@ CMDCache::SetCacheQuota(ULLONG ullCacheQuota)
 //
 //---------------------------------------------------------------------------
 ULLONG
-CMDCache::ULLGetCacheQuota()
-{
-	// make sure that the CMDCache's saved quota is reflected in the underlying CCache
-	GPOS_ASSERT_IMP(NULL != m_pcache,
-					m_pcache->GetCacheQuota() == m_ullCacheQuota);
-	return m_ullCacheQuota;
+CMDCache::ULLGetCacheQuota() {
+  // make sure that the CMDCache's saved quota is reflected in the underlying CCache
+  GPOS_ASSERT_IMP(nullptr != m_pcache, m_pcache->GetCacheQuota() == m_ullCacheQuota);
+  return m_ullCacheQuota;
 }
 
 //---------------------------------------------------------------------------
@@ -101,12 +89,11 @@ CMDCache::ULLGetCacheQuota()
 //
 //---------------------------------------------------------------------------
 ULLONG
-CMDCache::ULLGetCacheEvictionCounter()
-{
-	// make sure that we already initialized our underlying CCache
-	GPOS_ASSERT(NULL != m_pcache);
+CMDCache::ULLGetCacheEvictionCounter() {
+  // make sure that we already initialized our underlying CCache
+  GPOS_ASSERT(nullptr != m_pcache);
 
-	return m_pcache->GetEvictionCounter();
+  return m_pcache->GetEvictionCounter();
 }
 
 //---------------------------------------------------------------------------
@@ -117,16 +104,9 @@ CMDCache::ULLGetCacheEvictionCounter()
 //		Reset metadata cache
 //
 //---------------------------------------------------------------------------
-void
-CMDCache::Reset()
-{
-	CAutoTraceFlag atf1(EtraceSimulateOOM, false);
-	CAutoTraceFlag atf2(EtraceSimulateAbort, false);
-	CAutoTraceFlag atf3(EtraceSimulateIOError, false);
-	CAutoTraceFlag atf4(EtraceSimulateNetError, false);
-
-	Shutdown();
-	Init();
+void CMDCache::Reset() {
+  Shutdown();
+  Init();
 }
 
 // EOF

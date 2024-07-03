@@ -28,22 +28,31 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CRefCountTest::EresUnittest()
-{
-	CUnittest rgut[] = {
-		GPOS_UNITTEST_FUNC(CRefCountTest::EresUnittest_CountUpAndDown),
-		GPOS_UNITTEST_FUNC(CRefCountTest::EresUnittest_DeletableObjects)
+CRefCountTest::EresUnittest() {
+  CUnittest rgut[] = {GPOS_UNITTEST_FUNC(CRefCountTest::EresUnittest_CountUpAndDown),
+                      GPOS_UNITTEST_FUNC(CRefCountTest::EresUnittest_DeletableObjects)
 
 #ifdef GPOS_DEBUG
-			,
-		GPOS_UNITTEST_FUNC_ASSERT(CRefCountTest::EresUnittest_Stack),
-		GPOS_UNITTEST_FUNC_ASSERT(CRefCountTest::EresUnittest_Check)
-#endif	// GPOS_DEBUG
-	};
+                          ,
+                      GPOS_UNITTEST_FUNC_ASSERT(CRefCountTest::EresUnittest_Stack),
 
-	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
+// This test ensures that an exception is raised with an illegal refcount.
+// However, MacOS seems to have extra protection and no exception is raised.
+//
+// GPOS_DELETE_ARRAY indirectly calls into CMemoryPoolTracker::DeleteImpl()
+// which sets memory to 0xcdcdcdcd. But the last step in that function
+// calls clib::Free(header) which on MacOS unexpectedly set the bits back
+// to 0. The header is part of the allocation block so that's probably
+// legal.  Although Mac sets this to 0, it's not necessarily something we
+// can assume.
+#ifndef __APPLE__
+                      GPOS_UNITTEST_FUNC_ASSERT(CRefCountTest::EresUnittest_Check)
+#endif
+#endif  // GPOS_DEBUG
+  };
+
+  return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -54,31 +63,28 @@ CRefCountTest::EresUnittest()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CRefCountTest::EresUnittest_CountUpAndDown()
-{
-	// create memory pool
-	CAutoMemoryPool amp;
-	CMemoryPool *mp = amp.Pmp();
+CRefCountTest::EresUnittest_CountUpAndDown() {
+  // create memory pool
+  CAutoMemoryPool amp;
+  CMemoryPool *mp = amp.Pmp();
 
-	// blank ref count object
-	CRefCount *pref = GPOS_NEW(mp) CRefCount;
+  // blank ref count object
+  CRefCount *pref = GPOS_NEW(mp) CRefCount;
 
-	// add counts
-	for (ULONG i = 0; i < 10; i++)
-	{
-		pref->AddRef();
-	}
+  // add counts
+  for (ULONG i = 0; i < 10; i++) {
+    pref->AddRef();
+  }
 
-	// release all additional refs
-	for (ULONG i = 0; i < 10; i++)
-	{
-		pref->Release();
-	}
+  // release all additional refs
+  for (ULONG i = 0; i < 10; i++) {
+    pref->Release();
+  }
 
-	// destruct the object
-	pref->Release();
+  // destruct the object
+  pref->Release();
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
 
 //---------------------------------------------------------------------------
@@ -90,42 +96,34 @@ CRefCountTest::EresUnittest_CountUpAndDown()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CRefCountTest::EresUnittest_DeletableObjects()
-{
-	// create memory pool
-	CAutoMemoryPool amp;
-	CMemoryPool *mp = amp.Pmp();
+CRefCountTest::EresUnittest_DeletableObjects() {
+  // create memory pool
+  CAutoMemoryPool amp;
+  CMemoryPool *mp = amp.Pmp();
 
-	CAutoTraceFlag atfOOM(EtraceSimulateOOM, false);
+  CDeletableTest *pdt = GPOS_NEW(mp) CDeletableTest;
 
-	CDeletableTest *pdt = GPOS_NEW(mp) CDeletableTest;
+  GPOS_TRY {
+    // trying to release object here throws InvalidDeletion exception
+    pdt->Release();
+  }
+  GPOS_CATCH_EX(ex) {
+    if (!GPOS_MATCH_EX(ex, CException::ExmaSystem, CException::ExmiInvalidDeletion)) {
+      // unexpected exception -- rethrow it
+      GPOS_RETHROW(ex);
+    }
 
-	GPOS_TRY
-	{
-		// trying to release object here throws InvalidDeletion exception
-		pdt->Release();
-	}
-	GPOS_CATCH_EX(ex)
-	{
-		if (!GPOS_MATCH_EX(ex, CException::ExmaSystem,
-						   CException::ExmiInvalidDeletion))
-		{
-			// unexpected exception -- rethrow it
-			GPOS_RETHROW(ex);
-		}
+    GPOS_RESET_EX;
+  }
+  GPOS_CATCH_END;
 
-		GPOS_RESET_EX;
-	}
-	GPOS_CATCH_END;
+  pdt->AllowDeletion();
 
-	pdt->AllowDeletion();
+  // now deletion is allowed
+  pdt->Release();
 
-	// now deletion is allowed
-	pdt->Release();
-
-	return GPOS_OK;
+  return GPOS_OK;
 }
-
 
 #ifdef GPOS_DEBUG
 
@@ -138,15 +136,12 @@ CRefCountTest::EresUnittest_DeletableObjects()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CRefCountTest::EresUnittest_Stack()
-{
-	CRefCount ref;
+CRefCountTest::EresUnittest_Stack() {
+  CRefCount ref;
 
-	// does not reach this line
-	return GPOS_FAILED;
+  // does not reach this line
+  return GPOS_FAILED;
 }
-
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -157,25 +152,23 @@ CRefCountTest::EresUnittest_Stack()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CRefCountTest::EresUnittest_Check()
-{
-	// create memory pool
-	CAutoMemoryPool amp;
-	CMemoryPool *mp = amp.Pmp();
+CRefCountTest::EresUnittest_Check() {
+  // create memory pool
+  CAutoMemoryPool amp;
+  CMemoryPool *mp = amp.Pmp();
 
-	BYTE *rgb = GPOS_NEW_ARRAY(mp, BYTE, 128);
-	CRefCount *pref = (CRefCount *) rgb;
+  BYTE *rgb = GPOS_NEW_ARRAY(mp, BYTE, 128);
+  CRefCount *pref = (CRefCount *)rgb;
 
-	GPOS_DELETE_ARRAY(rgb);
+  GPOS_DELETE_ARRAY(rgb);
 
+  // must throw
+  pref->AddRef();
 
-	// must throw
-	pref->AddRef();
-
-	// does not reach this line
-	return GPOS_FAILED;
+  // does not reach this line
+  return GPOS_FAILED;
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

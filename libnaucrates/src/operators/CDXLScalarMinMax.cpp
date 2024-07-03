@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLScalarMinMax.cpp
@@ -27,12 +27,10 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarMinMax::CDXLScalarMinMax(CMemoryPool *mp, IMDId *mdid_type,
-								   EdxlMinMaxType min_max_type)
-	: CDXLScalar(mp), m_mdid_type(mdid_type), m_min_max_type(min_max_type)
-{
-	GPOS_ASSERT(m_mdid_type->IsValid());
-	GPOS_ASSERT(EmmtSentinel > min_max_type);
+CDXLScalarMinMax::CDXLScalarMinMax(CMemoryPool *mp, IMDId *mdid_type, EdxlMinMaxType min_max_type)
+    : CDXLScalar(mp), m_mdid_type(mdid_type), m_min_max_type(min_max_type) {
+  GPOS_ASSERT(m_mdid_type->IsValid());
+  GPOS_ASSERT(EmmtSentinel > min_max_type);
 }
 
 //---------------------------------------------------------------------------
@@ -43,9 +41,8 @@ CDXLScalarMinMax::CDXLScalarMinMax(CMemoryPool *mp, IMDId *mdid_type,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLScalarMinMax::~CDXLScalarMinMax()
-{
-	m_mdid_type->Release();
+CDXLScalarMinMax::~CDXLScalarMinMax() {
+  m_mdid_type->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -56,10 +53,8 @@ CDXLScalarMinMax::~CDXLScalarMinMax()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarMinMax::GetDXLOperator() const
-{
-	return EdxlopScalarMinMax;
+Edxlopid CDXLScalarMinMax::GetDXLOperator() const {
+  return EdxlopScalarMinMax;
 }
 
 //---------------------------------------------------------------------------
@@ -70,18 +65,15 @@ CDXLScalarMinMax::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarMinMax::GetOpNameStr() const
-{
-	switch (m_min_max_type)
-	{
-		case EmmtMin:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenScalarMin);
-		case EmmtMax:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenScalarMax);
-		default:
-			return NULL;
-	}
+const CWStringConst *CDXLScalarMinMax::GetOpNameStr() const {
+  switch (m_min_max_type) {
+    case EmmtMin:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenScalarMin);
+    case EmmtMax:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenScalarMax);
+    default:
+      return nullptr;
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -92,19 +84,13 @@ CDXLScalarMinMax::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarMinMax::SerializeToDXL(CXMLSerializer *xml_serializer,
-								 const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarMinMax::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	m_mdid_type->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------
@@ -115,11 +101,8 @@ CDXLScalarMinMax::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLScalarMinMax::HasBoolResult(CMDAccessor *md_accessor) const
-{
-	return (IMDType::EtiBool ==
-			md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
+BOOL CDXLScalarMinMax::HasBoolResult(CMDAccessor *md_accessor) const {
+  return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
 }
 
 #ifdef GPOS_DEBUG
@@ -131,26 +114,19 @@ CDXLScalarMinMax::HasBoolResult(CMDAccessor *md_accessor) const
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarMinMax::AssertValid(const CDXLNode *dxlnode,
-							  BOOL validate_children) const
-{
-	GPOS_ASSERT(0 < dxlnode->Arity());
+void CDXLScalarMinMax::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  GPOS_ASSERT(0 < dxlnode->Arity());
 
-	const ULONG arity = dxlnode->Arity();
-	for (ULONG idx = 0; idx < arity; ++idx)
-	{
-		CDXLNode *dxlnode_arg = (*dxlnode)[idx];
-		GPOS_ASSERT(EdxloptypeScalar ==
-					dxlnode_arg->GetOperator()->GetDXLOperatorType());
+  const ULONG arity = dxlnode->Arity();
+  for (ULONG idx = 0; idx < arity; ++idx) {
+    CDXLNode *dxlnode_arg = (*dxlnode)[idx];
+    GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 
-		if (validate_children)
-		{
-			dxlnode_arg->GetOperator()->AssertValid(dxlnode_arg,
-													validate_children);
-		}
-	}
+    if (validate_children) {
+      dxlnode_arg->GetOperator()->AssertValid(dxlnode_arg, validate_children);
+    }
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

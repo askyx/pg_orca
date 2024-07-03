@@ -16,7 +16,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CTimerUser::ElapsedUS
@@ -26,18 +25,15 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 ULONG
-CTimerUser::ElapsedUS() const
-{
-	RUSAGE rusage;
-	syslib::GetRusage(&rusage);
+CTimerUser::ElapsedUS() const {
+  RUSAGE rusage;
+  syslib::GetRusage(&rusage);
 
-	ULONG diff = (ULONG)(((rusage.ru_utime.tv_sec - m_rusage.ru_utime.tv_sec) *
-						  GPOS_USEC_IN_SEC) +
-						 (rusage.ru_utime.tv_usec - m_rusage.ru_utime.tv_usec));
+  ULONG diff = (ULONG)(((rusage.ru_utime.tv_sec - m_rusage.ru_utime.tv_sec) * GPOS_USEC_IN_SEC) +
+                       (rusage.ru_utime.tv_usec - m_rusage.ru_utime.tv_usec));
 
-	return diff;
+  return diff;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -47,11 +43,8 @@ CTimerUser::ElapsedUS() const
 //		Restart timer
 //
 //---------------------------------------------------------------------------
-void
-CTimerUser::Restart()
-{
-	syslib::GetRusage(&m_rusage);
+void CTimerUser::Restart() {
+  syslib::GetRusage(&m_rusage);
 }
-
 
 // EOF

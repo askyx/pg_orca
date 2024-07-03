@@ -26,12 +26,8 @@ using namespace gpdxl;
 //		Constructs a BooleanTest node
 //
 //---------------------------------------------------------------------------
-CDXLScalarBooleanTest::CDXLScalarBooleanTest(
-	CMemoryPool *mp, const EdxlBooleanTestType dxl_bool_test_type)
-	: CDXLScalar(mp), m_dxl_bool_test_type(dxl_bool_test_type)
-{
-}
-
+CDXLScalarBooleanTest::CDXLScalarBooleanTest(CMemoryPool *mp, const EdxlBooleanTestType dxl_bool_test_type)
+    : CDXLScalar(mp), m_dxl_bool_test_type(dxl_bool_test_type) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -41,10 +37,8 @@ CDXLScalarBooleanTest::CDXLScalarBooleanTest(
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarBooleanTest::GetDXLOperator() const
-{
-	return EdxlopScalarBooleanTest;
+Edxlopid CDXLScalarBooleanTest::GetDXLOperator() const {
+  return EdxlopScalarBooleanTest;
 }
 
 //---------------------------------------------------------------------------
@@ -55,12 +49,9 @@ CDXLScalarBooleanTest::GetDXLOperator() const
 //		Boolean Test type
 //
 //---------------------------------------------------------------------------
-EdxlBooleanTestType
-CDXLScalarBooleanTest::GetDxlBoolTypeStr() const
-{
-	return m_dxl_bool_test_type;
+EdxlBooleanTestType CDXLScalarBooleanTest::GetDxlBoolTypeStr() const {
+  return m_dxl_bool_test_type;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -70,28 +61,23 @@ CDXLScalarBooleanTest::GetDxlBoolTypeStr() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarBooleanTest::GetOpNameStr() const
-{
-	switch (m_dxl_bool_test_type)
-	{
-		case EdxlbooleantestIsTrue:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBoolTestIsTrue);
-		case EdxlbooleantestIsNotTrue:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBoolTestIsNotTrue);
-		case EdxlbooleantestIsFalse:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBoolTestIsFalse);
-		case EdxlbooleantestIsNotFalse:
-			return CDXLTokens::GetDXLTokenStr(
-				EdxltokenScalarBoolTestIsNotFalse);
-		case EdxlbooleantestIsUnknown:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBoolTestIsUnknown);
-		case EdxlbooleantestIsNotUnknown:
-			return CDXLTokens::GetDXLTokenStr(
-				EdxltokenScalarBoolTestIsNotUnknown);
-		default:
-			return NULL;
-	}
+const CWStringConst *CDXLScalarBooleanTest::GetOpNameStr() const {
+  switch (m_dxl_bool_test_type) {
+    case EdxlbooleantestIsTrue:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBoolTestIsTrue);
+    case EdxlbooleantestIsNotTrue:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBoolTestIsNotTrue);
+    case EdxlbooleantestIsFalse:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBoolTestIsFalse);
+    case EdxlbooleantestIsNotFalse:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBoolTestIsNotFalse);
+    case EdxlbooleantestIsUnknown:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBoolTestIsUnknown);
+    case EdxlbooleantestIsNotUnknown:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBoolTestIsNotUnknown);
+    default:
+      return nullptr;
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -102,20 +88,15 @@ CDXLScalarBooleanTest::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarBooleanTest::SerializeToDXL(CXMLSerializer *xml_serializer,
-									  const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarBooleanTest::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	GPOS_ASSERT(NULL != element_name);
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  GPOS_ASSERT(nullptr != element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -127,31 +108,22 @@ CDXLScalarBooleanTest::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarBooleanTest::AssertValid(const CDXLNode *dxlnode,
-								   BOOL validate_children) const
-{
-	EdxlBooleanTestType dxl_bool_type =
-		((CDXLScalarBooleanTest *) dxlnode->GetOperator())->GetDxlBoolTypeStr();
+void CDXLScalarBooleanTest::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  EdxlBooleanTestType dxl_bool_type = ((CDXLScalarBooleanTest *)dxlnode->GetOperator())->GetDxlBoolTypeStr();
 
-	GPOS_ASSERT((EdxlbooleantestIsTrue == dxl_bool_type) ||
-				(EdxlbooleantestIsNotTrue == dxl_bool_type) ||
-				(EdxlbooleantestIsFalse == dxl_bool_type) ||
-				(EdxlbooleantestIsNotFalse == dxl_bool_type) ||
-				(EdxlbooleantestIsUnknown == dxl_bool_type) ||
-				(EdxlbooleantestIsNotUnknown == dxl_bool_type));
+  GPOS_ASSERT((EdxlbooleantestIsTrue == dxl_bool_type) || (EdxlbooleantestIsNotTrue == dxl_bool_type) ||
+              (EdxlbooleantestIsFalse == dxl_bool_type) || (EdxlbooleantestIsNotFalse == dxl_bool_type) ||
+              (EdxlbooleantestIsUnknown == dxl_bool_type) || (EdxlbooleantestIsNotUnknown == dxl_bool_type));
 
-	GPOS_ASSERT(1 == dxlnode->Arity());
-	CDXLNode *dxlnode_arg = (*dxlnode)[0];
-	GPOS_ASSERT(EdxloptypeScalar ==
-				dxlnode_arg->GetOperator()->GetDXLOperatorType());
+  GPOS_ASSERT(1 == dxlnode->Arity());
+  CDXLNode *dxlnode_arg = (*dxlnode)[0];
+  GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 
-	if (validate_children)
-	{
-		dxlnode_arg->GetOperator()->AssertValid(dxlnode_arg, validate_children);
-	}
+  if (validate_children) {
+    dxlnode_arg->GetOperator()->AssertValid(dxlnode_arg, validate_children);
+  }
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CPattern.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,49 +26,30 @@ using namespace gpos;
 //		Pattern that matches a single leaf
 //
 //---------------------------------------------------------------------------
-class CPatternLeaf : public CPattern
-{
-private:
-	// private copy ctor
-	CPatternLeaf(const CPatternLeaf &);
+class CPatternLeaf : public CPattern {
+ private:
+ public:
+  CPatternLeaf(const CPatternLeaf &) = delete;
 
-public:
-	// ctor
-	explicit CPatternLeaf(CMemoryPool *mp) : CPattern(mp)
-	{
-	}
+  // ctor
+  explicit CPatternLeaf(CMemoryPool *mp) : CPattern(mp) {}
 
-	// dtor
-	virtual ~CPatternLeaf()
-	{
-	}
+  // dtor
+  ~CPatternLeaf() override = default;
 
-	// check if operator is a pattern leaf
-	virtual BOOL
-	FLeaf() const
-	{
-		return true;
-	}
+  // check if operator is a pattern leaf
+  BOOL FLeaf() const override { return true; }
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPatternLeaf;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPatternLeaf; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPatternLeaf";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CPatternLeaf"; }
 
-};	// class CPatternLeaf
+};  // class CPatternLeaf
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CPatternLeaf_H
+#endif  // !GPOPT_CPatternLeaf_H
 
 // EOF

@@ -16,7 +16,6 @@
 
 using namespace gpdxl;
 
-
 XERCES_CPP_NAMESPACE_USE
 
 //---------------------------------------------------------------------------
@@ -27,13 +26,9 @@ XERCES_CPP_NAMESPACE_USE
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CParseHandlerMetadataObject::CParseHandlerMetadataObject(
-	CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
-	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
-	  m_imd_obj(NULL)
-{
-}
+CParseHandlerMetadataObject::CParseHandlerMetadataObject(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                                         CParseHandlerBase *parse_handler_root)
+    : CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root), m_imd_obj(nullptr) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -43,9 +38,8 @@ CParseHandlerMetadataObject::CParseHandlerMetadataObject(
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CParseHandlerMetadataObject::~CParseHandlerMetadataObject()
-{
-	CRefCount::SafeRelease(m_imd_obj);
+CParseHandlerMetadataObject::~CParseHandlerMetadataObject() {
+  CRefCount::SafeRelease(m_imd_obj);
 }
 
 //---------------------------------------------------------------------------
@@ -56,12 +50,8 @@ CParseHandlerMetadataObject::~CParseHandlerMetadataObject()
 //		Returns the constructed metadata object.
 //
 //---------------------------------------------------------------------------
-IMDCacheObject *
-CParseHandlerMetadataObject::GetImdObj() const
-{
-	return m_imd_obj;
+IMDCacheObject *CParseHandlerMetadataObject::GetImdObj() const {
+  return m_imd_obj;
 }
-
-
 
 // EOF

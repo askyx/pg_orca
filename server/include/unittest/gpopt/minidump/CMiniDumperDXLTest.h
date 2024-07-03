@@ -13,9 +13,7 @@
 
 #include "gpos/base.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -26,17 +24,16 @@ using namespace gpos;
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CMiniDumperDXLTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
-	static GPOS_RESULT EresUnittest_Load();
+class CMiniDumperDXLTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
+  static GPOS_RESULT EresUnittest_Load();
 
-};	// class CMiniDumperDXLTest
+};  // class CMiniDumperDXLTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CMiniDumperDXLTest_H
+#endif  // !GPOPT_CMiniDumperDXLTest_H
 
 // EOF

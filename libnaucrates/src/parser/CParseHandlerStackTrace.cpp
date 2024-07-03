@@ -18,7 +18,6 @@
 
 using namespace gpdxl;
 
-
 XERCES_CPP_NAMESPACE_USE
 
 //---------------------------------------------------------------------------
@@ -29,13 +28,9 @@ XERCES_CPP_NAMESPACE_USE
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CParseHandlerStacktrace::CParseHandlerStacktrace(
-	CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
-	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root)
-{
-}
-
+CParseHandlerStacktrace::CParseHandlerStacktrace(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                                 CParseHandlerBase *parse_handler_root)
+    : CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,15 +40,12 @@ CParseHandlerStacktrace::CParseHandlerStacktrace(
 //		Invoked by Xerces to process an opening tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerStacktrace::StartElement(
-	const XMLCh *const,	 // element_uri,
-	const XMLCh *const,	 // element_local_name,
-	const XMLCh *const,	 // element_qname
-	const Attributes &	 // attrs
-)
-{
-	// passthrough
+void CParseHandlerStacktrace::StartElement(const XMLCh *const,  // element_uri,
+                                           const XMLCh *const,  // element_local_name,
+                                           const XMLCh *const,  // element_qname
+                                           const Attributes &   // attrs
+) {
+  // passthrough
 }
 
 //---------------------------------------------------------------------------
@@ -64,14 +56,12 @@ CParseHandlerStacktrace::StartElement(
 //		Invoked by Xerces to process a closing tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerStacktrace::EndElement(const XMLCh *const,	 // element_uri,
-									const XMLCh *const,	 // element_local_name,
-									const XMLCh *const	 // element_qname
-)
-{
-	// deactivate handler
-	m_parse_handler_mgr->DeactivateHandler();
+void CParseHandlerStacktrace::EndElement(const XMLCh *const,  // element_uri,
+                                         const XMLCh *const,  // element_local_name,
+                                         const XMLCh *const   // element_qname
+) {
+  // deactivate handler
+  m_parse_handler_mgr->DeactivateHandler();
 }
 
 // EOF

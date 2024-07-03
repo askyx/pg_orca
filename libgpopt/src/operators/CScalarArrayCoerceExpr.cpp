@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2017 Pivotal Inc.
+//	Copyright (C) 2017 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarArrayCoerceExpr.cpp
@@ -22,7 +22,6 @@
 using namespace gpopt;
 using namespace gpmd;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CScalarArrayCoerceExpr::CScalarArrayCoerceExpr
@@ -31,59 +30,9 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarArrayCoerceExpr::CScalarArrayCoerceExpr(
-	CMemoryPool *mp, IMDId *element_func, IMDId *result_type_mdid,
-	INT type_modifier, BOOL is_explicit, ECoercionForm ecf, INT location)
-	: CScalarCoerceBase(mp, result_type_mdid, type_modifier, ecf, location),
-	  m_pmdidElementFunc(element_func),
-	  m_is_explicit(is_explicit)
-{
-	GPOS_ASSERT(NULL != element_func);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CScalarArrayCoerceExpr::~CScalarArrayCoerceExpr
-//
-//	@doc:
-//		dtor
-//
-//---------------------------------------------------------------------------
-CScalarArrayCoerceExpr::~CScalarArrayCoerceExpr()
-{
-	m_pmdidElementFunc->Release();
-}
-
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CScalarArrayCoerceExpr::PmdidElementFunc
-//
-//	@doc:
-//		Return metadata id of element coerce function
-//
-//---------------------------------------------------------------------------
-IMDId *
-CScalarArrayCoerceExpr::PmdidElementFunc() const
-{
-	return m_pmdidElementFunc;
-}
-
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CScalarArrayCoerceExpr::IsExplicit
-//
-//	@doc:
-//		Conversion semantics flag to pass to func
-//
-//---------------------------------------------------------------------------
-BOOL
-CScalarArrayCoerceExpr::IsExplicit() const
-{
-	return m_is_explicit;
-}
-
+CScalarArrayCoerceExpr::CScalarArrayCoerceExpr(CMemoryPool *mp, IMDId *result_type_mdid, INT type_modifier,
+                                               ECoercionForm ecf, INT location)
+    : CScalarCoerceBase(mp, result_type_mdid, type_modifier, ecf, location) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -93,12 +42,9 @@ CScalarArrayCoerceExpr::IsExplicit() const
 //		Return operator identifier
 //
 //---------------------------------------------------------------------------
-CScalar::EOperatorId
-CScalarArrayCoerceExpr::Eopid() const
-{
-	return EopScalarArrayCoerceExpr;
+CScalar::EOperatorId CScalarArrayCoerceExpr::Eopid() const {
+  return EopScalarArrayCoerceExpr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -108,12 +54,9 @@ CScalarArrayCoerceExpr::Eopid() const
 //		Return a string for operator name
 //
 //---------------------------------------------------------------------------
-const CHAR *
-CScalarArrayCoerceExpr::SzId() const
-{
-	return "CScalarArrayCoerceExpr";
+const CHAR *CScalarArrayCoerceExpr::SzId() const {
+  return "CScalarArrayCoerceExpr";
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -123,23 +66,16 @@ CScalarArrayCoerceExpr::SzId() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarArrayCoerceExpr::Matches(COperator *pop) const
-{
-	if (pop->Eopid() != Eopid())
-	{
-		return false;
-	}
+BOOL CScalarArrayCoerceExpr::Matches(COperator *pop) const {
+  if (pop->Eopid() != Eopid()) {
+    return false;
+  }
 
-	CScalarArrayCoerceExpr *popCoerce = CScalarArrayCoerceExpr::PopConvert(pop);
+  CScalarArrayCoerceExpr *popCoerce = CScalarArrayCoerceExpr::PopConvert(pop);
 
-	return popCoerce->PmdidElementFunc()->Equals(m_pmdidElementFunc) &&
-		   popCoerce->MdidType()->Equals(MdidType()) &&
-		   popCoerce->TypeModifier() == TypeModifier() &&
-		   popCoerce->IsExplicit() == m_is_explicit &&
-		   popCoerce->Ecf() == Ecf() && popCoerce->Location() == Location();
+  return popCoerce->MdidType()->Equals(MdidType()) && popCoerce->TypeModifier() == TypeModifier() &&
+         popCoerce->Ecf() == Ecf() && popCoerce->Location() == Location();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -149,12 +85,9 @@ CScalarArrayCoerceExpr::Matches(COperator *pop) const
 //		Sensitivity to order of inputs
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarArrayCoerceExpr::FInputOrderSensitive() const
-{
-	return false;
+BOOL CScalarArrayCoerceExpr::FInputOrderSensitive() const {
+  return false;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -164,14 +97,11 @@ CScalarArrayCoerceExpr::FInputOrderSensitive() const
 //		Conversion function
 //
 //---------------------------------------------------------------------------
-CScalarArrayCoerceExpr *
-CScalarArrayCoerceExpr::PopConvert(COperator *pop)
-{
-	GPOS_ASSERT(NULL != pop);
-	GPOS_ASSERT(EopScalarArrayCoerceExpr == pop->Eopid());
+CScalarArrayCoerceExpr *CScalarArrayCoerceExpr::PopConvert(COperator *pop) {
+  GPOS_ASSERT(nullptr != pop);
+  GPOS_ASSERT(EopScalarArrayCoerceExpr == pop->Eopid());
 
-	return dynamic_cast<CScalarArrayCoerceExpr *>(pop);
+  return dynamic_cast<CScalarArrayCoerceExpr *>(pop);
 }
-
 
 // EOF

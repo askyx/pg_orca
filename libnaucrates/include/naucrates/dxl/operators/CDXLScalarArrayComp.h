@@ -16,16 +16,10 @@
 
 #include "naucrates/dxl/operators/CDXLScalarComp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
-enum EdxlArrayCompType
-{
-	Edxlarraycomptypeany = 0,
-	Edxlarraycomptypeall
-};
+enum EdxlArrayCompType { Edxlarraycomptypeany = 0, Edxlarraycomptypeall };
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -35,62 +29,55 @@ enum EdxlArrayCompType
 //		Class for representing DXL scalar Array OpExpr
 //
 //---------------------------------------------------------------------------
-class CDXLScalarArrayComp : public CDXLScalarComp
-{
-private:
-	EdxlArrayCompType m_comparison_type;
+class CDXLScalarArrayComp : public CDXLScalarComp {
+ private:
+  EdxlArrayCompType m_comparison_type;
 
-	// private copy ctor
-	CDXLScalarArrayComp(const CDXLScalarArrayComp &);
+  // private copy ctor
+  CDXLScalarArrayComp(const CDXLScalarArrayComp &);
 
-	const CWStringConst *GetDXLStrArrayCmpType() const;
+  const CWStringConst *GetDXLStrArrayCmpType() const;
 
-public:
-	// ctor/dtor
-	CDXLScalarArrayComp(CMemoryPool *mp, IMDId *mdid_op,
-						const CWStringConst *str_opname,
-						EdxlArrayCompType comparison_type);
+ public:
+  // ctor/dtor
+  CDXLScalarArrayComp(CMemoryPool *mp, IMDId *mdid_op, const CWStringConst *str_opname,
+                      EdxlArrayCompType comparison_type);
 
-	// ident accessors
-	Edxlopid GetDXLOperator() const;
+  // ident accessors
+  Edxlopid GetDXLOperator() const override;
 
-	// name of the DXL operator
-	const CWStringConst *GetOpNameStr() const;
+  // name of the DXL operator
+  const CWStringConst *GetOpNameStr() const override;
 
-	//accessors
-	BOOL HasBoolResult() const;
-	EdxlArrayCompType GetDXLArrayCmpType() const;
+  // accessors
+  BOOL HasBoolResult() const;
+  EdxlArrayCompType GetDXLArrayCmpType() const;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// conversion function
-	static CDXLScalarArrayComp *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarArrayComp == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarArrayComp *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarArrayComp == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarArrayComp *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarArrayComp *>(dxl_op);
+  }
 
-	// does the operator return a boolean result
-	virtual BOOL
-	HasBoolResult(CMDAccessor *	 //md_accessor
-	) const
-	{
-		return true;
-	}
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  ) const override {
+    return true;
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalarArrayComp_H
+#endif  // !GPDXL_CDXLScalarArrayComp_H
 
 // EOF

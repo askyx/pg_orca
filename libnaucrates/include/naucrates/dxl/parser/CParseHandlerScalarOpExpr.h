@@ -18,9 +18,7 @@
 #include "naucrates/dxl/operators/CDXLScalarOpExpr.h"
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -33,36 +31,32 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing a scalar op expression
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarOpExpr : public CParseHandlerScalarOp
-{
-private:
-	ULONG m_num_of_children;
-	// private copy ctor
-	CParseHandlerScalarOpExpr(const CParseHandlerScalarOpExpr &);
+class CParseHandlerScalarOpExpr : public CParseHandlerScalarOp {
+ private:
+  ULONG m_num_of_children;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-public:
-	// ctor/dtor
-	CParseHandlerScalarOpExpr(CMemoryPool *mp,
-							  CParseHandlerManager *parse_handler_mgr,
-							  CParseHandlerBase *parse_handler_root);
+ public:
+  CParseHandlerScalarOpExpr(const CParseHandlerScalarOpExpr &) = delete;
+
+  // ctor/dtor
+  CParseHandlerScalarOpExpr(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                            CParseHandlerBase *parse_handler_root);
 };
 
 }  // namespace gpdxl
-#endif	// GPDXL_CParseHandlerScalarOpExpr_H
+#endif  // GPDXL_CParseHandlerScalarOpExpr_H
 
-//EOF
+// EOF

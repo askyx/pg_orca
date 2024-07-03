@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarCoerceToDomain.cpp
@@ -16,7 +16,6 @@
 using namespace gpopt;
 using namespace gpmd;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CScalarCoerceToDomain::CScalarCoerceToDomain
@@ -25,14 +24,9 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarCoerceToDomain::CScalarCoerceToDomain(CMemoryPool *mp, IMDId *mdid_type,
-											 INT type_modifier,
-											 ECoercionForm ecf, INT location)
-	: CScalarCoerceBase(mp, mdid_type, type_modifier, ecf, location),
-	  m_returns_null_on_null_input(false)
-{
-}
-
+CScalarCoerceToDomain::CScalarCoerceToDomain(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, ECoercionForm ecf,
+                                             INT location)
+    : CScalarCoerceBase(mp, mdid_type, type_modifier, ecf, location), m_returns_null_on_null_input(false) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -42,22 +36,16 @@ CScalarCoerceToDomain::CScalarCoerceToDomain(CMemoryPool *mp, IMDId *mdid_type,
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarCoerceToDomain::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarCoerceToDomain *popCoerce =
-			CScalarCoerceToDomain::PopConvert(pop);
+BOOL CScalarCoerceToDomain::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarCoerceToDomain *popCoerce = CScalarCoerceToDomain::PopConvert(pop);
 
-		return popCoerce->MdidType()->Equals(MdidType()) &&
-			   popCoerce->TypeModifier() == TypeModifier() &&
-			   popCoerce->Ecf() == Ecf() && popCoerce->Location() == Location();
-	}
+    return popCoerce->MdidType()->Equals(MdidType()) && popCoerce->TypeModifier() == TypeModifier() &&
+           popCoerce->Ecf() == Ecf() && popCoerce->Location() == Location();
+  }
 
-	return false;
+  return false;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -67,16 +55,12 @@ CScalarCoerceToDomain::Matches(COperator *pop) const
 //		Perform boolean expression evaluation
 //
 //---------------------------------------------------------------------------
-CScalar::EBoolEvalResult
-CScalarCoerceToDomain::Eber(ULongPtrArray *pdrgpulChildren) const
-{
-	if (m_returns_null_on_null_input)
-	{
-		return EberNullOnAnyNullChild(pdrgpulChildren);
-	}
+CScalar::EBoolEvalResult CScalarCoerceToDomain::Eber(ULongPtrArray *pdrgpulChildren) const {
+  if (m_returns_null_on_null_input) {
+    return EberNullOnAnyNullChild(pdrgpulChildren);
+  }
 
-	return EberAny;
+  return EberAny;
 }
-
 
 // EOF

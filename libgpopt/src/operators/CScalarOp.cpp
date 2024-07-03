@@ -15,10 +15,10 @@
 
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdPropScalar.h"
+#include "gpopt/base/COptCtxt.h"
 #include "gpopt/mdcache/CMDAccessorUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "naucrates/md/IMDScalarOp.h"
-
 
 using namespace gpopt;
 
@@ -30,29 +30,22 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarOp::CScalarOp(CMemoryPool *mp, IMDId *mdid_op, IMDId *return_type_mdid,
-					 const CWStringConst *pstrOp)
-	: CScalar(mp),
-	  m_mdid_op(mdid_op),
-	  m_return_type_mdid(return_type_mdid),
-	  m_pstrOp(pstrOp),
-	  m_returns_null_on_null_input(false),
-	  m_fBoolReturnType(false),
-	  m_fCommutative(false)
-{
-	GPOS_ASSERT(mdid_op->IsValid());
+CScalarOp::CScalarOp(CMemoryPool *mp, IMDId *mdid_op, IMDId *return_type_mdid, const CWStringConst *pstrOp)
+    : CScalar(mp),
+      m_mdid_op(mdid_op),
+      m_return_type_mdid(return_type_mdid),
+      m_pstrOp(pstrOp),
+      m_returns_null_on_null_input(false),
+      m_fBoolReturnType(false),
+      m_fCommutative(false) {
+  GPOS_ASSERT(mdid_op->IsValid());
 
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
 
-	m_returns_null_on_null_input =
-		CMDAccessorUtils::FScalarOpReturnsNullOnNullInput(md_accessor,
-														  m_mdid_op);
-	m_fCommutative =
-		CMDAccessorUtils::FCommutativeScalarOp(md_accessor, m_mdid_op);
-	m_fBoolReturnType =
-		CMDAccessorUtils::FBoolType(md_accessor, m_return_type_mdid);
+  m_returns_null_on_null_input = CMDAccessorUtils::FScalarOpReturnsNullOnNullInput(md_accessor, m_mdid_op);
+  m_fCommutative = CMDAccessorUtils::FCommutativeScalarOp(md_accessor, m_mdid_op);
+  m_fBoolReturnType = CMDAccessorUtils::FBoolType(md_accessor, m_return_type_mdid);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -62,10 +55,8 @@ CScalarOp::CScalarOp(CMemoryPool *mp, IMDId *mdid_op, IMDId *return_type_mdid,
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CScalarOp::Pstr() const
-{
-	return m_pstrOp;
+const CWStringConst *CScalarOp::Pstr() const {
+  return m_pstrOp;
 }
 
 //---------------------------------------------------------------------------
@@ -76,10 +67,8 @@ CScalarOp::Pstr() const
 //		Scalar operator metadata id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarOp::MdIdOp() const
-{
-	return m_mdid_op;
+IMDId *CScalarOp::MdIdOp() const {
+  return m_mdid_op;
 }
 
 //---------------------------------------------------------------------------
@@ -92,11 +81,9 @@ CScalarOp::MdIdOp() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarOp::HashValue() const
-{
-	return gpos::CombineHashes(COperator::HashValue(), m_mdid_op->HashValue());
+CScalarOp::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(), m_mdid_op->HashValue());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -106,18 +93,15 @@ CScalarOp::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarOp::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarOp *pscop = CScalarOp::PopConvert(pop);
+BOOL CScalarOp::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarOp *pscop = CScalarOp::PopConvert(pop);
 
-		// match if operator oid are identical
-		return m_mdid_op->Equals(pscop->MdIdOp());
-	}
+    // match if operator oid are identical
+    return m_mdid_op->Equals(pscop->MdIdOp());
+  }
 
-	return false;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -128,10 +112,8 @@ CScalarOp::Matches(COperator *pop) const
 //		Accessor to the return type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarOp::GetReturnTypeMdId() const
-{
-	return m_return_type_mdid;
+IMDId *CScalarOp::GetReturnTypeMdId() const {
+  return m_return_type_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -142,16 +124,13 @@ CScalarOp::GetReturnTypeMdId() const
 //		Expression type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarOp::MdidType() const
-{
-	if (NULL != m_return_type_mdid)
-	{
-		return m_return_type_mdid;
-	}
+IMDId *CScalarOp::MdidType() const {
+  if (nullptr != m_return_type_mdid) {
+    return m_return_type_mdid;
+  }
 
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	return md_accessor->RetrieveScOp(m_mdid_op)->GetResultTypeMdid();
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  return md_accessor->RetrieveScOp(m_mdid_op)->GetResultTypeMdid();
 }
 
 //---------------------------------------------------------------------------
@@ -162,12 +141,9 @@ CScalarOp::MdidType() const
 //		Sensitivity to order of inputs
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarOp::FInputOrderSensitive() const
-{
-	return !m_fCommutative;
+BOOL CScalarOp::FInputOrderSensitive() const {
+  return !m_fCommutative;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -177,14 +153,12 @@ CScalarOp::FInputOrderSensitive() const
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarOp::OsPrint(IOstream &os) const
-{
-	os << SzId() << " (";
-	os << Pstr()->GetBuffer();
-	os << ")";
+IOstream &CScalarOp::OsPrint(IOstream &os) const {
+  os << SzId() << " (";
+  os << Pstr()->GetBuffer();
+  os << ")";
 
-	return os;
+  return os;
 }
 
 //---------------------------------------------------------------------------
@@ -195,15 +169,12 @@ CScalarOp::OsPrint(IOstream &os) const
 //		Perform boolean expression evaluation
 //
 //---------------------------------------------------------------------------
-CScalar::EBoolEvalResult
-CScalarOp::Eber(ULongPtrArray *pdrgpulChildren) const
-{
-	if (m_returns_null_on_null_input)
-	{
-		return EberNullOnAnyNullChild(pdrgpulChildren);
-	}
+CScalar::EBoolEvalResult CScalarOp::Eber(ULongPtrArray *pdrgpulChildren) const {
+  if (m_returns_null_on_null_input) {
+    return EberNullOnAnyNullChild(pdrgpulChildren);
+  }
 
-	return EberAny;
+  return EberAny;
 }
 
 // EOF

@@ -28,19 +28,16 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLColDescr::CDXLColDescr(CMemoryPool *mp, CMDName *md_name, ULONG column_id,
-						   INT attr_no, IMDId *column_mdid_type,
-						   INT type_modifier, BOOL is_dropped, ULONG width)
-	: m_mp(mp),
-	  m_md_name(md_name),
-	  m_column_id(column_id),
-	  m_attr_no(attr_no),
-	  m_column_mdid_type(column_mdid_type),
-	  m_type_modifier(type_modifier),
-	  m_is_dropped(is_dropped),
-	  m_column_width(width)
-{
-	GPOS_ASSERT_IMP(m_is_dropped, 0 == m_md_name->GetMDName()->Length());
+CDXLColDescr::CDXLColDescr(CMDName *md_name, ULONG column_id, INT attr_no, IMDId *column_mdid_type, INT type_modifier,
+                           BOOL is_dropped, ULONG width)
+    : m_md_name(md_name),
+      m_column_id(column_id),
+      m_attr_no(attr_no),
+      m_column_mdid_type(column_mdid_type),
+      m_type_modifier(type_modifier),
+      m_is_dropped(is_dropped),
+      m_column_width(width) {
+  GPOS_ASSERT_IMP(m_is_dropped, 0 == m_md_name->GetMDName()->Length());
 }
 
 //---------------------------------------------------------------------------
@@ -51,10 +48,9 @@ CDXLColDescr::CDXLColDescr(CMemoryPool *mp, CMDName *md_name, ULONG column_id,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLColDescr::~CDXLColDescr()
-{
-	m_column_mdid_type->Release();
-	GPOS_DELETE(m_md_name);
+CDXLColDescr::~CDXLColDescr() {
+  m_column_mdid_type->Release();
+  GPOS_DELETE(m_md_name);
 }
 
 //---------------------------------------------------------------------------
@@ -65,10 +61,8 @@ CDXLColDescr::~CDXLColDescr()
 //		Returns the column name
 //
 //---------------------------------------------------------------------------
-const CMDName *
-CDXLColDescr::MdName() const
-{
-	return m_md_name;
+const CMDName *CDXLColDescr::MdName() const {
+  return m_md_name;
 }
 
 //---------------------------------------------------------------------------
@@ -80,9 +74,8 @@ CDXLColDescr::MdName() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CDXLColDescr::Id() const
-{
-	return m_column_id;
+CDXLColDescr::Id() const {
+  return m_column_id;
 }
 
 //---------------------------------------------------------------------------
@@ -93,10 +86,8 @@ CDXLColDescr::Id() const
 //		Returns the column attribute number in GPDB
 //
 //---------------------------------------------------------------------------
-INT
-CDXLColDescr::AttrNum() const
-{
-	return m_attr_no;
+INT CDXLColDescr::AttrNum() const {
+  return m_attr_no;
 }
 
 //---------------------------------------------------------------------------
@@ -107,16 +98,12 @@ CDXLColDescr::AttrNum() const
 //		Returns the type id for this column
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLColDescr::MdidType() const
-{
-	return m_column_mdid_type;
+IMDId *CDXLColDescr::MdidType() const {
+  return m_column_mdid_type;
 }
 
-INT
-CDXLColDescr::TypeModifier() const
-{
-	return m_type_modifier;
+INT CDXLColDescr::TypeModifier() const {
+  return m_type_modifier;
 }
 
 //---------------------------------------------------------------------------
@@ -127,10 +114,8 @@ CDXLColDescr::TypeModifier() const
 //		Is the column dropped from the relation
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLColDescr::IsDropped() const
-{
-	return m_is_dropped;
+BOOL CDXLColDescr::IsDropped() const {
+  return m_is_dropped;
 }
 
 //---------------------------------------------------------------------------
@@ -142,9 +127,8 @@ CDXLColDescr::IsDropped() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CDXLColDescr::Width() const
-{
-	return m_column_width;
+CDXLColDescr::Width() const {
+  return m_column_width;
 }
 
 //---------------------------------------------------------------------------
@@ -155,48 +139,31 @@ CDXLColDescr::Width() const
 //		Serializes the column descriptor into DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLColDescr::SerializeToDXL(CXMLSerializer *xml_serializer) const
-{
-	const CWStringConst *pstrTokenColDescr =
-		CDXLTokens::GetDXLTokenStr(EdxltokenColDescr);
+void CDXLColDescr::SerializeToDXL(CXMLSerializer *xml_serializer) const {
+  const CWStringConst *pstrTokenColDescr = CDXLTokens::GetDXLTokenStr(EdxltokenColDescr);
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		pstrTokenColDescr);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrTokenColDescr);
 
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId),
-								 m_column_id);
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAttno),
-								 m_attr_no);
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColName),
-								 m_md_name->GetMDName());
-	m_column_mdid_type->Serialize(xml_serializer,
-								  CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), m_column_id);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAttno), m_attr_no);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColName), m_md_name->GetMDName());
+  m_column_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
 
-	if (default_type_modifier != TypeModifier())
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
-	}
+  if (default_type_modifier != TypeModifier()) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
+  }
 
-	if (m_is_dropped)
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenColDropped), m_is_dropped);
-	}
+  if (m_is_dropped) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColDropped), m_is_dropped);
+  }
 
-	if (gpos::ulong_max != m_column_width)
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenColWidth), m_column_width);
-	}
+  if (gpos::ulong_max != m_column_width) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColWidth), m_column_width);
+  }
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		pstrTokenColDescr);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrTokenColDescr);
 
-	GPOS_CHECK_ABORT;
+  GPOS_CHECK_ABORT;
 }
 
 // EOF

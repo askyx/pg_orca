@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 Pivotal Inc.
+//	Copyright (C) 2013 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		base.h
@@ -31,6 +31,6 @@ using namespace gpmd;
 using namespace gpdxl;
 using namespace gpdbcost;
 
-#endif	// UNITTEST_BASE_H
+#endif  // UNITTEST_BASE_H
 
 // EOF

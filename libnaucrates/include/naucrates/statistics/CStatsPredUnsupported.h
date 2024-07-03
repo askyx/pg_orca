@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CStatsPredUnsupported.h
@@ -16,8 +16,7 @@
 
 #include "naucrates/statistics/CStatsPred.h"
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,63 +26,43 @@ using namespace gpos;
 //	@doc:
 //		Class representing unsupported statistics filter
 //---------------------------------------------------------------------------
-class CStatsPredUnsupported : public CStatsPred
-{
-private:
-	// predicate comparison type
-	CStatsPred::EStatsCmpType m_stats_cmp_type;
+class CStatsPredUnsupported : public CStatsPred {
+ private:
+  // predicate comparison type
+  CStatsPred::EStatsCmpType m_stats_cmp_type;
 
-	// scale factor of the predicate
-	CDouble m_default_scale_factor;
+  // scale factor of the predicate
+  CDouble m_default_scale_factor;
 
-	// initialize the scale factor of the predicate
-	CDouble InitScaleFactor();
+  // initialize the scale factor of the predicate
+  static CDouble InitScaleFactor();
 
-	// private copy ctor
-	CStatsPredUnsupported(const CStatsPredUnsupported &);
+ public:
+  CStatsPredUnsupported(const CStatsPredUnsupported &) = delete;
 
-public:
-	// ctors
-	CStatsPredUnsupported(ULONG colid,
-						  CStatsPred::EStatsCmpType stats_pred_type);
-	CStatsPredUnsupported(ULONG colid,
-						  CStatsPred::EStatsCmpType stats_pred_type,
-						  CDouble default_scale_factor);
+  // ctors
+  CStatsPredUnsupported(ULONG colid, CStatsPred::EStatsCmpType stats_pred_type);
+  CStatsPredUnsupported(ULONG colid, CStatsPred::EStatsCmpType stats_pred_type, CDouble default_scale_factor);
 
-	// filter type id
-	virtual CStatsPred::EStatsPredType
-	GetPredStatsType() const
-	{
-		return CStatsPred::EsptUnsupported;
-	}
+  // filter type id
+  CStatsPred::EStatsPredType GetPredStatsType() const override { return CStatsPred::EsptUnsupported; }
 
-	// comparison types for stats computation
-	virtual CStatsPred::EStatsCmpType
-	GetStatsCmpType() const
-	{
-		return m_stats_cmp_type;
-	}
+  // comparison types for stats computation
+  virtual CStatsPred::EStatsCmpType GetStatsCmpType() const { return m_stats_cmp_type; }
 
-	CDouble
-	ScaleFactor() const
-	{
-		return m_default_scale_factor;
-	}
+  CDouble ScaleFactor() const { return m_default_scale_factor; }
 
-	// conversion function
-	static CStatsPredUnsupported *
-	ConvertPredStats(CStatsPred *pred_stats)
-	{
-		GPOS_ASSERT(NULL != pred_stats);
-		GPOS_ASSERT(CStatsPred::EsptUnsupported ==
-					pred_stats->GetPredStatsType());
+  // conversion function
+  static CStatsPredUnsupported *ConvertPredStats(CStatsPred *pred_stats) {
+    GPOS_ASSERT(nullptr != pred_stats);
+    GPOS_ASSERT(CStatsPred::EsptUnsupported == pred_stats->GetPredStatsType());
 
-		return dynamic_cast<CStatsPredUnsupported *>(pred_stats);
-	}
+    return dynamic_cast<CStatsPredUnsupported *>(pred_stats);
+  }
 
-};	// class CStatsPredUnsupported
+};  // class CStatsPredUnsupported
 }  // namespace gpnaucrates
 
-#endif	// !GPNAUCRATES_CStatsPredUnsupported_H
+#endif  // !GPNAUCRATES_CStatsPredUnsupported_H
 
 // EOF

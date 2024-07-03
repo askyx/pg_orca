@@ -26,7 +26,6 @@
 using namespace gpos;
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CJobQueue::EjqrAdd
@@ -35,52 +34,41 @@ using namespace gpopt;
 //		Add job as a waiter;
 //
 //---------------------------------------------------------------------------
-CJobQueue::EJobQueueResult
-CJobQueue::EjqrAdd(CJob *pj)
-{
-	GPOS_ASSERT(NULL != pj);
+CJobQueue::EJobQueueResult CJobQueue::EjqrAdd(CJob *pj) {
+  GPOS_ASSERT(nullptr != pj);
 
-	EJobQueueResult ejer = EjqrCompleted;
+  EJobQueueResult ejer = EjqrCompleted;
 
-	// check if job has completed before getting the lock
-	if (!m_fCompleted)
-	{
-		// check if this is the main job
-		if (pj == m_pj)
-		{
-			GPOS_ASSERT(!m_fCompleted);
-			ejer = EjqrMain;
-			pj->IncRefs();
-		}
-		else
-		{
-			// check if job is completed
-			if (!m_fCompleted)
-			{
-				m_listjQueued.Append(pj);
-				BOOL fOwner = (pj == m_listjQueued.First());
+  // check if job has completed before getting the lock
+  if (!m_fCompleted) {
+    // check if this is the main job
+    if (pj == m_pj) {
+      GPOS_ASSERT(!m_fCompleted);
+      ejer = EjqrMain;
+      pj->IncRefs();
+    } else {
+      // check if job is completed
+      if (!m_fCompleted) {
+        m_listjQueued.Append(pj);
+        BOOL fOwner = (pj == m_listjQueued.First());
 
-				// first caller becomes the owner
-				if (fOwner)
-				{
-					GPOS_ASSERT(NULL == m_pj);
+        // first caller becomes the owner
+        if (fOwner) {
+          GPOS_ASSERT(nullptr == m_pj);
 
-					m_pj = pj;
-					ejer = EjqrMain;
-				}
-				else
-				{
-					ejer = EjqrQueued;
-				}
+          m_pj = pj;
+          ejer = EjqrMain;
+        } else {
+          ejer = EjqrQueued;
+        }
 
-				pj->IncRefs();
-			}
-		}
-	}
+        pj->IncRefs();
+      }
+    }
+  }
 
-	return ejer;
+  return ejer;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -90,27 +78,23 @@ CJobQueue::EjqrAdd(CJob *pj)
 //		Notify waiting jobs of job completion
 //
 //---------------------------------------------------------------------------
-void
-CJobQueue::NotifyCompleted(CSchedulerContext *psc)
-{
-	GPOS_ASSERT(!m_fCompleted);
-	m_fCompleted = true;
+void CJobQueue::NotifyCompleted(CSchedulerContext *psc) {
+  GPOS_ASSERT(!m_fCompleted);
+  m_fCompleted = true;
 
-	GPOS_ASSERT(!m_listjQueued.IsEmpty());
-	while (!m_listjQueued.IsEmpty())
-	{
-		CJob *pj = m_listjQueued.RemoveHead();
+  GPOS_ASSERT(!m_listjQueued.IsEmpty());
+  while (!m_listjQueued.IsEmpty()) {
+    CJob *pj = m_listjQueued.RemoveHead();
 
-		// check if job execution has completed
-		if (1 == pj->UlpDecrRefs())
-		{
-			// update job as completed
-			psc->Psched()->CompleteQueued(pj);
+    // check if job execution has completed
+    if (1 == pj->UlpDecrRefs()) {
+      // update job as completed
+      psc->Psched()->CompleteQueued(pj);
 
-			// recycle job
-			psc->Pjf()->Release(pj);
-		}
-	}
+      // recycle job
+      psc->Pjf()->Release(pj);
+    }
+  }
 }
 
 #ifdef GPOS_DEBUG
@@ -123,21 +107,18 @@ CJobQueue::NotifyCompleted(CSchedulerContext *psc)
 //		Print queue - not thread-safe
 //
 //---------------------------------------------------------------------------
-IOstream &
-CJobQueue::OsPrintQueuedJobs(IOstream &os)
-{
-	os << "Job queue: " << std::endl;
+IOstream &CJobQueue::OsPrintQueuedJobs(IOstream &os) {
+  os << "Job queue: " << std::endl;
 
-	CJob *pj = m_listjQueued.First();
-	while (NULL != pj)
-	{
-		pj->OsPrint(os);
-		pj = m_listjQueued.Next(pj);
-	}
+  CJob *pj = m_listjQueued.First();
+  while (nullptr != pj) {
+    pj->OsPrint(os);
+    pj = m_listjQueued.Next(pj);
+  }
 
-	return os;
+  return os;
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

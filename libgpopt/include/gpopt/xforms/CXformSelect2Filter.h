@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,44 +26,32 @@ using namespace gpos;
 //		Transform Select to Filter
 //
 //---------------------------------------------------------------------------
-class CXformSelect2Filter : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformSelect2Filter(const CXformSelect2Filter &);
+class CXformSelect2Filter : public CXformImplementation {
+ private:
+ public:
+  CXformSelect2Filter(const CXformSelect2Filter &) = delete;
 
-public:
-	// ctor
-	explicit CXformSelect2Filter(CMemoryPool *mp);
+  // ctor
+  explicit CXformSelect2Filter(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformSelect2Filter()
-	{
-	}
+  // dtor
+  ~CXformSelect2Filter() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSelect2Filter;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfSelect2Filter; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSelect2Filter";
-	}
+  const CHAR *SzId() const override { return "CXformSelect2Filter"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *, CXformResult *, CExpression *) const;
+  // actual transform
+  void Transform(CXformContext *, CXformResult *, CExpression *) const override;
 
-};	// class CXformSelect2Filter
+};  // class CXformSelect2Filter
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSelect2Filter_H
+#endif  // !GPOPT_CXformSelect2Filter_H
 
 // EOF

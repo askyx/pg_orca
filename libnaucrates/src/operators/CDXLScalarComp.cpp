@@ -9,7 +9,6 @@
 //		Implementation of DXL comparison operator
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/dxl/operators/CDXLScalarComp.h"
 
 #include "naucrates/dxl/CDXLUtils.h"
@@ -27,13 +26,9 @@ using namespace gpdxl;
 //		Constructs a scalar comparison node
 //
 //---------------------------------------------------------------------------
-CDXLScalarComp::CDXLScalarComp(CMemoryPool *mp, IMDId *mdid_op,
-							   const CWStringConst *comparison_operator_name)
-	: CDXLScalar(mp),
-	  m_mdid(mdid_op),
-	  m_comparison_operator_name(comparison_operator_name)
-{
-	GPOS_ASSERT(m_mdid->IsValid());
+CDXLScalarComp::CDXLScalarComp(CMemoryPool *mp, IMDId *mdid_op, const CWStringConst *comparison_operator_name)
+    : CDXLScalar(mp), m_mdid(mdid_op), m_comparison_operator_name(comparison_operator_name) {
+  GPOS_ASSERT(m_mdid->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -44,10 +39,9 @@ CDXLScalarComp::CDXLScalarComp(CMemoryPool *mp, IMDId *mdid_op,
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarComp::~CDXLScalarComp()
-{
-	m_mdid->Release();
-	GPOS_DELETE(m_comparison_operator_name);
+CDXLScalarComp::~CDXLScalarComp() {
+  m_mdid->Release();
+  GPOS_DELETE(m_comparison_operator_name);
 }
 
 //---------------------------------------------------------------------------
@@ -58,10 +52,8 @@ CDXLScalarComp::~CDXLScalarComp()
 //		Comparison operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarComp::GetComparisonOpName() const
-{
-	return m_comparison_operator_name;
+const CWStringConst *CDXLScalarComp::GetComparisonOpName() const {
+  return m_comparison_operator_name;
 }
 
 //---------------------------------------------------------------------------
@@ -72,10 +64,8 @@ CDXLScalarComp::GetComparisonOpName() const
 //		Comparison operator id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLScalarComp::MDId() const
-{
-	return m_mdid;
+IMDId *CDXLScalarComp::MDId() const {
+  return m_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -86,12 +76,9 @@ CDXLScalarComp::MDId() const
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarComp::GetDXLOperator() const
-{
-	return EdxlopScalarCmp;
+Edxlopid CDXLScalarComp::GetDXLOperator() const {
+  return EdxlopScalarCmp;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -101,10 +88,8 @@ CDXLScalarComp::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarComp::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarComp);
+const CWStringConst *CDXLScalarComp::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarComp);
 }
 
 //---------------------------------------------------------------------------
@@ -115,28 +100,20 @@ CDXLScalarComp::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarComp::SerializeToDXL(CXMLSerializer *xml_serializer,
-							   const CDXLNode *node) const
-{
-	GPOS_CHECK_ABORT;
+void CDXLScalarComp::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
+  GPOS_CHECK_ABORT;
 
-	const CWStringConst *element_name = GetOpNameStr();
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenComparisonOp),
-		GetComparisonOpName());
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenComparisonOp), GetComparisonOpName());
 
-	m_mdid->Serialize(xml_serializer,
-					  CDXLTokens::GetDXLTokenStr(EdxltokenOpNo));
+  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenOpNo));
 
-	node->SerializeChildrenToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  node->SerializeChildrenToDXL(xml_serializer);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	GPOS_CHECK_ABORT;
+  GPOS_CHECK_ABORT;
 }
 
 #ifdef GPOS_DEBUG
@@ -148,29 +125,20 @@ CDXLScalarComp::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarComp::AssertValid(const CDXLNode *node, BOOL validate_children) const
-{
-	const ULONG arity = node->Arity();
-	GPOS_ASSERT(2 == arity);
+void CDXLScalarComp::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+  const ULONG arity = node->Arity();
+  GPOS_ASSERT(2 == arity);
 
-	for (ULONG ul = 0; ul < arity; ++ul)
-	{
-		CDXLNode *child_dxlnode = (*node)[ul];
-		GPOS_ASSERT(EdxloptypeScalar ==
-						child_dxlnode->GetOperator()->GetDXLOperatorType() ||
-					EdxloptypeLogical ==
-						child_dxlnode->GetOperator()->GetDXLOperatorType());
+  for (ULONG ul = 0; ul < arity; ++ul) {
+    CDXLNode *child_dxlnode = (*node)[ul];
+    GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType() ||
+                EdxloptypeLogical == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-		if (validate_children)
-		{
-			child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-													  validate_children);
-		}
-	}
+    if (validate_children) {
+      child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+    }
+  }
 }
-#endif	// GPOS_DEBUG
-
-
+#endif  // GPOS_DEBUG
 
 // EOF

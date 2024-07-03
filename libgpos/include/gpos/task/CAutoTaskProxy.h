@@ -18,8 +18,7 @@
 #include "gpos/task/CTaskContext.h"
 #include "gpos/task/CWorkerPoolManager.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CAutoTaskProxy
@@ -30,78 +29,68 @@ namespace gpos
 //		object.
 //
 //---------------------------------------------------------------------------
-class CAutoTaskProxy : CStackObject
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CAutoTaskProxy : CStackObject {
+ private:
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// worker pool
-	CWorkerPoolManager *m_pwpm;
+  // worker pool
+  CWorkerPoolManager *m_pwpm;
 
-	// task list
-	CList<CTask> m_list;
+  // task list
+  CList<CTask> m_list;
 
-	// propagate error of sub-task or not
-	BOOL m_propagate_error;
+  // propagate error of sub-task or not
+  BOOL m_propagate_error;
 
-	// find finished task
-	GPOS_RESULT
-	FindFinished(CTask **task);
+  // find finished task
+  GPOS_RESULT
+  FindFinished(CTask **task);
 
-	// no copy ctor
-	CAutoTaskProxy(const CAutoTaskProxy &);
+  // propagate the error from sub-task to current task
+  static void PropagateError(CTask *sub_task);
 
-	// propagate the error from sub-task to current task
-	void PropagateError(CTask *sub_task);
+  // check error from sub-task
+  void CheckError(CTask *sub_task) const;
 
-	// check error from sub-task
-	void CheckError(CTask *sub_task);
+ public:
+  CAutoTaskProxy(const CAutoTaskProxy &) = delete;
 
-public:
-	// ctor
-	CAutoTaskProxy(CMemoryPool *mp, CWorkerPoolManager *m_pwpm,
-				   BOOL propagate_error = true);
+  // ctor
+  CAutoTaskProxy(CMemoryPool *mp, CWorkerPoolManager *m_pwpm, BOOL propagate_error = true);
 
-	// dtor
-	~CAutoTaskProxy();
+  // dtor
+  ~CAutoTaskProxy();
 
-	// task count
-	ULONG
-	TaskCount()
-	{
-		return m_list.Size();
-	}
+  // task count
+  ULONG
+  TaskCount() { return m_list.Size(); }
 
-	// disable/enable error propagation
-	void
-	SetPropagateError(BOOL propagate_error)
-	{
-		m_propagate_error = propagate_error;
-	}
+  // disable/enable error propagation
+  void SetPropagateError(BOOL propagate_error) { m_propagate_error = propagate_error; }
 
-	// create new task
-	CTask *Create(void *(*pfunc)(void *), void *argv, BOOL *cancel = NULL);
+  // create new task
+  CTask *Create(void *(*pfunc)(void *), void *argv, BOOL *cancel = nullptr);
 
-	// schedule task for execution
-	void Schedule(CTask *task);
+  // schedule task for execution
+  void Schedule(CTask *task);
 
-	// execute task in thread owning ATP (synchronous execution)
-	void Execute(CTask *task);
+  // execute task in thread owning ATP (synchronous execution)
+  void Execute(CTask *task) const;
 
-	// cancel task
-	void Cancel(CTask *task);
+  // cancel task
+  void Cancel(CTask *task);
 
-	// unregister and release task
-	void Destroy(CTask *task);
+  // unregister and release task
+  void Destroy(CTask *task);
 
-	// unregister and release all tasks
-	void DestroyAll();
+  // unregister and release all tasks
+  void DestroyAll();
 
-};	// class CAutoTaskProxy
+};  // class CAutoTaskProxy
 
 }  // namespace gpos
 
-#endif	// !GPOS_CAutoTaskProxy_H_
+#endif  // !GPOS_CAutoTaskProxy_H_
 
 // EOF

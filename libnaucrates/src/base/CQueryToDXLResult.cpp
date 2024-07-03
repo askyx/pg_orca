@@ -9,9 +9,7 @@
 //		Implementation of the methods for accessing the result of the translation
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/base/CQueryToDXLResult.h"
-
 
 using namespace gpdxl;
 using namespace gpos;
@@ -24,14 +22,9 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CQueryToDXLResult::CQueryToDXLResult(CDXLNode *query,
-									 CDXLNodeArray *query_output,
-									 CDXLNodeArray *cte_producers)
-	: m_query_dxl(query),
-	  m_query_output(query_output),
-	  m_cte_producers(cte_producers)
-{
-	GPOS_ASSERT(NULL != query);
+CQueryToDXLResult::CQueryToDXLResult(CDXLNode *query, CDXLNodeArray *query_output, CDXLNodeArray *cte_producers)
+    : m_query_dxl(query), m_query_output(query_output), m_cte_producers(cte_producers) {
+  GPOS_ASSERT(nullptr != query);
 }
 
 //---------------------------------------------------------------------------
@@ -42,11 +35,10 @@ CQueryToDXLResult::CQueryToDXLResult(CDXLNode *query,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CQueryToDXLResult::~CQueryToDXLResult()
-{
-	m_query_dxl->Release();
-	CRefCount::SafeRelease(m_query_output);
-	CRefCount::SafeRelease(m_cte_producers);
+CQueryToDXLResult::~CQueryToDXLResult() {
+  m_query_dxl->Release();
+  CRefCount::SafeRelease(m_query_output);
+  CRefCount::SafeRelease(m_cte_producers);
 }
 
 //---------------------------------------------------------------------------
@@ -57,10 +49,8 @@ CQueryToDXLResult::~CQueryToDXLResult()
 //		Return the array of dxl nodes representing the query output
 //
 //---------------------------------------------------------------------------
-const CDXLNodeArray *
-CQueryToDXLResult::GetOutputColumnsDXLArray() const
-{
-	return m_query_output;
+const CDXLNodeArray *CQueryToDXLResult::GetOutputColumnsDXLArray() const {
+  return m_query_output;
 }
 
 //---------------------------------------------------------------------------
@@ -71,10 +61,8 @@ CQueryToDXLResult::GetOutputColumnsDXLArray() const
 //		Return the array of CTEs
 //
 //---------------------------------------------------------------------------
-const CDXLNodeArray *
-CQueryToDXLResult::GetCTEProducerDXLArray() const
-{
-	return m_cte_producers;
+const CDXLNodeArray *CQueryToDXLResult::GetCTEProducerDXLArray() const {
+  return m_cte_producers;
 }
 
 //---------------------------------------------------------------------------
@@ -85,12 +73,8 @@ CQueryToDXLResult::GetCTEProducerDXLArray() const
 //		Return the DXL node representing the query
 //
 //---------------------------------------------------------------------------
-const CDXLNode *
-CQueryToDXLResult::CreateDXLNode() const
-{
-	return m_query_dxl;
+const CDXLNode *CQueryToDXLResult::CreateDXLNode() const {
+  return m_query_dxl;
 }
-
-
 
 // EOF

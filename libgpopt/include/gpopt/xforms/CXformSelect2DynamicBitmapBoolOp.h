@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformSelect2DynamicBitmapBoolOp.h
@@ -16,8 +16,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CXformSelect2DynamicBitmapBoolOp
@@ -26,45 +25,32 @@ namespace gpopt
 //		Transform select over partitioned table table into a dynamic bitmap
 //		table get with bitmap bool op
 //---------------------------------------------------------------------------
-class CXformSelect2DynamicBitmapBoolOp : public CXformExploration
-{
-private:
-	// disable copy ctor
-	CXformSelect2DynamicBitmapBoolOp(const CXformSelect2DynamicBitmapBoolOp &);
+class CXformSelect2DynamicBitmapBoolOp : public CXformExploration {
+ private:
+ public:
+  CXformSelect2DynamicBitmapBoolOp(const CXformSelect2DynamicBitmapBoolOp &) = delete;
 
-public:
-	// ctor
-	explicit CXformSelect2DynamicBitmapBoolOp(CMemoryPool *mp);
+  // ctor
+  explicit CXformSelect2DynamicBitmapBoolOp(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformSelect2DynamicBitmapBoolOp()
-	{
-	}
+  // dtor
+  ~CXformSelect2DynamicBitmapBoolOp() override = default;
 
-	// identifier
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSelect2DynamicBitmapBoolOp;
-	}
+  // identifier
+  EXformId Exfid() const override { return ExfSelect2DynamicBitmapBoolOp; }
 
-	// xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSelect2DynamicBitmapBoolOp";
-	}
+  // xform name
+  const CHAR *SzId() const override { return "CXformSelect2DynamicBitmapBoolOp"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformSelect2DynamicBitmapBoolOp
+};  // class CXformSelect2DynamicBitmapBoolOp
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSelect2DynamicBitmapBoolOp_H
+#endif  // !GPOPT_CXformSelect2DynamicBitmapBoolOp_H
 
 // EOF

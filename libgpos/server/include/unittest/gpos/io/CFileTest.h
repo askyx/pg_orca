@@ -17,8 +17,7 @@
 #include "gpos/io/CFileWriter.h"
 #include "gpos/io/ioutils.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CFileTest
@@ -27,43 +26,39 @@ namespace gpos
 //		Static unit tests for CFileWriter and CFileReader
 //
 //---------------------------------------------------------------------------
-class CFileTest
-{
-public:
-	// help CFileWriter get file size by descriptor
-	class CFileWriterInternal : public CFileWriter
-	{
-	public:
-		// get file size by descriptor
-		ULLONG UllSizeInternal() const;
+class CFileTest {
+ public:
+  // help CFileWriter get file size by descriptor
+  class CFileWriterInternal : public CFileWriter {
+   public:
+    // get file size by descriptor
+    ULLONG UllSizeInternal() const;
 
-		// dtor
-		virtual ~CFileWriterInternal();
+    // dtor
+    ~CFileWriterInternal() override;
 
+  };  // class CFileWriterInternal
 
-	};	// class CFileWriterInternal
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_FileContent();
+  static GPOS_RESULT EresUnittest_Invalid();
+  static GPOS_RESULT EresUnittest_InconsistentSize();
 
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_FileContent();
-	static GPOS_RESULT EresUnittest_Invalid();
-	static GPOS_RESULT EresUnittest_InconsistentSize();
+  static void Unittest_MkTmpFile(CHAR *szTmpDir, CHAR *szTmpFile);
+  static void Unittest_DeleteTmpDir(const CHAR *szDir, const CHAR *szFile);
 
-	static void Unittest_MkTmpFile(CHAR *szTmpDir, CHAR *szTmpFile);
-	static void Unittest_DeleteTmpDir(const CHAR *szDir, const CHAR *szFile);
+  template <typename T, typename R, typename ARG1, typename ARG2>
+  static void Unittest_CheckError(T *pt, R (T::*pfunc)(ARG1, ARG2), ARG1 argFirst, ARG2 argSec,
+                                  CException::ExMinor exmi);
 
-	template <typename T, typename R, typename ARG1, typename ARG2>
-	static void Unittest_CheckError(T *pt, R (T::*pfunc)(ARG1, ARG2),
-									ARG1 argFirst, ARG2 argSec,
-									CException::ExMinor exmi);
+  static void Unittest_WriteInconsistentSize(const CHAR *szTmpFile);
+  static void Unittest_ReadInconsistentSize(const CHAR *szTmpFile);
 
-	static void Unittest_WriteInconsistentSize(const CHAR *szTmpFile);
-	static void Unittest_ReadInconsistentSize(const CHAR *szTmpFile);
-
-};	// class CFileTest
+};  // class CFileTest
 
 }  // namespace gpos
 
-#endif	// !GPOS_CFileTest_H
+#endif  // !GPOS_CFileTest_H
 
 // EOF

@@ -16,8 +16,7 @@
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/string/CWStringConst.h"
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,37 +27,32 @@ using namespace gpos;
 //		Class for representing metadata names.
 //
 //---------------------------------------------------------------------------
-class CMDName
-{
-private:
-	// the string holding the name
-	const CWStringConst *m_name;
+class CMDName {
+ private:
+  // the string holding the name
+  const CWStringConst *m_name;
 
-	// keep track of copy status
-	BOOL m_deep_copy;
+  // keep track of copy status
+  BOOL m_deep_copy;
 
-public:
-	// ctor/dtor
-	CMDName(CMemoryPool *mp, const CWStringBase *str);
-	CMDName(const CWStringConst *, BOOL fOwnsMemory = false);
+ public:
+  // ctor/dtor
+  CMDName(CMemoryPool *mp, const CWStringBase *str);
+  CMDName(const CWStringConst *, BOOL fOwnsMemory = false);
 
-	// shallow copy ctor
-	CMDName(const CMDName &);
+  // shallow copy ctor
+  CMDName(const CMDName &);
 
-	~CMDName();
+  ~CMDName();
 
-	// accessors
-	const CWStringConst *
-	GetMDName() const
-	{
-		return m_name;
-	}
+  // accessors
+  const CWStringConst *GetMDName() const { return m_name; }
 };
 
 // array of names
-typedef CDynamicPtrArray<CMDName, CleanupDelete> CMDNameArray;
+using CMDNameArray = CDynamicPtrArray<CMDName, CleanupDelete>;
 }  // namespace gpmd
 
-#endif	// !GPMD_CMDName_H
+#endif  // !GPMD_CMDName_H
 
 // EOF

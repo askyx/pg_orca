@@ -15,9 +15,7 @@
 
 #include "gpopt/operators/CExpressionHandle.h"
 
-
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -28,12 +26,7 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CLogicalApply::CLogicalApply(CMemoryPool *mp)
-	: CLogical(mp),
-	  m_pdrgpcrInner(NULL),
-	  m_eopidOriginSubq(COperator::EopSentinel)
-{
-}
-
+    : CLogical(mp), m_pdrgpcrInner(nullptr), m_eopidOriginSubq(COperator::EopSentinel) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -43,13 +36,9 @@ CLogicalApply::CLogicalApply(CMemoryPool *mp)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalApply::CLogicalApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner,
-							 EOperatorId eopidOriginSubq)
-	: CLogical(mp),
-	  m_pdrgpcrInner(pdrgpcrInner),
-	  m_eopidOriginSubq(eopidOriginSubq)
-{
-	GPOS_ASSERT(NULL != pdrgpcrInner);
+CLogicalApply::CLogicalApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq)
+    : CLogical(mp), m_pdrgpcrInner(pdrgpcrInner), m_eopidOriginSubq(eopidOriginSubq) {
+  GPOS_ASSERT(nullptr != pdrgpcrInner);
 }
 
 //---------------------------------------------------------------------------
@@ -60,11 +49,9 @@ CLogicalApply::CLogicalApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CLogicalApply::~CLogicalApply()
-{
-	CRefCount::SafeRelease(m_pdrgpcrInner);
+CLogicalApply::~CLogicalApply() {
+  CRefCount::SafeRelease(m_pdrgpcrInner);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -74,27 +61,23 @@ CLogicalApply::~CLogicalApply()
 //		Compute required stat columns of the n-th child
 //
 //---------------------------------------------------------------------------
-CColRefSet *
-CLogicalApply::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl,
-						CColRefSet *pcrsInput, ULONG child_index) const
-{
-	GPOS_ASSERT(3 == exprhdl.Arity());
+CColRefSet *CLogicalApply::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
+                                    ULONG child_index) const {
+  GPOS_ASSERT(3 == exprhdl.Arity());
 
-	CColRefSet *pcrsUsed = GPOS_NEW(mp) CColRefSet(mp);
-	// add columns used by scalar child
-	pcrsUsed->Union(exprhdl.DeriveUsedColumns(2));
+  CColRefSet *pcrsUsed = GPOS_NEW(mp) CColRefSet(mp);
+  // add columns used by scalar child
+  pcrsUsed->Union(exprhdl.DeriveUsedColumns(2));
 
-	if (0 == child_index)
-	{
-		// add outer references coming from inner child
-		pcrsUsed->Union(exprhdl.DeriveOuterReferences(1));
-	}
+  if (0 == child_index) {
+    // add outer references coming from inner child
+    pcrsUsed->Union(exprhdl.DeriveOuterReferences(1));
+  }
 
-	CColRefSet *pcrsStat =
-		PcrsReqdChildStats(mp, exprhdl, pcrsInput, pcrsUsed, child_index);
-	pcrsUsed->Release();
+  CColRefSet *pcrsStat = PcrsReqdChildStats(mp, exprhdl, pcrsInput, pcrsUsed, child_index);
+  pcrsUsed->Release();
 
-	return pcrsStat;
+  return pcrsStat;
 }
 
 //---------------------------------------------------------------------------
@@ -105,22 +88,17 @@ CLogicalApply::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL
-CLogicalApply::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CColRefArray *pdrgpcrInner =
-			CLogicalApply::PopConvert(pop)->PdrgPcrInner();
-		if (NULL == m_pdrgpcrInner || NULL == pdrgpcrInner)
-		{
-			return (NULL == m_pdrgpcrInner && NULL == pdrgpcrInner);
-		}
+BOOL CLogicalApply::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CColRefArray *pdrgpcrInner = CLogicalApply::PopConvert(pop)->PdrgPcrInner();
+    if (nullptr == m_pdrgpcrInner || nullptr == pdrgpcrInner) {
+      return (nullptr == m_pdrgpcrInner && nullptr == pdrgpcrInner);
+    }
 
-		return m_pdrgpcrInner->Equals(pdrgpcrInner);
-	}
+    return m_pdrgpcrInner->Equals(pdrgpcrInner);
+  }
 
-	return false;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -131,19 +109,15 @@ CLogicalApply::Matches(COperator *pop) const
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CLogicalApply::OsPrint(IOstream &os) const
-{
-	os << this->SzId();
-	if (NULL != m_pdrgpcrInner)
-	{
-		os << " (Reqd Inner Cols: ";
-		(void) CUtils::OsPrintDrgPcr(os, m_pdrgpcrInner);
-		os << ")";
-	}
+IOstream &CLogicalApply::OsPrint(IOstream &os) const {
+  os << this->SzId();
+  if (nullptr != m_pdrgpcrInner) {
+    os << " (Reqd Inner Cols: ";
+    (void)CUtils::OsPrintDrgPcr(os, m_pdrgpcrInner);
+    os << ")";
+  }
 
-	return os;
+  return os;
 }
-
 
 // EOF

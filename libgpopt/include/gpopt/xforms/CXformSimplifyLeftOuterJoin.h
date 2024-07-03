@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 Pivotal, Inc.
+//	Copyright (C) 2013 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformSimplifyLeftOuterJoin.h
@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,53 +26,36 @@ using namespace gpos;
 //		Simplify Left Outer Join with constant false predicate
 //
 //---------------------------------------------------------------------------
-class CXformSimplifyLeftOuterJoin : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformSimplifyLeftOuterJoin(const CXformSimplifyLeftOuterJoin &);
+class CXformSimplifyLeftOuterJoin : public CXformExploration {
+ private:
+ public:
+  CXformSimplifyLeftOuterJoin(const CXformSimplifyLeftOuterJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformSimplifyLeftOuterJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformSimplifyLeftOuterJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformSimplifyLeftOuterJoin()
-	{
-	}
+  // dtor
+  ~CXformSimplifyLeftOuterJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSimplifyLeftOuterJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfSimplifyLeftOuterJoin; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSimplifyLeftOuterJoin";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformSimplifyLeftOuterJoin"; }
 
-	// Compatibility function for simplifying aggregates
-	virtual BOOL
-	FCompatible(CXform::EXformId exfid)
-	{
-		return (CXform::ExfSimplifyLeftOuterJoin != exfid);
-	}
+  // Compatibility function for simplifying aggregates
+  BOOL FCompatible(CXform::EXformId exfid) override { return (CXform::ExfSimplifyLeftOuterJoin != exfid); }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformSimplifyLeftOuterJoin
+};  // class CXformSimplifyLeftOuterJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSimplifyLeftOuterJoin_H
+#endif  // !GPOPT_CXformSimplifyLeftOuterJoin_H
 
 // EOF

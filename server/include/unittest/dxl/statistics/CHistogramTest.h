@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2018 Pivotal Inc.
+//	Copyright (C) 2018 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CHistogramTest.h
@@ -15,8 +15,7 @@
 
 #include "naucrates/statistics/CHistogram.h"
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 //---------------------------------------------------------------------------
 //	@class:
 //		CHistogramTest
@@ -25,31 +24,34 @@ namespace gpnaucrates
 //		Static unit tests for point
 //
 //---------------------------------------------------------------------------
-class CHistogramTest
-{
-private:
-	// generate int histogram having tuples not covered by buckets,
-	// including null fraction and nDistinctRemain
-	static CHistogram *PhistExampleInt4Remain(CMemoryPool *mp);
+class CHistogramTest {
+ private:
+  // generate int histogram having tuples not covered by buckets,
+  // including null fraction and nDistinctRemain
+  static CHistogram *PhistExampleInt4Remain(CMemoryPool *mp);
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
 
-	// histogram basic tests
-	static GPOS_RESULT EresUnittest_CHistogramValid();
+  // histogram basic tests
+  static GPOS_RESULT EresUnittest_CHistogramValid();
 
-	static GPOS_RESULT EresUnittest_CHistogramInt4();
+  static GPOS_RESULT EresUnittest_CHistogramInt4();
 
-	static GPOS_RESULT EresUnittest_CHistogramBool();
+  static GPOS_RESULT EresUnittest_CHistogramBool();
 
-	// skew basic tests
-	static GPOS_RESULT EresUnittest_Skew();
+  // skew basic tests
+  static GPOS_RESULT EresUnittest_Skew();
 
-};	// class CHistogramTest
+  // merge basic tests
+  static GPOS_RESULT EresUnittest_MergeUnion();
+
+  // merge union test with double values differing by less than epsilon
+  static GPOS_RESULT EresUnittest_MergeUnionDoubleLessThanEpsilon();
+};  // class CHistogramTest
 }  // namespace gpnaucrates
 
-#endif	// !GPNAUCRATES_CHistogramTest_H
-
+#endif  // !GPNAUCRATES_CHistogramTest_H
 
 // EOF

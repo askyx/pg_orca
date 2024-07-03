@@ -32,22 +32,18 @@ using namespace gpmd;
 //
 //---------------------------------------------------------------------------
 CScalarNullIf::CScalarNullIf(CMemoryPool *mp, IMDId *mdid_op, IMDId *mdid_type)
-	: CScalar(mp),
-	  m_mdid_op(mdid_op),
-	  m_mdid_type(mdid_type),
-	  m_returns_null_on_null_input(false),
-	  m_fBoolReturnType(false)
-{
-	GPOS_ASSERT(mdid_op->IsValid());
-	GPOS_ASSERT(mdid_type->IsValid());
+    : CScalar(mp),
+      m_mdid_op(mdid_op),
+      m_mdid_type(mdid_type),
+      m_returns_null_on_null_input(false),
+      m_fBoolReturnType(false) {
+  GPOS_ASSERT(mdid_op->IsValid());
+  GPOS_ASSERT(mdid_type->IsValid());
 
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	m_returns_null_on_null_input =
-		CMDAccessorUtils::FScalarOpReturnsNullOnNullInput(md_accessor,
-														  m_mdid_op);
-	m_fBoolReturnType = CMDAccessorUtils::FBoolType(md_accessor, m_mdid_type);
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  m_returns_null_on_null_input = CMDAccessorUtils::FScalarOpReturnsNullOnNullInput(md_accessor, m_mdid_op);
+  m_fBoolReturnType = CMDAccessorUtils::FBoolType(md_accessor, m_mdid_type);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -57,10 +53,9 @@ CScalarNullIf::CScalarNullIf(CMemoryPool *mp, IMDId *mdid_op, IMDId *mdid_type)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarNullIf::~CScalarNullIf()
-{
-	m_mdid_op->Release();
-	m_mdid_type->Release();
+CScalarNullIf::~CScalarNullIf() {
+  m_mdid_op->Release();
+  m_mdid_type->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -73,11 +68,9 @@ CScalarNullIf::~CScalarNullIf()
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarNullIf::HashValue() const
-{
-	return gpos::CombineHashes(
-		COperator::HashValue(),
-		gpos::CombineHashes(m_mdid_op->HashValue(), m_mdid_type->HashValue()));
+CScalarNullIf::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(),
+                             gpos::CombineHashes(m_mdid_op->HashValue(), m_mdid_type->HashValue()));
 }
 
 //---------------------------------------------------------------------------
@@ -88,21 +81,16 @@ CScalarNullIf::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarNullIf::Matches(COperator *pop) const
-{
-	if (pop->Eopid() != Eopid())
-	{
-		return false;
-	}
+BOOL CScalarNullIf::Matches(COperator *pop) const {
+  if (pop->Eopid() != Eopid()) {
+    return false;
+  }
 
-	CScalarNullIf *popScNullIf = CScalarNullIf::PopConvert(pop);
+  CScalarNullIf *popScNullIf = CScalarNullIf::PopConvert(pop);
 
-	// match if operators and return types are identical
-	return m_mdid_op->Equals(popScNullIf->MdIdOp()) &&
-		   m_mdid_type->Equals(popScNullIf->MdidType());
+  // match if operators and return types are identical
+  return m_mdid_op->Equals(popScNullIf->MdIdOp()) && m_mdid_type->Equals(popScNullIf->MdidType());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -112,17 +100,12 @@ CScalarNullIf::Matches(COperator *pop) const
 //		Perform boolean expression evaluation
 //
 //---------------------------------------------------------------------------
-CScalar::EBoolEvalResult
-CScalarNullIf::Eber(ULongPtrArray *pdrgpulChildren) const
-{
-	if (m_returns_null_on_null_input)
-	{
-		return EberNullOnAnyNullChild(pdrgpulChildren);
-	}
+CScalar::EBoolEvalResult CScalarNullIf::Eber(ULongPtrArray *pdrgpulChildren) const {
+  if (m_returns_null_on_null_input) {
+    return EberNullOnAnyNullChild(pdrgpulChildren);
+  }
 
-	return EberAny;
+  return EberAny;
 }
-
-
 
 // EOF

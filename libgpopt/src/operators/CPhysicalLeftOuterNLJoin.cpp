@@ -13,11 +13,7 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/base/CUtils.h"
-
-
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -27,11 +23,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftOuterNLJoin::CPhysicalLeftOuterNLJoin(CMemoryPool *mp)
-	: CPhysicalNLJoin(mp)
-{
-}
-
+CPhysicalLeftOuterNLJoin::CPhysicalLeftOuterNLJoin(CMemoryPool *mp) : CPhysicalNLJoin(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -41,9 +33,6 @@ CPhysicalLeftOuterNLJoin::CPhysicalLeftOuterNLJoin(CMemoryPool *mp)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftOuterNLJoin::~CPhysicalLeftOuterNLJoin()
-{
-}
-
+CPhysicalLeftOuterNLJoin::~CPhysicalLeftOuterNLJoin() = default;
 
 // EOF

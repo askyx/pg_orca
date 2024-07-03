@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CCTETest.h
@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CCTETest
@@ -23,21 +22,20 @@ namespace gpopt
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CCTETest
-{
-private:
-	// counter used to mark last successful test
-	static gpos::ULONG m_ulCTETestCounter;
+class CCTETest {
+ private:
+  // counter used to mark last successful test
+  static gpos::ULONG m_ulCTETestCounter;
 
-public:
-	// unittests
-	static gpos::GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static gpos::GPOS_RESULT EresUnittest();
 
-	static gpos::GPOS_RESULT EresUnittest_RunTests();
+  static gpos::GPOS_RESULT EresUnittest_RunTests();
 
-};	// class CCTETest
+};  // class CCTETest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CCTETest_H
+#endif  // !GPOPT_CCTETest_H
 
 // EOF

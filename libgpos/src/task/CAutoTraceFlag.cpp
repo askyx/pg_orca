@@ -12,9 +12,9 @@
 #include "gpos/task/CAutoTraceFlag.h"
 
 #include "gpos/base.h"
+#include "gpos/error/CAutoTrace.h"
 
 using namespace gpos;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -24,13 +24,10 @@ using namespace gpos;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CAutoTraceFlag::CAutoTraceFlag(ULONG trace, BOOL orig)
-	: m_trace(trace), m_orig(false)
-{
-	GPOS_ASSERT(NULL != ITask::Self());
-	m_orig = ITask::Self()->SetTrace(m_trace, orig);
+CAutoTraceFlag::CAutoTraceFlag(ULONG trace, BOOL orig) : m_trace(trace), m_orig(false) {
+  GPOS_ASSERT(nullptr != ITask::Self());
+  m_orig = ITask::Self()->SetTrace(m_trace, orig);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -40,13 +37,11 @@ CAutoTraceFlag::CAutoTraceFlag(ULONG trace, BOOL orig)
 //		dtor
 //
 //---------------------------------------------------------------------------
-CAutoTraceFlag::~CAutoTraceFlag()
-{
-	GPOS_ASSERT(NULL != ITask::Self());
+CAutoTraceFlag::~CAutoTraceFlag() {
+  GPOS_ASSERT(nullptr != ITask::Self());
 
-	// reset original value
-	ITask::Self()->SetTrace(m_trace, m_orig);
+  // reset original value
+  ITask::Self()->SetTrace(m_trace, m_orig);
 }
-
 
 // EOF

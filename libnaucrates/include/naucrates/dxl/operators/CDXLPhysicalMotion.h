@@ -9,8 +9,6 @@
 //		Base class for representing DXL motion operators.
 //---------------------------------------------------------------------------
 
-
-
 #ifndef GPDXL_CDXLPhysicalMotion_H
 #define GPDXL_CDXLPhysicalMotion_H
 
@@ -20,8 +18,7 @@
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -32,65 +29,57 @@ using namespace gpos;
 //		Base class for representing DXL motion operators
 //
 //---------------------------------------------------------------------------
-class CDXLPhysicalMotion : public CDXLPhysical
-{
-private:
-	// private copy ctor
-	CDXLPhysicalMotion(CDXLPhysicalMotion &);
+class CDXLPhysicalMotion : public CDXLPhysical {
+ private:
+  // serialize the given list of segment ids into a comma-separated string
+  CWStringDynamic *GetSegIdsCommaSeparatedStr(const IntPtrArray *segment_ids_array) const;
 
-	// serialize the given list of segment ids into a comma-separated string
-	CWStringDynamic *GetSegIdsCommaSeparatedStr(
-		const IntPtrArray *segment_ids_array) const;
+  // serialize input and output segment ids into a comma-separated string
+  CWStringDynamic *GetInputSegIdsStr() const;
+  CWStringDynamic *GetOutputSegIdsStr() const;
 
-	// serialize input and output segment ids into a comma-separated string
-	CWStringDynamic *GetInputSegIdsStr() const;
-	CWStringDynamic *GetOutputSegIdsStr() const;
+ protected:
+  // list of input segment ids
+  IntPtrArray *m_input_segids_array;
 
-protected:
-	// list of input segment ids
-	IntPtrArray *m_input_segids_array;
+  // list of output segment ids
+  IntPtrArray *m_output_segids_array;
 
-	// list of output segment ids
-	IntPtrArray *m_output_segids_array;
+  void SerializeSegmentInfoToDXL(CXMLSerializer *xml_serializer) const;
 
-	void SerializeSegmentInfoToDXL(CXMLSerializer *xml_serializer) const;
+ public:
+  CDXLPhysicalMotion(CDXLPhysicalMotion &) = delete;
 
+  // ctor/dtor
+  explicit CDXLPhysicalMotion(CMemoryPool *mp);
 
-public:
-	// ctor/dtor
-	explicit CDXLPhysicalMotion(CMemoryPool *mp);
+  ~CDXLPhysicalMotion() override;
 
-	virtual ~CDXLPhysicalMotion();
+  // accessors
+  const IntPtrArray *GetInputSegIdsArray() const;
+  const IntPtrArray *GetOutputSegIdsArray() const;
 
-	// accessors
-	const IntPtrArray *GetInputSegIdsArray() const;
-	const IntPtrArray *GetOutputSegIdsArray() const;
+  // setters
+  void SetInputSegIds(IntPtrArray *input_segids_array);
+  void SetOutputSegIds(IntPtrArray *output_segids_array);
+  void SetSegmentInfo(IntPtrArray *input_segids_array, IntPtrArray *output_segids_array);
 
-	// setters
-	void SetInputSegIds(IntPtrArray *input_segids_array);
-	void SetOutputSegIds(IntPtrArray *output_segids_array);
-	void SetSegmentInfo(IntPtrArray *input_segids_array,
-						IntPtrArray *output_segids_array);
+  // index of relational child node in the children array
+  virtual ULONG GetRelationChildIdx() const = 0;
 
-	// index of relational child node in the children array
-	virtual ULONG GetRelationChildIdx() const = 0;
+  // conversion function
+  static CDXLPhysicalMotion *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopPhysicalMotionGather == dxl_op->GetDXLOperator() ||
+                EdxlopPhysicalMotionBroadcast == dxl_op->GetDXLOperator() ||
+                EdxlopPhysicalMotionRedistribute == dxl_op->GetDXLOperator() ||
+                EdxlopPhysicalMotionRoutedDistribute == dxl_op->GetDXLOperator() ||
+                EdxlopPhysicalMotionRandom == dxl_op->GetDXLOperator());
 
-	// conversion function
-	static CDXLPhysicalMotion *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(
-			EdxlopPhysicalMotionGather == dxl_op->GetDXLOperator() ||
-			EdxlopPhysicalMotionBroadcast == dxl_op->GetDXLOperator() ||
-			EdxlopPhysicalMotionRedistribute == dxl_op->GetDXLOperator() ||
-			EdxlopPhysicalMotionRoutedDistribute == dxl_op->GetDXLOperator() ||
-			EdxlopPhysicalMotionRandom == dxl_op->GetDXLOperator());
-
-		return dynamic_cast<CDXLPhysicalMotion *>(dxl_op);
-	}
+    return dynamic_cast<CDXLPhysicalMotion *>(dxl_op);
+  }
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLPhysicalMotion_H
+#endif  // !GPDXL_CDXLPhysicalMotion_H
 
 // EOF

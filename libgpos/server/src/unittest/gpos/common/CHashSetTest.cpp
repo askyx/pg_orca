@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CHashSetTest.cpp
@@ -34,16 +34,14 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CHashSetTest::EresUnittest()
-{
-	CUnittest rgut[] = {
-		GPOS_UNITTEST_FUNC(CHashSetTest::EresUnittest_Basic),
-		GPOS_UNITTEST_FUNC(CHashSetTest::EresUnittest_Ownership),
-	};
+CHashSetTest::EresUnittest() {
+  CUnittest rgut[] = {
+      GPOS_UNITTEST_FUNC(CHashSetTest::EresUnittest_Basic),
+      GPOS_UNITTEST_FUNC(CHashSetTest::EresUnittest_Ownership),
+  };
 
-	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
+  return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -54,42 +52,33 @@ CHashSetTest::EresUnittest()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CHashSetTest::EresUnittest_Basic()
-{
-	// create memory pool
-	CAutoMemoryPool amp;
-	CMemoryPool *mp = amp.Pmp();
+CHashSetTest::EresUnittest_Basic() {
+  // create memory pool
+  CAutoMemoryPool amp;
+  CMemoryPool *mp = amp.Pmp();
 
-	// test with ULONG array
-	ULONG_PTR rgul[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+  // test with ULONG array
+  ULONG_PTR rgul[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
-	const ULONG ulCnt = GPOS_ARRAY_SIZE(rgul);
+  const ULONG ulCnt = GPOS_ARRAY_SIZE(rgul);
 
-	typedef CHashSet<ULONG_PTR, HashPtr<ULONG_PTR>, Equals<ULONG_PTR>,
-					 CleanupNULL<ULONG_PTR> >
-		UlongPtrHashSet;
+  using UlongPtrHashSet = CHashSet<ULONG_PTR, HashPtr<ULONG_PTR>, Equals<ULONG_PTR>, CleanupNULL<ULONG_PTR>>;
 
-	UlongPtrHashSet *phs = GPOS_NEW(mp) UlongPtrHashSet(mp, 128);
-	for (ULONG ul = 0; ul < ulCnt; ul++)
-	{
-#ifdef GPOS_DEBUG
-		BOOL fSuccess =
-#endif	// GPOS_DEBUG
-			phs->Insert(&rgul[ul]);
-		GPOS_ASSERT(fSuccess);
-	}
-	GPOS_ASSERT(ulCnt == phs->Size());
+  UlongPtrHashSet *phs = GPOS_NEW(mp) UlongPtrHashSet(mp, 128);
+  for (ULONG ul = 0; ul < ulCnt; ul++) {
+    BOOL fSuccess GPOS_ASSERTS_ONLY = phs->Insert(&rgul[ul]);
+    GPOS_UNITTEST_ASSERT(fSuccess);
+  }
+  GPOS_UNITTEST_ASSERT(ulCnt == phs->Size());
 
-	for (ULONG ul = 0; ul < ulCnt; ul++)
-	{
-		GPOS_ASSERT(phs->Contains(&rgul[ul]));
-	}
+  for (ULONG ul = 0; ul < ulCnt; ul++) {
+    GPOS_UNITTEST_ASSERT(phs->Contains(&rgul[ul]));
+  }
 
-	phs->Release();
+  phs->Release();
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -100,38 +89,31 @@ CHashSetTest::EresUnittest_Basic()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CHashSetTest::EresUnittest_Ownership()
-{
-	// create memory pool
-	CAutoMemoryPool amp;
-	CMemoryPool *mp = amp.Pmp();
+CHashSetTest::EresUnittest_Ownership() {
+  // create memory pool
+  CAutoMemoryPool amp;
+  CMemoryPool *mp = amp.Pmp();
 
-	ULONG ulCnt = 256;
+  ULONG ulCnt = 256;
 
-	typedef CHashSet<ULONG_PTR, HashPtr<ULONG_PTR>, Equals<ULONG_PTR>,
-					 CleanupDelete<ULONG_PTR> >
-		UlongPtrHashSet;
+  using UlongPtrHashSet = CHashSet<ULONG_PTR, HashPtr<ULONG_PTR>, Equals<ULONG_PTR>, CleanupDelete<ULONG_PTR>>;
 
-	UlongPtrHashSet *phs = GPOS_NEW(mp) UlongPtrHashSet(mp, 32);
-	for (ULONG ul = 0; ul < ulCnt; ul++)
-	{
-		ULONG_PTR *pulp = GPOS_NEW(mp) ULONG_PTR(ul);
+  UlongPtrHashSet *phs = GPOS_NEW(mp) UlongPtrHashSet(mp, 32);
+  for (ULONG ul = 0; ul < ulCnt; ul++) {
+    ULONG_PTR *pulp = GPOS_NEW(mp) ULONG_PTR(ul);
 
-#ifdef GPOS_DEBUG
-		BOOL fSuccess =
-#endif	// GPOS_DEBUG
-			phs->Insert(pulp);
+    BOOL fSuccess GPOS_ASSERTS_ONLY = phs->Insert(pulp);
 
-		GPOS_ASSERT(fSuccess);
-		GPOS_ASSERT(phs->Contains(pulp));
+    GPOS_UNITTEST_ASSERT(fSuccess);
+    GPOS_UNITTEST_ASSERT(phs->Contains(pulp));
 
-		// can't insert existing keys
-		GPOS_ASSERT(!phs->Insert(pulp));
-	}
+    // can't insert existing keys
+    GPOS_UNITTEST_ASSERT(!phs->Insert(pulp));
+  }
 
-	phs->Release();
+  phs->Release();
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
 
 // EOF

@@ -15,11 +15,9 @@
 #include "gpos/base.h"
 
 #include "naucrates/dxl/parser/CParseHandlerMetadataObject.h"
-#include "naucrates/md/CMDPartConstraintGPDB.h"
 #include "naucrates/md/IMDIndex.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 using namespace gpnaucrates;
@@ -34,69 +32,66 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler class for parsing an MD index
 //
 //---------------------------------------------------------------------------
-class CParseHandlerMDIndex : public CParseHandlerMetadataObject
-{
-private:
-	// mdid of the index
-	IMDId *m_mdid;
+class CParseHandlerMDIndex : public CParseHandlerMetadataObject {
+ private:
+  // mdid of the index
+  IMDId *m_mdid;
 
-	// name of the index
-	CMDName *m_mdname;
+  // name of the index
+  CMDName *m_mdname;
 
-	// mdid of the indexed relation
-	IMDId *m_rel_mdid;
+  // is the index clustered
+  BOOL m_clustered;
 
-	// is the index clustered
-	BOOL m_clustered;
+  // Does Index AM support ordering
+  BOOL m_amcanorder;
 
-	// index type
-	IMDIndex::EmdindexType m_index_type;
+  // index type
+  IMDIndex::EmdindexType m_index_type;
 
-	// type id of index items
-	// for instance, for bitmap indexes, this is the type id of the bitmap
-	IMDId *m_mdid_item_type;
+  // type id of index items
+  // for instance, for bitmap indexes, this is the type id of the bitmap
+  IMDId *m_mdid_item_type;
 
-	// index keys
-	ULongPtrArray *m_index_key_cols_array;
+  // index keys
+  ULongPtrArray *m_index_key_cols_array;
 
-	// included columns
-	ULongPtrArray *m_included_cols_array;
+  // included columns
+  ULongPtrArray *m_included_cols_array;
 
-	// index part constraint
-	CMDPartConstraintGPDB *m_part_constraint;
+  // returnable columns
+  ULongPtrArray *m_returnable_cols_array;
 
-	// levels that include default partitions
-	ULongPtrArray *m_level_with_default_part_array;
+  // index key's sort direction
+  ULongPtrArray *m_sort_direction;
 
-	// is constraint unbounded
-	BOOL m_part_constraint_unbounded;
+  // index key's NULLS direction
+  ULongPtrArray *m_nulls_direction;
 
-	// private copy ctor
-	CParseHandlerMDIndex(const CParseHandlerMDIndex &);
+  // child index oids parse handler
+  CParseHandlerBase *m_child_indexes_parse_handler;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-public:
-	// ctor
-	CParseHandlerMDIndex(CMemoryPool *mp,
-						 CParseHandlerManager *parse_handler_mgr,
-						 CParseHandlerBase *parse_handler_root);
+ public:
+  CParseHandlerMDIndex(const CParseHandlerMDIndex &) = delete;
+
+  // ctor
+  CParseHandlerMDIndex(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerMDIndex_H
+#endif  // !GPDXL_CParseHandlerMDIndex_H
 
 // EOF

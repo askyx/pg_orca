@@ -30,12 +30,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLDatumInt4::CDXLDatumInt4(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null,
-							 INT val)
-	: CDXLDatum(mp, mdid_type, default_type_modifier, is_null, 4 /*length*/),
-	  m_val(val)
-{
-}
+CDXLDatumInt4::CDXLDatumInt4(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, INT val)
+    : CDXLDatum(mp, mdid_type, default_type_modifier, is_null, 4 /*length*/), m_val(val) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,10 +41,8 @@ CDXLDatumInt4::CDXLDatumInt4(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null,
 //		Return the integer value
 //
 //---------------------------------------------------------------------------
-INT
-CDXLDatumInt4::Value() const
-{
-	return m_val;
+INT CDXLDatumInt4::Value() const {
+  return m_val;
 }
 
 //---------------------------------------------------------------------------
@@ -59,22 +53,14 @@ CDXLDatumInt4::Value() const
 //		Serialize datum in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLDatumInt4::Serialize(CXMLSerializer *xml_serializer)
-{
-	m_mdid_type->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+void CDXLDatumInt4::Serialize(CXMLSerializer *xml_serializer) {
+  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
 
-	if (!m_is_null)
-	{
-		xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue),
-									 m_val);
-	}
-	else
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
-	}
+  if (!m_is_null) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue), m_val);
+  } else {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
+  }
 }
 
 // EOF

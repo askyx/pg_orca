@@ -13,9 +13,10 @@
 
 #include "gpos/types.h"
 
+namespace gpos {
+// wide char ostream
+using WOSTREAM = std::basic_ostream<WCHAR, std::char_traits<WCHAR>>;
 
-namespace gpos
-{
 //---------------------------------------------------------------------------
 //	@class:
 //		IOstream
@@ -25,46 +26,44 @@ namespace gpos
 //		system stream classes or their operators/member functions
 //
 //---------------------------------------------------------------------------
-class IOstream
-{
-protected:
-	// ctor
-	IOstream()
-	{
-	}
+class IOstream {
+ protected:
+  // ctor
+  IOstream() = default;
 
-public:
-	enum EStreamManipulator
-	{
-		EsmDec,
-		EsmHex
-		// no sentinel to enforce strict switch-ing
-	};
+  BOOL m_fullPrecision{false};
 
-	// virtual dtor
-	virtual ~IOstream()
-	{
-	}
+ public:
+  enum EStreamManipulator {
+    EsmDec,
+    EsmHex
+    // no sentinel to enforce strict switch-ing
+  };
 
-	// operator interface
-	virtual IOstream &operator<<(const CHAR *) = 0;
-	virtual IOstream &operator<<(const WCHAR) = 0;
-	virtual IOstream &operator<<(const CHAR) = 0;
-	virtual IOstream &operator<<(ULONG) = 0;
-	virtual IOstream &operator<<(ULLONG) = 0;
-	virtual IOstream &operator<<(INT) = 0;
-	virtual IOstream &operator<<(LINT) = 0;
-	virtual IOstream &operator<<(DOUBLE) = 0;
-	virtual IOstream &operator<<(const void *) = 0;
-	virtual IOstream &operator<<(WOSTREAM &(*) (WOSTREAM &) ) = 0;
-	virtual IOstream &operator<<(EStreamManipulator) = 0;
+  // virtual dtor
+  virtual ~IOstream() = default;
 
-	// needs to be implemented by subclass
-	virtual IOstream &operator<<(const WCHAR *) = 0;
+  // operator interface
+  virtual IOstream &operator<<(const CHAR *) = 0;
+  virtual IOstream &operator<<(const WCHAR) = 0;
+  virtual IOstream &operator<<(const CHAR) = 0;
+  virtual IOstream &operator<<(ULONG) = 0;
+  virtual IOstream &operator<<(ULLONG) = 0;
+  virtual IOstream &operator<<(INT) = 0;
+  virtual IOstream &operator<<(LINT) = 0;
+  virtual IOstream &operator<<(DOUBLE) = 0;
+  virtual IOstream &operator<<(const void *) = 0;
+  virtual IOstream &operator<<(WOSTREAM &(*)(WOSTREAM &)) = 0;
+  virtual IOstream &operator<<(EStreamManipulator) = 0;
+
+  // needs to be implemented by subclass
+  virtual IOstream &operator<<(const WCHAR *) = 0;
+
+  void SetFullPrecision(BOOL fullPrecision) { m_fullPrecision = fullPrecision; }
 };
 
 }  // namespace gpos
 
-#endif	// !GPOS_IOstream_H
+#endif  // !GPOS_IOstream_H
 
 // EOF

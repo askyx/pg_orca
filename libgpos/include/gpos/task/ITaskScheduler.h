@@ -13,8 +13,7 @@
 
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 // prototypes
 class CTask;
 class CTaskId;
@@ -28,39 +27,33 @@ class CTaskId;
 //
 //---------------------------------------------------------------------------
 
-class ITaskScheduler
-{
-private:
-	// private copy ctor
-	ITaskScheduler(const ITaskScheduler &);
+class ITaskScheduler {
+ private:
+ public:
+  ITaskScheduler(const ITaskScheduler &) = delete;
 
-public:
-	// dummy ctor
-	ITaskScheduler()
-	{
-	}
+  // dummy ctor
+  ITaskScheduler() = default;
 
-	// dummy dtor
-	virtual ~ITaskScheduler()
-	{
-	}
+  // dummy dtor
+  virtual ~ITaskScheduler() = default;
 
-	// add task to waiting queue
-	virtual void Enqueue(CTask *) = 0;
+  // add task to waiting queue
+  virtual void Enqueue(CTask *) = 0;
 
-	// get next task to execute
-	virtual CTask *Dequeue() = 0;
+  // get next task to execute
+  virtual CTask *Dequeue() = 0;
 
-	// check if task is waiting to be scheduled and remove it
-	virtual GPOS_RESULT Cancel(CTask *task) = 0;
+  // check if task is waiting to be scheduled and remove it
+  virtual GPOS_RESULT Cancel(CTask *task) = 0;
 
-	// get number of waiting tasks
-	virtual ULONG GetQueueSize() = 0;
+  // get number of waiting tasks
+  virtual ULONG GetQueueSize() = 0;
 
-	// check if task queue is empty
-	virtual BOOL IsEmpty() const = 0;
+  // check if task queue is empty
+  virtual BOOL IsEmpty() const = 0;
 
-};	// class ITaskScheduler
+};  // class ITaskScheduler
 }  // namespace gpos
 
 #endif /* GPOS_ITaskScheduler_H */

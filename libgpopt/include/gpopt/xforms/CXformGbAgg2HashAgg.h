@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,54 +26,40 @@ using namespace gpos;
 //		Transform Get to TableScan
 //
 //---------------------------------------------------------------------------
-class CXformGbAgg2HashAgg : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformGbAgg2HashAgg(const CXformGbAgg2HashAgg &);
+class CXformGbAgg2HashAgg : public CXformImplementation {
+ private:
+ protected:
+  // check if the transformation is applicable
+  static BOOL FApplicable(CExpression *pexpr);
 
-protected:
-	// check if the transformation is applicable
-	BOOL FApplicable(CExpression *pexpr) const;
+ public:
+  CXformGbAgg2HashAgg(const CXformGbAgg2HashAgg &) = delete;
 
-public:
-	// ctor
-	CXformGbAgg2HashAgg(CMemoryPool *mp);
+  // ctor
+  CXformGbAgg2HashAgg(CMemoryPool *mp);
 
-	// ctor
-	explicit CXformGbAgg2HashAgg(CExpression *pexprPattern);
+  // ctor
+  explicit CXformGbAgg2HashAgg(CExpression *pexprPattern);
 
-	// dtor
-	virtual ~CXformGbAgg2HashAgg()
-	{
-	}
+  // dtor
+  ~CXformGbAgg2HashAgg() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfGbAgg2HashAgg;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfGbAgg2HashAgg; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformGbAgg2HashAgg";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformGbAgg2HashAgg"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformGbAgg2HashAgg
+};  // class CXformGbAgg2HashAgg
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformGbAgg2HashAgg_H
+#endif  // !GPOPT_CXformGbAgg2HashAgg_H
 
 // EOF

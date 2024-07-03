@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerPhysicalDynamicBitmapTableScan.cpp
@@ -23,26 +23,14 @@ using namespace gpdxl;
 //		Invoked by Xerces to process an opening tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerPhysicalDynamicBitmapTableScan::StartElement(
-	const XMLCh *const,	 // element_uri
-	const XMLCh *const element_local_name,
-	const XMLCh *const,	 // element_qname
-	const Attributes &attrs)
-{
-	StartElementHelper(element_local_name,
-					   EdxltokenPhysicalDynamicBitmapTableScan);
-	m_part_index_id = CDXLOperatorFactory::ExtractConvertAttrValueToUlong(
-		m_parse_handler_mgr->GetDXLMemoryManager(), attrs, EdxltokenPartIndexId,
-		EdxltokenPhysicalDynamicBitmapTableScan);
+void CParseHandlerPhysicalDynamicBitmapTableScan::StartElement(const XMLCh *const,  // element_uri
+                                                               const XMLCh *const element_local_name,
+                                                               const XMLCh *const,  // element_qname
+                                                               const Attributes &attrs) {
+  StartElementHelper(element_local_name, EdxltokenPhysicalDynamicBitmapTableScan);
 
-	m_part_index_id_printable =
-		CDXLOperatorFactory::ExtractConvertAttrValueToUlong(
-			m_parse_handler_mgr->GetDXLMemoryManager(), attrs,
-			EdxltokenPartIndexIdPrintable,
-			EdxltokenPhysicalDynamicBitmapTableScan,
-			true,  //is_optional
-			m_part_index_id);
+  m_selector_ids = CDXLOperatorFactory::ExtractConvertValuesToArray(
+      m_parse_handler_mgr->GetDXLMemoryManager(), attrs, EdxltokenSelectorIds, EdxltokenPhysicalDynamicTableScan);
 }
 
 //---------------------------------------------------------------------------
@@ -53,16 +41,11 @@ CParseHandlerPhysicalDynamicBitmapTableScan::StartElement(
 //		Invoked by Xerces to process a closing tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerPhysicalDynamicBitmapTableScan::EndElement(
-	const XMLCh *const,	 // element_uri
-	const XMLCh *const element_local_name,
-	const XMLCh *const	// element_qname
-)
-{
-	EndElementHelper(element_local_name,
-					 EdxltokenPhysicalDynamicBitmapTableScan, m_part_index_id,
-					 m_part_index_id_printable);
+void CParseHandlerPhysicalDynamicBitmapTableScan::EndElement(const XMLCh *const,  // element_uri
+                                                             const XMLCh *const element_local_name,
+                                                             const XMLCh *const  // element_qname
+) {
+  EndElementHelper(element_local_name, EdxltokenPhysicalDynamicBitmapTableScan, m_selector_ids);
 }
 
 // EOF

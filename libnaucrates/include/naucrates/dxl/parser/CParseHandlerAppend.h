@@ -17,8 +17,7 @@
 #include "naucrates/dxl/operators/CDXLPhysicalAppend.h"
 #include "naucrates/dxl/parser/CParseHandlerPhysicalOp.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -31,39 +30,33 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for Append operator
 //
 //---------------------------------------------------------------------------
-class CParseHandlerAppend : public CParseHandlerPhysicalOp
-{
-private:
-	CDXLPhysicalAppend *m_dxl_op;
+class CParseHandlerAppend : public CParseHandlerPhysicalOp {
+ private:
+  CDXLPhysicalAppend *m_dxl_op;
 
-	// private copy ctor
-	CParseHandlerAppend(const CParseHandlerAppend &);
+  // set up initial handlers
+  void SetupInitialHandlers(const Attributes &attrs);
 
-	// set up initial handlers
-	void SetupInitialHandlers(const Attributes &attrs);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attrs                 // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attrs					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerAppend(const CParseHandlerAppend &) = delete;
 
-public:
-	// ctor/dtor
-	CParseHandlerAppend(CMemoryPool *mp,
-						CParseHandlerManager *parse_handler_mgr,
-						CParseHandlerBase *parse_handler_root);
+  // ctor/dtor
+  CParseHandlerAppend(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
-#endif	// GPDXL_CParseHandlerAppend_H
+#endif  // GPDXL_CParseHandlerAppend_H
 
 // EOF

@@ -13,11 +13,7 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/base/CUtils.h"
-
-
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -27,11 +23,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftAntiSemiNLJoin::CPhysicalLeftAntiSemiNLJoin(CMemoryPool *mp)
-	: CPhysicalNLJoin(mp)
-{
-}
-
+CPhysicalLeftAntiSemiNLJoin::CPhysicalLeftAntiSemiNLJoin(CMemoryPool *mp) : CPhysicalNLJoin(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -41,10 +33,7 @@ CPhysicalLeftAntiSemiNLJoin::CPhysicalLeftAntiSemiNLJoin(CMemoryPool *mp)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftAntiSemiNLJoin::~CPhysicalLeftAntiSemiNLJoin()
-{
-}
-
+CPhysicalLeftAntiSemiNLJoin::~CPhysicalLeftAntiSemiNLJoin() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -54,35 +43,11 @@ CPhysicalLeftAntiSemiNLJoin::~CPhysicalLeftAntiSemiNLJoin()
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalLeftAntiSemiNLJoin::FProvidesReqdCols(CExpressionHandle &exprhdl,
-											   CColRefSet *pcrsRequired,
-											   ULONG  // ulOptReq
-) const
-{
-	// left anti semi join only propagates columns from left child
-	return FOuterProvidesReqdCols(exprhdl, pcrsRequired);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalLeftAntiSemiNLJoin::PppsRequired
-//
-//	@doc:
-//		Compute required partition propagation of the n-th child
-//
-//---------------------------------------------------------------------------
-CPartitionPropagationSpec *
-CPhysicalLeftAntiSemiNLJoin::PppsRequired(
-	CMemoryPool *mp, CExpressionHandle &exprhdl,
-	CPartitionPropagationSpec *pppsRequired, ULONG child_index,
-	CDrvdPropArray *,  // pdrgpdpCtxt,
-	ULONG			   // ulOptReq
-)
-{
-	// no partition elimination for LASJ: push request to the respective child
-	return CPhysical::PppsRequiredPushThruNAry(mp, exprhdl, pppsRequired,
-											   child_index);
+BOOL CPhysicalLeftAntiSemiNLJoin::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                                    ULONG  // ulOptReq
+) const {
+  // left anti semi join only propagates columns from left child
+  return FOuterProvidesReqdCols(exprhdl, pcrsRequired);
 }
 
 // EOF

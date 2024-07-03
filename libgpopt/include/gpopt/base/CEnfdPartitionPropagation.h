@@ -14,14 +14,10 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CEnfdProp.h"
-#include "gpopt/base/CPartIndexMap.h"
 #include "gpopt/base/CPartitionPropagationSpec.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -31,102 +27,57 @@ using namespace gpos;
 //		Enforceable distribution property;
 //
 //---------------------------------------------------------------------------
-class CEnfdPartitionPropagation : public CEnfdProp
-{
-public:
-	// type of distribution matching function
-	enum EPartitionPropagationMatching
-	{
-		EppmSatisfy = 0,
-		EppmSentinel
-	};
+class CEnfdPartitionPropagation : public CEnfdProp {
+ public:
+  // type of partition matching function(s)
+  enum EPartitionPropagationMatching { EppmSatisfy = 0, EppmSentinel };
 
-private:
-	// partition propagation spec
-	CPartitionPropagationSpec *m_ppps;
+ private:
+  // partition propagation spec
+  CPartitionPropagationSpec *m_ppps;
 
-	// distribution matching type
-	EPartitionPropagationMatching m_eppm;
+  // partition propagation matching type
+  EPartitionPropagationMatching m_eppm;
 
-	// derived part filter
-	CPartFilterMap *m_ppfmDerived;
+ public:
+  CEnfdPartitionPropagation(const CEnfdPartitionPropagation &) = delete;
 
-	// private copy ctor
-	CEnfdPartitionPropagation(const CEnfdPartitionPropagation &);
+  // ctor
+  CEnfdPartitionPropagation(CPartitionPropagationSpec *ppps, EPartitionPropagationMatching eppm);
 
-public:
-	// ctor
-	CEnfdPartitionPropagation(CPartitionPropagationSpec *ppps,
-							  EPartitionPropagationMatching eppm,
-							  CPartFilterMap *ppfm);
+  // dtor
+  ~CEnfdPartitionPropagation() override;
 
-	// dtor
-	virtual ~CEnfdPartitionPropagation();
+  // partition spec accessor
+  CPropSpec *Pps() const override { return m_ppps; }
 
-	// partition spec accessor
-	virtual CPropSpec *
-	Pps() const
-	{
-		return m_ppps;
-	}
+  // hash function
+  ULONG HashValue() const override;
 
-	// hash function
-	virtual ULONG HashValue() const;
+  // required propagation accessor
+  CPartitionPropagationSpec *PppsRequired() const { return m_ppps; }
 
-	// required propagation accessor
-	CPartitionPropagationSpec *
-	PppsRequired() const
-	{
-		return m_ppps;
-	}
+  // get distribution enforcing type for the given operator
+  EPropEnforcingType Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical, BOOL fPropagationReqd) const;
 
-	// derived part filter
-	CPartFilterMap *
-	PpfmDerived() const
-	{
-		return m_ppfmDerived;
-	}
+  // return matching type
+  EPartitionPropagationMatching Eppm() const { return m_eppm; }
 
-	// is required partition propagation resolved by the given part index map
-	BOOL FResolved(CMemoryPool *mp, CPartIndexMap *ppim) const;
+  // matching function
+  BOOL Matches(CEnfdPartitionPropagation *pepp);
 
-	// are the dynamic scans required by the partition propagation in the scope defined by the given part index map
-	BOOL FInScope(CMemoryPool *mp, CPartIndexMap *ppim) const;
+  BOOL FCompatible(CPartitionPropagationSpec *pps_drvd) const;
 
-	// get distribution enforcing type for the given operator
-	EPropEnforcingType Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical,
-							BOOL fPropagationReqd) const;
+  // print function
+  IOstream &OsPrint(IOstream &os) const override;
 
-	// return matching type
-	EPartitionPropagationMatching
-	Eppm() const
-	{
-		return m_eppm;
-	}
+  // name of propagation matching type
+  static const CHAR *SzPropagationMatching(EPartitionPropagationMatching eppm);
 
-	// matching function
-	BOOL
-	Matches(CEnfdPartitionPropagation *pepp)
-	{
-		GPOS_ASSERT(NULL != pepp);
-
-		return m_eppm == pepp->Eppm() &&
-			   m_ppps->Matches(pepp->PppsRequired()) &&
-			   PpfmDerived()->Equals(pepp->PpfmDerived());
-	}
-
-	// print function
-	virtual IOstream &OsPrint(IOstream &os) const;
-
-	// name of propagation matching type
-	static const CHAR *SzPropagationMatching(
-		EPartitionPropagationMatching eppm);
-
-};	// class CEnfdPartitionPropagation
+};  // class CEnfdPartitionPropagation
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CEnfdPartitionPropagation_H
+#endif  // !GPOPT_CEnfdPartitionPropagation_H
 
 // EOF

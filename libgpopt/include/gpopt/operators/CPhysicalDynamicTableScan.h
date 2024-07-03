@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CPhysicalDynamicScan.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CPhysicalDynamicTableScan
@@ -25,60 +24,43 @@ namespace gpopt
 //		Dynamic Table scan operator
 //
 //---------------------------------------------------------------------------
-class CPhysicalDynamicTableScan : public CPhysicalDynamicScan
-{
-private:
-	// private copy ctor
-	CPhysicalDynamicTableScan(const CPhysicalDynamicTableScan &);
+class CPhysicalDynamicTableScan : public CPhysicalDynamicScan {
+ private:
+ public:
+  CPhysicalDynamicTableScan(const CPhysicalDynamicTableScan &) = delete;
 
-public:
-	// ctors
-	CPhysicalDynamicTableScan(CMemoryPool *mp, BOOL is_partial,
-							  const CName *pname, CTableDescriptor *ptabdesc,
-							  ULONG ulOriginOpId, ULONG scan_id,
-							  CColRefArray *colref_array,
-							  CColRef2dArray *pdrgpdrgpcrParts,
-							  ULONG ulSecondaryScanId,
-							  CPartConstraint *ppartcnstr,
-							  CPartConstraint *ppartcnstrRel);
+  // ctors
+  CPhysicalDynamicTableScan(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
+                            ULONG scan_id, CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrParts,
+                            IMdIdArray *partition_mdids, ColRefToUlongMapArray *root_col_mapping_per_part);
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPhysicalDynamicTableScan;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPhysicalDynamicTableScan; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPhysicalDynamicTableScan";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CPhysicalDynamicTableScan"; }
 
-	// match function
-	virtual BOOL Matches(COperator *) const;
+  // match function
+  BOOL Matches(COperator *) const override;
 
-	// statistics derivation during costing
-	virtual IStatistics *PstatsDerive(CMemoryPool *mp,
-									  CExpressionHandle &exprhdl,
-									  CReqdPropPlan *prpplan,
-									  IStatisticsArray *stats_ctxt) const;
+  // statistics derivation during costing
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpplan,
+                            IStatisticsArray *stats_ctxt) const override;
 
-	// conversion function
-	static CPhysicalDynamicTableScan *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopPhysicalDynamicTableScan == pop->Eopid());
+  // conversion function
+  static CPhysicalDynamicTableScan *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopPhysicalDynamicTableScan == pop->Eopid());
 
-		return dynamic_cast<CPhysicalDynamicTableScan *>(pop);
-	}
+    return dynamic_cast<CPhysicalDynamicTableScan *>(pop);
+  }
 
-};	// class CPhysicalDynamicTableScan
+  CPartitionPropagationSpec *PppsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
+
+};  // class CPhysicalDynamicTableScan
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPhysicalDynamicTableScan_H
+#endif  // !GPOPT_CPhysicalDynamicTableScan_H
 
 // EOF

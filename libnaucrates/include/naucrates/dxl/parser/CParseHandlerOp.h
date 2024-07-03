@@ -18,8 +18,7 @@
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 #include "naucrates/dxl/parser/CParseHandlerManager.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -33,32 +32,27 @@ XERCES_CPP_NAMESPACE_USE
 //
 //
 //---------------------------------------------------------------------------
-class CParseHandlerOp : public CParseHandlerBase
-{
-private:
-	// private copy ctor
-	CParseHandlerOp(const CParseHandlerOp &);
+class CParseHandlerOp : public CParseHandlerBase {
+ private:
+ protected:
+  // the root of the parsed DXL tree constructed by the parse handler
+  CDXLNode *m_dxl_node;
 
+  void AddChildFromParseHandler(const CParseHandlerOp *);
 
-protected:
-	// the root of the parsed DXL tree constructed by the parse handler
-	CDXLNode *m_dxl_node;
+ public:
+  CParseHandlerOp(const CParseHandlerOp &) = delete;
 
+  // ctor/dtor
+  CParseHandlerOp(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root);
 
-	void AddChildFromParseHandler(const CParseHandlerOp *);
+  ~CParseHandlerOp() override;
 
-public:
-	// ctor/dtor
-	CParseHandlerOp(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-					CParseHandlerBase *parse_handler_root);
-
-	virtual ~CParseHandlerOp();
-
-	// returns constructed DXL node
-	CDXLNode *CreateDXLNode() const;
+  // returns constructed DXL node
+  CDXLNode *CreateDXLNode() const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerOp_H
+#endif  // !GPDXL_CParseHandlerOp_H
 
 // EOF

@@ -14,8 +14,7 @@
 #include "gpos/base.h"
 #include "gpos/common/CStackObject.h"
 
-namespace gpos
-{
+namespace gpos {
 class CTask;
 
 //---------------------------------------------------------------------------
@@ -26,24 +25,22 @@ class CTask;
 //		Auto object for suspending and resuming task cancellation
 //
 //---------------------------------------------------------------------------
-class CAutoSuspendAbort : public CStackObject
-{
-private:
-	// pointer to task in current execution context
-	CTask *m_task;
+class CAutoSuspendAbort : public CStackObject {
+ private:
+  // pointer to task in current execution context
+  CTask *m_task;
 
-public:
-	// ctor - suspends CFA
-	CAutoSuspendAbort();
+ public:
+  // ctor - suspends CFA
+  CAutoSuspendAbort();
 
-	// dtor - resumes CFA
-	virtual ~CAutoSuspendAbort();
+  // dtor - resumes CFA
+  virtual ~CAutoSuspendAbort();
 
-};	// class CAutoSuspendAbort
+};  // class CAutoSuspendAbort
 
 }  // namespace gpos
 
-#endif	// GPOS_CAutoSuspendAbort_H
-
+#endif  // GPOS_CAutoSuspendAbort_H
 
 // EOF

@@ -16,13 +16,10 @@
 #include "gpopt/base/CReqdPropPlan.h"
 #include "gpopt/operators/CPhysicalSort.h"
 
-
 using namespace gpopt;
-
 
 // initialization of static variables
 const CHAR *CEnfdOrder::m_szOrderMatching[EomSentinel] = {"satisfy"};
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -32,13 +29,10 @@ const CHAR *CEnfdOrder::m_szOrderMatching[EomSentinel] = {"satisfy"};
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CEnfdOrder::CEnfdOrder(COrderSpec *pos, EOrderMatching eom)
-	: m_pos(pos), m_eom(eom)
-{
-	GPOS_ASSERT(NULL != pos);
-	GPOS_ASSERT(EomSentinel > eom);
+CEnfdOrder::CEnfdOrder(COrderSpec *pos, EOrderMatching eom) : m_pos(pos), m_eom(eom) {
+  GPOS_ASSERT(nullptr != pos);
+  GPOS_ASSERT(EomSentinel > eom);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -48,11 +42,9 @@ CEnfdOrder::CEnfdOrder(COrderSpec *pos, EOrderMatching eom)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CEnfdOrder::~CEnfdOrder()
-{
-	CRefCount::SafeRelease(m_pos);
+CEnfdOrder::~CEnfdOrder() {
+  CRefCount::SafeRelease(m_pos);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -63,23 +55,19 @@ CEnfdOrder::~CEnfdOrder()
 //		order specification of this object for the specified matching type
 //
 //---------------------------------------------------------------------------
-BOOL
-CEnfdOrder::FCompatible(COrderSpec *pos) const
-{
-	GPOS_ASSERT(NULL != pos);
+BOOL CEnfdOrder::FCompatible(COrderSpec *pos) const {
+  GPOS_ASSERT(nullptr != pos);
 
-	switch (m_eom)
-	{
-		case EomSatisfy:
-			return pos->FSatisfies(m_pos);
+  switch (m_eom) {
+    case EomSatisfy:
+      return pos->FSatisfies(m_pos);
 
-		case EomSentinel:
-			GPOS_ASSERT("invalid matching type");
-	}
+    case EomSentinel:
+      GPOS_ASSERT("invalid matching type");
+  }
 
-	return false;
+  return false;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -90,11 +78,9 @@ CEnfdOrder::FCompatible(COrderSpec *pos) const
 //
 //---------------------------------------------------------------------------
 ULONG
-CEnfdOrder::HashValue() const
-{
-	return gpos::CombineHashes(m_eom + 1, m_pos->HashValue());
+CEnfdOrder::HashValue() const {
+  return gpos::CombineHashes(m_eom + 1, m_pos->HashValue());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -104,17 +90,13 @@ CEnfdOrder::HashValue() const
 // 		Get order enforcing type for the given operator
 //
 //---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType
-CEnfdOrder::Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical,
-				 BOOL fOrderReqd) const
-{
-	if (fOrderReqd)
-	{
-		return popPhysical->EpetOrder(exprhdl, this);
-	}
-	return EpetUnnecessary;
+CEnfdProp::EPropEnforcingType CEnfdOrder::Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical,
+                                               BOOL fOrderReqd) const {
+  if (fOrderReqd) {
+    return popPhysical->EpetOrder(exprhdl, this);
+  }
+  return EpetUnnecessary;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -124,11 +106,8 @@ CEnfdOrder::Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical,
 //		Print function
 //
 //---------------------------------------------------------------------------
-IOstream &
-CEnfdOrder::OsPrint(IOstream &os) const
-{
-	return os << (*m_pos) << " match: " << m_szOrderMatching[m_eom] << " ";
+IOstream &CEnfdOrder::OsPrint(IOstream &os) const {
+  return os << (*m_pos) << " match: " << m_szOrderMatching[m_eom] << " ";
 }
-
 
 // EOF

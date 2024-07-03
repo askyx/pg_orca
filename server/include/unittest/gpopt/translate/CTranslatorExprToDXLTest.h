@@ -13,9 +13,7 @@
 
 #include "gpos/base.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -26,21 +24,20 @@ using namespace gpos;
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CTranslatorExprToDXLTest
-{
-private:
-	// counter used to mark last successful test
-	static ULONG m_ulTestCounter;
+class CTranslatorExprToDXLTest {
+ private:
+  // counter used to mark last successful test
+  static ULONG m_ulTestCounter;
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_RunTests();
-	static GPOS_RESULT EresUnittest_RunMinidumpTests();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_RunTests();
+  static GPOS_RESULT EresUnittest_RunMinidumpTests();
 
-};	// class CTranslatorExprToDXLTest
+};  // class CTranslatorExprToDXLTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CTranslatorExprToDXLTest_H
+#endif  // !GPOPT_CTranslatorExprToDXLTest_H
 
 // EOF

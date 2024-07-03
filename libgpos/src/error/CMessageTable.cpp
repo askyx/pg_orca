@@ -20,7 +20,6 @@ using namespace gpos;
 // invalid locale
 const ELocale CMessageTable::m_invalid_locale = ELocInvalid;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CMessageTable::CMessageTable
@@ -28,15 +27,10 @@ const ELocale CMessageTable::m_invalid_locale = ELocInvalid;
 //	@doc:
 //
 //---------------------------------------------------------------------------
-CMessageTable::CMessageTable(CMemoryPool *mp, ULONG size, ELocale locale)
-	: m_locale(locale)
-{
-	m_hash_table.Init(mp, size, GPOS_OFFSET(CMessage, m_link),
-					  GPOS_OFFSET(CMessage, m_exception),
-					  &(CException::m_invalid_exception), CException::HashValue,
-					  CException::Equals);
+CMessageTable::CMessageTable(CMemoryPool *mp, ULONG size, ELocale locale) : m_locale(locale) {
+  m_hash_table.Init(mp, size, GPOS_OFFSET(CMessage, m_link), GPOS_OFFSET(CMessage, m_exception),
+                    &(CException::m_invalid_exception), CException::HashValue, CException::Equals);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -46,13 +40,10 @@ CMessageTable::CMessageTable(CMemoryPool *mp, ULONG size, ELocale locale)
 //		Lookup message
 //
 //---------------------------------------------------------------------------
-CMessage *
-CMessageTable::LookupMessage(CException exc)
-{
-	MTAccessor acc(m_hash_table, exc);
-	return acc.Find();
+CMessage *CMessageTable::LookupMessage(CException exc) {
+  MTAccessor acc(m_hash_table, exc);
+  return acc.Find();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -62,18 +53,15 @@ CMessageTable::LookupMessage(CException exc)
 //		Insert new message
 //
 //---------------------------------------------------------------------------
-void
-CMessageTable::AddMessage(CMessage *msg)
-{
-	MTAccessor acc(m_hash_table, msg->m_exception);
+void CMessageTable::AddMessage(CMessage *msg) {
+  MTAccessor acc(m_hash_table, msg->m_exception);
 
-	if (NULL == acc.Find())
-	{
-		acc.Insert(msg);
-	}
+  if (nullptr == acc.Find()) {
+    acc.Insert(msg);
+  }
 
-	// TODO: 6/24/2010; raise approp. error for duplicate message
-	// or simply ignore?
+  // TODO: 6/24/2010; raise approp. error for duplicate message
+  // or simply ignore?
 }
 
 // EOF

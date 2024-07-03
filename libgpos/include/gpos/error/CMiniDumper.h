@@ -12,10 +12,10 @@
 #define GPOS_CMiniDumper_H
 
 #include "gpos/base.h"
+#include "gpos/common/CStackObject.h"
 #include "gpos/io/COstream.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CMiniDumper
@@ -24,56 +24,51 @@ namespace gpos
 //		Interface for minidump handler;
 //
 //---------------------------------------------------------------------------
-class CMiniDumper : CStackObject
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CMiniDumper : CStackObject {
+ private:
+  // flag indicating if handler is initialized
+  BOOL m_initialized{false};
 
-	// flag indicating if handler is initialized
-	BOOL m_initialized;
+  // flag indicating if handler is finalized
+  BOOL m_finalized{false};
 
-	// flag indicating if handler is finalized
-	BOOL m_finalized;
+ protected:
+  // stream to serialize objects to
+  COstream *m_oos{nullptr};
 
-	// private copy ctor
-	CMiniDumper(const CMiniDumper &);
+ public:
+  CMiniDumper(const CMiniDumper &) = delete;
 
-protected:
-	// stream to serialize objects to
-	COstream *m_oos;
+  // ctor
+  CMiniDumper();
 
-public:
-	// ctor
-	CMiniDumper(CMemoryPool *mp);
+  // dtor
+  virtual ~CMiniDumper();
 
-	// dtor
-	virtual ~CMiniDumper();
+  // initialize
+  void Init(COstream *oos);
 
-	// initialize
-	void Init(COstream *oos);
+  // finalize
+  void Finalize();
 
-	// finalize
-	void Finalize();
+  // get stream to serialize to
+  COstream &GetOStream();
 
-	// get stream to serialize to
-	COstream &GetOStream();
+  // serialize minidump header
+  virtual void SerializeHeader() = 0;
 
-	// serialize minidump header
-	virtual void SerializeHeader() = 0;
+  // serialize minidump footer
+  virtual void SerializeFooter() = 0;
 
-	// serialize minidump footer
-	virtual void SerializeFooter() = 0;
+  // serialize entry header
+  virtual void SerializeEntryHeader() = 0;
 
-	// serialize entry header
-	virtual void SerializeEntryHeader() = 0;
+  // serialize entry footer
+  virtual void SerializeEntryFooter() = 0;
 
-	// serialize entry footer
-	virtual void SerializeEntryFooter() = 0;
-
-};	// class CMiniDumper
+};  // class CMiniDumper
 }  // namespace gpos
 
-#endif	// !GPOS_CMiniDumper_H
+#endif  // !GPOS_CMiniDumper_H
 
 // EOF

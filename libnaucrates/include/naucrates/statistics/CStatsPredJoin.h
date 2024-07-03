@@ -18,8 +18,7 @@
 #include "naucrates/md/IMDType.h"
 #include "naucrates/statistics/CStatsPred.h"
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 using namespace gpos;
 using namespace gpmd;
 
@@ -30,77 +29,49 @@ using namespace gpmd;
 //	@doc:
 //		Join predicate used for join cardinality estimation
 //---------------------------------------------------------------------------
-class CStatsPredJoin : public CRefCount
-{
-private:
-	// private copy ctor
-	CStatsPredJoin(const CStatsPredJoin &);
+class CStatsPredJoin : public CRefCount {
+ private:
+  // column id
+  ULONG m_colidOuter;
 
-	// private assignment operator
-	CStatsPredJoin &operator=(CStatsPredJoin &);
+  // comparison type
+  CStatsPred::EStatsCmpType m_stats_cmp_type;
 
-	// column id
-	ULONG m_colidOuter;
+  // column id
+  ULONG m_colidInner;
 
-	// comparison type
-	CStatsPred::EStatsCmpType m_stats_cmp_type;
+ public:
+  CStatsPredJoin &operator=(CStatsPredJoin &) = delete;
 
-	// column id
-	ULONG m_colidInner;
+  CStatsPredJoin(const CStatsPredJoin &) = delete;
 
-public:
-	// c'tor
-	CStatsPredJoin(ULONG colid1, CStatsPred::EStatsCmpType stats_cmp_type,
-				   ULONG colid2)
-		: m_colidOuter(colid1),
-		  m_stats_cmp_type(stats_cmp_type),
-		  m_colidInner(colid2)
-	{
-	}
+  // c'tor
+  CStatsPredJoin(ULONG colid1, CStatsPred::EStatsCmpType stats_cmp_type, ULONG colid2)
+      : m_colidOuter(colid1), m_stats_cmp_type(stats_cmp_type), m_colidInner(colid2) {}
 
-	// accessors
-	BOOL
-	HasValidColIdOuter() const
-	{
-		return gpos::ulong_max != m_colidOuter;
-	}
+  // accessors
+  BOOL HasValidColIdOuter() const { return gpos::ulong_max != m_colidOuter; }
 
-	ULONG
-	ColIdOuter() const
-	{
-		return m_colidOuter;
-	}
+  ULONG
+  ColIdOuter() const { return m_colidOuter; }
 
-	// comparison type
-	CStatsPred::EStatsCmpType
-	GetCmpType() const
-	{
-		return m_stats_cmp_type;
-	}
+  // comparison type
+  CStatsPred::EStatsCmpType GetCmpType() const { return m_stats_cmp_type; }
 
-	BOOL
-	HasValidColIdInner() const
-	{
-		return gpos::ulong_max != m_colidInner;
-	}
+  BOOL HasValidColIdInner() const { return gpos::ulong_max != m_colidInner; }
 
-	ULONG
-	ColIdInner() const
-	{
-		return m_colidInner;
-	}
+  ULONG
+  ColIdInner() const { return m_colidInner; }
 
-	// d'tor
-	virtual ~CStatsPredJoin()
-	{
-	}
+  // d'tor
+  ~CStatsPredJoin() override = default;
 
-};	// class CStatsPredJoin
+};  // class CStatsPredJoin
 
 // array of filters
-typedef CDynamicPtrArray<CStatsPredJoin, CleanupRelease> CStatsPredJoinArray;
+using CStatsPredJoinArray = CDynamicPtrArray<CStatsPredJoin, CleanupRelease>;
 }  // namespace gpnaucrates
 
-#endif	// !GPNAUCRATES_CStatsPredJoin_H
+#endif  // !GPNAUCRATES_CStatsPredJoin_H
 
 // EOF

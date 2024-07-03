@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLScalarOpList.cpp
@@ -26,11 +26,9 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarOpList::CDXLScalarOpList(CMemoryPool *mp,
-								   EdxlOpListType dxl_op_list_type)
-	: CDXLScalar(mp), m_dxl_op_list_type(dxl_op_list_type)
-{
-	GPOS_ASSERT(EdxloplistSentinel > dxl_op_list_type);
+CDXLScalarOpList::CDXLScalarOpList(CMemoryPool *mp, EdxlOpListType dxl_op_list_type)
+    : CDXLScalar(mp), m_dxl_op_list_type(dxl_op_list_type) {
+  GPOS_ASSERT(EdxloplistSentinel > dxl_op_list_type);
 }
 
 //---------------------------------------------------------------------------
@@ -41,10 +39,8 @@ CDXLScalarOpList::CDXLScalarOpList(CMemoryPool *mp,
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarOpList::GetDXLOperator() const
-{
-	return EdxlopScalarOpList;
+Edxlopid CDXLScalarOpList::GetDXLOperator() const {
+  return EdxlopScalarOpList;
 }
 
 //---------------------------------------------------------------------------
@@ -55,30 +51,27 @@ CDXLScalarOpList::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarOpList::GetOpNameStr() const
-{
-	Edxltoken dxl_token = EdxltokenSentinel;
-	switch (m_dxl_op_list_type)
-	{
-		case EdxloplistEqFilterList:
-			dxl_token = EdxltokenPartLevelEqFilterList;
-			break;
+const CWStringConst *CDXLScalarOpList::GetOpNameStr() const {
+  Edxltoken dxl_token = EdxltokenSentinel;
+  switch (m_dxl_op_list_type) {
+    case EdxloplistEqFilterList:
+      dxl_token = EdxltokenPartLevelEqFilterList;
+      break;
 
-		case EdxloplistFilterList:
-			dxl_token = EdxltokenPartLevelFilterList;
-			break;
+    case EdxloplistFilterList:
+      dxl_token = EdxltokenPartLevelFilterList;
+      break;
 
-		case EdxloplistGeneral:
-			dxl_token = EdxltokenScalarOpList;
-			break;
+    case EdxloplistGeneral:
+      dxl_token = EdxltokenScalarOpList;
+      break;
 
-		default:
-			GPOS_ASSERT(!"Invalid op list type");
-			break;
-	}
+    default:
+      GPOS_ASSERT(!"Invalid op list type");
+      break;
+  }
 
-	return CDXLTokens::GetDXLTokenStr(dxl_token);
+  return CDXLTokens::GetDXLTokenStr(dxl_token);
 }
 
 //---------------------------------------------------------------------------
@@ -89,17 +82,12 @@ CDXLScalarOpList::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarOpList::SerializeToDXL(CXMLSerializer *xml_serializer,
-								 const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarOpList::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -111,24 +99,17 @@ CDXLScalarOpList::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarOpList::AssertValid(const CDXLNode *dxlnode,
-							  BOOL validate_children) const
-{
-	const ULONG arity = dxlnode->Arity();
-	for (ULONG idx = 0; idx < arity; ++idx)
-	{
-		CDXLNode *child_dxlnode = (*dxlnode)[idx];
-		GPOS_ASSERT(EdxloptypeScalar ==
-					child_dxlnode->GetOperator()->GetDXLOperatorType());
+void CDXLScalarOpList::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  const ULONG arity = dxlnode->Arity();
+  for (ULONG idx = 0; idx < arity; ++idx) {
+    CDXLNode *child_dxlnode = (*dxlnode)[idx];
+    GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-		if (validate_children)
-		{
-			child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-													  validate_children);
-		}
-	}
+    if (validate_children) {
+      child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+    }
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

@@ -15,7 +15,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CXformExploration::CXformExploration
@@ -24,11 +23,9 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformExploration::CXformExploration(CExpression *pexpr) : CXform(pexpr)
-{
-	GPOS_ASSERT(NULL != pexpr);
+CXformExploration::CXformExploration(CExpression *pexpr) : CXform(pexpr) {
+  GPOS_ASSERT(nullptr != pexpr);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -38,9 +35,6 @@ CXformExploration::CXformExploration(CExpression *pexpr) : CXform(pexpr)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformExploration::~CXformExploration()
-{
-}
-
+CXformExploration::~CXformExploration() = default;
 
 // EOF

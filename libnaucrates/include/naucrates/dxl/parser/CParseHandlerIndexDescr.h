@@ -18,9 +18,7 @@
 #include "naucrates/dxl/operators/CDXLIndexDescr.h"
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -33,42 +31,37 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing an index descriptor
 //
 //---------------------------------------------------------------------------
-class CParseHandlerIndexDescr : public CParseHandlerBase
-{
-private:
-	// the index descriptor to construct
-	CDXLIndexDescr *m_dxl_index_descr;
+class CParseHandlerIndexDescr : public CParseHandlerBase {
+ private:
+  // the index descriptor to construct
+  CDXLIndexDescr *m_dxl_index_descr;
 
-	// private copy ctor
-	CParseHandlerIndexDescr(const CParseHandlerIndexDescr &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerIndexDescr(const CParseHandlerIndexDescr &) = delete;
 
-public:
-	// ctor
-	CParseHandlerIndexDescr(CMemoryPool *, CParseHandlerManager *,
-							CParseHandlerBase *);
+  // ctor
+  CParseHandlerIndexDescr(CMemoryPool *, CParseHandlerManager *, CParseHandlerBase *);
 
-	//dtor
-	~CParseHandlerIndexDescr();
+  // dtor
+  ~CParseHandlerIndexDescr() override;
 
-	CDXLIndexDescr *GetDXLIndexDescr();
+  CDXLIndexDescr *GetDXLIndexDescr();
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerIndexDescriptor_H
+#endif  // !GPDXL_CParseHandlerIndexDescriptor_H
 
 // EOF

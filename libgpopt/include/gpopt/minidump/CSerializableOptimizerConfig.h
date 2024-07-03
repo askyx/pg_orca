@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2018 Pivotal, Inc.
+//	Copyright (C) 2018 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CSerializableOptimizerConfig.h
@@ -20,8 +20,7 @@
 using namespace gpos;
 using namespace gpdxl;
 
-namespace gpopt
-{
+namespace gpopt {
 // fwd decl
 class COptimizerConfig;
 
@@ -33,31 +32,28 @@ class COptimizerConfig;
 //		Serializable optimizer configuration object
 //
 //---------------------------------------------------------------------------
-class CSerializableOptimizerConfig : public CSerializable
-{
-private:
-	CMemoryPool *m_mp;
+class CSerializableOptimizerConfig : public CSerializable {
+ private:
+  CMemoryPool *m_mp;
 
-	// optimizer configurations
-	const COptimizerConfig *m_optimizer_config;
+  // optimizer configurations
+  const COptimizerConfig *m_optimizer_config;
 
-	// private copy ctor
-	CSerializableOptimizerConfig(const CSerializableOptimizerConfig &);
+ public:
+  CSerializableOptimizerConfig(const CSerializableOptimizerConfig &) = delete;
 
-public:
-	// ctor
-	CSerializableOptimizerConfig(CMemoryPool *mp,
-								 const COptimizerConfig *optimizer_config);
+  // ctor
+  CSerializableOptimizerConfig(CMemoryPool *mp, const COptimizerConfig *optimizer_config);
 
-	// dtor
-	virtual ~CSerializableOptimizerConfig();
+  // dtor
+  ~CSerializableOptimizerConfig() override;
 
-	// serialize object to passed stream
-	virtual void Serialize(COstream &oos);
+  // serialize object to passed stream
+  void Serialize(COstream &oos) override;
 
-};	// class CSerializableOptimizerConfig
+};  // class CSerializableOptimizerConfig
 }  // namespace gpopt
 
-#endif	// !GPOS_CSerializableOptimizerConfig_H
+#endif  // !GPOS_CSerializableOptimizerConfig_H
 
 // EOF

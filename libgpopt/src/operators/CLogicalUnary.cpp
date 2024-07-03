@@ -26,10 +26,8 @@ using namespace gpopt;
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL
-CLogicalUnary::Matches(COperator *pop) const
-{
-	return (pop->Eopid() == Eopid());
+BOOL CLogicalUnary::Matches(COperator *pop) const {
+  return (pop->Eopid() == Eopid());
 }
 
 //---------------------------------------------------------------------------
@@ -40,19 +38,15 @@ CLogicalUnary::Matches(COperator *pop) const
 //		Promise level for stat derivation
 //
 //---------------------------------------------------------------------------
-CLogical::EStatPromise
-CLogicalUnary::Esp(CExpressionHandle &exprhdl) const
-{
-	// low promise for stat derivation if scalar predicate has subqueries, or logical
-	// expression has outer-refs or is part of an Apply expression
-	if (exprhdl.DeriveHasSubquery(1) || exprhdl.HasOuterRefs() ||
-		(NULL != exprhdl.Pgexpr() &&
-		 CXformUtils::FGenerateApply(exprhdl.Pgexpr()->ExfidOrigin())))
-	{
-		return EspLow;
-	}
+CLogical::EStatPromise CLogicalUnary::Esp(CExpressionHandle &exprhdl) const {
+  // low promise for stat derivation if scalar predicate has subqueries, or logical
+  // expression has outer-refs or is part of an Apply expression
+  if (exprhdl.DeriveHasSubquery(1) || exprhdl.HasOuterRefs() ||
+      (nullptr != exprhdl.Pgexpr() && CXformUtils::FGenerateApply(exprhdl.Pgexpr()->ExfidOrigin()))) {
+    return EspLow;
+  }
 
-	return EspHigh;
+  return EspHigh;
 }
 
 //---------------------------------------------------------------------------
@@ -63,25 +57,23 @@ CLogicalUnary::Esp(CExpressionHandle &exprhdl) const
 //		Derive statistics for projection operators
 //
 //---------------------------------------------------------------------------
-IStatistics *
-CLogicalUnary::PstatsDeriveProject(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								   UlongToIDatumMap *phmuldatum) const
-{
-	GPOS_ASSERT(Esp(exprhdl) > EspNone);
-	IStatistics *child_stats = exprhdl.Pstats(0);
-	CReqdPropRelational *prprel =
-		CReqdPropRelational::GetReqdRelationalProps(exprhdl.Prp());
-	CColRefSet *pcrs = prprel->PcrsStat();
-	ULongPtrArray *colids = GPOS_NEW(mp) ULongPtrArray(mp);
-	pcrs->ExtractColIds(mp, colids);
+IStatistics *CLogicalUnary::PstatsDeriveProject(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                UlongToIDatumMap *phmuldatum,
+                                                UlongToConstColRefMap *colidToColrefMapForNDVExpr) const {
+  GPOS_ASSERT(Esp(exprhdl) > EspNone);
+  IStatistics *child_stats = exprhdl.Pstats(0);
+  CReqdPropRelational *prprel = CReqdPropRelational::GetReqdRelationalProps(exprhdl.Prp());
+  CColRefSet *pcrs = prprel->PcrsStat();
+  ULongPtrArray *colids = GPOS_NEW(mp) ULongPtrArray(mp);
+  pcrs->ExtractColIds(mp, colids);
 
-	IStatistics *stats = CProjectStatsProcessor::CalcProjStats(
-		mp, dynamic_cast<CStatistics *>(child_stats), colids, phmuldatum);
+  IStatistics *stats = CProjectStatsProcessor::CalcProjStats(mp, dynamic_cast<CStatistics *>(child_stats), colids,
+                                                             phmuldatum, colidToColrefMapForNDVExpr);
 
-	// clean up
-	colids->Release();
+  // clean up
+  colids->Release();
 
-	return stats;
+  return stats;
 }
 
 // EOF

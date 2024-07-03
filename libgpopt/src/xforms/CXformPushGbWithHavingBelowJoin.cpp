@@ -13,12 +13,13 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalGbAgg.h"
+#include "gpopt/operators/CLogicalInnerJoin.h"
+#include "gpopt/operators/CLogicalSelect.h"
+#include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/xforms/CXformUtils.h"
 
-
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -28,31 +29,21 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformPushGbWithHavingBelowJoin::CXformPushGbWithHavingBelowJoin(
-	CMemoryPool *mp)
-	:  // pattern
-	  CXformExploration(GPOS_NEW(mp) CExpression(
-		  mp, GPOS_NEW(mp) CLogicalSelect(mp),
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CLogicalGbAgg(mp),
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CLogicalInnerJoin(mp),
-				  GPOS_NEW(mp) CExpression(
-					  mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // join outer child
-				  GPOS_NEW(mp) CExpression(
-					  mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // join inner child
-				  GPOS_NEW(mp) CExpression(
-					  mp, GPOS_NEW(mp) CPatternTree(mp))  // join predicate
-				  ),
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CPatternTree(mp))  // scalar project list
-			  ),
-		  GPOS_NEW(mp)
-			  CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))  // Having clause
-		  ))
-{
-}
-
+CXformPushGbWithHavingBelowJoin::CXformPushGbWithHavingBelowJoin(CMemoryPool *mp)
+    :  // pattern
+      CXformExploration(GPOS_NEW(mp) CExpression(
+          mp, GPOS_NEW(mp) CLogicalSelect(mp),
+          GPOS_NEW(mp) CExpression(
+              mp, GPOS_NEW(mp) CLogicalGbAgg(mp),
+              GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalInnerJoin(mp),
+                                       GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // join outer child
+                                       GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // join inner child
+                                       GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // join predicate
+                                       ),
+              GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))  // scalar project list
+              ),
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))  // Having clause
+          )) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -63,13 +54,10 @@ CXformPushGbWithHavingBelowJoin::CXformPushGbWithHavingBelowJoin(
 //		we only push down global aggregates
 //
 //---------------------------------------------------------------------------
-CXform::EXformPromise
-CXformPushGbWithHavingBelowJoin::Exfp(CExpressionHandle &  // exprhdl
-) const
-{
-	return CXform::ExfpHigh;
+CXform::EXformPromise CXformPushGbWithHavingBelowJoin::Exfp(CExpressionHandle &  // exprhdl
+) const {
+  return CXform::ExfpHigh;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -79,33 +67,27 @@ CXformPushGbWithHavingBelowJoin::Exfp(CExpressionHandle &  // exprhdl
 //		Actual transformation
 //
 //---------------------------------------------------------------------------
-void
-CXformPushGbWithHavingBelowJoin::Transform(CXformContext *pxfctxt,
-										   CXformResult *pxfres,
-										   CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformPushGbWithHavingBelowJoin::Transform(CXformContext *pxfctxt, CXformResult *pxfres,
+                                                CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CMemoryPool *mp = pxfctxt->Pmp();
+  CMemoryPool *mp = pxfctxt->Pmp();
 
-	CExpression *pexprGb = (*pexpr)[0];
-	CLogicalGbAgg *popGbAgg = CLogicalGbAgg::PopConvert(pexprGb->Pop());
-	if (!popGbAgg->FGlobal())
-	{
-		// xform only applies to global aggs
-		return;
-	}
+  CExpression *pexprGb = (*pexpr)[0];
+  CLogicalGbAgg *popGbAgg = CLogicalGbAgg::PopConvert(pexprGb->Pop());
+  if (!popGbAgg->FGlobal()) {
+    // xform only applies to global aggs
+    return;
+  }
 
-	CExpression *pexprResult = CXformUtils::PexprPushGbBelowJoin(mp, pexpr);
+  CExpression *pexprResult = CXformUtils::PexprPushGbBelowJoin(mp, pexpr);
 
-	if (NULL != pexprResult)
-	{
-		// add alternative to results
-		pxfres->Add(pexprResult);
-	}
+  if (nullptr != pexprResult) {
+    // add alternative to results
+    pxfres->Add(pexprResult);
+  }
 }
-
 
 // EOF

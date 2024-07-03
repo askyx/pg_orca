@@ -13,9 +13,7 @@
 
 #include "gpos/base.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -26,16 +24,15 @@ using namespace gpos;
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CBindingTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
+class CBindingTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
 
-};	// class CBindingTest
+};  // class CBindingTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CBindingTest_H
+#endif  // !GPOPT_CBindingTest_H
 
 // EOF

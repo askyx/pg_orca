@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLScalarCoerceViaIO.h
@@ -25,8 +25,7 @@
 #include "naucrates/dxl/operators/CDXLScalarCoerceBase.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -38,43 +37,33 @@ using namespace gpmd;
 //		Class for representing DXL casting operator
 //
 //---------------------------------------------------------------------------
-class CDXLScalarCoerceViaIO : public CDXLScalarCoerceBase
-{
-private:
-	// private copy ctor
-	CDXLScalarCoerceViaIO(const CDXLScalarCoerceViaIO &);
+class CDXLScalarCoerceViaIO : public CDXLScalarCoerceBase {
+ private:
+ public:
+  CDXLScalarCoerceViaIO(const CDXLScalarCoerceViaIO &) = delete;
 
-public:
-	// ctor/dtor
-	CDXLScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier,
-						  EdxlCoercionForm dxl_coerce_format, INT location);
+  // ctor/dtor
+  CDXLScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, EdxlCoercionForm dxl_coerce_format,
+                        INT location);
 
-	virtual ~CDXLScalarCoerceViaIO()
-	{
-	}
+  ~CDXLScalarCoerceViaIO() override = default;
 
-	// ident accessor
-	virtual Edxlopid
-	GetDXLOperator() const
-	{
-		return EdxlopScalarCoerceViaIO;
-	}
+  // ident accessor
+  Edxlopid GetDXLOperator() const override { return EdxlopScalarCoerceViaIO; }
 
-	// name of the DXL operator name
-	virtual const CWStringConst *GetOpNameStr() const;
+  // name of the DXL operator name
+  const CWStringConst *GetOpNameStr() const override;
 
-	// conversion function
-	static CDXLScalarCoerceViaIO *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarCoerceViaIO == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarCoerceViaIO *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarCoerceViaIO == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarCoerceViaIO *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarCoerceViaIO *>(dxl_op);
+  }
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalarCoerceViaIO_H
+#endif  // !GPDXL_CDXLScalarCoerceViaIO_H
 
 // EOF

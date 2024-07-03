@@ -22,31 +22,37 @@
 #ifndef GPOS_assert_H
 #define GPOS_assert_H
 
-#include "gpos/config.h"
+#ifndef USE_CMAKE
+#include "pg_config.h"
+#endif
 
 // retail assert; available in all builds
-#define GPOS_RTL_ASSERT(x)                                                 \
-	((x) ? ((void) 0)                                                      \
-		 : gpos::CException::Raise(__FILE__, __LINE__,                     \
-								   gpos::CException::ExmaSystem,           \
-								   gpos::CException::ExmiAssert, __FILE__, \
-								   __LINE__, GPOS_WSZ_LIT(#x)))
+#define GPOS_RTL_ASSERT(x)                                                                                       \
+  ((x) ? ((void)0)                                                                                               \
+       : gpos::CException::Raise(__FILE__, __LINE__, gpos::CException::ExmaSystem, gpos::CException::ExmiAssert, \
+                                 __FILE__, __LINE__, GPOS_WSZ_LIT(#x)))
 
 #ifdef GPOS_DEBUG
 // standard debug assert; maps to retail assert in debug builds only
 #define GPOS_ASSERT(x) GPOS_RTL_ASSERT(x)
 #else
 #define GPOS_ASSERT(x) ;
-#endif	// !GPOS_DEBUG
+#endif  // !GPOS_DEBUG
+
+#define GPOS_UNITTEST_ASSERT GPOS_RTL_ASSERT
 
 // implication assert
 #define GPOS_ASSERT_IMP(x, y) GPOS_ASSERT(!(x) || (y))
 
+#define GPOS_UNITTEST_ASSERT_IMP(x, y) GPOS_RTL_ASSERT(!(x) || (y))
+
 // if-and-only-if assert
 #define GPOS_ASSERT_IFF(x, y) GPOS_ASSERT((!(x) || (y)) && (!(y) || (x)))
 
+#define GPOS_UNITTEST_ASSERT_IFF(x, y) GPOS_RTL_ASSERT((!(x) || (y)) && (!(y) || (x)))
+
 // compile assert
-#define GPOS_CPL_ASSERT(x) extern int assert_array[(x) ? 1 : -1]
+#define GPOS_CPL_ASSERT static_assert
 
 // debug assert, with message
 #define GPOS_ASSERT_MSG(x, msg) GPOS_ASSERT((x) && (msg))
@@ -54,7 +60,9 @@
 // retail assert, with message
 #define GPOS_RTL_ASSERT_MSG(x, msg) GPOS_RTL_ASSERT((x) && (msg))
 
+// unittest assert, with message
+#define GPOS_UNITTEST_ASSERT_MSG(x, msg) GPOS_RTL_ASSERT((x) && (msg))
 
-#endif	// !GPOS_assert_H
+#endif  // !GPOS_assert_H
 
 // EOF

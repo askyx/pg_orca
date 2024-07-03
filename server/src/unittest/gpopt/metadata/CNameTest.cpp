@@ -28,14 +28,12 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CNameTest::EresUnittest()
-{
-	CUnittest rgut[] = {GPOS_UNITTEST_FUNC(CNameTest::EresUnittest_Basic),
-						GPOS_UNITTEST_FUNC(CNameTest::EresUnittest_Ownership)};
+CNameTest::EresUnittest() {
+  CUnittest rgut[] = {GPOS_UNITTEST_FUNC(CNameTest::EresUnittest_Basic),
+                      GPOS_UNITTEST_FUNC(CNameTest::EresUnittest_Ownership)};
 
-	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
+  return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -46,20 +44,18 @@ CNameTest::EresUnittest()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CNameTest::EresUnittest_Basic()
-{
-	CWStringConst strName(GPOS_WSZ_LIT("nametest"));
-	CName name1(&strName);
-	CName name2(name1);
-	CName name3 = name2;
+CNameTest::EresUnittest_Basic() {
+  CWStringConst strName(GPOS_WSZ_LIT("nametest"));
+  CName name1(&strName);
+  CName name2(name1);
+  CName name3 = name2;
 
-	GPOS_ASSERT(name1.Equals(name2));
-	GPOS_ASSERT(name1.Equals(name3));
-	GPOS_ASSERT(name2.Equals(name3));
+  GPOS_UNITTEST_ASSERT(name1.Equals(name2));
+  GPOS_UNITTEST_ASSERT(name1.Equals(name3));
+  GPOS_UNITTEST_ASSERT(name2.Equals(name3));
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -70,23 +66,21 @@ CNameTest::EresUnittest_Basic()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CNameTest::EresUnittest_Ownership()
-{
-	CAutoMemoryPool amp;
-	CMemoryPool *mp = amp.Pmp();
+CNameTest::EresUnittest_Ownership() {
+  CAutoMemoryPool amp;
+  CMemoryPool *mp = amp.Pmp();
 
-	CWStringConst strName(GPOS_WSZ_LIT("nametest"));
-	CName name1(&strName);
+  CWStringConst strName(GPOS_WSZ_LIT("nametest"));
+  CName name1(&strName);
 
-	CName name2(mp, name1);
-	CName name3(mp, name2);
+  CName name2(mp, name1);
+  CName name3(mp, name2);
 
-	GPOS_ASSERT(name1.Equals(name2));
-	GPOS_ASSERT(name1.Equals(name3));
-	GPOS_ASSERT(name2.Equals(name3));
+  GPOS_UNITTEST_ASSERT(name1.Equals(name2));
+  GPOS_UNITTEST_ASSERT(name1.Equals(name3));
+  GPOS_UNITTEST_ASSERT(name2.Equals(name3));
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
-
 
 // EOF

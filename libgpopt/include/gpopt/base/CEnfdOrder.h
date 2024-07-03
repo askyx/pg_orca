@@ -16,14 +16,11 @@
 #include "gpopt/base/CEnfdProp.h"
 #include "gpopt/base/COrderSpec.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // prototypes
 class CPhysical;
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -33,86 +30,67 @@ class CPhysical;
 //		Enforceable order property;
 //
 //---------------------------------------------------------------------------
-class CEnfdOrder : public CEnfdProp
-{
-public:
-	// type of order matching function
-	enum EOrderMatching
-	{
-		EomSatisfy = 0,
+class CEnfdOrder : public CEnfdProp {
+ public:
+  // type of order matching function
+  enum EOrderMatching {
+    EomSatisfy = 0,
 
-		EomSentinel
-	};
+    EomSentinel
+  };
 
-private:
-	// required sort order
-	COrderSpec *m_pos;
+ private:
+  // required sort order
+  COrderSpec *m_pos;
 
-	// order matching type
-	EOrderMatching m_eom;
+  // order matching type
+  EOrderMatching m_eom;
 
-	// private copy ctor
-	CEnfdOrder(const CEnfdOrder &);
+  // names of order matching types
+  static const CHAR *m_szOrderMatching[EomSentinel];
 
-	// names of order matching types
-	static const CHAR *m_szOrderMatching[EomSentinel];
+ public:
+  CEnfdOrder(const CEnfdOrder &) = delete;
 
-public:
-	// ctor
-	CEnfdOrder(COrderSpec *pos, EOrderMatching eom);
+  // ctor
+  CEnfdOrder(COrderSpec *pos, EOrderMatching eom);
 
-	// dtor
-	virtual ~CEnfdOrder();
+  // dtor
+  ~CEnfdOrder() override;
 
-	// hash function
-	virtual ULONG HashValue() const;
+  // hash function
+  ULONG HashValue() const override;
 
-	// check if the given order specification is compatible with the
-	// order specification of this object for the specified matching type
-	BOOL FCompatible(COrderSpec *pos) const;
+  // check if the given order specification is compatible with the
+  // order specification of this object for the specified matching type
+  BOOL FCompatible(COrderSpec *pos) const;
 
-	// required order accessor
-	COrderSpec *
-	PosRequired() const
-	{
-		return m_pos;
-	}
+  // required order accessor
+  COrderSpec *PosRequired() const { return m_pos; }
 
-	// get order enforcing type for the given operator
-	EPropEnforcingType Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical,
-							BOOL fOrderReqd) const;
+  // get order enforcing type for the given operator
+  EPropEnforcingType Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical, BOOL fOrderReqd) const;
 
-	// property spec accessor
-	virtual CPropSpec *
-	Pps() const
-	{
-		return m_pos;
-	}
+  // property spec accessor
+  CPropSpec *Pps() const override { return m_pos; }
 
-	// return matching type
-	EOrderMatching
-	Eom() const
-	{
-		return m_eom;
-	}
+  // return matching type
+  EOrderMatching Eom() const { return m_eom; }
 
-	// matching function
-	BOOL
-	Matches(CEnfdOrder *peo)
-	{
-		GPOS_ASSERT(NULL != peo);
+  // matching function
+  BOOL Matches(CEnfdOrder *peo) {
+    GPOS_ASSERT(nullptr != peo);
 
-		return m_eom == peo->Eom() && m_pos->Matches(peo->PosRequired());
-	}
+    return m_eom == peo->Eom() && m_pos->Matches(peo->PosRequired());
+  }
 
-	// print function
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // print function
+  IOstream &OsPrint(IOstream &os) const override;
 
-};	// class CEnfdOrder
+};  // class CEnfdOrder
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CEnfdOrder_H
+#endif  // !GPOPT_CEnfdOrder_H
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CPhysicalBitmapTableScan.cpp
@@ -32,17 +32,12 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalBitmapTableScan::CPhysicalBitmapTableScan(CMemoryPool *mp,
-												   CTableDescriptor *ptabdesc,
-												   ULONG ulOriginOpId,
-												   const CName *pnameTableAlias,
-												   CColRefArray *pdrgpcrOutput)
-	: CPhysicalScan(mp, pnameTableAlias, ptabdesc, pdrgpcrOutput),
-	  m_ulOriginOpId(ulOriginOpId)
-{
-	GPOS_ASSERT(NULL != mp);
-	GPOS_ASSERT(NULL != ptabdesc);
-	GPOS_ASSERT(NULL != pdrgpcrOutput);
+CPhysicalBitmapTableScan::CPhysicalBitmapTableScan(CMemoryPool *mp, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
+                                                   const CName *pnameTableAlias, CColRefArray *pdrgpcrOutput)
+    : CPhysicalScan(mp, pnameTableAlias, ptabdesc, pdrgpcrOutput), m_ulOriginOpId(ulOriginOpId) {
+  GPOS_ASSERT(nullptr != mp);
+  GPOS_ASSERT(nullptr != ptabdesc);
+  GPOS_ASSERT(nullptr != pdrgpcrOutput);
 }
 
 //---------------------------------------------------------------------------
@@ -54,14 +49,11 @@ CPhysicalBitmapTableScan::CPhysicalBitmapTableScan(CMemoryPool *mp,
 //
 //---------------------------------------------------------------------------
 ULONG
-CPhysicalBitmapTableScan::HashValue() const
-{
-	ULONG ulHash = gpos::CombineHashes(COperator::HashValue(),
-									   m_ptabdesc->MDId()->HashValue());
-	ulHash =
-		gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
+CPhysicalBitmapTableScan::HashValue() const {
+  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
+  ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
 
-	return ulHash;
+  return ulHash;
 }
 
 //---------------------------------------------------------------------------
@@ -72,12 +64,9 @@ CPhysicalBitmapTableScan::HashValue() const
 //		Match this operator with the given one.
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalBitmapTableScan::Matches(COperator *pop) const
-{
-	return CUtils::FMatchBitmapScan(this, pop);
+BOOL CPhysicalBitmapTableScan::Matches(COperator *pop) const {
+  return CUtils::FMatchBitmapScan(this, pop);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -87,18 +76,16 @@ CPhysicalBitmapTableScan::Matches(COperator *pop) const
 //		Debug print of a CPhysicalBitmapTableScan
 //
 //---------------------------------------------------------------------------
-IOstream &
-CPhysicalBitmapTableScan::OsPrint(IOstream &os) const
-{
-	os << SzId() << " ";
-	os << ", Table Name: (";
-	m_ptabdesc->Name().OsPrint(os);
-	os << ")";
-	os << ", Columns: [";
-	CUtils::OsPrintDrgPcr(os, m_pdrgpcrOutput);
-	os << "]";
+IOstream &CPhysicalBitmapTableScan::OsPrint(IOstream &os) const {
+  os << SzId() << " ";
+  os << ", Table Name: (";
+  m_ptabdesc->Name().OsPrint(os);
+  os << ")";
+  os << ", Columns: [";
+  CUtils::OsPrintDrgPcr(os, m_pdrgpcrOutput);
+  os << "]";
 
-	return os;
+  return os;
 }
 
 // EOF

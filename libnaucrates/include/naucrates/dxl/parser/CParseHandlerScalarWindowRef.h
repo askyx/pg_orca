@@ -18,8 +18,7 @@
 #include "naucrates/dxl/operators/CDXLScalarWindowRef.h"
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -32,35 +31,30 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing a scalar WindowRef
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarWindowRef : public CParseHandlerScalarOp
-{
-private:
-	// private copy ctor
-	CParseHandlerScalarWindowRef(const CParseHandlerScalarWindowRef &);
+class CParseHandlerScalarWindowRef : public CParseHandlerScalarOp {
+ private:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerScalarWindowRef(const CParseHandlerScalarWindowRef &) = delete;
 
-public:
-	// ctor
-	CParseHandlerScalarWindowRef(CMemoryPool *mp,
-								 CParseHandlerManager *parse_handler_mgr,
-								 CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerScalarWindowRef(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                               CParseHandlerBase *parse_handler_root);
 };
 
 }  // namespace gpdxl
-#endif	// !GPDXL_CParseHandlerScalarWindowRef_H
+#endif  // !GPDXL_CParseHandlerScalarWindowRef_H
 
-//EOF
+// EOF

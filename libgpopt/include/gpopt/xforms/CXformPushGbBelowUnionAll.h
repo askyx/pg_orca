@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 Pivotal, Inc.
+//	Copyright (C) 2013 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformPushGbBelowUnionAll.h
@@ -13,11 +13,10 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalUnionAll.h"
 #include "gpopt/xforms/CXformPushGbBelowSetOp.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,49 +27,29 @@ using namespace gpos;
 //		Push grouping below UnionAll operation
 //
 //---------------------------------------------------------------------------
-class CXformPushGbBelowUnionAll
-	: public CXformPushGbBelowSetOp<CLogicalUnionAll>
-{
-private:
-	// private copy ctor
-	CXformPushGbBelowUnionAll(const CXformPushGbBelowUnionAll &);
+class CXformPushGbBelowUnionAll : public CXformPushGbBelowSetOp<CLogicalUnionAll> {
+ private:
+ public:
+  CXformPushGbBelowUnionAll(const CXformPushGbBelowUnionAll &) = delete;
 
-public:
-	// ctor
-	explicit CXformPushGbBelowUnionAll(CMemoryPool *mp)
-		: CXformPushGbBelowSetOp<CLogicalUnionAll>(mp)
-	{
-	}
+  // ctor
+  explicit CXformPushGbBelowUnionAll(CMemoryPool *mp) : CXformPushGbBelowSetOp<CLogicalUnionAll>(mp) {}
 
-	// dtor
-	virtual ~CXformPushGbBelowUnionAll()
-	{
-	}
+  // dtor
+  ~CXformPushGbBelowUnionAll() override = default;
 
-	// Compatibility function
-	virtual BOOL
-	FCompatible(CXform::EXformId exfid)
-	{
-		return ExfPushGbBelowUnionAll != exfid;
-	}
+  // Compatibility function
+  BOOL FCompatible(CXform::EXformId exfid) override { return ExfPushGbBelowUnionAll != exfid; }
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfPushGbBelowUnionAll;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfPushGbBelowUnionAll; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformPushGbBelowUnionAll";
-	}
+  const CHAR *SzId() const override { return "CXformPushGbBelowUnionAll"; }
 
-};	// class CXformPushGbBelowUnionAll
+};  // class CXformPushGbBelowUnionAll
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformPushGbBelowUnionAll_H
+#endif  // !GPOPT_CXformPushGbBelowUnionAll_H
 
 // EOF

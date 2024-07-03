@@ -9,7 +9,6 @@
 //		Base class for the DXL tree operators.
 //---------------------------------------------------------------------------
 
-
 #ifndef GPDXL_CDXLOperator_H
 #define GPDXL_CDXLOperator_H
 
@@ -18,8 +17,7 @@
 
 #include "naucrates/md/CDXLStatsDerivedRelation.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -27,185 +25,172 @@ using namespace gpmd;
 class CDXLNode;
 class CXMLSerializer;
 
-enum Edxlopid
-{
-	EdxlopLogicalGet,
-	EdxlopLogicalExternalGet,
-	EdxlopLogicalProject,
-	EdxlopLogicalSelect,
-	EdxlopLogicalJoin,
-	EdxlopLogicalCTEProducer,
-	EdxlopLogicalCTEConsumer,
-	EdxlopLogicalCTEAnchor,
-	EdxlopLogicalLimit,
-	EdxlopLogicalGrpBy,
-	EdxlopLogicalGrpCl,
-	EdxlopLogicalGrpCols,
-	EdxlopLogicalConstTable,
-	EdxlopLogicalTVF,
-	EdxlopLogicalSetOp,
-	EdxlopLogicalWindow,
+enum Edxlopid {
+  EdxlopLogicalGet,
+  EdxlopLogicalForeignGet,
+  EdxlopLogicalProject,
+  EdxlopLogicalSelect,
+  EdxlopLogicalJoin,
+  EdxlopLogicalCTEProducer,
+  EdxlopLogicalCTEConsumer,
+  EdxlopLogicalCTEAnchor,
+  EdxlopLogicalLimit,
+  EdxlopLogicalGrpBy,
+  EdxlopLogicalGrpCl,
+  EdxlopLogicalGrpCols,
+  EdxlopLogicalConstTable,
+  EdxlopLogicalTVF,
+  EdxlopLogicalSetOp,
+  EdxlopLogicalWindow,
 
-	EdxlopLogicalInsert,
-	EdxlopLogicalDelete,
-	EdxlopLogicalUpdate,
+  EdxlopLogicalInsert,
+  EdxlopLogicalDelete,
+  EdxlopLogicalUpdate,
 
-	EdxlopLogicalCTAS,
-	EdxlopPhysicalCTAS,
+  EdxlopLogicalCTAS,
+  EdxlopPhysicalCTAS,
 
-	EdxlopScalarCmp,
-	EdxlopScalarDistinct,
-	EdxlopScalarIdent,
-	EdxlopScalarProjectList,
-	EdxlopScalarProjectElem,
-	EdxlopScalarConstTuple,
-	EdxlopScalarFilter,
-	EdxlopScalarOneTimeFilter,
-	EdxlopScalarJoinFilter,
-	EdxlopScalarRecheckCondFilter,
-	EdxlopScalarHashExprList,
-	EdxlopScalarHashExpr,
-	EdxlopScalarHashCondList,
-	EdxlopScalarArray,
-	EdxlopScalarArrayRef,
-	EdxlopScalarArrayRefIndexList,
+  EdxlopScalarCmp,
+  EdxlopScalarDistinct,
+  EdxlopScalarIdent,
+  EdxlopScalarParam,
+  EdxlopScalarProjectList,
+  EdxlopScalarProjectElem,
+  EdxlopScalarConstTuple,
+  EdxlopScalarFilter,
+  EdxlopScalarOneTimeFilter,
+  EdxlopScalarJoinFilter,
+  EdxlopScalarRecheckCondFilter,
+  EdxlopScalarHashExprList,
+  EdxlopScalarHashExpr,
+  EdxlopScalarHashCondList,
+  EdxlopScalarArray,
+  EdxlopScalarArrayRef,
+  EdxlopScalarFieldSelect,
+  EdxlopScalarArrayRefIndexList,
 
-	EdxlopScalarAssertConstraintList,
-	EdxlopScalarAssertConstraint,
+  EdxlopScalarAssertConstraintList,
+  EdxlopScalarAssertConstraint,
 
-	EdxlopScalarMergeCondList,
+  EdxlopScalarMergeCondList,
 
-	EdxlopScalarIndexCondList,
+  EdxlopScalarIndexCondList,
 
-	EdxlopScalarSortColList,
-	EdxlopScalarSortCol,
+  EdxlopScalarSortColList,
+  EdxlopScalarSortCol,
 
-	EdxlopScalarQueryOutput,
+  EdxlopScalarQueryOutput,
 
-	EdxlopScalarOpExpr,
-	EdxlopScalarBoolExpr,
-	EdxlopScalarCaseTest,
-	EdxlopScalarCoalesce,
-	EdxlopScalarConstValue,
-	EdxlopScalarIfStmt,
-	EdxlopScalarSwitch,
-	EdxlopScalarSwitchCase,
-	EdxlopScalarLimitCount,
-	EdxlopScalarLimitOffset,
-	EdxlopScalarFuncExpr,
-	EdxlopScalarMinMax,
-	EdxlopScalarWindowRef,
-	EdxlopScalarNullTest,
-	EdxlopScalarNullIf,
-	EdxlopScalarCast,
-	EdxlopScalarCoerceToDomain,
-	EdxlopScalarCoerceViaIO,
-	EdxlopScalarArrayCoerceExpr,
-	EdxlopScalarAggref,
-	EdxlopScalarArrayComp,
-	EdxlopScalarBooleanTest,
-	EdxlopScalarSubPlan,
-	EdxlopScalarWindowFrameEdge,
+  EdxlopScalarOpExpr,
+  EdxlopScalarBoolExpr,
+  EdxlopScalarCaseTest,
+  EdxlopScalarCoalesce,
+  EdxlopScalarConstValue,
+  EdxlopScalarIfStmt,
+  EdxlopScalarSwitch,
+  EdxlopScalarSwitchCase,
+  EdxlopScalarLimitCount,
+  EdxlopScalarLimitOffset,
+  EdxlopScalarFuncExpr,
+  EdxlopScalarMinMax,
+  EdxlopScalarWindowRef,
+  EdxlopScalarNullTest,
+  EdxlopScalarNullIf,
+  EdxlopScalarCast,
+  EdxlopScalarCoerceToDomain,
+  EdxlopScalarCoerceViaIO,
+  EdxlopScalarArrayCoerceExpr,
+  EdxlopScalarAggref,
+  EdxlopScalarArrayComp,
+  EdxlopScalarBooleanTest,
+  EdxlopScalarSubPlan,
+  EdxlopScalarWindowFrameEdge,
 
-	EdxlopScalarSubquery,
-	EdxlopScalarSubqueryAny,
-	EdxlopScalarSubqueryAll,
-	EdxlopScalarSubqueryExists,
-	EdxlopScalarSubqueryNotExists,
-	EdxlopScalarBitmapBoolOp,
+  EdxlopScalarSubquery,
+  EdxlopScalarSubqueryAny,
+  EdxlopScalarSubqueryAll,
+  EdxlopScalarSubqueryExists,
+  EdxlopScalarSubqueryNotExists,
+  EdxlopScalarBitmapBoolOp,
 
-	EdxlopScalarDMLAction,
-	EdxlopScalarOpList,
-	EdxlopScalarPartOid,
-	EdxlopScalarPartDefault,
-	EdxlopScalarPartBound,
-	EdxlopScalarPartBoundInclusion,
-	EdxlopScalarPartBoundOpen,
-	EdxlopScalarPartListValues,
-	EdxlopScalarPartListNullTest,
-	EdxlopScalarValuesList,
+  EdxlopScalarDMLAction,
+  EdxlopScalarOpList,
+  EdxlopScalarValuesList,
+  EdxlopScalarSortGroupClause,
 
-	EdxlopPhysicalResult,
-	EdxlopPhysicalValuesScan,
-	EdxlopPhysicalProjection,
-	EdxlopPhysicalTableScan,
-	EdxlopPhysicalBitmapTableScan,
-	EdxlopPhysicalDynamicBitmapTableScan,
-	EdxlopPhysicalExternalScan,
-	EdxlopPhysicalIndexScan,
-	EdxlopPhysicalIndexOnlyScan,
-	EdxlopScalarBitmapIndexProbe,
-	EdxlopPhysicalSubqueryScan,
-	EdxlopPhysicalConstTable,
-	EdxlopPhysicalNLJoin,
-	EdxlopPhysicalHashJoin,
-	EdxlopPhysicalMergeJoin,
-	EdxlopPhysicalMotionGather,
-	EdxlopPhysicalMotionBroadcast,
-	EdxlopPhysicalMotionRedistribute,
-	EdxlopPhysicalMotionRoutedDistribute,
-	EdxlopPhysicalMotionRandom,
-	EdxlopPhysicalLimit,
-	EdxlopPhysicalAgg,
-	EdxlopPhysicalSort,
-	EdxlopPhysicalAppend,
-	EdxlopPhysicalMaterialize,
-	EdxlopPhysicalSequence,
-	EdxlopPhysicalDynamicTableScan,
-	EdxlopPhysicalDynamicIndexScan,
-	EdxlopPhysicalPartitionSelector,
-	EdxlopPhysicalTVF,
-	EdxlopPhysicalWindow,
+  EdxlopPhysicalResult,
+  EdxlopPhysicalValuesScan,
+  EdxlopPhysicalProjection,
+  EdxlopPhysicalTableScan,
+  EdxlopPhysicalBitmapTableScan,
+  EdxlopPhysicalDynamicBitmapTableScan,
+  EdxlopPhysicalForeignScan,
+  EdxlopPhysicalIndexScan,
+  EdxlopPhysicalIndexOnlyScan,
+  EdxlopScalarBitmapIndexProbe,
+  EdxlopPhysicalConstTable,
+  EdxlopPhysicalNLJoin,
+  EdxlopPhysicalHashJoin,
+  EdxlopPhysicalMergeJoin,
+  EdxlopPhysicalMotionGather,
+  EdxlopPhysicalMotionBroadcast,
+  EdxlopPhysicalMotionRedistribute,
+  EdxlopPhysicalMotionRoutedDistribute,
+  EdxlopPhysicalMotionRandom,
+  EdxlopPhysicalLimit,
+  EdxlopPhysicalAgg,
+  EdxlopPhysicalSort,
+  EdxlopPhysicalAppend,
+  EdxlopPhysicalMaterialize,
+  EdxlopPhysicalDynamicForeignScan,
+  EdxlopPhysicalSequence,
+  EdxlopPhysicalDynamicTableScan,
+  EdxlopPhysicalDynamicIndexScan,
+  EdxlopPhysicalDynamicIndexOnlyScan,
+  EdxlopPhysicalPartitionSelector,
+  EdxlopPhysicalTVF,
+  EdxlopPhysicalWindow,
 
-	EdxlopPhysicalCTEProducer,
-	EdxlopPhysicalCTEConsumer,
+  EdxlopPhysicalCTEProducer,
+  EdxlopPhysicalCTEConsumer,
 
-	EdxlopPhysicalDML,
-	EdxlopPhysicalSplit,
-	EdxlopPhysicalRowTrigger,
+  EdxlopPhysicalDML,
+  EdxlopPhysicalSplit,
 
-	EdxlopPhysicalAssert,
+  EdxlopPhysicalAssert,
 
-	EdxlopSentinel
+  EdxlopSentinel
 };
 
-enum Edxloptype
-{
-	EdxloptypeLogical,
-	EdxloptypePhysical,
-	EdxloptypeScalar
-};
+enum Edxloptype { EdxloptypeLogical, EdxloptypePhysical, EdxloptypeScalar };
 
 // Join types
-enum EdxlJoinType
-{
-	EdxljtInner,
-	EdxljtLeft,
-	EdxljtFull,
-	EdxljtRight,
-	EdxljtIn,
-	EdxljtLeftAntiSemijoin,
-	EdxljtLeftAntiSemijoinNotIn,
-	EdxljtSentinel
+enum EdxlJoinType {
+  EdxljtInner,
+  EdxljtLeft,
+  EdxljtFull,
+  EdxljtRight,
+  EdxljtIn,
+  EdxljtLeftAntiSemijoin,
+  EdxljtLeftAntiSemijoinNotIn,
+  EdxljtSentinel
 };
 
 // Scan direction of the index
-enum EdxlIndexScanDirection
-{
-	EdxlisdBackward = 0,
-	EdxlisdForward,
-	EdxlisdNoMovement,
+enum EdxlIndexScanDirection {
+  EdxlisdBackward = 0,
+  EdxlisdForward,
+  EdxlisdNoMovement,
 
-	EdxlisdSentinel
+  EdxlisdSentinel
 };
 
 // coercion form
-enum EdxlCoercionForm
-{
-	EdxlcfExplicitCall,	 // display as a function call
-	EdxlcfExplicitCast,	 // display as an explicit cast
-	EdxlcfImplicitCast,	 // implicit cast, so hide it
-	EdxlcfDontCare		 // don't care about display
+enum EdxlCoercionForm {
+  EdxlcfExplicitCall,  // display as a function call
+  EdxlcfExplicitCast,  // display as an explicit cast
+  EdxlcfImplicitCast,  // implicit cast, so hide it
+  EdxlcfDontCare       // don't care about display
 };
 
 //---------------------------------------------------------------------------
@@ -216,57 +201,53 @@ enum EdxlCoercionForm
 //		Base class for operators in a DXL tree
 //
 //---------------------------------------------------------------------------
-class CDXLOperator : public CRefCount
-{
-private:
-	// private copy constructor
-	CDXLOperator(const CDXLOperator &);
+class CDXLOperator : public CRefCount {
+ private:
+ protected:
+  // memory pool
+  CMemoryPool *m_mp;
 
-protected:
-	// memory pool
-	CMemoryPool *m_mp;
+ public:
+  CDXLOperator(const CDXLOperator &) = delete;
 
-public:
-	// ctor/dtor
-	explicit CDXLOperator(CMemoryPool *);
+  // ctor/dtor
+  explicit CDXLOperator(CMemoryPool *);
 
-	virtual ~CDXLOperator();
+  ~CDXLOperator() override;
 
-	// ident accessors
-	virtual Edxlopid GetDXLOperator() const = 0;
+  // ident accessors
+  virtual Edxlopid GetDXLOperator() const = 0;
 
-	// name of the operator
-	virtual const CWStringConst *GetOpNameStr() const = 0;
+  // name of the operator
+  virtual const CWStringConst *GetOpNameStr() const = 0;
 
-	virtual Edxloptype GetDXLOperatorType() const = 0;
+  virtual Edxloptype GetDXLOperatorType() const = 0;
 
-	// serialize operator in DXL format given a serializer object and the
-	// host DXL node, providing access to the operator's children
-	virtual void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const = 0;
+  // serialize operator in DXL format given a serializer object and the
+  // host DXL node, providing access to the operator's children
+  virtual void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const = 0;
 
-	// check if given column is defined by operator
-	virtual BOOL IsColDefined(ULONG	 // colid
-	) const
-	{
-		// by default, operator does not define columns
-		return false;
-	}
+  // check if given column is defined by operator
+  virtual BOOL IsColDefined(ULONG  // colid
+  ) const {
+    // by default, operator does not define columns
+    return false;
+  }
 
-	static const CWStringConst *GetJoinTypeNameStr(EdxlJoinType);
+  static const CWStringConst *GetJoinTypeNameStr(EdxlJoinType);
 
-	// Return the index scan direction
-	static const CWStringConst *GetIdxScanDirectionStr(EdxlIndexScanDirection);
+  // Return the index scan direction
+  static const CWStringConst *GetIdxScanDirectionStr(EdxlIndexScanDirection);
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	virtual void AssertValid(const CDXLNode *,
-							 BOOL validate_children) const = 0;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  virtual void AssertValid(const CDXLNode *, BOOL validate_children) const = 0;
+#endif  // GPOS_DEBUG
 };
 
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLOperator_H
+#endif  // !GPDXL_CDXLOperator_H
 
 // EOF

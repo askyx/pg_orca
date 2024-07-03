@@ -16,8 +16,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,35 +27,30 @@ using namespace gpos;
 //		Prefix element for debug print functions
 //
 //---------------------------------------------------------------------------
-class CPrintPrefix
-{
-private:
-	// previous prefix; usually in the previous stack frame
-	const CPrintPrefix *m_ppfx;
+class CPrintPrefix {
+ private:
+  // previous prefix; usually in the previous stack frame
+  const CPrintPrefix *m_ppfx;
 
-	// actual string
-	const CHAR *m_sz;
+  // actual string
+  const CHAR *m_sz;
 
-public:
-	// ctor
-	explicit CPrintPrefix(const CPrintPrefix *, const CHAR *);
+ public:
+  // ctor
+  explicit CPrintPrefix(const CPrintPrefix *, const CHAR *);
 
-	// print
-	IOstream &OsPrint(IOstream &os) const;
+  // print
+  IOstream &OsPrint(IOstream &os) const;
 
-};	// class CPrintPrefix
-
+};  // class CPrintPrefix
 
 // shorthand for printing
-inline IOstream &
-operator<<(IOstream &os, CPrintPrefix &pfx)
-{
-	return pfx.OsPrint(os);
+inline IOstream &operator<<(IOstream &os, CPrintPrefix &pfx) {
+  return pfx.OsPrint(os);
 }
 
 }  // namespace gpopt
 
-#endif	// !GPOS_CPrintPrefix_H
-
+#endif  // !GPOS_CPrintPrefix_H
 
 // EOF

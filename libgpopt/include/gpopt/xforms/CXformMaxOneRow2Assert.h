@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformMaxOneRow2Assert.h
@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,45 +26,32 @@ using namespace gpos;
 //		Transform MaxOneRow into LogicalAssert
 //
 //---------------------------------------------------------------------------
-class CXformMaxOneRow2Assert : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformMaxOneRow2Assert(const CXformMaxOneRow2Assert &);
+class CXformMaxOneRow2Assert : public CXformExploration {
+ private:
+ public:
+  CXformMaxOneRow2Assert(const CXformMaxOneRow2Assert &) = delete;
 
-public:
-	// ctor
-	explicit CXformMaxOneRow2Assert(CMemoryPool *mp);
+  // ctor
+  explicit CXformMaxOneRow2Assert(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformMaxOneRow2Assert()
-	{
-	}
+  // dtor
+  ~CXformMaxOneRow2Assert() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfMaxOneRow2Assert;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfMaxOneRow2Assert; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformMaxOneRow2Assert";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformMaxOneRow2Assert"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformMaxOneRow2Assert
+};  // class CXformMaxOneRow2Assert
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformMaxOneRow2Assert_H
+#endif  // !GPOPT_CXformMaxOneRow2Assert_H
 
 // EOF

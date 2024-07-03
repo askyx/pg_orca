@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLScalarCoerceViaIO.cpp
@@ -31,14 +31,9 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarCoerceViaIO::CDXLScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type,
-											 INT type_modifier,
-											 EdxlCoercionForm dxl_coerce_format,
-											 INT location)
-	: CDXLScalarCoerceBase(mp, mdid_type, type_modifier, dxl_coerce_format,
-						   location)
-{
-}
+CDXLScalarCoerceViaIO::CDXLScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier,
+                                             EdxlCoercionForm dxl_coerce_format, INT location)
+    : CDXLScalarCoerceBase(mp, mdid_type, type_modifier, dxl_coerce_format, location) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -48,10 +43,8 @@ CDXLScalarCoerceViaIO::CDXLScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type,
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarCoerceViaIO::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarCoerceViaIO);
+const CWStringConst *CDXLScalarCoerceViaIO::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarCoerceViaIO);
 }
 
 // EOF

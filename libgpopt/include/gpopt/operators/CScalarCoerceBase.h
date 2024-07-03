@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2017 Pivotal Inc.
+//	Copyright (C) 2017 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarCoerceBase.h
@@ -21,8 +21,7 @@
 
 #include "gpopt/operators/CScalar.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -33,53 +32,49 @@ using namespace gpos;
 //		Scalar coerce operator base class
 //
 //---------------------------------------------------------------------------
-class CScalarCoerceBase : public CScalar
-{
-private:
-	// catalog MDId of the result type
-	IMDId *m_result_type_mdid;
+class CScalarCoerceBase : public CScalar {
+ private:
+  // catalog MDId of the result type
+  IMDId *m_result_type_mdid;
 
-	// output type modifier
-	INT m_type_modifier;
+  // output type modifier
+  INT m_type_modifier;
 
-	// coercion form
-	ECoercionForm m_ecf;
+  // coercion form
+  ECoercionForm m_ecf;
 
-	// location of token to be coerced
-	INT m_location;
+  // location of token to be coerced
+  INT m_location;
 
-	// private copy ctor
-	CScalarCoerceBase(const CScalarCoerceBase &);
+ public:
+  CScalarCoerceBase(const CScalarCoerceBase &) = delete;
 
-public:
-	// ctor
-	CScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier,
-					  ECoercionForm dxl_coerce_format, INT location);
+  // ctor
+  CScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, ECoercionForm dxl_coerce_format,
+                    INT location);
 
-	// dtor
-	virtual ~CScalarCoerceBase();
+  // dtor
+  ~CScalarCoerceBase() override;
 
-	// the type of the scalar expression
-	virtual IMDId *MdidType() const;
+  // the type of the scalar expression
+  IMDId *MdidType() const override;
 
-	// return type modifier
-	INT TypeModifier() const;
+  // return type modifier
+  INT TypeModifier() const override;
 
-	// return coercion form
-	ECoercionForm Ecf() const;
+  // return coercion form
+  ECoercionForm Ecf() const;
 
-	// return token location
-	INT Location() const;
+  // return token location
+  INT Location() const;
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-};	// class CScalarCoerceBase
+};  // class CScalarCoerceBase
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CScalarCoerceBase_H
+#endif  // !GPOPT_CScalarCoerceBase_H
 
 // EOF

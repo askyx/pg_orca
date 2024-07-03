@@ -16,8 +16,7 @@
 
 #include "gpopt/base/CDistributionSpec.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,117 +27,87 @@ using namespace gpos;
 //		Class for representing forced random distribution.
 //
 //---------------------------------------------------------------------------
-class CDistributionSpecRandom : public CDistributionSpec
-{
-protected:
-	// is the random distribution sensitive to duplicates
-	BOOL m_is_duplicate_sensitive;
+class CDistributionSpecRandom : public CDistributionSpec {
+ protected:
+  // is the random distribution sensitive to duplicates
+  BOOL m_is_duplicate_sensitive{false};
 
-	// does Singleton spec satisfy current distribution?
-	// by default, Singleton satisfies hashed/random since all tuples with the same hash value
-	// are moved to the same host/segment,
-	// this flag adds the ability to mark a distribution request as non-satisfiable by Singleton
-	// in case we need to enforce across segments distribution
-	BOOL m_fSatisfiedBySingleton;
+  // does Singleton spec satisfy current distribution?
+  // by default, Singleton satisfies hashed/random since all tuples with the same hash value
+  // are moved to the same host/segment,
+  // this flag adds the ability to mark a distribution request as non-satisfiable by Singleton
+  // in case we need to enforce across segments distribution
+  BOOL m_fSatisfiedBySingleton{true};
 
-	// private copy ctor
-	CDistributionSpecRandom(const CDistributionSpecRandom &);
+  // private copy ctor
+  CDistributionSpecRandom(const CDistributionSpecRandom &);
 
-public:
-	//ctor
-	CDistributionSpecRandom();
+  CColRef *m_gp_segment_id = {nullptr};
 
-	// accessor
-	virtual EDistributionType
-	Edt() const
-	{
-		return CDistributionSpec::EdtRandom;
-	}
+ public:
+  // ctor
+  CDistributionSpecRandom();
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "RANDOM";
-	}
+  CDistributionSpecRandom(CColRef *gp_segment_id_);
 
-	// is distribution duplicate sensitive
-	BOOL
-	IsDuplicateSensitive() const
-	{
-		return m_is_duplicate_sensitive;
-	}
+  // accessor
+  EDistributionType Edt() const override { return CDistributionSpec::EdtRandom; }
 
-	// mark distribution as unsatisfiable by Singleton
-	void
-	MarkDuplicateSensitive()
-	{
-		GPOS_ASSERT(!m_is_duplicate_sensitive);
+  virtual const CHAR *SzId() const { return "RANDOM"; }
 
-		m_is_duplicate_sensitive = true;
-	}
+  CColRef *GetGpSegmentId() { return m_gp_segment_id; }
+  // is distribution duplicate sensitive
+  BOOL IsDuplicateSensitive() const { return m_is_duplicate_sensitive; }
 
-	// does Singleton spec satisfy current distribution?
-	BOOL
-	FSatisfiedBySingleton() const
-	{
-		return m_fSatisfiedBySingleton;
-	}
+  // mark distribution as unsatisfiable by Singleton
+  void MarkDuplicateSensitive() { m_is_duplicate_sensitive = true; }
 
-	// mark distribution as unsatisfiable by Singleton
-	void
-	MarkUnsatisfiableBySingleton()
-	{
-		GPOS_ASSERT(m_fSatisfiedBySingleton);
+  // does Singleton spec satisfy current distribution?
+  BOOL FSatisfiedBySingleton() const { return m_fSatisfiedBySingleton; }
 
-		m_fSatisfiedBySingleton = false;
-	}
+  // mark distribution as unsatisfiable by Singleton
+  void MarkUnsatisfiableBySingleton() {
+    GPOS_ASSERT(m_fSatisfiedBySingleton);
 
-	// does this distribution match the given one
-	virtual BOOL Matches(const CDistributionSpec *pds) const;
+    m_fSatisfiedBySingleton = false;
+  }
 
-	// does current distribution satisfy the given one
-	virtual BOOL FSatisfies(const CDistributionSpec *pds) const;
+  // does this distribution match the given one
+  BOOL Matches(const CDistributionSpec *pds) const override;
 
-	// append enforcers to dynamic array for the given plan properties
-	virtual void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								 CReqdPropPlan *prpp,
-								 CExpressionArray *pdrgpexpr,
-								 CExpression *pexpr);
+  // does current distribution satisfy the given one
+  BOOL FSatisfies(const CDistributionSpec *pds) const override;
 
-	// return distribution partitioning type
-	virtual EDistributionPartitioningType
-	Edpt() const
-	{
-		return EdptPartitioned;
-	}
+  // append enforcers to dynamic array for the given plan properties
+  void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpp, CExpressionArray *pdrgpexpr,
+                       CExpression *pexpr) override;
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // return distribution partitioning type
+  EDistributionPartitioningType Edpt() const override { return EdptPartitioned; }
 
-	// conversion function
-	static CDistributionSpecRandom *
-	PdsConvert(CDistributionSpec *pds)
-	{
-		GPOS_ASSERT(NULL != pds);
-		GPOS_ASSERT(EdtRandom == pds->Edt());
+  // print
+  IOstream &OsPrint(IOstream &os) const override;
 
-		return dynamic_cast<CDistributionSpecRandom *>(pds);
-	}
+  // conversion function
+  static CDistributionSpecRandom *PdsConvert(CDistributionSpec *pds) {
+    GPOS_ASSERT(nullptr != pds);
+    GPOS_ASSERT(EdtRandom == pds->Edt());
 
-	// conversion function: const argument
-	static const CDistributionSpecRandom *
-	PdsConvert(const CDistributionSpec *pds)
-	{
-		GPOS_ASSERT(NULL != pds);
-		GPOS_ASSERT(EdtRandom == pds->Edt());
+    return dynamic_cast<CDistributionSpecRandom *>(pds);
+  }
 
-		return dynamic_cast<const CDistributionSpecRandom *>(pds);
-	}
+  // conversion function: const argument
+  static const CDistributionSpecRandom *PdsConvert(const CDistributionSpec *pds) {
+    GPOS_ASSERT(nullptr != pds);
+    GPOS_ASSERT(EdtRandom == pds->Edt());
 
-};	// class CDistributionSpecRandom
+    return dynamic_cast<const CDistributionSpecRandom *>(pds);
+  }
+
+};  // class CDistributionSpecRandom
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CDistributionSpecRandom_H
+#endif  // !GPOPT_CDistributionSpecRandom_H
 
 // EOF

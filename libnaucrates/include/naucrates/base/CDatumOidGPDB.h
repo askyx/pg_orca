@@ -15,8 +15,7 @@
 
 #include "naucrates/base/IDatumOid.h"
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDatumOidGPDB
@@ -25,59 +24,57 @@ namespace gpnaucrates
 //		GPDB-specific oid representation
 //
 //---------------------------------------------------------------------------
-class CDatumOidGPDB : public IDatumOid
-{
-private:
-	// type information
-	IMDId *m_mdid;
+class CDatumOidGPDB : public IDatumOid {
+ private:
+  // type information
+  IMDId *m_mdid;
 
-	// oid value
-	OID m_val;
+  // oid value
+  OID m_val;
 
-	// is null
-	BOOL m_is_null;
+  // is null
+  BOOL m_is_null;
 
-	// private copy ctor
-	CDatumOidGPDB(const CDatumOidGPDB &);
+ public:
+  CDatumOidGPDB(const CDatumOidGPDB &) = delete;
 
-public:
-	// ctors
-	CDatumOidGPDB(CSystemId sysid, OID oid_val, BOOL is_null = false);
-	CDatumOidGPDB(IMDId *mdid, OID oid_val, BOOL is_null = false);
+  // ctors
+  CDatumOidGPDB(CSystemId sysid, OID oid_val, BOOL is_null = false);
+  CDatumOidGPDB(IMDId *mdid, OID oid_val, BOOL is_null = false);
 
-	// dtor
-	virtual ~CDatumOidGPDB();
+  // dtor
+  ~CDatumOidGPDB() override;
 
-	// accessor of metadata type id
-	virtual IMDId *MDId() const;
+  // accessor of metadata type id
+  IMDId *MDId() const override;
 
-	// accessor of size
-	virtual ULONG Size() const;
+  // accessor of size
+  ULONG Size() const override;
 
-	// accessor of oid value
-	virtual OID OidValue() const;
+  // accessor of oid value
+  OID OidValue() const override;
 
-	// accessor of is null
-	virtual BOOL IsNull() const;
+  // accessor of is null
+  BOOL IsNull() const override;
 
-	// return string representation
-	virtual const CWStringConst *GetStrRepr(CMemoryPool *mp) const;
+  // return string representation
+  const CWStringConst *GetStrRepr(CMemoryPool *mp) const override;
 
-	// hash function
-	virtual ULONG HashValue() const;
+  // hash function
+  ULONG HashValue() const override;
 
-	// match function for datums
-	virtual BOOL Matches(const IDatum *) const;
+  // match function for datums
+  BOOL Matches(const IDatum *) const override;
 
-	// copy datum
-	virtual IDatum *MakeCopy(CMemoryPool *mp) const;
+  // copy datum
+  IDatum *MakeCopy(CMemoryPool *mp) const override;
 
-	// print function
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // print function
+  IOstream &OsPrint(IOstream &os) const override;
 
-};	// class CDatumOidGPDB
+};  // class CDatumOidGPDB
 }  // namespace gpnaucrates
 
-#endif	// !GPNAUCRATES_CDatumOidGPDB_H
+#endif  // !GPNAUCRATES_CDatumOidGPDB_H
 
 // EOF

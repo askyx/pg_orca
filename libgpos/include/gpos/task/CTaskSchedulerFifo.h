@@ -16,8 +16,7 @@
 #include "gpos/task/CTask.h"
 #include "gpos/task/ITaskScheduler.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CTaskScheduler
@@ -34,51 +33,37 @@ namespace gpos
 //
 //---------------------------------------------------------------------------
 
-class CTaskSchedulerFifo : public ITaskScheduler
-{
-private:
-	// task queue
-	CList<CTask> m_task_queue;
+class CTaskSchedulerFifo : public ITaskScheduler {
+ private:
+  // task queue
+  CList<CTask> m_task_queue;
 
-	// private copy ctor
-	CTaskSchedulerFifo(const CTaskSchedulerFifo &);
+ public:
+  CTaskSchedulerFifo(const CTaskSchedulerFifo &) = delete;
 
-public:
-	// ctor
-	CTaskSchedulerFifo()
-	{
-		m_task_queue.Init(GPOS_OFFSET(CTask, m_task_scheduler_link));
-	}
+  // ctor
+  CTaskSchedulerFifo() { m_task_queue.Init(GPOS_OFFSET(CTask, m_task_scheduler_link)); }
 
-	// dtor
-	~CTaskSchedulerFifo()
-	{
-	}
+  // dtor
+  ~CTaskSchedulerFifo() override = default;
 
-	// add task to waiting queue
-	void Enqueue(CTask *task);
+  // add task to waiting queue
+  void Enqueue(CTask *task) override;
 
-	// get next task to execute
-	CTask *Dequeue();
+  // get next task to execute
+  CTask *Dequeue() override;
 
-	// check if task is waiting to be scheduled and remove it
-	GPOS_RESULT Cancel(CTask *task);
+  // check if task is waiting to be scheduled and remove it
+  GPOS_RESULT Cancel(CTask *task) override;
 
-	// get number of waiting tasks
-	ULONG
-	GetQueueSize()
-	{
-		return m_task_queue.Size();
-	}
+  // get number of waiting tasks
+  ULONG
+  GetQueueSize() override { return m_task_queue.Size(); }
 
-	// check if task queue is empty
-	BOOL
-	IsEmpty() const
-	{
-		return m_task_queue.IsEmpty();
-	}
+  // check if task queue is empty
+  BOOL IsEmpty() const override { return m_task_queue.IsEmpty(); }
 
-};	// class CTaskSchedulerFifo
+};  // class CTaskSchedulerFifo
 }  // namespace gpos
 
 #endif /* GPOS_CTaskSchedulerFifo_H */

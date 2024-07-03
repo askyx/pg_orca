@@ -14,11 +14,11 @@
 #include "gpos/base.h"
 
 #include "gpopt/metadata/CTableDescriptor.h"
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalInsert.h"
+#include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/xforms/CXformUtils.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,13 +29,10 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformInsert2DML::CXformInsert2DML(CMemoryPool *mp)
-	: CXformExploration(
-		  // pattern
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CLogicalInsert(mp),
-			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))))
-{
-}
+    : CXformExploration(
+          // pattern
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalInsert(mp),
+                                   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)))) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,11 +42,9 @@ CXformInsert2DML::CXformInsert2DML(CMemoryPool *mp)
 //		Compute promise of xform
 //
 //---------------------------------------------------------------------------
-CXform::EXformPromise
-CXformInsert2DML::Exfp(CExpressionHandle &	// exprhdl
-) const
-{
-	return CXform::ExfpHigh;
+CXform::EXformPromise CXformInsert2DML::Exfp(CExpressionHandle &  // exprhdl
+) const {
+  return CXform::ExfpHigh;
 }
 
 //---------------------------------------------------------------------------
@@ -60,38 +55,35 @@ CXformInsert2DML::Exfp(CExpressionHandle &	// exprhdl
 //		Actual transformation
 //
 //---------------------------------------------------------------------------
-void
-CXformInsert2DML::Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-							CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformInsert2DML::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CLogicalInsert *popInsert = CLogicalInsert::PopConvert(pexpr->Pop());
-	CMemoryPool *mp = pxfctxt->Pmp();
+  CLogicalInsert *popInsert = CLogicalInsert::PopConvert(pexpr->Pop());
+  CMemoryPool *mp = pxfctxt->Pmp();
 
-	// extract components for alternative
+  // extract components for alternative
 
-	CTableDescriptor *ptabdesc = popInsert->Ptabdesc();
-	ptabdesc->AddRef();
+  CTableDescriptor *ptabdesc = popInsert->Ptabdesc();
+  ptabdesc->AddRef();
 
-	CColRefArray *pdrgpcrSource = popInsert->PdrgpcrSource();
-	pdrgpcrSource->AddRef();
+  CColRefArray *pdrgpcrSource = popInsert->PdrgpcrSource();
+  pdrgpcrSource->AddRef();
 
-	// child of insert operator
-	CExpression *pexprChild = (*pexpr)[0];
-	pexprChild->AddRef();
+  // child of insert operator
+  CExpression *pexprChild = (*pexpr)[0];
+  pexprChild->AddRef();
 
-	// create logical DML
-	CExpression *pexprAlt = CXformUtils::PexprLogicalDMLOverProject(
-		mp, pexprChild, CLogicalDML::EdmlInsert, ptabdesc, pdrgpcrSource,
-		NULL,  //pcrCtid
-		NULL   //pcrSegmentId
-	);
+  // create logical DML
+  CExpression *pexprAlt =
+      CXformUtils::PexprLogicalDMLOverProject(mp, pexprChild, CLogicalDML::EdmlInsert, ptabdesc, pdrgpcrSource,
+                                              nullptr,  // pcrCtid
+                                              nullptr   // pcrSegmentId
+      );
 
-	// add alternative to transformation result
-	pxfres->Add(pexprAlt);
+  // add alternative to transformation result
+  pxfres->Add(pexprAlt);
 }
 
 // EOF

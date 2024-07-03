@@ -17,8 +17,7 @@
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalSetOp.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalDifferenceAll
@@ -27,101 +26,74 @@ namespace gpopt
 //		Difference all operators
 //
 //---------------------------------------------------------------------------
-class CLogicalDifferenceAll : public CLogicalSetOp
-{
-private:
-	// private copy ctor
-	CLogicalDifferenceAll(const CLogicalDifferenceAll &);
+class CLogicalDifferenceAll : public CLogicalSetOp {
+ private:
+ public:
+  CLogicalDifferenceAll(const CLogicalDifferenceAll &) = delete;
 
-public:
-	// ctor
-	explicit CLogicalDifferenceAll(CMemoryPool *mp);
+  // ctor
+  explicit CLogicalDifferenceAll(CMemoryPool *mp);
 
-	CLogicalDifferenceAll(CMemoryPool *mp, CColRefArray *pdrgpcrOutput,
-						  CColRef2dArray *pdrgpdrgpcrInput);
+  CLogicalDifferenceAll(CMemoryPool *mp, CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrInput);
 
-	// dtor
-	virtual ~CLogicalDifferenceAll();
+  // dtor
+  ~CLogicalDifferenceAll() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalDifferenceAll;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalDifferenceAll; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalDifferenceAll";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalDifferenceAll"; }
 
-	// sensitivity to order of inputs
-	BOOL
-	FInputOrderSensitive() const
-	{
-		return true;
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return true; }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive max card
-	virtual CMaxCard DeriveMaxCard(CMemoryPool *mp,
-								   CExpressionHandle &exprhdl) const;
+  // derive max card
+  CMaxCard DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive key collections
-	virtual CKeyCollection *DeriveKeyCollection(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  // derive key collections
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive constraint property
-	virtual CPropConstraint *
-	DerivePropertyConstraint(CMemoryPool *,	 //mp,
-							 CExpressionHandle &exprhdl) const
-	{
-		return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
-	}
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *mp, CExpressionHandle &exprhdl) const override {
+    return PpcDeriveConstraintSetop(mp, exprhdl, false /*fIntersect*/);
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// candidate set of xforms
-	CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	// stat promise
-	virtual EStatPromise
-	Esp(CExpressionHandle &	 // exprhdl
-	) const
-	{
-		return CLogical::EspLow;
-	}
+  // stat promise
+  EStatPromise Esp(CExpressionHandle &  // exprhdl
+  ) const override {
+    return CLogical::EspLow;
+  }
 
-	// derive statistics
-	virtual IStatistics *PstatsDerive(CMemoryPool *mp,
-									  CExpressionHandle &exprhdl,
-									  IStatisticsArray *stats_ctxt) const;
+  // derive statistics
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
-	// conversion function
-	static CLogicalDifferenceAll *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalDifferenceAll == pop->Eopid());
+  // conversion function
+  static CLogicalDifferenceAll *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalDifferenceAll == pop->Eopid());
 
-		return reinterpret_cast<CLogicalDifferenceAll *>(pop);
-	}
+    return dynamic_cast<CLogicalDifferenceAll *>(pop);
+  }
 
-};	// class CLogicalDifferenceAll
+};  // class CLogicalDifferenceAll
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CLogicalDifferenceAll_H
+#endif  // !GPOPT_CLogicalDifferenceAll_H
 
 // EOF

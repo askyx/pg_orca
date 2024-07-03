@@ -9,7 +9,6 @@
 //		Implementation of DXL physical table scan operators
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/dxl/operators/CDXLPhysicalTableScan.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
@@ -26,11 +25,7 @@ using namespace gpdxl;
 //		Construct a table scan node with uninitialized table descriptor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalTableScan::CDXLPhysicalTableScan(CMemoryPool *mp)
-	: CDXLPhysical(mp), m_dxl_table_descr(NULL)
-{
-}
-
+CDXLPhysicalTableScan::CDXLPhysicalTableScan(CMemoryPool *mp) : CDXLPhysical(mp), m_dxl_table_descr(nullptr) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -40,12 +35,8 @@ CDXLPhysicalTableScan::CDXLPhysicalTableScan(CMemoryPool *mp)
 //		Construct a table scan node given its table descriptor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalTableScan::CDXLPhysicalTableScan(CMemoryPool *mp,
-											 CDXLTableDescr *table_descr)
-	: CDXLPhysical(mp), m_dxl_table_descr(table_descr)
-{
-}
-
+CDXLPhysicalTableScan::CDXLPhysicalTableScan(CMemoryPool *mp, CDXLTableDescr *table_descr)
+    : CDXLPhysical(mp), m_dxl_table_descr(table_descr) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -55,11 +46,9 @@ CDXLPhysicalTableScan::CDXLPhysicalTableScan(CMemoryPool *mp,
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalTableScan::~CDXLPhysicalTableScan()
-{
-	CRefCount::SafeRelease(m_dxl_table_descr);
+CDXLPhysicalTableScan::~CDXLPhysicalTableScan() {
+  CRefCount::SafeRelease(m_dxl_table_descr);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -69,13 +58,11 @@ CDXLPhysicalTableScan::~CDXLPhysicalTableScan()
 //		Set table descriptor
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalTableScan::SetTableDescriptor(CDXLTableDescr *table_descr)
-{
-	// allow setting table descriptor only once
-	GPOS_ASSERT(NULL == m_dxl_table_descr);
+void CDXLPhysicalTableScan::SetTableDescriptor(CDXLTableDescr *table_descr) {
+  // allow setting table descriptor only once
+  GPOS_ASSERT(nullptr == m_dxl_table_descr);
 
-	m_dxl_table_descr = table_descr;
+  m_dxl_table_descr = table_descr;
 }
 
 //---------------------------------------------------------------------------
@@ -86,12 +73,9 @@ CDXLPhysicalTableScan::SetTableDescriptor(CDXLTableDescr *table_descr)
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLPhysicalTableScan::GetDXLOperator() const
-{
-	return EdxlopPhysicalTableScan;
+Edxlopid CDXLPhysicalTableScan::GetDXLOperator() const {
+  return EdxlopPhysicalTableScan;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -101,10 +85,8 @@ CDXLPhysicalTableScan::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLPhysicalTableScan::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalTableScan);
+const CWStringConst *CDXLPhysicalTableScan::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalTableScan);
 }
 
 //---------------------------------------------------------------------------
@@ -115,12 +97,9 @@ CDXLPhysicalTableScan::GetOpNameStr() const
 //		Table descriptor for the table scan
 //
 //---------------------------------------------------------------------------
-const CDXLTableDescr *
-CDXLPhysicalTableScan::GetDXLTableDescr()
-{
-	return m_dxl_table_descr;
+const CDXLTableDescr *CDXLPhysicalTableScan::GetDXLTableDescr() {
+  return m_dxl_table_descr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -130,26 +109,21 @@ CDXLPhysicalTableScan::GetDXLTableDescr()
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalTableScan::SerializeToDXL(CXMLSerializer *xml_serializer,
-									  const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLPhysicalTableScan::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	// serialize properties
-	dxlnode->SerializePropertiesToDXL(xml_serializer);
+  // serialize properties
+  dxlnode->SerializePropertiesToDXL(xml_serializer);
 
-	// serialize children
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
+  // serialize children
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
 
-	// serialize table descriptor
-	m_dxl_table_descr->SerializeToDXL(xml_serializer);
+  // serialize table descriptor
+  m_dxl_table_descr->SerializeToDXL(xml_serializer);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -161,21 +135,18 @@ CDXLPhysicalTableScan::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalTableScan::AssertValid(const CDXLNode *dxlnode,
-								   BOOL validate_children) const
-{
-	// assert proj list and filter are valid
-	CDXLPhysical::AssertValid(dxlnode, validate_children);
+void CDXLPhysicalTableScan::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  // assert proj list and filter are valid
+  CDXLPhysical::AssertValid(dxlnode, validate_children);
 
-	// table scan has only 2 children
-	GPOS_ASSERT(2 == dxlnode->Arity());
+  // table scan has only 2 children
+  GPOS_ASSERT(2 == dxlnode->Arity());
 
-	// assert validity of table descriptor
-	GPOS_ASSERT(NULL != m_dxl_table_descr);
-	GPOS_ASSERT(NULL != m_dxl_table_descr->MdName());
-	GPOS_ASSERT(m_dxl_table_descr->MdName()->GetMDName()->IsValid());
+  // assert validity of table descriptor
+  GPOS_ASSERT(nullptr != m_dxl_table_descr);
+  GPOS_ASSERT(nullptr != m_dxl_table_descr->MdName());
+  GPOS_ASSERT(m_dxl_table_descr->MdName()->GetMDName()->IsValid());
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

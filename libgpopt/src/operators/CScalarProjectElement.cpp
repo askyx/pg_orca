@@ -14,9 +14,9 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CColRefSet.h"
+#include "gpopt/base/COptCtxt.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -27,12 +27,9 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarProjectElement::HashValue() const
-{
-	return gpos::CombineHashes(COperator::HashValue(),
-							   gpos::HashPtr<CColRef>(m_pcr));
+CScalarProjectElement::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(), gpos::HashPtr<CColRef>(m_pcr));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -42,19 +39,15 @@ CScalarProjectElement::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarProjectElement::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarProjectElement *popScPrEl =
-			CScalarProjectElement::PopConvert(pop);
+BOOL CScalarProjectElement::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarProjectElement *popScPrEl = CScalarProjectElement::PopConvert(pop);
 
-		// match if column reference is same
-		return Pcr() == popScPrEl->Pcr();
-	}
+    // match if column reference is same
+    return Pcr() == popScPrEl->Pcr();
+  }
 
-	return false;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -65,10 +58,8 @@ CScalarProjectElement::Matches(COperator *pop) const
 //		Not called for leaf operators
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarProjectElement::FInputOrderSensitive() const
-{
-	return false;
+BOOL CScalarProjectElement::FInputOrderSensitive() const {
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -79,36 +70,26 @@ CScalarProjectElement::FInputOrderSensitive() const
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CScalarProjectElement::PopCopyWithRemappedColumns(
-	CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist)
-{
-	ULONG id = m_pcr->Id();
-	CColRef *colref = colref_mapping->Find(&id);
-	if (NULL == colref)
-	{
-		if (must_exist)
-		{
-			// not found in hashmap, so create a new colref and add to hashmap
-			CColumnFactory *col_factory = COptCtxt::PoctxtFromTLS()->Pcf();
+COperator *CScalarProjectElement::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
+                                                             BOOL must_exist) {
+  ULONG id = m_pcr->Id();
+  CColRef *colref = colref_mapping->Find(&id);
+  if (nullptr == colref) {
+    if (must_exist) {
+      // not found in hashmap, so create a new colref and add to hashmap
+      CColumnFactory *col_factory = COptCtxt::PoctxtFromTLS()->Pcf();
 
-			CName name(m_pcr->Name());
-			colref = col_factory->PcrCreate(m_pcr->RetrieveType(),
-											m_pcr->TypeModifier(), name);
+      CName name(m_pcr->Name());
+      colref = col_factory->PcrCreate(m_pcr->RetrieveType(), m_pcr->TypeModifier(), name);
 
-#ifdef GPOS_DEBUG
-			BOOL result =
-#endif	// GPOS_DEBUG
-				colref_mapping->Insert(GPOS_NEW(mp) ULONG(id), colref);
-			GPOS_ASSERT(result);
-		}
-		else
-		{
-			colref = m_pcr;
-		}
-	}
+      BOOL result GPOS_ASSERTS_ONLY = colref_mapping->Insert(GPOS_NEW(mp) ULONG(id), colref);
+      GPOS_ASSERT(result);
+    } else {
+      colref = m_pcr;
+    }
+  }
 
-	return GPOS_NEW(mp) CScalarProjectElement(mp, colref);
+  return GPOS_NEW(mp) CScalarProjectElement(mp, colref);
 }
 
 //---------------------------------------------------------------------------
@@ -119,13 +100,11 @@ CScalarProjectElement::PopCopyWithRemappedColumns(
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarProjectElement::OsPrint(IOstream &os) const
-{
-	os << SzId() << " ";
-	m_pcr->OsPrint(os);
+IOstream &CScalarProjectElement::OsPrint(IOstream &os) const {
+  os << SzId() << " ";
+  m_pcr->OsPrint(os);
 
-	return os;
+  return os;
 }
 
 // EOF

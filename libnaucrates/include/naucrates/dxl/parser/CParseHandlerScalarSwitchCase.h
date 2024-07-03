@@ -17,9 +17,7 @@
 #include "naucrates/dxl/operators/CDXLScalarSwitchCase.h"
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -32,30 +30,25 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing a SwitchCase operator
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarSwitchCase : public CParseHandlerScalarOp
-{
-private:
-	// private copy ctor
-	CParseHandlerScalarSwitchCase(const CParseHandlerScalarSwitchCase &);
+class CParseHandlerScalarSwitchCase : public CParseHandlerScalarOp {
+ private:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri, const XMLCh *const element_local_name,
+                    const XMLCh *const element_qname, const Attributes &attr) override;
 
-	// process the start of an element
-	void StartElement(const XMLCh *const element_uri,
-					  const XMLCh *const element_local_name,
-					  const XMLCh *const element_qname, const Attributes &attr);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri, const XMLCh *const element_local_name,
+                  const XMLCh *const element_qname) override;
 
-	// process the end of an element
-	void EndElement(const XMLCh *const element_uri,
-					const XMLCh *const element_local_name,
-					const XMLCh *const element_qname);
+ public:
+  CParseHandlerScalarSwitchCase(const CParseHandlerScalarSwitchCase &) = delete;
 
-public:
-	// ctor
-	CParseHandlerScalarSwitchCase(CMemoryPool *mp,
-								  CParseHandlerManager *parse_handler_mgr,
-								  CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerScalarSwitchCase(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerScalarSwitchCase_H
+#endif  // !GPDXL_CParseHandlerScalarSwitchCase_H
 
-//EOF
+// EOF

@@ -17,13 +17,11 @@
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 
 // fwd decl
-namespace gpos
-{
+namespace gpos {
 class CBitSet;
 }
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -37,46 +35,41 @@ XERCES_CPP_NAMESPACE_USE
 //		redistribute motion node.
 //
 //---------------------------------------------------------------------------
-class CParseHandlerTraceFlags : public CParseHandlerBase
-{
-private:
-	// trace flag bitset
-	CBitSet *m_trace_flags_bitset;
+class CParseHandlerTraceFlags : public CParseHandlerBase {
+ private:
+  // trace flag bitset
+  CBitSet *m_trace_flags_bitset;
 
-	// private copy ctor
-	CParseHandlerTraceFlags(const CParseHandlerTraceFlags &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerTraceFlags(const CParseHandlerTraceFlags &) = delete;
 
-public:
-	// ctor/dtor
-	CParseHandlerTraceFlags(CMemoryPool *mp,
-							CParseHandlerManager *parse_handler_mgr,
-							CParseHandlerBase *parse_handler_root);
+  // ctor/dtor
+  CParseHandlerTraceFlags(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                          CParseHandlerBase *parse_handler_root);
 
-	virtual ~CParseHandlerTraceFlags();
+  ~CParseHandlerTraceFlags() override;
 
-	// type of the parse handler
-	EDxlParseHandlerType GetParseHandlerType() const;
+  // type of the parse handler
+  EDxlParseHandlerType GetParseHandlerType() const override;
 
-	// accessor
-	CBitSet *GetTraceFlagBitSet();
+  // accessor
+  CBitSet *GetTraceFlagBitSet();
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerTraceFlags_H
+#endif  // !GPDXL_CParseHandlerTraceFlags_H
 
 // EOF

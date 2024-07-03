@@ -16,16 +16,9 @@
 
 #include "naucrates/dxl/operators/CDXLScalarComp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 // indices of scalar distinct comparison elements in the children array
-enum Edxlscdistcmp
-{
-	EdxlscdistcmpIndexLeft = 0,
-	EdxlscdistcmpIndexRight,
-	EdxlscdistcmpSentinel
-};
+enum Edxlscdistcmp { EdxlscdistcmpIndexLeft = 0, EdxlscdistcmpIndexRight, EdxlscdistcmpSentinel };
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -35,53 +28,45 @@ enum Edxlscdistcmp
 //		Class for representing DXL scalar "is distinct from" comparison operators
 //
 //---------------------------------------------------------------------------
-class CDXLScalarDistinctComp : public CDXLScalarComp
-{
-private:
-	// private copy ctor
-	CDXLScalarDistinctComp(CDXLScalarDistinctComp &);
+class CDXLScalarDistinctComp : public CDXLScalarComp {
+ private:
+ public:
+  CDXLScalarDistinctComp(CDXLScalarDistinctComp &) = delete;
 
-public:
-	// ctor/dtor
-	CDXLScalarDistinctComp(CMemoryPool *mp, IMDId *operator_mdid);
+  // ctor/dtor
+  CDXLScalarDistinctComp(CMemoryPool *mp, IMDId *operator_mdid);
 
-	// ident accessors
-	Edxlopid GetDXLOperator() const;
+  // ident accessors
+  Edxlopid GetDXLOperator() const override;
 
-	// name of the DXL operator
-	const CWStringConst *GetOpNameStr() const;
+  // name of the DXL operator
+  const CWStringConst *GetOpNameStr() const override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *node) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
-	// conversion function
-	static CDXLScalarDistinctComp *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarDistinct == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarDistinctComp *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarDistinct == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarDistinctComp *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarDistinctComp *>(dxl_op);
+  }
 
-	// does the operator return a boolean result
-	virtual BOOL
-	HasBoolResult(CMDAccessor *	 //md_accessor
-	) const
-	{
-		return true;
-	}
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  ) const override {
+    return true;
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *node, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalarDistinctComp_H
-
+#endif  // !GPDXL_CDXLScalarDistinctComp_H
 
 // EOF

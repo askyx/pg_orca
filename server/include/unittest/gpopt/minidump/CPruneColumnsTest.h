@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2016 Pivotal, Inc.
+//	Copyright (C) 2016 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CPruneColumnsTest.h
@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CPruneColumnsTest
@@ -23,21 +22,20 @@ namespace gpopt
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CPruneColumnsTest
-{
-private:
-	// counter used to mark last successful test
-	static gpos::ULONG m_ulPruneColumnsTestCounter;
+class CPruneColumnsTest {
+ private:
+  // counter used to mark last successful test
+  static gpos::ULONG m_ulPruneColumnsTestCounter;
 
-public:
-	// unittests
-	static gpos::GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static gpos::GPOS_RESULT EresUnittest();
 
-	static gpos::GPOS_RESULT EresUnittest_RunTests();
+  static gpos::GPOS_RESULT EresUnittest_RunTests();
 
-};	// class CPruneColumnsTest
+};  // class CPruneColumnsTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPruneColumnsTest_H
+#endif  // !GPOPT_CPruneColumnsTest_H
 
 // EOF

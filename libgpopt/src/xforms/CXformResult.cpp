@@ -15,6 +15,7 @@
 
 using namespace gpopt;
 
+FORCE_GENERATE_DBGSTR(CXformResult);
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -24,12 +25,10 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CXformResult::CXformResult(CMemoryPool *mp) : m_ulExpr(0)
-{
-	GPOS_ASSERT(NULL != mp);
-	m_pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
+CXformResult::CXformResult(CMemoryPool *mp) : m_ulExpr(0) {
+  GPOS_ASSERT(nullptr != mp);
+  m_pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -39,12 +38,10 @@ CXformResult::CXformResult(CMemoryPool *mp) : m_ulExpr(0)
 //		dtor
 //
 //---------------------------------------------------------------------------
-CXformResult::~CXformResult()
-{
-	// release array (releases all elements)
-	m_pdrgpexpr->Release();
+CXformResult::~CXformResult() {
+  // release array (releases all elements)
+  m_pdrgpexpr->Release();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -54,16 +51,12 @@ CXformResult::~CXformResult()
 //		add alternative
 //
 //---------------------------------------------------------------------------
-void
-CXformResult::Add(CExpression *pexpr)
-{
-	GPOS_ASSERT(0 == m_ulExpr &&
-				"Incorrect workflow: cannot add further alternatives");
+void CXformResult::Add(CExpression *pexpr) {
+  GPOS_ASSERT(0 == m_ulExpr && "Incorrect workflow: cannot add further alternatives");
 
-	GPOS_ASSERT(NULL != pexpr);
-	m_pdrgpexpr->Append(pexpr);
+  GPOS_ASSERT(nullptr != pexpr);
+  m_pdrgpexpr->Append(pexpr);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -73,21 +66,17 @@ CXformResult::Add(CExpression *pexpr)
 //		retrieve next alternative
 //
 //---------------------------------------------------------------------------
-CExpression *
-CXformResult::PexprNext()
-{
-	CExpression *pexpr = NULL;
-	if (m_ulExpr < m_pdrgpexpr->Size())
-	{
-		pexpr = (*m_pdrgpexpr)[m_ulExpr];
-	}
+CExpression *CXformResult::PexprNext() {
+  CExpression *pexpr = nullptr;
+  if (m_ulExpr < m_pdrgpexpr->Size()) {
+    pexpr = (*m_pdrgpexpr)[m_ulExpr];
+  }
 
-	GPOS_ASSERT(m_ulExpr <= m_pdrgpexpr->Size());
-	m_ulExpr++;
+  GPOS_ASSERT(m_ulExpr <= m_pdrgpexpr->Size());
+  m_ulExpr++;
 
-	return pexpr;
+  return pexpr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -97,18 +86,15 @@ CXformResult::PexprNext()
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CXformResult::OsPrint(IOstream &os) const
-{
-	os << "Alternatives:" << std::endl;
+IOstream &CXformResult::OsPrint(IOstream &os) const {
+  os << "Alternatives:" << std::endl;
 
-	for (ULONG i = 0; i < m_pdrgpexpr->Size(); i++)
-	{
-		os << i << ": " << std::endl;
-		(*m_pdrgpexpr)[i]->OsPrint(os);
-	}
+  for (ULONG i = 0; i < m_pdrgpexpr->Size(); i++) {
+    os << i << ": " << std::endl;
+    (*m_pdrgpexpr)[i]->OsPrint(os);
+  }
 
-	return os;
+  return os;
 }
 
 // EOF

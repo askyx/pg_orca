@@ -14,11 +14,8 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CDistributionSpecHashed.h"
-#include "gpopt/base/CUtils.h"
-
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -28,13 +25,11 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftAntiSemiHashJoin::CPhysicalLeftAntiSemiHashJoin(
-	CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys,
-	CExpressionArray *pdrgpexprInnerKeys)
-	: CPhysicalHashJoin(mp, pdrgpexprOuterKeys, pdrgpexprInnerKeys)
-{
-}
-
+CPhysicalLeftAntiSemiHashJoin::CPhysicalLeftAntiSemiHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys,
+                                                             CExpressionArray *pdrgpexprInnerKeys,
+                                                             IMdIdArray *hash_opfamilies, BOOL is_null_aware,
+                                                             CXform::EXformId origin_xform)
+    : CPhysicalHashJoin(mp, pdrgpexprOuterKeys, pdrgpexprInnerKeys, hash_opfamilies, is_null_aware, origin_xform) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,10 +39,7 @@ CPhysicalLeftAntiSemiHashJoin::CPhysicalLeftAntiSemiHashJoin(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftAntiSemiHashJoin::~CPhysicalLeftAntiSemiHashJoin()
-{
-}
-
+CPhysicalLeftAntiSemiHashJoin::~CPhysicalLeftAntiSemiHashJoin() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -57,35 +49,11 @@ CPhysicalLeftAntiSemiHashJoin::~CPhysicalLeftAntiSemiHashJoin()
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalLeftAntiSemiHashJoin::FProvidesReqdCols(CExpressionHandle &exprhdl,
-												 CColRefSet *pcrsRequired,
-												 ULONG	// ulOptReq
-) const
-{
-	// left anti semi join only propagates columns from left child
-	return FOuterProvidesReqdCols(exprhdl, pcrsRequired);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalLeftAntiSemiHashJoin::PppsRequired
-//
-//	@doc:
-//		Compute required partition propagation of the n-th child
-//
-//---------------------------------------------------------------------------
-CPartitionPropagationSpec *
-CPhysicalLeftAntiSemiHashJoin::PppsRequired(
-	CMemoryPool *mp, CExpressionHandle &exprhdl,
-	CPartitionPropagationSpec *pppsRequired, ULONG child_index,
-	CDrvdPropArray *,  // pdrgpdpCtxt,
-	ULONG			   // ulOptReq
-)
-{
-	// no partition elimination for LASJ: push request to the respective child
-	return CPhysical::PppsRequiredPushThruNAry(mp, exprhdl, pppsRequired,
-											   child_index);
+BOOL CPhysicalLeftAntiSemiHashJoin::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                                      ULONG  // ulOptReq
+) const {
+  // left anti semi join only propagates columns from left child
+  return FOuterProvidesReqdCols(exprhdl, pcrsRequired);
 }
 
 // EOF

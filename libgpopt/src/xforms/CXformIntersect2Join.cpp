@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 Pivotal Inc.
+//	Copyright (C) 2013 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformIntersect2Join.cpp
@@ -16,14 +16,15 @@
 #include "gpopt/base/CColRefComputed.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/exception.h"
+#include "gpopt/operators/CLogicalInnerJoin.h"
+#include "gpopt/operators/CLogicalIntersect.h"
 #include "gpopt/operators/COperator.h"
-#include "gpopt/operators/ops.h"
-#include "gpopt/translate/CTranslatorDXLToExpr.h"
+#include "gpopt/operators/CPatternLeaf.h"
+#include "gpopt/operators/CScalarProjectList.h"
 #include "gpopt/xforms/CXformUtils.h"
 
 using namespace gpmd;
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -34,17 +35,13 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformIntersect2Join::CXformIntersect2Join(CMemoryPool *mp)
-	: CXformExploration(
-		  // pattern
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CLogicalIntersect(mp),
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left relational child
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CPatternLeaf(mp))  // right relational child
-			  ))
-{
-}
+    : CXformExploration(
+          // pattern
+          GPOS_NEW(mp)
+              CExpression(mp, GPOS_NEW(mp) CLogicalIntersect(mp),
+                          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left relational child
+                          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))   // right relational child
+                          )) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -55,51 +52,44 @@ CXformIntersect2Join::CXformIntersect2Join(CMemoryPool *mp)
 //		over a group by over the inputs
 //
 //---------------------------------------------------------------------------
-void
-CXformIntersect2Join::Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-								CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(NULL != pxfres);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformIntersect2Join::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(nullptr != pxfres);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CMemoryPool *mp = pxfctxt->Pmp();
+  CMemoryPool *mp = pxfctxt->Pmp();
 
-	GPOS_ASSERT(2 == pexpr->Arity());
+  GPOS_ASSERT(2 == pexpr->Arity());
 
-	// extract components
-	CExpression *pexprLeftChild = (*pexpr)[0];
-	CExpression *pexprRightChild = (*pexpr)[1];
+  // extract components
+  CExpression *pexprLeftChild = (*pexpr)[0];
+  CExpression *pexprRightChild = (*pexpr)[1];
 
-	CLogicalIntersect *popIntersect =
-		CLogicalIntersect::PopConvert(pexpr->Pop());
-	CColRef2dArray *pdrgpdrgpcrInput = popIntersect->PdrgpdrgpcrInput();
+  CLogicalIntersect *popIntersect = CLogicalIntersect::PopConvert(pexpr->Pop());
+  CColRef2dArray *pdrgpdrgpcrInput = popIntersect->PdrgpdrgpcrInput();
 
-	// construct group by over the left and right expressions
+  // construct group by over the left and right expressions
 
-	CExpression *pexprProjList =
-		GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarProjectList(mp),
-								 GPOS_NEW(mp) CExpressionArray(mp));
-	pexprProjList->AddRef();
-	pexprLeftChild->AddRef();
-	pexprRightChild->AddRef();
-	(*pdrgpdrgpcrInput)[0]->AddRef();
-	(*pdrgpdrgpcrInput)[1]->AddRef();
+  CExpression *pexprProjList =
+      GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarProjectList(mp), GPOS_NEW(mp) CExpressionArray(mp));
+  pexprProjList->AddRef();
+  pexprLeftChild->AddRef();
+  pexprRightChild->AddRef();
+  (*pdrgpdrgpcrInput)[0]->AddRef();
+  (*pdrgpdrgpcrInput)[1]->AddRef();
 
-	CExpression *pexprLeftAgg = CUtils::PexprLogicalGbAggGlobal(
-		mp, (*pdrgpdrgpcrInput)[0], pexprLeftChild, pexprProjList);
-	CExpression *pexprRightAgg = CUtils::PexprLogicalGbAggGlobal(
-		mp, (*pdrgpdrgpcrInput)[1], pexprRightChild, pexprProjList);
+  CExpression *pexprLeftAgg =
+      CUtils::PexprLogicalGbAggGlobal(mp, (*pdrgpdrgpcrInput)[0], pexprLeftChild, pexprProjList);
+  CExpression *pexprRightAgg =
+      CUtils::PexprLogicalGbAggGlobal(mp, (*pdrgpdrgpcrInput)[1], pexprRightChild, pexprProjList);
 
-	CExpression *pexprScCond = CUtils::PexprConjINDFCond(mp, pdrgpdrgpcrInput);
+  CExpression *pexprScCond = CUtils::PexprConjINDFCond(mp, pdrgpdrgpcrInput);
 
-	CExpression *pexprJoin =
-		GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalInnerJoin(mp),
-								 pexprLeftAgg, pexprRightAgg, pexprScCond);
+  CExpression *pexprJoin =
+      GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalInnerJoin(mp), pexprLeftAgg, pexprRightAgg, pexprScCond);
 
-
-	pxfres->Add(pexprJoin);
+  pxfres->Add(pexprJoin);
 }
 
 // EOF

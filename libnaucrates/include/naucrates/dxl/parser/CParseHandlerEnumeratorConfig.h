@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -30,47 +29,42 @@ XERCES_CPP_NAMESPACE_USE
 //		SAX parse handler class for parsing enumerator configuration options
 //
 //---------------------------------------------------------------------------
-class CParseHandlerEnumeratorConfig : public CParseHandlerBase
-{
-private:
-	// enumerator configuration
-	CEnumeratorConfig *m_enumerator_cfg;
+class CParseHandlerEnumeratorConfig : public CParseHandlerBase {
+ private:
+  // enumerator configuration
+  CEnumeratorConfig *m_enumerator_cfg;
 
-	// private copy ctor
-	CParseHandlerEnumeratorConfig(const CParseHandlerEnumeratorConfig &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerEnumeratorConfig(const CParseHandlerEnumeratorConfig &) = delete;
 
-public:
-	// ctor
-	CParseHandlerEnumeratorConfig(CMemoryPool *mp,
-								  CParseHandlerManager *parse_handler_mgr,
-								  CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerEnumeratorConfig(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                CParseHandlerBase *parse_handler_root);
 
-	// dtor
-	virtual ~CParseHandlerEnumeratorConfig();
+  // dtor
+  ~CParseHandlerEnumeratorConfig() override;
 
-	// type of the parse handler
-	EDxlParseHandlerType GetParseHandlerType() const;
+  // type of the parse handler
+  EDxlParseHandlerType GetParseHandlerType() const override;
 
-	// enumerator configuration
-	CEnumeratorConfig *GetEnumeratorCfg() const;
+  // enumerator configuration
+  CEnumeratorConfig *GetEnumeratorCfg() const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerEnumeratorConfig_H
+#endif  // !GPDXL_CParseHandlerEnumeratorConfig_H
 
 // EOF

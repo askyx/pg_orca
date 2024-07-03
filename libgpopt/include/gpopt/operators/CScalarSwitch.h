@@ -14,11 +14,9 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CDrvdProp.h"
-#include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CScalar.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -41,91 +39,66 @@ using namespace gpos;
 //		+-- retdef
 //
 //---------------------------------------------------------------------------
-class CScalarSwitch : public CScalar
-{
-private:
-	// return type
-	IMDId *m_mdid_type;
+class CScalarSwitch : public CScalar {
+ private:
+  // return type
+  IMDId *m_mdid_type;
 
-	// is operator return type BOOL?
-	BOOL m_fBoolReturnType;
+  // is operator return type BOOL?
+  BOOL m_fBoolReturnType;
 
-	// private copy ctor
-	CScalarSwitch(const CScalarSwitch &);
+ public:
+  CScalarSwitch(const CScalarSwitch &) = delete;
 
-public:
-	// ctor
-	CScalarSwitch(CMemoryPool *mp, IMDId *mdid_type);
+  // ctor
+  CScalarSwitch(CMemoryPool *mp, IMDId *mdid_type);
 
-	// dtor
-	virtual ~CScalarSwitch();
+  // dtor
+  ~CScalarSwitch() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopScalarSwitch;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopScalarSwitch; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CScalarSwitch";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CScalarSwitch"; }
 
-	// the type of the scalar expression
-	virtual IMDId *
-	MdidType() const
-	{
-		return m_mdid_type;
-	}
+  // the type of the scalar expression
+  IMDId *MdidType() const override { return m_mdid_type; }
 
-	// operator specific hash function
-	virtual ULONG HashValue() const;
+  // operator specific hash function
+  ULONG HashValue() const override;
 
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// sensitivity to order of inputs
-	virtual BOOL
-	FInputOrderSensitive() const
-	{
-		return true;
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return true; }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *
-	PopCopyWithRemappedColumns(CMemoryPool *,		//mp,
-							   UlongToColRefMap *,	//colref_mapping,
-							   BOOL					//must_exist
-	)
-	{
-		return PopCopyDefault();
-	}
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
+                                        UlongToColRefMap *,  // colref_mapping,
+                                        BOOL                 // must_exist
+                                        ) override {
+    return PopCopyDefault();
+  }
 
-	// boolean expression evaluation
-	virtual EBoolEvalResult
-	Eber(ULongPtrArray *pdrgpulChildren) const
-	{
-		return EberNullOnAllNullChildren(pdrgpulChildren);
-	}
+  // boolean expression evaluation
+  EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const override {
+    return EberNullOnAllNullChildren(pdrgpulChildren);
+  }
 
-	// conversion function
-	static CScalarSwitch *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarSwitch == pop->Eopid());
+  // conversion function
+  static CScalarSwitch *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarSwitch == pop->Eopid());
 
-		return dynamic_cast<CScalarSwitch *>(pop);
-	}
+    return dynamic_cast<CScalarSwitch *>(pop);
+  }
 
-};	// class CScalarSwitch
+};  // class CScalarSwitch
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CScalarSwitch_H
+#endif  // !GPOPT_CScalarSwitch_H
 
 // EOF

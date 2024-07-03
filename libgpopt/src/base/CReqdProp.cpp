@@ -19,9 +19,11 @@
 #include "gpos/error/CAutoTrace.h"
 
 #include "gpopt/base/COptCtxt.h"
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 using namespace gpopt;
+
+FORCE_GENERATE_DBGSTR(CReqdProp);
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -31,10 +33,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CReqdProp::CReqdProp()
-{
-}
-
+CReqdProp::CReqdProp() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,9 +43,6 @@ CReqdProp::CReqdProp()
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CReqdProp::~CReqdProp()
-{
-}
-
+CReqdProp::~CReqdProp() = default;
 
 // EOF

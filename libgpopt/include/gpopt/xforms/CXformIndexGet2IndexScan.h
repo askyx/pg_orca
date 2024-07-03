@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,47 +26,34 @@ using namespace gpos;
 //		Transform Index Get to Index Scan
 //
 //---------------------------------------------------------------------------
-class CXformIndexGet2IndexScan : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformIndexGet2IndexScan(const CXformIndexGet2IndexScan &);
+class CXformIndexGet2IndexScan : public CXformImplementation {
+ private:
+ public:
+  CXformIndexGet2IndexScan(const CXformIndexGet2IndexScan &) = delete;
 
-public:
-	// ctor
-	explicit CXformIndexGet2IndexScan(CMemoryPool *);
+  // ctor
+  explicit CXformIndexGet2IndexScan(CMemoryPool *);
 
-	// dtor
-	virtual ~CXformIndexGet2IndexScan()
-	{
-	}
+  // dtor
+  ~CXformIndexGet2IndexScan() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfIndexGet2IndexScan;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfIndexGet2IndexScan; }
 
-	// xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformIndexGet2IndexScan";
-	}
+  // xform name
+  const CHAR *SzId() const override { return "CXformIndexGet2IndexScan"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &	//exprhdl
-	) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &  // exprhdl
+  ) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformIndexGet2IndexScan
+};  // class CXformIndexGet2IndexScan
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformIndexGet2IndexScan_H
+#endif  // !GPOPT_CXformIndexGet2IndexScan_H
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarBitmapIndexProbe.cpp
@@ -36,14 +36,13 @@ using namespace gpopt;
 //		Takes ownership of the index descriptor and the bitmap type id.
 //
 //---------------------------------------------------------------------------
-CScalarBitmapIndexProbe::CScalarBitmapIndexProbe(CMemoryPool *mp,
-												 CIndexDescriptor *pindexdesc,
-												 IMDId *pmdidBitmapType)
-	: CScalar(mp), m_pindexdesc(pindexdesc), m_pmdidBitmapType(pmdidBitmapType)
-{
-	GPOS_ASSERT(NULL != mp);
-	GPOS_ASSERT(NULL != pindexdesc);
-	GPOS_ASSERT(NULL != pmdidBitmapType);
+CScalarBitmapIndexProbe::CScalarBitmapIndexProbe(CMemoryPool *mp, CIndexDescriptor *pindexdesc,
+                                                 CTableDescriptor *ptabdesc, IMDId *pmdidBitmapType)
+    : CScalar(mp), m_pindexdesc(pindexdesc), m_ptabdesc(ptabdesc), m_pmdidBitmapType(pmdidBitmapType) {
+  GPOS_ASSERT(nullptr != mp);
+  GPOS_ASSERT(nullptr != pindexdesc);
+  GPOS_ASSERT(nullptr != ptabdesc);
+  GPOS_ASSERT(nullptr != pmdidBitmapType);
 }
 
 //---------------------------------------------------------------------------
@@ -54,10 +53,10 @@ CScalarBitmapIndexProbe::CScalarBitmapIndexProbe(CMemoryPool *mp,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarBitmapIndexProbe::~CScalarBitmapIndexProbe()
-{
-	m_pindexdesc->Release();
-	m_pmdidBitmapType->Release();
+CScalarBitmapIndexProbe::~CScalarBitmapIndexProbe() {
+  m_pindexdesc->Release();
+  m_ptabdesc->Release();
+  m_pmdidBitmapType->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -69,12 +68,9 @@ CScalarBitmapIndexProbe::~CScalarBitmapIndexProbe()
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarBitmapIndexProbe::HashValue() const
-{
-	return gpos::CombineHashes(COperator::HashValue(),
-							   m_pindexdesc->MDId()->HashValue());
+CScalarBitmapIndexProbe::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(), m_pindexdesc->MDId()->HashValue());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -84,16 +80,13 @@ CScalarBitmapIndexProbe::HashValue() const
 //		Match this operator with the given one.
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarBitmapIndexProbe::Matches(COperator *pop) const
-{
-	if (pop->Eopid() != Eopid())
-	{
-		return false;
-	}
-	CScalarBitmapIndexProbe *popIndexProbe = PopConvert(pop);
+BOOL CScalarBitmapIndexProbe::Matches(COperator *pop) const {
+  if (pop->Eopid() != Eopid()) {
+    return false;
+  }
+  CScalarBitmapIndexProbe *popIndexProbe = PopConvert(pop);
 
-	return m_pindexdesc->MDId()->Equals(popIndexProbe->Pindexdesc()->MDId());
+  return m_pindexdesc->MDId()->Equals(popIndexProbe->Pindexdesc()->MDId());
 }
 
 //---------------------------------------------------------------------------
@@ -104,16 +97,14 @@ CScalarBitmapIndexProbe::Matches(COperator *pop) const
 //		Debug print of this operator
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarBitmapIndexProbe::OsPrint(IOstream &os) const
-{
-	os << SzId() << " ";
-	// index name
-	os << "  Bitmap Index Name: (";
-	m_pindexdesc->Name().OsPrint(os);
-	os << ")";
+IOstream &CScalarBitmapIndexProbe::OsPrint(IOstream &os) const {
+  os << SzId() << " ";
+  // index name
+  os << "  Bitmap Index Name: (";
+  m_pindexdesc->Name().OsPrint(os);
+  os << ")";
 
-	return os;
+  return os;
 }
 
 // EOF

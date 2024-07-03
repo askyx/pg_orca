@@ -13,10 +13,10 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalSequenceProject.h"
+#include "gpopt/operators/CPatternLeaf.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -27,15 +27,11 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformSequenceProject2Apply::CXformSequenceProject2Apply(CMemoryPool *mp)
-	:  // pattern
-	  CXformSubqueryUnnest(GPOS_NEW(mp) CExpression(
-		  mp, GPOS_NEW(mp) CLogicalSequenceProject(mp),
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // relational child
-		  GPOS_NEW(mp)
-			  CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))  // project list
-		  ))
-{
-}
+    :  // pattern
+      CXformSubqueryUnnest(GPOS_NEW(mp) CExpression(
+          mp, GPOS_NEW(mp) CLogicalSequenceProject(mp),
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // relational child
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // project list
+          )) {}
 
 // EOF

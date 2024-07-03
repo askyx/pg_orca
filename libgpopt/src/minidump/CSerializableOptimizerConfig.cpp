@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2018 Pivotal, Inc..
+//	Copyright (C) 2018 VMware, Inc. or its affiliates..
 //
 //	@filename:
 //		CSerializableOptimizerConfig.cpp
@@ -37,11 +37,9 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CSerializableOptimizerConfig::CSerializableOptimizerConfig(
-	CMemoryPool *mp, const COptimizerConfig *optimizer_config)
-	: CSerializable(), m_mp(mp), m_optimizer_config(optimizer_config)
-{
-	GPOS_ASSERT(NULL != optimizer_config);
+CSerializableOptimizerConfig::CSerializableOptimizerConfig(CMemoryPool *mp, const COptimizerConfig *optimizer_config)
+    : CSerializable(), m_mp(mp), m_optimizer_config(optimizer_config) {
+  GPOS_ASSERT(nullptr != optimizer_config);
 }
 
 //---------------------------------------------------------------------------
@@ -52,9 +50,7 @@ CSerializableOptimizerConfig::CSerializableOptimizerConfig(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CSerializableOptimizerConfig::~CSerializableOptimizerConfig()
-{
-}
+CSerializableOptimizerConfig::~CSerializableOptimizerConfig() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -64,15 +60,13 @@ CSerializableOptimizerConfig::~CSerializableOptimizerConfig()
 //		Serialize contents into provided stream
 //
 //---------------------------------------------------------------------------
-void
-CSerializableOptimizerConfig::Serialize(COstream &oos)
-{
-	CXMLSerializer xml_serializer(m_mp, oos, false /*Indent*/);
+void CSerializableOptimizerConfig::Serialize(COstream &oos) {
+  CXMLSerializer xml_serializer(m_mp, oos, false /*Indent*/);
 
-	// Copy traceflags from global state
-	CBitSet *pbs = CTask::Self()->GetTaskCtxt()->copy_trace_flags(m_mp);
-	m_optimizer_config->Serialize(m_mp, &xml_serializer, pbs);
-	pbs->Release();
+  // Copy traceflags from global state
+  CBitSet *pbs = CTask::Self()->GetTaskCtxt()->copy_trace_flags(m_mp);
+  m_optimizer_config->Serialize(m_mp, &xml_serializer, pbs);
+  pbs->Release();
 }
 
 // EOF

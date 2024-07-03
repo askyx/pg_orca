@@ -16,8 +16,7 @@
 
 #include "naucrates/base/IDatum.h"
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 //---------------------------------------------------------------------------
 //	@class:
 //		IDatumGeneric
@@ -26,31 +25,24 @@ namespace gpnaucrates
 //		Base abstract class for generic datum representation
 //
 //---------------------------------------------------------------------------
-class IDatumGeneric : public IDatum
-{
-private:
-	// private copy ctor
-	IDatumGeneric(const IDatumGeneric &);
+class IDatumGeneric : public IDatum {
+ private:
+ public:
+  IDatumGeneric(const IDatumGeneric &) = delete;
 
-public:
-	// ctor
-	IDatumGeneric(){};
+  // ctor
+  IDatumGeneric() = default;
 
-	// dtor
-	virtual ~IDatumGeneric(){};
+  // dtor
+  ~IDatumGeneric() override = default;
 
-	// accessor for datum type
-	virtual IMDType::ETypeInfo
-	GetDatumType()
-	{
-		return IMDType::EtiGeneric;
-	}
+  // accessor for datum type
+  IMDType::ETypeInfo GetDatumType() override { return IMDType::EtiGeneric; }
 
-};	// class IDatumGeneric
+};  // class IDatumGeneric
 
 }  // namespace gpnaucrates
 
-
-#endif	// !GPNAUCRATES_IDatumGeneric_H
+#endif  // !GPNAUCRATES_IDatumGeneric_H
 
 // EOF

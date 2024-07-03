@@ -17,17 +17,9 @@
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 #include "naucrates/dxl/operators/CDXLSpoolInfo.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 // indices of materialize elements in the children array
-enum Edxlmaterialize
-{
-	EdxlmatIndexProjList = 0,
-	EdxlmatIndexFilter,
-	EdxlmatIndexChild,
-	EdxlmatIndexSentinel
-};
+enum Edxlmaterialize { EdxlmatIndexProjList = 0, EdxlmatIndexFilter, EdxlmatIndexChild, EdxlmatIndexSentinel };
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -37,70 +29,64 @@ enum Edxlmaterialize
 //		Class for representing DXL materialize operators
 //
 //---------------------------------------------------------------------------
-class CDXLPhysicalMaterialize : public CDXLPhysical
-{
-private:
-	// eager materialization
-	BOOL m_is_eager;
+class CDXLPhysicalMaterialize : public CDXLPhysical {
+ private:
+  // eager materialization
+  BOOL m_is_eager;
 
-	// spool info
-	// id of the spooling operator
-	ULONG m_spooling_op_id;
+  // spool info
+  // id of the spooling operator
+  ULONG m_spooling_op_id;
 
-	// type of the underlying spool
-	Edxlspooltype m_spool_type;
+  // type of the underlying spool
+  Edxlspooltype m_spool_type;
 
-	// slice executing the underlying sort or materialize
-	INT m_executor_slice;
+  // slice executing the underlying sort or materialize
+  INT m_executor_slice;
 
-	// number of consumers in case the materialize is a spooling operator
-	ULONG m_num_consumer_slices;
+  // number of consumers in case the materialize is a spooling operator
+  ULONG m_num_consumer_slices;
 
-	// private copy ctor
-	CDXLPhysicalMaterialize(CDXLPhysicalMaterialize &);
+ public:
+  CDXLPhysicalMaterialize(CDXLPhysicalMaterialize &) = delete;
 
-public:
-	// ctor/dtor
-	CDXLPhysicalMaterialize(CMemoryPool *mp, BOOL is_eager);
+  // ctor/dtor
+  CDXLPhysicalMaterialize(CMemoryPool *mp, BOOL is_eager);
 
-	CDXLPhysicalMaterialize(CMemoryPool *mp, BOOL is_eager,
-							ULONG spooling_op_id, INT executor_slice,
-							ULONG num_consumer_slices);
+  CDXLPhysicalMaterialize(CMemoryPool *mp, BOOL is_eager, ULONG spooling_op_id, INT executor_slice,
+                          ULONG num_consumer_slices);
 
-	// accessors
-	Edxlopid GetDXLOperator() const;
-	const CWStringConst *GetOpNameStr() const;
-	ULONG GetSpoolingOpId() const;
-	INT GetExecutorSlice() const;
-	ULONG GetNumConsumerSlices() const;
+  // accessors
+  Edxlopid GetDXLOperator() const override;
+  const CWStringConst *GetOpNameStr() const override;
+  ULONG GetSpoolingOpId() const;
+  INT GetExecutorSlice() const;
+  ULONG GetNumConsumerSlices() const;
 
-	// is the operator spooling to other operators
-	BOOL IsSpooling() const;
+  // is the operator spooling to other operators
+  BOOL IsSpooling() const;
 
-	// does the operator do eager materialization
-	BOOL IsEager() const;
+  // does the operator do eager materialization
+  BOOL IsEager() const;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *node) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
-	// conversion function
-	static CDXLPhysicalMaterialize *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopPhysicalMaterialize == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLPhysicalMaterialize *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopPhysicalMaterialize == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLPhysicalMaterialize *>(dxl_op);
-	}
+    return dynamic_cast<CDXLPhysicalMaterialize *>(dxl_op);
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLPhysicalMaterialize_H
+#endif  // !GPDXL_CDXLPhysicalMaterialize_H
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,48 +26,35 @@ using namespace gpos;
 //		Push group by below join transform
 //
 //---------------------------------------------------------------------------
-class CXformPushGbBelowJoin : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformPushGbBelowJoin(const CXformPushGbBelowJoin &);
+class CXformPushGbBelowJoin : public CXformExploration {
+ private:
+ public:
+  CXformPushGbBelowJoin(const CXformPushGbBelowJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformPushGbBelowJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformPushGbBelowJoin(CMemoryPool *mp);
 
-	// ctor
-	explicit CXformPushGbBelowJoin(CExpression *pexprPattern);
+  // ctor
+  explicit CXformPushGbBelowJoin(CExpression *pexprPattern);
 
-	// dtor
-	virtual ~CXformPushGbBelowJoin()
-	{
-	}
+  // dtor
+  ~CXformPushGbBelowJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfPushGbBelowJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfPushGbBelowJoin; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformPushGbBelowJoin";
-	}
+  const CHAR *SzId() const override { return "CXformPushGbBelowJoin"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformPushGbBelowJoin
+};  // class CXformPushGbBelowJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformPushGbBelowJoin_H
+#endif  // !GPOPT_CXformPushGbBelowJoin_H
 
 // EOF

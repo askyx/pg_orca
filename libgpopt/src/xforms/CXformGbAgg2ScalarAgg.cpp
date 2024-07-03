@@ -13,12 +13,13 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalGbAgg.h"
+#include "gpopt/operators/CPatternLeaf.h"
+#include "gpopt/operators/CPhysicalScalarAgg.h"
 #include "gpopt/xforms/CXformGbAgg2HashAgg.h"
 #include "gpopt/xforms/CXformUtils.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,15 +30,11 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformGbAgg2ScalarAgg::CXformGbAgg2ScalarAgg(CMemoryPool *mp)
-	: CXformImplementation(
-		  // pattern
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CLogicalGbAgg(mp),
-			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),
-			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))))
-{
-}
-
+    : CXformImplementation(
+          // pattern
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalGbAgg(mp),
+                                   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),
+                                   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)))) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -48,19 +45,14 @@ CXformGbAgg2ScalarAgg::CXformGbAgg2ScalarAgg(CMemoryPool *mp)
 //		grouping columns must be empty
 //
 //---------------------------------------------------------------------------
-CXform::EXformPromise
-CXformGbAgg2ScalarAgg::Exfp(CExpressionHandle &exprhdl) const
-{
-	if (0 < CLogicalGbAgg::PopConvert(exprhdl.Pop())->Pdrgpcr()->Size() ||
-		exprhdl.DeriveHasSubquery(1))
-	{
-		// GbAgg has grouping columns, or agg functions use subquery arguments
-		return CXform::ExfpNone;
-	}
+CXform::EXformPromise CXformGbAgg2ScalarAgg::Exfp(CExpressionHandle &exprhdl) const {
+  if (0 < CLogicalGbAgg::PopConvert(exprhdl.Pop())->Pdrgpcr()->Size() || exprhdl.DeriveHasSubquery(1)) {
+    // GbAgg has grouping columns, or agg functions use subquery arguments
+    return CXform::ExfpNone;
+  }
 
-	return CXform::ExfpHigh;
+  return CXform::ExfpHigh;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -70,47 +62,40 @@ CXformGbAgg2ScalarAgg::Exfp(CExpressionHandle &exprhdl) const
 //		Actual transformation
 //
 //---------------------------------------------------------------------------
-void
-CXformGbAgg2ScalarAgg::Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-								 CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformGbAgg2ScalarAgg::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CLogicalGbAgg *popAgg = CLogicalGbAgg::PopConvert(pexpr->Pop());
-	CMemoryPool *mp = pxfctxt->Pmp();
-	CColRefArray *colref_array = popAgg->Pdrgpcr();
-	colref_array->AddRef();
+  CLogicalGbAgg *popAgg = CLogicalGbAgg::PopConvert(pexpr->Pop());
+  CMemoryPool *mp = pxfctxt->Pmp();
+  CColRefArray *colref_array = popAgg->Pdrgpcr();
+  colref_array->AddRef();
 
-	// extract components
-	CExpression *pexprRel = (*pexpr)[0];
-	CExpression *pexprScalar = (*pexpr)[1];
+  // extract components
+  CExpression *pexprRel = (*pexpr)[0];
+  CExpression *pexprScalar = (*pexpr)[1];
 
-	// addref children
-	pexprRel->AddRef();
-	pexprScalar->AddRef();
+  // addref children
+  pexprRel->AddRef();
+  pexprScalar->AddRef();
 
-	CColRefArray *pdrgpcrArgDQA = popAgg->PdrgpcrArgDQA();
-	if (pdrgpcrArgDQA != NULL && 0 != pdrgpcrArgDQA->Size())
-	{
-		pdrgpcrArgDQA->AddRef();
-	}
+  CColRefArray *pdrgpcrArgDQA = popAgg->PdrgpcrArgDQA();
+  if (pdrgpcrArgDQA != nullptr && 0 != pdrgpcrArgDQA->Size()) {
+    pdrgpcrArgDQA->AddRef();
+  }
 
-	// create alternative expression
-	CExpression *pexprAlt = GPOS_NEW(mp) CExpression(
-		mp,
-		GPOS_NEW(mp) CPhysicalScalarAgg(
-			mp, colref_array, popAgg->PdrgpcrMinimal(), popAgg->Egbaggtype(),
-			popAgg->FGeneratesDuplicates(), pdrgpcrArgDQA,
-			CXformUtils::FMultiStageAgg(pexpr),
-			CXformUtils::FAggGenBySplitDQAXform(pexpr), popAgg->AggStage(),
-			!CXformUtils::FLocalAggCreatedByEagerAggXform(pexpr)),
-		pexprRel, pexprScalar);
+  // create alternative expression
+  CExpression *pexprAlt = GPOS_NEW(mp)
+      CExpression(mp,
+                  GPOS_NEW(mp) CPhysicalScalarAgg(
+                      mp, colref_array, popAgg->PdrgpcrMinimal(), popAgg->Egbaggtype(), popAgg->FGeneratesDuplicates(),
+                      pdrgpcrArgDQA, CXformUtils::FMultiStageAgg(pexpr), CXformUtils::FAggGenBySplitDQAXform(pexpr),
+                      popAgg->AggStage(), !CXformUtils::FLocalAggCreatedByEagerAggXform(pexpr)),
+                  pexprRel, pexprScalar);
 
-	// add alternative to transformation result
-	pxfres->Add(pexprAlt);
+  // add alternative to transformation result
+  pxfres->Add(pexprAlt);
 }
-
 
 // EOF

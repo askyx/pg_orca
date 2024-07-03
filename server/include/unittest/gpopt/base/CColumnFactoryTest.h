@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,15 +24,14 @@ using namespace gpos;
 //		unittests
 //
 //---------------------------------------------------------------------------
-class CColumnFactoryTest
-{
-public:
-	// actual unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
+class CColumnFactoryTest {
+ public:
+  // actual unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
 };
 }  // namespace gpopt
 
-#endif	// !GPOPT_CColumnFactoryTest_H
+#endif  // !GPOPT_CColumnFactoryTest_H
 
 // EOF

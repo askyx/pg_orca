@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLDatumStatsLintMappable.cpp
@@ -31,15 +31,9 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLDatumStatsLintMappable::CDXLDatumStatsLintMappable(
-	CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, BOOL is_null,
-	BYTE *byte_array, ULONG length, LINT value)
-	: CDXLDatumGeneric(mp, mdid_type, type_modifier, is_null, byte_array,
-					   length),
-	  m_val(value)
-{
-}
-
+CDXLDatumStatsLintMappable::CDXLDatumStatsLintMappable(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier,
+                                                       BOOL is_null, BYTE *byte_array, ULONG length, LINT value)
+    : CDXLDatumGeneric(mp, mdid_type, type_modifier, is_null, byte_array, length), m_val(value) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -49,29 +43,17 @@ CDXLDatumStatsLintMappable::CDXLDatumStatsLintMappable(
 //		Serialize datum in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLDatumStatsLintMappable::Serialize(CXMLSerializer *xml_serializer)
-{
-	m_mdid_type->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-	if (default_type_modifier != TypeModifier())
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
-	}
-	if (!m_is_null)
-	{
-		xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue),
-									 m_is_null, GetByteArray(), Length());
-	}
-	else
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
-	}
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenLintValue),
-								 GetLINTMapping());
+void CDXLDatumStatsLintMappable::Serialize(CXMLSerializer *xml_serializer) {
+  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  if (default_type_modifier != TypeModifier()) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
+  }
+  if (!m_is_null) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue), m_is_null, GetByteArray(), Length());
+  } else {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
+  }
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenLintValue), GetLINTMapping());
 }
-
 
 // EOF

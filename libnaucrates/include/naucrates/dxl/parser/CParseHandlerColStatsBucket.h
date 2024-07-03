@@ -17,14 +17,12 @@
 #include "naucrates/dxl/parser/CParseHandlerMetadataObject.h"
 
 // fwd decl
-namespace gpmd
-{
+namespace gpmd {
 class CMDIdColStats;
 class CDXLBucket;
 }  // namespace gpmd
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 using namespace gpnaucrates;
@@ -42,62 +40,57 @@ class CDXLDatum;
 //		Parse handler class for buckets of column stats objects
 //
 //---------------------------------------------------------------------------
-class CParseHandlerColStatsBucket : public CParseHandlerBase
-{
-private:
-	// frequency
-	CDouble m_frequency;
+class CParseHandlerColStatsBucket : public CParseHandlerBase {
+ private:
+  // frequency
+  CDouble m_frequency;
 
-	// distinct values
-	CDouble m_distinct;
+  // distinct values
+  CDouble m_distinct;
 
-	// lower bound value for the bucket
-	CDXLDatum *m_lower_bound_dxl_datum;
+  // lower bound value for the bucket
+  CDXLDatum *m_lower_bound_dxl_datum;
 
-	// upper bound value for the bucket
-	CDXLDatum *m_upper_bound_dxl_datum;
+  // upper bound value for the bucket
+  CDXLDatum *m_upper_bound_dxl_datum;
 
-	// is lower bound closed
-	BOOL m_is_lower_closed;
+  // is lower bound closed
+  BOOL m_is_lower_closed;
 
-	// is upper bound closed
-	BOOL m_is_upper_closed;
+  // is upper bound closed
+  BOOL m_is_upper_closed;
 
-	// dxl bucket object
-	CDXLBucket *m_dxl_bucket;
+  // dxl bucket object
+  CDXLBucket *m_dxl_bucket;
 
-	// private copy ctor
-	CParseHandlerColStatsBucket(const CParseHandlerColStatsBucket &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerColStatsBucket(const CParseHandlerColStatsBucket &) = delete;
 
-public:
-	// ctor
-	CParseHandlerColStatsBucket(CMemoryPool *mp,
-								CParseHandlerManager *parse_handler_mgr,
-								CParseHandlerBase *parse_handler_base);
+  // ctor
+  CParseHandlerColStatsBucket(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                              CParseHandlerBase *parse_handler_base);
 
-	// dtor
-	virtual ~CParseHandlerColStatsBucket();
+  // dtor
+  ~CParseHandlerColStatsBucket() override;
 
-	// returns the constructed bucket
-	CDXLBucket *GetDXLBucketAt() const;
+  // returns the constructed bucket
+  CDXLBucket *GetDXLBucketAt() const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerColStatsBucket_H
+#endif  // !GPDXL_CParseHandlerColStatsBucket_H
 
 // EOF

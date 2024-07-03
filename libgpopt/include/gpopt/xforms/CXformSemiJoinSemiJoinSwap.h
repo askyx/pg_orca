@@ -13,11 +13,10 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalLeftSemiJoin.h"
 #include "gpopt/xforms/CXformJoinSwap.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,49 +27,30 @@ using namespace gpos;
 //		Swap two cascaded semi-joins
 //
 //---------------------------------------------------------------------------
-class CXformSemiJoinSemiJoinSwap
-	: public CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalLeftSemiJoin>
-{
-private:
-	// private copy ctor
-	CXformSemiJoinSemiJoinSwap(const CXformSemiJoinSemiJoinSwap &);
+class CXformSemiJoinSemiJoinSwap : public CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalLeftSemiJoin> {
+ private:
+ public:
+  CXformSemiJoinSemiJoinSwap(const CXformSemiJoinSemiJoinSwap &) = delete;
 
-public:
-	// ctor
-	explicit CXformSemiJoinSemiJoinSwap(CMemoryPool *mp)
-		: CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalLeftSemiJoin>(mp)
-	{
-	}
+  // ctor
+  explicit CXformSemiJoinSemiJoinSwap(CMemoryPool *mp)
+      : CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalLeftSemiJoin>(mp) {}
 
-	// dtor
-	virtual ~CXformSemiJoinSemiJoinSwap()
-	{
-	}
+  // dtor
+  ~CXformSemiJoinSemiJoinSwap() override = default;
 
-	// Compatibility function
-	virtual BOOL
-	FCompatible(CXform::EXformId exfid)
-	{
-		return ExfSemiJoinSemiJoinSwap != exfid;
-	}
+  // Compatibility function
+  BOOL FCompatible(CXform::EXformId exfid) override { return ExfSemiJoinSemiJoinSwap != exfid; }
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSemiJoinSemiJoinSwap;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfSemiJoinSemiJoinSwap; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSemiJoinSemiJoinSwap";
-	}
+  const CHAR *SzId() const override { return "CXformSemiJoinSemiJoinSwap"; }
 
-};	// class CXformSemiJoinSemiJoinSwap
+};  // class CXformSemiJoinSemiJoinSwap
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSemiJoinSemiJoinSwap_H
+#endif  // !GPOPT_CXformSemiJoinSemiJoinSwap_H
 
 // EOF

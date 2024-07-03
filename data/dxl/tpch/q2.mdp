@@ -3,9 +3,10 @@
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="103001"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
@@ -1514,142 +1515,100 @@
       <dxl:RelationStatistics Mdid="2.24611.1.1" Name="nation" Rows="25.000000"/>
       <dxl:RelationStatistics Mdid="2.24657.1.1" Name="partsupp" Rows="801020.000000"/>
       <dxl:RelationStatistics Mdid="2.24749.1.1" Name="part" Rows="200152.000000"/>
-      <dxl:Relation Mdid="0.24611.1.1" Name="nation" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="10,4">
+      <dxl:Relation Mdid="6.24611.1.1" Name="nation" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="10,4">
         <dxl:Columns>
           <dxl:Column Name="n_nationkey" Attno="1" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="n_name" Attno="2" Mdid="0.1042.1.0" Nullable="false" ColWidth="25">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="n_regionkey" Attno="3" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="n_comment" Attno="4" Mdid="0.1043.1.0" Nullable="true" ColWidth="152">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
-      <dxl:Relation Mdid="0.24657.1.1" Name="partsupp" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="11,5">
+      <dxl:Relation Mdid="6.24657.1.1" Name="partsupp" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="11,5">
         <dxl:Columns>
           <dxl:Column Name="ps_partkey" Attno="1" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ps_suppkey" Attno="2" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ps_availqty" Attno="3" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ps_supplycost" Attno="4" Mdid="0.1700.1.0" Nullable="false" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ps_comment" Attno="5" Mdid="0.1043.1.0" Nullable="false" ColWidth="199">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
-      <dxl:Relation Mdid="0.24749.1.1" Name="part" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="15,9">
+      <dxl:Relation Mdid="6.24749.1.1" Name="part" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="15,9">
         <dxl:Columns>
           <dxl:Column Name="p_partkey" Attno="1" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p_name" Attno="2" Mdid="0.1043.1.0" Nullable="false" ColWidth="55">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p_mfgr" Attno="3" Mdid="0.1042.1.0" Nullable="false" ColWidth="25">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p_brand" Attno="4" Mdid="0.1042.1.0" Nullable="false" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p_type" Attno="5" Mdid="0.1043.1.0" Nullable="false" ColWidth="25">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p_size" Attno="6" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p_container" Attno="7" Mdid="0.1042.1.0" Nullable="false" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p_retailprice" Attno="8" Mdid="0.1700.1.0" Nullable="false" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="p_comment" Attno="9" Mdid="0.1043.1.0" Nullable="false" ColWidth="25">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.24588.1.1.5" Name="cmin" Width="4.000000"/>
@@ -1980,90 +1939,64 @@
       <dxl:MDCast Mdid="3.1700.1.0;1700.1.0" Name="numeric" BinaryCoercible="true" SourceTypeId="0.1700.1.0" DestinationTypeId="0.1700.1.0" CastFuncId="0.0.0.0"/>
       <dxl:RelationStatistics Mdid="2.24588.1.1" Name="region" Rows="5.000000"/>
       <dxl:RelationStatistics Mdid="2.24634.1.1" Name="supplier" Rows="9972.000000"/>
-      <dxl:Relation Mdid="0.24588.1.1" Name="region" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
+      <dxl:Relation Mdid="6.24588.1.1" Name="region" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="9,3">
         <dxl:Columns>
           <dxl:Column Name="r_regionkey" Attno="1" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="r_name" Attno="2" Mdid="0.1042.1.0" Nullable="false" ColWidth="25">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="r_comment" Attno="3" Mdid="0.1043.1.0" Nullable="true" ColWidth="152">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
-      <dxl:Relation Mdid="0.24634.1.1" Name="supplier" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="13,7">
+      <dxl:Relation Mdid="6.24634.1.1" Name="supplier" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="13,7">
         <dxl:Columns>
           <dxl:Column Name="s_suppkey" Attno="1" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="s_name" Attno="2" Mdid="0.1042.1.0" Nullable="false" ColWidth="25">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="s_address" Attno="3" Mdid="0.1043.1.0" Nullable="false" ColWidth="40">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="s_nationkey" Attno="4" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="s_phone" Attno="5" Mdid="0.1042.1.0" Nullable="false" ColWidth="15">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="s_acctbal" Attno="6" Mdid="0.1700.1.0" Nullable="false" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="s_comment" Attno="7" Mdid="0.1043.1.0" Nullable="false" ColWidth="101">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.24588.1.1.7" Name="cmax" Width="4.000000"/>
@@ -2310,7 +2243,7 @@
         <dxl:LimitOffset/>
         <dxl:LogicalJoin JoinType="Inner">
           <dxl:LogicalGet>
-            <dxl:TableDescriptor Mdid="0.24749.1.1" TableName="part">
+            <dxl:TableDescriptor Mdid="6.24749.1.1" TableName="part">
               <dxl:Columns>
                 <dxl:Column ColId="1" Attno="1" ColName="p_partkey" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="2" Attno="2" ColName="p_name" TypeMdid="0.1043.1.0" ColWidth="55"/>
@@ -2332,7 +2265,7 @@
             </dxl:TableDescriptor>
           </dxl:LogicalGet>
           <dxl:LogicalGet>
-            <dxl:TableDescriptor Mdid="0.24634.1.1" TableName="supplier">
+            <dxl:TableDescriptor Mdid="6.24634.1.1" TableName="supplier">
               <dxl:Columns>
                 <dxl:Column ColId="17" Attno="1" ColName="s_suppkey" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="18" Attno="2" ColName="s_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -2352,7 +2285,7 @@
             </dxl:TableDescriptor>
           </dxl:LogicalGet>
           <dxl:LogicalGet>
-            <dxl:TableDescriptor Mdid="0.24657.1.1" TableName="partsupp">
+            <dxl:TableDescriptor Mdid="6.24657.1.1" TableName="partsupp">
               <dxl:Columns>
                 <dxl:Column ColId="31" Attno="1" ColName="ps_partkey" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="32" Attno="2" ColName="ps_suppkey" TypeMdid="0.23.1.0"/>
@@ -2370,7 +2303,7 @@
             </dxl:TableDescriptor>
           </dxl:LogicalGet>
           <dxl:LogicalGet>
-            <dxl:TableDescriptor Mdid="0.24611.1.1" TableName="nation">
+            <dxl:TableDescriptor Mdid="6.24611.1.1" TableName="nation">
               <dxl:Columns>
                 <dxl:Column ColId="43" Attno="1" ColName="n_nationkey" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="44" Attno="2" ColName="n_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -2387,7 +2320,7 @@
             </dxl:TableDescriptor>
           </dxl:LogicalGet>
           <dxl:LogicalGet>
-            <dxl:TableDescriptor Mdid="0.24588.1.1" TableName="region">
+            <dxl:TableDescriptor Mdid="6.24588.1.1" TableName="region">
               <dxl:Columns>
                 <dxl:Column ColId="54" Attno="1" ColName="r_regionkey" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="55" Attno="2" ColName="r_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -2440,14 +2373,19 @@
                   <dxl:GroupingColumns/>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="111" Alias="min">
-                      <dxl:AggFunc AggMdid="0.2146.1.0" AggDistinct="false" AggStage="Normal">
+                      <dxl:AggFunc AggMdid="0.2146.1.0" AggDistinct="false" AggStage="Normal" AggKind="n" AggArgTypes="">
+                        <dxl:ValuesList ParamType="aggargs">
                         <dxl:Ident ColId="67" ColName="ps_supplycost" TypeMdid="0.1700.1.0"/>
+                        </dxl:ValuesList>
+                        <dxl:ValuesList ParamType="aggdirectargs"/>
+                        <dxl:ValuesList ParamType="aggorder"/>
+                        <dxl:ValuesList ParamType="aggdistinct"/>
                       </dxl:AggFunc>
                     </dxl:ProjElem>
                   </dxl:ProjList>
                   <dxl:LogicalJoin JoinType="Inner">
                     <dxl:LogicalGet>
-                      <dxl:TableDescriptor Mdid="0.24657.1.1" TableName="partsupp">
+                      <dxl:TableDescriptor Mdid="6.24657.1.1" TableName="partsupp">
                         <dxl:Columns>
                           <dxl:Column ColId="64" Attno="1" ColName="ps_partkey" TypeMdid="0.23.1.0"/>
                           <dxl:Column ColId="65" Attno="2" ColName="ps_suppkey" TypeMdid="0.23.1.0"/>
@@ -2465,7 +2403,7 @@
                       </dxl:TableDescriptor>
                     </dxl:LogicalGet>
                     <dxl:LogicalGet>
-                      <dxl:TableDescriptor Mdid="0.24634.1.1" TableName="supplier">
+                      <dxl:TableDescriptor Mdid="6.24634.1.1" TableName="supplier">
                         <dxl:Columns>
                           <dxl:Column ColId="76" Attno="1" ColName="s_suppkey" TypeMdid="0.23.1.0"/>
                           <dxl:Column ColId="77" Attno="2" ColName="s_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -2485,7 +2423,7 @@
                       </dxl:TableDescriptor>
                     </dxl:LogicalGet>
                     <dxl:LogicalGet>
-                      <dxl:TableDescriptor Mdid="0.24611.1.1" TableName="nation">
+                      <dxl:TableDescriptor Mdid="6.24611.1.1" TableName="nation">
                         <dxl:Columns>
                           <dxl:Column ColId="90" Attno="1" ColName="n_nationkey" TypeMdid="0.23.1.0"/>
                           <dxl:Column ColId="91" Attno="2" ColName="n_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -2502,7 +2440,7 @@
                       </dxl:TableDescriptor>
                     </dxl:LogicalGet>
                     <dxl:LogicalGet>
-                      <dxl:TableDescriptor Mdid="0.24588.1.1" TableName="region">
+                      <dxl:TableDescriptor Mdid="6.24588.1.1" TableName="region">
                         <dxl:Columns>
                           <dxl:Column ColId="101" Attno="1" ColName="r_regionkey" TypeMdid="0.23.1.0"/>
                           <dxl:Column ColId="102" Attno="2" ColName="r_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -2962,8 +2900,13 @@
                       </dxl:GroupingColumns>
                       <dxl:ProjList>
                         <dxl:ProjElem ColId="110" Alias="min">
-                          <dxl:AggFunc AggMdid="0.2146.1.0" AggDistinct="false" AggStage="Normal">
+                          <dxl:AggFunc AggMdid="0.2146.1.0" AggDistinct="false" AggStage="Normal" AggKind="n" AggArgTypes="">
+                            <dxl:ValuesList ParamType="aggargs">
                             <dxl:Ident ColId="66" ColName="ps_supplycost" TypeMdid="0.1700.1.0"/>
+                            </dxl:ValuesList>
+                            <dxl:ValuesList ParamType="aggdirectargs"/>
+                            <dxl:ValuesList ParamType="aggorder"/>
+                            <dxl:ValuesList ParamType="aggdistinct"/>
                           </dxl:AggFunc>
                         </dxl:ProjElem>
                         <dxl:ProjElem ColId="0" Alias="p_partkey">
@@ -3415,7 +3358,7 @@
                                 </dxl:ProjElem>
                               </dxl:ProjList>
                               <dxl:Filter/>
-                              <dxl:TableDescriptor Mdid="0.24657.1.1" TableName="partsupp">
+                              <dxl:TableDescriptor Mdid="6.24657.1.1" TableName="partsupp">
                                 <dxl:Columns>
                                   <dxl:Column ColId="63" Attno="1" ColName="ps_partkey" TypeMdid="0.23.1.0"/>
                                   <dxl:Column ColId="64" Attno="2" ColName="ps_suppkey" TypeMdid="0.23.1.0"/>
@@ -3473,7 +3416,7 @@
                                     </dxl:ProjElem>
                                   </dxl:ProjList>
                                   <dxl:Filter/>
-                                  <dxl:TableDescriptor Mdid="0.24634.1.1" TableName="supplier">
+                                  <dxl:TableDescriptor Mdid="6.24634.1.1" TableName="supplier">
                                     <dxl:Columns>
                                       <dxl:Column ColId="75" Attno="1" ColName="s_suppkey" TypeMdid="0.23.1.0"/>
                                       <dxl:Column ColId="76" Attno="2" ColName="s_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -3533,7 +3476,7 @@
                                         </dxl:ProjElem>
                                       </dxl:ProjList>
                                       <dxl:Filter/>
-                                      <dxl:TableDescriptor Mdid="0.24611.1.1" TableName="nation">
+                                      <dxl:TableDescriptor Mdid="6.24611.1.1" TableName="nation">
                                         <dxl:Columns>
                                           <dxl:Column ColId="89" Attno="1" ColName="n_nationkey" TypeMdid="0.23.1.0"/>
                                           <dxl:Column ColId="90" Attno="2" ColName="n_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -3575,7 +3518,7 @@
                                             <dxl:ConstValue TypeMdid="0.1042.1.0" Value="AAAACkVVUk9QRQ==" LintValue="931701620"/>
                                           </dxl:Comparison>
                                         </dxl:Filter>
-                                        <dxl:TableDescriptor Mdid="0.24588.1.1" TableName="region">
+                                        <dxl:TableDescriptor Mdid="6.24588.1.1" TableName="region">
                                           <dxl:Columns>
                                             <dxl:Column ColId="100" Attno="1" ColName="r_regionkey" TypeMdid="0.23.1.0"/>
                                             <dxl:Column ColId="101" Attno="2" ColName="r_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -3719,7 +3662,7 @@
                             <dxl:Filter/>
                             <dxl:SortingColumnList/>
                             <dxl:HashExprList>
-                              <dxl:HashExpr TypeMdid="0.23.1.0">
+                              <dxl:HashExpr>
                                 <dxl:Ident ColId="0" ColName="p_partkey" TypeMdid="0.23.1.0"/>
                               </dxl:HashExpr>
                             </dxl:HashExprList>
@@ -3959,7 +3902,7 @@
                                     </dxl:ProjElem>
                                   </dxl:ProjList>
                                   <dxl:Filter/>
-                                  <dxl:TableDescriptor Mdid="0.24634.1.1" TableName="supplier">
+                                  <dxl:TableDescriptor Mdid="6.24634.1.1" TableName="supplier">
                                     <dxl:Columns>
                                       <dxl:Column ColId="16" Attno="1" ColName="s_suppkey" TypeMdid="0.23.1.0"/>
                                       <dxl:Column ColId="17" Attno="2" ColName="s_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -4091,7 +4034,7 @@
                                         </dxl:ProjElem>
                                       </dxl:ProjList>
                                       <dxl:Filter/>
-                                      <dxl:TableDescriptor Mdid="0.24611.1.1" TableName="nation">
+                                      <dxl:TableDescriptor Mdid="6.24611.1.1" TableName="nation">
                                         <dxl:Columns>
                                           <dxl:Column ColId="42" Attno="1" ColName="n_nationkey" TypeMdid="0.23.1.0"/>
                                           <dxl:Column ColId="43" Attno="2" ColName="n_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -4157,7 +4100,7 @@
                                             <dxl:ConstValue TypeMdid="0.1042.1.0" Value="AAAACkVVUk9QRQ==" LintValue="931701620"/>
                                           </dxl:Comparison>
                                         </dxl:Filter>
-                                        <dxl:TableDescriptor Mdid="0.24588.1.1" TableName="region">
+                                        <dxl:TableDescriptor Mdid="6.24588.1.1" TableName="region">
                                           <dxl:Columns>
                                             <dxl:Column ColId="53" Attno="1" ColName="r_regionkey" TypeMdid="0.23.1.0"/>
                                             <dxl:Column ColId="54" Attno="2" ColName="r_name" TypeMdid="0.1042.1.0" ColWidth="25"/>
@@ -4239,7 +4182,7 @@
                                 <dxl:Filter/>
                                 <dxl:SortingColumnList/>
                                 <dxl:HashExprList>
-                                  <dxl:HashExpr TypeMdid="0.23.1.0">
+                                  <dxl:HashExpr>
                                     <dxl:Ident ColId="31" ColName="ps_suppkey" TypeMdid="0.23.1.0"/>
                                   </dxl:HashExpr>
                                 </dxl:HashExprList>
@@ -4339,7 +4282,7 @@
                                       </dxl:ProjElem>
                                     </dxl:ProjList>
                                     <dxl:Filter/>
-                                    <dxl:TableDescriptor Mdid="0.24657.1.1" TableName="partsupp">
+                                    <dxl:TableDescriptor Mdid="6.24657.1.1" TableName="partsupp">
                                       <dxl:Columns>
                                         <dxl:Column ColId="30" Attno="1" ColName="ps_partkey" TypeMdid="0.23.1.0"/>
                                         <dxl:Column ColId="31" Attno="2" ColName="ps_suppkey" TypeMdid="0.23.1.0"/>
@@ -4409,7 +4352,7 @@
                                         </dxl:Comparison>
                                       </dxl:And>
                                     </dxl:Filter>
-                                    <dxl:TableDescriptor Mdid="0.24749.1.1" TableName="part">
+                                    <dxl:TableDescriptor Mdid="6.24749.1.1" TableName="part">
                                       <dxl:Columns>
                                         <dxl:Column ColId="0" Attno="1" ColName="p_partkey" TypeMdid="0.23.1.0"/>
                                         <dxl:Column ColId="1" Attno="2" ColName="p_name" TypeMdid="0.1043.1.0" ColWidth="55"/>

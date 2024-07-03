@@ -13,8 +13,7 @@
 
 #include "gpos/error/CErrorHandler.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CErrorHandlerStandard
@@ -23,29 +22,23 @@ namespace gpos
 //		Default error handler;
 //
 //---------------------------------------------------------------------------
-class CErrorHandlerStandard : public CErrorHandler
-{
-private:
-	// private copy ctor
-	CErrorHandlerStandard(const CErrorHandlerStandard &);
+class CErrorHandlerStandard : public CErrorHandler {
+ private:
+ public:
+  CErrorHandlerStandard(const CErrorHandlerStandard &) = delete;
 
-public:
-	// ctor
-	CErrorHandlerStandard()
-	{
-	}
+  // ctor
+  CErrorHandlerStandard() = default;
 
-	// dtor
-	virtual ~CErrorHandlerStandard()
-	{
-	}
+  // dtor
+  ~CErrorHandlerStandard() override = default;
 
-	// process error
-	virtual void Process(CException exception);
+  // process error
+  void Process(CException exception) override;
 
-};	// class CErrorHandlerStandard
+};  // class CErrorHandlerStandard
 }  // namespace gpos
 
-#endif	// !GPOS_CErrorHandlerStandard_H
+#endif  // !GPOS_CErrorHandlerStandard_H
 
 // EOF

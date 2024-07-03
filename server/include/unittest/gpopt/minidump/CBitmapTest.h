@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CBitmapTest.h
@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,21 +24,20 @@ using namespace gpos;
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CBitmapTest
-{
-private:
-	// counter used to mark last successful test
-	static ULONG m_ulBitmapTestCounter;
+class CBitmapTest {
+ private:
+  // counter used to mark last successful test
+  static ULONG m_ulBitmapTestCounter;
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
 
-	static GPOS_RESULT EresUnittest_RunTests();
+  static GPOS_RESULT EresUnittest_RunTests();
 
-};	// class CBitmapTest
+};  // class CBitmapTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CBitmapTest_H
+#endif  // !GPOPT_CBitmapTest_H
 
 // EOF

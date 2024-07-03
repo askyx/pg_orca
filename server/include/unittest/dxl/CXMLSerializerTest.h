@@ -9,7 +9,6 @@
 //		Tests the XML serializer
 //---------------------------------------------------------------------------
 
-
 #ifndef GPOPT_CXMLSerializerTest_H
 #define GPOPT_CXMLSerializerTest_H
 
@@ -19,13 +18,11 @@
 #include "naucrates/dxl/xml/CDXLMemoryManager.h"
 
 // fwd decl
-namespace gpos
-{
+namespace gpos {
 class CWStringDynamic;
 }
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -37,23 +34,22 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 
-class CXMLSerializerTest
-{
-private:
-	// helper function for using the XML serializer to generate a document
-	// with or without indentation
-	static CWStringDynamic *Pstr(CMemoryPool *mp, BOOL indentation);
+class CXMLSerializerTest {
+ private:
+  // helper function for using the XML serializer to generate a document
+  // with or without indentation
+  static CWStringDynamic *Pstr(CMemoryPool *mp, BOOL indentation);
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
-	static GPOS_RESULT EresUnittest_NoIndent();
-	static GPOS_RESULT EresUnittest_Base64();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
+  static GPOS_RESULT EresUnittest_NoIndent();
+  static GPOS_RESULT EresUnittest_Base64();
 
-};	// class CXMLSerializerTest
+};  // class CXMLSerializerTest
 }  // namespace gpdxl
 
-#endif	// !GPOPT_CXMLSerializerTest_H
+#endif  // !GPOPT_CXMLSerializerTest_H
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright 2014 Pivotal Inc.
+//	Copyright 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CLogicalLeftSemiApplyIn.h
@@ -16,8 +16,7 @@
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalLeftSemiApply.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalLeftSemiApplyIn
@@ -26,75 +25,53 @@ namespace gpopt
 //		Logical Apply operator used in IN/ANY subqueries
 //
 //---------------------------------------------------------------------------
-class CLogicalLeftSemiApplyIn : public CLogicalLeftSemiApply
-{
-private:
-	// private copy ctor
-	CLogicalLeftSemiApplyIn(const CLogicalLeftSemiApplyIn &);
+class CLogicalLeftSemiApplyIn : public CLogicalLeftSemiApply {
+ private:
+ public:
+  CLogicalLeftSemiApplyIn(const CLogicalLeftSemiApplyIn &) = delete;
 
-public:
-	// ctor
-	explicit CLogicalLeftSemiApplyIn(CMemoryPool *mp)
-		: CLogicalLeftSemiApply(mp)
-	{
-	}
+  // ctor
+  explicit CLogicalLeftSemiApplyIn(CMemoryPool *mp) : CLogicalLeftSemiApply(mp) {}
 
-	// ctor
-	CLogicalLeftSemiApplyIn(CMemoryPool *mp, CColRefArray *pdrgpcrInner,
-							EOperatorId eopidOriginSubq)
-		: CLogicalLeftSemiApply(mp, pdrgpcrInner, eopidOriginSubq)
-	{
-	}
+  // ctor
+  CLogicalLeftSemiApplyIn(CMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq)
+      : CLogicalLeftSemiApply(mp, pdrgpcrInner, eopidOriginSubq) {}
 
-	// dtor
-	virtual ~CLogicalLeftSemiApplyIn()
-	{
-	}
+  // dtor
+  ~CLogicalLeftSemiApplyIn() override = default;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalLeftSemiApplyIn;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalLeftSemiApplyIn; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalLeftSemiApplyIn";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalLeftSemiApplyIn"; }
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// candidate set of xforms
-	virtual CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	// conversion function
-	static CLogicalLeftSemiApplyIn *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalLeftSemiApplyIn == pop->Eopid());
+  // conversion function
+  static CLogicalLeftSemiApplyIn *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalLeftSemiApplyIn == pop->Eopid());
 
-		return dynamic_cast<CLogicalLeftSemiApplyIn *>(pop);
-	}
+    return dynamic_cast<CLogicalLeftSemiApplyIn *>(pop);
+  }
 
-};	// class CLogicalLeftSemiApplyIn
+};  // class CLogicalLeftSemiApplyIn
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CLogicalLeftSemiApplyIn_H
+#endif  // !GPOPT_CLogicalLeftSemiApplyIn_H
 
 // EOF

@@ -19,7 +19,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CLogicalLeftAntiSemiJoinNotIn::CLogicalLeftAntiSemiJoinNotIn
@@ -28,10 +27,9 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalLeftAntiSemiJoinNotIn::CLogicalLeftAntiSemiJoinNotIn(CMemoryPool *mp)
-	: CLogicalLeftAntiSemiJoin(mp)
-{
-	GPOS_ASSERT(NULL != mp);
+CLogicalLeftAntiSemiJoinNotIn::CLogicalLeftAntiSemiJoinNotIn(CMemoryPool *mp, CXform::EXformId origin_xform)
+    : CLogicalLeftAntiSemiJoin(mp, origin_xform) {
+  GPOS_ASSERT(nullptr != mp);
 }
 
 //---------------------------------------------------------------------------
@@ -42,22 +40,17 @@ CLogicalLeftAntiSemiJoinNotIn::CLogicalLeftAntiSemiJoinNotIn(CMemoryPool *mp)
 //		Get candidate xforms
 //
 //---------------------------------------------------------------------------
-CXformSet *
-CLogicalLeftAntiSemiJoinNotIn::PxfsCandidates(CMemoryPool *mp) const
-{
-	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
+CXformSet *CLogicalLeftAntiSemiJoinNotIn::PxfsCandidates(CMemoryPool *mp) const {
+  CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
 
-	(void) xform_set->ExchangeSet(
-		CXform::ExfAntiSemiJoinNotInAntiSemiJoinNotInSwap);
-	(void) xform_set->ExchangeSet(CXform::ExfAntiSemiJoinNotInAntiSemiJoinSwap);
-	(void) xform_set->ExchangeSet(CXform::ExfAntiSemiJoinNotInSemiJoinSwap);
-	(void) xform_set->ExchangeSet(CXform::ExfAntiSemiJoinNotInInnerJoinSwap);
-	(void) xform_set->ExchangeSet(
-		CXform::ExfLeftAntiSemiJoinNotIn2CrossProduct);
-	(void) xform_set->ExchangeSet(CXform::ExfLeftAntiSemiJoinNotIn2NLJoinNotIn);
-	(void) xform_set->ExchangeSet(
-		CXform::ExfLeftAntiSemiJoinNotIn2HashJoinNotIn);
-	return xform_set;
+  (void)xform_set->ExchangeSet(CXform::ExfAntiSemiJoinNotInAntiSemiJoinNotInSwap);
+  (void)xform_set->ExchangeSet(CXform::ExfAntiSemiJoinNotInAntiSemiJoinSwap);
+  (void)xform_set->ExchangeSet(CXform::ExfAntiSemiJoinNotInSemiJoinSwap);
+  (void)xform_set->ExchangeSet(CXform::ExfAntiSemiJoinNotInInnerJoinSwap);
+  (void)xform_set->ExchangeSet(CXform::ExfLeftAntiSemiJoinNotIn2CrossProduct);
+  (void)xform_set->ExchangeSet(CXform::ExfLeftAntiSemiJoinNotIn2NLJoinNotIn);
+  (void)xform_set->ExchangeSet(CXform::ExfLeftAntiSemiJoinNotIn2HashJoinNotIn);
+  return xform_set;
 }
 
 // EOF

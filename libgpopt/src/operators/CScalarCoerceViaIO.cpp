@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarCoerceViaIO.cpp
@@ -22,7 +22,6 @@
 using namespace gpopt;
 using namespace gpmd;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CScalarCoerceViaIO::CScalarCoerceViaIO
@@ -31,13 +30,9 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarCoerceViaIO::CScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type,
-									   INT type_modifier, ECoercionForm ecf,
-									   INT location)
-	: CScalarCoerceBase(mp, mdid_type, type_modifier, ecf, location)
-{
-}
-
+CScalarCoerceViaIO::CScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, ECoercionForm ecf,
+                                       INT location)
+    : CScalarCoerceBase(mp, mdid_type, type_modifier, ecf, location) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -47,20 +42,15 @@ CScalarCoerceViaIO::CScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type,
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarCoerceViaIO::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarCoerceViaIO *popCoerce = CScalarCoerceViaIO::PopConvert(pop);
+BOOL CScalarCoerceViaIO::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarCoerceViaIO *popCoerce = CScalarCoerceViaIO::PopConvert(pop);
 
-		return popCoerce->MdidType()->Equals(MdidType()) &&
-			   popCoerce->TypeModifier() == TypeModifier() &&
-			   popCoerce->Ecf() == Ecf() && popCoerce->Location() == Location();
-	}
+    return popCoerce->MdidType()->Equals(MdidType()) && popCoerce->TypeModifier() == TypeModifier() &&
+           popCoerce->Ecf() == Ecf() && popCoerce->Location() == Location();
+  }
 
-	return false;
+  return false;
 }
-
 
 // EOF

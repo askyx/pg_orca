@@ -16,9 +16,7 @@
 #include "gpopt/base/CDistributionSpecHashed.h"
 #include "gpopt/base/CUtils.h"
 
-
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -28,13 +26,10 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftSemiHashJoin::CPhysicalLeftSemiHashJoin(
-	CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys,
-	CExpressionArray *pdrgpexprInnerKeys)
-	: CPhysicalHashJoin(mp, pdrgpexprOuterKeys, pdrgpexprInnerKeys)
-{
-}
-
+CPhysicalLeftSemiHashJoin::CPhysicalLeftSemiHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys,
+                                                     CExpressionArray *pdrgpexprInnerKeys, IMdIdArray *hash_opfamilies,
+                                                     BOOL is_null_aware, CXform::EXformId origin_xform)
+    : CPhysicalHashJoin(mp, pdrgpexprOuterKeys, pdrgpexprInnerKeys, hash_opfamilies, is_null_aware, origin_xform) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,10 +39,7 @@ CPhysicalLeftSemiHashJoin::CPhysicalLeftSemiHashJoin(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CPhysicalLeftSemiHashJoin::~CPhysicalLeftSemiHashJoin()
-{
-}
-
+CPhysicalLeftSemiHashJoin::~CPhysicalLeftSemiHashJoin() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -57,35 +49,23 @@ CPhysicalLeftSemiHashJoin::~CPhysicalLeftSemiHashJoin()
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalLeftSemiHashJoin::FProvidesReqdCols(CExpressionHandle &exprhdl,
-											 CColRefSet *pcrsRequired,
-											 ULONG	// ulOptReq
-) const
-{
-	// left semi join only propagates columns from left child
-	return FOuterProvidesReqdCols(exprhdl, pcrsRequired);
+BOOL CPhysicalLeftSemiHashJoin::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                                  ULONG  // ulOptReq
+) const {
+  // left semi join only propagates columns from left child
+  return FOuterProvidesReqdCols(exprhdl, pcrsRequired);
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalLeftSemiHashJoin::PppsRequired
-//
-//	@doc:
-//		Compute required partition propagation of the n-th child
-//
-//---------------------------------------------------------------------------
-CPartitionPropagationSpec *
-CPhysicalLeftSemiHashJoin::PppsRequired(CMemoryPool *mp,
-										CExpressionHandle &exprhdl,
-										CPartitionPropagationSpec *pppsRequired,
-										ULONG child_index,
-										CDrvdPropArray *pdrgpdpCtxt,
-										ULONG  // ulOptReq
-)
-{
-	return PppsRequiredJoinChild(mp, exprhdl, pppsRequired, child_index,
-								 pdrgpdpCtxt, false);
+CPartitionPropagationSpec *CPhysicalLeftSemiHashJoin::PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                                   CPartitionPropagationSpec *pppsRequired,
+                                                                   ULONG child_index, CDrvdPropArray *pdrgpdpCtxt,
+                                                                   ULONG ulOptReq) const {
+  return PppsRequiredForJoins(mp, exprhdl, pppsRequired, child_index, pdrgpdpCtxt, ulOptReq);
 }
 
+// In the following function, we are generating the Derived property :
+// "Partition Propagation Spec" of Right Outer Hash join.
+CPartitionPropagationSpec *CPhysicalLeftSemiHashJoin::PppsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
+  return PppsDeriveForJoins(mp, exprhdl);
+}
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2019 Pivotal Software, Inc.
+//	Copyright (C) 2019 VMware, Inc. or its affiliates.
 //
 #ifndef GPOPT_CXformImplementFullOuterMergeJoin_H
 #define GPOPT_CXformImplementFullOuterMergeJoin_H
@@ -9,53 +9,38 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // FIXME: This should derive from CXformImplementation, but there is an unrelated bug
 // with ImplementMergeJoin() that causes us to generate an invalid plan in some
 // cases if we change this without fixing the bug.
-class CXformImplementFullOuterMergeJoin : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformImplementFullOuterMergeJoin(
-		const CXformImplementFullOuterMergeJoin &);
+class CXformImplementFullOuterMergeJoin : public CXformExploration {
+ private:
+ public:
+  CXformImplementFullOuterMergeJoin(const CXformImplementFullOuterMergeJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementFullOuterMergeJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementFullOuterMergeJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformImplementFullOuterMergeJoin()
-	{
-	}
+  // dtor
+  ~CXformImplementFullOuterMergeJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementFullOuterMergeJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementFullOuterMergeJoin; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementFullOuterMergeJoin";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformImplementFullOuterMergeJoin"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformImplementFullOuterMergeJoin
+};  // class CXformImplementFullOuterMergeJoin
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementFullOuterMergeJoin_H
+#endif  // !GPOPT_CXformImplementFullOuterMergeJoin_H
 
 // EOF

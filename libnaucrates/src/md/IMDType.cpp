@@ -28,19 +28,15 @@ using namespace gpmd;
 //		Return the comparison type as a string value
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-IMDType::GetCmpTypeStr(IMDType::ECmpType cmp_type)
-{
-	GPOS_ASSERT(IMDType::EcmptOther >= cmp_type);
+const CWStringConst *IMDType::GetCmpTypeStr(IMDType::ECmpType cmp_type) {
+  GPOS_ASSERT(IMDType::EcmptOther >= cmp_type);
 
-	Edxltoken dxl_token_array[] = {
-		EdxltokenCmpEq, EdxltokenCmpNeq, EdxltokenCmpLt,  EdxltokenCmpLeq,
-		EdxltokenCmpGt, EdxltokenCmpGeq, EdxltokenCmpIDF, EdxltokenCmpOther};
+  Edxltoken dxl_token_array[] = {EdxltokenCmpEq, EdxltokenCmpNeq, EdxltokenCmpLt,  EdxltokenCmpLeq,
+                                 EdxltokenCmpGt, EdxltokenCmpGeq, EdxltokenCmpIDF, EdxltokenCmpOther};
 
-	GPOS_ASSERT(IMDType::EcmptOther + 1 == GPOS_ARRAY_SIZE(dxl_token_array));
-	return CDXLTokens::GetDXLTokenStr(dxl_token_array[cmp_type]);
+  GPOS_ASSERT(IMDType::EcmptOther + 1 == GPOS_ARRAY_SIZE(dxl_token_array));
+  return CDXLTokens::GetDXLTokenStr(dxl_token_array[cmp_type]);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -51,19 +47,15 @@ IMDType::GetCmpTypeStr(IMDType::ECmpType cmp_type)
 //		datums of these two types; else return false
 //
 //---------------------------------------------------------------------------
-BOOL
-IMDType::StatsAreComparable(const IMDType *mdtype_first,
-							const IMDType *mdtype_second)
-{
-	GPOS_ASSERT(NULL != mdtype_first);
-	GPOS_ASSERT(NULL != mdtype_second);
+BOOL IMDType::StatsAreComparable(const IMDType *mdtype_first, const IMDType *mdtype_second) {
+  GPOS_ASSERT(nullptr != mdtype_first);
+  GPOS_ASSERT(nullptr != mdtype_second);
 
-	const IDatum *datum_first = mdtype_first->DatumNull();
-	const IDatum *datum_second = mdtype_second->DatumNull();
+  const IDatum *datum_first = mdtype_first->DatumNull();
+  const IDatum *datum_second = mdtype_second->DatumNull();
 
-	return datum_first->StatsAreComparable(datum_second);
+  return datum_first->StatsAreComparable(datum_second);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -74,17 +66,13 @@ IMDType::StatsAreComparable(const IMDType *mdtype_first,
 //		datum of the given type and a given datum; else return false
 //
 //---------------------------------------------------------------------------
-BOOL
-IMDType::StatsAreComparable(const IMDType *mdtype_first,
-							const IDatum *datum_second)
-{
-	GPOS_ASSERT(NULL != mdtype_first);
-	GPOS_ASSERT(NULL != datum_second);
+BOOL IMDType::StatsAreComparable(const IMDType *mdtype_first, const IDatum *datum_second) {
+  GPOS_ASSERT(nullptr != mdtype_first);
+  GPOS_ASSERT(nullptr != datum_second);
 
-	const IDatum *datum_first = mdtype_first->DatumNull();
+  const IDatum *datum_first = mdtype_first->DatumNull();
 
-	return datum_first->StatsAreComparable(datum_second);
+  return datum_first->StatsAreComparable(datum_second);
 }
-
 
 // EOF

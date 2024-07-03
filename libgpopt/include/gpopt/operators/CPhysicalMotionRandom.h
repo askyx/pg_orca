@@ -17,8 +17,7 @@
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/operators/CPhysicalMotion.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CPhysicalMotionRandom
@@ -27,104 +26,84 @@ namespace gpopt
 //		Random motion operator
 //
 //---------------------------------------------------------------------------
-class CPhysicalMotionRandom : public CPhysicalMotion
-{
-private:
-	// distribution spec
-	CDistributionSpecRandom *m_pdsRandom;
+class CPhysicalMotionRandom : public CPhysicalMotion {
+ private:
+  // distribution spec
+  CDistributionSpecRandom *m_pdsRandom;
 
-	// private copy ctor
-	CPhysicalMotionRandom(const CPhysicalMotionRandom &);
+ public:
+  CPhysicalMotionRandom(const CPhysicalMotionRandom &) = delete;
 
-public:
-	// ctor
-	CPhysicalMotionRandom(CMemoryPool *mp, CDistributionSpecRandom *pdsRandom);
+  // ctor
+  CPhysicalMotionRandom(CMemoryPool *mp, CDistributionSpecRandom *pdsRandom);
 
-	// dtor
-	virtual ~CPhysicalMotionRandom();
+  // dtor
+  ~CPhysicalMotionRandom() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPhysicalMotionRandom;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPhysicalMotionRandom; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPhysicalMotionRandom";
-	}
+  const CHAR *SzId() const override { return "CPhysicalMotionRandom"; }
 
-	// output distribution accessor
-	virtual CDistributionSpec *
-	Pds() const
-	{
-		return m_pdsRandom;
-	}
+  // output distribution accessor
+  CDistributionSpec *Pds() const override { return m_pdsRandom; }
 
-	// is distribution duplicate sensitive
-	BOOL
-	IsDuplicateSensitive() const
-	{
-		return m_pdsRandom->IsDuplicateSensitive();
-	}
+  // is distribution duplicate sensitive
+  BOOL IsDuplicateSensitive() const { return m_pdsRandom->IsDuplicateSensitive(); }
 
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	//-------------------------------------------------------------------------------------
-	// Required Plan Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Required Plan Properties
+  //-------------------------------------------------------------------------------------
 
-	// compute required output columns of the n-th child
-	virtual CColRefSet *PcrsRequired(CMemoryPool *mp,
-									 CExpressionHandle &exprhdl,
-									 CColRefSet *pcrsInput, ULONG child_index,
-									 CDrvdPropArray *pdrgpdpCtxt,
-									 ULONG ulOptReq);
+  // compute required output columns of the n-th child
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput, ULONG child_index,
+                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
 
-	// compute required sort order of the n-th child
-	virtual COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-									COrderSpec *posInput, ULONG child_index,
-									CDrvdPropArray *pdrgpdpCtxt,
-									ULONG ulOptReq) const;
+  // compute required sort order of the n-th child
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, ULONG child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-	// check if required columns are included in output columns
-	virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl,
-								   CColRefSet *pcrsRequired,
-								   ULONG ulOptReq) const;
+  // compute required partition propagation spec of the n-th child
+  CPartitionPropagationSpec *PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                          CPartitionPropagationSpec *pppsRequired, ULONG child_index,
+                                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-	//-------------------------------------------------------------------------------------
-	// Derived Plan Properties
-	//-------------------------------------------------------------------------------------
+  // check if required columns are included in output columns
+  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
 
-	// derive sort order
-	virtual COrderSpec *PosDerive(CMemoryPool *mp,
-								  CExpressionHandle &exprhdl) const;
+  //-------------------------------------------------------------------------------------
+  // Derived Plan Properties
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	// Enforced Properties
-	//-------------------------------------------------------------------------------------
+  // derive sort order
+  COrderSpec *PosDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// return order property enforcing type for this operator
-	virtual CEnfdProp::EPropEnforcingType EpetOrder(
-		CExpressionHandle &exprhdl, const CEnfdOrder *peo) const;
+  // derived properties: derive partition propagation spec
+  CPartitionPropagationSpec *PppsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
+  //-------------------------------------------------------------------------------------
+  // Enforced Properties
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  // return order property enforcing type for this operator
+  CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const override;
 
-	// print
-	virtual IOstream &OsPrint(IOstream &) const;
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// conversion function
-	static CPhysicalMotionRandom *PopConvert(COperator *pop);
+  // print
+  IOstream &OsPrint(IOstream &) const override;
 
-};	// class CPhysicalMotionRandom
+  // conversion function
+  static CPhysicalMotionRandom *PopConvert(COperator *pop);
+
+};  // class CPhysicalMotionRandom
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPhysicalMotionRandom_H
+#endif  // !GPOPT_CPhysicalMotionRandom_H
 
 // EOF

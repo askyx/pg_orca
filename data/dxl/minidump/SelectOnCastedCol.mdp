@@ -3,9 +3,10 @@
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="103027,102007,103001"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
@@ -63,73 +64,52 @@
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
       <dxl:MDCast Mdid="3.1043.1.0;25.1.0" Name="text" BinaryCoercible="true" SourceTypeId="0.1043.1.0" DestinationTypeId="0.25.1.0" CastFuncId="0.0.0.0"/>
-      <dxl:Relation Mdid="0.17068.1.0" Name="customer_address" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="0;19,13">
+      <dxl:Relation Mdid="6.17068.1.0" Name="customer_address" IsTemporary="false" Rows="50221.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="0;19,13">
         <dxl:Columns>
           <dxl:Column Name="ca_address_sk" Attno="1" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_address_id" Attno="2" Mdid="0.1042.1.0" Nullable="false" ColWidth="16">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_street_number" Attno="3" Mdid="0.1042.1.0" Nullable="true" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_street_name" Attno="4" Mdid="0.1043.1.0" Nullable="true" ColWidth="60">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_street_type" Attno="5" Mdid="0.1042.1.0" Nullable="true" ColWidth="15">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_suite_number" Attno="6" Mdid="0.1042.1.0" Nullable="true" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_city" Attno="7" Mdid="0.1043.1.0" Nullable="true" ColWidth="60">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_county" Attno="8" Mdid="0.1043.1.0" Nullable="true" ColWidth="30">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_state" Attno="9" Mdid="0.1042.1.0" Nullable="true" ColWidth="2">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_zip" Attno="10" Mdid="0.1042.1.0" Nullable="true" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_country" Attno="11" Mdid="0.1043.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_gmt_offset" Attno="12" Mdid="0.1700.1.0" Nullable="true" ColWidth="7">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_location_type" Attno="13" Mdid="0.1042.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.17091.1.0" IsPartial="false"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:Type Mdid="0.1042.1.0" Name="bpchar" IsRedistributable="true" IsHashable="true" IsMergeJoinable="true" IsComposite="false" IsTextRelated="true" IsFixedLength="false" Length="-1" PassByValue="false">
@@ -968,7 +948,7 @@
         <dxl:SumAgg Mdid="0.2108.1.0"/>
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
-      <dxl:Index Mdid="0.17091.1.0" Name="customer_address_pkey" IsClustered="false" KeyColumns="0" IncludedColumns="0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19">
+      <dxl:Index Mdid="0.17091.1.0" Name="customer_address_pkey" IsClustered="false" KeyColumns="0" IncludedColumns="" ReturnableColumns="0">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.3027.1.0"/>
         </dxl:Opfamilies>
@@ -1415,73 +1395,52 @@
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.17068.1.1" Name="customer_address" Rows="50221.000000"/>
-      <dxl:Relation Mdid="0.17068.1.1" Name="customer_address" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="0;19,13">
+      <dxl:Relation Mdid="6.17068.1.1" Name="customer_address" IsTemporary="false" Rows="50221.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="0;19,13">
         <dxl:Columns>
           <dxl:Column Name="ca_address_sk" Attno="1" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_address_id" Attno="2" Mdid="0.1042.1.0" Nullable="false" ColWidth="16">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_street_number" Attno="3" Mdid="0.1042.1.0" Nullable="true" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_street_name" Attno="4" Mdid="0.1043.1.0" Nullable="true" ColWidth="60">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_street_type" Attno="5" Mdid="0.1042.1.0" Nullable="true" ColWidth="15">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_suite_number" Attno="6" Mdid="0.1042.1.0" Nullable="true" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_city" Attno="7" Mdid="0.1043.1.0" Nullable="true" ColWidth="60">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_county" Attno="8" Mdid="0.1043.1.0" Nullable="true" ColWidth="30">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_state" Attno="9" Mdid="0.1042.1.0" Nullable="true" ColWidth="2">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_zip" Attno="10" Mdid="0.1042.1.0" Nullable="true" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_country" Attno="11" Mdid="0.1043.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_gmt_offset" Attno="12" Mdid="0.1700.1.0" Nullable="true" ColWidth="7">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ca_location_type" Attno="13" Mdid="0.1042.1.0" Nullable="true" ColWidth="20">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.17091.1.0" IsPartial="false"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.17068.1.1.13" Name="ctid" Width="6.000000"/>
@@ -2039,7 +1998,7 @@
           <dxl:ConstValue TypeMdid="0.25.1.0" Value="AAAAEVVuaXRlZCBTdGF0ZXM=" LintValue="702178094"/>
         </dxl:Comparison>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.17068.1.1" TableName="customer_address">
+          <dxl:TableDescriptor Mdid="6.17068.1.1" TableName="customer_address">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="ca_address_sk" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="2" Attno="2" ColName="ca_address_id" TypeMdid="0.1042.1.0" ColWidth="16"/>
@@ -2069,7 +2028,7 @@
     <dxl:Plan Id="0" SpaceSize="1">
       <dxl:GatherMotion InputSegments="0,1" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="24717.486528" Rows="48656.716292" Width="258"/>
+          <dxl:Cost StartupCost="0" TotalCost="503.926109" Rows="48656.716292" Width="258"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="ca_address_sk">
@@ -2116,7 +2075,7 @@
         <dxl:SortingColumnList/>
         <dxl:TableScan>
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="18586.880667" Rows="48656.716292" Width="258"/>
+            <dxl:Cost StartupCost="0" TotalCost="447.561196" Rows="48656.716292" Width="258"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="ca_address_sk">
@@ -2167,7 +2126,7 @@
               <dxl:ConstValue TypeMdid="0.25.1.0" Value="AAAAEVVuaXRlZCBTdGF0ZXM=" LintValue="702178094"/>
             </dxl:Comparison>
           </dxl:Filter>
-          <dxl:TableDescriptor Mdid="0.17068.1.1" TableName="customer_address">
+          <dxl:TableDescriptor Mdid="6.17068.1.1" TableName="customer_address">
             <dxl:Columns>
               <dxl:Column ColId="0" Attno="1" ColName="ca_address_sk" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="1" Attno="2" ColName="ca_address_id" TypeMdid="0.1042.1.0" ColWidth="16"/>

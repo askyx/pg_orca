@@ -9,8 +9,6 @@
 //		Interface for relation stats
 //---------------------------------------------------------------------------
 
-
-
 #ifndef GPMD_IMDRelStats_H
 #define GPMD_IMDRelStats_H
 
@@ -19,8 +17,7 @@
 
 #include "naucrates/md/IMDCacheObject.h"
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 using namespace gpdxl;
 
@@ -32,24 +29,23 @@ using namespace gpdxl;
 //		Interface for relation stats
 //
 //---------------------------------------------------------------------------
-class IMDRelStats : public IMDCacheObject
-{
-public:
-	// object type
-	virtual Emdtype
-	MDType() const
-	{
-		return EmdtRelStats;
-	}
+class IMDRelStats : public IMDCacheObject {
+ public:
+  // object type
+  Emdtype MDType() const override { return EmdtRelStats; }
 
-	// number of rows
-	virtual CDouble Rows() const = 0;
+  // number of rows
+  virtual CDouble Rows() const = 0;
 
-	// is statistics on an empty input
-	virtual BOOL IsEmpty() const = 0;
+  virtual ULONG RelPages() const = 0;
+
+  virtual ULONG RelAllVisible() const = 0;
+
+  // is statistics on an empty input
+  virtual BOOL IsEmpty() const = 0;
 };
 }  // namespace gpmd
 
-#endif	// !GPMD_IMDRelStats_H
+#endif  // !GPMD_IMDRelStats_H
 
 // EOF

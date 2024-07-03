@@ -15,31 +15,31 @@
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CHashMap.h"
 #include "gpos/common/CList.h"
+#include "gpos/common/DbgPrintMixin.h"
 
 #include "gpopt/metadata/CName.h"
 #include "naucrates/md/IMDType.h"
 #include "naucrates/traceflags/traceflags.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 using namespace gpmd;
 
 class CColRef;
 
 // colref array
-typedef CDynamicPtrArray<CColRef, CleanupNULL> CColRefArray;
-typedef CDynamicPtrArray<CColRefArray, CleanupRelease> CColRef2dArray;
+using CColRefArray = CDynamicPtrArray<CColRef, CleanupNULL>;
+using CColRef2dArray = CDynamicPtrArray<CColRefArray, CleanupRelease>;
 
 // hash map mapping ULONG -> CColRef
-typedef CHashMap<ULONG, CColRef, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-				 CleanupDelete<ULONG>, CleanupNULL<CColRef> >
-	UlongToColRefMap;
+using UlongToColRefMap =
+    CHashMap<ULONG, CColRef, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>, CleanupNULL<CColRef>>;
+// hash map mapping ULONG -> const CColRef
+using UlongToConstColRefMap = CHashMap<ULONG, const CColRef, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
+                                       CleanupDelete<ULONG>, CleanupNULL<const CColRef>>;
 // iterator
-typedef CHashMapIter<ULONG, CColRef, gpos::HashValue<ULONG>,
-					 gpos::Equals<ULONG>, CleanupDelete<ULONG>,
-					 CleanupNULL<CColRef> >
-	UlongToColRefMapIter;
+using UlongToColRefMapIter = CHashMapIter<ULONG, CColRef, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
+                                          CleanupDelete<ULONG>, CleanupNULL<CColRef>>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -51,192 +51,140 @@ typedef CHashMapIter<ULONG, CColRef, gpos::HashValue<ULONG>,
 //		factory object
 //
 //---------------------------------------------------------------------------
-class CColRef
-{
-public:
-	enum EUsedStatus
-	{
-		EUsed,
-		EUnused,
-		EUnknown,
-		ESentinel
-	};
+class CColRef : public gpos::DbgPrintMixin<CColRef> {
+ public:
+  enum EUsedStatus { EUsed, EUnused, EUnknown, ESentinel };
 
-private:
-	// type information
-	const IMDType *m_pmdtype;
+ private:
+  // type information
+  const IMDType *m_pmdtype;
 
-	// type modifier
-	const INT m_type_modifier;
+  // type modifier
+  const INT m_type_modifier;
 
-	// name: SQL alias or artificial name
-	const CName *m_pname;
+  // name: SQL alias or artificial name
+  const CName *m_pname;
 
-	// private copy ctor
-	CColRef(const CColRef &);
+  // track the usage of colref (used/unused/unknown)
+  EUsedStatus m_used;
 
-	// track the usage of colref (used/unused/unknown)
-	EUsedStatus m_used;
+  // table info
+  IMDId *m_mdid_table;
 
-	// table info
-	IMDId *m_mdid_table;
+ public:
+  CColRef(const CColRef &) = delete;
 
-public:
-	enum Ecolreftype
-	{
-		EcrtTable,
-		EcrtComputed,
+  enum Ecolreftype {
+    EcrtTable,
+    EcrtComputed,
 
-		EcrtSentinel
-	};
+    EcrtSentinel
+  };
 
-	// ctor
-	CColRef(const IMDType *pmdtype, const INT type_modifier, ULONG id,
-			const CName *pname);
+  // ctor
+  CColRef(const IMDType *pmdtype, const INT type_modifier, ULONG id, const CName *pname);
 
-	// dtor
-	virtual ~CColRef();
+  // dtor
+  virtual ~CColRef();
 
-	// accessor to type info
-	const IMDType *
-	RetrieveType() const
-	{
-		return m_pmdtype;
-	}
+  // accessor to type info
+  const IMDType *RetrieveType() const { return m_pmdtype; }
 
-	// type modifier
-	INT
-	TypeModifier() const
-	{
-		return m_type_modifier;
-	}
+  // type modifier
+  INT TypeModifier() const { return m_type_modifier; }
 
-	// name
-	const CName &
-	Name() const
-	{
-		return *m_pname;
-	}
+  // name
+  const CName &Name() const { return *m_pname; }
 
-	// id
-	ULONG
-	Id() const
-	{
-		return m_id;
-	}
+  // id
+  ULONG
+  Id() const { return m_id; }
 
-	// overloaded equality operator
-	BOOL
-	operator==(const CColRef &cr) const
-	{
-		return Equals(m_id, cr.Id());
-	}
+  // overloaded equality operator
+  BOOL operator==(const CColRef &cr) const { return Equals(m_id, cr.Id()); }
 
-	// static hash functions
-	static ULONG HashValue(const ULONG &);
+  // static hash functions
+  static ULONG HashValue(const ULONG &);
 
-	static ULONG HashValue(const CColRef *colref);
+  static ULONG HashValue(const CColRef *colref);
 
-	// equality function for hash table
-	static BOOL
-	Equals(const ULONG &ulKey, const ULONG &ulKeyOther)
-	{
-		return ulKey == ulKeyOther;
-	}
+  // equality function for hash table
+  static BOOL Equals(const ULONG &ulKey, const ULONG &ulKeyOther) { return ulKey == ulKeyOther; }
 
-	// equality function
-	static BOOL
-	Equals(const CColRef *pcrFirst, const CColRef *pcrSecond)
-	{
-		return Equals(pcrFirst->Id(), pcrSecond->Id());
-	}
+  // equality function
+  static BOOL Equals(const CColRef *pcrFirst, const CColRef *pcrSecond) {
+    return Equals(pcrFirst->Id(), pcrSecond->Id());
+  }
 
-	// extract array of colids from array of colrefs
-	static ULongPtrArray *Pdrgpul(CMemoryPool *mp, CColRefArray *colref_array);
+  // extract array of colids from array of colrefs
+  static ULongPtrArray *Pdrgpul(CMemoryPool *mp, CColRefArray *colref_array);
 
-	// check if the the array of column references are equal
-	static BOOL Equals(const CColRefArray *pdrgpcr1,
-					   const CColRefArray *pdrgpcr2);
+  // check if the the array of column references are equal
+  static BOOL Equals(const CColRefArray *pdrgpcr1, const CColRefArray *pdrgpcr2);
 
-	// check if the the array of column reference arrays are equal
-	static BOOL Equals(const CColRef2dArray *pdrgdrgpcr1,
-					   const CColRef2dArray *pdrgdrgpcr2);
+  // check if the the array of column reference arrays are equal
+  static BOOL Equals(const CColRef2dArray *pdrgdrgpcr1, const CColRef2dArray *pdrgdrgpcr2);
 
-	// type of column reference (base/computed)
-	virtual Ecolreftype Ecrt() const = 0;
+  // type of column reference (base/computed)
+  virtual Ecolreftype Ecrt() const = 0;
 
-	// is column a system column?
-	virtual BOOL FSystemCol() const = 0;
+  // is column a system column?
+  virtual BOOL IsSystemCol() const = 0;
 
-	// print
-	IOstream &OsPrint(IOstream &) const;
+  // is column a distribution column?
+  virtual BOOL IsDistCol() const = 0;
 
-	// link for hash chain
-	SLink m_link;
+  // is column a partition column?
+  virtual BOOL IsPartCol() const = 0;
 
-	// id, serves as hash key
-	const ULONG m_id;
+  // print
+  IOstream &OsPrint(IOstream &) const;
 
-	// invalid key
-	static const ULONG m_ulInvalid;
+  // link for hash chain
+  SLink m_link;
 
-	void
-	MarkAsUnused()
-	{
-		GPOS_ASSERT(m_used != EUsed);
-		m_used = EUnused;
-	}
+  // id, serves as hash key
+  const ULONG m_id;
 
-	void
-	MarkAsUsed()
-	{
-		m_used = EUsed;
-	}
+  // invalid key
+  static const ULONG m_ulInvalid;
 
-	void
-	MarkAsUnknown()
-	{
-		m_used = EUnknown;
-	}
+  void MarkAsUnused() {
+    GPOS_ASSERT(m_used != EUsed);
+    m_used = EUnused;
+  }
 
-	EUsedStatus
-	GetUsage() const
-	{
-		if (GPOS_FTRACE(EopttraceTranslateUnusedColrefs) || FSystemCol())
-		{
-			return EUsed;
-		}
+  void MarkAsUsed() { m_used = EUsed; }
 
-		return m_used;
-	}
+  void MarkAsUnknown() { m_used = EUnknown; }
 
-	IMDId *
-	GetMdidTable() const
-	{
-		return m_mdid_table;
-	};
+  EUsedStatus GetUsage(BOOL check_system_col = false, BOOL check_distribution_col = false) const {
+    if ((!check_system_col && IsSystemCol()) || (!check_distribution_col && IsDistCol())) {
+      return EUsed;
+    }
 
-	void
-	SetMdidTable(IMDId *mdid_table)
-	{
-		m_mdid_table = mdid_table;
-	}
+    return m_used;
+  }
 
-#ifdef GPOS_DEBUG
-	void DbgPrint() const;
-#endif	// GPOS_DEBUG
+  IMDId *GetMdidTable() const { return m_mdid_table; };
 
-};	// class CColRef
+  void SetMdidTable(IMDId *mdid_table) { m_mdid_table = mdid_table; }
+
+};  // class CColRef
 
 // shorthand for printing
-inline IOstream &
-operator<<(IOstream &os, CColRef &cr)
-{
-	return cr.OsPrint(os);
+inline IOstream &operator<<(IOstream &os, CColRef &cr) {
+  return cr.OsPrint(os);
 }
+
+// hash map: CColRef -> ULONG
+using ColRefToUlongMap =
+    CHashMap<CColRef, ULONG, CColRef::HashValue, gpos::Equals<CColRef>, CleanupNULL<CColRef>, CleanupDelete<ULONG>>;
+
+using ColRefToUlongMapArray = CDynamicPtrArray<ColRefToUlongMap, CleanupRelease>;
 
 }  // namespace gpopt
 
-#endif	// !GPOS_CColRef_H
+#endif  // !GPOS_CColRef_H
 
 // EOF

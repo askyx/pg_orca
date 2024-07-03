@@ -1,5 +1,5 @@
 //	Greenplum Database
-//	Copyright (C) 2016 Pivotal Software, Inc.
+//	Copyright (C) 2016 VMware, Inc. or its affiliates.
 
 #ifndef GPOPT_CColConstraintsArrayMapper_H
 #define GPOPT_CColConstraintsArrayMapper_H
@@ -9,21 +9,18 @@
 #include "gpopt/base/CConstraint.h"
 #include "gpopt/base/IColConstraintsMapper.h"
 
-namespace gpopt
-{
-class CColConstraintsArrayMapper : public IColConstraintsMapper
-{
-public:
-	CColConstraintsArrayMapper(gpos::CMemoryPool *mp,
-							   CConstraintArray *pdrgpcnstr);
-	virtual CConstraintArray *PdrgPcnstrLookup(CColRef *colref);
+namespace gpopt {
+class CColConstraintsArrayMapper : public IColConstraintsMapper {
+ public:
+  CColConstraintsArrayMapper(gpos::CMemoryPool *mp, CConstraintArray *pdrgpcnstr);
+  CConstraintArray *PdrgPcnstrLookup(CColRef *colref) override;
 
-	virtual ~CColConstraintsArrayMapper();
+  ~CColConstraintsArrayMapper() override;
 
-private:
-	gpos::CMemoryPool *m_mp;
-	CConstraintArray *m_pdrgpcnstr;
+ private:
+  gpos::CMemoryPool *m_mp;
+  CConstraintArray *m_pdrgpcnstr;
 };
 }  // namespace gpopt
 
-#endif	//GPOPT_CColConstraintsArrayMapper_H
+#endif  // GPOPT_CColConstraintsArrayMapper_H

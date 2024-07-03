@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformImplementBitmapTableGet
@@ -22,8 +22,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CXformImplementBitmapTableGet
@@ -32,45 +31,32 @@ namespace gpopt
 //		Implement CLogicalBitmapTableGet as a CPhysicalBitmapTableScan
 //
 //---------------------------------------------------------------------------
-class CXformImplementBitmapTableGet : public CXformImplementation
-{
-private:
-	// disable copy ctor
-	CXformImplementBitmapTableGet(const CXformImplementBitmapTableGet &);
+class CXformImplementBitmapTableGet : public CXformImplementation {
+ private:
+ public:
+  CXformImplementBitmapTableGet(const CXformImplementBitmapTableGet &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementBitmapTableGet(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementBitmapTableGet(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformImplementBitmapTableGet()
-	{
-	}
+  // dtor
+  ~CXformImplementBitmapTableGet() override = default;
 
-	// identifier
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementBitmapTableGet;
-	}
+  // identifier
+  EXformId Exfid() const override { return ExfImplementBitmapTableGet; }
 
-	// xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementBitmapTableGet";
-	}
+  // xform name
+  const CHAR *SzId() const override { return "CXformImplementBitmapTableGet"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformImplementBitmapTableGet
+};  // class CXformImplementBitmapTableGet
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementBitmapTableGet_H
+#endif  // !GPOPT_CXformImplementBitmapTableGet_H
 
 // EOF

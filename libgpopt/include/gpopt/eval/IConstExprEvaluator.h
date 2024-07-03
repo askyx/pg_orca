@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		IConstExprEvaluator.h
@@ -21,11 +21,10 @@
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
-class CExpression;	// forward declaration
+class CExpression;  // forward declaration
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -37,23 +36,21 @@ class CExpression;	// forward declaration
 //		database)
 //
 //---------------------------------------------------------------------------
-class IConstExprEvaluator : public CRefCount
-{
-public:
-	// dtor
-	virtual ~IConstExprEvaluator()
-	{
-	}
+class IConstExprEvaluator : public CRefCount {
+ public:
+  // dtor
+  ~IConstExprEvaluator() override = default;
 
-	// evaluate the given expression and return the result as a new expression
-	// caller takes ownership of returned expression
-	virtual CExpression *PexprEval(CExpression *pexpr) = 0;
+  // evaluate the given expression and return the result as a new expression
+  // caller takes ownership of returned expression
+  virtual CExpression *PexprEval(CExpression *pexpr) = 0;
 
-	// returns true iff the evaluator can evaluate constant expressions without subqueries
-	virtual BOOL FCanEvalExpressions() = 0;
+  // returns true iff the evaluator can evaluate constant expressions without
+  // subqueries
+  virtual BOOL FCanEvalExpressions() = 0;
 };
 }  // namespace gpopt
 
-#endif	// !GPOPT_IConstExprEvaluator_H
+#endif  // !GPOPT_IConstExprEvaluator_H
 
 // EOF

@@ -10,7 +10,6 @@
 //
 //---------------------------------------------------------------------------
 
-
 #ifndef GPDXL_CParseHandlerScalarLimitOffset_H
 #define GPDXL_CParseHandlerScalarLimitOffset_H
 
@@ -18,9 +17,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -33,29 +30,24 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing a LIMIT Offset statement
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarLimitOffset : public CParseHandlerScalarOp
-{
-private:
-	// private copy ctor
-	CParseHandlerScalarLimitOffset(const CParseHandlerScalarLimitOffset &);
+class CParseHandlerScalarLimitOffset : public CParseHandlerScalarOp {
+ private:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri, const XMLCh *const element_local_name,
+                    const XMLCh *const element_qname, const Attributes &attr) override;
 
-	// process the start of an element
-	void StartElement(const XMLCh *const element_uri,
-					  const XMLCh *const element_local_name,
-					  const XMLCh *const element_qname, const Attributes &attr);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri, const XMLCh *const element_local_name,
+                  const XMLCh *const element_qname) override;
 
-	// process the end of an element
-	void EndElement(const XMLCh *const element_uri,
-					const XMLCh *const element_local_name,
-					const XMLCh *const element_qname);
+ public:
+  CParseHandlerScalarLimitOffset(const CParseHandlerScalarLimitOffset &) = delete;
 
-public:
-	// ctor
-	CParseHandlerScalarLimitOffset(CMemoryPool *mp,
-								   CParseHandlerManager *parse_handler_mgr,
-								   CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerScalarLimitOffset(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                 CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CParseHandlerScalarLimitOffset_H
+#endif  // !GPDXL_CParseHandlerScalarLimitOffset_H
 
-//EOF
+// EOF

@@ -19,8 +19,7 @@
 #include "naucrates/dxl/operators/CDXLPhysicalIndexScan.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDXLPhysicalIndexOnlyScan
@@ -29,40 +28,33 @@ namespace gpdxl
 //		Class for representing DXL index only scan operators
 //
 //---------------------------------------------------------------------------
-class CDXLPhysicalIndexOnlyScan : public CDXLPhysicalIndexScan
-{
-private:
-	// private copy ctor
-	CDXLPhysicalIndexOnlyScan(CDXLPhysicalIndexOnlyScan &);
+class CDXLPhysicalIndexOnlyScan : public CDXLPhysicalIndexScan {
+ private:
+ public:
+  CDXLPhysicalIndexOnlyScan(CDXLPhysicalIndexOnlyScan &) = delete;
 
-public:
-	//ctor
-	CDXLPhysicalIndexOnlyScan(CMemoryPool *mp, CDXLTableDescr *table_descr,
-							  CDXLIndexDescr *dxl_index_descr,
-							  EdxlIndexScanDirection idx_scan_direction);
+  // ctor
+  CDXLPhysicalIndexOnlyScan(CMemoryPool *mp, CDXLTableDescr *table_descr, CDXLIndexDescr *dxl_index_descr,
+                            EdxlIndexScanDirection idx_scan_direction);
 
-	//dtor
-	virtual ~CDXLPhysicalIndexOnlyScan()
-	{
-	}
+  // dtor
+  ~CDXLPhysicalIndexOnlyScan() override = default;
 
-	// operator type
-	virtual Edxlopid GetDXLOperator() const;
+  // operator type
+  Edxlopid GetDXLOperator() const override;
 
-	// operator name
-	virtual const CWStringConst *GetOpNameStr() const;
+  // operator name
+  const CWStringConst *GetOpNameStr() const override;
 
-	// conversion function
-	static CDXLPhysicalIndexOnlyScan *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopPhysicalIndexOnlyScan == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLPhysicalIndexOnlyScan *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopPhysicalIndexOnlyScan == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLPhysicalIndexOnlyScan *>(dxl_op);
-	}
+    return dynamic_cast<CDXLPhysicalIndexOnlyScan *>(dxl_op);
+  }
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLPhysicalIndexOnlyScan_H
+#endif  // !GPDXL_CDXLPhysicalIndexOnlyScan_H
 
 // EOF

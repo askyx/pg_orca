@@ -25,17 +25,14 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarSortCol::CDXLScalarSortCol(CMemoryPool *mp, ULONG colid,
-									 IMDId *mdid_sort_op,
-									 CWStringConst *sort_op_name_str,
-									 BOOL sort_nulls_first)
-	: CDXLScalar(mp),
-	  m_colid(colid),
-	  m_mdid_sort_op(mdid_sort_op),
-	  m_sort_op_name_str(sort_op_name_str),
-	  m_must_sort_nulls_first(sort_nulls_first)
-{
-	GPOS_ASSERT(m_mdid_sort_op->IsValid());
+CDXLScalarSortCol::CDXLScalarSortCol(CMemoryPool *mp, ULONG colid, IMDId *mdid_sort_op, CWStringConst *sort_op_name_str,
+                                     BOOL sort_nulls_first)
+    : CDXLScalar(mp),
+      m_colid(colid),
+      m_mdid_sort_op(mdid_sort_op),
+      m_sort_op_name_str(sort_op_name_str),
+      m_must_sort_nulls_first(sort_nulls_first) {
+  GPOS_ASSERT(m_mdid_sort_op->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -46,10 +43,9 @@ CDXLScalarSortCol::CDXLScalarSortCol(CMemoryPool *mp, ULONG colid,
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarSortCol::~CDXLScalarSortCol()
-{
-	m_mdid_sort_op->Release();
-	GPOS_DELETE(m_sort_op_name_str);
+CDXLScalarSortCol::~CDXLScalarSortCol() {
+  m_mdid_sort_op->Release();
+  GPOS_DELETE(m_sort_op_name_str);
 }
 
 //---------------------------------------------------------------------------
@@ -60,12 +56,9 @@ CDXLScalarSortCol::~CDXLScalarSortCol()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarSortCol::GetDXLOperator() const
-{
-	return EdxlopScalarSortCol;
+Edxlopid CDXLScalarSortCol::GetDXLOperator() const {
+  return EdxlopScalarSortCol;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -75,10 +68,8 @@ CDXLScalarSortCol::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarSortCol::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarSortCol);
+const CWStringConst *CDXLScalarSortCol::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarSortCol);
 }
 
 //---------------------------------------------------------------------------
@@ -90,9 +81,8 @@ CDXLScalarSortCol::GetOpNameStr() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CDXLScalarSortCol::GetColId() const
-{
-	return m_colid;
+CDXLScalarSortCol::GetColId() const {
+  return m_colid;
 }
 
 //---------------------------------------------------------------------------
@@ -103,10 +93,8 @@ CDXLScalarSortCol::GetColId() const
 //		Oid of the sorting operator for the column from the catalog
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLScalarSortCol::GetMdIdSortOp() const
-{
-	return m_mdid_sort_op;
+IMDId *CDXLScalarSortCol::GetMdIdSortOp() const {
+  return m_mdid_sort_op;
 }
 
 //---------------------------------------------------------------------------
@@ -117,10 +105,8 @@ CDXLScalarSortCol::GetMdIdSortOp() const
 //		Whether nulls are sorted before other values
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLScalarSortCol::IsSortedNullsFirst() const
-{
-	return m_must_sort_nulls_first;
+BOOL CDXLScalarSortCol::IsSortedNullsFirst() const {
+  return m_must_sort_nulls_first;
 }
 
 //---------------------------------------------------------------------------
@@ -131,26 +117,17 @@ CDXLScalarSortCol::IsSortedNullsFirst() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarSortCol::SerializeToDXL(CXMLSerializer *xml_serializer,
-								  const CDXLNode *	// dxlnode
-) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+void CDXLScalarSortCol::SerializeToDXL(CXMLSerializer *xml_serializer,
+                                       const CDXLNode *  // dxlnode
+) const {
+  const CWStringConst *element_name = GetOpNameStr();
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId),
-								 m_colid);
-	m_mdid_sort_op->Serialize(xml_serializer,
-							  CDXLTokens::GetDXLTokenStr(EdxltokenSortOpId));
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenSortOpName), m_sort_op_name_str);
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenSortNullsFirst),
-		m_must_sort_nulls_first);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), m_colid);
+  m_mdid_sort_op->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenSortOpId));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSortOpName), m_sort_op_name_str);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSortNullsFirst), m_must_sort_nulls_first);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -162,14 +139,11 @@ CDXLScalarSortCol::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarSortCol::AssertValid(const CDXLNode *dxlnode,
-							   BOOL	 // validate_children
-) const
-{
-	GPOS_ASSERT(0 == dxlnode->Arity());
+void CDXLScalarSortCol::AssertValid(const CDXLNode *dxlnode,
+                                    BOOL  // validate_children
+) const {
+  GPOS_ASSERT(0 == dxlnode->Arity());
 }
-#endif	// GPOS_DEBUG
-
+#endif  // GPOS_DEBUG
 
 // EOF

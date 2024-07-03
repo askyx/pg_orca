@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformImplementDynamicBitmapTableGet.cpp
@@ -18,7 +18,9 @@
 #include "gpopt/xforms/CXformImplementDynamicBitmapTableGet.h"
 
 #include "gpopt/metadata/CTableDescriptor.h"
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalDynamicBitmapTableGet.h"
+#include "gpopt/operators/CPatternLeaf.h"
+#include "gpopt/operators/CPhysicalDynamicBitmapTableScan.h"
 
 using namespace gpopt;
 using namespace gpos;
@@ -31,28 +33,20 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformImplementDynamicBitmapTableGet::CXformImplementDynamicBitmapTableGet(
-	CMemoryPool *mp)
-	:  // pattern
-	  CXformImplementation(GPOS_NEW(mp) CExpression(
-		  mp, GPOS_NEW(mp) CLogicalDynamicBitmapTableGet(mp),
-		  GPOS_NEW(mp)
-			  CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // predicate tree
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CPatternLeaf(mp))  // bitmap index expression
-		  ))
-{
-}
+CXformImplementDynamicBitmapTableGet::CXformImplementDynamicBitmapTableGet(CMemoryPool *mp)
+    :  // pattern
+      CXformImplementation(GPOS_NEW(mp) CExpression(
+          mp, GPOS_NEW(mp) CLogicalDynamicBitmapTableGet(mp),
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // predicate tree
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))   // bitmap index expression
+          )) {}
 
 // compute xform promise for a given expression handle
-CXform::EXformPromise
-CXformImplementDynamicBitmapTableGet::Exfp(CExpressionHandle &exprhdl) const
-{
-	if (exprhdl.DeriveHasSubquery(0) || exprhdl.DeriveHasSubquery(1))
-	{
-		return CXform::ExfpNone;
-	}
-	return CXform::ExfpHigh;
+CXform::EXformPromise CXformImplementDynamicBitmapTableGet::Exfp(CExpressionHandle &exprhdl) const {
+  if (exprhdl.DeriveHasSubquery(0) || exprhdl.DeriveHasSubquery(1)) {
+    return CXform::ExfpNone;
+  }
+  return CXform::ExfpHigh;
 }
 
 //---------------------------------------------------------------------------
@@ -63,52 +57,43 @@ CXformImplementDynamicBitmapTableGet::Exfp(CExpressionHandle &exprhdl) const
 //		Actual transformation
 //
 //---------------------------------------------------------------------------
-void
-CXformImplementDynamicBitmapTableGet::Transform(CXformContext *pxfctxt,
-												CXformResult *pxfres,
-												CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformImplementDynamicBitmapTableGet::Transform(CXformContext *pxfctxt GPOS_ASSERTS_ONLY,
+                                                     CXformResult *pxfres GPOS_UNUSED,
+                                                     CExpression *pexpr GPOS_ASSERTS_ONLY) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CMemoryPool *mp = pxfctxt->Pmp();
-	CLogicalDynamicBitmapTableGet *popLogical =
-		CLogicalDynamicBitmapTableGet::PopConvert(pexpr->Pop());
+  CMemoryPool *mp = pxfctxt->Pmp();
+  CLogicalDynamicBitmapTableGet *popLogical = CLogicalDynamicBitmapTableGet::PopConvert(pexpr->Pop());
 
-	CTableDescriptor *ptabdesc = popLogical->Ptabdesc();
-	ptabdesc->AddRef();
+  CTableDescriptor *ptabdesc = popLogical->Ptabdesc();
+  ptabdesc->AddRef();
 
-	CName *pname = GPOS_NEW(mp) CName(mp, popLogical->Name());
+  CName *pname = GPOS_NEW(mp) CName(mp, popLogical->Name());
 
-	CColRefArray *pdrgpcrOutput = popLogical->PdrgpcrOutput();
+  CColRefArray *pdrgpcrOutput = popLogical->PdrgpcrOutput();
 
-	GPOS_ASSERT(NULL != pdrgpcrOutput);
-	pdrgpcrOutput->AddRef();
+  GPOS_ASSERT(nullptr != pdrgpcrOutput);
+  pdrgpcrOutput->AddRef();
 
-	CColRef2dArray *pdrgpdrgpcrPart = popLogical->PdrgpdrgpcrPart();
-	pdrgpdrgpcrPart->AddRef();
+  CColRef2dArray *pdrgpdrgpcrPart = popLogical->PdrgpdrgpcrPart();
+  pdrgpdrgpcrPart->AddRef();
 
-	CPartConstraint *ppartcnstr = popLogical->Ppartcnstr();
-	ppartcnstr->AddRef();
+  popLogical->GetPartitionMdids()->AddRef();
+  popLogical->GetRootColMappingPerPart()->AddRef();
 
-	CPartConstraint *ppartcnstrRel = popLogical->PpartcnstrRel();
-	ppartcnstrRel->AddRef();
+  CPhysicalDynamicBitmapTableScan *popPhysical = GPOS_NEW(mp) CPhysicalDynamicBitmapTableScan(
+      mp, ptabdesc, pexpr->Pop()->UlOpId(), pname, popLogical->ScanId(), pdrgpcrOutput, pdrgpdrgpcrPart,
+      popLogical->GetPartitionMdids(), popLogical->GetRootColMappingPerPart());
 
-	CPhysicalDynamicBitmapTableScan *popPhysical =
-		GPOS_NEW(mp) CPhysicalDynamicBitmapTableScan(
-			mp, popLogical->IsPartial(), ptabdesc, pexpr->Pop()->UlOpId(),
-			pname, popLogical->ScanId(), pdrgpcrOutput, pdrgpdrgpcrPart,
-			popLogical->UlSecondaryScanId(), ppartcnstr, ppartcnstrRel);
+  CExpression *pexprCondition = (*pexpr)[0];
+  CExpression *pexprIndexPath = (*pexpr)[1];
+  pexprCondition->AddRef();
+  pexprIndexPath->AddRef();
 
-	CExpression *pexprCondition = (*pexpr)[0];
-	CExpression *pexprIndexPath = (*pexpr)[1];
-	pexprCondition->AddRef();
-	pexprIndexPath->AddRef();
-
-	CExpression *pexprPhysical = GPOS_NEW(mp)
-		CExpression(mp, popPhysical, pexprCondition, pexprIndexPath);
-	pxfres->Add(pexprPhysical);
+  CExpression *pexprPhysical = GPOS_NEW(mp) CExpression(mp, popPhysical, pexprCondition, pexprIndexPath);
+  pxfres->Add(pexprPhysical);
 }
 
 // EOF

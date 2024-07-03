@@ -9,7 +9,6 @@
 //		Worker abstraction, e.g. thread
 //---------------------------------------------------------------------------
 
-
 #include "gpos/task/IWorker.h"
 
 #include "gpos/memory/CMemoryPoolManager.h"
@@ -25,19 +24,15 @@ using namespace gpos;
 //		static function to lookup ones own worker in the pool manager
 //
 //---------------------------------------------------------------------------
-IWorker *
-IWorker::Self()
-{
-	IWorker *worker = NULL;
+IWorker *IWorker::Self() {
+  IWorker *worker = nullptr;
 
-	if (NULL != CWorkerPoolManager::WorkerPoolManager())
-	{
-		worker = CWorkerPoolManager::WorkerPoolManager()->Self();
-	}
+  if (nullptr != CWorkerPoolManager::WorkerPoolManager()) {
+    worker = CWorkerPoolManager::WorkerPoolManager()->Self();
+  }
 
-	return worker;
+  return worker;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -47,14 +42,11 @@ IWorker::Self()
 //		Check for aborts
 //
 //---------------------------------------------------------------------------
-void
-IWorker::CheckAbort(const CHAR *file, ULONG line_num)
-{
-	IWorker *worker = Self();
-	if (NULL != worker)
-	{
-		worker->CheckForAbort(file, line_num);
-	}
+void IWorker::CheckAbort(const CHAR *file, ULONG line_num) {
+  IWorker *worker = Self();
+  if (nullptr != worker) {
+    worker->CheckForAbort(file, line_num);
+  }
 }
 
 // EOF

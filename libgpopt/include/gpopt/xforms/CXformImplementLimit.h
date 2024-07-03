@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,44 +26,32 @@ using namespace gpos;
 //		Transform Logical into Physical Limit
 //
 //---------------------------------------------------------------------------
-class CXformImplementLimit : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformImplementLimit(const CXformImplementLimit &);
+class CXformImplementLimit : public CXformImplementation {
+ private:
+ public:
+  CXformImplementLimit(const CXformImplementLimit &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementLimit(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementLimit(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformImplementLimit()
-	{
-	}
+  // dtor
+  ~CXformImplementLimit() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementLimit;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementLimit; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementLimit";
-	}
+  const CHAR *SzId() const override { return "CXformImplementLimit"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *, CXformResult *, CExpression *) const;
+  // actual transform
+  void Transform(CXformContext *, CXformResult *, CExpression *) const override;
 
-};	// class CXformImplementLimit
+};  // class CXformImplementLimit
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementLimit_H
+#endif  // !GPOPT_CXformImplementLimit_H
 
 // EOF

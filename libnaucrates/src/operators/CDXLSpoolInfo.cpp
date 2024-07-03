@@ -13,7 +13,6 @@
 
 #include "naucrates/dxl/xml/CXMLSerializer.h"
 
-
 using namespace gpos;
 using namespace gpdxl;
 
@@ -25,15 +24,11 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLSpoolInfo::CDXLSpoolInfo(ULONG ulSpoolId, Edxlspooltype edxlspstype,
-							 BOOL fMultiSlice, INT iExecutorSlice)
-	: m_spool_id(ulSpoolId),
-	  m_spool_type(edxlspstype),
-	  m_is_multi_slice_shared(fMultiSlice),
-	  m_executor_slice_id(iExecutorSlice)
-{
-}
-
+CDXLSpoolInfo::CDXLSpoolInfo(ULONG ulSpoolId, Edxlspooltype edxlspstype, BOOL fMultiSlice, INT iExecutorSlice)
+    : m_spool_id(ulSpoolId),
+      m_spool_type(edxlspstype),
+      m_is_multi_slice_shared(fMultiSlice),
+      m_executor_slice_id(iExecutorSlice) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,9 +39,8 @@ CDXLSpoolInfo::CDXLSpoolInfo(ULONG ulSpoolId, Edxlspooltype edxlspstype,
 //
 //---------------------------------------------------------------------------
 ULONG
-CDXLSpoolInfo::GetSpoolId() const
-{
-	return m_spool_id;
+CDXLSpoolInfo::GetSpoolId() const {
+  return m_spool_id;
 }
 
 //---------------------------------------------------------------------------
@@ -57,10 +51,8 @@ CDXLSpoolInfo::GetSpoolId() const
 //		Type of the underlying operator (Materialize or Sort)
 //
 //---------------------------------------------------------------------------
-Edxlspooltype
-CDXLSpoolInfo::GetSpoolType() const
-{
-	return m_spool_type;
+Edxlspooltype CDXLSpoolInfo::GetSpoolType() const {
+  return m_spool_type;
 }
 
 //---------------------------------------------------------------------------
@@ -71,10 +63,8 @@ CDXLSpoolInfo::GetSpoolType() const
 //		Is the spool used across slices
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLSpoolInfo::IsMultiSlice() const
-{
-	return m_is_multi_slice_shared;
+BOOL CDXLSpoolInfo::IsMultiSlice() const {
+  return m_is_multi_slice_shared;
 }
 
 //---------------------------------------------------------------------------
@@ -85,10 +75,8 @@ CDXLSpoolInfo::IsMultiSlice() const
 //		Id of slice executing the underlying operation
 //
 //---------------------------------------------------------------------------
-INT
-CDXLSpoolInfo::GetExecutorSliceId() const
-{
-	return m_executor_slice_id;
+INT CDXLSpoolInfo::GetExecutorSliceId() const {
+  return m_executor_slice_id;
 }
 
 //---------------------------------------------------------------------------
@@ -99,21 +87,17 @@ CDXLSpoolInfo::GetExecutorSliceId() const
 //		Id of slice executing the underlying operation
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLSpoolInfo::GetSpoolTypeName() const
-{
-	GPOS_ASSERT(EdxlspoolMaterialize == m_spool_type ||
-				EdxlspoolSort == m_spool_type);
+const CWStringConst *CDXLSpoolInfo::GetSpoolTypeName() const {
+  GPOS_ASSERT(EdxlspoolMaterialize == m_spool_type || EdxlspoolSort == m_spool_type);
 
-	switch (m_spool_type)
-	{
-		case EdxlspoolMaterialize:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenSpoolMaterialize);
-		case EdxlspoolSort:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenSpoolSort);
-		default:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenUnknown);
-	}
+  switch (m_spool_type) {
+    case EdxlspoolMaterialize:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenSpoolMaterialize);
+    case EdxlspoolSort:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenSpoolSort);
+    default:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenUnknown);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -124,25 +108,15 @@ CDXLSpoolInfo::GetSpoolTypeName() const
 //		Serialize spooling info in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLSpoolInfo::SerializeToDXL(CXMLSerializer *xml_serializer) const
-{
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSpoolId),
-								 m_spool_id);
+void CDXLSpoolInfo::SerializeToDXL(CXMLSerializer *xml_serializer) const {
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSpoolId), m_spool_id);
 
-	const CWStringConst *pstrSpoolType = GetSpoolTypeName();
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSpoolType),
-								 pstrSpoolType);
+  const CWStringConst *pstrSpoolType = GetSpoolTypeName();
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSpoolType), pstrSpoolType);
 
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenSpoolMultiSlice),
-		m_is_multi_slice_shared);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSpoolMultiSlice), m_is_multi_slice_shared);
 
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenExecutorSliceId),
-		m_executor_slice_id);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenExecutorSliceId), m_executor_slice_id);
 }
-
-
 
 // EOF

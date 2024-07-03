@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2018 Pivotal Software Inc.
+//	Copyright (C) 2018 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformExpandNAryJoinGreedy.h
@@ -17,8 +17,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -31,59 +30,38 @@ using namespace gpos;
 //		the end
 //
 //---------------------------------------------------------------------------
-class CXformExpandNAryJoinGreedy : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformExpandNAryJoinGreedy(const CXformExpandNAryJoinGreedy &);
+class CXformExpandNAryJoinGreedy : public CXformExploration {
+ private:
+ public:
+  CXformExpandNAryJoinGreedy(const CXformExpandNAryJoinGreedy &) = delete;
 
-public:
-	// ctor
-	explicit CXformExpandNAryJoinGreedy(CMemoryPool *pmp);
+  // ctor
+  explicit CXformExpandNAryJoinGreedy(CMemoryPool *pmp);
 
-	// dtor
-	virtual ~CXformExpandNAryJoinGreedy()
-	{
-	}
+  // dtor
+  ~CXformExpandNAryJoinGreedy() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfExpandNAryJoinGreedy;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfExpandNAryJoinGreedy; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformExpandNAryJoinGreedy";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformExpandNAryJoinGreedy"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// do stats need to be computed before applying xform?
-	virtual BOOL
-	FNeedsStats() const
-	{
-		return true;
-	}
+  // do stats need to be computed before applying xform?
+  BOOL FNeedsStats() const override { return true; }
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-	BOOL
-	IsApplyOnce()
-	{
-		return true;
-	}
-};	// class CXformExpandNAryJoinGreedy
+  BOOL IsApplyOnce() override { return true; }
+
+};  // class CXformExpandNAryJoinGreedy
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformExpandNAryJoinGreedy_H
+#endif  // !GPOPT_CXformExpandNAryJoinGreedy_H
 
 // EOF

@@ -17,9 +17,7 @@
 #include "gpopt/metadata/CIndexDescriptor.h"
 #include "gpopt/operators/CLogical.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 // fwd declarations
 class CName;
 class CColRefSet;
@@ -32,225 +30,190 @@ class CColRefSet;
 //		Basic index accessor
 //
 //---------------------------------------------------------------------------
-class CLogicalIndexGet : public CLogical
-{
-private:
-	// index descriptor
-	CIndexDescriptor *m_pindexdesc;
+class CLogicalIndexGet : public CLogical {
+ private:
+  // index descriptor
+  CIndexDescriptor *m_pindexdesc;
 
-	// table descriptor
-	CTableDescriptor *m_ptabdesc;
+  // table descriptor
+  CTableDescriptor *m_ptabdesc;
 
-	// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-	ULONG m_ulOriginOpId;
+  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
+  ULONG m_ulOriginOpId;
 
-	// alias for table
-	const CName *m_pnameAlias;
+  // alias for table
+  const CName *m_pnameAlias;
 
-	// output columns
-	CColRefArray *m_pdrgpcrOutput;
+  // output columns
+  CColRefArray *m_pdrgpcrOutput;
 
-	// set representation of output columns
-	CColRefSet *m_pcrsOutput;
+  // set representation of output columns
+  CColRefSet *m_pcrsOutput;
 
-	// order spec
-	COrderSpec *m_pos;
+  // order spec
+  COrderSpec *m_pos;
 
-	// distribution columns (empty for master only tables)
-	CColRefSet *m_pcrsDist;
+  // distribution columns (empty for coordinator only tables)
+  CColRefSet *m_pcrsDist;
 
-	// private copy ctor
-	CLogicalIndexGet(const CLogicalIndexGet &);
+  // Number of predicate not applicable on the index
+  ULONG m_ulUnindexedPredColCount;
 
-public:
-	// ctors
-	explicit CLogicalIndexGet(CMemoryPool *mp);
+  // index scan direction
+  EIndexScanDirection m_scan_direction;
 
-	CLogicalIndexGet(CMemoryPool *mp, const IMDIndex *pmdindex,
-					 CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
-					 const CName *pnameAlias, CColRefArray *pdrgpcrOutput);
+ public:
+  CLogicalIndexGet(const CLogicalIndexGet &) = delete;
 
-	// dtor
-	virtual ~CLogicalIndexGet();
+  // ctors
+  explicit CLogicalIndexGet(CMemoryPool *mp);
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalIndexGet;
-	}
+  CLogicalIndexGet(CMemoryPool *mp, const IMDIndex *pmdindex, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
+                   const CName *pnameAlias, CColRefArray *pdrgpcrOutput, ULONG ulUnindexedPredColCount,
+                   EIndexScanDirection scan_direction);
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalIndexGet";
-	}
+  // dtor
+  ~CLogicalIndexGet() override;
 
-	// distribution columns
-	virtual const CColRefSet *
-	PcrsDist() const
-	{
-		return m_pcrsDist;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalIndexGet; }
 
-	// array of output columns
-	CColRefArray *
-	PdrgpcrOutput() const
-	{
-		return m_pdrgpcrOutput;
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalIndexGet"; }
 
-	// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-	ULONG
-	UlOriginOpId() const
-	{
-		return m_ulOriginOpId;
-	}
+  // distribution columns
+  virtual const CColRefSet *PcrsDist() const { return m_pcrsDist; }
 
-	// index name
-	const CName &
-	Name() const
-	{
-		return m_pindexdesc->Name();
-	}
+  // array of output columns
+  CColRefArray *PdrgpcrOutput() const { return m_pdrgpcrOutput; }
 
-	// table alias name
-	const CName &
-	NameAlias() const
-	{
-		return *m_pnameAlias;
-	}
+  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
+  ULONG
+  UlOriginOpId() const { return m_ulOriginOpId; }
 
-	// index descriptor
-	CIndexDescriptor *
-	Pindexdesc() const
-	{
-		return m_pindexdesc;
-	}
+  // index name
+  const CName &Name() const { return m_pindexdesc->Name(); }
 
-	// table descriptor
-	CTableDescriptor *
-	Ptabdesc() const
-	{
-		return m_ptabdesc;
-	}
+  // table alias name
+  const CName &NameAlias() const { return *m_pnameAlias; }
 
-	// order spec
-	COrderSpec *
-	Pos() const
-	{
-		return m_pos;
-	}
+  // index descriptor
+  CIndexDescriptor *Pindexdesc() const { return m_pindexdesc; }
 
-	// operator specific hash function
-	virtual ULONG HashValue() const;
+  // table descriptor
+  CTableDescriptor *Ptabdesc() const { return m_ptabdesc; }
 
-	// match function
-	BOOL Matches(COperator *pop) const;
+  // order spec
+  COrderSpec *Pos() const { return m_pos; }
 
-	// sensitivity to order of inputs
-	BOOL FInputOrderSensitive() const;
+  // number of predicate not applicable on the index
+  ULONG
+  ResidualPredicateSize() const { return m_ulUnindexedPredColCount; }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // index scan direction is only used for B-tree indices.
+  EIndexScanDirection ScanDirection() const { return m_scan_direction; }
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  // operator specific hash function
+  ULONG HashValue() const override;
 
-	// derive output columns
-	virtual CColRefSet *DeriveOutputColumns(CMemoryPool *mp,
-											CExpressionHandle &exprhdl);
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// derive outer references
-	virtual CColRefSet *DeriveOuterReferences(CMemoryPool *mp,
-											  CExpressionHandle &exprhdl);
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override;
 
-	// derive partition consumer info
-	virtual CPartInfo *
-	DerivePartitionInfo(CMemoryPool *mp,
-						CExpressionHandle &	 //exprhdl
-	) const
-	{
-		return GPOS_NEW(mp) CPartInfo(mp);
-	}
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	// derive constraint property
-	virtual CPropConstraint *
-	DerivePropertyConstraint(CMemoryPool *mp,
-							 CExpressionHandle &  // exprhdl
-	) const
-	{
-		return PpcDeriveConstraintFromTable(mp, m_ptabdesc, m_pdrgpcrOutput);
-	}
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive join depth
-	virtual ULONG
-	DeriveJoinDepth(CMemoryPool *,		 // mp
-					CExpressionHandle &	 // exprhdl
-	) const
-	{
-		return 1;
-	}
+  // derive output columns
+  CColRefSet *DeriveOutputColumns(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
-	//-------------------------------------------------------------------------------------
-	// Required Relational Properties
-	//-------------------------------------------------------------------------------------
+  // derive outer references
+  CColRefSet *DeriveOuterReferences(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
-	// compute required stat columns of the n-th child
-	virtual CColRefSet *
-	PcrsStat(CMemoryPool *mp,
-			 CExpressionHandle &,  // exprhdl
-			 CColRefSet *,		   //pcrsInput
-			 ULONG				   // child_index
-	) const
-	{
-		// TODO:  March 26 2012; statistics derivation for indexes
-		return GPOS_NEW(mp) CColRefSet(mp);
-	}
+  // derive partition consumer info
+  CPartInfo *DerivePartitionInfo(CMemoryPool *mp,
+                                 CExpressionHandle &  // exprhdl
+  ) const override {
+    return GPOS_NEW(mp) CPartInfo(mp);
+  }
 
-	// derive statistics
-	virtual IStatistics *PstatsDerive(CMemoryPool *mp,
-									  CExpressionHandle &exprhdl,
-									  IStatisticsArray *stats_ctxt) const;
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *mp,
+                                            CExpressionHandle &  // exprhdl
+  ) const override {
+    return PpcDeriveConstraintFromTable(mp, m_ptabdesc, m_pdrgpcrOutput);
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  // derive key collections
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// candidate set of xforms
-	CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // derive join depth
+  ULONG
+  DeriveJoinDepth(CMemoryPool *,       // mp
+                  CExpressionHandle &  // exprhdl
+  ) const override {
+    return 1;
+  }
 
-	// stat promise
-	virtual EStatPromise
-	Esp(CExpressionHandle &) const
-	{
-		return CLogical::EspLow;
-	}
+  //-------------------------------------------------------------------------------------
+  // Required Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	// conversion function
-	//-------------------------------------------------------------------------------------
+  // compute required stat columns of the n-th child
+  CColRefSet *PcrsStat(CMemoryPool *mp,
+                       CExpressionHandle &,  // exprhdl
+                       CColRefSet *,         // pcrsInput
+                       ULONG                 // child_index
+  ) const override {
+    // TODO:  March 26 2012; statistics derivation for indexes
+    return GPOS_NEW(mp) CColRefSet(mp);
+  }
 
-	static CLogicalIndexGet *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalIndexGet == pop->Eopid());
+  // derive statistics
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
-		return dynamic_cast<CLogicalIndexGet *>(pop);
-	}
+  CTableDescriptorHashSet *DeriveTableDescriptor(CMemoryPool *mp,
+                                                 CExpressionHandle &exprhdl GPOS_UNUSED) const override {
+    CTableDescriptorHashSet *result = GPOS_NEW(mp) CTableDescriptorHashSet(mp);
+    if (result->Insert(m_ptabdesc)) {
+      m_ptabdesc->AddRef();
+    }
+    return result;
+  }
 
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// debug print
-	virtual IOstream &OsPrint(IOstream &) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-};	// class CLogicalIndexGet
+  // stat promise
+  EStatPromise Esp(CExpressionHandle &) const override { return CLogical::EspLow; }
+
+  //-------------------------------------------------------------------------------------
+  // conversion function
+  //-------------------------------------------------------------------------------------
+
+  static CLogicalIndexGet *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalIndexGet == pop->Eopid());
+
+    return dynamic_cast<CLogicalIndexGet *>(pop);
+  }
+
+  // debug print
+  IOstream &OsPrint(IOstream &) const override;
+
+};  // class CLogicalIndexGet
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CLogicalIndexGet_H
+#endif  // !GPOPT_CLogicalIndexGet_H
 
 // EOF

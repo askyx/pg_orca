@@ -26,8 +26,7 @@
 #include "gpopt/search/CJobTest.h"
 #include "gpopt/search/CJobTransformation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -50,100 +49,87 @@ using namespace gpos;
 //		return it to the caller.
 //
 //---------------------------------------------------------------------------
-class CJobFactory
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CJobFactory {
+ private:
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// number of jobs in each pool
-	const ULONG m_ulJobs;
+  // number of jobs in each pool
+  const ULONG m_ulJobs;
 
-	// container for testing jobs
-	CSyncPool<CJobTest> *m_pspjTest;
+  // container for testing jobs
+  CSyncPool<CJobTest> *m_pspjTest;
 
-	// container for group optimization jobs
-	CSyncPool<CJobGroupOptimization> *m_pspjGroupOptimization;
+  // container for group optimization jobs
+  CSyncPool<CJobGroupOptimization> *m_pspjGroupOptimization;
 
-	// container for group implementation jobs
-	CSyncPool<CJobGroupImplementation> *m_pspjGroupImplementation;
+  // container for group implementation jobs
+  CSyncPool<CJobGroupImplementation> *m_pspjGroupImplementation;
 
-	// container for group exploration jobs
-	CSyncPool<CJobGroupExploration> *m_pspjGroupExploration;
+  // container for group exploration jobs
+  CSyncPool<CJobGroupExploration> *m_pspjGroupExploration;
 
-	// container for group expression optimization jobs
-	CSyncPool<CJobGroupExpressionOptimization>
-		*m_pspjGroupExpressionOptimization;
+  // container for group expression optimization jobs
+  CSyncPool<CJobGroupExpressionOptimization> *m_pspjGroupExpressionOptimization;
 
-	// container for group expression implementation jobs
-	CSyncPool<CJobGroupExpressionImplementation>
-		*m_pspjGroupExpressionImplementation;
+  // container for group expression implementation jobs
+  CSyncPool<CJobGroupExpressionImplementation> *m_pspjGroupExpressionImplementation;
 
-	// container for group expression exploration jobs
-	CSyncPool<CJobGroupExpressionExploration> *m_pspjGroupExpressionExploration;
+  // container for group expression exploration jobs
+  CSyncPool<CJobGroupExpressionExploration> *m_pspjGroupExpressionExploration;
 
-	// container for transformation jobs
-	CSyncPool<CJobTransformation> *m_pspjTransformation;
+  // container for transformation jobs
+  CSyncPool<CJobTransformation> *m_pspjTransformation;
 
-	// retrieve job of specific type
-	template <class T>
-	T *
-	PtRetrieve(CSyncPool<T> *&pspt)
-	{
-		if (NULL == pspt)
-		{
-			pspt = GPOS_NEW(m_mp) CSyncPool<T>(m_mp, m_ulJobs);
-			pspt->Init(GPOS_OFFSET(T, m_id));
-		}
+  // retrieve job of specific type
+  template <class T>
+  T *PtRetrieve(CSyncPool<T> *&pspt) {
+    if (nullptr == pspt) {
+      pspt = GPOS_NEW(m_mp) CSyncPool<T>(m_mp, m_ulJobs);
+      pspt->Init(GPOS_OFFSET(T, m_id));
+    }
 
-		return pspt->PtRetrieve();
-	}
+    return pspt->PtRetrieve();
+  }
 
-	// release job
-	template <class T>
-	void
-	Release(T *pt, CSyncPool<T> *pspt)
-	{
-		GPOS_ASSERT(NULL != pt);
-		GPOS_ASSERT(NULL != pspt);
+  // release job
+  template <class T>
+  void Release(T *pt, CSyncPool<T> *pspt) {
+    GPOS_ASSERT(nullptr != pt);
+    GPOS_ASSERT(nullptr != pspt);
 
-		pspt->Recycle(pt);
-	}
+    pspt->Recycle(pt);
+  }
 
-	// truncate job pool
-	template <class T>
-	void
-	TruncatePool(CSyncPool<T> *&pspt)
-	{
-		GPOS_DELETE(pspt);
-		pspt = NULL;
-	}
+  // truncate job pool
+  template <class T>
+  void TruncatePool(CSyncPool<T> *&pspt) {
+    GPOS_DELETE(pspt);
+    pspt = nullptr;
+  }
 
-	// no copy ctor
-	CJobFactory(const CJobFactory &);
+ public:
+  CJobFactory(const CJobFactory &) = delete;
 
-public:
-	// ctor
-	CJobFactory(CMemoryPool *mp, ULONG ulJobs);
+  // ctor
+  CJobFactory(CMemoryPool *mp, ULONG ulJobs);
 
-	// dtor
-	~CJobFactory();
+  // dtor
+  ~CJobFactory();
 
-	// create job of specific type
-	CJob *PjCreate(CJob::EJobType ejt);
+  // create job of specific type
+  CJob *PjCreate(CJob::EJobType ejt);
 
-	// release completed job
-	void Release(CJob *pj);
+  // release completed job
+  void Release(CJob *pj);
 
-	// truncate the container for the specific job type
-	void Truncate(CJob::EJobType ejt);
+  // truncate the container for the specific job type
+  void Truncate(CJob::EJobType ejt);
 
-};	// class CJobFactory
+};  // class CJobFactory
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CJobFactory_H
-
+#endif  // !GPOPT_CJobFactory_H
 
 // EOF

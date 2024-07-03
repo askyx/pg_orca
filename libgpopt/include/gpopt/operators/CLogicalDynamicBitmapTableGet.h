@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CLogicalDynamicBitmapTableGet.h
@@ -22,8 +22,7 @@
 
 #include "gpopt/operators/CLogicalDynamicGetBase.h"
 
-namespace gpopt
-{
+namespace gpopt {
 // fwd declarations
 class CColRefSet;
 class CTableDescriptor;
@@ -36,117 +35,84 @@ class CTableDescriptor;
 //		Logical operator for dynamic table access via bitmap indexes.
 //
 //---------------------------------------------------------------------------
-class CLogicalDynamicBitmapTableGet : public CLogicalDynamicGetBase
-{
-private:
-	// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-	ULONG m_ulOriginOpId;
+class CLogicalDynamicBitmapTableGet : public CLogicalDynamicGetBase {
+ private:
+  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
+  ULONG m_ulOriginOpId;
 
-	// private copy ctor
-	CLogicalDynamicBitmapTableGet(const CLogicalDynamicBitmapTableGet &);
+ public:
+  CLogicalDynamicBitmapTableGet(const CLogicalDynamicBitmapTableGet &) = delete;
 
-public:
-	// ctors
-	CLogicalDynamicBitmapTableGet(
-		CMemoryPool *mp, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
-		const CName *pnameTableAlias, ULONG ulPartIndex,
-		CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrPart,
-		ULONG ulSecondaryPartIndexId, BOOL is_partial,
-		CPartConstraint *ppartcnstr, CPartConstraint *ppartcnstrRel);
+  // ctors
+  CLogicalDynamicBitmapTableGet(CMemoryPool *mp, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
+                                const CName *pnameTableAlias, ULONG ulPartIndex, CColRefArray *pdrgpcrOutput,
+                                CColRef2dArray *pdrgpdrgpcrPart, IMdIdArray *partition_mdids);
 
-	explicit CLogicalDynamicBitmapTableGet(CMemoryPool *mp);
+  explicit CLogicalDynamicBitmapTableGet(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CLogicalDynamicBitmapTableGet();
+  // dtor
+  ~CLogicalDynamicBitmapTableGet() override;
 
-	// identifier
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalDynamicBitmapTableGet;
-	}
+  // identifier
+  EOperatorId Eopid() const override { return EopLogicalDynamicBitmapTableGet; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalDynamicBitmapTableGet";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalDynamicBitmapTableGet"; }
 
-	// operator specific hash function
-	virtual ULONG HashValue() const;
+  // operator specific hash function
+  ULONG HashValue() const override;
 
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// sensitivity to order of inputs
-	virtual BOOL
-	FInputOrderSensitive() const
-	{
-		return true;
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return true; }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	// derive outer references
-	virtual CColRefSet *DeriveOuterReferences(CMemoryPool *mp,
-											  CExpressionHandle &exprhdl);
+  // derive outer references
+  CColRefSet *DeriveOuterReferences(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
-	// derive constraint property
-	virtual CPropConstraint *DerivePropertyConstraint(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// compute required stat columns of the n-th child
-	virtual CColRefSet *
-	PcrsStat(CMemoryPool *mp,
-			 CExpressionHandle &,  // exprhdl
-			 CColRefSet *,		   //pcrsInput
-			 ULONG				   // child_index
-	) const
-	{
-		return GPOS_NEW(mp) CColRefSet(mp);
-	}
+  // compute required stat columns of the n-th child
+  CColRefSet *PcrsStat(CMemoryPool *mp,
+                       CExpressionHandle &,  // exprhdl
+                       CColRefSet *,         // pcrsInput
+                       ULONG                 // child_index
+  ) const override {
+    return GPOS_NEW(mp) CColRefSet(mp);
+  }
 
-	// candidate set of xforms
-	virtual CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	// derive statistics
-	virtual IStatistics *PstatsDerive(CMemoryPool *mp,
-									  CExpressionHandle &exprhdl,
-									  IStatisticsArray *stats_ctxt) const;
+  // derive statistics
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
-	// stat promise
-	virtual EStatPromise
-	Esp(CExpressionHandle &) const
-	{
-		return CLogical::EspHigh;
-	}
+  // stat promise
+  EStatPromise Esp(CExpressionHandle &) const override { return CLogical::EspHigh; }
 
-	// origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-	ULONG
-	UlOriginOpId() const
-	{
-		return m_ulOriginOpId;
-	}
+  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
+  ULONG
+  UlOriginOpId() const { return m_ulOriginOpId; }
 
-	// debug print
-	virtual IOstream &OsPrint(IOstream &) const;
+  // debug print
+  IOstream &OsPrint(IOstream &) const override;
 
-	// conversion
-	static CLogicalDynamicBitmapTableGet *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalDynamicBitmapTableGet == pop->Eopid());
+  // conversion
+  static CLogicalDynamicBitmapTableGet *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalDynamicBitmapTableGet == pop->Eopid());
 
-		return dynamic_cast<CLogicalDynamicBitmapTableGet *>(pop);
-	}
+    return dynamic_cast<CLogicalDynamicBitmapTableGet *>(pop);
+  }
 
-};	// class CLogicalDynamicBitmapTableGet
+};  // class CLogicalDynamicBitmapTableGet
 }  // namespace gpopt
 
-#endif	// !GPOPT_CLogicalDynamicBitmapTableGet_H
+#endif  // !GPOPT_CLogicalDynamicBitmapTableGet_H
 
 // EOF

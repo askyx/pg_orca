@@ -35,7 +35,7 @@ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..433.00 rows=1 width=24)
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.000000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/>
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="3">
@@ -43,8 +43,9 @@ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..433.00 rows=1 width=24)
           <dxl:CostParam Name="NLJFactor" Value="1024.000000" LowerBound="1023.500000" UpperBound="1024.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
-      <dxl:Hint MinNumOfPartsToRequireSortOnInsert="2147483647" JoinArityForAssociativityCommutativity="18" ArrayExpansionThreshold="100" JoinOrderDynamicProgThreshold="10" BroadcastThreshold="10000000" EnforceConstraintsOnDML="false"/>
-      <dxl:TraceFlags Value="101013,102074,102146,102120,103001,103014,103015,103022,104003,104004,104005,105000"/>
+      <dxl:Hint JoinArityForAssociativityCommutativity="18" ArrayExpansionThreshold="100" JoinOrderDynamicProgThreshold="10" BroadcastThreshold="10000000" EnforceConstraintsOnDML="false"/>
+      <dxl:PlanHint/>
+      <dxl:TraceFlags Value="101013,102001,102002,102003,102074,102120,102144,103001,103014,103015,103022,103033,104003,104004,104005,105000"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:Type Mdid="0.566477.1.0" Name="geometry" IsRedistributable="false" IsHashable="false" IsMergeJoinable="false" IsComposite="false" IsFixedLength="false" Length="-1" PassByValue="false">
@@ -156,47 +157,37 @@ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..433.00 rows=1 width=24)
       <dxl:ColumnStatistics Mdid="1.577571.1.0.0" Name="a" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
       <dxl:ColumnStatistics Mdid="1.581648.1.0.1" Name="geo" Width="8.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
       <dxl:ColumnStatistics Mdid="1.581648.1.0.0" Name="a" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000" ColStatsMissing="true"/>
-      <dxl:GPDBFunc Mdid="0.566917.1.0" Name="_st_contains" ReturnsSet="false" Stability="Immutable" DataAccess="NoSQL" IsStrict="true">
+      <dxl:GPDBFunc Mdid="0.566917.1.0" Name="_st_contains" ReturnsSet="false" Stability="Immutable" IsStrict="true">
         <dxl:ResultType Mdid="0.16.1.0"/>
       </dxl:GPDBFunc>
-      <dxl:Index Mdid="0.581647.1.0" Name="multi" IsClustered="false" IndexType="Gist" IndexItemType="0.2283.1.0" KeyColumns="1" IncludedColumns="0,1,2,3,4,5,6,7,8">
+      <dxl:Index Mdid="0.581647.1.0" Name="multi" IsClustered="false" IndexType="Gist" IndexItemType="0.2283.1.0" KeyColumns="1" IncludedColumns="" ReturnableColumns="">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.566580.1.0"/>
         </dxl:Opfamilies>
       </dxl:Index>
       <dxl:RelationStatistics Mdid="2.581648.1.0" Name="postgis" Rows="0.000000" EmptyRelation="true"/>
-      <dxl:Relation Mdid="0.581648.1.0" Name="postgis" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,2" NumberLeafPartitions="0">
+      <dxl:Relation Mdid="6.581648.1.0" Name="postgis" IsTemporary="false" Rows="0.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,2">
         <dxl:Columns>
           <dxl:Column Name="a" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="geo" Attno="2" Mdid="0.566477.1.0" TypeModifier="4" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:GPDBScalarOp Mdid="0.566555.1.0" Name="&amp;&amp;" ComparisonType="Other" ReturnsNullOnNullInput="true">
@@ -210,40 +201,30 @@ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..433.00 rows=1 width=24)
         </dxl:Opfamilies>
       </dxl:GPDBScalarOp>
       <dxl:RelationStatistics Mdid="2.577571.1.0" Name="postgis2" Rows="0.000000" EmptyRelation="true"/>
-      <dxl:Relation Mdid="0.577571.1.0" Name="postgis2" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,2" NumberLeafPartitions="0">
+      <dxl:Relation Mdid="6.577571.1.0" Name="postgis2" IsTemporary="false" Rows="0.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="8,2">
         <dxl:Columns>
           <dxl:Column Name="a" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="geo" Attno="2" Mdid="0.566477.1.0" TypeModifier="24" Nullable="true" ColWidth="8">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.581647.1.0" IsPartial="false"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
     </dxl:Metadata>
@@ -257,7 +238,7 @@ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..433.00 rows=1 width=24)
       <dxl:CTEList/>
       <dxl:LogicalJoin JoinType="Inner">
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.581648.1.0" TableName="postgis">
+          <dxl:TableDescriptor Mdid="6.581648.1.0" TableName="postgis">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="a" TypeMdid="0.23.1.0" ColWidth="4"/>
               <dxl:Column ColId="2" Attno="2" ColName="geo" TypeMdid="0.566477.1.0" TypeModifier="4" ColWidth="8"/>
@@ -272,7 +253,7 @@ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..433.00 rows=1 width=24)
           </dxl:TableDescriptor>
         </dxl:LogicalGet>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.577571.1.0" TableName="postgis2">
+          <dxl:TableDescriptor Mdid="6.577571.1.0" TableName="postgis2">
             <dxl:Columns>
               <dxl:Column ColId="10" Attno="1" ColName="a" TypeMdid="0.23.1.0" ColWidth="4"/>
               <dxl:Column ColId="11" Attno="2" ColName="geo" TypeMdid="0.566477.1.0" TypeModifier="24" ColWidth="8"/>
@@ -298,7 +279,7 @@ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..433.00 rows=1 width=24)
         </dxl:And>
       </dxl:LogicalJoin>
     </dxl:Query>
-    <dxl:Plan Id="0" SpaceSize="4">
+    <dxl:Plan Id="0" SpaceSize="3">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="437.000490" Rows="1.000000" Width="24"/>
@@ -368,7 +349,7 @@ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..433.00 rows=1 width=24)
                 </dxl:ProjElem>
               </dxl:ProjList>
               <dxl:Filter/>
-              <dxl:TableDescriptor Mdid="0.581648.1.0" TableName="postgis">
+              <dxl:TableDescriptor Mdid="6.581648.1.0" TableName="postgis">
                 <dxl:Columns>
                   <dxl:Column ColId="0" Attno="1" ColName="a" TypeMdid="0.23.1.0" ColWidth="4"/>
                   <dxl:Column ColId="1" Attno="2" ColName="geo" TypeMdid="0.566477.1.0" TypeModifier="4" ColWidth="8"/>
@@ -397,7 +378,7 @@ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..433.00 rows=1 width=24)
             </dxl:ProjList>
             <dxl:Filter>
               <dxl:And>
-                <dxl:FuncExpr FuncId="0.566917.1.0" FuncRetSet="false" TypeMdid="0.16.1.0">
+                <dxl:FuncExpr FuncId="0.566917.1.0" FuncRetSet="false" TypeMdid="0.16.1.0" FuncVariadic="false">
                   <dxl:Ident ColId="10" ColName="geo" TypeMdid="0.566477.1.0" TypeModifier="24"/>
                   <dxl:Ident ColId="1" ColName="geo" TypeMdid="0.566477.1.0" TypeModifier="4"/>
                 </dxl:FuncExpr>
@@ -413,8 +394,9 @@ Gather Motion 3:1  (slice2; segments: 3)  (cost=0.00..433.00 rows=1 width=24)
                 <dxl:Ident ColId="1" ColName="geo" TypeMdid="0.566477.1.0" TypeModifier="4"/>
               </dxl:Comparison>
             </dxl:IndexCondList>
+            <dxl:Partitions/>
             <dxl:IndexDescriptor Mdid="0.581647.1.0" IndexName="multi"/>
-            <dxl:TableDescriptor Mdid="0.577571.1.0" TableName="postgis2">
+            <dxl:TableDescriptor Mdid="6.577571.1.0" TableName="postgis2">
               <dxl:Columns>
                 <dxl:Column ColId="9" Attno="1" ColName="a" TypeMdid="0.23.1.0" ColWidth="4"/>
                 <dxl:Column ColId="10" Attno="2" ColName="geo" TypeMdid="0.566477.1.0" TypeModifier="24" ColWidth="8"/>

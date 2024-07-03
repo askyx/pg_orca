@@ -6,7 +6,7 @@
 //		CColumnDescriptor.h
 //
 //	@doc:
-//		Abstraction of columns in tables, functions, external tables etc.
+//		Abstraction of columns in tables, functions, foreign tables etc.
 //---------------------------------------------------------------------------
 #ifndef GPOPT_CColumnDescriptor_H
 #define GPOPT_CColumnDescriptor_H
@@ -17,8 +17,7 @@
 #include "gpopt/metadata/CName.h"
 #include "naucrates/md/IMDType.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpmd;
 
 //---------------------------------------------------------------------------
@@ -31,90 +30,90 @@ using namespace gpmd;
 //		column descriptor;
 //
 //---------------------------------------------------------------------------
-class CColumnDescriptor : public CRefCount
-{
-private:
-	// type information
-	const IMDType *m_pmdtype;
+class CColumnDescriptor : public CRefCount, public DbgPrintMixin<CColumnDescriptor> {
+ private:
+  // type information
+  const IMDType *m_pmdtype;
 
-	// type modifier
-	const INT m_type_modifier;
+  // type modifier
+  const INT m_type_modifier;
 
-	// name of column -- owned
-	CName m_name;
+  // name of column -- owned
+  CName m_name;
 
-	// attribute number
-	INT m_iAttno;
+  // attribute number
+  INT m_iAttno;
 
-	// does column allow null values?
-	BOOL m_is_nullable;
+  // does column allow null values?
+  BOOL m_is_nullable;
 
-	// width of the column, for instance  char(10) column has width 10
-	ULONG m_width;
+  // width of the column, for instance  char(10) column has width 10
+  ULONG m_width;
 
-public:
-	// ctor
-	CColumnDescriptor(CMemoryPool *mp, const IMDType *pmdtype,
-					  INT type_modifier, const CName &name, INT attno,
-					  BOOL is_nullable, ULONG ulWidth = gpos::ulong_max);
+  // is the column a distribution col
+  BOOL m_is_dist_col;
 
-	// dtor
-	virtual ~CColumnDescriptor();
+  // is the column a partition col
+  BOOL m_is_part_col;
 
-	// return column name
-	const CName &
-	Name() const
-	{
-		return m_name;
-	}
+ public:
+  // ctor
+  CColumnDescriptor(CMemoryPool *mp, const IMDType *pmdtype, INT type_modifier, const CName &name, INT attno,
+                    BOOL is_nullable, ULONG ulWidth = gpos::ulong_max);
 
-	// return metadata type
-	const IMDType *
-	RetrieveType() const
-	{
-		return m_pmdtype;
-	}
+  // dtor
+  ~CColumnDescriptor() override;
 
-	// type modifier
-	INT
-	TypeModifier() const
-	{
-		return m_type_modifier;
-	}
+  // return column name
+  const CName &Name() const { return m_name; }
 
-	// return attribute number
-	INT
-	AttrNum() const
-	{
-		return m_iAttno;
-	}
+  // return metadata type
+  const IMDType *RetrieveType() const { return m_pmdtype; }
 
-	// does column allow null values?
-	BOOL
-	IsNullable() const
-	{
-		return m_is_nullable;
-	}
+  // type modifier
+  INT TypeModifier() const { return m_type_modifier; }
 
-	// is this a system column
-	virtual BOOL
-	IsSystemColumn() const
-	{
-		return (0 > m_iAttno);
-	}
+  // return attribute number
+  INT AttrNum() const { return m_iAttno; }
 
-	// width of the column
-	virtual ULONG
-	Width() const
-	{
-		return m_width;
-	}
+  // does column allow null values?
+  BOOL IsNullable() const { return m_is_nullable; }
 
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // is this a system column
+  virtual BOOL IsSystemColumn() const { return (0 > m_iAttno); }
 
-};	// class CColumnDescriptor
+  // width of the column
+  virtual ULONG Width() const { return m_width; }
+
+  // is this a distribution column
+  BOOL IsDistCol() const { return m_is_dist_col; }
+
+  // is this a partition column
+  BOOL IsPartCol() const { return m_is_part_col; }
+
+  // set this column as a distribution column
+  void SetAsDistCol() { m_is_dist_col = true; }
+
+  // set this column as a partition column
+  void SetAsPartCol() { m_is_part_col = true; }
+
+  IOstream &OsPrint(IOstream &os) const;
+
+  BOOL operator==(const CColumnDescriptor &other) const {
+    if (this == &other) {
+      // same object reference
+      return true;
+    }
+
+    return Name().Equals(other.Name()) && RetrieveType()->MDId()->Equals(other.RetrieveType()->MDId()) &&
+           TypeModifier() == other.TypeModifier() && AttrNum() == other.AttrNum() &&
+           IsNullable() == other.IsNullable() && IsSystemColumn() == other.IsSystemColumn() &&
+           Width() == other.Width() && IsDistCol() == other.IsDistCol();
+  }
+
+};  // class CColumnDescriptor
 }  // namespace gpopt
 
-#endif	// !GPOPT_CColumnDescriptor_H
+#endif  // !GPOPT_CColumnDescriptor_H
 
 // EOF

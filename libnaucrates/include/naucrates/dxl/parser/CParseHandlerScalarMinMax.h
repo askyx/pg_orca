@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerScalarMinMax.h
@@ -17,9 +17,7 @@
 #include "naucrates/dxl/operators/CDXLScalarMinMax.h"
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -32,40 +30,34 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing a MinMax operator
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarMinMax : public CParseHandlerScalarOp
-{
-private:
-	// return type
-	IMDId *m_mdid_type;
+class CParseHandlerScalarMinMax : public CParseHandlerScalarOp {
+ private:
+  // return type
+  IMDId *m_mdid_type;
 
-	// min/max type
-	CDXLScalarMinMax::EdxlMinMaxType m_min_max_type;
+  // min/max type
+  CDXLScalarMinMax::EdxlMinMaxType m_min_max_type;
 
-	// private copy ctor
-	CParseHandlerScalarMinMax(const CParseHandlerScalarMinMax &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri, const XMLCh *const element_local_name,
+                    const XMLCh *const element_qname, const Attributes &attr) override;
 
-	// process the start of an element
-	void StartElement(const XMLCh *const element_uri,
-					  const XMLCh *const element_local_name,
-					  const XMLCh *const element_qname, const Attributes &attr);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri, const XMLCh *const element_local_name,
+                  const XMLCh *const element_qname) override;
 
-	// process the end of an element
-	void EndElement(const XMLCh *const element_uri,
-					const XMLCh *const element_local_name,
-					const XMLCh *const element_qname);
+  // parse the min/max type from the attribute value
+  static CDXLScalarMinMax::EdxlMinMaxType GetMinMaxType(const XMLCh *element_local_name);
 
-	// parse the min/max type from the attribute value
-	static CDXLScalarMinMax::EdxlMinMaxType GetMinMaxType(
-		const XMLCh *element_local_name);
+ public:
+  CParseHandlerScalarMinMax(const CParseHandlerScalarMinMax &) = delete;
 
-public:
-	// ctor
-	CParseHandlerScalarMinMax(CMemoryPool *mp,
-							  CParseHandlerManager *parse_handler_mgr,
-							  CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerScalarMinMax(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                            CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerScalarMinMax_H
+#endif  // !GPDXL_CParseHandlerScalarMinMax_H
 
-//EOF
+// EOF

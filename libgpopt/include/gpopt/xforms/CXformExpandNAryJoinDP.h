@@ -16,8 +16,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -29,54 +28,36 @@ using namespace gpos;
 //		programming
 //
 //---------------------------------------------------------------------------
-class CXformExpandNAryJoinDP : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformExpandNAryJoinDP(const CXformExpandNAryJoinDP &);
+class CXformExpandNAryJoinDP : public CXformExploration {
+ private:
+ public:
+  CXformExpandNAryJoinDP(const CXformExpandNAryJoinDP &) = delete;
 
-public:
-	// ctor
-	explicit CXformExpandNAryJoinDP(CMemoryPool *mp);
+  // ctor
+  explicit CXformExpandNAryJoinDP(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformExpandNAryJoinDP()
-	{
-	}
+  // dtor
+  ~CXformExpandNAryJoinDP() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfExpandNAryJoinDP;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfExpandNAryJoinDP; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformExpandNAryJoinDP";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformExpandNAryJoinDP"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// do stats need to be computed before applying xform?
-	virtual BOOL
-	FNeedsStats() const
-	{
-		return true;
-	}
+  // do stats need to be computed before applying xform?
+  BOOL FNeedsStats() const override { return true; }
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformExpandNAryJoinDP
+};  // class CXformExpandNAryJoinDP
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformExpandNAryJoinDP_H
+#endif  // !GPOPT_CXformExpandNAryJoinDP_H
 
 // EOF

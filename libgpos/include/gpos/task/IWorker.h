@@ -20,24 +20,16 @@
 
 #define GPOS_CHECK_ABORT (IWorker::CheckAbort(__FILE__, __LINE__))
 
-#define GPOS_CHECK_STACK_SIZE                         \
-	do                                                \
-	{                                                 \
-		if (NULL != IWorker::Self())                  \
-		{                                             \
-			(void) IWorker::Self()->CheckStackSize(); \
-		}                                             \
-	} while (0)
+#define GPOS_CHECK_STACK_SIZE                  \
+  do {                                         \
+    if (NULL != IWorker::Self()) {             \
+      (void)IWorker::Self()->CheckStackSize(); \
+    }                                          \
+  } while (0)
 
-
-#if defined(GPOS_SunOS)
-#define GPOS_CHECK_ABORT_MAX_INTERVAL_MSEC (ULONG(2000))
-#else
 #define GPOS_CHECK_ABORT_MAX_INTERVAL_MSEC (ULONG(1500))
-#endif
 
-namespace gpos
-{
+namespace gpos {
 // prototypes
 class ITask;
 class CWorkerId;
@@ -50,42 +42,36 @@ class CWorkerId;
 //		Interface to abstract scheduling primitive such as threads;
 //
 //---------------------------------------------------------------------------
-class IWorker : public CStackObject
-{
-private:
-	// hidden copy ctor
-	IWorker(const IWorker &);
+class IWorker : public CStackObject {
+ private:
+  // check for abort request
+  virtual void CheckForAbort(const CHAR *, ULONG) = 0;
 
-	// check for abort request
-	virtual void CheckForAbort(const CHAR *, ULONG) = 0;
+ public:
+  IWorker(const IWorker &) = delete;
 
-public:
-	// dummy ctor
-	IWorker()
-	{
-	}
+  // dummy ctor
+  IWorker() = default;
 
-	// dummy dtor
-	virtual ~IWorker()
-	{
-	}
+  // dummy dtor
+  virtual ~IWorker() = default;
 
-	// accessors
-	virtual ULONG_PTR GetStackStart() const = 0;
-	virtual ITask *GetTask() = 0;
+  // accessors
+  virtual ULONG_PTR GetStackStart() const = 0;
+  virtual ITask *GetTask() = 0;
 
-	// stack check
-	virtual BOOL CheckStackSize(ULONG request = 0) const = 0;
+  // stack check
+  virtual BOOL CheckStackSize(ULONG request = 0) const = 0;
 
-	// lookup worker in worker pool manager
-	static IWorker *Self();
+  // lookup worker in worker pool manager
+  static IWorker *Self();
 
-	// check for aborts
-	static void CheckAbort(const CHAR *file, ULONG line_num);
+  // check for aborts
+  static void CheckAbort(const CHAR *file, ULONG line_num);
 
-};	// class IWorker
+};  // class IWorker
 }  // namespace gpos
 
-#endif	// !GPOS_IWorker_H
+#endif  // !GPOS_IWorker_H
 
 // EOF

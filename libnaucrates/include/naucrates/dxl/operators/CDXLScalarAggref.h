@@ -17,19 +17,26 @@
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpmd;
 
-enum EdxlAggrefStage
-{
-	EdxlaggstageNormal = 0,
-	EdxlaggstagePartial,  // First (lower, earlier) stage of 2-stage aggregation.
-	EdxlaggstageIntermediate,  // Between AGGSTAGE_PARTIAL and AGGSTAGE_FINAL that handles the higher aggregation
-	// level in a (partial) ROLLUP grouping extension query
-	EdxlaggstageFinal,	// Second (upper, later) stage of 2-stage aggregation.
-	EdxlaggstageSentinel
+enum Edxlascalarggref {
+  EdxlscalaraggrefIndexArgs = 0,
+  EdxlscalaraggrefIndexDirectArgs,
+  EdxlscalaraggrefIndexAggOrder,
+  EdxlscalaraggrefIndexAggDistinct,
 };
+
+enum EdxlAggrefStage {
+  EdxlaggstageNormal = 0,
+  EdxlaggstagePartial,       // First (lower, earlier) stage of 2-stage aggregation.
+  EdxlaggstageIntermediate,  // Between AGGSTAGE_PARTIAL and AGGSTAGE_FINAL that handles the higher aggregation
+  // level in a (partial) ROLLUP grouping extension query
+  EdxlaggstageFinal,  // Second (upper, later) stage of 2-stage aggregation.
+  EdxlaggstageSentinel
+};
+
+enum EdxlAggrefKind { EdxlaggkindNormal = 0, EdxlaggkindOrderedSet, EdxlaggkindHypothetical };
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -39,74 +46,82 @@ enum EdxlAggrefStage
 //		Class for representing DXL AggRef
 //
 //---------------------------------------------------------------------------
-class CDXLScalarAggref : public CDXLScalar
-{
-private:
-	// catalog id of the function
-	IMDId *m_agg_func_mdid;
+class CDXLScalarAggref : public CDXLScalar {
+ private:
+  // catalog id of the function
+  IMDId *m_agg_func_mdid;
 
-	// resolved return type refers to a non-ambiguous type that was resolved during query
-	// parsing if the actual return type of Agg is ambiguous (e.g., AnyElement in GPDB)
-	// if resolved return type is NULL, then we can get Agg return type by looking up MD cache
-	// using Agg MDId
-	IMDId *m_resolved_rettype_mdid;
+  // resolved return type refers to a non-ambiguous type that was resolved during query
+  // parsing if the actual return type of Agg is ambiguous (e.g., AnyElement in GPDB)
+  // if resolved return type is NULL, then we can get Agg return type by looking up MD cache
+  // using Agg MDId
+  IMDId *m_resolved_rettype_mdid;
 
-	// Denotes whether it's agg(DISTINCT ...)
-	BOOL m_is_distinct;
+  // Denotes whether it's agg(DISTINCT ...)
+  BOOL m_is_distinct;
 
-	// Denotes the MPP Stage
-	EdxlAggrefStage m_agg_stage;
+  // Denotes the MPP Stage
+  EdxlAggrefStage m_agg_stage;
 
-	// private copy ctor
-	CDXLScalarAggref(const CDXLScalarAggref &);
+  EdxlAggrefKind m_aggkind;
 
-public:
-	// ctor/dtor
-	CDXLScalarAggref(CMemoryPool *mp, IMDId *agg_mdid, IMDId *resolved_rettype,
-					 BOOL is_distinct, EdxlAggrefStage agg_stage);
+  ULongPtrArray *m_argtypes;
 
-	virtual ~CDXLScalarAggref();
+ public:
+  CDXLScalarAggref(const CDXLScalarAggref &) = delete;
 
-	// ident accessors
-	Edxlopid GetDXLOperator() const;
+  // ctor/dtor
+  CDXLScalarAggref(CMemoryPool *mp, IMDId *agg_mdid, IMDId *resolved_rettype, BOOL is_distinct,
+                   EdxlAggrefStage agg_stage, EdxlAggrefKind aggkind, ULongPtrArray *argtypes);
 
-	const CWStringConst *GetOpNameStr() const;
+  ~CDXLScalarAggref() override;
 
-	IMDId *GetDXLAggFuncMDid() const;
+  // ident accessors
+  Edxlopid GetDXLOperator() const override;
 
-	IMDId *GetDXLResolvedRetTypeMDid() const;
+  const CWStringConst *GetOpNameStr() const override;
 
-	const CWStringConst *GetDXLStrAggStage() const;
+  IMDId *GetDXLAggFuncMDid() const;
 
-	EdxlAggrefStage GetDXLAggStage() const;
+  IMDId *GetDXLResolvedRetTypeMDid() const;
 
-	BOOL IsDistinct() const;
+  const CWStringConst *GetDXLStrAggStage() const;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  EdxlAggrefStage GetDXLAggStage() const;
 
-	// conversion function
-	static CDXLScalarAggref *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarAggref == dxl_op->GetDXLOperator());
+  const CWStringConst *GetDXLStrAggKind() const;
 
-		return dynamic_cast<CDXLScalarAggref *>(dxl_op);
-	}
+  BOOL IsDistinct() const;
 
-	// does the operator return a boolean result
-	virtual BOOL HasBoolResult(CMDAccessor *md_accessor) const;
+  EdxlAggrefKind GetAggKind() const { return m_aggkind; }
+
+  ULongPtrArray *GetArgTypes() const { return m_argtypes; }
+
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
+
+  void SerializeValuesListChildToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode, ULONG index,
+                                     const CHAR *attr_name) const;
+
+  // conversion function
+  static CDXLScalarAggref *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarAggref == dxl_op->GetDXLOperator());
+
+    return dynamic_cast<CDXLScalarAggref *>(dxl_op);
+  }
+
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalarAggref_H
+#endif  // !GPDXL_CDXLScalarAggref_H
 
 // EOF

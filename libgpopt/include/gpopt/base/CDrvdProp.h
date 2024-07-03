@@ -14,10 +14,9 @@
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
+#include "gpos/common/DbgPrintMixin.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // fwd declarations
@@ -28,7 +27,7 @@ class CDrvdPropCtxt;
 class CReqdPropPlan;
 
 // dynamic array for properties
-typedef CDynamicPtrArray<CDrvdProp, CleanupRelease> CDrvdPropArray;
+using CDrvdPropArray = CDynamicPtrArray<CDrvdProp, CleanupRelease>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -62,57 +61,47 @@ typedef CDynamicPtrArray<CDrvdProp, CleanupRelease> CDrvdPropArray;
 //		CExpressionHandle::DeriveProps().
 //
 //---------------------------------------------------------------------------
-class CDrvdProp : public CRefCount
-{
-public:
-	// types of derived properties
-	enum EPropType
-	{
-		EptRelational,
-		EptPlan,
-		EptScalar,
+class CDrvdProp : public CRefCount, public DbgPrintMixin<CDrvdProp> {
+ public:
+  // types of derived properties
+  enum EPropType {
+    EptRelational,
+    EptPlan,
+    EptScalar,
 
-		EptInvalid,
-		EptSentinel = EptInvalid
-	};
+    EptInvalid,
+    EptSentinel = EptInvalid
+  };
 
-private:
-	// private copy ctor
-	CDrvdProp(const CDrvdProp &);
+ private:
+ public:
+  CDrvdProp(const CDrvdProp &) = delete;
 
-public:
-	// ctor
-	CDrvdProp();
+  // ctor
+  CDrvdProp();
 
-	// dtor
-	virtual ~CDrvdProp()
-	{
-	}
+  // dtor
+  ~CDrvdProp() override = default;
 
-	// type of properties
-	virtual EPropType Ept() = 0;
+  // type of properties
+  virtual EPropType Ept() = 0;
 
-	// derivation function
-	virtual void Derive(CMemoryPool *mp, CExpressionHandle &exprhdl,
-						CDrvdPropCtxt *pdppropctxt) = 0;
+  // derivation function
+  virtual void Derive(CMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdppropctxt) = 0;
 
-	// check for satisfying required plan properties
-	virtual BOOL FSatisfies(const CReqdPropPlan *prpp) const = 0;
+  // check for satisfying required plan properties
+  virtual BOOL FSatisfies(const CReqdPropPlan *prpp) const = 0;
 
-	virtual BOOL
-	IsComplete() const
-	{
-		return true;
-	}
+  virtual BOOL IsComplete() const { return true; }
 
-};	// class CDrvdProp
+  virtual gpos::IOstream &OsPrint(gpos::IOstream &os) const = 0;
+};  // class CDrvdProp
 
 // shorthand for printing
 IOstream &operator<<(IOstream &os, const CDrvdProp &drvdprop);
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CDrvdProp_H
+#endif  // !GPOPT_CDrvdProp_H
 
 // EOF

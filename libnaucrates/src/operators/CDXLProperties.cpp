@@ -23,9 +23,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLProperties::CDXLProperties() : m_dxl_stats_derived_relation(NULL)
-{
-}
+CDXLProperties::CDXLProperties() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -35,9 +33,8 @@ CDXLProperties::CDXLProperties() : m_dxl_stats_derived_relation(NULL)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLProperties::~CDXLProperties()
-{
-	CRefCount::SafeRelease(m_dxl_stats_derived_relation);
+CDXLProperties::~CDXLProperties() {
+  CRefCount::SafeRelease(m_dxl_stats_derived_relation);
 }
 
 //---------------------------------------------------------------------------
@@ -48,13 +45,11 @@ CDXLProperties::~CDXLProperties()
 //		Set operator properties
 //
 //---------------------------------------------------------------------------
-void
-CDXLProperties::SetStats(CDXLStatsDerivedRelation *dxl_stats_derived_relation)
-{
-	// allow setting properties only once
-	GPOS_ASSERT(NULL == m_dxl_stats_derived_relation);
-	GPOS_ASSERT(NULL != dxl_stats_derived_relation);
-	m_dxl_stats_derived_relation = dxl_stats_derived_relation;
+void CDXLProperties::SetStats(CDXLStatsDerivedRelation *dxl_stats_derived_relation) {
+  // allow setting properties only once
+  GPOS_ASSERT(nullptr == m_dxl_stats_derived_relation);
+  GPOS_ASSERT(nullptr != dxl_stats_derived_relation);
+  m_dxl_stats_derived_relation = dxl_stats_derived_relation;
 }
 
 //---------------------------------------------------------------------------
@@ -65,10 +60,8 @@ CDXLProperties::SetStats(CDXLStatsDerivedRelation *dxl_stats_derived_relation)
 //		Return operator's statistical information
 //
 //---------------------------------------------------------------------------
-const CDXLStatsDerivedRelation *
-CDXLProperties::GetDxlStatsDrvdRelation() const
-{
-	return m_dxl_stats_derived_relation;
+const CDXLStatsDerivedRelation *CDXLProperties::GetDxlStatsDrvdRelation() const {
+  return m_dxl_stats_derived_relation;
 }
 
 //---------------------------------------------------------------------------
@@ -79,10 +72,8 @@ CDXLProperties::GetDxlStatsDrvdRelation() const
 //		Serialize operator statistics in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLProperties::SerializePropertiesToDXL(CXMLSerializer *xml_serializer) const
-{
-	SerializeStatsToDXL(xml_serializer);
+void CDXLProperties::SerializePropertiesToDXL(CXMLSerializer *xml_serializer) const {
+  SerializeStatsToDXL(xml_serializer);
 }
 
 //---------------------------------------------------------------------------
@@ -93,13 +84,10 @@ CDXLProperties::SerializePropertiesToDXL(CXMLSerializer *xml_serializer) const
 //		Serialize operator statistics in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLProperties::SerializeStatsToDXL(CXMLSerializer *xml_serializer) const
-{
-	if (NULL != m_dxl_stats_derived_relation)
-	{
-		m_dxl_stats_derived_relation->Serialize(xml_serializer);
-	}
+void CDXLProperties::SerializeStatsToDXL(CXMLSerializer *xml_serializer) const {
+  if (nullptr != m_dxl_stats_derived_relation) {
+    m_dxl_stats_derived_relation->Serialize(xml_serializer);
+  }
 }
 
 // EOF

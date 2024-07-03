@@ -14,8 +14,13 @@
             <dxl:GroupingColumns/>
             <dxl:ProjList>
               <dxl:ProjElem ColId="21" Alias="max">
-                <dxl:AggFunc AggMdid="0.2116.1.0" AggDistinct="false" AggStage="Normal">
+                <dxl:AggFunc AggMdid="0.2116.1.0" AggDistinct="false" AggStage="Normal" AggKind="n" AggArgTypes="">
+                  <dxl:ValuesList ParamType="aggargs">
                   <dxl:Ident ColId="11" ColName="s1" TypeMdid="0.23.1.0"/>
+                  </dxl:ValuesList>
+                  <dxl:ValuesList ParamType="aggdirectargs"/>
+                  <dxl:ValuesList ParamType="aggorder"/>
+                  <dxl:ValuesList ParamType="aggdistinct"/>
                 </dxl:AggFunc>
               </dxl:ProjElem>
             </dxl:ProjList>
@@ -25,7 +30,7 @@
                 <dxl:Ident ColId="2" ColName="t2" TypeMdid="0.23.1.0"/>
               </dxl:Comparison>
               <dxl:LogicalGet>
-                <dxl:TableDescriptor Mdid="0.899663.1.1" TableName="s">
+                <dxl:TableDescriptor Mdid="6.899663.1.1" TableName="s">
                   <dxl:Columns>
                     <dxl:Column ColId="11" Attno="1" ColName="s1" TypeMdid="0.23.1.0"/>
                     <dxl:Column ColId="12" Attno="2" ColName="s2" TypeMdid="0.23.1.0"/>
@@ -45,7 +50,7 @@
         </dxl:ScalarSubquery>
       </dxl:IsNull>
       <dxl:LogicalGet>
-        <dxl:TableDescriptor Mdid="0.899686.1.1" TableName="t">
+        <dxl:TableDescriptor Mdid="6.899686.1.1" TableName="t">
           <dxl:Columns>
             <dxl:Column ColId="1" Attno="1" ColName="t1" TypeMdid="0.23.1.0"/>
             <dxl:Column ColId="2" Attno="2" ColName="t2" TypeMdid="0.23.1.0"/>

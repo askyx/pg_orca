@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerOp.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -31,39 +30,33 @@ XERCES_CPP_NAMESPACE_USE
 //
 //
 //---------------------------------------------------------------------------
-class CParseHandlerPhysicalOp : public CParseHandlerOp
-{
-private:
-	// private copy ctor
-	CParseHandlerPhysicalOp(const CParseHandlerPhysicalOp &);
+class CParseHandlerPhysicalOp : public CParseHandlerOp {
+ private:
+ protected:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-protected:
-	// process the start of an element
-	virtual void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+ public:
+  CParseHandlerPhysicalOp(const CParseHandlerPhysicalOp &) = delete;
 
-	// process the end of an element
-	virtual void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+  // ctor/dtor
+  CParseHandlerPhysicalOp(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                          CParseHandlerBase *parse_handler_root);
 
-public:
-	// ctor/dtor
-	CParseHandlerPhysicalOp(CMemoryPool *mp,
-							CParseHandlerManager *parse_handler_mgr,
-							CParseHandlerBase *parse_handler_root);
-
-	virtual ~CParseHandlerPhysicalOp();
+  ~CParseHandlerPhysicalOp() override;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerPhysicalOp_H
+#endif  // !GPDXL_CParseHandlerPhysicalOp_H
 
 // EOF

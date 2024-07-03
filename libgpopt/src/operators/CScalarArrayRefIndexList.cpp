@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarArrayRefIndexList.cpp
@@ -24,11 +24,8 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarArrayRefIndexList::CScalarArrayRefIndexList(CMemoryPool *mp,
-												   EIndexListType eilt)
-	: CScalar(mp), m_eilt(eilt)
-{
-	GPOS_ASSERT(EiltSentinel > eilt);
+CScalarArrayRefIndexList::CScalarArrayRefIndexList(CMemoryPool *mp, EIndexListType eilt) : CScalar(mp), m_eilt(eilt) {
+  GPOS_ASSERT(EiltSentinel > eilt);
 }
 
 //---------------------------------------------------------------------------
@@ -39,18 +36,14 @@ CScalarArrayRefIndexList::CScalarArrayRefIndexList(CMemoryPool *mp,
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarArrayRefIndexList::Matches(COperator *pop) const
-{
-	if (pop->Eopid() != Eopid())
-	{
-		return false;
-	}
+BOOL CScalarArrayRefIndexList::Matches(COperator *pop) const {
+  if (pop->Eopid() != Eopid()) {
+    return false;
+  }
 
-	CScalarArrayRefIndexList *popIndexList =
-		CScalarArrayRefIndexList::PopConvert(pop);
+  CScalarArrayRefIndexList *popIndexList = CScalarArrayRefIndexList::PopConvert(pop);
 
-	return m_eilt == popIndexList->Eilt();
+  return m_eilt == popIndexList->Eilt();
 }
 
 // EOF

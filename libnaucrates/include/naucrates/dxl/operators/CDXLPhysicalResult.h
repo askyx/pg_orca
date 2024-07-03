@@ -16,16 +16,14 @@
 
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 // indices of result elements in the children array
-enum Edxlresult
-{
-	EdxlresultIndexProjList = 0,
-	EdxlresultIndexFilter,
-	EdxlresultIndexOneTimeFilter,
-	EdxlresultIndexChild,
-	EdxlresultIndexSentinel
+enum Edxlresult {
+  EdxlresultIndexProjList = 0,
+  EdxlresultIndexFilter,
+  EdxlresultIndexOneTimeFilter,
+  EdxlresultIndexChild,
+  EdxlresultIndexSentinel
 };
 //---------------------------------------------------------------------------
 //	@class:
@@ -35,41 +33,36 @@ enum Edxlresult
 //		Class for representing DXL result operators
 //
 //---------------------------------------------------------------------------
-class CDXLPhysicalResult : public CDXLPhysical
-{
-private:
-	// private copy ctor
-	CDXLPhysicalResult(CDXLPhysicalResult &);
+class CDXLPhysicalResult : public CDXLPhysical {
+ private:
+ public:
+  CDXLPhysicalResult(CDXLPhysicalResult &) = delete;
 
-public:
-	// ctor/dtor
-	explicit CDXLPhysicalResult(CMemoryPool *mp);
+  // ctor/dtor
+  explicit CDXLPhysicalResult(CMemoryPool *mp);
 
-	// accessors
-	Edxlopid GetDXLOperator() const;
-	const CWStringConst *GetOpNameStr() const;
+  // accessors
+  Edxlopid GetDXLOperator() const override;
+  const CWStringConst *GetOpNameStr() const override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// conversion function
-	static CDXLPhysicalResult *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopPhysicalResult == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLPhysicalResult *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopPhysicalResult == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLPhysicalResult *>(dxl_op);
-	}
+    return dynamic_cast<CDXLPhysicalResult *>(dxl_op);
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLPhysicalResult_H
+#endif  // !GPDXL_CDXLPhysicalResult_H
 
 // EOF

@@ -7,7 +7,7 @@ INSERT INTO t VALUES (11),(12),(13);
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="3">
@@ -15,7 +15,8 @@ INSERT INTO t VALUES (11),(12),(13);
           <dxl:CostParam Name="NLJFactor" Value="1.000000" LowerBound="0.500000" UpperBound="1.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
-      <dxl:Hint MinNumOfPartsToRequireSortOnInsert="2147483647" JoinArityForAssociativityCommutativity="2147483647" ArrayExpansionThreshold="25"/>
+      <dxl:Hint JoinArityForAssociativityCommutativity="2147483647" ArrayExpansionThreshold="25"/>
+      <dxl:PlanHint/>
       <dxl:TraceFlags Value="103027,102120,103001,103014,103015,103022,103025,104004,104005,105000"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
@@ -109,35 +110,26 @@ INSERT INTO t VALUES (11),(12),(13);
         <dxl:SumAgg Mdid="0.0.0.0"/>
         <dxl:CountAgg Mdid="0.2147.1.0"/>
       </dxl:Type>
-      <dxl:Relation Mdid="0.6861048.1.1" Name="lubo" IsTemporary="true" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="7,1" NumberLeafPartitions="0">
+      <dxl:Relation Mdid="6.6861048.1.1" Name="lubo" IsTemporary="true" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="7,1">
         <dxl:Columns>
           <dxl:Column Name="i" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
     </dxl:Metadata>
@@ -147,7 +139,7 @@ INSERT INTO t VALUES (11),(12),(13);
       </dxl:OutputColumns>
       <dxl:CTEList/>
       <dxl:LogicalInsert InsertColumns="1">
-        <dxl:TableDescriptor Mdid="0.6861048.1.1" TableName="lubo">
+        <dxl:TableDescriptor Mdid="6.6861048.1.1" TableName="lubo">
           <dxl:Columns>
             <dxl:Column ColId="4" Attno="1" ColName="i" TypeMdid="0.23.1.0"/>
             <dxl:Column ColId="5" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
@@ -191,7 +183,7 @@ INSERT INTO t VALUES (11),(12),(13);
       </dxl:LogicalInsert>
     </dxl:Query>
     <dxl:Plan Id="0" SpaceSize="0">
-      <dxl:DMLInsert Columns="0" ActionCol="3" OidCol="0" CtidCol="0" SegmentIdCol="0" InputSorted="false">
+      <dxl:DMLInsert Columns="0" ActionCol="3" CtidCol="0" SegmentIdCol="0">
         <dxl:Properties>
           <dxl:Cost StartupCost="0" TotalCost="0.031272" Rows="3.000000" Width="4"/>
         </dxl:Properties>
@@ -201,7 +193,7 @@ INSERT INTO t VALUES (11),(12),(13);
             <dxl:Ident ColId="0" ColName="column1" TypeMdid="0.23.1.0"/>
           </dxl:ProjElem>
         </dxl:ProjList>
-        <dxl:TableDescriptor Mdid="0.6861048.1.1" TableName="lubo">
+        <dxl:TableDescriptor Mdid="6.6861048.1.1" TableName="lubo">
           <dxl:Columns>
             <dxl:Column ColId="4" Attno="1" ColName="i" TypeMdid="0.23.1.0"/>
             <dxl:Column ColId="5" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
@@ -249,7 +241,7 @@ INSERT INTO t VALUES (11),(12),(13);
               <dxl:Filter/>
               <dxl:SortingColumnList/>
               <dxl:HashExprList>
-                <dxl:HashExpr TypeMdid="0.23.1.0">
+                <dxl:HashExpr>
                   <dxl:Ident ColId="0" ColName="column1" TypeMdid="0.23.1.0"/>
                 </dxl:HashExpr>
               </dxl:HashExprList>
@@ -278,7 +270,7 @@ INSERT INTO t VALUES (11),(12),(13);
               <dxl:Filter/>
               <dxl:SortingColumnList/>
               <dxl:HashExprList>
-                <dxl:HashExpr TypeMdid="0.23.1.0">
+                <dxl:HashExpr>
                   <dxl:Ident ColId="1" ColName="column1" TypeMdid="0.23.1.0"/>
                 </dxl:HashExpr>
               </dxl:HashExprList>
@@ -307,7 +299,7 @@ INSERT INTO t VALUES (11),(12),(13);
               <dxl:Filter/>
               <dxl:SortingColumnList/>
               <dxl:HashExprList>
-                <dxl:HashExpr TypeMdid="0.23.1.0">
+                <dxl:HashExpr>
                   <dxl:Ident ColId="2" ColName="column1" TypeMdid="0.23.1.0"/>
                 </dxl:HashExpr>
               </dxl:HashExprList>

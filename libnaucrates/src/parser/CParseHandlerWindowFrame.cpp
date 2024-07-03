@@ -17,7 +17,6 @@
 
 using namespace gpdxl;
 
-
 XERCES_CPP_NAMESPACE_USE
 
 //---------------------------------------------------------------------------
@@ -28,15 +27,17 @@ XERCES_CPP_NAMESPACE_USE
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CParseHandlerWindowFrame::CParseHandlerWindowFrame(
-	CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
-	: CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
-	  m_dxl_win_frame_spec(EdxlfsSentinel),
-	  m_dxl_frame_exclusion_strategy(EdxlfesSentinel),
-	  m_window_frame(NULL)
-{
-}
+CParseHandlerWindowFrame::CParseHandlerWindowFrame(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                                   CParseHandlerBase *parse_handler_root)
+    : CParseHandlerBase(mp, parse_handler_mgr, parse_handler_root),
+      m_dxl_win_frame_spec(EdxlfsSentinel),
+      m_dxl_frame_exclusion_strategy(EdxlfesSentinel),
+      m_start_in_range_func(0),
+      m_end_in_range_func(0),
+      m_in_range_coll(0),
+      m_in_range_asc(false),
+      m_in_range_nulls_first(false),
+      m_window_frame(nullptr) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -46,48 +47,31 @@ CParseHandlerWindowFrame::CParseHandlerWindowFrame(
 //		Invoked by Xerces to process an opening tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerWindowFrame::StartElement(const XMLCh *const,	// element_uri,
-									   const XMLCh *const element_local_name,
-									   const XMLCh *const,	// element_qname,
-									   const Attributes &attrs)
-{
-	if (0 ==
-		XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenWindowFrame),
-								 element_local_name))
-	{
-		m_dxl_win_frame_spec = CDXLOperatorFactory::ParseDXLFrameSpec(attrs);
-		m_dxl_frame_exclusion_strategy =
-			CDXLOperatorFactory::ParseFrameExclusionStrategy(attrs);
+void CParseHandlerWindowFrame::StartElement(const XMLCh *const,  // element_uri,
+                                            const XMLCh *const element_local_name,
+                                            const XMLCh *const,  // element_qname,
+                                            const Attributes &attrs) {
+  if (0 == XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenWindowFrame), element_local_name)) {
+    m_dxl_win_frame_spec = CDXLOperatorFactory::ParseDXLFrameSpec(attrs);
+    m_dxl_frame_exclusion_strategy = CDXLOperatorFactory::ParseFrameExclusionStrategy(attrs);
 
-		// parse handler for the trailing window frame edge
-		CParseHandlerBase *trailing_val_parse_handler_base =
-			CParseHandlerFactory::GetParseHandler(
-				m_mp,
-				CDXLTokens::XmlstrToken(EdxltokenScalarWindowFrameTrailingEdge),
-				m_parse_handler_mgr, this);
-		m_parse_handler_mgr->ActivateParseHandler(
-			trailing_val_parse_handler_base);
+    // parse handler for the trailing window frame edge
+    CParseHandlerBase *trailing_val_parse_handler_base = CParseHandlerFactory::GetParseHandler(
+        m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarWindowFrameTrailingEdge), m_parse_handler_mgr, this);
+    m_parse_handler_mgr->ActivateParseHandler(trailing_val_parse_handler_base);
 
-		// parse handler for the leading scalar values
-		CParseHandlerBase *leading_val_parse_handler_base =
-			CParseHandlerFactory::GetParseHandler(
-				m_mp,
-				CDXLTokens::XmlstrToken(EdxltokenScalarWindowFrameLeadingEdge),
-				m_parse_handler_mgr, this);
-		m_parse_handler_mgr->ActivateParseHandler(
-			leading_val_parse_handler_base);
+    // parse handler for the leading scalar values
+    CParseHandlerBase *leading_val_parse_handler_base = CParseHandlerFactory::GetParseHandler(
+        m_mp, CDXLTokens::XmlstrToken(EdxltokenScalarWindowFrameLeadingEdge), m_parse_handler_mgr, this);
+    m_parse_handler_mgr->ActivateParseHandler(leading_val_parse_handler_base);
 
-		this->Append(leading_val_parse_handler_base);
-		this->Append(trailing_val_parse_handler_base);
-	}
-	else
-	{
-		CWStringDynamic *str = CDXLUtils::CreateDynamicStringFromXMLChArray(
-			m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
-		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag,
-				   str->GetBuffer());
-	}
+    this->Append(leading_val_parse_handler_base);
+    this->Append(trailing_val_parse_handler_base);
+  } else {
+    CWStringDynamic *str =
+        CDXLUtils::CreateDynamicStringFromXMLChArray(m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
+    GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, str->GetBuffer());
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -98,43 +82,34 @@ CParseHandlerWindowFrame::StartElement(const XMLCh *const,	// element_uri,
 //		Invoked by Xerces to process a closing tag
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerWindowFrame::EndElement(const XMLCh *const,  // element_uri,
-									 const XMLCh *const element_local_name,
-									 const XMLCh *const	 // element_qname
-)
-{
-	if (0 !=
-		XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenWindowFrame),
-								 element_local_name))
-	{
-		CWStringDynamic *str = CDXLUtils::CreateDynamicStringFromXMLChArray(
-			m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
-		GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag,
-				   str->GetBuffer());
-	}
-	GPOS_ASSERT(NULL == m_window_frame);
-	GPOS_ASSERT(2 == this->Length());
+void CParseHandlerWindowFrame::EndElement(const XMLCh *const,  // element_uri,
+                                          const XMLCh *const element_local_name,
+                                          const XMLCh *const  // element_qname
+) {
+  if (0 != XMLString::compareString(CDXLTokens::XmlstrToken(EdxltokenWindowFrame), element_local_name)) {
+    CWStringDynamic *str =
+        CDXLUtils::CreateDynamicStringFromXMLChArray(m_parse_handler_mgr->GetDXLMemoryManager(), element_local_name);
+    GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiDXLUnexpectedTag, str->GetBuffer());
+  }
+  GPOS_ASSERT(nullptr == m_window_frame);
+  GPOS_ASSERT(2 == this->Length());
 
-	CParseHandlerScalarOp *trailing_val_parse_handler_base =
-		dynamic_cast<CParseHandlerScalarOp *>((*this)[0]);
-	GPOS_ASSERT(NULL != trailing_val_parse_handler_base);
-	CDXLNode *dxlnode_trailing =
-		trailing_val_parse_handler_base->CreateDXLNode();
-	dxlnode_trailing->AddRef();
+  CParseHandlerScalarOp *trailing_val_parse_handler_base = dynamic_cast<CParseHandlerScalarOp *>((*this)[0]);
+  GPOS_ASSERT(nullptr != trailing_val_parse_handler_base);
+  CDXLNode *dxlnode_trailing = trailing_val_parse_handler_base->CreateDXLNode();
+  dxlnode_trailing->AddRef();
 
-	CParseHandlerScalarOp *leading_val_parse_handler_base =
-		dynamic_cast<CParseHandlerScalarOp *>((*this)[1]);
-	GPOS_ASSERT(NULL != leading_val_parse_handler_base);
-	CDXLNode *dxlnode_leading = leading_val_parse_handler_base->CreateDXLNode();
-	dxlnode_leading->AddRef();
+  CParseHandlerScalarOp *leading_val_parse_handler_base = dynamic_cast<CParseHandlerScalarOp *>((*this)[1]);
+  GPOS_ASSERT(nullptr != leading_val_parse_handler_base);
+  CDXLNode *dxlnode_leading = leading_val_parse_handler_base->CreateDXLNode();
+  dxlnode_leading->AddRef();
 
-	m_window_frame = GPOS_NEW(m_mp) CDXLWindowFrame(
-		m_mp, m_dxl_win_frame_spec, m_dxl_frame_exclusion_strategy,
-		dxlnode_leading, dxlnode_trailing);
+  m_window_frame = GPOS_NEW(m_mp) CDXLWindowFrame(m_dxl_win_frame_spec, m_dxl_frame_exclusion_strategy, dxlnode_leading,
+                                                  dxlnode_trailing, m_start_in_range_func, m_end_in_range_func,
+                                                  m_in_range_coll, m_in_range_asc, m_in_range_nulls_first);
 
-	// deactivate handler
-	m_parse_handler_mgr->DeactivateHandler();
+  // deactivate handler
+  m_parse_handler_mgr->DeactivateHandler();
 }
 
 // EOF

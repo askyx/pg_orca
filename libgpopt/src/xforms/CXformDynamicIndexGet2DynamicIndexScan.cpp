@@ -13,12 +13,14 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/metadata/CPartConstraint.h"
+#include "gpopt/hints/CHintUtils.h"
 #include "gpopt/metadata/CTableDescriptor.h"
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalDynamicIndexGet.h"
+#include "gpopt/operators/CPatternLeaf.h"
+#include "gpopt/operators/CPhysicalDynamicIndexScan.h"
+#include "gpopt/optimizer/COptimizerConfig.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -28,26 +30,25 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CXformDynamicIndexGet2DynamicIndexScan::CXformDynamicIndexGet2DynamicIndexScan(
-	CMemoryPool *mp)
-	: CXformImplementation(
-		  // pattern
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CLogicalDynamicIndexGet(mp),
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CPatternLeaf(mp))  // index lookup predicate
-			  ))
-{
-}
+CXformDynamicIndexGet2DynamicIndexScan::CXformDynamicIndexGet2DynamicIndexScan(CMemoryPool *mp)
+    : CXformImplementation(
+          // pattern
+          GPOS_NEW(mp)
+              CExpression(mp, GPOS_NEW(mp) CLogicalDynamicIndexGet(mp),
+                          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))  // index lookup predicate
+                          )) {}
 
-CXform::EXformPromise
-CXformDynamicIndexGet2DynamicIndexScan::Exfp(CExpressionHandle &exprhdl) const
-{
-	if (exprhdl.DeriveHasSubquery(0))
-	{
-		return CXform::ExfpNone;
-	}
-	return CXform::ExfpHigh;
+CXform::EXformPromise CXformDynamicIndexGet2DynamicIndexScan::Exfp(CExpressionHandle &exprhdl) const {
+  CLogicalDynamicIndexGet *popGet = CLogicalDynamicIndexGet::PopConvert(exprhdl.Pop());
+
+  CTableDescriptor *ptabdesc = popGet->Ptabdesc();
+  BOOL possible_ao_table =
+      ptabdesc->IsAORowOrColTable() || ptabdesc->RetrieveRelStorageType() == IMDRelation::ErelstorageMixedPartitioned;
+  if (possible_ao_table || exprhdl.DeriveHasSubquery(0)) {
+    // GPDB does not support dynamic index scan on AO/AOCS table.
+    return CXform::ExfpNone;
+  }
+  return CXform::ExfpHigh;
 }
 
 //---------------------------------------------------------------------------
@@ -58,60 +59,57 @@ CXformDynamicIndexGet2DynamicIndexScan::Exfp(CExpressionHandle &exprhdl) const
 //		Actual transformation
 //
 //---------------------------------------------------------------------------
-void
-CXformDynamicIndexGet2DynamicIndexScan::Transform(CXformContext *pxfctxt,
-												  CXformResult *pxfres,
-												  CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformDynamicIndexGet2DynamicIndexScan::Transform(CXformContext *pxfctxt GPOS_ASSERTS_ONLY,
+                                                       CXformResult *pxfres GPOS_UNUSED,
+                                                       CExpression *pexpr GPOS_ASSERTS_ONLY) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CLogicalDynamicIndexGet *popIndexGet =
-		CLogicalDynamicIndexGet::PopConvert(pexpr->Pop());
-	CMemoryPool *mp = pxfctxt->Pmp();
+  CLogicalDynamicIndexGet *popIndexGet = CLogicalDynamicIndexGet::PopConvert(pexpr->Pop());
+  CMemoryPool *mp = pxfctxt->Pmp();
 
-	// create/extract components for alternative
-	CName *pname = GPOS_NEW(mp) CName(mp, popIndexGet->Name());
+  if (!CHintUtils::SatisfiesPlanHints(popIndexGet, COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
+    return;
+  }
 
-	// extract components
-	CExpression *pexprIndexCond = (*pexpr)[0];
-	pexprIndexCond->AddRef();
+  // create/extract components for alternative
+  CName *pname = GPOS_NEW(mp) CName(mp, popIndexGet->Name());
+  GPOS_ASSERT(pname != nullptr);
 
-	CTableDescriptor *ptabdesc = popIndexGet->Ptabdesc();
-	ptabdesc->AddRef();
+  // extract components
+  CExpression *pexprIndexCond = (*pexpr)[0];
+  pexprIndexCond->AddRef();
 
-	CIndexDescriptor *pindexdesc = popIndexGet->Pindexdesc();
-	pindexdesc->AddRef();
+  CTableDescriptor *ptabdesc = popIndexGet->Ptabdesc();
+  ptabdesc->AddRef();
 
-	CColRefArray *pdrgpcrOutput = popIndexGet->PdrgpcrOutput();
-	GPOS_ASSERT(NULL != pdrgpcrOutput);
-	pdrgpcrOutput->AddRef();
+  CIndexDescriptor *pindexdesc = popIndexGet->Pindexdesc();
+  pindexdesc->AddRef();
 
-	CColRef2dArray *pdrgpdrgpcrPart = popIndexGet->PdrgpdrgpcrPart();
-	pdrgpdrgpcrPart->AddRef();
+  CColRefArray *pdrgpcrOutput = popIndexGet->PdrgpcrOutput();
+  GPOS_ASSERT(nullptr != pdrgpcrOutput);
+  pdrgpcrOutput->AddRef();
 
-	CPartConstraint *ppartcnstr = popIndexGet->Ppartcnstr();
-	ppartcnstr->AddRef();
+  CColRef2dArray *pdrgpdrgpcrPart = popIndexGet->PdrgpdrgpcrPart();
+  pdrgpdrgpcrPart->AddRef();
 
-	CPartConstraint *ppartcnstrRel = popIndexGet->PpartcnstrRel();
-	ppartcnstrRel->AddRef();
+  COrderSpec *pos = popIndexGet->Pos();
+  pos->AddRef();
 
-	COrderSpec *pos = popIndexGet->Pos();
-	pos->AddRef();
+  popIndexGet->GetPartitionMdids()->AddRef();
+  popIndexGet->GetRootColMappingPerPart()->AddRef();
 
-	// create alternative expression
-	CExpression *pexprAlt = GPOS_NEW(mp) CExpression(
-		mp,
-		GPOS_NEW(mp) CPhysicalDynamicIndexScan(
-			mp, popIndexGet->IsPartial(), pindexdesc, ptabdesc,
-			pexpr->Pop()->UlOpId(), pname, pdrgpcrOutput, popIndexGet->ScanId(),
-			pdrgpdrgpcrPart, popIndexGet->UlSecondaryScanId(), ppartcnstr,
-			ppartcnstrRel, pos),
-		pexprIndexCond);
-	// add alternative to transformation result
-	pxfres->Add(pexprAlt);
+  // create alternative expression
+  CExpression *pexprAlt = GPOS_NEW(mp) CExpression(
+      mp,
+      GPOS_NEW(mp)
+          CPhysicalDynamicIndexScan(mp, pindexdesc, ptabdesc, pexpr->Pop()->UlOpId(), pname, pdrgpcrOutput,
+                                    popIndexGet->ScanId(), pdrgpdrgpcrPart, pos, popIndexGet->GetPartitionMdids(),
+                                    popIndexGet->GetRootColMappingPerPart(), popIndexGet->ResidualPredicateSize()),
+      pexprIndexCond);
+  // add alternative to transformation result
+  pxfres->Add(pexprAlt);
 }
-
 
 // EOF

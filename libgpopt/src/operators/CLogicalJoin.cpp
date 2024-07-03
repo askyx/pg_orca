@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2018 Pivotal, Inc.
+//	Copyright (C) 2018 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CLogicalJoin.cpp
@@ -22,7 +22,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CLogicalJoin::CLogicalJoin
@@ -31,11 +30,11 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalJoin::CLogicalJoin(CMemoryPool *mp) : CLogical(mp)
-{
-	GPOS_ASSERT(NULL != mp);
-}
 
+CLogicalJoin::CLogicalJoin(CMemoryPool *mp, CXform::EXformId origin_xform)
+    : CLogical(mp), m_origin_xform(origin_xform) {
+  GPOS_ASSERT(nullptr != mp);
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,10 +44,8 @@ CLogicalJoin::CLogicalJoin(CMemoryPool *mp) : CLogical(mp)
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CLogicalJoin::Matches(COperator *pop) const
-{
-	return (pop->Eopid() == Eopid());
+BOOL CLogicalJoin::Matches(COperator *pop) const {
+  return (pop->Eopid() == Eopid());
 }
 
 //---------------------------------------------------------------------------
@@ -59,11 +56,21 @@ CLogicalJoin::Matches(COperator *pop) const
 //		Derive statistics
 //
 //---------------------------------------------------------------------------
-IStatistics *
-CLogicalJoin::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
-						   IStatisticsArray *stats_ctxt) const
-{
-	return CJoinStatsProcessor::DeriveJoinStats(mp, exprhdl, stats_ctxt);
+IStatistics *CLogicalJoin::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                        IStatisticsArray *stats_ctxt) const {
+  IStatistics *pstats = CJoinStatsProcessor::DeriveJoinStats(mp, exprhdl, stats_ctxt);
+
+  // Check whether a row plan hint exists for this join operators relations.
+  // And if one does exist, then evaluate the hint to overwrite the estimated
+  // rows.
+  CPlanHint *planhint = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint();
+  if (nullptr != planhint) {
+    CRowHint *rowhint = planhint->GetRowHint(exprhdl.DeriveTableDescriptor());
+    if (nullptr != rowhint) {
+      pstats->SetRows(rowhint->ComputeRows(pstats->Rows()));
+    }
+  }
+  return pstats;
 }
 
 // EOF

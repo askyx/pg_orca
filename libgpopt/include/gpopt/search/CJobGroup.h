@@ -15,8 +15,7 @@
 
 #include "gpopt/search/CJob.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // prototypes
@@ -31,57 +30,52 @@ class CGroupExpression;
 //		Abstract superclass of all group optimization jobs
 //
 //---------------------------------------------------------------------------
-class CJobGroup : public CJob
-{
-private:
-	// private copy ctor
-	CJobGroup(const CJobGroup &);
+class CJobGroup : public CJob {
+ private:
+ protected:
+  // target group
+  CGroup *m_pgroup{nullptr};
 
-protected:
-	// target group
-	CGroup *m_pgroup;
+  // last scheduled group expression
+  CGroupExpression *m_pgexprLastScheduled;
 
-	// last scheduled group expression
-	CGroupExpression *m_pgexprLastScheduled;
+  // ctor
+  CJobGroup() = default;
 
-	// ctor
-	CJobGroup() : m_pgroup(NULL)
-	{
-	}
+  // dtor
+  ~CJobGroup() override = default;
 
-	// dtor
-	virtual ~CJobGroup(){};
+  // initialize job
+  void Init(CGroup *pgroup);
 
-	// initialize job
-	void Init(CGroup *pgroup);
+  // get first unscheduled logical expression
+  virtual CGroupExpression *PgexprFirstUnschedLogical();
 
-	// get first unscheduled logical expression
-	virtual CGroupExpression *PgexprFirstUnschedLogical();
+  // get first unscheduled non-logical expression
+  virtual CGroupExpression *PgexprFirstUnschedNonLogical();
 
-	// get first unscheduled non-logical expression
-	virtual CGroupExpression *PgexprFirstUnschedNonLogical();
+  // get first unscheduled expression
+  virtual CGroupExpression *PgexprFirstUnsched() = 0;
 
-	// get first unscheduled expression
-	virtual CGroupExpression *PgexprFirstUnsched() = 0;
+  // schedule jobs for of all new group expressions
+  virtual BOOL FScheduleGroupExpressions(CSchedulerContext *psc) = 0;
 
-	// schedule jobs for of all new group expressions
-	virtual BOOL FScheduleGroupExpressions(CSchedulerContext *psc) = 0;
-
-	// job's function
-	virtual BOOL FExecute(CSchedulerContext *psc) = 0;
+  // job's function
+  BOOL FExecute(CSchedulerContext *psc) override = 0;
 
 #ifdef GPOS_DEBUG
 
-	// print function
-	virtual IOstream &OsPrint(IOstream &os) = 0;
+  // print function
+  IOstream &OsPrint(IOstream &os) const override = 0;
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
+ public:
+  CJobGroup(const CJobGroup &) = delete;
 
-};	// class CJobGroup
+};  // class CJobGroup
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CJobGroup_H
-
+#endif  // !GPOPT_CJobGroup_H
 
 // EOF

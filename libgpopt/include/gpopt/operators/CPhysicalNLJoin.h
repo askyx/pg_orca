@@ -16,8 +16,7 @@
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CPhysicalJoin.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CPhysicalNLJoin
@@ -26,106 +25,63 @@ namespace gpopt
 //		Inner nested-loops join operator
 //
 //---------------------------------------------------------------------------
-class CPhysicalNLJoin : public CPhysicalJoin
-{
-private:
-	// private copy ctor
-	CPhysicalNLJoin(const CPhysicalNLJoin &);
+class CPhysicalNLJoin : public CPhysicalJoin {
+ private:
+ public:
+  CPhysicalNLJoin(const CPhysicalNLJoin &) = delete;
 
-protected:
-	// helper function for computing the required partition propagation
-	// spec for the children of a nested loop join
-	CPartitionPropagationSpec *PppsRequiredNLJoinChild(
-		CMemoryPool *mp, CExpressionHandle &exprhdl,
-		CPartitionPropagationSpec *pppsRequired, ULONG child_index,
-		CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq);
+  // ctor
+  explicit CPhysicalNLJoin(CMemoryPool *mp);
 
-public:
-	// ctor
-	explicit CPhysicalNLJoin(CMemoryPool *mp);
+  // dtor
+  ~CPhysicalNLJoin() override;
 
-	// dtor
-	virtual ~CPhysicalNLJoin();
+  //-------------------------------------------------------------------------------------
+  // Required Plan Properties
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	// Required Plan Properties
-	//-------------------------------------------------------------------------------------
+  // compute required sort order of the n-th child
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, ULONG child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-	// compute required sort order of the n-th child
-	virtual COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-									COrderSpec *posInput, ULONG child_index,
-									CDrvdPropArray *pdrgpdpCtxt,
-									ULONG ulOptReq) const;
+  // compute required rewindability of the n-th child
+  CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
+                                  ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-	// compute required rewindability of the n-th child
-	virtual CRewindabilitySpec *PrsRequired(CMemoryPool *mp,
-											CExpressionHandle &exprhdl,
-											CRewindabilitySpec *prsRequired,
-											ULONG child_index,
-											CDrvdPropArray *pdrgpdpCtxt,
-											ULONG ulOptReq) const;
+  // compute required output columns of the n-th child
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG child_index,
+                           CDrvdPropArray *,  // pdrgpdpCtxt
+                           ULONG              // ulOptReq
+                           ) override;
 
-	// compute required output columns of the n-th child
-	virtual CColRefSet *PcrsRequired(CMemoryPool *mp,
-									 CExpressionHandle &exprhdl,
-									 CColRefSet *pcrsRequired,
-									 ULONG child_index,
-									 CDrvdPropArray *,	// pdrgpdpCtxt
-									 ULONG				// ulOptReq
-	);
+  //-------------------------------------------------------------------------------------
+  // Enforced Properties
+  //-------------------------------------------------------------------------------------
 
-	// compute required partition propagation of the n-th child
-	virtual CPartitionPropagationSpec *
-	PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-				 CPartitionPropagationSpec *pppsRequired, ULONG child_index,
-				 CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq)
-	{
-		GPOS_ASSERT(ulOptReq < UlPartPropagateRequests());
+  // return order property enforcing type for this operator
+  CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const override;
 
-		return PppsRequiredNLJoinChild(mp, exprhdl, pppsRequired, child_index,
-									   pdrgpdpCtxt, ulOptReq);
-	}
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	// Enforced Properties
-	//-------------------------------------------------------------------------------------
+  // return true if operator is a correlated NL Join
+  virtual BOOL FCorrelated() const { return false; }
 
-	// return order property enforcing type for this operator
-	virtual CEnfdProp::EPropEnforcingType EpetOrder(
-		CExpressionHandle &exprhdl, const CEnfdOrder *peo) const;
+  // return required inner columns -- overloaded by correlated join children
+  virtual CColRefArray *PdrgPcrInner() const { return nullptr; }
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  // conversion function
+  static CPhysicalNLJoin *PopConvert(COperator *pop) {
+    GPOS_ASSERT(CUtils::FNLJoin(pop));
 
-	// return true if operator is a correlated NL Join
-	virtual BOOL
-	FCorrelated() const
-	{
-		return false;
-	}
+    return dynamic_cast<CPhysicalNLJoin *>(pop);
+  }
 
-	// return required inner columns -- overloaded by correlated join children
-	virtual CColRefArray *
-	PdrgPcrInner() const
-	{
-		return NULL;
-	}
-
-	// conversion function
-	static CPhysicalNLJoin *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(CUtils::FNLJoin(pop));
-
-		return dynamic_cast<CPhysicalNLJoin *>(pop);
-	}
-
-
-};	// class CPhysicalNLJoin
+};  // class CPhysicalNLJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPhysicalNLJoin_H
+#endif  // !GPOPT_CPhysicalNLJoin_H
 
 // EOF

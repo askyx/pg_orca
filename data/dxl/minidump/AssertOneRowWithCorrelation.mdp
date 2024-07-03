@@ -7,7 +7,7 @@ select (select a from x x2 where x2.a=x1.a) from x x1;
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="3">
@@ -15,7 +15,8 @@ select (select a from x x2 where x2.a=x1.a) from x x1;
           <dxl:CostParam Name="NLJFactor" Value="1.000000" LowerBound="0.500000" UpperBound="1.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
-      <dxl:TraceFlags Value="103027,101013,102016,102024,102025,102115,102116,102119,102120,102128,103001,103014,103015"/>
+      <dxl:PlanHint/>
+      <dxl:TraceFlags Value="101013,102001,102002,102003,102016,102024,102025,102115,102116,102119,102120,102128,102144,103001,103014,103015,103027,103033"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:ColumnStatistics Mdid="1.24719017.1.1.7" Name="gp_segment_id" Width="4.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
@@ -128,35 +129,26 @@ select (select a from x x2 where x2.a=x1.a) from x x1;
         </dxl:Opfamilies>
       </dxl:GPDBScalarOp>
       <dxl:RelationStatistics Mdid="2.24719017.1.1" Name="x" Rows="1000.000000" EmptyRelation="false"/>
-      <dxl:Relation Mdid="0.24719017.1.1" Name="x" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="7,1">
+      <dxl:Relation Mdid="6.24719017.1.1" Name="x" IsTemporary="false" Rows="1000.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="7,1">
         <dxl:Columns>
           <dxl:Column Name="a" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.24719017.1.1.1" Name="ctid" Width="6.000000" NullFreq="0.000000" NdvRemain="0.000000" FreqRemain="0.000000"/>
@@ -278,7 +270,7 @@ select (select a from x x2 where x2.a=x1.a) from x x1;
                   <dxl:Ident ColId="1" ColName="a" TypeMdid="0.23.1.0"/>
                 </dxl:Comparison>
                 <dxl:LogicalGet>
-                  <dxl:TableDescriptor Mdid="0.24719017.1.1" TableName="x">
+                  <dxl:TableDescriptor Mdid="6.24719017.1.1" TableName="x">
                     <dxl:Columns>
                       <dxl:Column ColId="9" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
                       <dxl:Column ColId="10" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
@@ -296,7 +288,7 @@ select (select a from x x2 where x2.a=x1.a) from x x1;
           </dxl:ProjElem>
         </dxl:ProjList>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.24719017.1.1" TableName="x">
+          <dxl:TableDescriptor Mdid="6.24719017.1.1" TableName="x">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="2" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
@@ -370,7 +362,7 @@ select (select a from x x2 where x2.a=x1.a) from x x1;
                         </dxl:ProjElem>
                       </dxl:ProjList>
                       <dxl:Filter/>
-                      <dxl:TableDescriptor Mdid="0.24719017.1.1" TableName="x">
+                      <dxl:TableDescriptor Mdid="6.24719017.1.1" TableName="x">
                         <dxl:Columns>
                           <dxl:Column ColId="8" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
                           <dxl:Column ColId="9" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>
@@ -412,7 +404,7 @@ select (select a from x x2 where x2.a=x1.a) from x x1;
               </dxl:ProjElem>
             </dxl:ProjList>
             <dxl:Filter/>
-            <dxl:TableDescriptor Mdid="0.24719017.1.1" TableName="x">
+            <dxl:TableDescriptor Mdid="6.24719017.1.1" TableName="x">
               <dxl:Columns>
                 <dxl:Column ColId="0" Attno="1" ColName="a" TypeMdid="0.23.1.0"/>
                 <dxl:Column ColId="1" Attno="-1" ColName="ctid" TypeMdid="0.27.1.0"/>

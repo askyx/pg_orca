@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLScalarArrayRef.h
@@ -17,8 +17,7 @@
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpmd;
 
 //---------------------------------------------------------------------------
@@ -29,89 +28,70 @@ using namespace gpmd;
 //		Class for representing DXL scalar arrayrefs
 //
 //---------------------------------------------------------------------------
-class CDXLScalarArrayRef : public CDXLScalar
-{
-private:
-	// base element type id
-	IMDId *m_elem_type_mdid;
+class CDXLScalarArrayRef : public CDXLScalar {
+ private:
+  // base element type id
+  IMDId *m_elem_type_mdid;
 
-	// element type modifier
-	INT m_type_modifier;
+  // element type modifier
+  INT m_type_modifier;
 
-	// array type id
-	IMDId *m_array_type_mdid;
+  // array type id
+  IMDId *m_array_type_mdid;
 
-	// return type id
-	IMDId *m_return_type_mdid;
+  // return type id
+  IMDId *m_return_type_mdid;
 
-	// private copy ctor
-	CDXLScalarArrayRef(const CDXLScalarArrayRef &);
+ public:
+  CDXLScalarArrayRef(const CDXLScalarArrayRef &) = delete;
 
-public:
-	// ctor
-	CDXLScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid,
-					   INT type_modifier, IMDId *array_type_mdid,
-					   IMDId *return_type_mdid);
+  // ctor
+  CDXLScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid, INT type_modifier, IMDId *array_type_mdid,
+                     IMDId *return_type_mdid);
 
-	// dtor
-	virtual ~CDXLScalarArrayRef();
+  // dtor
+  ~CDXLScalarArrayRef() override;
 
-	// ident accessors
-	virtual Edxlopid GetDXLOperator() const;
+  // ident accessors
+  Edxlopid GetDXLOperator() const override;
 
-	// operator name
-	virtual const CWStringConst *GetOpNameStr() const;
+  // operator name
+  const CWStringConst *GetOpNameStr() const override;
 
-	// element type id
-	IMDId *
-	ElementTypeMDid() const
-	{
-		return m_elem_type_mdid;
-	}
+  // element type id
+  IMDId *ElementTypeMDid() const { return m_elem_type_mdid; }
 
-	// element type modifier
-	INT TypeModifier() const;
+  // element type modifier
+  INT TypeModifier() const;
 
-	// array type id
-	IMDId *
-	ArrayTypeMDid() const
-	{
-		return m_array_type_mdid;
-	}
+  // array type id
+  IMDId *ArrayTypeMDid() const { return m_array_type_mdid; }
 
-	// return type id
-	IMDId *
-	ReturnTypeMDid() const
-	{
-		return m_return_type_mdid;
-	}
+  // return type id
+  IMDId *ReturnTypeMDid() const { return m_return_type_mdid; }
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// does the operator return a boolean result
-	virtual BOOL HasBoolResult(CMDAccessor *md_accessor) const;
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	virtual void AssertValid(const CDXLNode *dxlnode,
-							 BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 
-	// conversion function
-	static CDXLScalarArrayRef *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarArrayRef == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarArrayRef *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarArrayRef == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarArrayRef *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarArrayRef *>(dxl_op);
+  }
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalarArrayRef_H
+#endif  // !GPDXL_CDXLScalarArrayRef_H
 
 // EOF

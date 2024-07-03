@@ -14,13 +14,15 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CUtils.h"
+#include "gpopt/operators/CLogicalLeftOuterJoin.h"
+#include "gpopt/operators/CLogicalNAryJoin.h"
 #include "gpopt/operators/CNormalizer.h"
+#include "gpopt/operators/CPatternLeaf.h"
+#include "gpopt/operators/CPatternMultiLeaf.h"
+#include "gpopt/operators/CPatternTree.h"
 #include "gpopt/operators/CPredicateUtils.h"
-#include "gpopt/operators/ops.h"
-
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -31,25 +33,18 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformPushDownLeftOuterJoin::CXformPushDownLeftOuterJoin(CMemoryPool *mp)
-	: CXformExploration(
-		  // pattern
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CLogicalLeftOuterJoin(mp),
-			  GPOS_NEW(mp) CExpression	// outer child is an NAry-Join
-			  (mp, GPOS_NEW(mp) CLogicalNAryJoin(mp),
-			   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternMultiLeaf(mp)),
-			   GPOS_NEW(mp) CExpression(
-				   mp,
-				   GPOS_NEW(mp) CPatternTree(mp))  // NAry-join predicate tree
-			   ),
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // inner child is a leaf
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CPatternTree(mp))  // LOJ predicate tree
-			  ))
-{
-}
-
+    : CXformExploration(
+          // pattern
+          GPOS_NEW(mp) CExpression(
+              mp, GPOS_NEW(mp) CLogicalLeftOuterJoin(mp),
+              GPOS_NEW(mp) CExpression  // outer child is an NAry-Join
+              (mp, GPOS_NEW(mp) CLogicalNAryJoin(mp), GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternMultiLeaf(mp)),
+               GPOS_NEW(mp) CExpression(mp,
+                                        GPOS_NEW(mp) CPatternTree(mp))  // NAry-join predicate tree
+               ),
+              GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // inner child is a leaf
+              GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // LOJ predicate tree
+              )) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -59,15 +54,12 @@ CXformPushDownLeftOuterJoin::CXformPushDownLeftOuterJoin(CMemoryPool *mp)
 //		Xform promise
 //
 //---------------------------------------------------------------------------
-CXform::EXformPromise
-CXformPushDownLeftOuterJoin::Exfp(CExpressionHandle &exprhdl) const
-{
-	CExpression *pexprScalar = exprhdl.PexprScalarRepChild(2);
-	if (COperator::EopScalarConst == pexprScalar->Pop()->Eopid())
-	{
-		return CXform::ExfpNone;
-	}
-	return CXform::ExfpHigh;
+CXform::EXformPromise CXformPushDownLeftOuterJoin::Exfp(CExpressionHandle &exprhdl) const {
+  CExpression *pexprScalar = exprhdl.PexprScalarRepChild(2);
+  if (COperator::EopScalarConst == pexprScalar->Pop()->Eopid()) {
+    return CXform::ExfpNone;
+  }
+  return CXform::ExfpHigh;
 }
 
 //---------------------------------------------------------------------------
@@ -95,112 +87,104 @@ CXformPushDownLeftOuterJoin::Exfp(CExpressionHandle &exprhdl) const
 //					+--D
 //
 //---------------------------------------------------------------------------
-void
-CXformPushDownLeftOuterJoin::Transform(CXformContext *pxfctxt,
-									   CXformResult *pxfres,
-									   CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(NULL != pxfres);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformPushDownLeftOuterJoin::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(nullptr != pxfres);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CMemoryPool *mp = pxfctxt->Pmp();
+  CMemoryPool *mp = pxfctxt->Pmp();
 
-	CExpression *pexprNAryJoin = (*pexpr)[0];
-	CExpression *pexprLOJInnerChild = (*pexpr)[1];
-	CExpression *pexprLOJScalarChild = (*pexpr)[2];
+  CExpression *pexprNAryJoin = (*pexpr)[0];
+  CExpression *pexprLOJInnerChild = (*pexpr)[1];
+  CExpression *pexprLOJScalarChild = (*pexpr)[2];
 
-	CColRefSet *pcrsLOJUsed = pexprLOJScalarChild->DeriveUsedColumns();
-	CExpressionArray *pdrgpexprLOJChildren = GPOS_NEW(mp) CExpressionArray(mp);
-	CExpressionArray *pdrgpexprNAryJoinChildren =
-		GPOS_NEW(mp) CExpressionArray(mp);
+  CColRefSet *pcrsLOJUsed = pexprLOJScalarChild->DeriveUsedColumns();
+  CExpressionArray *pdrgpexprLOJChildren = GPOS_NEW(mp) CExpressionArray(mp);
+  CExpressionArray *pdrgpexprNAryJoinChildren = GPOS_NEW(mp) CExpressionArray(mp);
 
-	const ULONG arity = pexprNAryJoin->Arity();
-	CExpression *pexprNAryJoinScalarChild = (*pexprNAryJoin)[arity - 1];
-	for (ULONG ul = 0; ul < arity - 1; ul++)
-	{
-		CExpression *pexprChild = (*pexprNAryJoin)[ul];
-		CColRefSet *pcrsOutput = pexprChild->DeriveOutputColumns();
-		pexprChild->AddRef();
-		if (!pcrsOutput->IsDisjoint(pcrsLOJUsed))
-		{
-			pdrgpexprLOJChildren->Append(pexprChild);
-		}
-		else
-		{
-			pdrgpexprNAryJoinChildren->Append(pexprChild);
-		}
-	}
+  const ULONG arity = pexprNAryJoin->Arity();
+  CExpression *pexprNAryJoinScalarChild = (*pexprNAryJoin)[arity - 1];
+  for (ULONG ul = 0; ul < arity - 1; ul++) {
+    CExpression *pexprChild = (*pexprNAryJoin)[ul];
+    CColRefSet *pcrsOutput = pexprChild->DeriveOutputColumns();
+    pexprChild->AddRef();
+    if (!pcrsOutput->IsDisjoint(pcrsLOJUsed)) {
+      pdrgpexprLOJChildren->Append(pexprChild);
+    } else {
+      pdrgpexprNAryJoinChildren->Append(pexprChild);
+    }
+  }
 
-	CExpression *pexprLOJOuterChild = (*pdrgpexprLOJChildren)[0];
-	if (1 < pdrgpexprLOJChildren->Size())
-	{
-		// collect all relations needed by LOJ outer side into a cross product,
-		// normalization at the end of this function takes care of pushing NAry
-		// join predicates down
-		pdrgpexprLOJChildren->Append(
-			CPredicateUtils::PexprConjunction(mp, NULL /*pdrgpexpr*/));
-		pexprLOJOuterChild = GPOS_NEW(mp) CExpression(
-			mp, GPOS_NEW(mp) CLogicalNAryJoin(mp), pdrgpexprLOJChildren);
+  if (pdrgpexprLOJChildren->Size() == 0) {
+    // cannot create a valid LOJ; bail
+    pdrgpexprLOJChildren->Release();
+    pdrgpexprNAryJoinChildren->Release();
+    return;
+  }
 
-		// reconstruct LOJ children and add only the created child
-		pdrgpexprLOJChildren = GPOS_NEW(mp) CExpressionArray(mp);
-		pdrgpexprLOJChildren->Append(pexprLOJOuterChild);
-	}
+  CExpression *pexprLOJOuterChild = (*pdrgpexprLOJChildren)[0];
+  if (1 < pdrgpexprLOJChildren->Size()) {
+    // collect all relations needed by LOJ outer side into a cross product,
+    // normalization at the end of this function takes care of pushing NAry
+    // join predicates down
+    pdrgpexprLOJChildren->Append(CPredicateUtils::PexprConjunction(mp, nullptr /*pdrgpexpr*/));
+    pexprLOJOuterChild = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalNAryJoin(mp), pdrgpexprLOJChildren);
 
-	// continue with rest of LOJ inner and scalar children
-	pexprLOJInnerChild->AddRef();
-	pdrgpexprLOJChildren->Append(pexprLOJInnerChild);
-	pexprLOJScalarChild->AddRef();
-	pdrgpexprLOJChildren->Append(pexprLOJScalarChild);
+    // reconstruct LOJ children and add only the created child
+    pdrgpexprLOJChildren = GPOS_NEW(mp) CExpressionArray(mp);
+    pdrgpexprLOJChildren->Append(pexprLOJOuterChild);
+  }
 
-	// build new LOJ
-	CExpression *pexprLOJNew = GPOS_NEW(mp) CExpression(
-		mp, GPOS_NEW(mp) CLogicalLeftOuterJoin(mp), pdrgpexprLOJChildren);
+  // continue with rest of LOJ inner and scalar children
+  pexprLOJInnerChild->AddRef();
+  pdrgpexprLOJChildren->Append(pexprLOJInnerChild);
+  pexprLOJScalarChild->AddRef();
+  pdrgpexprLOJChildren->Append(pexprLOJScalarChild);
 
-	// add new NAry join children
-	pdrgpexprNAryJoinChildren->Append(pexprLOJNew);
-	pexprNAryJoinScalarChild->AddRef();
-	pdrgpexprNAryJoinChildren->Append(pexprNAryJoinScalarChild);
+  // build new LOJ
+  CExpression *pexprLOJNew = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalLeftOuterJoin(mp), pdrgpexprLOJChildren);
 
-	if (3 > pdrgpexprNAryJoinChildren->Size())
-	{
-		// xform must generate a valid NAry-join expression
-		// for example, in the following case we end-up with the same input
-		// expression, which should be avoided:
-		//
-		//	Input:
-		//
-		//    LOJ (a=c) and (b=c)
-		//     |--NAry-Join (a=b)
-		//     |   |--A
-		//     |   +--B
-		//     +--C
-		//
-		//	Output:
-		//
-		//	  NAry-Join (true)
-		//      +--LOJ (a=c) and (b=c)
-		//           |--NAry-Join (a=b)
-		//           |    |--A
-		//           |    +--B
-		//           +--C
+  // add new NAry join children
+  pdrgpexprNAryJoinChildren->Append(pexprLOJNew);
+  pexprNAryJoinScalarChild->AddRef();
+  pdrgpexprNAryJoinChildren->Append(pexprNAryJoinScalarChild);
 
-		pdrgpexprNAryJoinChildren->Release();
-		return;
-	}
+  if (3 > pdrgpexprNAryJoinChildren->Size()) {
+    // xform must generate a valid NAry-join expression
+    // for example, in the following case we end-up with the same input
+    // expression, which should be avoided:
+    //
+    //	Input:
+    //
+    //    LOJ (a=c) and (b=c)
+    //     |--NAry-Join (a=b)
+    //     |   |--A
+    //     |   +--B
+    //     +--C
+    //
+    //	Output:
+    //
+    //	  NAry-Join (true)
+    //      +--LOJ (a=c) and (b=c)
+    //           |--NAry-Join (a=b)
+    //           |    |--A
+    //           |    +--B
+    //           +--C
 
-	// create new NAry join
-	CExpression *pexprNAryJoinNew = GPOS_NEW(mp) CExpression(
-		mp, GPOS_NEW(mp) CLogicalNAryJoin(mp), pdrgpexprNAryJoinChildren);
+    pdrgpexprNAryJoinChildren->Release();
+    return;
+  }
 
-	// normalize resulting expression and add it to xform results
-	CExpression *pexprResult =
-		CNormalizer::PexprNormalize(mp, pexprNAryJoinNew);
-	pexprNAryJoinNew->Release();
+  // create new NAry join
+  CExpression *pexprNAryJoinNew =
+      GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalNAryJoin(mp), pdrgpexprNAryJoinChildren);
 
-	pxfres->Add(pexprResult);
+  // normalize resulting expression and add it to xform results
+  CExpression *pexprResult = CNormalizer::PexprNormalize(mp, pexprNAryJoinNew);
+  pexprNAryJoinNew->Release();
+
+  pxfres->Add(pexprResult);
 }
 
 // EOF

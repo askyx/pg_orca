@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CConstExprEvaluationDefaultTest.h
@@ -20,8 +20,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -32,14 +31,13 @@ using namespace gpos;
 //		Unit tests for CConstExprEvaluatorDefault
 //
 //---------------------------------------------------------------------------
-class CConstExprEvaluatorDefaultTest
-{
-public:
-	// run unittests
-	static GPOS_RESULT EresUnittest();
+class CConstExprEvaluatorDefaultTest {
+ public:
+  // run unittests
+  static GPOS_RESULT EresUnittest();
 };
 }  // namespace gpopt
 
-#endif	// !GPOPT_CConstExprEvaluatorDefaultTest_H
+#endif  // !GPOPT_CConstExprEvaluatorDefaultTest_H
 
 // EOF

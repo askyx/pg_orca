@@ -16,7 +16,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		COstreamBasic::COstreamBasic
@@ -25,9 +24,8 @@ using namespace gpos;
 //		ctor
 //
 //---------------------------------------------------------------------------
-COstreamBasic::COstreamBasic(WOSTREAM *pos) : COstream(), m_ostream(pos)
-{
-	GPOS_ASSERT(NULL != m_ostream && "Output stream cannot be NULL");
+COstreamBasic::COstreamBasic(WOSTREAM *pos) : COstream(), m_ostream(pos) {
+  GPOS_ASSERT(nullptr != m_ostream && "Output stream cannot be NULL");
 }
 
 //---------------------------------------------------------------------------
@@ -38,11 +36,9 @@ COstreamBasic::COstreamBasic(WOSTREAM *pos) : COstream(), m_ostream(pos)
 //		WCHAR write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &
-COstreamBasic::operator<<(const WCHAR *wsz)
-{
-	m_ostream = &(*m_ostream << wsz);
-	return *this;
+IOstream &COstreamBasic::operator<<(const WCHAR *wsz) {
+  m_ostream = &(*m_ostream << wsz);
+  return *this;
 }
 
 //---------------------------------------------------------------------------
@@ -53,11 +49,9 @@ COstreamBasic::operator<<(const WCHAR *wsz)
 //		WCHAR write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &
-COstreamBasic::operator<<(const WCHAR wc)
-{
-	m_ostream = &(*m_ostream << wc);
-	return *this;
+IOstream &COstreamBasic::operator<<(const WCHAR wc) {
+  m_ostream = &(*m_ostream << wc);
+  return *this;
 }
 
 // EOF

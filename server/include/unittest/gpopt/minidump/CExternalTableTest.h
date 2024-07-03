@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,20 +24,19 @@ using namespace gpos;
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CExternalTableTest
-{
-private:
-	// counter used to mark last successful test
-	static ULONG m_ulTestCounter;
+class CExternalTableTest {
+ private:
+  // counter used to mark last successful test
+  static ULONG m_ulTestCounter;
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
 
-	static GPOS_RESULT EresUnittest_RunMinidumpTests();
-};	// class CExternalTableTest
+  static GPOS_RESULT EresUnittest_RunMinidumpTests();
+};  // class CExternalTableTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CExternalTableTest_H
+#endif  // !GPOPT_CExternalTableTest_H
 
 // EOF

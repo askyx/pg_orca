@@ -17,13 +17,11 @@
 #include "naucrates/dxl/parser/CParseHandlerMetadataObject.h"
 
 // fwd decl
-namespace gpmd
-{
+namespace gpmd {
 class CMDIdColStats;
 }
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 using namespace gpnaucrates;
@@ -38,56 +36,51 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler class for base relation column stats
 //
 //---------------------------------------------------------------------------
-class CParseHandlerColStats : public CParseHandlerMetadataObject
-{
-private:
-	// mdid of the col stats object
-	CMDIdColStats *m_mdid;
+class CParseHandlerColStats : public CParseHandlerMetadataObject {
+ private:
+  // mdid of the col stats object
+  CMDIdColStats *m_mdid;
 
-	// name of the column
-	CMDName *m_md_name;
+  // name of the column
+  CMDName *m_md_name;
 
-	// column width
-	CDouble m_width;
+  // column width
+  CDouble m_width;
 
-	// null fraction
-	CDouble m_null_freq;
+  // null fraction
+  CDouble m_null_freq;
 
-	// ndistinct of remaining tuples
-	CDouble m_distinct_remaining;
+  // ndistinct of remaining tuples
+  CDouble m_distinct_remaining;
 
-	// frequency of remaining tuples
-	CDouble m_freq_remaining;
+  // frequency of remaining tuples
+  CDouble m_freq_remaining;
 
-	// is the column statistics missing in the database
-	BOOL m_is_column_stats_missing;
+  // is the column statistics missing in the database
+  BOOL m_is_column_stats_missing;
 
-	// private copy ctor
-	CParseHandlerColStats(const CParseHandlerColStats &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerColStats(const CParseHandlerColStats &) = delete;
 
-public:
-	// ctor
-	CParseHandlerColStats(CMemoryPool *mp,
-						  CParseHandlerManager *parse_handler_mgr,
-						  CParseHandlerBase *parse_handler_base);
+  // ctor
+  CParseHandlerColStats(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                        CParseHandlerBase *parse_handler_base);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerColStats_H
+#endif  // !GPDXL_CParseHandlerColStats_H
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDXLLogicalCTEConsumer
@@ -25,68 +24,55 @@ namespace gpdxl
 //		Class for representing DXL logical CTE Consumers
 //
 //---------------------------------------------------------------------------
-class CDXLLogicalCTEConsumer : public CDXLLogical
-{
-private:
-	// cte id
-	ULONG m_id;
+class CDXLLogicalCTEConsumer : public CDXLLogical {
+ private:
+  // cte id
+  ULONG m_id;
 
-	// output column ids
-	ULongPtrArray *m_output_colids_array;
+  // output column ids
+  ULongPtrArray *m_output_colids_array;
 
-	// private copy ctor
-	CDXLLogicalCTEConsumer(CDXLLogicalCTEConsumer &);
+ public:
+  CDXLLogicalCTEConsumer(CDXLLogicalCTEConsumer &) = delete;
 
-public:
-	// ctor
-	CDXLLogicalCTEConsumer(CMemoryPool *mp, ULONG id,
-						   ULongPtrArray *output_colids_array);
+  // ctor
+  CDXLLogicalCTEConsumer(CMemoryPool *mp, ULONG id, ULongPtrArray *output_colids_array);
 
-	// dtor
-	virtual ~CDXLLogicalCTEConsumer();
+  // dtor
+  ~CDXLLogicalCTEConsumer() override;
 
-	// operator type
-	virtual Edxlopid GetDXLOperator() const;
+  // operator type
+  Edxlopid GetDXLOperator() const override;
 
-	// operator name
-	virtual const CWStringConst *GetOpNameStr() const;
+  // operator name
+  const CWStringConst *GetOpNameStr() const override;
 
-	// cte identifier
-	ULONG
-	Id() const
-	{
-		return m_id;
-	}
+  // cte identifier
+  ULONG
+  Id() const { return m_id; }
 
-	ULongPtrArray *
-	GetOutputColIdsArray() const
-	{
-		return m_output_colids_array;
-	}
+  ULongPtrArray *GetOutputColIdsArray() const { return m_output_colids_array; }
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// check if given column is defined by operator
-	virtual BOOL IsColDefined(ULONG colid) const;
+  // check if given column is defined by operator
+  BOOL IsColDefined(ULONG colid) const override;
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 
-	// conversion function
-	static CDXLLogicalCTEConsumer *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopLogicalCTEConsumer == dxl_op->GetDXLOperator());
-		return dynamic_cast<CDXLLogicalCTEConsumer *>(dxl_op);
-	}
+  // conversion function
+  static CDXLLogicalCTEConsumer *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopLogicalCTEConsumer == dxl_op->GetDXLOperator());
+    return dynamic_cast<CDXLLogicalCTEConsumer *>(dxl_op);
+  }
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLLogicalCTEConsumer_H
+#endif  // !GPDXL_CDXLLogicalCTEConsumer_H
 
 // EOF

@@ -16,9 +16,7 @@
 #include "gpopt/search/CJob.h"
 #include "gpopt/xforms/CXform.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // prototypes
@@ -33,87 +31,64 @@ class CGroupExpression;
 //		Abstract superclass of all group expression optimization jobs
 //
 //---------------------------------------------------------------------------
-class CJobGroupExpression : public CJob
-{
-private:
-	// true if job has scheduled child group jobs
-	BOOL m_fChildrenScheduled;
+class CJobGroupExpression : public CJob {
+ private:
+  // true if job has scheduled child group jobs
+  BOOL m_fChildrenScheduled;
 
-	// true if job has scheduled transformation jobs
-	BOOL m_fXformsScheduled;
+  // true if job has scheduled transformation jobs
+  BOOL m_fXformsScheduled;
 
-	// private copy ctor
-	CJobGroupExpression(const CJobGroupExpression &);
+ protected:
+  // target group expression
+  CGroupExpression *m_pgexpr{nullptr};
 
-protected:
-	// target group expression
-	CGroupExpression *m_pgexpr;
+  // ctor
+  CJobGroupExpression() = default;
 
-	// ctor
-	CJobGroupExpression() : m_pgexpr(NULL)
-	{
-	}
+  // dtor
+  ~CJobGroupExpression() override = default;
 
-	// dtor
-	virtual ~CJobGroupExpression()
-	{
-	}
+  // has job scheduled child groups ?
+  BOOL FChildrenScheduled() const { return m_fChildrenScheduled; }
 
-	// has job scheduled child groups ?
-	BOOL
-	FChildrenScheduled() const
-	{
-		return m_fChildrenScheduled;
-	}
+  // set children scheduled
+  void SetChildrenScheduled() { m_fChildrenScheduled = true; }
 
-	// set children scheduled
-	void
-	SetChildrenScheduled()
-	{
-		m_fChildrenScheduled = true;
-	}
+  // has job scheduled xform groups ?
+  BOOL FXformsScheduled() const { return m_fXformsScheduled; }
 
-	// has job scheduled xform groups ?
-	BOOL
-	FXformsScheduled() const
-	{
-		return m_fXformsScheduled;
-	}
+  // set xforms scheduled
+  void SetXformsScheduled() { m_fXformsScheduled = true; }
 
-	// set xforms scheduled
-	void
-	SetXformsScheduled()
-	{
-		m_fXformsScheduled = true;
-	}
+  // initialize job
+  void Init(CGroupExpression *pgexpr);
 
-	// initialize job
-	void Init(CGroupExpression *pgexpr);
+  // schedule transformation jobs for applicable xforms
+  virtual void ScheduleApplicableTransformations(CSchedulerContext *psc) = 0;
 
-	// schedule transformation jobs for applicable xforms
-	virtual void ScheduleApplicableTransformations(CSchedulerContext *psc) = 0;
+  // schedule jobs for all child groups
+  virtual void ScheduleChildGroupsJobs(CSchedulerContext *psc) = 0;
 
-	// schedule jobs for all child groups
-	virtual void ScheduleChildGroupsJobs(CSchedulerContext *psc) = 0;
+  // schedule transformation jobs for the given set of xforms
+  void ScheduleTransformations(CSchedulerContext *psc, CXformSet *xform_set);
 
-	// schedule transformation jobs for the given set of xforms
-	void ScheduleTransformations(CSchedulerContext *psc, CXformSet *xform_set);
-
-	// job's function
-	virtual BOOL FExecute(CSchedulerContext *psc) = 0;
+  // job's function
+  BOOL FExecute(CSchedulerContext *psc) override = 0;
 
 #ifdef GPOS_DEBUG
 
-	// print function
-	virtual IOstream &OsPrint(IOstream &os) = 0;
+  // print function
+  IOstream &OsPrint(IOstream &os) const override = 0;
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
+ public:
+  CJobGroupExpression(const CJobGroupExpression &) = delete;
 
-};	// class CJobGroupExpression
+};  // class CJobGroupExpression
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CJobGroupExpression_H
-
+#endif  // !GPOPT_CJobGroupExpression_H
 
 // EOF

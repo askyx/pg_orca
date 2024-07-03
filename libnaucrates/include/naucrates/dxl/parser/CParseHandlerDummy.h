@@ -16,8 +16,7 @@
 
 #include "gpos/base.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -32,21 +31,20 @@ class CDXLMemoryManager;
 //		Dummy parse handler for validation of XML documents.
 //
 //---------------------------------------------------------------------------
-class CParseHandlerDummy : public DefaultHandler
-{
-private:
-	// memory manager to use for Xerces allocation
-	CDXLMemoryManager *m_dxl_memory_manager;
+class CParseHandlerDummy : public DefaultHandler {
+ private:
+  // memory manager to use for Xerces allocation
+  CDXLMemoryManager *m_dxl_memory_manager;
 
-public:
-	// ctor
-	explicit CParseHandlerDummy(CDXLMemoryManager *dxl_memory_manager);
+ public:
+  // ctor
+  explicit CParseHandlerDummy(CDXLMemoryManager *dxl_memory_manager);
 
-	// process a parsing error
-	void error(const SAXParseException &sax_parse_ex);
+  // process a parsing error
+  void error(const SAXParseException &sax_parse_ex) override;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerDummy_H
+#endif  // !GPDXL_CParseHandlerDummy_H
 
 // EOF

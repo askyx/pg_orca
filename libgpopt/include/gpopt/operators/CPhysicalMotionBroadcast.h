@@ -17,8 +17,7 @@
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/operators/CPhysicalMotion.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CPhysicalMotionBroadcast
@@ -27,98 +26,74 @@ namespace gpopt
 //		Broadcast motion operator
 //
 //---------------------------------------------------------------------------
-class CPhysicalMotionBroadcast : public CPhysicalMotion
-{
-private:
-	// output distribution
-	CDistributionSpecReplicated *m_pdsReplicated;
+class CPhysicalMotionBroadcast : public CPhysicalMotion {
+ private:
+  // output distribution
+  CDistributionSpecReplicated *m_pdsReplicated;
 
-	// private copy ctor
-	CPhysicalMotionBroadcast(const CPhysicalMotionBroadcast &);
+ public:
+  CPhysicalMotionBroadcast(const CPhysicalMotionBroadcast &) = delete;
 
-public:
-	// ctor
-	explicit CPhysicalMotionBroadcast(CMemoryPool *mp);
+  // ctor
+  explicit CPhysicalMotionBroadcast(CMemoryPool *mp, BOOL ignore_broadcast_threshold);
 
-	// dtor
-	virtual ~CPhysicalMotionBroadcast();
+  // dtor
+  ~CPhysicalMotionBroadcast() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPhysicalMotionBroadcast;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPhysicalMotionBroadcast; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPhysicalMotionBroadcast";
-	}
+  const CHAR *SzId() const override { return "CPhysicalMotionBroadcast"; }
 
-	// output distribution accessor
-	virtual CDistributionSpec *
-	Pds() const
-	{
-		return m_pdsReplicated;
-	}
+  // output distribution accessor
+  CDistributionSpec *Pds() const override { return m_pdsReplicated; }
 
-	// match function
-	virtual BOOL Matches(COperator *) const;
+  // match function
+  BOOL Matches(COperator *) const override;
 
-	//-------------------------------------------------------------------------------------
-	// Required Plan Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Required Plan Properties
+  //-------------------------------------------------------------------------------------
 
-	// compute required output columns of the n-th child
-	virtual CColRefSet *PcrsRequired(CMemoryPool *mp,
-									 CExpressionHandle &exprhdl,
-									 CColRefSet *pcrsInput, ULONG child_index,
-									 CDrvdPropArray *pdrgpdpCtxt,
-									 ULONG ulOptReq);
+  // compute required output columns of the n-th child
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput, ULONG child_index,
+                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
 
-	// compute required sort order of the n-th child
-	virtual COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-									COrderSpec *posInput, ULONG child_index,
-									CDrvdPropArray *pdrgpdpCtxt,
-									ULONG ulOptReq) const;
+  // compute required sort order of the n-th child
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, ULONG child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-	// check if required columns are included in output columns
-	virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl,
-								   CColRefSet *pcrsRequired,
-								   ULONG ulOptReq) const;
+  // check if required columns are included in output columns
+  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
 
+  //-------------------------------------------------------------------------------------
+  // Derived Plan Properties
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	// Derived Plan Properties
-	//-------------------------------------------------------------------------------------
+  // derive sort order
+  COrderSpec *PosDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive sort order
-	virtual COrderSpec *PosDerive(CMemoryPool *mp,
-								  CExpressionHandle &exprhdl) const;
+  //-------------------------------------------------------------------------------------
+  // Enforced Properties
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	// Enforced Properties
-	//-------------------------------------------------------------------------------------
+  // return order property enforcing type for this operator
+  CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const override;
 
-	// return order property enforcing type for this operator
-	virtual CEnfdProp::EPropEnforcingType EpetOrder(
-		CExpressionHandle &exprhdl, const CEnfdOrder *peo) const;
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  // print
+  IOstream &OsPrint(IOstream &) const override;
 
-	// print
-	virtual IOstream &OsPrint(IOstream &) const;
+  // conversion function
+  static CPhysicalMotionBroadcast *PopConvert(COperator *pop);
 
-	// conversion function
-	static CPhysicalMotionBroadcast *PopConvert(COperator *pop);
-
-};	// class CPhysicalMotionBroadcast
+};  // class CPhysicalMotionBroadcast
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CPhysicalMotionBroadcast_H
+#endif  // !GPOPT_CPhysicalMotionBroadcast_H
 
 // EOF

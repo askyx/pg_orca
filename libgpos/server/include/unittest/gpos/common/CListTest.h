@@ -14,8 +14,7 @@
 #include "gpos/common/CList.h"
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CListTest
@@ -25,38 +24,35 @@ namespace gpos
 //		instantiation with sample parameters
 //
 //---------------------------------------------------------------------------
-class CListTest
-{
-public:
-	//---------------------------------------------------------------------------
-	//	@class:
-	//		SElem
-	//
-	//	@doc:
-	//		Local class for list experiment;
-	//
-	//---------------------------------------------------------------------------
-	struct SElem
-	{
-	public:
-		// generic link for primary list
-		SLink m_linkFwd;
+class CListTest {
+ public:
+  //---------------------------------------------------------------------------
+  //	@class:
+  //		SElem
+  //
+  //	@doc:
+  //		Local class for list experiment;
+  //
+  //---------------------------------------------------------------------------
+  struct SElem {
+   public:
+    // generic link for primary list
+    SLink m_linkFwd;
 
-		// ..for secondary list
-		SLink m_linkBwd;
+    // ..for secondary list
+    SLink m_linkBwd;
 
-	};	// struct SElem
+  };  // struct SElem
 
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
-	static GPOS_RESULT EresUnittest_Navigate();
-	static GPOS_RESULT EresUnittest_Cursor();
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
+  static GPOS_RESULT EresUnittest_Navigate();
+  static GPOS_RESULT EresUnittest_Cursor();
 
-};	// class CListTest
+};  // class CListTest
 }  // namespace gpos
 
-
-#endif	// !GPOS_CListTest_H
+#endif  // !GPOS_CListTest_H
 
 // EOF

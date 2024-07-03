@@ -25,18 +25,16 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CStatsPredLike::CStatsPredLike(ULONG colid, CExpression *expr_left,
-							   CExpression *expr_right,
-							   CDouble default_scale_factor)
-	: CStatsPred(colid),
-	  m_expr_left(expr_left),
-	  m_expr_right(expr_right),
-	  m_default_scale_factor(default_scale_factor)
-{
-	GPOS_ASSERT(gpos::ulong_max != colid);
-	GPOS_ASSERT(NULL != expr_left);
-	GPOS_ASSERT(NULL != expr_right);
-	GPOS_ASSERT(0 < default_scale_factor);
+CStatsPredLike::CStatsPredLike(ULONG colid, CExpression *expr_left, CExpression *expr_right,
+                               CDouble default_scale_factor)
+    : CStatsPred(colid),
+      m_expr_left(expr_left),
+      m_expr_right(expr_right),
+      m_default_scale_factor(default_scale_factor) {
+  GPOS_ASSERT(gpos::ulong_max != colid);
+  GPOS_ASSERT(nullptr != expr_left);
+  GPOS_ASSERT(nullptr != expr_right);
+  GPOS_ASSERT(0 < default_scale_factor);
 }
 
 //---------------------------------------------------------------------------
@@ -47,10 +45,9 @@ CStatsPredLike::CStatsPredLike(ULONG colid, CExpression *expr_left,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CStatsPredLike::~CStatsPredLike()
-{
-	m_expr_left->Release();
-	m_expr_right->Release();
+CStatsPredLike::~CStatsPredLike() {
+  m_expr_left->Release();
+  m_expr_right->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -62,9 +59,8 @@ CStatsPredLike::~CStatsPredLike()
 //
 //---------------------------------------------------------------------------
 ULONG
-CStatsPredLike::GetColId() const
-{
-	return m_colid;
+CStatsPredLike::GetColId() const {
+  return m_colid;
 }
 
 //---------------------------------------------------------------------------
@@ -75,10 +71,8 @@ CStatsPredLike::GetColId() const
 //		Return the default like scale factor
 //
 //---------------------------------------------------------------------------
-CDouble
-CStatsPredLike::DefaultScaleFactor() const
-{
-	return m_default_scale_factor;
+CDouble CStatsPredLike::DefaultScaleFactor() const {
+  return m_default_scale_factor;
 }
 
 // EOF

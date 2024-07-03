@@ -17,14 +17,12 @@
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/cost/ICostModel.h"
-#include "gpopt/metadata/CPartConstraint.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "naucrates/statistics/CFilterStatsProcessor.h"
 #include "naucrates/statistics/CStatisticsUtils.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -34,22 +32,22 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalDynamicIndexScan::CPhysicalDynamicIndexScan(
-	CMemoryPool *mp, BOOL is_partial, CIndexDescriptor *pindexdesc,
-	CTableDescriptor *ptabdesc, ULONG ulOriginOpId, const CName *pnameAlias,
-	CColRefArray *pdrgpcrOutput, ULONG scan_id, CColRef2dArray *pdrgpdrgpcrPart,
-	ULONG ulSecondaryScanId, CPartConstraint *ppartcnstr,
-	CPartConstraint *ppartcnstrRel, COrderSpec *pos)
-	: CPhysicalDynamicScan(mp, is_partial, ptabdesc, ulOriginOpId, pnameAlias,
-						   scan_id, pdrgpcrOutput, pdrgpdrgpcrPart,
-						   ulSecondaryScanId, ppartcnstr, ppartcnstrRel),
-	  m_pindexdesc(pindexdesc),
-	  m_pos(pos)
-{
-	GPOS_ASSERT(NULL != pindexdesc);
-	GPOS_ASSERT(NULL != pos);
-}
+CPhysicalDynamicIndexScan::CPhysicalDynamicIndexScan(CMemoryPool *mp, CIndexDescriptor *pindexdesc,
+                                                     CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
+                                                     const CName *pnameAlias, CColRefArray *pdrgpcrOutput,
+                                                     ULONG scan_id, CColRef2dArray *pdrgpdrgpcrPart, COrderSpec *pos,
+                                                     IMdIdArray *partition_mdids,
+                                                     ColRefToUlongMapArray *root_col_mapping_per_part,
+                                                     ULONG ulUnindexedPredColCount)
+    : CPhysicalDynamicScan(mp, ptabdesc, ulOriginOpId, pnameAlias, scan_id, pdrgpcrOutput, pdrgpdrgpcrPart,
+                           partition_mdids, root_col_mapping_per_part),
+      m_pindexdesc(pindexdesc),
+      m_pos(pos) {
+  GPOS_ASSERT(nullptr != pindexdesc);
+  GPOS_ASSERT(nullptr != pos);
 
+  m_ulUnindexedPredColCount = ulUnindexedPredColCount;
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -59,10 +57,9 @@ CPhysicalDynamicIndexScan::CPhysicalDynamicIndexScan(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CPhysicalDynamicIndexScan::~CPhysicalDynamicIndexScan()
-{
-	m_pindexdesc->Release();
-	m_pos->Release();
+CPhysicalDynamicIndexScan::~CPhysicalDynamicIndexScan() {
+  m_pindexdesc->Release();
+  m_pos->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -73,20 +70,17 @@ CPhysicalDynamicIndexScan::~CPhysicalDynamicIndexScan()
 //		Return the enforcing type for order property based on this operator
 //
 //---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType
-CPhysicalDynamicIndexScan::EpetOrder(CExpressionHandle &,  // exprhdl
-									 const CEnfdOrder *peo) const
-{
-	GPOS_ASSERT(NULL != peo);
-	GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
+CEnfdProp::EPropEnforcingType CPhysicalDynamicIndexScan::EpetOrder(CExpressionHandle &,  // exprhdl
+                                                                   const CEnfdOrder *peo) const {
+  GPOS_ASSERT(nullptr != peo);
+  GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
 
-	if (peo->FCompatible(m_pos))
-	{
-		// required order is already established by the index
-		return CEnfdProp::EpetUnnecessary;
-	}
+  if (peo->FCompatible(m_pos)) {
+    // required order is already established by the index
+    return CEnfdProp::EpetUnnecessary;
+  }
 
-	return CEnfdProp::EpetRequired;
+  return CEnfdProp::EpetRequired;
 }
 
 //---------------------------------------------------------------------------
@@ -98,13 +92,10 @@ CPhysicalDynamicIndexScan::EpetOrder(CExpressionHandle &,  // exprhdl
 //
 //---------------------------------------------------------------------------
 ULONG
-CPhysicalDynamicIndexScan::HashValue() const
-{
-	ULONG scan_id = ScanId();
-	return gpos::CombineHashes(
-		COperator::HashValue(),
-		gpos::CombineHashes(gpos::HashValue(&scan_id),
-							m_pindexdesc->MDId()->HashValue()));
+CPhysicalDynamicIndexScan::HashValue() const {
+  ULONG scan_id = ScanId();
+  return gpos::CombineHashes(COperator::HashValue(),
+                             gpos::CombineHashes(gpos::HashValue(&scan_id), m_pindexdesc->MDId()->HashValue()));
 }
 
 //---------------------------------------------------------------------------
@@ -115,10 +106,8 @@ CPhysicalDynamicIndexScan::HashValue() const
 //		match operator
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalDynamicIndexScan::Matches(COperator *pop) const
-{
-	return CUtils::FMatchDynamicIndex(this, pop);
+BOOL CPhysicalDynamicIndexScan::Matches(COperator *pop) const {
+  return CUtils::FMatchDynamicIndex(this, pop);
 }
 
 //---------------------------------------------------------------------------
@@ -129,34 +118,25 @@ CPhysicalDynamicIndexScan::Matches(COperator *pop) const
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CPhysicalDynamicIndexScan::OsPrint(IOstream &os) const
-{
-	if (m_fPattern)
-	{
-		return COperator::OsPrint(os);
-	}
+IOstream &CPhysicalDynamicIndexScan::OsPrint(IOstream &os) const {
+  if (m_fPattern) {
+    return COperator::OsPrint(os);
+  }
 
-	os << SzId() << " ";
-	// index name
-	os << "  Index: (";
-	m_pindexdesc->Name().OsPrint(os);
-	// table name
-	os << ")";
-	os << ", Table: (";
-	Ptabdesc()->Name().OsPrint(os);
-	os << ")";
-	os << ", Columns: [";
-	CUtils::OsPrintDrgPcr(os, PdrgpcrOutput());
-	os << "] Scan Id: " << ScanId() << "." << UlSecondaryScanId();
+  os << SzId() << " ";
+  // index name
+  os << "  Index: (";
+  m_pindexdesc->Name().OsPrint(os);
+  // table name
+  os << ")";
+  os << ", Table: (";
+  Ptabdesc()->Name().OsPrint(os);
+  os << ")";
+  os << ", Columns: [";
+  CUtils::OsPrintDrgPcr(os, PdrgpcrOutput());
+  os << "] Scan Id: " << ScanId();
 
-	if (!Ppartcnstr()->IsConstraintUnbounded())
-	{
-		os << ", ";
-		Ppartcnstr()->OsPrint(os);
-	}
-
-	return os;
+  return os;
 }
 
 //---------------------------------------------------------------------------
@@ -167,37 +147,31 @@ CPhysicalDynamicIndexScan::OsPrint(IOstream &os) const
 //		Statistics derivation during costing
 //
 //---------------------------------------------------------------------------
-IStatistics *
-CPhysicalDynamicIndexScan::PstatsDerive(CMemoryPool *mp,
-										CExpressionHandle &exprhdl,
-										CReqdPropPlan *prpplan,
-										IStatisticsArray *stats_ctxt) const
-{
-	GPOS_ASSERT(NULL != prpplan);
+IStatistics *CPhysicalDynamicIndexScan::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                     CReqdPropPlan *prpplan, IStatisticsArray *stats_ctxt) const {
+  GPOS_ASSERT(nullptr != prpplan);
 
-	IStatistics *pstatsBaseTable = CStatisticsUtils::DeriveStatsForDynamicScan(
-		mp, exprhdl, ScanId(), prpplan->Pepp()->PpfmDerived());
+  IStatistics *pstatsBaseTable =
+      CStatisticsUtils::DeriveStatsForDynamicScan(mp, exprhdl, ScanId(), prpplan->Pepp()->PppsRequired());
 
-	// create a conjunction of index condition and additional filters
-	CExpression *pexprScalar = exprhdl.PexprScalarRepChild(0 /*ulChidIndex*/);
-	CExpression *local_expr = NULL;
-	CExpression *expr_with_outer_refs = NULL;
+  // create a conjunction of index condition and additional filters
+  CExpression *pexprScalar = exprhdl.PexprScalarRepChild(0 /*ulChidIndex*/);
+  CExpression *local_expr = nullptr;
+  CExpression *expr_with_outer_refs = nullptr;
 
-	// get outer references from expression handle
-	CColRefSet *outer_refs = exprhdl.DeriveOuterReferences();
+  // get outer references from expression handle
+  CColRefSet *outer_refs = exprhdl.DeriveOuterReferences();
 
-	CPredicateUtils::SeparateOuterRefs(mp, pexprScalar, outer_refs, &local_expr,
-									   &expr_with_outer_refs);
+  CPredicateUtils::SeparateOuterRefs(mp, pexprScalar, outer_refs, &local_expr, &expr_with_outer_refs);
 
-	IStatistics *stats = CFilterStatsProcessor::MakeStatsFilterForScalarExpr(
-		mp, exprhdl, pstatsBaseTable, local_expr, expr_with_outer_refs,
-		stats_ctxt);
+  IStatistics *stats = CFilterStatsProcessor::MakeStatsFilterForScalarExpr(mp, exprhdl, pstatsBaseTable, local_expr,
+                                                                           expr_with_outer_refs, stats_ctxt);
 
-	pstatsBaseTable->Release();
-	local_expr->Release();
-	expr_with_outer_refs->Release();
+  pstatsBaseTable->Release();
+  local_expr->Release();
+  expr_with_outer_refs->Release();
 
-	return stats;
+  return stats;
 }
 
 // EOF

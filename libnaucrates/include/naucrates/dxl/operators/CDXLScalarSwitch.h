@@ -18,8 +18,7 @@
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -31,55 +30,50 @@ using namespace gpmd;
 //		Class for representing DXL Switch
 //
 //---------------------------------------------------------------------------
-class CDXLScalarSwitch : public CDXLScalar
-{
-private:
-	// return type
-	IMDId *m_mdid_type;
+class CDXLScalarSwitch : public CDXLScalar {
+ private:
+  // return type
+  IMDId *m_mdid_type;
 
-	// private copy ctor
-	CDXLScalarSwitch(const CDXLScalarSwitch &);
+ public:
+  CDXLScalarSwitch(const CDXLScalarSwitch &) = delete;
 
-public:
-	// ctor
-	CDXLScalarSwitch(CMemoryPool *mp, IMDId *mdid_type);
+  // ctor
+  CDXLScalarSwitch(CMemoryPool *mp, IMDId *mdid_type);
 
-	//dtor
-	virtual ~CDXLScalarSwitch();
+  // dtor
+  ~CDXLScalarSwitch() override;
 
-	// name of the operator
-	virtual const CWStringConst *GetOpNameStr() const;
+  // name of the operator
+  const CWStringConst *GetOpNameStr() const override;
 
-	// return type
-	virtual IMDId *MdidType() const;
+  // return type
+  virtual IMDId *MdidType() const;
 
-	// DXL Operator ID
-	virtual Edxlopid GetDXLOperator() const;
+  // DXL Operator ID
+  Edxlopid GetDXLOperator() const override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// conversion function
-	static CDXLScalarSwitch *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarSwitch == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarSwitch *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarSwitch == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarSwitch *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarSwitch *>(dxl_op);
+  }
 
-	// does the operator return a boolean result
-	virtual BOOL HasBoolResult(CMDAccessor *md_accessor) const;
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLScalarSwitch_H
+#endif  // !GPDXL_CDXLScalarSwitch_H
 
 // EOF

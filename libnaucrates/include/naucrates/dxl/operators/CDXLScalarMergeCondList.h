@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDXLScalarMergeCondList
@@ -26,52 +25,46 @@ namespace gpdxl
 //		Class for representing the list of merge conditions in DXL Merge join nodes.
 //
 //---------------------------------------------------------------------------
-class CDXLScalarMergeCondList : public CDXLScalar
-{
-private:
-	// private copy ctor
-	CDXLScalarMergeCondList(CDXLScalarMergeCondList &);
+class CDXLScalarMergeCondList : public CDXLScalar {
+ private:
+ public:
+  CDXLScalarMergeCondList(CDXLScalarMergeCondList &) = delete;
 
-public:
-	// ctor
-	explicit CDXLScalarMergeCondList(CMemoryPool *mp);
+  // ctor
+  explicit CDXLScalarMergeCondList(CMemoryPool *mp);
 
-	// ident accessors
-	Edxlopid GetDXLOperator() const;
+  // ident accessors
+  Edxlopid GetDXLOperator() const override;
 
-	// name of the operator
-	const CWStringConst *GetOpNameStr() const;
+  // name of the operator
+  const CWStringConst *GetOpNameStr() const override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const override;
 
-	// conversion function
-	static CDXLScalarMergeCondList *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarMergeCondList == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarMergeCondList *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarMergeCondList == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarMergeCondList *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarMergeCondList *>(dxl_op);
+  }
 
-	// does the operator return a boolean result
-	virtual BOOL
-	HasBoolResult(CMDAccessor *	 //md_accessor
-	) const
-	{
-		GPOS_ASSERT(!"Invalid function call for a container operator");
-		return false;
-	}
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  ) const override {
+    GPOS_ASSERT(!"Invalid function call for a container operator");
+    return false;
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *node, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalarMergeCondList_H
+#endif  // !GPDXL_CDXLScalarMergeCondList_H
 
 // EOF

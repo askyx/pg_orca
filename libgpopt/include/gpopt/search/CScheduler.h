@@ -20,8 +20,7 @@
 #define OPT_SCHED_QUEUED_RUNNING_RATIO 10
 #define OPT_SCHED_CFA 100
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // prototypes
@@ -52,174 +51,158 @@ class CSchedulerContext;
 //		have any further dependencies.
 //
 //---------------------------------------------------------------------------
-class CScheduler
-{
-	// friend classes
-	friend class CJob;
+class CScheduler {
+  // friend classes
+  friend class CJob;
 
-public:
-	// enum for job execution result
-	enum EJobResult
-	{
-		EjrRunnable = 0,
-		EjrSuspended,
-		EjrCompleted,
+ public:
+  // enum for job execution result
+  enum EJobResult {
+    EjrRunnable = 0,
+    EjrSuspended,
+    EjrCompleted,
 
-		EjrSentinel
-	};
+    EjrSentinel
+  };
 
-private:
-	// job wrapper; used for inserting job to waiting list (lock-free)
-	struct SJobLink
-	{
-		// link id, set by sync set
-		ULONG m_id;
+ private:
+  // job wrapper; used for inserting job to waiting list (lock-free)
+  struct SJobLink {
+    // link id, set by sync set
+    ULONG m_id;
 
-		// pointer to job
-		CJob *m_pj;
+    // pointer to job
+    CJob *m_pj;
 
-		// slink for list of waiting jobs
-		SLink m_link;
+    // slink for list of waiting jobs
+    SLink m_link;
 
-		// initialize link
-		void
-		Init(CJob *pj)
-		{
-			m_pj = pj;
-			m_link.m_prev = m_link.m_next = NULL;
-		}
-	};
+    // initialize link
+    void Init(CJob *pj) {
+      m_pj = pj;
+      m_link.m_prev = m_link.m_next = nullptr;
+    }
+  };
 
-	// list of jobs waiting to execute
-	CSyncList<SJobLink> m_listjlWaiting;
+  // list of jobs waiting to execute
+  CSyncList<SJobLink> m_listjlWaiting;
 
-	// pool of job link objects
-	CSyncPool<SJobLink> m_spjl;
+  // pool of job link objects
+  CSyncPool<SJobLink> m_spjl;
 
-	// current job counters
-	ULONG_PTR m_ulpTotal;
-	ULONG_PTR m_ulpRunning;
-	ULONG_PTR m_ulpQueued;
+  // current job counters
+  ULONG_PTR m_ulpTotal;
+  ULONG_PTR m_ulpRunning;
+  ULONG_PTR m_ulpQueued;
 
-	// stats
-	ULONG_PTR m_ulpStatsQueued;
-	ULONG_PTR m_ulpStatsDequeued;
-	ULONG_PTR m_ulpStatsSuspended;
-	ULONG_PTR m_ulpStatsCompleted;
-	ULONG_PTR m_ulpStatsCompletedQueued;
-	ULONG_PTR m_ulpStatsResumed;
+  // stats
+  ULONG_PTR m_ulpStatsQueued;
+  ULONG_PTR m_ulpStatsDequeued;
+  ULONG_PTR m_ulpStatsSuspended;
+  ULONG_PTR m_ulpStatsCompleted;
+  ULONG_PTR m_ulpStatsCompletedQueued;
+  ULONG_PTR m_ulpStatsResumed;
 
 #ifdef GPOS_DEBUG
-	// list of running jobs
-	CList<CJob> m_listjRunning;
+  // list of running jobs
+  CList<CJob> m_listjRunning;
 
-	// list of suspended jobs
-	CList<CJob> m_listjSuspended;
+  // list of suspended jobs
+  CList<CJob> m_listjSuspended;
 
-	// flag indicating if scheduler keeps track
-	// of running and suspended jobs
-	const BOOL m_fTrackingJobs;
-#endif	// GPOS_DEBUG
+  // flag indicating if scheduler keeps track
+  // of running and suspended jobs
+  const BOOL m_fTrackingJobs;
+#endif  // GPOS_DEBUG
 
-	// keep executing jobs (if any)
-	void ExecuteJobs(CSchedulerContext *psc);
+  // keep executing jobs (if any)
+  void ExecuteJobs(CSchedulerContext *psc);
 
-	// process job execution results
-	void ProcessJobResult(CJob *pj, CSchedulerContext *psc, BOOL fCompleted);
+  // process job execution results
+  void ProcessJobResult(CJob *pj, CSchedulerContext *psc, BOOL fCompleted);
 
-	// retrieve next job to run
-	CJob *PjRetrieve();
+  // retrieve next job to run
+  CJob *PjRetrieve();
 
-	// schedule job for execution
-	void Schedule(CJob *pj);
+  // schedule job for execution
+  void Schedule(CJob *pj);
 
-	// prepare for job execution
-	void PreExecute(CJob *pj);
+  // prepare for job execution
+  void PreExecute(CJob *pj);
 
-	// execute job
-	BOOL FExecute(CJob *pj, CSchedulerContext *psc);
+  // execute job
+  static BOOL FExecute(CJob *pj, CSchedulerContext *psc);
 
-	// process job execution outcome
-	EJobResult EjrPostExecute(CJob *pj, BOOL fCompleted);
+  // process job execution outcome
+  EJobResult EjrPostExecute(CJob *pj, BOOL fCompleted);
 
-	// resume parent job
-	void ResumeParent(CJob *pj);
+  // resume parent job
+  void ResumeParent(CJob *pj);
 
-	// check if all jobs have completed
-	BOOL
-	IsEmpty() const
-	{
-		return (0 == m_ulpTotal);
-	}
+  // check if all jobs have completed
+  BOOL IsEmpty() const { return (0 == m_ulpTotal); }
 
-	// no copy ctor
-	CScheduler(const CScheduler &);
+  // no copy ctor
+  CScheduler(const CScheduler &);
 
-public:
-	// ctor
-	CScheduler(CMemoryPool *mp, ULONG ulJobs
+ public:
+  // ctor
+  CScheduler(CMemoryPool *mp, ULONG ulJobs
 #ifdef GPOS_DEBUG
-			   ,
-			   BOOL fTrackingJobs = true
-#endif	// GPOS_DEBUG
-	);
+             ,
+             BOOL fTrackingJobs = true
+#endif  // GPOS_DEBUG
+  );
 
-	// dtor
-	virtual ~CScheduler();
+  // dtor
+  virtual ~CScheduler();
 
-	// main job processing task
-	static void *Run(void *);
+  // main job processing task
+  static void *Run(void *);
 
-	// transition job to completed
-	void Complete(CJob *pj);
+  // transition job to completed
+  void Complete(CJob *pj);
 
-	// transition queued job to completed
-	void CompleteQueued(CJob *pj);
+  // transition queued job to completed
+  void CompleteQueued(CJob *pj);
 
-	// transition job to suspended
-	void Suspend(CJob *pj);
+  // transition job to suspended
+  void Suspend(CJob *pj);
 
-	// add new job for scheduling
-	void Add(CJob *pj, CJob *pjParent);
+  // add new job for scheduling
+  void Add(CJob *pj, CJob *pjParent);
 
-	// resume suspended job
-	void Resume(CJob *pj);
+  // resume suspended job
+  void Resume(CJob *pj);
 
-	// print statistics
-	void PrintStats() const;
+  // print statistics
+  void PrintStats() const;
 
 #ifdef GPOS_DEBUG
-	// get flag for tracking jobs
-	BOOL
-	FTrackingJobs() const
-	{
-		return m_fTrackingJobs;
-	}
+  // get flag for tracking jobs
+  BOOL FTrackingJobs() const { return m_fTrackingJobs; }
 
-	// print queue
-	IOstream &OsPrintActiveJobs(IOstream &);
+  // print queue
+  IOstream &OsPrintActiveJobs(IOstream &);
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-};	// class CScheduler
+};  // class CScheduler
 
 // shorthand for printing
-inline IOstream &
-operator<<(IOstream &os, CScheduler &
+inline IOstream &operator<<(IOstream &os, CScheduler &
 #ifdef GPOS_DEBUG
-							 sched
-#endif	// GPOS_DEBUG
-)
-{
+                                              sched
+#endif  // GPOS_DEBUG
+) {
 #ifdef GPOS_DEBUG
-	return sched.OsPrintActiveJobs(os);
+  return sched.OsPrintActiveJobs(os);
 #else
-	return os;
-#endif	// GPOS_DEBUG
+  return os;
+#endif  // GPOS_DEBUG
 }
 }  // namespace gpopt
 
-#endif	// !GPOPT_CScheduler_H
-
+#endif  // !GPOPT_CScheduler_H
 
 // EOF

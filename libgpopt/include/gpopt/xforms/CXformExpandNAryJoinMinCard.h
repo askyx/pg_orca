@@ -16,8 +16,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -29,59 +28,37 @@ using namespace gpos;
 //		cardinality of intermediate results
 //
 //---------------------------------------------------------------------------
-class CXformExpandNAryJoinMinCard : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformExpandNAryJoinMinCard(const CXformExpandNAryJoinMinCard &);
+class CXformExpandNAryJoinMinCard : public CXformExploration {
+ private:
+ public:
+  CXformExpandNAryJoinMinCard(const CXformExpandNAryJoinMinCard &) = delete;
 
-public:
-	// ctor
-	explicit CXformExpandNAryJoinMinCard(CMemoryPool *mp);
+  // ctor
+  explicit CXformExpandNAryJoinMinCard(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformExpandNAryJoinMinCard()
-	{
-	}
+  // dtor
+  ~CXformExpandNAryJoinMinCard() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfExpandNAryJoinMinCard;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfExpandNAryJoinMinCard; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformExpandNAryJoinMinCard";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformExpandNAryJoinMinCard"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// do stats need to be computed before applying xform?
-	virtual BOOL
-	FNeedsStats() const
-	{
-		return true;
-	}
+  // do stats need to be computed before applying xform?
+  BOOL FNeedsStats() const override { return true; }
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-	BOOL
-	IsApplyOnce()
-	{
-		return true;
-	}
-};	// class CXformExpandNAryJoinMinCard
+  BOOL IsApplyOnce() override { return true; }
+};  // class CXformExpandNAryJoinMinCard
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformExpandNAryJoinMinCard_H
+#endif  // !GPOPT_CXformExpandNAryJoinMinCard_H
 
 // EOF

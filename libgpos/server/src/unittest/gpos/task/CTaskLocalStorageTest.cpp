@@ -21,7 +21,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CTaskLocalStorageTest::EresUnittest
@@ -31,16 +30,14 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CTaskLocalStorageTest::EresUnittest()
-{
-	CUnittest rgut[] = {
-		GPOS_UNITTEST_FUNC(CTaskLocalStorageTest::EresUnittest_Basics),
-		GPOS_UNITTEST_FUNC(CTaskLocalStorageTest::EresUnittest_TraceFlags),
-	};
+CTaskLocalStorageTest::EresUnittest() {
+  CUnittest rgut[] = {
+      GPOS_UNITTEST_FUNC(CTaskLocalStorageTest::EresUnittest_Basics),
+      GPOS_UNITTEST_FUNC(CTaskLocalStorageTest::EresUnittest_TraceFlags),
+  };
 
-	return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
+  return CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -51,23 +48,20 @@ CTaskLocalStorageTest::EresUnittest()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CTaskLocalStorageTest::EresUnittest_Basics()
-{
-	CTestObject tobj;
+CTaskLocalStorageTest::EresUnittest_Basics() {
+  CTestObject tobj;
 
-	// store object in TLS
-	ITask::Self()->GetTls().Store(&tobj);
+  // store object in TLS
+  ITask::Self()->GetTls().Store(&tobj);
 
-	// assert identiy when looking it up
-	GPOS_ASSERT(&tobj ==
-				ITask::Self()->GetTls().Get(CTaskLocalStorage::EtlsidxTest));
+  // assert identiy when looking it up
+  GPOS_UNITTEST_ASSERT(&tobj == ITask::Self()->GetTls().Get(CTaskLocalStorage::EtlsidxTest));
 
-	// clean out TLS
-	ITask::Self()->GetTls().Remove(&tobj);
+  // clean out TLS
+  ITask::Self()->GetTls().Remove(&tobj);
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -78,37 +72,35 @@ CTaskLocalStorageTest::EresUnittest_Basics()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CTaskLocalStorageTest::EresUnittest_TraceFlags()
-{
-	GPOS_ASSERT(!GPOS_FTRACE(EtraceTest));
+CTaskLocalStorageTest::EresUnittest_TraceFlags() {
+  GPOS_UNITTEST_ASSERT(!GPOS_FTRACE(EtraceTest));
 
-	GPOS_SET_TRACE(EtraceTest);
+  GPOS_SET_TRACE(EtraceTest);
 
-	GPOS_ASSERT(GPOS_FTRACE(EtraceTest));
+  GPOS_UNITTEST_ASSERT(GPOS_FTRACE(EtraceTest));
 
-	// test auto trace flag
-	{
-		CAutoTraceFlag atf(EtraceTest, false /*value*/);
+  // test auto trace flag
+  {
+    CAutoTraceFlag atf(EtraceTest, false /*value*/);
 
-		GPOS_ASSERT(!GPOS_FTRACE(EtraceTest));
-	}
-	GPOS_ASSERT(GPOS_FTRACE(EtraceTest));
+    GPOS_UNITTEST_ASSERT(!GPOS_FTRACE(EtraceTest));
+  }
+  GPOS_UNITTEST_ASSERT(GPOS_FTRACE(EtraceTest));
 
 #ifdef GPOS_DEBUG
-	// test trace flag iterator
-	CTraceFlagIter tfi;
-	BOOL fFound = false;
-	while (tfi.Advance())
-	{
-		GPOS_ASSERT_IMP(!fFound, EtraceTest == tfi.Bit());
-		fFound = true;
-	}
-#endif	// GPOS_DEBUG
+  // test trace flag iterator
+  CTraceFlagIter tfi;
+  BOOL fFound = false;
+  while (tfi.Advance()) {
+    GPOS_UNITTEST_ASSERT_IMP(!fFound, EtraceTest == tfi.Bit());
+    fFound = true;
+  }
+#endif  // GPOS_DEBUG
 
-	GPOS_ASSERT(GPOS_FTRACE(EtraceTest));
-	GPOS_UNSET_TRACE(EtraceTest);
-	GPOS_ASSERT(!GPOS_FTRACE(EtraceTest));
+  GPOS_UNITTEST_ASSERT(GPOS_FTRACE(EtraceTest));
+  GPOS_UNSET_TRACE(EtraceTest);
+  GPOS_UNITTEST_ASSERT(!GPOS_FTRACE(EtraceTest));
 
-	return GPOS_OK;
+  return GPOS_OK;
 }
 // EOF

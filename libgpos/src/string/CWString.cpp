@@ -15,7 +15,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CWString::CWString
@@ -25,13 +24,10 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 CWString::CWString(ULONG length)
-	: CWStringBase(length,
-				   true	 // owns_memory
-				   ),
-	  m_w_str_buffer(NULL)
-{
-}
-
+    : CWStringBase(length,
+                   true  // owns_memory
+                   ),
+      m_w_str_buffer(nullptr) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -41,12 +37,9 @@ CWString::CWString(ULONG length)
 //		Returns the wide character buffer storing the string
 //
 //---------------------------------------------------------------------------
-const WCHAR *
-CWString::GetBuffer() const
-{
-	return m_w_str_buffer;
+const WCHAR *CWString::GetBuffer() const {
+  return m_w_str_buffer;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -56,15 +49,12 @@ CWString::GetBuffer() const
 //		Appends a string to the current string
 //
 //---------------------------------------------------------------------------
-void
-CWString::Append(const CWStringBase *str)
-{
-	GPOS_ASSERT(NULL != str);
-	if (0 < str->Length())
-	{
-		AppendBuffer(str->GetBuffer());
-	}
-	GPOS_ASSERT(IsValid());
+void CWString::Append(const CWStringBase *str) {
+  GPOS_ASSERT(nullptr != str);
+  if (0 < str->Length()) {
+    AppendBuffer(str->GetBuffer());
+  }
+  GPOS_ASSERT(IsValid());
 }
 
 // EOF

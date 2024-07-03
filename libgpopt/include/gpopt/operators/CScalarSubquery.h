@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CScalar.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,107 +26,76 @@ using namespace gpos;
 //		Scalar subquery
 //
 //---------------------------------------------------------------------------
-class CScalarSubquery : public CScalar
-{
-private:
-	// computed column reference
-	const CColRef *m_pcr;
+class CScalarSubquery : public CScalar {
+ private:
+  // computed column reference
+  const CColRef *m_pcr;
 
-	// is subquery generated from existential subquery?
-	BOOL m_fGeneratedByExist;
+  // is subquery generated from existential subquery?
+  BOOL m_fGeneratedByExist;
 
-	// is subquery generated from quantified subquery?
-	BOOL m_fGeneratedByQuantified;
+  // is subquery generated from quantified subquery?
+  BOOL m_fGeneratedByQuantified;
 
-	// private copy ctor
-	CScalarSubquery(const CScalarSubquery &);
+ public:
+  CScalarSubquery(const CScalarSubquery &) = delete;
 
-public:
-	// ctor
-	CScalarSubquery(CMemoryPool *mp, const CColRef *colref,
-					BOOL fGeneratedByExist, BOOL fGeneratedByQuantified);
+  // ctor
+  CScalarSubquery(CMemoryPool *mp, const CColRef *colref, BOOL fGeneratedByExist, BOOL fGeneratedByQuantified);
 
-	// dtor
-	virtual ~CScalarSubquery();
+  // dtor
+  ~CScalarSubquery() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopScalarSubquery;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopScalarSubquery; }
 
-	// return a string for scalar subquery
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CScalarSubquery";
-	}
+  // return a string for scalar subquery
+  const CHAR *SzId() const override { return "CScalarSubquery"; }
 
-	// accessor to computed column reference
-	const CColRef *
-	Pcr() const
-	{
-		return m_pcr;
-	}
+  // accessor to computed column reference
+  const CColRef *Pcr() const { return m_pcr; }
 
-	// the type of the scalar expression
-	virtual IMDId *MdidType() const;
+  // the type of the scalar expression
+  IMDId *MdidType() const override;
 
-	// operator specific hash function
-	ULONG HashValue() const;
+  // operator specific hash function
+  ULONG HashValue() const override;
 
-	// match function
-	BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// sensitivity to order of inputs
-	BOOL
-	FInputOrderSensitive() const
-	{
-		return true;
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return true; }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	// return locally used columns
-	virtual CColRefSet *PcrsUsed(CMemoryPool *mp, CExpressionHandle &exprhdl);
+  // return locally used columns
+  CColRefSet *PcrsUsed(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
-	// is subquery generated from existential subquery?
-	BOOL
-	FGeneratedByExist() const
-	{
-		return m_fGeneratedByExist;
-	}
+  // is subquery generated from existential subquery?
+  BOOL FGeneratedByExist() const { return m_fGeneratedByExist; }
 
-	// is subquery generated from quantified subquery?
-	BOOL
-	FGeneratedByQuantified() const
-	{
-		return m_fGeneratedByQuantified;
-	}
+  // is subquery generated from quantified subquery?
+  BOOL FGeneratedByQuantified() const { return m_fGeneratedByQuantified; }
 
-	// derive partition consumer info
-	virtual CPartInfo *PpartinfoDerive(CMemoryPool *mp,
-									   CExpressionHandle &exprhdl) const;
+  // derive partition consumer info
+  CPartInfo *PpartinfoDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// conversion function
-	static CScalarSubquery *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarSubquery == pop->Eopid());
+  // conversion function
+  static CScalarSubquery *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarSubquery == pop->Eopid());
 
-		return reinterpret_cast<CScalarSubquery *>(pop);
-	}
+    return dynamic_cast<CScalarSubquery *>(pop);
+  }
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // print
+  IOstream &OsPrint(IOstream &os) const override;
 
-};	// class CScalarSubquery
+};  // class CScalarSubquery
 }  // namespace gpopt
 
-#endif	// !GPOPT_CScalarSubquery_H
+#endif  // !GPOPT_CScalarSubquery_H
 
 // EOF

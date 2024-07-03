@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CLogicalLeftAntiSemiCorrelatedApplyNotIn.cpp
@@ -23,14 +23,11 @@ using namespace gpopt;
 //		Get candidate xforms
 //
 //---------------------------------------------------------------------------
-CXformSet *
-CLogicalLeftAntiSemiCorrelatedApplyNotIn::PxfsCandidates(CMemoryPool *mp) const
-{
-	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	(void) xform_set->ExchangeSet(
-		CXform::ExfImplementLeftAntiSemiCorrelatedApplyNotIn);
+CXformSet *CLogicalLeftAntiSemiCorrelatedApplyNotIn::PxfsCandidates(CMemoryPool *mp) const {
+  CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
+  (void)xform_set->ExchangeSet(CXform::ExfImplementLeftAntiSemiCorrelatedApplyNotIn);
 
-	return xform_set;
+  return xform_set;
 }
 
 //---------------------------------------------------------------------------
@@ -41,16 +38,12 @@ CLogicalLeftAntiSemiCorrelatedApplyNotIn::PxfsCandidates(CMemoryPool *mp) const
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CLogicalLeftAntiSemiCorrelatedApplyNotIn::PopCopyWithRemappedColumns(
-	CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist)
-{
-	CColRefArray *pdrgpcrInner =
-		CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
+COperator *CLogicalLeftAntiSemiCorrelatedApplyNotIn::PopCopyWithRemappedColumns(CMemoryPool *mp,
+                                                                                UlongToColRefMap *colref_mapping,
+                                                                                BOOL must_exist) {
+  CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
-	return GPOS_NEW(mp) CLogicalLeftAntiSemiCorrelatedApplyNotIn(
-		mp, pdrgpcrInner, m_eopidOriginSubq);
+  return GPOS_NEW(mp) CLogicalLeftAntiSemiCorrelatedApplyNotIn(mp, pdrgpcrInner, m_eopidOriginSubq);
 }
-
 
 // EOF

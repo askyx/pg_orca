@@ -16,8 +16,7 @@
 #include "gpopt/operators/CScalar.h"
 #include "gpopt/xforms/CSubqueryHandler.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // fwd declarations
@@ -39,84 +38,69 @@ class CExpressionHandle;
 //		- scalar child : (a+b)
 //
 //---------------------------------------------------------------------------
-class CScalarSubqueryQuantified : public CScalar
-{
-private:
-	// id of comparison operator
-	IMDId *m_scalar_op_mdid;
+class CScalarSubqueryQuantified : public CScalar {
+ private:
+  // id of comparison operator
+  IMDId *m_scalar_op_mdid;
 
-	// name of comparison operator
-	const CWStringConst *m_pstrScalarOp;
+  // name of comparison operator
+  const CWStringConst *m_pstrScalarOp;
 
-	// column reference used in comparison
-	const CColRef *m_pcr;
+  // column reference used in comparison
+  const CColRef *m_pcr;
 
-	// private copy ctor
-	CScalarSubqueryQuantified(const CScalarSubqueryQuantified &);
+ protected:
+  // ctor
+  CScalarSubqueryQuantified(CMemoryPool *mp, IMDId *scalar_op_mdid, const CWStringConst *pstrScalarOp,
+                            const CColRef *colref);
 
-protected:
-	// ctor
-	CScalarSubqueryQuantified(CMemoryPool *mp, IMDId *scalar_op_mdid,
-							  const CWStringConst *pstrScalarOp,
-							  const CColRef *colref);
+  // dtor
+  ~CScalarSubqueryQuantified() override;
 
-	// dtor
-	virtual ~CScalarSubqueryQuantified();
+ public:
+  CScalarSubqueryQuantified(const CScalarSubqueryQuantified &) = delete;
 
-public:
-	// operator mdid accessor
-	IMDId *MdIdOp() const;
+  // operator mdid accessor
+  IMDId *MdIdOp() const;
 
-	// operator name accessor
-	const CWStringConst *PstrOp() const;
+  // operator name accessor
+  const CWStringConst *PstrOp() const;
 
-	// column reference accessor
-	const CColRef *
-	Pcr() const
-	{
-		return m_pcr;
-	}
+  // column reference accessor
+  const CColRef *Pcr() const { return m_pcr; }
 
-	// return the type of the scalar expression
-	virtual IMDId *MdidType() const;
+  // return the type of the scalar expression
+  IMDId *MdidType() const override;
 
-	// operator specific hash function
-	ULONG HashValue() const;
+  // operator specific hash function
+  ULONG HashValue() const override;
 
-	// match function
-	BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// sensitivity to order of inputs
-	BOOL
-	FInputOrderSensitive() const
-	{
-		return true;
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return true; }
 
-	// return locally used columns
-	virtual CColRefSet *PcrsUsed(CMemoryPool *mp, CExpressionHandle &exprhdl);
+  // return locally used columns
+  CColRefSet *PcrsUsed(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
-	// derive partition consumer info
-	virtual CPartInfo *PpartinfoDerive(CMemoryPool *mp,
-									   CExpressionHandle &exprhdl) const;
+  // derive partition consumer info
+  CPartInfo *PpartinfoDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// conversion function
-	static CScalarSubqueryQuantified *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarSubqueryAny == pop->Eopid() ||
-					EopScalarSubqueryAll == pop->Eopid());
+  // conversion function
+  static CScalarSubqueryQuantified *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarSubqueryAny == pop->Eopid() || EopScalarSubqueryAll == pop->Eopid());
 
-		return reinterpret_cast<CScalarSubqueryQuantified *>(pop);
-	}
+    return dynamic_cast<CScalarSubqueryQuantified *>(pop);
+  }
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // print
+  IOstream &OsPrint(IOstream &os) const override;
 
-};	// class CScalarSubqueryQuantified
+};  // class CScalarSubqueryQuantified
 }  // namespace gpopt
 
-#endif	// !GPOPT_CScalarSubqueryQuantified_H
+#endif  // !GPOPT_CScalarSubqueryQuantified_H
 
 // EOF

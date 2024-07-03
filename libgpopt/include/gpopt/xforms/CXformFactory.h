@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXform.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,87 +26,80 @@ using namespace gpos;
 //		Factory class to manage xforms
 //
 //---------------------------------------------------------------------------
-class CXformFactory
-{
-private:
-	// definition of hash map to maintain mappings
-	typedef CHashMap<CHAR, CXform, gpos::HashValue<CHAR>, CXform::FEqualIds,
-					 CleanupDeleteArray<CHAR>, CleanupNULL<CXform> >
-		XformNameToXformMap;
+class CXformFactory {
+ private:
+  // definition of hash map to maintain mappings
+  using XformNameToXformMap =
+      CHashMap<CHAR, CXform, gpos::HashValue<CHAR>, CXform::FEqualIds, CleanupDeleteArray<CHAR>, CleanupNULL<CXform>>;
 
-	// memory pool
-	CMemoryPool *m_mp;
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// range of all xforms
-	CXform *m_rgpxf[CXform::ExfSentinel];
+  // range of all xforms
+  CXform *m_rgpxf[CXform::ExfSentinel];
 
-	// name -> xform map
-	XformNameToXformMap *m_phmszxform;
+  // name -> xform map
+  XformNameToXformMap *m_phmszxform;
 
-	// bitset of exploration xforms
-	CXformSet *m_pxfsExploration;
+  // bitset of exploration xforms
+  CXformSet *m_pxfsExploration;
 
-	// bitset of implementation xforms
-	CXformSet *m_pxfsImplementation;
+  // bitset of implementation xforms
+  CXformSet *m_pxfsImplementation;
 
-	// global instance
-	static CXformFactory *m_pxff;
+  // ensure that xforms are inserted in order
+  ULONG m_lastAddedOrSkippedXformId;
 
-	// private ctor
-	explicit CXformFactory(CMemoryPool *mp);
+  // global instance
+  static CXformFactory *m_pxff;
 
-	// private copy ctor
-	CXformFactory(const CXformFactory &);
+  // private ctor
+  explicit CXformFactory(CMemoryPool *mp);
 
-	// actual adding of xform
-	void Add(CXform *pxform);
+  // actual adding of xform
+  void Add(CXform *pxform);
 
+  // skip unused xforms that have been removed, preserving
+  // xform ids of the remaining ones
+  void SkipUnused(ULONG numXformsToSkip) { m_lastAddedOrSkippedXformId += numXformsToSkip; }
 
-public:
-	// dtor
-	~CXformFactory();
+ public:
+  CXformFactory(const CXformFactory &) = delete;
 
-	// create all xforms
-	void Instantiate();
+  // dtor
+  ~CXformFactory();
 
-	// accessor by xform id
-	CXform *Pxf(CXform::EXformId exfid) const;
+  // create all xforms
+  void Instantiate();
 
-	// accessor by xform name
-	CXform *Pxf(const CHAR *szXformName) const;
+  // accessor by xform id
+  CXform *Pxf(CXform::EXformId exfid) const;
 
-	// accessor of exploration xforms
-	CXformSet *
-	PxfsExploration() const
-	{
-		return m_pxfsExploration;
-	}
+  // accessor by xform name
+  CXform *Pxf(const CHAR *szXformName) const;
 
-	// accessor of implementation xforms
-	CXformSet *
-	PxfsImplementation() const
-	{
-		return m_pxfsImplementation;
-	}
+  // accessor of exploration xforms
+  CXformSet *PxfsExploration() const { return m_pxfsExploration; }
 
-	// global accessor
-	static CXformFactory *
-	Pxff()
-	{
-		return m_pxff;
-	}
+  // accessor of implementation xforms
+  CXformSet *PxfsImplementation() const { return m_pxfsImplementation; }
 
-	// initialize global factory instance
-	static GPOS_RESULT Init();
+  // is this xform id still used?
+  BOOL IsXformIdUsed(CXform::EXformId exfid);
 
-	// destroy global factory instance
-	void Shutdown();
+  // global accessor
+  static CXformFactory *Pxff() { return m_pxff; }
 
-};	// class CXformFactory
+  // initialize global factory instance
+  static void Init();
+
+  // destroy global factory instance
+  static void Shutdown();
+
+};  // class CXformFactory
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformFactory_H
+#endif  // !GPOPT_CXformFactory_H
 
 // EOF

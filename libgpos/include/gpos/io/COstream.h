@@ -19,8 +19,7 @@
 // conversion buffer size
 #define GPOS_OSTREAM_CONVBUF_SIZE (256)
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		COstream
@@ -37,59 +36,55 @@ namespace gpos
 //
 //---------------------------------------------------------------------------
 
-class COstream : public IOstream
-{
-protected:
-	// constructor
-	COstream();
+class COstream : public IOstream {
+ protected:
+  // constructor
+  COstream();
 
-public:
-	using IOstream::operator<<;
+ public:
+  using IOstream::operator<<;
 
-	// virtual dtor
-	virtual ~COstream()
-	{
-	}
+  COstream(COstream &) = delete;
 
-	// default implementations for the following interfaces available
-	virtual IOstream &operator<<(const CHAR *);
-	virtual IOstream &operator<<(const WCHAR);
-	virtual IOstream &operator<<(const CHAR);
-	virtual IOstream &operator<<(ULONG);
-	virtual IOstream &operator<<(ULLONG);
-	virtual IOstream &operator<<(INT);
-	virtual IOstream &operator<<(LINT);
-	virtual IOstream &operator<<(DOUBLE);
-	virtual IOstream &operator<<(const void *);
+  // virtual dtor
+  ~COstream() override = default;
 
-	// to support std:endl only
-	virtual IOstream &operator<<(WOSTREAM &(*) (WOSTREAM &) );
+  // default implementations for the following interfaces available
+  IOstream &operator<<(const CHAR *) override;
+  IOstream &operator<<(const WCHAR) override;
+  IOstream &operator<<(const CHAR) override;
+  IOstream &operator<<(ULONG) override;
+  IOstream &operator<<(ULLONG) override;
+  IOstream &operator<<(INT) override;
+  IOstream &operator<<(LINT) override;
+  IOstream &operator<<(DOUBLE) override;
+  IOstream &operator<<(const void *) override;
 
-	// set the stream modifier
-	virtual IOstream &operator<<(EStreamManipulator);
+  // to support std:endl only
+  IOstream &operator<<(WOSTREAM &(*)(WOSTREAM &)) override;
 
-private:
-	// formatting buffer
-	WCHAR m_string_format_buffer[GPOS_OSTREAM_CONVBUF_SIZE];
+  // set the stream modifier
+  IOstream &operator<<(EStreamManipulator) override;
 
-	// wrapper string for formatting buffer
-	CWStringStatic m_static_string_buffer;
+ private:
+  // formatting buffer
+  WCHAR m_string_format_buffer[GPOS_OSTREAM_CONVBUF_SIZE];
 
-	// current mode
-	EStreamManipulator m_stream_manipulator;
+  // wrapper string for formatting buffer
+  CWStringStatic m_static_string_buffer;
 
-	// append formatted string
-	IOstream &AppendFormat(const WCHAR *format, ...);
+  // current mode
+  EStreamManipulator m_stream_manipulator{EsmDec};
 
-	// what is the stream modifier?
-	EStreamManipulator GetStreamManipulator() const;
+  // append formatted string
+  IOstream &AppendFormat(const WCHAR *format, ...);
 
-	// no copy constructor
-	COstream(COstream &);
+  // what is the stream modifier?
+  EStreamManipulator GetStreamManipulator() const;
 };
 
 }  // namespace gpos
 
-#endif	// !GPOS_COstream_H
+#endif  // !GPOS_COstream_H
 
 // EOF

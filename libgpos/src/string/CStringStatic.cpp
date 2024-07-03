@@ -15,10 +15,7 @@
 #include "gpos/common/clibwrapper.h"
 #include "gpos/string/CWStringStatic.h"
 
-
-
 using namespace gpos;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -28,15 +25,12 @@ using namespace gpos;
 //		Ctor - initializes with empty string
 //
 //---------------------------------------------------------------------------
-CStringStatic::CStringStatic(CHAR buffer[], ULONG capacity)
-	: m_buffer(buffer), m_length(0), m_capacity(capacity)
-{
-	GPOS_ASSERT(NULL != buffer);
-	GPOS_ASSERT(0 < m_capacity);
+CStringStatic::CStringStatic(CHAR buffer[], ULONG capacity) : m_buffer(buffer), m_length(0), m_capacity(capacity) {
+  GPOS_ASSERT(nullptr != buffer);
+  GPOS_ASSERT(0 < m_capacity);
 
-	m_buffer[0] = CHAR_EOS;
+  m_buffer[0] = CHAR_EOS;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -46,16 +40,13 @@ CStringStatic::CStringStatic(CHAR buffer[], ULONG capacity)
 //		Ctor with string initialization
 //
 //---------------------------------------------------------------------------
-CStringStatic::CStringStatic(CHAR buffer[], ULONG capacity,
-							 const CHAR init_str[])
-	: m_buffer(buffer), m_length(0), m_capacity(capacity)
-{
-	GPOS_ASSERT(NULL != buffer);
-	GPOS_ASSERT(0 < m_capacity);
+CStringStatic::CStringStatic(CHAR buffer[], ULONG capacity, const CHAR init_str[])
+    : m_buffer(buffer), m_length(0), m_capacity(capacity) {
+  GPOS_ASSERT(nullptr != buffer);
+  GPOS_ASSERT(0 < m_capacity);
 
-	AppendBuffer(init_str);
+  AppendBuffer(init_str);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -65,15 +56,12 @@ CStringStatic::CStringStatic(CHAR buffer[], ULONG capacity,
 //		Checks whether the string is byte-wise equal to a given string literal
 //
 //---------------------------------------------------------------------------
-BOOL
-CStringStatic::Equals(const CHAR *buf) const
-{
-	GPOS_ASSERT(NULL != buf);
+BOOL CStringStatic::Equals(const CHAR *buf) const {
+  GPOS_ASSERT(nullptr != buf);
 
-	ULONG length = clib::Strlen(buf);
-	return (m_length == length && 0 == clib::Strncmp(m_buffer, buf, length));
+  ULONG length = clib::Strlen(buf);
+  return (m_length == length && 0 == clib::Strncmp(m_buffer, buf, length));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -83,12 +71,9 @@ CStringStatic::Equals(const CHAR *buf) const
 //		Appends a string
 //
 //---------------------------------------------------------------------------
-void
-CStringStatic::Append(const CStringStatic *str)
-{
-	AppendBuffer(str->Buffer());
+void CStringStatic::Append(const CStringStatic *str) {
+  AppendBuffer(str->Buffer());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -98,34 +83,29 @@ CStringStatic::Append(const CStringStatic *str)
 //		Appends the contents of a buffer to the current string
 //
 //---------------------------------------------------------------------------
-void
-CStringStatic::AppendBuffer(const CHAR *buf)
-{
-	GPOS_ASSERT(NULL != buf);
-	ULONG length = clib::Strlen(buf);
-	if (0 == length || m_capacity == m_length)
-	{
-		return;
-	}
+void CStringStatic::AppendBuffer(const CHAR *buf) {
+  GPOS_ASSERT(nullptr != buf);
+  ULONG length = clib::Strlen(buf);
+  if (0 == length || m_capacity == m_length) {
+    return;
+  }
 
-	// check if new length exceeds capacity
-	if (m_capacity <= length + m_length)
-	{
-		// truncate string
-		length = m_capacity - m_length - 1;
-	}
+  // check if new length exceeds capacity
+  if (m_capacity <= length + m_length) {
+    // truncate string
+    length = m_capacity - m_length - 1;
+  }
 
-	GPOS_ASSERT(m_capacity > length + m_length);
+  GPOS_ASSERT(m_capacity > length + m_length);
 
-	clib::Strncpy(m_buffer + m_length, buf, length + 1);
-	m_length += length;
+  clib::Strncpy(m_buffer + m_length, buf, length + 1);
+  m_length += length;
 
-	// terminate string
-	m_buffer[m_length] = CHAR_EOS;
+  // terminate string
+  m_buffer[m_length] = CHAR_EOS;
 
-	GPOS_ASSERT(IsValid());
+  GPOS_ASSERT(IsValid());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -135,20 +115,17 @@ CStringStatic::AppendBuffer(const CHAR *buf)
 //		Appends a formatted string
 //
 //---------------------------------------------------------------------------
-void
-CStringStatic::AppendFormat(const CHAR *format, ...)
-{
-	VA_LIST va_args;
+void CStringStatic::AppendFormat(const CHAR *format, ...) {
+  VA_LIST va_args;
 
-	// get arguments
-	VA_START(va_args, format);
+  // get arguments
+  VA_START(va_args, format);
 
-	AppendFormatVA(format, va_args);
+  AppendFormatVA(format, va_args);
 
-	// reset arguments
-	VA_END(va_args);
+  // reset arguments
+  VA_END(va_args);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -158,26 +135,23 @@ CStringStatic::AppendFormat(const CHAR *format, ...)
 //		Appends a formatted string based on passed va list
 //
 //---------------------------------------------------------------------------
-void
-CStringStatic::AppendFormatVA(const CHAR *format, VA_LIST va_args)
-{
-	GPOS_ASSERT(NULL != format);
+void CStringStatic::AppendFormatVA(const CHAR *format, VA_LIST va_args) {
+  GPOS_ASSERT(nullptr != format);
 
-	// available space in buffer
-	ULONG ulAvailable = m_capacity - m_length;
+  // available space in buffer
+  ULONG ulAvailable = m_capacity - m_length;
 
-	// format string
-	(void) clib::Vsnprintf(m_buffer + m_length, ulAvailable, format, va_args);
+  // format string
+  (void)clib::Vsnprintf(m_buffer + m_length, ulAvailable, format, va_args);
 
-	// terminate string
-	m_buffer[m_capacity - 1] = CHAR_EOS;
-	m_length = clib::Strlen(m_buffer);
+  // terminate string
+  m_buffer[m_capacity - 1] = CHAR_EOS;
+  m_length = clib::Strlen(m_buffer);
 
-	GPOS_ASSERT(m_capacity > m_length);
+  GPOS_ASSERT(m_capacity > m_length);
 
-	GPOS_ASSERT(IsValid());
+  GPOS_ASSERT(IsValid());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -187,42 +161,34 @@ CStringStatic::AppendFormatVA(const CHAR *format, VA_LIST va_args)
 //		Appends wide character string
 //
 //---------------------------------------------------------------------------
-void
-CStringStatic::AppendConvert(const WCHAR *wc_str)
-{
-	ULONG length_entry = GPOS_WSZ_LENGTH(wc_str);
+void CStringStatic::AppendConvert(const WCHAR *wc_str) {
+  ULONG length_entry = GPOS_WSZ_LENGTH(wc_str);
 
-	if (m_capacity - m_length < length_entry)
-	{
-		length_entry = m_capacity - m_length - 1;
-	}
+  if (m_capacity - m_length < length_entry) {
+    length_entry = m_capacity - m_length - 1;
+  }
 
-	for (ULONG i = 0; i < length_entry; i++)
-	{
-		CHAR str_convert[MB_LEN_MAX];
+  for (ULONG i = 0; i < length_entry; i++) {
+    CHAR str_convert[MB_LEN_MAX];
 
-		/* convert wide character to multi-byte array */
-		ULONG char_length = clib::Wctomb(str_convert, wc_str[i]);
-		GPOS_ASSERT(0 < char_length);
+    /* convert wide character to multi-byte array */
+    ULONG char_length = clib::Wctomb(str_convert, wc_str[i]);
+    GPOS_ASSERT(0 < char_length);
 
-		// check if wide character is ASCII-compatible
-		if (1 == char_length)
-		{
-			// simple cast; works only for ASCII characters
-			m_buffer[m_length] = CHAR(wc_str[i]);
-		}
-		else
-		{
-			// substitute wide character
-			m_buffer[m_length] = GPOS_WCHAR_UNPRINTABLE;
-		}
-		m_length++;
-	}
+    // check if wide character is ASCII-compatible
+    if (1 == char_length) {
+      // simple cast; works only for ASCII characters
+      m_buffer[m_length] = CHAR(wc_str[i]);
+    } else {
+      // substitute wide character
+      m_buffer[m_length] = GPOS_WCHAR_UNPRINTABLE;
+    }
+    m_length++;
+  }
 
-	m_buffer[m_length] = CHAR_EOS;
-	GPOS_ASSERT(IsValid());
+  m_buffer[m_length] = CHAR_EOS;
+  GPOS_ASSERT(IsValid());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -232,13 +198,10 @@ CStringStatic::AppendConvert(const WCHAR *wc_str)
 //		Resets string
 //
 //---------------------------------------------------------------------------
-void
-CStringStatic::Reset()
-{
-	m_buffer[0] = CHAR_EOS;
-	m_length = 0;
+void CStringStatic::Reset() {
+  m_buffer[0] = CHAR_EOS;
+  m_length = 0;
 }
-
 
 #ifdef GPOS_DEBUG
 
@@ -250,13 +213,10 @@ CStringStatic::Reset()
 //		Checks whether a string is properly null-terminated
 //
 //---------------------------------------------------------------------------
-bool
-CStringStatic::IsValid() const
-{
-	return (m_length == clib::Strlen(m_buffer));
+bool CStringStatic::IsValid() const {
+  return (m_length == clib::Strlen(m_buffer));
 }
 
-#endif	// GPOS_DEBUG
-
+#endif  // GPOS_DEBUG
 
 // EOF

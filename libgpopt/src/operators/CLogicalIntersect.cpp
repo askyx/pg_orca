@@ -29,9 +29,8 @@ using namespace gpopt;
 //		Ctor - for pattern
 //
 //---------------------------------------------------------------------------
-CLogicalIntersect::CLogicalIntersect(CMemoryPool *mp) : CLogicalSetOp(mp)
-{
-	m_fPattern = true;
+CLogicalIntersect::CLogicalIntersect(CMemoryPool *mp) : CLogicalSetOp(mp) {
+  m_fPattern = true;
 }
 
 //---------------------------------------------------------------------------
@@ -42,12 +41,8 @@ CLogicalIntersect::CLogicalIntersect(CMemoryPool *mp) : CLogicalSetOp(mp)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalIntersect::CLogicalIntersect(CMemoryPool *mp,
-									 CColRefArray *pdrgpcrOutput,
-									 CColRef2dArray *pdrgpdrgpcrInput)
-	: CLogicalSetOp(mp, pdrgpcrOutput, pdrgpdrgpcrInput)
-{
-}
+CLogicalIntersect::CLogicalIntersect(CMemoryPool *mp, CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrInput)
+    : CLogicalSetOp(mp, pdrgpcrOutput, pdrgpdrgpcrInput) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -57,9 +52,7 @@ CLogicalIntersect::CLogicalIntersect(CMemoryPool *mp,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CLogicalIntersect::~CLogicalIntersect()
-{
-}
+CLogicalIntersect::~CLogicalIntersect() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -69,25 +62,21 @@ CLogicalIntersect::~CLogicalIntersect()
 //		Derive max card
 //
 //---------------------------------------------------------------------------
-CMaxCard
-CLogicalIntersect::DeriveMaxCard(CMemoryPool *,	 // mp
-								 CExpressionHandle &exprhdl) const
-{
-	// contradictions produce no rows
-	if (exprhdl.DerivePropertyConstraint()->FContradiction())
-	{
-		return CMaxCard(0 /*ull*/);
-	}
+CMaxCard CLogicalIntersect::DeriveMaxCard(CMemoryPool *,  // mp
+                                          CExpressionHandle &exprhdl) const {
+  // contradictions produce no rows
+  if (exprhdl.DerivePropertyConstraint()->FContradiction()) {
+    return CMaxCard(0 /*ull*/);
+  }
 
-	CMaxCard maxcardL = exprhdl.DeriveMaxCard(0);
-	CMaxCard maxcardR = exprhdl.DeriveMaxCard(1);
+  CMaxCard maxcardL = exprhdl.DeriveMaxCard(0);
+  CMaxCard maxcardR = exprhdl.DeriveMaxCard(1);
 
-	if (maxcardL <= maxcardR)
-	{
-		return maxcardL;
-	}
+  if (maxcardL <= maxcardR) {
+    return maxcardL;
+  }
 
-	return maxcardR;
+  return maxcardR;
 }
 
 //---------------------------------------------------------------------------
@@ -98,19 +87,13 @@ CLogicalIntersect::DeriveMaxCard(CMemoryPool *,	 // mp
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CLogicalIntersect::PopCopyWithRemappedColumns(CMemoryPool *mp,
-											  UlongToColRefMap *colref_mapping,
-											  BOOL must_exist)
-{
-	CColRefArray *pdrgpcrOutput =
-		CUtils::PdrgpcrRemap(mp, m_pdrgpcrOutput, colref_mapping, must_exist);
-	CColRef2dArray *pdrgpdrgpcrInput = CUtils::PdrgpdrgpcrRemap(
-		mp, m_pdrgpdrgpcrInput, colref_mapping, must_exist);
+COperator *CLogicalIntersect::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
+                                                         BOOL must_exist) {
+  CColRefArray *pdrgpcrOutput = CUtils::PdrgpcrRemap(mp, m_pdrgpcrOutput, colref_mapping, must_exist);
+  CColRef2dArray *pdrgpdrgpcrInput = CUtils::PdrgpdrgpcrRemap(mp, m_pdrgpdrgpcrInput, colref_mapping, must_exist);
 
-	return GPOS_NEW(mp) CLogicalIntersect(mp, pdrgpcrOutput, pdrgpdrgpcrInput);
+  return GPOS_NEW(mp) CLogicalIntersect(mp, pdrgpcrOutput, pdrgpdrgpcrInput);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -120,12 +103,10 @@ CLogicalIntersect::PopCopyWithRemappedColumns(CMemoryPool *mp,
 //		Get candidate xforms
 //
 //---------------------------------------------------------------------------
-CXformSet *
-CLogicalIntersect::PxfsCandidates(CMemoryPool *mp) const
-{
-	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	(void) xform_set->ExchangeSet(CXform::ExfIntersect2Join);
-	return xform_set;
+CXformSet *CLogicalIntersect::PxfsCandidates(CMemoryPool *mp) const {
+  CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
+  (void)xform_set->ExchangeSet(CXform::ExfIntersect2Join);
+  return xform_set;
 }
 
 //---------------------------------------------------------------------------
@@ -136,43 +117,39 @@ CLogicalIntersect::PxfsCandidates(CMemoryPool *mp) const
 //		Derive statistics
 //
 //---------------------------------------------------------------------------
-IStatistics *
-CLogicalIntersect::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								IStatisticsArray *	// not used
-) const
-{
-	GPOS_ASSERT(Esp(exprhdl) > EspNone);
+IStatistics *CLogicalIntersect::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                             IStatisticsArray *  // not used
+) const {
+  GPOS_ASSERT(Esp(exprhdl) > EspNone);
 
-	// intersect is transformed into a group by over an intersect all
-	// we follow the same route to compute statistics
+  // intersect is transformed into a group by over an intersect all
+  // we follow the same route to compute statistics
 
-	CColRefSetArray *output_colrefsets = GPOS_NEW(mp) CColRefSetArray(mp);
-	const ULONG size = m_pdrgpdrgpcrInput->Size();
-	for (ULONG ul = 0; ul < size; ul++)
-	{
-		CColRefSet *pcrs =
-			GPOS_NEW(mp) CColRefSet(mp, (*m_pdrgpdrgpcrInput)[ul]);
-		output_colrefsets->Append(pcrs);
-	}
+  CColRefSetArray *output_colrefsets = GPOS_NEW(mp) CColRefSetArray(mp);
+  const ULONG size = m_pdrgpdrgpcrInput->Size();
+  for (ULONG ul = 0; ul < size; ul++) {
+    CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, (*m_pdrgpdrgpcrInput)[ul]);
+    output_colrefsets->Append(pcrs);
+  }
 
-	IStatistics *pstatsIntersectAll = CLogicalIntersectAll::PstatsDerive(
-		mp, exprhdl, m_pdrgpdrgpcrInput, output_colrefsets);
+  IStatistics *pstatsIntersectAll =
+      CLogicalIntersectAll::PstatsDerive(mp, exprhdl, m_pdrgpdrgpcrInput, output_colrefsets);
 
-	// computed columns
-	ULongPtrArray *pdrgpulComputedCols = GPOS_NEW(mp) ULongPtrArray(mp);
+  // computed columns
+  ULongPtrArray *pdrgpulComputedCols = GPOS_NEW(mp) ULongPtrArray(mp);
 
-	IStatistics *stats = CLogicalGbAgg::PstatsDerive(
-		mp, pstatsIntersectAll,
-		(*m_pdrgpdrgpcrInput)[0],  // we group by the columns of the first child
-		pdrgpulComputedCols,	   // no computed columns for set ops
-		NULL					   // no keys, use all grouping cols
-	);
-	// clean up
-	pdrgpulComputedCols->Release();
-	pstatsIntersectAll->Release();
-	output_colrefsets->Release();
+  IStatistics *stats =
+      CLogicalGbAgg::PstatsDerive(mp, pstatsIntersectAll,
+                                  (*m_pdrgpdrgpcrInput)[0],  // we group by the columns of the first child
+                                  pdrgpulComputedCols,       // no computed columns for set ops
+                                  nullptr                    // no keys, use all grouping cols
+      );
+  // clean up
+  pdrgpulComputedCols->Release();
+  pstatsIntersectAll->Release();
+  output_colrefsets->Release();
 
-	return stats;
+  return stats;
 }
 
 // EOF

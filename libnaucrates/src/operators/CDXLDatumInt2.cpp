@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLDatumInt2.cpp
@@ -30,12 +30,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLDatumInt2::CDXLDatumInt2(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null,
-							 SINT val)
-	: CDXLDatum(mp, mdid_type, default_type_modifier, is_null, 2 /*length*/),
-	  m_val(val)
-{
-}
+CDXLDatumInt2::CDXLDatumInt2(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, SINT val)
+    : CDXLDatum(mp, mdid_type, default_type_modifier, is_null, 2 /*length*/), m_val(val) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,10 +41,8 @@ CDXLDatumInt2::CDXLDatumInt2(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null,
 //		Return the short integer value
 //
 //---------------------------------------------------------------------------
-SINT
-CDXLDatumInt2::Value() const
-{
-	return m_val;
+SINT CDXLDatumInt2::Value() const {
+  return m_val;
 }
 
 //---------------------------------------------------------------------------
@@ -59,21 +53,13 @@ CDXLDatumInt2::Value() const
 //		Serialize datum in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLDatumInt2::Serialize(CXMLSerializer *xml_serializer)
-{
-	m_mdid_type->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-	if (!m_is_null)
-	{
-		xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue),
-									 m_val);
-	}
-	else
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
-	}
+void CDXLDatumInt2::Serialize(CXMLSerializer *xml_serializer) {
+  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  if (!m_is_null) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue), m_val);
+  } else {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
+  }
 }
 
 // EOF

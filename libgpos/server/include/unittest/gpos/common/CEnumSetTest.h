@@ -13,8 +13,7 @@
 
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CEnumSetTest
@@ -23,24 +22,22 @@ namespace gpos
 //		Static unit tests for enum set
 //
 //---------------------------------------------------------------------------
-class CEnumSetTest
-{
-public:
-	enum eTest
-	{
-		eTestOne,
-		eTestTwo,
+class CEnumSetTest {
+ public:
+  enum eTest {
+    eTestOne,
+    eTestTwo,
 
-		eTestSentinel
-	};
+    eTestSentinel
+  };
 
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
 
-};	// class CEnumSetTest
+};  // class CEnumSetTest
 }  // namespace gpos
 
-#endif	// !GPOS_CEnumSetTest_H
+#endif  // !GPOS_CEnumSetTest_H
 
 // EOF

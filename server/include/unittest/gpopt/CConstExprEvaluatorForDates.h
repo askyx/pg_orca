@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CConstExprEvaluatorForDates.h
@@ -22,8 +22,7 @@
 
 #include "gpopt/eval/IConstExprEvaluator.h"
 
-namespace gpopt
-{
+namespace gpopt {
 // fwd declarations
 class CExpression;
 
@@ -37,39 +36,29 @@ class CExpression;
 //		backend evaluator.
 //
 //---------------------------------------------------------------------------
-class CConstExprEvaluatorForDates : public IConstExprEvaluator
-{
-private:
-	// memory pool, not owned
-	CMemoryPool *m_mp;
+class CConstExprEvaluatorForDates : public IConstExprEvaluator {
+ private:
+  // memory pool, not owned
+  CMemoryPool *m_mp;
 
-	// disable copy ctor
-	CConstExprEvaluatorForDates(const CConstExprEvaluatorForDates &);
+ public:
+  CConstExprEvaluatorForDates(const CConstExprEvaluatorForDates &) = delete;
 
-public:
-	// ctor
-	explicit CConstExprEvaluatorForDates(CMemoryPool *mp) : m_mp(mp)
-	{
-	}
+  // ctor
+  explicit CConstExprEvaluatorForDates(CMemoryPool *mp) : m_mp(mp) {}
 
-	// dtor
-	virtual ~CConstExprEvaluatorForDates()
-	{
-	}
+  // dtor
+  ~CConstExprEvaluatorForDates() override = default;
 
-	// evaluate the given expression and return the result as a new expression
-	// caller takes ownership of returned expression
-	virtual CExpression *PexprEval(CExpression *pexpr);
+  // evaluate the given expression and return the result as a new expression
+  // caller takes ownership of returned expression
+  CExpression *PexprEval(CExpression *pexpr) override;
 
-	// returns true iff the evaluator can evaluate constant expressions
-	virtual BOOL
-	FCanEvalExpressions()
-	{
-		return true;
-	}
-};	// class CConstExprEvaluatorForDates
+  // returns true iff the evaluator can evaluate constant expressions
+  BOOL FCanEvalExpressions() override { return true; }
+};  // class CConstExprEvaluatorForDates
 }  // namespace gpopt
 
-#endif	// !GPOPT_CConstExprEvaluatorForDates_H
+#endif  // !GPOPT_CConstExprEvaluatorForDates_H
 
 // EOF

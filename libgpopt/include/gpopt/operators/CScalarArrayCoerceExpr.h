@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2017 Pivotal Inc.
+//	Copyright (C) 2017 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarArrayCoerceExpr.h
@@ -23,8 +23,7 @@
 
 #include "gpopt/operators/CScalarCoerceBase.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -35,52 +34,36 @@ using namespace gpos;
 //		Scalar Array Coerce Expr operator
 //
 //---------------------------------------------------------------------------
-class CScalarArrayCoerceExpr : public CScalarCoerceBase
-{
-private:
-	// catalog MDId of the element function
-	IMDId *m_pmdidElementFunc;
+class CScalarArrayCoerceExpr : public CScalarCoerceBase {
+ private:
+ public:
+  CScalarArrayCoerceExpr(const CScalarArrayCoerceExpr &) = delete;
 
-	// conversion semantics flag to pass to func
-	BOOL m_is_explicit;
+  // ctor
+  CScalarArrayCoerceExpr(CMemoryPool *mp, IMDId *result_type_mdid, INT type_modifier, ECoercionForm dxl_coerce_format,
+                         INT location);
 
-	// private copy ctor
-	CScalarArrayCoerceExpr(const CScalarArrayCoerceExpr &);
+  // dtor
+  ~CScalarArrayCoerceExpr() override = default;
 
-public:
-	// ctor
-	CScalarArrayCoerceExpr(CMemoryPool *mp, IMDId *element_func,
-						   IMDId *result_type_mdid, INT type_modifier,
-						   BOOL is_explicit, ECoercionForm dxl_coerce_format,
-						   INT location);
+  EOperatorId Eopid() const override;
 
-	// dtor
-	virtual ~CScalarArrayCoerceExpr();
+  // return a string for operator name
+  const CHAR *SzId() const override;
 
-	// return metadata id of element coerce function
-	IMDId *PmdidElementFunc() const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	BOOL IsExplicit() const;
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override;
 
-	virtual EOperatorId Eopid() const;
+  // conversion function
+  static CScalarArrayCoerceExpr *PopConvert(COperator *pop);
 
-	// return a string for operator name
-	virtual const CHAR *SzId() const;
-
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
-
-	// sensitivity to order of inputs
-	virtual BOOL FInputOrderSensitive() const;
-
-	// conversion function
-	static CScalarArrayCoerceExpr *PopConvert(COperator *pop);
-
-};	// class CScalarArrayCoerceExpr
+};  // class CScalarArrayCoerceExpr
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CScalarArrayCoerceExpr_H
+#endif  // !GPOPT_CScalarArrayCoerceExpr_H
 
 // EOF

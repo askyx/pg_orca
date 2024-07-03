@@ -23,7 +23,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CPhysicalTableScan::CPhysicalTableScan
@@ -32,12 +31,9 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalTableScan::CPhysicalTableScan(CMemoryPool *mp, const CName *pnameAlias,
-									   CTableDescriptor *ptabdesc,
-									   CColRefArray *pdrgpcrOutput)
-	: CPhysicalScan(mp, pnameAlias, ptabdesc, pdrgpcrOutput)
-{
-}
+CPhysicalTableScan::CPhysicalTableScan(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc,
+                                       CColRefArray *pdrgpcrOutput)
+    : CPhysicalScan(mp, pnameAlias, ptabdesc, pdrgpcrOutput) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -48,16 +44,12 @@ CPhysicalTableScan::CPhysicalTableScan(CMemoryPool *mp, const CName *pnameAlias,
 //
 //---------------------------------------------------------------------------
 ULONG
-CPhysicalTableScan::HashValue() const
-{
-	ULONG ulHash = gpos::CombineHashes(COperator::HashValue(),
-									   m_ptabdesc->MDId()->HashValue());
-	ulHash =
-		gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
+CPhysicalTableScan::HashValue() const {
+  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
+  ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
 
-	return ulHash;
+  return ulHash;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -67,19 +59,15 @@ CPhysicalTableScan::HashValue() const
 //		match operator
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalTableScan::Matches(COperator *pop) const
-{
-	if (Eopid() != pop->Eopid())
-	{
-		return false;
-	}
+BOOL CPhysicalTableScan::Matches(COperator *pop) const {
+  if (Eopid() != pop->Eopid()) {
+    return false;
+  }
 
-	CPhysicalTableScan *popTableScan = CPhysicalTableScan::PopConvert(pop);
-	return m_ptabdesc->MDId()->Equals(popTableScan->Ptabdesc()->MDId()) &&
-		   m_pdrgpcrOutput->Equals(popTableScan->PdrgpcrOutput());
+  CPhysicalTableScan *popTableScan = CPhysicalTableScan::PopConvert(pop);
+  return m_ptabdesc->MDId()->Equals(popTableScan->Ptabdesc()->MDId()) &&
+         m_pdrgpcrOutput->Equals(popTableScan->PdrgpcrOutput());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -89,22 +77,18 @@ CPhysicalTableScan::Matches(COperator *pop) const
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CPhysicalTableScan::OsPrint(IOstream &os) const
-{
-	os << SzId() << " ";
+IOstream &CPhysicalTableScan::OsPrint(IOstream &os) const {
+  os << SzId() << " ";
 
-	// alias of table as referenced in the query
-	m_pnameAlias->OsPrint(os);
+  // alias of table as referenced in the query
+  m_pnameAlias->OsPrint(os);
 
-	// actual name of table in catalog and columns
-	os << " (";
-	m_ptabdesc->Name().OsPrint(os);
-	os << ")";
+  // actual name of table in catalog and columns
+  os << " (";
+  m_ptabdesc->Name().OsPrint(os);
+  os << ")";
 
-	return os;
+  return os;
 }
-
-
 
 // EOF

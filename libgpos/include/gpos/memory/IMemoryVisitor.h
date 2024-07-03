@@ -21,41 +21,32 @@
 #include "gpos/assert.h"
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 // prototypes
 class CStackDescriptor;
 
 // wrapper for common operation on allocated memory;
 // called by memory pools when a walk of the memory is requested;
-class IMemoryVisitor
-{
-private:
-	// private copy ctor
-	IMemoryVisitor(IMemoryVisitor &);
+class IMemoryVisitor {
+ private:
+ public:
+  IMemoryVisitor(IMemoryVisitor &) = delete;
 
-public:
-	// ctor
-	IMemoryVisitor()
-	{
-	}
+  // ctor
+  IMemoryVisitor() = default;
 
-	// dtor
-	virtual ~IMemoryVisitor()
-	{
-	}
+  // dtor
+  virtual ~IMemoryVisitor() = default;
 
-	// executed operation during a walk of objects;
-	// file name may be NULL (when debugging is not enabled);
-	// line number will be zero in that case;
-	// sequence number is a constant in case allocation sequencing is not supported;
-	virtual void Visit(void *user_addr, SIZE_T user_size, void *total_addr,
-					   SIZE_T total_size, const CHAR *alloc_filename,
-					   const ULONG alloc_line, ULLONG alloc_seq_number,
-					   CStackDescriptor *desc) = 0;
+  // executed operation during a walk of objects;
+  // file name may be NULL (when debugging is not enabled);
+  // line number will be zero in that case;
+  // sequence number is a constant in case allocation sequencing is not supported;
+  virtual void Visit(void *user_addr, SIZE_T user_size, void *total_addr, SIZE_T total_size, const CHAR *alloc_filename,
+                     const ULONG alloc_line, ULLONG alloc_seq_number, CStackDescriptor *desc) = 0;
 };
 }  // namespace gpos
 
-#endif	// GPOS_IMemoryVisitor_H
+#endif  // GPOS_IMemoryVisitor_H
 
 // EOF

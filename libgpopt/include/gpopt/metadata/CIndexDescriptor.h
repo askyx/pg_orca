@@ -20,8 +20,7 @@
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDIndex.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 using namespace gpmd;
 
@@ -33,97 +32,69 @@ using namespace gpmd;
 //		Base class for index descriptor
 //
 //---------------------------------------------------------------------------
-class CIndexDescriptor : public CRefCount
-{
-private:
-	// mdid of the index
-	IMDId *m_pmdidIndex;
+class CIndexDescriptor : public CRefCount, public DbgPrintMixin<CIndexDescriptor> {
+ private:
+  // mdid of the index
+  IMDId *m_pmdidIndex;
 
-	// name of index
-	CName m_name;
+  // name of index
+  CName m_name;
 
-	// array of index key columns
-	CColumnDescriptorArray *m_pdrgpcoldescKeyCols;
+  // array of index key columns
+  CColumnDescriptorArray *m_pdrgpcoldescKeyCols;
 
-	// array of index included columns
-	CColumnDescriptorArray *m_pdrgpcoldescIncludedCols;
+  // array of index included columns
+  CColumnDescriptorArray *m_pdrgpcoldescIncludedCols;
 
-	// clustered index
-	BOOL m_clustered;
+  // clustered index
+  BOOL m_clustered;
 
-	// index type
-	IMDIndex::EmdindexType m_index_type;
+  // index type
+  IMDIndex::EmdindexType m_index_type;
 
-	// private copy ctor
-	CIndexDescriptor(const CIndexDescriptor &);
+ public:
+  CIndexDescriptor(const CIndexDescriptor &) = delete;
 
-public:
-	// ctor
-	CIndexDescriptor(CMemoryPool *mp, IMDId *pmdidIndex, const CName &name,
-					 CColumnDescriptorArray *pdrgcoldescKeyCols,
-					 CColumnDescriptorArray *pdrgcoldescIncludedCols,
-					 BOOL is_clustered, IMDIndex::EmdindexType emdindt);
+  // ctor
+  CIndexDescriptor(CMemoryPool *mp, IMDId *pmdidIndex, const CName &name, CColumnDescriptorArray *pdrgcoldescKeyCols,
+                   CColumnDescriptorArray *pdrgcoldescIncludedCols, BOOL is_clustered, IMDIndex::EmdindexType emdindt);
 
-	// dtor
-	virtual ~CIndexDescriptor();
+  // dtor
+  ~CIndexDescriptor() override;
 
-	// number of key columns
-	ULONG Keys() const;
+  // number of key columns
+  ULONG Keys() const;
 
-	// number of included columns
-	ULONG UlIncludedColumns() const;
+  // number of included columns
+  ULONG UlIncludedColumns() const;
 
-	// index mdid accessor
-	IMDId *
-	MDId() const
-	{
-		return m_pmdidIndex;
-	}
+  // index mdid accessor
+  IMDId *MDId() const { return m_pmdidIndex; }
 
-	// index name
-	const CName &
-	Name() const
-	{
-		return m_name;
-	}
+  // index name
+  const CName &Name() const { return m_name; }
 
-	// key column descriptors
-	CColumnDescriptorArray *
-	PdrgpcoldescKey() const
-	{
-		return m_pdrgpcoldescKeyCols;
-	}
+  // key column descriptors
+  CColumnDescriptorArray *PdrgpcoldescKey() const { return m_pdrgpcoldescKeyCols; }
 
-	// included column descriptors
-	CColumnDescriptorArray *
-	PdrgpcoldescIncluded() const
-	{
-		return m_pdrgpcoldescIncludedCols;
-	}
+  // included column descriptors
+  CColumnDescriptorArray *PdrgpcoldescIncluded() const { return m_pdrgpcoldescIncludedCols; }
 
-	// is index clustered
-	BOOL
-	IsClustered() const
-	{
-		return m_clustered;
-	}
+  // is index clustered
+  BOOL IsClustered() const { return m_clustered; }
 
-	IMDIndex::EmdindexType
-	IndexType() const
-	{
-		return m_index_type;
-	}
+  IMDIndex::EmdindexType IndexType() const { return m_index_type; }
 
-	// create an index descriptor
-	static CIndexDescriptor *Pindexdesc(CMemoryPool *mp,
-										const CTableDescriptor *ptabdesc,
-										const IMDIndex *pmdindex);
+  BOOL SupportsIndexOnlyScan(CTableDescriptor *ptabdesc) const;
 
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // create an index descriptor
+  static CIndexDescriptor *Pindexdesc(CMemoryPool *mp, const CTableDescriptor *ptabdesc, const IMDIndex *pmdindex);
 
-};	// class CIndexDescriptor
+  IOstream &OsPrint(IOstream &os) const;
+
+};  // class CIndexDescriptor
 }  // namespace gpopt
 
-#endif	// !GPOPT_CIndexDescriptor_H
+#endif  // !GPOPT_CIndexDescriptor_H
 
 // EOF

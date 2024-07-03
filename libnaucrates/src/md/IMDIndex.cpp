@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		IMDIndex.cpp
@@ -26,23 +26,24 @@ using namespace gpmd;
 //		Return relation distribution policy as a string value
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-IMDIndex::GetDXLStr(EmdindexType index_type)
-{
-	switch (index_type)
-	{
-		case EmdindBtree:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenIndexTypeBtree);
-		case EmdindBitmap:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenIndexTypeBitmap);
-		case EmdindGist:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenIndexTypeGist);
-		case EmdindGin:
-			return CDXLTokens::GetDXLTokenStr(EdxltokenIndexTypeGin);
-		default:
-			GPOS_ASSERT(!"Unrecognized index type");
-			return NULL;
-	}
+const CWStringConst* IMDIndex::GetDXLStr(EmdindexType index_type) {
+  switch (index_type) {
+    case EmdindBtree:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenIndexTypeBtree);
+    case EmdindBitmap:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenIndexTypeBitmap);
+    case EmdindGist:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenIndexTypeGist);
+    case EmdindGin:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenIndexTypeGin);
+    case EmdindBrin:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenIndexTypeBrin);
+    case EmdindHash:
+      return CDXLTokens::GetDXLTokenStr(EdxltokenIndexTypeHash);
+    default:
+      GPOS_ASSERT(!"Unrecognized index type");
+      return nullptr;
+  }
 }
 
 // EOF

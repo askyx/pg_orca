@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2017 Pivotal, Inc.
+//	Copyright (C) 2017 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CCollapseProjectTest.h
@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CCollapseProjectTest
@@ -23,21 +22,20 @@ namespace gpopt
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CCollapseProjectTest
-{
-private:
-	// counter used to mark last successful test
-	static gpos::ULONG m_ulCollapseProjectTestCounter;
+class CCollapseProjectTest {
+ private:
+  // counter used to mark last successful test
+  static gpos::ULONG m_ulCollapseProjectTestCounter;
 
-public:
-	// unittests
-	static gpos::GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static gpos::GPOS_RESULT EresUnittest();
 
-	static gpos::GPOS_RESULT EresUnittest_RunTests();
+  static gpos::GPOS_RESULT EresUnittest_RunTests();
 
-};	// class CCollapseProjectTest
+};  // class CCollapseProjectTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CCollapseProjectTest_H
+#endif  // !GPOPT_CCollapseProjectTest_H
 
 // EOF

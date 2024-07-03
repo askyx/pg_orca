@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,47 +26,33 @@ using namespace gpos;
 //		Transform left semi join to inner join
 //
 //---------------------------------------------------------------------------
-class CXformLeftSemiJoin2InnerJoin : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformLeftSemiJoin2InnerJoin(const CXformLeftSemiJoin2InnerJoin &);
+class CXformLeftSemiJoin2InnerJoin : public CXformExploration {
+ private:
+ public:
+  CXformLeftSemiJoin2InnerJoin(const CXformLeftSemiJoin2InnerJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformLeftSemiJoin2InnerJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformLeftSemiJoin2InnerJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformLeftSemiJoin2InnerJoin()
-	{
-	}
+  // dtor
+  ~CXformLeftSemiJoin2InnerJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfLeftSemiJoin2InnerJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfLeftSemiJoin2InnerJoin; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformLeftSemiJoin2InnerJoin";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformLeftSemiJoin2InnerJoin"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformLeftSemiJoin2InnerJoin
+};  // class CXformLeftSemiJoin2InnerJoin
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformLeftSemiJoin2InnerJoin_H
+#endif  // !GPOPT_CXformLeftSemiJoin2InnerJoin_H
 
 // EOF

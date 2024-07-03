@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,47 +26,33 @@ using namespace gpos;
 //		Transform left anti semi join to left anti semi NLJ (NotIn semantics)
 //
 //---------------------------------------------------------------------------
-class CXformLeftAntiSemiJoinNotIn2NLJoinNotIn : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformLeftAntiSemiJoinNotIn2NLJoinNotIn(
-		const CXformLeftAntiSemiJoinNotIn2NLJoinNotIn &);
+class CXformLeftAntiSemiJoinNotIn2NLJoinNotIn : public CXformImplementation {
+ private:
+ public:
+  CXformLeftAntiSemiJoinNotIn2NLJoinNotIn(const CXformLeftAntiSemiJoinNotIn2NLJoinNotIn &) = delete;
 
-public:
-	// ctor
-	explicit CXformLeftAntiSemiJoinNotIn2NLJoinNotIn(CMemoryPool *mp);
+  // ctor
+  explicit CXformLeftAntiSemiJoinNotIn2NLJoinNotIn(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformLeftAntiSemiJoinNotIn2NLJoinNotIn()
-	{
-	}
+  // dtor
+  ~CXformLeftAntiSemiJoinNotIn2NLJoinNotIn() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfLeftAntiSemiJoinNotIn2NLJoinNotIn;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfLeftAntiSemiJoinNotIn2NLJoinNotIn; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformLeftAntiSemiJoinNotIn2NLJoinNotIn";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformLeftAntiSemiJoinNotIn2NLJoinNotIn"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformLeftAntiSemiJoinNotIn2NLJoinNotIn
+};  // class CXformLeftAntiSemiJoinNotIn2NLJoinNotIn
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformLeftAntiSemiJoinNotIn2NLJoinNotIn_H
+#endif  // !GPOPT_CXformLeftAntiSemiJoinNotIn2NLJoinNotIn_H
 
 // EOF

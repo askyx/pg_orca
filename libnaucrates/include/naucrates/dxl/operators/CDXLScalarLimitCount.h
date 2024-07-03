@@ -17,9 +17,7 @@
 
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -30,51 +28,45 @@ using namespace gpos;
 //		Class for representing DXL scalar LimitCount
 //
 //---------------------------------------------------------------------------
-class CDXLScalarLimitCount : public CDXLScalar
-{
-private:
-	// private copy ctor
-	CDXLScalarLimitCount(const CDXLScalarLimitCount &);
+class CDXLScalarLimitCount : public CDXLScalar {
+ private:
+ public:
+  CDXLScalarLimitCount(const CDXLScalarLimitCount &) = delete;
 
-public:
-	// ctor/dtor
-	explicit CDXLScalarLimitCount(CMemoryPool *mp);
+  // ctor/dtor
+  explicit CDXLScalarLimitCount(CMemoryPool *mp);
 
-	// ident accessors
-	Edxlopid GetDXLOperator() const;
+  // ident accessors
+  Edxlopid GetDXLOperator() const override;
 
-	// name of the DXL operator
-	const CWStringConst *GetOpNameStr() const;
+  // name of the DXL operator
+  const CWStringConst *GetOpNameStr() const override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const override;
 
-	// conversion function
-	static CDXLScalarLimitCount *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarLimitCount == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarLimitCount *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarLimitCount == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarLimitCount *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarLimitCount *>(dxl_op);
+  }
 
-	// does the operator return a boolean result
-	virtual BOOL
-	HasBoolResult(CMDAccessor *	 //md_accessor
-	) const
-	{
-		GPOS_ASSERT(!"Invalid function call for a container operator");
-		return false;
-	}
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  ) const override {
+    GPOS_ASSERT(!"Invalid function call for a container operator");
+    return false;
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *node, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLScalarLimitCount_H
+#endif  // !GPDXL_CDXLScalarLimitCount_H
 
 // EOF

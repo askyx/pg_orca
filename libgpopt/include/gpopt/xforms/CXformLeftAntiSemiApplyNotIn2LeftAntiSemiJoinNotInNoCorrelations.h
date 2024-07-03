@@ -14,12 +14,11 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalLeftAntiSemiApplyNotIn.h"
+#include "gpopt/operators/CLogicalLeftAntiSemiJoinNotIn.h"
 #include "gpopt/xforms/CXformApply2Join.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -31,54 +30,35 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 class CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations
-	: public CXformApply2Join<CLogicalLeftAntiSemiApplyNotIn,
-							  CLogicalLeftAntiSemiJoinNotIn>
-{
-private:
-	// private copy ctor
-	CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations(
-		const CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations
-			&);
+    : public CXformApply2Join<CLogicalLeftAntiSemiApplyNotIn, CLogicalLeftAntiSemiJoinNotIn> {
+ private:
+ public:
+  CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations(
+      const CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations &) = delete;
 
-public:
-	// ctor
-	explicit CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations(
-		CMemoryPool *mp)
-		: CXformApply2Join<CLogicalLeftAntiSemiApplyNotIn,
-						   CLogicalLeftAntiSemiJoinNotIn>(mp)
-	{
-	}
+  // ctor
+  explicit CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations(CMemoryPool *mp)
+      : CXformApply2Join<CLogicalLeftAntiSemiApplyNotIn, CLogicalLeftAntiSemiJoinNotIn>(mp) {}
 
-	// dtor
-	virtual ~CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations()
-	{
-	}
+  // dtor
+  ~CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations; }
 
-	// xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations";
-	}
+  // xform name
+  const CHAR *SzId() const override { return "CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations
+};  // class CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations_H
+#endif  // !GPOPT_CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotInNoCorrelations_H
 
 // EOF

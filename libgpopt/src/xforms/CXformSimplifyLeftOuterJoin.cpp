@@ -14,11 +14,13 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CUtils.h"
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalConstTableGet.h"
+#include "gpopt/operators/CLogicalLeftOuterJoin.h"
+#include "gpopt/operators/CPatternLeaf.h"
+#include "gpopt/operators/CPatternTree.h"
 
 using namespace gpmd;
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,20 +31,13 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformSimplifyLeftOuterJoin::CXformSimplifyLeftOuterJoin(CMemoryPool *mp)
-	: CXformExploration(
-		  // pattern
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CLogicalLeftOuterJoin(mp),
-			  GPOS_NEW(mp)
-				  CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // right child
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CPatternTree(mp))  // predicate tree
-			  ))
-{
-}
-
+    : CXformExploration(
+          // pattern
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalLeftOuterJoin(mp),
+                                   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
+                                   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // right child
+                                   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // predicate tree
+                                   )) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -52,19 +47,15 @@ CXformSimplifyLeftOuterJoin::CXformSimplifyLeftOuterJoin(CMemoryPool *mp)
 //		Compute xform promise for a given expression handle
 //
 //---------------------------------------------------------------------------
-CXform::EXformPromise
-CXformSimplifyLeftOuterJoin::Exfp(CExpressionHandle &exprhdl) const
-{
-	CExpression *pexprScalar = exprhdl.PexprScalarExactChild(2 /*child_index*/);
-	if (NULL != pexprScalar && CUtils::FScalarConstFalse(pexprScalar))
-	{
-		// if LOJ predicate is False, we can replace inner child with empty table
-		return CXform::ExfpHigh;
-	}
+CXform::EXformPromise CXformSimplifyLeftOuterJoin::Exfp(CExpressionHandle &exprhdl) const {
+  CExpression *pexprScalar = exprhdl.PexprScalarExactChild(2 /*child_index*/);
+  if (nullptr != pexprScalar && CUtils::FScalarConstFalse(pexprScalar)) {
+    // if LOJ predicate is False, we can replace inner child with empty table
+    return CXform::ExfpHigh;
+  }
 
-	return CXform::ExfpNone;
+  return CXform::ExfpNone;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -74,41 +65,35 @@ CXformSimplifyLeftOuterJoin::Exfp(CExpressionHandle &exprhdl) const
 //		Actual transformation to simplify left outer join
 //
 //---------------------------------------------------------------------------
-void
-CXformSimplifyLeftOuterJoin::Transform(CXformContext *pxfctxt,
-									   CXformResult *pxfres,
-									   CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(NULL != pxfres);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformSimplifyLeftOuterJoin::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(nullptr != pxfres);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CMemoryPool *mp = pxfctxt->Pmp();
+  CMemoryPool *mp = pxfctxt->Pmp();
 
-	// extract components
-	CExpression *pexprOuter = (*pexpr)[0];
-	CExpression *pexprInner = (*pexpr)[1];
-	CExpression *pexprScalar = (*pexpr)[2];
+  // extract components
+  CExpression *pexprOuter = (*pexpr)[0];
+  CExpression *pexprInner = (*pexpr)[1];
+  CExpression *pexprScalar = (*pexpr)[2];
 
-	pexprOuter->AddRef();
-	pexprScalar->AddRef();
-	CExpression *pexprResult = NULL;
+  pexprOuter->AddRef();
+  pexprScalar->AddRef();
+  CExpression *pexprResult = nullptr;
 
-	// inner child of LOJ can be replaced with empty table
-	GPOS_ASSERT(CUtils::FScalarConstFalse(pexprScalar));
+  // inner child of LOJ can be replaced with empty table
+  GPOS_ASSERT(CUtils::FScalarConstFalse(pexprScalar));
 
-	// extract output columns of inner child
-	CColRefArray *colref_array = pexprInner->DeriveOutputColumns()->Pdrgpcr(mp);
+  // extract output columns of inner child
+  CColRefArray *colref_array = pexprInner->DeriveOutputColumns()->Pdrgpcr(mp);
 
-	// generate empty constant table with the same columns
-	COperator *popCTG = GPOS_NEW(mp)
-		CLogicalConstTableGet(mp, colref_array, GPOS_NEW(mp) IDatum2dArray(mp));
-	pexprResult = GPOS_NEW(mp)
-		CExpression(mp, GPOS_NEW(mp) CLogicalLeftOuterJoin(mp), pexprOuter,
-					GPOS_NEW(mp) CExpression(mp, popCTG), pexprScalar);
+  // generate empty constant table with the same columns
+  COperator *popCTG = GPOS_NEW(mp) CLogicalConstTableGet(mp, colref_array, GPOS_NEW(mp) IDatum2dArray(mp));
+  pexprResult = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalLeftOuterJoin(mp), pexprOuter,
+                                         GPOS_NEW(mp) CExpression(mp, popCTG), pexprScalar);
 
-	pxfres->Add(pexprResult);
+  pxfres->Add(pexprResult);
 }
 
 // EOF

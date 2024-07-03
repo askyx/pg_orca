@@ -13,7 +13,9 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalLeftAntiSemiJoinNotIn.h"
+#include "gpopt/operators/CPatternLeaf.h"
+#include "gpopt/operators/CPhysicalLeftAntiSemiNLJoinNotIn.h"
 #include "gpopt/xforms/CXformUtils.h"
 
 using namespace gpopt;
@@ -26,21 +28,14 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CXformLeftAntiSemiJoinNotIn2NLJoinNotIn::
-	CXformLeftAntiSemiJoinNotIn2NLJoinNotIn(CMemoryPool *mp)
-	:  // pattern
-	  CXformImplementation(GPOS_NEW(mp) CExpression(
-		  mp, GPOS_NEW(mp) CLogicalLeftAntiSemiJoinNotIn(mp),
-		  GPOS_NEW(mp)
-			  CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
-		  GPOS_NEW(mp)
-			  CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // right child
-		  GPOS_NEW(mp)
-			  CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)))  // predicate
-	  )
-{
-}
-
+CXformLeftAntiSemiJoinNotIn2NLJoinNotIn::CXformLeftAntiSemiJoinNotIn2NLJoinNotIn(CMemoryPool *mp)
+    :  // pattern
+      CXformImplementation(GPOS_NEW(mp)
+                               CExpression(mp, GPOS_NEW(mp) CLogicalLeftAntiSemiJoinNotIn(mp),
+                                           GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
+                                           GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // right child
+                                           GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)))  // predicate
+      ) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -50,12 +45,9 @@ CXformLeftAntiSemiJoinNotIn2NLJoinNotIn::
 //		Compute xform promise for a given expression handle;
 //
 //---------------------------------------------------------------------------
-CXform::EXformPromise
-CXformLeftAntiSemiJoinNotIn2NLJoinNotIn::Exfp(CExpressionHandle &exprhdl) const
-{
-	return CXformUtils::ExfpLogicalJoin2PhysicalJoin(exprhdl);
+CXform::EXformPromise CXformLeftAntiSemiJoinNotIn2NLJoinNotIn::Exfp(CExpressionHandle &exprhdl) const {
+  return CXformUtils::ExfpLogicalJoin2PhysicalJoin(exprhdl);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -65,18 +57,13 @@ CXformLeftAntiSemiJoinNotIn2NLJoinNotIn::Exfp(CExpressionHandle &exprhdl) const
 //		actual transformation
 //
 //---------------------------------------------------------------------------
-void
-CXformLeftAntiSemiJoinNotIn2NLJoinNotIn::Transform(CXformContext *pxfctxt,
-												   CXformResult *pxfres,
-												   CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformLeftAntiSemiJoinNotIn2NLJoinNotIn::Transform(CXformContext *pxfctxt, CXformResult *pxfres,
+                                                        CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CXformUtils::ImplementNLJoin<CPhysicalLeftAntiSemiNLJoinNotIn>(
-		pxfctxt, pxfres, pexpr);
+  CXformUtils::ImplementNLJoin<CPhysicalLeftAntiSemiNLJoinNotIn>(pxfctxt, pxfres, pexpr);
 }
-
 
 // EOF

@@ -13,11 +13,11 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalLeftAntiSemiApply.h"
+#include "gpopt/operators/CLogicalLeftAntiSemiJoin.h"
 #include "gpopt/xforms/CXformApply2Join.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -29,51 +29,33 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 class CXformLeftAntiSemiApply2LeftAntiSemiJoin
-	: public CXformApply2Join<CLogicalLeftAntiSemiApply,
-							  CLogicalLeftAntiSemiJoin>
-{
-private:
-	// private copy ctor
-	CXformLeftAntiSemiApply2LeftAntiSemiJoin(
-		const CXformLeftAntiSemiApply2LeftAntiSemiJoin &);
+    : public CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin> {
+ private:
+ public:
+  CXformLeftAntiSemiApply2LeftAntiSemiJoin(const CXformLeftAntiSemiApply2LeftAntiSemiJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformLeftAntiSemiApply2LeftAntiSemiJoin(CMemoryPool *mp)
-		: CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin>(
-			  mp, true /*fDeepTree*/)
-	{
-	}
+  // ctor
+  explicit CXformLeftAntiSemiApply2LeftAntiSemiJoin(CMemoryPool *mp)
+      : CXformApply2Join<CLogicalLeftAntiSemiApply, CLogicalLeftAntiSemiJoin>(mp, true /*fDeepTree*/) {}
 
-	// dtor
-	virtual ~CXformLeftAntiSemiApply2LeftAntiSemiJoin()
-	{
-	}
+  // dtor
+  ~CXformLeftAntiSemiApply2LeftAntiSemiJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfLeftAntiSemiApply2LeftAntiSemiJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfLeftAntiSemiApply2LeftAntiSemiJoin; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformLeftAntiSemiApply2LeftAntiSemiJoin";
-	}
+  const CHAR *SzId() const override { return "CXformLeftAntiSemiApply2LeftAntiSemiJoin"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformLeftAntiSemiApply2LeftAntiSemiJoin
+};  // class CXformLeftAntiSemiApply2LeftAntiSemiJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformLeftAntiSemiApply2LeftAntiSemiJoin_H
+#endif  // !GPOPT_CXformLeftAntiSemiApply2LeftAntiSemiJoin_H
 
 // EOF

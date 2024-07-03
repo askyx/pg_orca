@@ -15,8 +15,7 @@
 
 #include "naucrates/base/IDatum.h"
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 //---------------------------------------------------------------------------
 //	@class:
 //		IDatumInt8
@@ -25,105 +24,64 @@ namespace gpnaucrates
 //		Base abstract class for int8 representation
 //
 //---------------------------------------------------------------------------
-class IDatumInt8 : public IDatum
-{
-private:
-	// private copy ctor
-	IDatumInt8(const IDatumInt8 &);
+class IDatumInt8 : public IDatum {
+ private:
+ public:
+  IDatumInt8(const IDatumInt8 &) = delete;
 
-public:
-	// ctor
-	IDatumInt8()
-	{
-	}
+  // ctor
+  IDatumInt8() = default;
 
-	// dtor
-	virtual ~IDatumInt8()
-	{
-	}
+  // dtor
+  ~IDatumInt8() override = default;
 
-	// accessor for datum type
-	virtual IMDType::ETypeInfo
-	GetDatumType()
-	{
-		return IMDType::EtiInt8;
-	}
+  // accessor for datum type
+  IMDType::ETypeInfo GetDatumType() override { return IMDType::EtiInt8; }
 
-	// accessor of integer value
-	virtual LINT Value() const = 0;
+  // accessor of integer value
+  virtual LINT Value() const = 0;
 
-	// can datum be mapped to a double
-	BOOL
-	IsDatumMappableToDouble() const
-	{
-		return true;
-	}
+  // can datum be mapped to a double
+  BOOL IsDatumMappableToDouble() const override { return true; }
 
-	// map to double for stats computation
-	CDouble
-	GetDoubleMapping() const
-	{
-		return CDouble(Value());
-	}
+  // map to double for stats computation
+  CDouble GetDoubleMapping() const override { return CDouble(Value()); }
 
-	// can datum be mapped to LINT
-	BOOL
-	IsDatumMappableToLINT() const
-	{
-		return true;
-	}
+  // can datum be mapped to LINT
+  BOOL IsDatumMappableToLINT() const override { return true; }
 
-	// map to LINT for statistics computation
-	LINT
-	GetLINTMapping() const
-	{
-		return Value();
-	}
+  // map to LINT for statistics computation
+  LINT GetLINTMapping() const override { return Value(); }
 
-	// byte array representation of datum
-	virtual const BYTE *
-	GetByteArrayValue() const
-	{
-		GPOS_ASSERT(!"Invalid invocation of MakeCopyOfValue");
-		return NULL;
-	}
+  // byte array representation of datum
+  const BYTE *GetByteArrayValue() const override {
+    GPOS_ASSERT(!"Invalid invocation of MakeCopyOfValue");
+    return nullptr;
+  }
 
-	// does the datum need to be padded before statistical derivation
-	virtual BOOL
-	NeedsPadding() const
-	{
-		return false;
-	}
+  // does the datum need to be padded before statistical derivation
+  BOOL NeedsPadding() const override { return false; }
 
-	// return the padded datum
-	virtual IDatum *
-	MakePaddedDatum(CMemoryPool *,	// mp,
-					ULONG			// col_len
-	) const
-	{
-		GPOS_ASSERT(!"Invalid invocation of MakePaddedDatum");
-		return NULL;
-	}
+  // return the padded datum
+  IDatum *MakePaddedDatum(CMemoryPool *,  // mp,
+                          ULONG           // col_len
+  ) const override {
+    GPOS_ASSERT(!"Invalid invocation of MakePaddedDatum");
+    return nullptr;
+  }
 
-	// does datum support like predicate
-	virtual BOOL
-	SupportsLikePredicate() const
-	{
-		return false;
-	}
+  // does datum support like predicate
+  BOOL SupportsLikePredicate() const override { return false; }
 
-	// return the default scale factor of like predicate
-	virtual CDouble
-	GetLikePredicateScaleFactor() const
-	{
-		GPOS_ASSERT(!"Invalid invocation of DLikeSelectivity");
-		return false;
-	}
-};	// class IDatumInt8
+  // return the default scale factor of like predicate
+  CDouble GetLikePredicateScaleFactor() const override {
+    GPOS_ASSERT(!"Invalid invocation of DLikeSelectivity");
+    return false;
+  }
+};  // class IDatumInt8
 
 }  // namespace gpnaucrates
 
-
-#endif	// !GPNAUCRATES_IDatumInt8_H
+#endif  // !GPNAUCRATES_IDatumInt8_H
 
 // EOF

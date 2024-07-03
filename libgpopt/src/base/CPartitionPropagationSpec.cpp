@@ -11,76 +11,288 @@
 
 #include "gpopt/base/CPartitionPropagationSpec.h"
 
-#include "gpos/memory/CAutoMemoryPool.h"
-
-#include "gpopt/base/CPartIndexMap.h"
 #include "gpopt/exception.h"
+#include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPhysicalPartitionSelector.h"
-#include "gpopt/operators/CPredicateUtils.h"
 
 using namespace gpos;
 using namespace gpopt;
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPartitionPropagationSpec::CPartitionPropagationSpec
-//
-//	@doc:
-//		Ctor
-//
-//---------------------------------------------------------------------------
-CPartitionPropagationSpec::CPartitionPropagationSpec(CPartIndexMap *ppim,
-													 CPartFilterMap *ppfm)
-	: m_ppim(ppim), m_ppfm(ppfm)
-{
-	GPOS_ASSERT(NULL != ppim);
-	GPOS_ASSERT(NULL != ppfm);
+// used for determining equality in memo (e.g in optimization contexts)
+BOOL CPartitionPropagationSpec::SPartPropSpecInfo::Equals(const SPartPropSpecInfo *other) const {
+  GPOS_ASSERT_IMP(m_scan_id == other->m_scan_id, m_root_rel_mdid->Equals(other->m_root_rel_mdid));
+  return m_scan_id == other->m_scan_id && m_type == other->m_type && m_selector_ids->Equals(other->m_selector_ids);
 }
 
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPartitionPropagationSpec::~CPartitionPropagationSpec
-//
-//	@doc:
-//		Dtor
-//
-//---------------------------------------------------------------------------
-CPartitionPropagationSpec::~CPartitionPropagationSpec()
-{
-	m_ppim->Release();
-	m_ppfm->Release();
+BOOL CPartitionPropagationSpec::SPartPropSpecInfo::FSatisfies(const SPartPropSpecInfo *other) const {
+  GPOS_ASSERT_IMP(m_scan_id == other->m_scan_id, m_root_rel_mdid->Equals(other->m_root_rel_mdid));
+  return m_scan_id == other->m_scan_id && m_type == other->m_type;
 }
 
+// used for sorting SPartPropSpecInfo in an array
+// NB: this serves a different purpose than  Equals(); it is used only to
+// maintain a sorted array in CPartitionPropagationSpec.
+// Eg, consumer<1>(10) and consumer<1>(10,11) will be treated as equal by
+// CmpFunc, but as non-equal by Equals
+INT CPartitionPropagationSpec::SPartPropSpecInfo::CmpFunc(const void *val1, const void *val2) {
+  const SPartPropSpecInfo *info1 = *(const SPartPropSpecInfo **)val1;
+  const SPartPropSpecInfo *info2 = *(const SPartPropSpecInfo **)val2;
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CPartitionPropagationSpec::HashValue
-//
-//	@doc:
-//		Hash of components
-//
-//---------------------------------------------------------------------------
-ULONG
-CPartitionPropagationSpec::HashValue() const
-{
-	return m_ppim->HashValue();
+  return info1->m_scan_id - info2->m_scan_id;
 }
 
+CPartitionPropagationSpec::CPartitionPropagationSpec(CMemoryPool *mp) {
+  m_part_prop_spec_infos = GPOS_NEW(mp) UlongToSPartPropSpecInfoMap(mp);
+  m_scan_ids = GPOS_NEW(mp) CBitSet(mp);
+}
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CPartitionPropagationSpec::Matches
-//
-//	@doc:
-//		Check whether two partition propagation specs are equal
-//
-//---------------------------------------------------------------------------
-BOOL
-CPartitionPropagationSpec::Matches(const CPartitionPropagationSpec *ppps) const
-{
-	return m_ppim->Equals(ppps->Ppim()) && m_ppfm->Equals(ppps->m_ppfm);
+// dtor
+CPartitionPropagationSpec::~CPartitionPropagationSpec() {
+  m_part_prop_spec_infos->Release();
+  m_scan_ids->Release();
+}
+
+BOOL CPartitionPropagationSpec::Equals(const CPartitionPropagationSpec *pps) const {
+  if ((m_part_prop_spec_infos == nullptr) && (pps->m_part_prop_spec_infos == nullptr)) {
+    return true;
+  }
+
+  if ((m_part_prop_spec_infos == nullptr) ^ (pps->m_part_prop_spec_infos == nullptr)) {
+    return false;
+  }
+
+  GPOS_ASSERT(m_part_prop_spec_infos != nullptr && pps->m_part_prop_spec_infos != nullptr);
+
+  if (m_part_prop_spec_infos->Size() != pps->m_part_prop_spec_infos->Size()) {
+    return false;
+  }
+
+  UlongToSPartPropSpecInfoMapIter hmulpi(m_part_prop_spec_infos);
+  UlongToSPartPropSpecInfoMapIter hmulpi_other(pps->m_part_prop_spec_infos);
+  while (hmulpi.Advance() && hmulpi_other.Advance()) {
+    const SPartPropSpecInfo *info = hmulpi.Value();
+    const SPartPropSpecInfo *info_other = hmulpi_other.Value();
+    if (!info->Equals(info_other)) {
+      return false;
+    }
+  }
+  return hmulpi.Advance() == hmulpi_other.Advance();
+}
+
+CPartitionPropagationSpec::SPartPropSpecInfo *CPartitionPropagationSpec::FindPartPropSpecInfo(ULONG scan_id) const {
+  if (!Contains(scan_id)) {
+    return nullptr;
+  }
+
+  SPartPropSpecInfo *info = m_part_prop_spec_infos->Find(&scan_id);
+  GPOS_RTL_ASSERT(info != nullptr);
+
+  return info;
+}
+
+const CBitSet *CPartitionPropagationSpec::SelectorIds(ULONG scan_id) const {
+  SPartPropSpecInfo *found_info = FindPartPropSpecInfo(scan_id);
+
+  if (found_info == nullptr) {
+    GPOS_RTL_ASSERT(!"Scan id not found in CPartitionPropagationSpec!");
+  }
+
+  return found_info->m_selector_ids;
+}
+
+void CPartitionPropagationSpec::Insert(ULONG scan_id, EPartPropSpecInfoType type, IMDId *rool_rel_mdid,
+                                       CBitSet *selector_ids, CExpression *expr) {
+  GPOS_RTL_ASSERT(!Contains(scan_id));
+
+  CMemoryPool *mp = COptCtxt::PoctxtFromTLS()->Pmp();
+  rool_rel_mdid->AddRef();
+
+  // Constructing 'SPartPropSpecInfo' for the received scan-id & PartPropSpecInfoType
+  // This structure is a data member of CPartitionPropagationSpec and hence
+  // required to create new object.
+  SPartPropSpecInfo *info = GPOS_NEW(mp) SPartPropSpecInfo(scan_id, type, rool_rel_mdid);
+
+  // If we are adding a consumer, then the selector_ids field will
+  // not be NULL. For this consumer, we add the details of all the
+  // partition selectors which will feed to this particular consumer.
+  // If partition selector already exist for this scan id
+  // then we take union of the existing ids with the new coming with this call
+  if (selector_ids != nullptr) {
+    info->m_selector_ids->Union(selector_ids);
+  }
+
+  // When we add Consumer, exp is nullptr; for propagator it is not Null
+  // we only add propagator if we have predicate on the partition key
+  if (expr != nullptr) {
+    expr->AddRef();
+    info->m_filter_expr = expr;
+  }
+  m_scan_ids->ExchangeSet(scan_id);
+
+  // Insertion is done only if the value doesn't exist in the map
+  // Case - Insert called from PPSRequired(); For a given scan id,
+  // a case of consecutive propagator, consumer request
+  // cannot happen, as the PPSRequired() is called for a given child index
+  // and the child index decide if we will add propagator/consumer
+  m_part_prop_spec_infos->Insert(GPOS_NEW(mp) ULONG(scan_id), info);
+}
+
+void CPartitionPropagationSpec::Insert(SPartPropSpecInfo *other) {
+  Insert(other->m_scan_id, other->m_type, other->m_root_rel_mdid, other->m_selector_ids, other->m_filter_expr);
+}
+
+void CPartitionPropagationSpec::InsertAll(CPartitionPropagationSpec *pps) {
+  UlongToSPartPropSpecInfoMapIter hmulpi(pps->m_part_prop_spec_infos);
+  while (hmulpi.Advance()) {
+    SPartPropSpecInfo *other_info = const_cast<SPartPropSpecInfo *>(hmulpi.Value());
+
+    SPartPropSpecInfo *found_info = FindPartPropSpecInfo(other_info->m_scan_id);
+
+    if (found_info == nullptr) {
+      Insert(other_info);
+      continue;
+    }
+
+    GPOS_ASSERT(found_info->m_root_rel_mdid == other_info->m_root_rel_mdid);
+
+    // for a given scan-id, only a consumer request can be merged with an
+    // existing consumer request; so bail in all other cases; eg: merging a
+    // a propagator or merging a consumer when a propagator was already inserted
+    GPOS_RTL_ASSERT(found_info->m_type == EpptConsumer && other_info->m_type == EpptConsumer);
+
+    found_info->m_selector_ids->Union(other_info->m_selector_ids);
+  }
+}
+
+void CPartitionPropagationSpec::InsertAllowedConsumers(CPartitionPropagationSpec *pps, CBitSet *allowed_scan_ids) {
+  UlongToSPartPropSpecInfoMapIter hmulpi(pps->m_part_prop_spec_infos);
+  while (hmulpi.Advance()) {
+    SPartPropSpecInfo *other_info = const_cast<SPartPropSpecInfo *>(hmulpi.Value());
+
+    // only process allowed_scan_ids ...
+    if (allowed_scan_ids != nullptr && !allowed_scan_ids->Get(other_info->m_scan_id)) {
+      continue;
+    }
+
+    // ... and consumers
+    if (other_info->m_type != EpptConsumer) {
+      continue;
+    }
+
+    // We check if info for the other_info->m_scan_id exist for the calling
+    // object. eg pps_result->InsertAllowedConsumers(pppsRequired, allowed_scan_ids);
+    SPartPropSpecInfo *found_info = FindPartPropSpecInfo(other_info->m_scan_id);
+
+    if (found_info == nullptr) {
+      Insert(other_info);
+      continue;
+    }
+
+    GPOS_ASSERT(found_info->m_root_rel_mdid == other_info->m_root_rel_mdid);
+
+    // for a given scan-id, only a consumer request can be merged with an
+    // existing consumer request; so bail in all other cases; eg: merging
+    // a propagator or merging a consumer when a propagator was already inserted
+    GPOS_RTL_ASSERT(found_info->m_type == EpptConsumer && other_info->m_type == EpptConsumer);
+
+    found_info->m_selector_ids->Union(other_info->m_selector_ids);
+  }
+}
+
+void CPartitionPropagationSpec::InsertAllExcept(CPartitionPropagationSpec *pps, ULONG scan_id) {
+  UlongToSPartPropSpecInfoMapIter hmulpi(pps->m_part_prop_spec_infos);
+  while (hmulpi.Advance()) {
+    SPartPropSpecInfo *other_info = const_cast<SPartPropSpecInfo *>(hmulpi.Value());
+
+    if (other_info->m_scan_id == scan_id) {
+      continue;
+    }
+
+    SPartPropSpecInfo *found_info = FindPartPropSpecInfo(other_info->m_scan_id);
+
+    if (found_info == nullptr) {
+      Insert(other_info);
+      continue;
+    }
+
+    GPOS_ASSERT(found_info->m_root_rel_mdid == other_info->m_root_rel_mdid);
+
+    // for a given scan-id, only a consumer request can be merged with an
+    // existing consumer request; so bail in all other cases; eg: merging a
+    // a propagator or merging a consumer when a propagator was already inserted
+    GPOS_RTL_ASSERT(found_info->m_type == EpptConsumer && other_info->m_type == EpptConsumer);
+
+    found_info->m_selector_ids->Union(other_info->m_selector_ids);
+  }
+}
+
+void CPartitionPropagationSpec::InsertAllResolve(CPartitionPropagationSpec *pps) {
+  UlongToSPartPropSpecInfoMapIter hmulpi(pps->m_part_prop_spec_infos);
+  while (hmulpi.Advance()) {
+    SPartPropSpecInfo *other_info = const_cast<SPartPropSpecInfo *>(hmulpi.Value());
+
+    SPartPropSpecInfo *found_info = FindPartPropSpecInfo(other_info->m_scan_id);
+
+    if (found_info == nullptr) {
+      Insert(other_info);
+      continue;
+    }
+
+    GPOS_ASSERT(found_info->m_scan_id == other_info->m_scan_id);
+
+    if (found_info->m_type == EpptConsumer && other_info->m_type == EpptPropagator) {
+      // this scan_id is resolved (used in joins), don't add it to the result
+      continue;
+    }
+
+    if (found_info->m_type == EpptPropagator && other_info->m_type == EpptConsumer) {
+      // Currently unreachable because it is only called from HJ which calls
+      // this method on the pps derived from its outer child
+      // implement this with a Delete(found_info)
+      GPOS_ASSERT(!"Unreachable");
+    }
+
+    // when resolving, ignore requests of the same type; eg: same
+    // consumer<1> or propagator<1> requests from both children of a join
+    GPOS_ASSERT(!"Cannot resolve requests of the same type!");
+  }
+}
+
+BOOL CPartitionPropagationSpec::FSatisfies(const CPartitionPropagationSpec *pps_reqd) const {
+  if (pps_reqd->m_part_prop_spec_infos == nullptr) {
+    return true;
+  }
+
+  UlongToSPartPropSpecInfoMapIter hmulpi(pps_reqd->m_part_prop_spec_infos);
+  while (hmulpi.Advance()) {
+    const SPartPropSpecInfo *reqd_info = hmulpi.Value();
+    SPartPropSpecInfo *found_info = FindPartPropSpecInfo(reqd_info->m_scan_id);
+
+    if (found_info == nullptr || !found_info->FSatisfies(reqd_info)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+// Check if there is a matching partition propogation between two specs
+// This is used to ensure that there aren't partition selectors in places that
+// are unsupported by the executor
+BOOL CPartitionPropagationSpec::IsUnsupportedPartSelector(const CPartitionPropagationSpec *pps_reqd) const {
+  if (pps_reqd->m_part_prop_spec_infos == nullptr) {
+    return false;
+  }
+
+  UlongToSPartPropSpecInfoMapIter hmulpi(pps_reqd->m_part_prop_spec_infos);
+  while (hmulpi.Advance()) {
+    const SPartPropSpecInfo *reqd_info = hmulpi.Value();
+    SPartPropSpecInfo *found_info = FindPartPropSpecInfo(reqd_info->m_scan_id);
+    if (found_info != nullptr && found_info->m_scan_id == reqd_info->m_scan_id &&
+        found_info->m_type != reqd_info->m_type) {
+      return true;
+    }
+  }
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -91,411 +303,38 @@ CPartitionPropagationSpec::Matches(const CPartitionPropagationSpec *ppps) const
 //		Add required enforcers to dynamic array
 //
 //---------------------------------------------------------------------------
-void
-CPartitionPropagationSpec::AppendEnforcers(CMemoryPool *mp,
-										   CExpressionHandle &exprhdl,
-										   CReqdPropPlan *
-#ifdef GPOS_DEBUG
-											   prpp
-#endif	// GPOS_DEBUG
-										   ,
-										   CExpressionArray *pdrgpexpr,
-										   CExpression *pexpr)
-{
-	GPOS_ASSERT(NULL != prpp);
-	GPOS_ASSERT(NULL != mp);
-	GPOS_ASSERT(NULL != pdrgpexpr);
-	GPOS_ASSERT(NULL != pexpr);
+void CPartitionPropagationSpec::AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *,
+                                                CExpressionArray *pdrgpexpr, CExpression *expr) {
+  UlongToSPartPropSpecInfoMapIter hmulpi(m_part_prop_spec_infos);
+  while (hmulpi.Advance()) {
+    const SPartPropSpecInfo *info = hmulpi.Value();
 
-	ULongPtrArray *pdrgpul = m_ppim->PdrgpulScanIds(mp);
-	const ULONG size = pdrgpul->Size();
+    if (info->m_type != CPartitionPropagationSpec::EpptPropagator) {
+      continue;
+    }
 
-	for (ULONG ul = 0; ul < size; ul++)
-	{
-		ULONG scan_id = *((*pdrgpul)[ul]);
-		GPOS_ASSERT(m_ppim->Contains(scan_id));
+    COptCtxt *opt_ctxt = COptCtxt::PoctxtFromTLS();
+    ULONG selector_id = opt_ctxt->NextPartSelectorId();
 
-		if (CPartIndexMap::EpimConsumer != m_ppim->Epim(scan_id) ||
-			0 < m_ppim->UlExpectedPropagators(scan_id))
-		{
-			continue;
-		}
+    info->m_root_rel_mdid->AddRef();
+    info->m_filter_expr->AddRef();
+    expr->AddRef();
 
-		if (!FRequiresPartitionPropagation(mp, pexpr, exprhdl, scan_id))
-		{
-			continue;
-		}
+    CExpression *part_selector = GPOS_NEW(mp) CExpression(
+        mp,
+        GPOS_NEW(mp)
+            CPhysicalPartitionSelector(mp, info->m_scan_id, selector_id, info->m_root_rel_mdid, info->m_filter_expr),
+        expr);
 
-		CExpression *pexprResolver = NULL;
+    IStatistics *stats = exprhdl.Pstats();
 
-		IMDId *mdid = m_ppim->GetRelMdId(scan_id);
-		CColRef2dArray *pdrgpdrgpcrKeys = NULL;
-		CPartKeysArray *pdrgppartkeys = m_ppim->Pdrgppartkeys(scan_id);
-		CPartConstraint *ppartcnstr = m_ppim->PpartcnstrRel(scan_id);
-		UlongToPartConstraintMap *ppartcnstrmap =
-			m_ppim->Ppartcnstrmap(scan_id);
-		mdid->AddRef();
-		ppartcnstr->AddRef();
-		ppartcnstrmap->AddRef();
-		pexpr->AddRef();
+    info->m_filter_expr->AddRef();
+    stats->AddRef();
+    opt_ctxt->AddPartSelectorInfo(selector_id,
+                                  GPOS_NEW(mp) SPartSelectorInfoEntry(selector_id, info->m_filter_expr, stats));
 
-		// check if there is a predicate on this part index id
-		UlongToExprMap *phmulexprEqFilter = GPOS_NEW(mp) UlongToExprMap(mp);
-		UlongToExprMap *phmulexprFilter = GPOS_NEW(mp) UlongToExprMap(mp);
-		CExpression *pexprResidual = NULL;
-		if (m_ppfm->FContainsScanId(scan_id))
-		{
-			CExpression *pexprScalar = PexprFilter(mp, scan_id);
-
-			// find out which keys are used in the predicate, in case there are multiple
-			// keys at this point (e.g. from a union of multiple CTE consumers)
-			CColRefSet *pcrsUsed = pexprScalar->DeriveUsedColumns();
-			const ULONG ulKeysets = pdrgppartkeys->Size();
-			for (ULONG ulKey = 0; NULL == pdrgpdrgpcrKeys && ulKey < ulKeysets;
-				 ulKey++)
-			{
-				// get partition key
-				CPartKeys *ppartkeys = (*pdrgppartkeys)[ulKey];
-				if (ppartkeys->FOverlap(pcrsUsed))
-				{
-					pdrgpdrgpcrKeys = ppartkeys->Pdrgpdrgpcr();
-				}
-			}
-
-			// if we cannot find partition keys mapping the partition predicates, fall back to planner
-			if (NULL == pdrgpdrgpcrKeys)
-			{
-				GPOS_RAISE(gpopt::ExmaGPOPT,
-						   gpopt::ExmiUnsatisfiedRequiredProperties);
-			}
-
-			pdrgpdrgpcrKeys->AddRef();
-
-			// split predicates and put them in the appropriate hashmaps
-			SplitPartPredicates(mp, pexprScalar, pdrgpdrgpcrKeys,
-								phmulexprEqFilter, phmulexprFilter,
-								&pexprResidual);
-			pexprScalar->Release();
-		}
-		else
-		{
-			// doesn't matter which keys we use here since there is no filter
-			GPOS_ASSERT(1 <= pdrgppartkeys->Size());
-			pdrgpdrgpcrKeys = (*pdrgppartkeys)[0]->Pdrgpdrgpcr();
-			pdrgpdrgpcrKeys->AddRef();
-		}
-
-		pexprResolver = GPOS_NEW(mp) CExpression(
-			mp,
-			GPOS_NEW(mp) CPhysicalPartitionSelector(
-				mp, scan_id, mdid, pdrgpdrgpcrKeys, ppartcnstrmap, ppartcnstr,
-				phmulexprEqFilter, phmulexprFilter, pexprResidual),
-			pexpr);
-
-		pdrgpexpr->Append(pexprResolver);
-	}
-	pdrgpul->Release();
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPartitionPropagationSpec::PexprFilter
-//
-//	@doc:
-//		Return the filter expression for the given Scan Id
-//
-//---------------------------------------------------------------------------
-CExpression *
-CPartitionPropagationSpec::PexprFilter(CMemoryPool *mp, ULONG scan_id)
-{
-	CExpression *pexprScalar = m_ppfm->Pexpr(scan_id);
-	GPOS_ASSERT(NULL != pexprScalar);
-
-	if (CUtils::FScalarIdent(pexprScalar))
-	{
-		// condition of the form "pkey": translate into pkey = true
-		pexprScalar->AddRef();
-		pexprScalar = CUtils::PexprScalarEqCmp(
-			mp, pexprScalar,
-			CUtils::PexprScalarConstBool(mp, true /*value*/,
-										 false /*is_null*/));
-	}
-	else if (CPredicateUtils::FNot(pexprScalar) &&
-			 CUtils::FScalarIdent((*pexprScalar)[0]))
-	{
-		// condition of the form "!pkey": translate into pkey = false
-		CExpression *pexprId = (*pexprScalar)[0];
-		pexprId->AddRef();
-
-		pexprScalar = CUtils::PexprScalarEqCmp(
-			mp, pexprId,
-			CUtils::PexprScalarConstBool(mp, false /*value*/,
-										 false /*is_null*/));
-	}
-	else
-	{
-		pexprScalar->AddRef();
-	}
-
-	return pexprScalar;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPartitionPropagationSpec::FRequiresPartitionPropagation
-//
-//	@doc:
-//		Check if given part index id needs to be enforced on top of the given
-//		expression
-//
-//---------------------------------------------------------------------------
-BOOL
-CPartitionPropagationSpec::FRequiresPartitionPropagation(
-	CMemoryPool *mp, CExpression *pexpr, CExpressionHandle &exprhdl,
-	ULONG part_idx_id) const
-{
-	GPOS_ASSERT(m_ppim->Contains(part_idx_id));
-
-	// construct partition propagation spec with the given id only, and check if it needs to be
-	// enforced on top
-	CPartIndexMap *ppim = GPOS_NEW(mp) CPartIndexMap(mp);
-
-	IMDId *mdid = m_ppim->GetRelMdId(part_idx_id);
-	CPartKeysArray *pdrgppartkeys = m_ppim->Pdrgppartkeys(part_idx_id);
-	CPartConstraint *ppartcnstr = m_ppim->PpartcnstrRel(part_idx_id);
-	UlongToPartConstraintMap *ppartcnstrmap =
-		m_ppim->Ppartcnstrmap(part_idx_id);
-	mdid->AddRef();
-	pdrgppartkeys->AddRef();
-	ppartcnstr->AddRef();
-	ppartcnstrmap->AddRef();
-
-	ppim->Insert(part_idx_id, ppartcnstrmap, m_ppim->Epim(part_idx_id),
-				 m_ppim->UlExpectedPropagators(part_idx_id), mdid,
-				 pdrgppartkeys, ppartcnstr);
-
-	CPartitionPropagationSpec *ppps = GPOS_NEW(mp)
-		CPartitionPropagationSpec(ppim, GPOS_NEW(mp) CPartFilterMap(mp));
-
-	CEnfdPartitionPropagation *pepp = GPOS_NEW(mp)
-		CEnfdPartitionPropagation(ppps, CEnfdPartitionPropagation::EppmSatisfy,
-								  GPOS_NEW(mp) CPartFilterMap(mp));
-	CEnfdProp::EPropEnforcingType epetPartitionPropagation =
-		pepp->Epet(exprhdl, CPhysical::PopConvert(pexpr->Pop()),
-				   true /*fPartitionPropagationRequired*/);
-
-	pepp->Release();
-
-	return CEnfdProp::FEnforce(epetPartitionPropagation);
-}
-
-//---------------------------------------------------------------------------
-//      @function:
-//		CPartitionPropagationSpec::SplitPartPredicates
-//
-//	@doc:
-//		Split the partition elimination predicates over the various levels
-//		as well as the residual predicate and add them to the appropriate
-//		hashmaps. These are to be used when creating the partition selector
-//
-//---------------------------------------------------------------------------
-void
-CPartitionPropagationSpec::SplitPartPredicates(
-	CMemoryPool *mp, CExpression *pexprScalar, CColRef2dArray *pdrgpdrgpcrKeys,
-	UlongToExprMap *phmulexprEqFilter,	// output
-	UlongToExprMap *phmulexprFilter,	// output
-	CExpression **ppexprResidual		// output
-)
-{
-	GPOS_ASSERT(NULL != pexprScalar);
-	GPOS_ASSERT(NULL != pdrgpdrgpcrKeys);
-	GPOS_ASSERT(NULL != phmulexprEqFilter);
-	GPOS_ASSERT(NULL != phmulexprFilter);
-	GPOS_ASSERT(NULL != ppexprResidual);
-	GPOS_ASSERT(NULL == *ppexprResidual);
-
-	CExpressionArray *pdrgpexprConjuncts =
-		CPredicateUtils::PdrgpexprConjuncts(mp, pexprScalar);
-	CBitSet *pbsUsed = GPOS_NEW(mp) CBitSet(mp);
-	CColRefSet *pcrsKeys = PcrsKeys(mp, pdrgpdrgpcrKeys);
-
-	const ULONG ulLevels = pdrgpdrgpcrKeys->Size();
-	for (ULONG ul = 0; ul < ulLevels; ul++)
-	{
-		CColRef *colref = CUtils::PcrExtractPartKey(pdrgpdrgpcrKeys, ul);
-		// find conjuncts for this key and mark their positions
-		CExpressionArray *pdrgpexprKey = PdrgpexprPredicatesOnKey(
-			mp, pdrgpexprConjuncts, colref, pcrsKeys, &pbsUsed);
-		const ULONG length = pdrgpexprKey->Size();
-		if (length == 0)
-		{
-			// no predicates on this key
-			pdrgpexprKey->Release();
-			continue;
-		}
-
-		if (length == 1 && CPredicateUtils::FIdentCompare(
-							   (*pdrgpexprKey)[0], IMDType::EcmptEq, colref))
-		{
-			// EqFilters
-			// one equality predicate (key = expr); take out the expression
-			// and add it to the equality filters map
-			CExpression *pexprPartKey = NULL;
-			CExpression *pexprOther = NULL;
-			IMDType::ECmpType cmp_type = IMDType::EcmptOther;
-
-			CPredicateUtils::ExtractComponents((*pdrgpexprKey)[0], colref,
-											   &pexprPartKey, &pexprOther,
-											   &cmp_type);
-			GPOS_ASSERT(NULL != pexprOther);
-			pexprOther->AddRef();
-#ifdef GPOS_DEBUG
-			BOOL result =
-#endif	// GPOS_DEBUG
-				phmulexprEqFilter->Insert(GPOS_NEW(mp) ULONG(ul), pexprOther);
-			GPOS_ASSERT(result);
-			pdrgpexprKey->Release();
-		}
-		else
-		{
-			// Filters
-			// more than one predicate on this key or one non-simple-equality predicate
-#ifdef GPOS_DEBUG
-			BOOL result =
-#endif	// GPOS_DEBUG
-				phmulexprFilter->Insert(
-					GPOS_NEW(mp) ULONG(ul),
-					CPredicateUtils::PexprConjunction(mp, pdrgpexprKey));
-			GPOS_ASSERT(result);
-			continue;
-		}
-	}
-
-	(*ppexprResidual) = PexprResidualFilter(mp, pdrgpexprConjuncts, pbsUsed);
-
-	pcrsKeys->Release();
-	pdrgpexprConjuncts->Release();
-	pbsUsed->Release();
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPartitionPropagationSpec::PcrsKeys
-//
-//	@doc:
-//		Return a colrefset containing all the part keys
-//
-//---------------------------------------------------------------------------
-CColRefSet *
-CPartitionPropagationSpec::PcrsKeys(CMemoryPool *mp,
-									CColRef2dArray *pdrgpdrgpcrKeys)
-{
-	CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
-
-	const ULONG ulLevels = pdrgpdrgpcrKeys->Size();
-	for (ULONG ul = 0; ul < ulLevels; ul++)
-	{
-		CColRef *colref = CUtils::PcrExtractPartKey(pdrgpdrgpcrKeys, ul);
-		pcrs->Include(colref);
-	}
-
-	return pcrs;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPartitionPropagationSpec::PexprResidualFilter
-//
-//	@doc:
-//		Return a residual filter given an array of predicates and a bitset
-//		indicating which predicates have already been used
-//
-//---------------------------------------------------------------------------
-CExpression *
-CPartitionPropagationSpec::PexprResidualFilter(CMemoryPool *mp,
-											   CExpressionArray *pdrgpexpr,
-											   CBitSet *pbsUsed)
-{
-	GPOS_ASSERT(NULL != pdrgpexpr);
-	GPOS_ASSERT(NULL != pbsUsed);
-
-	CExpressionArray *pdrgpexprUnused = GPOS_NEW(mp) CExpressionArray(mp);
-
-	const ULONG length = pdrgpexpr->Size();
-	for (ULONG ul = 0; ul < length; ul++)
-	{
-		if (pbsUsed->Get(ul))
-		{
-			// predicate already considered
-			continue;
-		}
-
-		CExpression *pexpr = (*pdrgpexpr)[ul];
-		pexpr->AddRef();
-		pdrgpexprUnused->Append(pexpr);
-	}
-
-	CExpression *pexprResult =
-		CPredicateUtils::PexprConjunction(mp, pdrgpexprUnused);
-	if (CUtils::FScalarConstTrue(pexprResult))
-	{
-		pexprResult->Release();
-		pexprResult = NULL;
-	}
-
-	return pexprResult;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPartitionPropagationSpec::PdrgpexprPredicatesOnKey
-//
-//	@doc:
-//		Returns an array of predicates on the given partitioning key given
-//		an array of predicates on all keys
-//
-//---------------------------------------------------------------------------
-CExpressionArray *
-CPartitionPropagationSpec::PdrgpexprPredicatesOnKey(CMemoryPool *mp,
-													CExpressionArray *pdrgpexpr,
-													CColRef *colref,
-													CColRefSet *pcrsKeys,
-													CBitSet **ppbs)
-{
-	GPOS_ASSERT(NULL != pdrgpexpr);
-	GPOS_ASSERT(NULL != colref);
-	GPOS_ASSERT(NULL != ppbs);
-	GPOS_ASSERT(NULL != *ppbs);
-
-	CExpressionArray *pdrgpexprResult = GPOS_NEW(mp) CExpressionArray(mp);
-
-	const ULONG length = pdrgpexpr->Size();
-	for (ULONG ul = 0; ul < length; ul++)
-	{
-		if ((*ppbs)->Get(ul))
-		{
-			// this expression has already been added for another column
-			continue;
-		}
-
-		CExpression *pexpr = (*pdrgpexpr)[ul];
-		GPOS_ASSERT(pexpr->Pop()->FScalar());
-
-		CColRefSet *pcrsUsed = pexpr->DeriveUsedColumns();
-		CColRefSet *pcrsUsedKeys = GPOS_NEW(mp) CColRefSet(mp, *pcrsUsed);
-		pcrsUsedKeys->Intersection(pcrsKeys);
-
-		if (1 == pcrsUsedKeys->Size() && pcrsUsedKeys->FMember(colref))
-		{
-			pexpr->AddRef();
-			pdrgpexprResult->Append(pexpr);
-			(*ppbs)->ExchangeSet(ul);
-		}
-
-		pcrsUsedKeys->Release();
-	}
-
-	return pdrgpexprResult;
+    pdrgpexpr->Append(part_selector);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -506,16 +345,56 @@ CPartitionPropagationSpec::PdrgpexprPredicatesOnKey(CMemoryPool *mp,
 //		Print function
 //
 //---------------------------------------------------------------------------
-IOstream &
-CPartitionPropagationSpec::OsPrint(IOstream &os) const
-{
-	os << *m_ppim;
+IOstream &CPartitionPropagationSpec::OsPrint(IOstream &os) const {
+  if (nullptr == m_part_prop_spec_infos || m_part_prop_spec_infos->Size() == 0) {
+    os << "<empty>";
+    return os;
+  }
 
-	os << "Filters: [";
-	m_ppfm->OsPrint(os);
-	os << "]";
-	return os;
+  ULONG ul = 0;
+  UlongToSPartPropSpecInfoMapIter hmulpi(m_part_prop_spec_infos);
+  while (hmulpi.Advance()) {
+    const SPartPropSpecInfo *part_info = hmulpi.Value();
+
+    switch (part_info->m_type) {
+      case EpptConsumer:
+        os << "consumer";
+        break;
+      case EpptPropagator:
+        os << "propagator";
+      default:
+        break;
+    }
+
+    os << "<" << part_info->m_scan_id << ">";
+    os << "(";
+    part_info->m_selector_ids->OsPrint(os);
+    os << ")";
+
+    if (ul < (m_part_prop_spec_infos->Size() - 1)) {
+      os << ", ";
+    }
+
+    ul += 1;
+  }
+  return os;
 }
 
+BOOL CPartitionPropagationSpec::ContainsAnyConsumers() const {
+  if (nullptr == m_part_prop_spec_infos) {
+    return false;
+  }
+
+  UlongToSPartPropSpecInfoMapIter hmulpi(m_part_prop_spec_infos);
+  while (hmulpi.Advance()) {
+    const SPartPropSpecInfo *info = hmulpi.Value();
+
+    if (info->m_type == CPartitionPropagationSpec::EpptConsumer) {
+      return true;
+    }
+  }
+
+  return false;
+}
 
 // EOF

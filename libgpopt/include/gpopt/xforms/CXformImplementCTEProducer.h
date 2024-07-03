@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,45 +26,32 @@ using namespace gpos;
 //		Transform Logical CTE Producer to Physical CTE Producer
 //
 //---------------------------------------------------------------------------
-class CXformImplementCTEProducer : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformImplementCTEProducer(const CXformImplementCTEProducer &);
+class CXformImplementCTEProducer : public CXformImplementation {
+ private:
+ public:
+  CXformImplementCTEProducer(const CXformImplementCTEProducer &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementCTEProducer(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementCTEProducer(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformImplementCTEProducer()
-	{
-	}
+  // dtor
+  ~CXformImplementCTEProducer() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementCTEProducer;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementCTEProducer; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementCTEProducer";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformImplementCTEProducer"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformImplementCTEProducer
+};  // class CXformImplementCTEProducer
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementCTEProducer_H
+#endif  // !GPOPT_CXformImplementCTEProducer_H
 
 // EOF

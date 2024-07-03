@@ -9,8 +9,6 @@
 //		Class for representing DXL merge join operators.
 //---------------------------------------------------------------------------
 
-
-
 #ifndef GPDXL_CDXLPhysicalMergeJoin_H
 #define GPDXL_CDXLPhysicalMergeJoin_H
 
@@ -18,18 +16,16 @@
 
 #include "naucrates/dxl/operators/CDXLPhysicalJoin.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 // indices of merge join elements in the children array
-enum Edxlmj
-{
-	EdxlmjIndexProjList = 0,
-	EdxlmjIndexFilter,
-	EdxlmjIndexJoinFilter,
-	EdxlmjIndexMergeCondList,
-	EdxlmjIndexLeftChild,
-	EdxlmjIndexRightChild,
-	EdxlmjIndexSentinel
+enum Edxlmj {
+  EdxlmjIndexProjList = 0,
+  EdxlmjIndexFilter,
+  EdxlmjIndexJoinFilter,
+  EdxlmjIndexMergeCondList,
+  EdxlmjIndexLeftChild,
+  EdxlmjIndexRightChild,
+  EdxlmjIndexSentinel
 };
 
 //---------------------------------------------------------------------------
@@ -40,45 +36,39 @@ enum Edxlmj
 //		Class for representing DXL merge operators
 //
 //---------------------------------------------------------------------------
-class CDXLPhysicalMergeJoin : public CDXLPhysicalJoin
-{
-private:
-	// true if outer relation has unique values for the merge key
-	BOOL m_is_unique_outer;
+class CDXLPhysicalMergeJoin : public CDXLPhysicalJoin {
+ private:
+  // true if outer relation has unique values for the merge key
+  BOOL m_is_unique_outer;
 
-	// private copy ctor
-	CDXLPhysicalMergeJoin(const CDXLPhysicalMergeJoin &);
+ public:
+  CDXLPhysicalMergeJoin(const CDXLPhysicalMergeJoin &) = delete;
 
-public:
-	// ctor
-	CDXLPhysicalMergeJoin(CMemoryPool *mp, EdxlJoinType join_type,
-						  BOOL is_unique_outer);
+  // ctor
+  CDXLPhysicalMergeJoin(CMemoryPool *mp, EdxlJoinType join_type, BOOL is_unique_outer);
 
-	// accessors
-	Edxlopid GetDXLOperator() const;
-	const CWStringConst *GetOpNameStr() const;
+  // accessors
+  Edxlopid GetDXLOperator() const override;
+  const CWStringConst *GetOpNameStr() const override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// conversion function
-	static CDXLPhysicalMergeJoin *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopPhysicalMergeJoin == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLPhysicalMergeJoin *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopPhysicalMergeJoin == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLPhysicalMergeJoin *>(dxl_op);
-	}
+    return dynamic_cast<CDXLPhysicalMergeJoin *>(dxl_op);
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLPhysicalMergeJoin_H
+#endif  // !GPDXL_CDXLPhysicalMergeJoin_H
 
 // EOF

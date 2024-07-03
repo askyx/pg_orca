@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,47 +26,33 @@ using namespace gpos;
 //		Transform left semi join to left anti semi hash join (NotIn semantics)
 //
 //---------------------------------------------------------------------------
-class CXformLeftAntiSemiJoinNotIn2HashJoinNotIn : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformLeftAntiSemiJoinNotIn2HashJoinNotIn(
-		const CXformLeftAntiSemiJoinNotIn2HashJoinNotIn &);
+class CXformLeftAntiSemiJoinNotIn2HashJoinNotIn : public CXformImplementation {
+ private:
+ public:
+  CXformLeftAntiSemiJoinNotIn2HashJoinNotIn(const CXformLeftAntiSemiJoinNotIn2HashJoinNotIn &) = delete;
 
-public:
-	// ctor
-	explicit CXformLeftAntiSemiJoinNotIn2HashJoinNotIn(CMemoryPool *mp);
+  // ctor
+  explicit CXformLeftAntiSemiJoinNotIn2HashJoinNotIn(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformLeftAntiSemiJoinNotIn2HashJoinNotIn()
-	{
-	}
+  // dtor
+  ~CXformLeftAntiSemiJoinNotIn2HashJoinNotIn() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfLeftAntiSemiJoinNotIn2HashJoinNotIn;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfLeftAntiSemiJoinNotIn2HashJoinNotIn; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformLeftAntiSemiJoinNotIn2HashJoinNotIn";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformLeftAntiSemiJoinNotIn2HashJoinNotIn"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformLeftAntiSemiJoinNotIn2HashJoinNotIn
+};  // class CXformLeftAntiSemiJoinNotIn2HashJoinNotIn
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformLeftAntiSemiJoinNotIn2HashJoinNotIn_H
+#endif  // !GPOPT_CXformLeftAntiSemiJoinNotIn2HashJoinNotIn_H
 
 // EOF

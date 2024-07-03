@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2018 Pivotal Software Inc.
+//	Copyright (C) 2018 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CJoinOrderGreedy.h
@@ -16,8 +16,7 @@
 
 #include "gpopt/xforms/CJoinOrder.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,35 +27,35 @@ using namespace gpos;
 //		Helper class for creating join orders based on cardinality of results
 //
 //---------------------------------------------------------------------------
-class CJoinOrderGreedy : public CJoinOrder
-{
-private:
-	// result component
-	SComponent *m_pcompResult;
+class CJoinOrderGreedy : public CJoinOrder {
+ private:
+  // result component
+  SComponent *m_pcompResult;
 
-	// returns starting joins with minimal cardinality
-	SComponent *GetStartingJoins();
+  // returns starting joins with minimal cardinality
+  SComponent *GetStartingJoins();
 
-public:
-	// ctor
-	CJoinOrderGreedy(CMemoryPool *pmp, CExpressionArray *pdrgpexprComponents,
-					 CExpressionArray *pdrgpexprConjuncts);
+ public:
+  // ctor
+  CJoinOrderGreedy(CMemoryPool *pmp, CExpressionArray *pdrgpexprComponents, CExpressionArray *pdrgpexprConjuncts);
 
-	// dtor
-	virtual ~CJoinOrderGreedy();
+  // dtor
+  ~CJoinOrderGreedy() override;
 
-	// main handler
-	virtual CExpression *PexprExpand();
+  // main handler
+  virtual CExpression *PexprExpand();
 
-	ULONG
-	PickBestJoin(CBitSet *candidate_nodes);
+  ULONG
+  PickBestJoin(CBitSet *candidate_nodes);
 
-	CBitSet *GetAdjacentComponentsToJoinCandidate();
+  CBitSet *GetAdjacentComponentsToJoinCandidate();
 
-};	// class CJoinOrderGreedy
+  CXform::EXformId EOriginXForm() const override { return CXform::ExfExpandNAryJoinGreedy; }
+
+};  // class CJoinOrderGreedy
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CJoinOrderGreedy_H
+#endif  // !GPOPT_CJoinOrderGreedy_H
 
 // EOF

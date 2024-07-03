@@ -28,17 +28,16 @@ using namespace gpdxl;
 //		Constructs a scalar FuncExpr node
 //
 //---------------------------------------------------------------------------
-CDXLScalarFuncExpr::CDXLScalarFuncExpr(CMemoryPool *mp, IMDId *mdid_func,
-									   IMDId *mdid_return_type,
-									   INT return_type_modifier, BOOL fRetSet)
-	: CDXLScalar(mp),
-	  m_func_mdid(mdid_func),
-	  m_return_type_mdid(mdid_return_type),
-	  m_return_type_modifier(return_type_modifier),
-	  m_returns_set(fRetSet)
-{
-	GPOS_ASSERT(m_func_mdid->IsValid());
-	GPOS_ASSERT(m_return_type_mdid->IsValid());
+CDXLScalarFuncExpr::CDXLScalarFuncExpr(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type,
+                                       INT return_type_modifier, BOOL fRetSet, BOOL funcvariadic)
+    : CDXLScalar(mp),
+      m_func_mdid(mdid_func),
+      m_return_type_mdid(mdid_return_type),
+      m_return_type_modifier(return_type_modifier),
+      m_returns_set(fRetSet),
+      m_funcvariadic(funcvariadic) {
+  GPOS_ASSERT(m_func_mdid->IsValid());
+  GPOS_ASSERT(m_return_type_mdid->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -49,10 +48,9 @@ CDXLScalarFuncExpr::CDXLScalarFuncExpr(CMemoryPool *mp, IMDId *mdid_func,
 //		Destructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarFuncExpr::~CDXLScalarFuncExpr()
-{
-	m_func_mdid->Release();
-	m_return_type_mdid->Release();
+CDXLScalarFuncExpr::~CDXLScalarFuncExpr() {
+  m_func_mdid->Release();
+  m_return_type_mdid->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -63,12 +61,9 @@ CDXLScalarFuncExpr::~CDXLScalarFuncExpr()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarFuncExpr::GetDXLOperator() const
-{
-	return EdxlopScalarFuncExpr;
+Edxlopid CDXLScalarFuncExpr::GetDXLOperator() const {
+  return EdxlopScalarFuncExpr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -78,10 +73,8 @@ CDXLScalarFuncExpr::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarFuncExpr::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarFuncExpr);
+const CWStringConst *CDXLScalarFuncExpr::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarFuncExpr);
 }
 
 //---------------------------------------------------------------------------
@@ -92,10 +85,8 @@ CDXLScalarFuncExpr::GetOpNameStr() const
 //		Returns function id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLScalarFuncExpr::FuncMdId() const
-{
-	return m_func_mdid;
+IMDId *CDXLScalarFuncExpr::FuncMdId() const {
+  return m_func_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -106,16 +97,12 @@ CDXLScalarFuncExpr::FuncMdId() const
 //		Return type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLScalarFuncExpr::ReturnTypeMdId() const
-{
-	return m_return_type_mdid;
+IMDId *CDXLScalarFuncExpr::ReturnTypeMdId() const {
+  return m_return_type_mdid;
 }
 
-INT
-CDXLScalarFuncExpr::TypeModifier() const
-{
-	return m_return_type_modifier;
+INT CDXLScalarFuncExpr::TypeModifier() const {
+  return m_return_type_modifier;
 }
 
 //---------------------------------------------------------------------------
@@ -126,10 +113,19 @@ CDXLScalarFuncExpr::TypeModifier() const
 //		Returns whether the function returns a set
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLScalarFuncExpr::ReturnsSet() const
-{
-	return m_returns_set;
+BOOL CDXLScalarFuncExpr::ReturnsSet() const {
+  return m_returns_set;
+}
+//---------------------------------------------------------------------------
+//	@function:
+//		CDXLScalarFuncExpr::IsFuncVariadic
+//
+//	@doc:
+//		Returns whether the function is variadic
+//
+//---------------------------------------------------------------------------
+BOOL CDXLScalarFuncExpr::IsFuncVariadic() const {
+  return m_funcvariadic;
 }
 
 //---------------------------------------------------------------------------
@@ -140,31 +136,22 @@ CDXLScalarFuncExpr::ReturnsSet() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarFuncExpr::SerializeToDXL(CXMLSerializer *xml_serializer,
-								   const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarFuncExpr::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	m_func_mdid->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenFuncId));
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenFuncRetSet), m_returns_set);
-	m_return_type_mdid->Serialize(xml_serializer,
-								  CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  m_func_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenFuncId));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenFuncRetSet), m_returns_set);
+  m_return_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenFuncVariadic), m_funcvariadic);
 
-	if (default_type_modifier != TypeModifier())
-	{
-		xml_serializer->AddAttribute(
-			CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
-	}
+  if (default_type_modifier != TypeModifier()) {
+    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
+  }
 
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------
@@ -175,12 +162,9 @@ CDXLScalarFuncExpr::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Does the operator return boolean result
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLScalarFuncExpr::HasBoolResult(CMDAccessor *md_accessor) const
-{
-	IMDId *mdid = md_accessor->RetrieveFunc(m_func_mdid)->GetResultTypeMdid();
-	return (IMDType::EtiBool ==
-			md_accessor->RetrieveType(mdid)->GetDatumType());
+BOOL CDXLScalarFuncExpr::HasBoolResult(CMDAccessor *md_accessor) const {
+  IMDId *mdid = md_accessor->RetrieveFunc(m_func_mdid)->GetResultTypeMdid();
+  return (IMDType::EtiBool == md_accessor->RetrieveType(mdid)->GetDatumType());
 }
 
 #ifdef GPOS_DEBUG
@@ -192,24 +176,16 @@ CDXLScalarFuncExpr::HasBoolResult(CMDAccessor *md_accessor) const
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarFuncExpr::AssertValid(const CDXLNode *dxlnode,
-								BOOL validate_children) const
-{
-	for (ULONG ul = 0; ul < dxlnode->Arity(); ++ul)
-	{
-		CDXLNode *dxlnode_arg = (*dxlnode)[ul];
-		GPOS_ASSERT(EdxloptypeScalar ==
-					dxlnode_arg->GetOperator()->GetDXLOperatorType());
+void CDXLScalarFuncExpr::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  for (ULONG ul = 0; ul < dxlnode->Arity(); ++ul) {
+    CDXLNode *dxlnode_arg = (*dxlnode)[ul];
+    GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 
-		if (validate_children)
-		{
-			dxlnode_arg->GetOperator()->AssertValid(dxlnode_arg,
-													validate_children);
-		}
-	}
+    if (validate_children) {
+      dxlnode_arg->GetOperator()->AssertValid(dxlnode_arg, validate_children);
+    }
+  }
 }
-#endif	// GPOS_DEBUG
-
+#endif  // GPOS_DEBUG
 
 // EOF

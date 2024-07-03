@@ -29,18 +29,15 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CSerializablePlan::CSerializablePlan(CMemoryPool *mp, const CDXLNode *pdxlnPlan,
-									 ULLONG plan_id, ULLONG plan_space_size)
-	: CSerializable(),
-	  m_mp(mp),
-	  m_plan_dxl_root(pdxlnPlan),
-	  m_pstrPlan(NULL),
-	  m_plan_id(plan_id),
-	  m_plan_space_size(plan_space_size)
-{
-	GPOS_ASSERT(NULL != pdxlnPlan);
+CSerializablePlan::CSerializablePlan(CMemoryPool *mp, const CDXLNode *pdxlnPlan, ULLONG plan_id, ULLONG plan_space_size)
+    : CSerializable(),
+      m_mp(mp),
+      m_plan_dxl_root(pdxlnPlan),
+      m_pstrPlan(nullptr),
+      m_plan_id(plan_id),
+      m_plan_space_size(plan_space_size) {
+  GPOS_ASSERT(nullptr != pdxlnPlan);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -50,9 +47,8 @@ CSerializablePlan::CSerializablePlan(CMemoryPool *mp, const CDXLNode *pdxlnPlan,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CSerializablePlan::~CSerializablePlan()
-{
-	GPOS_DELETE(m_pstrPlan);
+CSerializablePlan::~CSerializablePlan() {
+  GPOS_DELETE(m_pstrPlan);
 }
 
 //---------------------------------------------------------------------------
@@ -63,13 +59,10 @@ CSerializablePlan::~CSerializablePlan()
 //		Serialize contents into provided stream
 //
 //---------------------------------------------------------------------------
-void
-CSerializablePlan::Serialize(COstream &oos)
-{
-	CDXLUtils::SerializePlan(m_mp, oos, m_plan_dxl_root, m_plan_id,
-							 m_plan_space_size, false /*fSerializeHeaders*/,
-							 false /*indentation*/
-	);
+void CSerializablePlan::Serialize(COstream &oos) {
+  CDXLUtils::SerializePlan(
+      m_mp, oos, m_plan_dxl_root, m_plan_id, m_plan_space_size, false /*fSerializeHeaders*/, false /*indentation*/
+  );
 }
 
 // EOF

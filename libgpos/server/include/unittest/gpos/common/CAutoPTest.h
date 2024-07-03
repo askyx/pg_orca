@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CAutoPTest
@@ -23,25 +22,22 @@ namespace gpos
 //		Static unit tests for auto pointer
 //
 //---------------------------------------------------------------------------
-class CAutoPTest
-{
-public:
-	class CElem
-	{
-	public:
-		ULONG m_ul;
+class CAutoPTest {
+ public:
+  class CElem {
+   public:
+    ULONG m_ul;
 
-	};	// class CElem
+  };  // class CElem
 
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
 
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
-
-};	// class CAutoPTest
+};  // class CAutoPTest
 
 }  // namespace gpos
 
-#endif	// !GPOS_CAutoPTest_H
+#endif  // !GPOS_CAutoPTest_H
 
 // EOF

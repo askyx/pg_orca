@@ -18,16 +18,9 @@
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 #include "naucrates/dxl/operators/CDXLWindowKey.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 // indices of window elements in the children array
-enum Edxlwindow
-{
-	EdxlwindowIndexProjList = 0,
-	EdxlwindowIndexFilter,
-	EdxlwindowIndexChild,
-	EdxlwindowIndexSentinel
-};
+enum Edxlwindow { EdxlwindowIndexProjList = 0, EdxlwindowIndexFilter, EdxlwindowIndexChild, EdxlwindowIndexSentinel };
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -37,67 +30,57 @@ enum Edxlwindow
 //		Class for representing DXL window operators
 //
 //---------------------------------------------------------------------------
-class CDXLPhysicalWindow : public CDXLPhysical
-{
-private:
-	// partition columns
-	ULongPtrArray *m_part_by_colid_array;
+class CDXLPhysicalWindow : public CDXLPhysical {
+ private:
+  // partition columns
+  ULongPtrArray *m_part_by_colid_array;
 
-	// window keys
-	CDXLWindowKeyArray *m_dxl_window_key_array;
+  // window keys
+  CDXLWindowKeyArray *m_dxl_window_key_array;
 
-	// private copy ctor
-	CDXLPhysicalWindow(CDXLPhysicalWindow &);
+ public:
+  CDXLPhysicalWindow(CDXLPhysicalWindow &) = delete;
 
-public:
-	//ctor
-	CDXLPhysicalWindow(CMemoryPool *mp, ULongPtrArray *part_by_colid_array,
-					   CDXLWindowKeyArray *window_key_array);
+  // ctor
+  CDXLPhysicalWindow(CMemoryPool *mp, ULongPtrArray *part_by_colid_array, CDXLWindowKeyArray *window_key_array);
 
-	//dtor
-	virtual ~CDXLPhysicalWindow();
+  // dtor
+  ~CDXLPhysicalWindow() override;
 
-	// accessors
-	Edxlopid GetDXLOperator() const;
-	const CWStringConst *GetOpNameStr() const;
+  // accessors
+  Edxlopid GetDXLOperator() const override;
+  const CWStringConst *GetOpNameStr() const override;
 
-	// number of partition columns
-	ULONG PartByColsCount() const;
+  // number of partition columns
+  ULONG PartByColsCount() const;
 
-	// return partition columns
-	const ULongPtrArray *
-	GetPartByColsArray() const
-	{
-		return m_part_by_colid_array;
-	}
+  // return partition columns
+  const ULongPtrArray *GetPartByColsArray() const { return m_part_by_colid_array; }
 
-	// number of window keys
-	ULONG WindowKeysCount() const;
+  // number of window keys
+  ULONG WindowKeysCount() const;
 
-	// return the window key at a given position
-	CDXLWindowKey *GetDXLWindowKeyAt(ULONG ulPos) const;
+  // return the window key at a given position
+  CDXLWindowKey *GetDXLWindowKeyAt(ULONG ulPos) const;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// conversion function
-	static CDXLPhysicalWindow *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopPhysicalWindow == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLPhysicalWindow *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopPhysicalWindow == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLPhysicalWindow *>(dxl_op);
-	}
+    return dynamic_cast<CDXLPhysicalWindow *>(dxl_op);
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLPhysicalWindow_H
+#endif  // !GPDXL_CDXLPhysicalWindow_H
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CLogicalApply.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalLeftSemiApply
@@ -25,125 +24,89 @@ namespace gpopt
 //		Logical Apply operator used in EXISTS subquery transformations
 //
 //---------------------------------------------------------------------------
-class CLogicalLeftSemiApply : public CLogicalApply
-{
-private:
-	// private copy ctor
-	CLogicalLeftSemiApply(const CLogicalLeftSemiApply &);
+class CLogicalLeftSemiApply : public CLogicalApply {
+ private:
+ public:
+  CLogicalLeftSemiApply(const CLogicalLeftSemiApply &) = delete;
 
-public:
-	// ctor
-	explicit CLogicalLeftSemiApply(CMemoryPool *mp) : CLogicalApply(mp)
-	{
-		m_pdrgpcrInner = GPOS_NEW(mp) CColRefArray(mp);
-	}
+  // ctor
+  explicit CLogicalLeftSemiApply(CMemoryPool *mp) : CLogicalApply(mp) {
+    m_pdrgpcrInner = GPOS_NEW(mp) CColRefArray(mp);
+  }
 
-	// ctor
-	CLogicalLeftSemiApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner,
-						  EOperatorId eopidOriginSubq)
-		: CLogicalApply(mp, pdrgpcrInner, eopidOriginSubq)
-	{
-	}
+  // ctor
+  CLogicalLeftSemiApply(CMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq)
+      : CLogicalApply(mp, pdrgpcrInner, eopidOriginSubq) {}
 
-	// dtor
-	virtual ~CLogicalLeftSemiApply()
-	{
-	}
+  // dtor
+  ~CLogicalLeftSemiApply() override = default;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalLeftSemiApply;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalLeftSemiApply; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalLeftSemiApply";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalLeftSemiApply"; }
 
-	// return true if we can pull projections up past this operator from its given child
-	virtual BOOL
-	FCanPullProjectionsUp(ULONG child_index) const
-	{
-		return (0 == child_index);
-	}
+  // return true if we can pull projections up past this operator from its given child
+  BOOL FCanPullProjectionsUp(ULONG child_index) const override { return (0 == child_index); }
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive output columns
-	virtual CColRefSet *DeriveOutputColumns(CMemoryPool *mp,
-											CExpressionHandle &exprhdl);
+  // derive output columns
+  CColRefSet *DeriveOutputColumns(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
-	// derive not nullable output columns
-	virtual CColRefSet *
-	DeriveNotNullColumns(CMemoryPool *,	 // mp
-						 CExpressionHandle &exprhdl) const
-	{
-		return PcrsDeriveNotNullPassThruOuter(exprhdl);
-	}
+  // derive not nullable output columns
+  CColRefSet *DeriveNotNullColumns(CMemoryPool *,  // mp
+                                   CExpressionHandle &exprhdl) const override {
+    return PcrsDeriveNotNullPassThruOuter(exprhdl);
+  }
 
-	// derive keys
-	CKeyCollection *
-	DeriveKeyCollection(CMemoryPool *,	// mp
-						CExpressionHandle &exprhdl) const
-	{
-		return PkcDeriveKeysPassThru(exprhdl, 0 /*child_index*/);
-	}
+  // derive keys
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *,  // mp
+                                      CExpressionHandle &exprhdl) const override {
+    return PkcDeriveKeysPassThru(exprhdl, 0 /*child_index*/);
+  }
 
-	// derive max card
-	virtual CMaxCard DeriveMaxCard(CMemoryPool *mp,
-								   CExpressionHandle &exprhdl) const;
+  // derive max card
+  CMaxCard DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive constraint property
-	virtual CPropConstraint *
-	DerivePropertyConstraint(CMemoryPool *,	 //mp,
-							 CExpressionHandle &exprhdl) const
-	{
-		return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
-	}
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *,  // mp,
+                                            CExpressionHandle &exprhdl) const override {
+    return PpcDeriveConstraintPassThru(exprhdl, 0 /*ulChild*/);
+  }
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// candidate set of xforms
-	virtual CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	// return true if operator is a left semi apply
-	virtual BOOL
-	FLeftSemiApply() const
-	{
-		return true;
-	}
+  // return true if operator is a left semi apply
+  BOOL FLeftSemiApply() const override { return true; }
 
-	// conversion function
-	static CLogicalLeftSemiApply *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(CUtils::FLeftSemiApply(pop));
+  // conversion function
+  static CLogicalLeftSemiApply *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(CUtils::FLeftSemiApply(pop));
 
-		return dynamic_cast<CLogicalLeftSemiApply *>(pop);
-	}
+    return dynamic_cast<CLogicalLeftSemiApply *>(pop);
+  }
 
-};	// class CLogicalLeftSemiApply
+};  // class CLogicalLeftSemiApply
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CLogicalLeftSemiApply_H
+#endif  // !GPOPT_CLogicalLeftSemiApply_H
 
 // EOF

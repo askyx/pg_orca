@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLPhysicalAbstractBitmapScan.cpp
@@ -28,9 +28,8 @@ using namespace gpos;
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalAbstractBitmapScan::~CDXLPhysicalAbstractBitmapScan()
-{
-	m_dxl_table_descr->Release();
+CDXLPhysicalAbstractBitmapScan::~CDXLPhysicalAbstractBitmapScan() {
+  m_dxl_table_descr->Release();
 }
 
 #ifdef GPOS_DEBUG
@@ -42,36 +41,28 @@ CDXLPhysicalAbstractBitmapScan::~CDXLPhysicalAbstractBitmapScan()
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalAbstractBitmapScan::AssertValid(const CDXLNode *node,
-											BOOL validate_children) const
-{
-	GPOS_ASSERT(4 == node->Arity());
+void CDXLPhysicalAbstractBitmapScan::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+  GPOS_ASSERT(4 == node->Arity());
 
-	// assert proj list and filter are valid
-	CDXLPhysical::AssertValid(node, validate_children);
+  // assert proj list and filter are valid
+  CDXLPhysical::AssertValid(node, validate_children);
 
-	GPOS_ASSERT(EdxlopScalarRecheckCondFilter ==
-				(*node)[2]->GetOperator()->GetDXLOperator());
+  GPOS_ASSERT(EdxlopScalarRecheckCondFilter == (*node)[2]->GetOperator()->GetDXLOperator());
 
-	// assert bitmap access path is valid
-	CDXLNode *bitmap_dxlnode = (*node)[3];
-	GPOS_ASSERT(EdxlopScalarBitmapIndexProbe ==
-					bitmap_dxlnode->GetOperator()->GetDXLOperator() ||
-				EdxlopScalarBitmapBoolOp ==
-					bitmap_dxlnode->GetOperator()->GetDXLOperator());
+  // assert bitmap access path is valid
+  CDXLNode *bitmap_dxlnode = (*node)[3];
+  GPOS_ASSERT(EdxlopScalarBitmapIndexProbe == bitmap_dxlnode->GetOperator()->GetDXLOperator() ||
+              EdxlopScalarBitmapBoolOp == bitmap_dxlnode->GetOperator()->GetDXLOperator());
 
-	// assert validity of table descriptor
-	GPOS_ASSERT(NULL != m_dxl_table_descr);
-	GPOS_ASSERT(NULL != m_dxl_table_descr->MdName());
-	GPOS_ASSERT(m_dxl_table_descr->MdName()->GetMDName()->IsValid());
+  // assert validity of table descriptor
+  GPOS_ASSERT(nullptr != m_dxl_table_descr);
+  GPOS_ASSERT(nullptr != m_dxl_table_descr->MdName());
+  GPOS_ASSERT(m_dxl_table_descr->MdName()->GetMDName()->IsValid());
 
-	if (validate_children)
-	{
-		bitmap_dxlnode->GetOperator()->AssertValid(bitmap_dxlnode,
-												   validate_children);
-	}
+  if (validate_children) {
+    bitmap_dxlnode->GetOperator()->AssertValid(bitmap_dxlnode, validate_children);
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

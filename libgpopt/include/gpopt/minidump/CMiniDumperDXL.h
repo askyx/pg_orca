@@ -16,8 +16,7 @@
 
 using namespace gpos;
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CMiniDumperDXL
@@ -26,34 +25,32 @@ namespace gpopt
 //		DXL-specific minidump handler
 //
 //---------------------------------------------------------------------------
-class CMiniDumperDXL : public CMiniDumper
-{
-private:
-	// private copy ctor
-	CMiniDumperDXL(const CMiniDumperDXL &);
+class CMiniDumperDXL : public CMiniDumper {
+ private:
+ public:
+  CMiniDumperDXL(const CMiniDumperDXL &) = delete;
 
-public:
-	// ctor
-	explicit CMiniDumperDXL(CMemoryPool *mp);
+  // ctor
+  CMiniDumperDXL();
 
-	// dtor
-	virtual ~CMiniDumperDXL();
+  // dtor
+  ~CMiniDumperDXL() override;
 
-	// serialize minidump header
-	virtual void SerializeHeader();
+  // serialize minidump header
+  void SerializeHeader() override;
 
-	// serialize minidump footer
-	virtual void SerializeFooter();
+  // serialize minidump footer
+  void SerializeFooter() override;
 
-	// serialize entry header
-	virtual void SerializeEntryHeader();
+  // serialize entry header
+  void SerializeEntryHeader() override;
 
-	// serialize entry footer
-	virtual void SerializeEntryFooter();
+  // serialize entry footer
+  void SerializeEntryFooter() override;
 
-};	// class CMiniDumperDXL
+};  // class CMiniDumperDXL
 }  // namespace gpopt
 
-#endif	// !GPOPT_CMiniDumperDXL_H
+#endif  // !GPOPT_CMiniDumperDXL_H
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CLogicalLeftSemiCorrelatedApplyIn.cpp
@@ -23,11 +23,7 @@ using namespace gpopt;
 //		Ctor - for patterns
 //
 //---------------------------------------------------------------------------
-CLogicalLeftSemiCorrelatedApplyIn::CLogicalLeftSemiCorrelatedApplyIn(
-	CMemoryPool *mp)
-	: CLogicalLeftSemiApplyIn(mp)
-{
-}
+CLogicalLeftSemiCorrelatedApplyIn::CLogicalLeftSemiCorrelatedApplyIn(CMemoryPool *mp) : CLogicalLeftSemiApplyIn(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -37,11 +33,9 @@ CLogicalLeftSemiCorrelatedApplyIn::CLogicalLeftSemiCorrelatedApplyIn(
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalLeftSemiCorrelatedApplyIn::CLogicalLeftSemiCorrelatedApplyIn(
-	CMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq)
-	: CLogicalLeftSemiApplyIn(mp, pdrgpcrInner, eopidOriginSubq)
-{
-}
+CLogicalLeftSemiCorrelatedApplyIn::CLogicalLeftSemiCorrelatedApplyIn(CMemoryPool *mp, CColRefArray *pdrgpcrInner,
+                                                                     EOperatorId eopidOriginSubq)
+    : CLogicalLeftSemiApplyIn(mp, pdrgpcrInner, eopidOriginSubq) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -51,14 +45,11 @@ CLogicalLeftSemiCorrelatedApplyIn::CLogicalLeftSemiCorrelatedApplyIn(
 //		Get candidate xforms
 //
 //---------------------------------------------------------------------------
-CXformSet *
-CLogicalLeftSemiCorrelatedApplyIn::PxfsCandidates(CMemoryPool *mp) const
-{
-	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	(void) xform_set->ExchangeSet(
-		CXform::ExfImplementLeftSemiCorrelatedApplyIn);
+CXformSet *CLogicalLeftSemiCorrelatedApplyIn::PxfsCandidates(CMemoryPool *mp) const {
+  CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
+  (void)xform_set->ExchangeSet(CXform::ExfImplementLeftSemiCorrelatedApplyIn);
 
-	return xform_set;
+  return xform_set;
 }
 
 //---------------------------------------------------------------------------
@@ -69,16 +60,12 @@ CLogicalLeftSemiCorrelatedApplyIn::PxfsCandidates(CMemoryPool *mp) const
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CLogicalLeftSemiCorrelatedApplyIn::PopCopyWithRemappedColumns(
-	CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist)
-{
-	CColRefArray *pdrgpcrInner =
-		CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
+COperator *CLogicalLeftSemiCorrelatedApplyIn::PopCopyWithRemappedColumns(CMemoryPool *mp,
+                                                                         UlongToColRefMap *colref_mapping,
+                                                                         BOOL must_exist) {
+  CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
-	return GPOS_NEW(mp)
-		CLogicalLeftSemiCorrelatedApplyIn(mp, pdrgpcrInner, m_eopidOriginSubq);
+  return GPOS_NEW(mp) CLogicalLeftSemiCorrelatedApplyIn(mp, pdrgpcrInner, m_eopidOriginSubq);
 }
-
 
 // EOF

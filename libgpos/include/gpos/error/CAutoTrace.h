@@ -12,11 +12,11 @@
 #define GPOS_CAutoTrace_H
 
 #include "gpos/base.h"
+#include "gpos/common/CStackObject.h"
 #include "gpos/io/COstreamString.h"
 #include "gpos/string/CWStringDynamic.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CAutoTrace
@@ -27,35 +27,29 @@ namespace gpos
 //		at destruction the string is written to the log as a trace msg;
 //
 //---------------------------------------------------------------------------
-class CAutoTrace : public CStackObject
-{
-private:
-	// dynamic string buffer
-	CWStringDynamic m_wstr;
+class CAutoTrace : public CStackObject {
+ private:
+  // dynamic string buffer
+  CWStringDynamic m_wstr;
 
-	// string stream
-	COstreamString m_os;
+  // string stream
+  COstreamString m_os;
 
-	// private copy ctor
-	CAutoTrace(const CAutoTrace &);
+ public:
+  CAutoTrace(const CAutoTrace &) = delete;
 
-public:
-	// ctor
-	explicit CAutoTrace(CMemoryPool *mp);
+  // ctor
+  explicit CAutoTrace(CMemoryPool *mp);
 
-	// dtor
-	~CAutoTrace();
+  // dtor
+  ~CAutoTrace();
 
-	// stream accessor
-	IOstream &
-	Os()
-	{
-		return m_os;
-	}
+  // stream accessor
+  IOstream &Os() { return m_os; }
 
-};	// class CAutoTrace
+};  // class CAutoTrace
 }  // namespace gpos
 
-#endif	// !GPOS_CAutoTrace_H
+#endif  // !GPOS_CAutoTrace_H
 
 // EOF

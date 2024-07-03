@@ -23,14 +23,9 @@
 
 // pattern used to mark deallocated memory, this must match
 // GPOS_MEM_FREED_PATTERN_CHAR in CMemoryPool.h
-#ifdef GPOS_32BIT
-#define GPOS_WIPED_MEM_PATTERN 0xCdCdCdCd
-#else
 #define GPOS_WIPED_MEM_PATTERN 0xCdCdCdCdCdCdCdCd
-#endif
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CRefCount
@@ -39,115 +34,78 @@ namespace gpos
 //		Basic reference counting
 //
 //---------------------------------------------------------------------------
-class CRefCount : public CHeapObject
-{
-private:
-	// reference counter -- first in class to be in sync with Check()
-	ULONG_PTR m_refs;
+class CRefCount : public CHeapObject {
+ private:
+  // reference counter -- first in class to be in sync with Check()
+  ULONG_PTR m_refs{1};
 
 #ifdef GPOS_DEBUG
-	// sanity check to detect deleted memory
-	void
-	Check()
-	{
-		// assert that first member of class has not been wiped
-		GPOS_ASSERT(m_refs != GPOS_WIPED_MEM_PATTERN);
-	}
-#endif	// GPOS_DEBUG
+  // sanity check to detect deleted memory
+  void Check() const {
+    // assert that first member of class has not been wiped
+    GPOS_ASSERT(m_refs != GPOS_WIPED_MEM_PATTERN);
+  }
+#endif  // GPOS_DEBUG
 
-	// private copy ctor
-	CRefCount(const CRefCount &);
+ public:
+  CRefCount(const CRefCount &) = delete;
 
-public:
-	// ctor
-	CRefCount() : m_refs(1)
-	{
-	}
+  // ctor
+  CRefCount() = default;
 
-	// dtor
-	virtual ~CRefCount()
-	{
-		// enforce strict ref-counting unless we're in a pending exception,
-		// e.g., a ctor has thrown
-		GPOS_ASSERT(NULL == ITask::Self() ||
-					ITask::Self()->HasPendingExceptions() || 0 == m_refs);
-	}
+  // FIXME: should mark this noexcept in non-assert builds
+  // dtor
+  virtual ~CRefCount() noexcept(false) {
+    // enforce strict ref-counting unless we're in a pending exception,
+    // e.g., a ctor has thrown
+    GPOS_ASSERT(nullptr == ITask::Self() || ITask::Self()->HasPendingExceptions() || 0 == m_refs);
+  }
 
-	// return ref-count
-	ULONG_PTR
-	RefCount() const
-	{
-		return m_refs;
-	}
+  // return ref-count
+  ULONG_PTR
+  RefCount() const { return m_refs; }
 
-	// return true if calling object's destructor is allowed
-	virtual BOOL
-	Deletable() const
-	{
-		return true;
-	}
+  // return true if calling object's destructor is allowed
+  virtual BOOL Deletable() const { return true; }
 
-	// count up
-	void
-	AddRef()
-	{
+  // count up
+  void AddRef() {
 #ifdef GPOS_DEBUG
-		Check();
-#endif	// GPOS_DEBUG
-		m_refs++;
-	}
+    Check();
+#endif  // GPOS_DEBUG
+    m_refs++;
+  }
 
-	// count down
-	void
-	Release()
-	{
+  // count down
+  void Release() {
 #ifdef GPOS_DEBUG
-		Check();
-#endif	// GPOS_DEBUG
-		m_refs--;
+    Check();
+#endif  // GPOS_DEBUG
+    m_refs--;
 
-		if (0 == m_refs)
-		{
-			if (!Deletable())
-			{
-				// restore ref-count
-				AddRef();
+    if (0 == m_refs) {
+      if (!Deletable()) {
+        // restore ref-count
+        AddRef();
 
-				// deletion is not allowed
-				GPOS_RAISE(CException::ExmaSystem,
-						   CException::ExmiInvalidDeletion);
-			}
+        // deletion is not allowed
+        GPOS_RAISE(CException::ExmaSystem, CException::ExmiInvalidDeletion);
+      }
 
-			GPOS_DELETE(this);
-		}
-	}
+      GPOS_DELETE(this);
+    }
+  }
 
-	// safe version of Release -- handles NULL pointers
-	static void
-	SafeRelease(CRefCount *rc)
-	{
-		if (NULL != rc)
-		{
-			rc->Release();
-		}
-	}
+  // safe version of Release -- handles NULL pointers
+  static void SafeRelease(CRefCount *rc) {
+    if (nullptr != rc) {
+      rc->Release();
+    }
+  }
 
-#ifdef GPOS_DEBUG
-	// debug print for interactive debugging sessions only
-	void DbgPrint() const;
-#endif	// GPOS_DEBUG
-
-	// print function
-	virtual IOstream &
-	OsPrint(IOstream &os) const
-	{
-		return os;
-	}
-
-
-};	// class CRefCount
+};  // class CRefCount
 }  // namespace gpos
 
-#endif	// !GPOS_CRefCount_H
+#endif  // !GPOS_CRefCount_H
 
 // EOF

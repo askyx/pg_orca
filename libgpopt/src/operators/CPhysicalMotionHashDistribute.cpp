@@ -18,7 +18,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CPhysicalMotionHashDistribute::CPhysicalMotionHashDistribute
@@ -27,14 +26,12 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalMotionHashDistribute::CPhysicalMotionHashDistribute(
-	CMemoryPool *mp, CDistributionSpecHashed *pdsHashed)
-	: CPhysicalMotion(mp), m_pdsHashed(pdsHashed), m_pcrsRequiredLocal(NULL)
-{
-	GPOS_ASSERT(NULL != pdsHashed);
-	GPOS_ASSERT(0 != pdsHashed->Pdrgpexpr()->Size());
+CPhysicalMotionHashDistribute::CPhysicalMotionHashDistribute(CMemoryPool *mp, CDistributionSpecHashed *pdsHashed)
+    : CPhysicalMotion(mp), m_pdsHashed(pdsHashed), m_pcrsRequiredLocal(nullptr) {
+  GPOS_ASSERT(nullptr != pdsHashed);
+  GPOS_ASSERT(0 != pdsHashed->Pdrgpexpr()->Size());
 
-	m_pcrsRequiredLocal = m_pdsHashed->PcrsUsed(mp);
+  m_pcrsRequiredLocal = m_pdsHashed->PcrsUsed(mp);
 }
 
 //---------------------------------------------------------------------------
@@ -45,10 +42,9 @@ CPhysicalMotionHashDistribute::CPhysicalMotionHashDistribute(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CPhysicalMotionHashDistribute::~CPhysicalMotionHashDistribute()
-{
-	m_pdsHashed->Release();
-	m_pcrsRequiredLocal->Release();
+CPhysicalMotionHashDistribute::~CPhysicalMotionHashDistribute() {
+  m_pdsHashed->Release();
+  m_pcrsRequiredLocal->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -59,18 +55,14 @@ CPhysicalMotionHashDistribute::~CPhysicalMotionHashDistribute()
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalMotionHashDistribute::Matches(COperator *pop) const
-{
-	if (Eopid() != pop->Eopid())
-	{
-		return false;
-	}
+BOOL CPhysicalMotionHashDistribute::Matches(COperator *pop) const {
+  if (Eopid() != pop->Eopid()) {
+    return false;
+  }
 
-	CPhysicalMotionHashDistribute *popHashDistribute =
-		CPhysicalMotionHashDistribute::PopConvert(pop);
+  CPhysicalMotionHashDistribute *popHashDistribute = CPhysicalMotionHashDistribute::PopConvert(pop);
 
-	return m_pdsHashed->Equals(popHashDistribute->m_pdsHashed);
+  return m_pdsHashed->Equals(popHashDistribute->m_pdsHashed);
 }
 
 //---------------------------------------------------------------------------
@@ -81,24 +73,19 @@ CPhysicalMotionHashDistribute::Matches(COperator *pop) const
 //		Compute required columns of the n-th child;
 //
 //---------------------------------------------------------------------------
-CColRefSet *
-CPhysicalMotionHashDistribute::PcrsRequired(CMemoryPool *mp,
-											CExpressionHandle &exprhdl,
-											CColRefSet *pcrsRequired,
-											ULONG child_index,
-											CDrvdPropArray *,  // pdrgpdpCtxt
-											ULONG			   // ulOptReq
-)
-{
-	GPOS_ASSERT(0 == child_index);
+CColRefSet *CPhysicalMotionHashDistribute::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                        CColRefSet *pcrsRequired, ULONG child_index,
+                                                        CDrvdPropArray *,  // pdrgpdpCtxt
+                                                        ULONG              // ulOptReq
+) {
+  GPOS_ASSERT(0 == child_index);
 
-	CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, *m_pcrsRequiredLocal);
-	pcrs->Union(pcrsRequired);
-	CColRefSet *pcrsChildReqd =
-		PcrsChildReqd(mp, exprhdl, pcrs, child_index, gpos::ulong_max);
-	pcrs->Release();
+  CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, *m_pcrsRequiredLocal);
+  pcrs->Union(pcrsRequired);
+  CColRefSet *pcrsChildReqd = PcrsChildReqd(mp, exprhdl, pcrs, child_index, gpos::ulong_max);
+  pcrs->Release();
 
-	return pcrsChildReqd;
+  return pcrsChildReqd;
 }
 
 //---------------------------------------------------------------------------
@@ -109,13 +96,10 @@ CPhysicalMotionHashDistribute::PcrsRequired(CMemoryPool *mp,
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL
-CPhysicalMotionHashDistribute::FProvidesReqdCols(CExpressionHandle &exprhdl,
-												 CColRefSet *pcrsRequired,
-												 ULONG	// ulOptReq
-) const
-{
-	return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
+BOOL CPhysicalMotionHashDistribute::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                                      ULONG  // ulOptReq
+) const {
+  return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }
 
 //---------------------------------------------------------------------------
@@ -126,14 +110,11 @@ CPhysicalMotionHashDistribute::FProvidesReqdCols(CExpressionHandle &exprhdl,
 //		Return the enforcing type for order property based on this operator
 //
 //---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType
-CPhysicalMotionHashDistribute::EpetOrder(CExpressionHandle &,  // exprhdl
-										 const CEnfdOrder *	   // peo
-) const
-{
-	return CEnfdProp::EpetRequired;
+CEnfdProp::EPropEnforcingType CPhysicalMotionHashDistribute::EpetOrder(CExpressionHandle &,  // exprhdl
+                                                                       const CEnfdOrder *    // peo
+) const {
+  return CEnfdProp::EpetRequired;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -143,22 +124,20 @@ CPhysicalMotionHashDistribute::EpetOrder(CExpressionHandle &,  // exprhdl
 //		Compute required sort order of the n-th child
 //
 //---------------------------------------------------------------------------
-COrderSpec *
-CPhysicalMotionHashDistribute::PosRequired(CMemoryPool *mp,
-										   CExpressionHandle &,	 // exprhdl
-										   COrderSpec *,		 //posInput
-										   ULONG
+COrderSpec *CPhysicalMotionHashDistribute::PosRequired(CMemoryPool *mp,
+                                                       CExpressionHandle &,  // exprhdl
+                                                       COrderSpec *,         // posInput
+                                                       ULONG
 #ifdef GPOS_DEBUG
-											   child_index
-#endif	// GPOS_DEBUG
-										   ,
-										   CDrvdPropArray *,  // pdrgpdpCtxt
-										   ULONG			  // ulOptReq
-) const
-{
-	GPOS_ASSERT(0 == child_index);
+                                                           child_index
+#endif  // GPOS_DEBUG
+                                                       ,
+                                                       CDrvdPropArray *,  // pdrgpdpCtxt
+                                                       ULONG              // ulOptReq
+) const {
+  GPOS_ASSERT(0 == child_index);
 
-	return GPOS_NEW(mp) COrderSpec(mp);
+  return GPOS_NEW(mp) COrderSpec(mp);
 }
 
 //---------------------------------------------------------------------------
@@ -169,14 +148,11 @@ CPhysicalMotionHashDistribute::PosRequired(CMemoryPool *mp,
 //		Derive sort order
 //
 //---------------------------------------------------------------------------
-COrderSpec *
-CPhysicalMotionHashDistribute::PosDerive(CMemoryPool *mp,
-										 CExpressionHandle &  // exprhdl
-) const
-{
-	return GPOS_NEW(mp) COrderSpec(mp);
+COrderSpec *CPhysicalMotionHashDistribute::PosDerive(CMemoryPool *mp,
+                                                     CExpressionHandle &  // exprhdl
+) const {
+  return GPOS_NEW(mp) COrderSpec(mp);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -186,17 +162,13 @@ CPhysicalMotionHashDistribute::PosDerive(CMemoryPool *mp,
 //		Debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CPhysicalMotionHashDistribute::OsPrint(IOstream &os) const
-{
-	os << SzId() << " ";
+IOstream &CPhysicalMotionHashDistribute::OsPrint(IOstream &os) const {
+  os << SzId() << " ";
 
-	// choose a prefix big enough to avoid overlapping at least the simpler
-	// expression trees
-	return m_pdsHashed->OsPrintWithPrefix(
-		os, "                                        ");
+  // choose a prefix big enough to avoid overlapping at least the simpler
+  // expression trees
+  return m_pdsHashed->OsPrintWithPrefix(os, "                                        ");
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -206,35 +178,25 @@ CPhysicalMotionHashDistribute::OsPrint(IOstream &os) const
 //		Conversion function
 //
 //---------------------------------------------------------------------------
-CPhysicalMotionHashDistribute *
-CPhysicalMotionHashDistribute::PopConvert(COperator *pop)
-{
-	GPOS_ASSERT(NULL != pop);
-	GPOS_ASSERT(EopPhysicalMotionHashDistribute == pop->Eopid());
+CPhysicalMotionHashDistribute *CPhysicalMotionHashDistribute::PopConvert(COperator *pop) {
+  GPOS_ASSERT(nullptr != pop);
+  GPOS_ASSERT(EopPhysicalMotionHashDistribute == pop->Eopid());
 
-	return dynamic_cast<CPhysicalMotionHashDistribute *>(pop);
+  return dynamic_cast<CPhysicalMotionHashDistribute *>(pop);
 }
 
-CDistributionSpec *
-CPhysicalMotionHashDistribute::PdsRequired(
-	CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-	ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const
-{
-	CDistributionSpecHashedNoOp *pdsNoOp =
-		dynamic_cast<CDistributionSpecHashedNoOp *>(m_pdsHashed);
-	if (NULL == pdsNoOp)
-	{
-		return CPhysicalMotion::PdsRequired(mp, exprhdl, pdsRequired,
-											child_index, pdrgpdpCtxt, ulOptReq);
-	}
-	else
-	{
-		CExpressionArray *pdrgpexpr = pdsNoOp->Pdrgpexpr();
-		pdrgpexpr->AddRef();
-		CDistributionSpecHashed *pdsHashed = GPOS_NEW(mp)
-			CDistributionSpecHashed(pdrgpexpr, pdsNoOp->FNullsColocated());
-		return pdsHashed;
-	}
+CDistributionSpec *CPhysicalMotionHashDistribute::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                              CDistributionSpec *pdsRequired, ULONG child_index,
+                                                              CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const {
+  CDistributionSpecHashedNoOp *pdsNoOp = dynamic_cast<CDistributionSpecHashedNoOp *>(m_pdsHashed);
+  if (nullptr == pdsNoOp) {
+    return CPhysicalMotion::PdsRequired(mp, exprhdl, pdsRequired, child_index, pdrgpdpCtxt, ulOptReq);
+  } else {
+    CExpressionArray *pdrgpexpr = pdsNoOp->Pdrgpexpr();
+    pdrgpexpr->AddRef();
+    CDistributionSpecHashed *pdsHashed = GPOS_NEW(mp) CDistributionSpecHashed(pdrgpexpr, pdsNoOp->FNullsColocated());
+    return pdsHashed;
+  }
 }
 
 // EOF

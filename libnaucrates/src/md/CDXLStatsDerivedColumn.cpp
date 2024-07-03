@@ -28,21 +28,20 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLStatsDerivedColumn::CDXLStatsDerivedColumn(
-	ULONG colid, CDouble width, CDouble null_freq, CDouble distinct_remaining,
-	CDouble freq_remaining, CDXLBucketArray *dxl_stats_bucket_array)
-	: m_colid(colid),
-	  m_width(width),
-	  m_null_freq(null_freq),
-	  m_distinct_remaining(distinct_remaining),
-	  m_freq_remaining(freq_remaining),
-	  m_dxl_stats_bucket_array(dxl_stats_bucket_array)
-{
-	GPOS_ASSERT(0 <= m_width);
-	GPOS_ASSERT(0 <= m_null_freq);
-	GPOS_ASSERT(0 <= m_distinct_remaining);
-	GPOS_ASSERT(0 <= m_freq_remaining);
-	GPOS_ASSERT(NULL != m_dxl_stats_bucket_array);
+CDXLStatsDerivedColumn::CDXLStatsDerivedColumn(ULONG colid, CDouble width, CDouble null_freq,
+                                               CDouble distinct_remaining, CDouble freq_remaining,
+                                               CDXLBucketArray *dxl_stats_bucket_array)
+    : m_colid(colid),
+      m_width(width),
+      m_null_freq(null_freq),
+      m_distinct_remaining(distinct_remaining),
+      m_freq_remaining(freq_remaining),
+      m_dxl_stats_bucket_array(dxl_stats_bucket_array) {
+  GPOS_ASSERT(0 <= m_width);
+  GPOS_ASSERT(0 <= m_null_freq);
+  GPOS_ASSERT(0 <= m_distinct_remaining);
+  GPOS_ASSERT(0 <= m_freq_remaining);
+  GPOS_ASSERT(nullptr != m_dxl_stats_bucket_array);
 }
 
 //---------------------------------------------------------------------------
@@ -53,9 +52,8 @@ CDXLStatsDerivedColumn::CDXLStatsDerivedColumn(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLStatsDerivedColumn::~CDXLStatsDerivedColumn()
-{
-	m_dxl_stats_bucket_array->Release();
+CDXLStatsDerivedColumn::~CDXLStatsDerivedColumn() {
+  m_dxl_stats_bucket_array->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -66,10 +64,8 @@ CDXLStatsDerivedColumn::~CDXLStatsDerivedColumn()
 //		Returns the array of buckets
 //
 //---------------------------------------------------------------------------
-const CDXLBucketArray *
-CDXLStatsDerivedColumn::TransformHistogramToDXLBucketArray() const
-{
-	return m_dxl_stats_bucket_array;
+const CDXLBucketArray *CDXLStatsDerivedColumn::TransformHistogramToDXLBucketArray() const {
+  return m_dxl_stats_bucket_array;
 }
 
 //---------------------------------------------------------------------------
@@ -80,40 +76,28 @@ CDXLStatsDerivedColumn::TransformHistogramToDXLBucketArray() const
 //		Serialize bucket in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLStatsDerivedColumn::Serialize(CXMLSerializer *xml_serializer) const
-{
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenStatsDerivedColumn));
+void CDXLStatsDerivedColumn::Serialize(CXMLSerializer *xml_serializer) const {
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                              CDXLTokens::GetDXLTokenStr(EdxltokenStatsDerivedColumn));
 
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId),
-								 m_colid);
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWidth),
-								 m_width);
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenColNullFreq), m_null_freq);
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenColNdvRemain),
-		m_distinct_remaining);
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenColFreqRemain), m_freq_remaining);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), m_colid);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWidth), m_width);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColNullFreq), m_null_freq);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColNdvRemain), m_distinct_remaining);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColFreqRemain), m_freq_remaining);
 
+  const ULONG num_of_buckets = m_dxl_stats_bucket_array->Size();
+  for (ULONG ul = 0; ul < num_of_buckets; ul++) {
+    GPOS_CHECK_ABORT;
 
-	const ULONG num_of_buckets = m_dxl_stats_bucket_array->Size();
-	for (ULONG ul = 0; ul < num_of_buckets; ul++)
-	{
-		GPOS_CHECK_ABORT;
+    CDXLBucket *dxl_bucket = (*m_dxl_stats_bucket_array)[ul];
+    dxl_bucket->Serialize(xml_serializer);
 
-		CDXLBucket *dxl_bucket = (*m_dxl_stats_bucket_array)[ul];
-		dxl_bucket->Serialize(xml_serializer);
+    GPOS_CHECK_ABORT;
+  }
 
-		GPOS_CHECK_ABORT;
-	}
-
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenStatsDerivedColumn));
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                               CDXLTokens::GetDXLTokenStr(EdxltokenStatsDerivedColumn));
 }
 
 #ifdef GPOS_DEBUG
@@ -125,22 +109,19 @@ CDXLStatsDerivedColumn::Serialize(CXMLSerializer *xml_serializer) const
 //		Debug print of the bucket object
 //
 //---------------------------------------------------------------------------
-void
-CDXLStatsDerivedColumn::DebugPrint(IOstream &os) const
-{
-	os << "Column id: " << m_colid;
-	os << std::endl;
-	os << "Width : " << m_width;
-	os << std::endl;
+void CDXLStatsDerivedColumn::DebugPrint(IOstream &os) const {
+  os << "Column id: " << m_colid;
+  os << std::endl;
+  os << "Width : " << m_width;
+  os << std::endl;
 
-	const ULONG num_of_buckets = m_dxl_stats_bucket_array->Size();
-	for (ULONG ul = 0; ul < num_of_buckets; ul++)
-	{
-		const CDXLBucket *dxl_bucket = (*m_dxl_stats_bucket_array)[ul];
-		dxl_bucket->DebugPrint(os);
-	}
+  const ULONG num_of_buckets = m_dxl_stats_bucket_array->Size();
+  for (ULONG ul = 0; ul < num_of_buckets; ul++) {
+    const CDXLBucket *dxl_bucket = (*m_dxl_stats_bucket_array)[ul];
+    dxl_bucket->DebugPrint(os);
+  }
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

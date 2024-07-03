@@ -16,9 +16,7 @@
 
 #include "naucrates/dxl/operators/CDXLScalarFilter.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDXLScalarOneTimeFilter
@@ -27,43 +25,37 @@ namespace gpdxl
 //		Class for representing DXL filter operators
 //
 //---------------------------------------------------------------------------
-class CDXLScalarOneTimeFilter : public CDXLScalarFilter
-{
-private:
-	// private copy ctor
-	CDXLScalarOneTimeFilter(CDXLScalarOneTimeFilter &);
+class CDXLScalarOneTimeFilter : public CDXLScalarFilter {
+ private:
+ public:
+  CDXLScalarOneTimeFilter(CDXLScalarOneTimeFilter &) = delete;
 
-public:
-	// ctor
-	explicit CDXLScalarOneTimeFilter(CMemoryPool *mp);
+  // ctor
+  explicit CDXLScalarOneTimeFilter(CMemoryPool *mp);
 
-	// accessors
-	Edxlopid GetDXLOperator() const;
-	const CWStringConst *GetOpNameStr() const;
+  // accessors
+  Edxlopid GetDXLOperator() const override;
+  const CWStringConst *GetOpNameStr() const override;
 
-	// conversion function
-	static CDXLScalarOneTimeFilter *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopScalarOneTimeFilter == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLScalarOneTimeFilter *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopScalarOneTimeFilter == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLScalarOneTimeFilter *>(dxl_op);
-	}
+    return dynamic_cast<CDXLScalarOneTimeFilter *>(dxl_op);
+  }
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const override;
 
-	// does the operator return a boolean result
-	virtual BOOL
-	HasBoolResult(CMDAccessor *	 //md_accessor
-	) const
-	{
-		GPOS_ASSERT(!"Invalid function call for a container operator");
-		return false;
-	}
+  // does the operator return a boolean result
+  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  ) const override {
+    GPOS_ASSERT(!"Invalid function call for a container operator");
+    return false;
+  }
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLScalarOneTimeFilter_H
+#endif  // !GPDXL_CDXLScalarOneTimeFilter_H
 
 // EOF

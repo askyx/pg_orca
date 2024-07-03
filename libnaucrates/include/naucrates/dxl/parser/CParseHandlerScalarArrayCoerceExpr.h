@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2017 Pivotal Inc.
+//	Copyright (C) 2017 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerScalarArrayCoerceExpr.h
@@ -24,9 +24,7 @@
 #include "naucrates/dxl/operators/CDXLScalarArrayCoerceExpr.h"
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -39,38 +37,32 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing ArrayCoerceExpr operator
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarArrayCoerceExpr : public CParseHandlerScalarOp
-{
-private:
-	// private copy ctor
-	CParseHandlerScalarArrayCoerceExpr(
-		const CParseHandlerScalarArrayCoerceExpr &);
+class CParseHandlerScalarArrayCoerceExpr : public CParseHandlerScalarOp {
+ private:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerScalarArrayCoerceExpr(const CParseHandlerScalarArrayCoerceExpr &) = delete;
 
-public:
-	// ctor/dtor
-	CParseHandlerScalarArrayCoerceExpr(CMemoryPool *mp,
-									   CParseHandlerManager *parse_handler_mgr,
-									   CParseHandlerBase *parse_handler_root);
+  // ctor/dtor
+  CParseHandlerScalarArrayCoerceExpr(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                     CParseHandlerBase *parse_handler_root);
 
-	virtual ~CParseHandlerScalarArrayCoerceExpr(){};
+  ~CParseHandlerScalarArrayCoerceExpr() override = default;
 };
 
 }  // namespace gpdxl
-#endif	// GPDXL_CParseHandlerScalarArrayCoerceExpr_H
+#endif  // GPDXL_CParseHandlerScalarArrayCoerceExpr_H
 
-//EOF
+// EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerScalarArrayRefIndexList.h
@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -30,36 +29,30 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler class for parsing the list of arrayref indexes
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarArrayRefIndexList : public CParseHandlerScalarOp
-{
-private:
-	// private copy ctor
-	CParseHandlerScalarArrayRefIndexList(
-		const CParseHandlerScalarArrayRefIndexList &);
+class CParseHandlerScalarArrayRefIndexList : public CParseHandlerScalarOp {
+ private:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerScalarArrayRefIndexList(const CParseHandlerScalarArrayRefIndexList &) = delete;
 
-public:
-	// ctor
-	CParseHandlerScalarArrayRefIndexList(
-		CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-		CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerScalarArrayRefIndexList(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                       CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerScalarScalarArrayRefIndexList_H
+#endif  // !GPDXL_CParseHandlerScalarScalarArrayRefIndexList_H
 
 // EOF

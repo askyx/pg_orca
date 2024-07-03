@@ -13,7 +13,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CDistributionSpecStrictSingleton::CDistributionSpecStrictSingleton
@@ -22,12 +21,8 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDistributionSpecStrictSingleton::CDistributionSpecStrictSingleton(
-	ESegmentType est)
-	: CDistributionSpecSingleton(est)
-{
-}
-
+CDistributionSpecStrictSingleton::CDistributionSpecStrictSingleton(ESegmentType est)
+    : CDistributionSpecSingleton(est) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -37,34 +32,25 @@ CDistributionSpecStrictSingleton::CDistributionSpecStrictSingleton(
 //		Check if this distribution spec satisfies the given one
 //
 //---------------------------------------------------------------------------
-BOOL
-CDistributionSpecStrictSingleton::FSatisfies(
-	const CDistributionSpec *pdss) const
-{
-	if (Matches(pdss))
-	{
-		// exact match implies satisfaction
-		return true;
-	}
+BOOL CDistributionSpecStrictSingleton::FSatisfies(const CDistributionSpec *pdss) const {
+  if (Matches(pdss)) {
+    // exact match implies satisfaction
+    return true;
+  }
 
-	if (EdtNonSingleton == pdss->Edt())
-	{
-		// singleton does not satisfy non-singleton requirements
-		return false;
-	}
+  if (EdtNonSingleton == pdss->Edt()) {
+    // singleton does not satisfy non-singleton requirements
+    return false;
+  }
 
-	if (EdtAny == pdss->Edt())
-	{
-		// a singleton distribution satisfies "any"
-		return true;
-	}
+  if (EdtAny == pdss->Edt() || EdtNonReplicated == pdss->Edt()) {
+    // a singleton distribution satisfies "any" and "non-replicated" distribution
+    return true;
+  }
 
-	return (
-		(EdtSingleton == pdss->Edt() || EdtStrictSingleton == pdss->Edt()) &&
-		m_est == ((CDistributionSpecStrictSingleton *) pdss)->Est());
+  return ((EdtSingleton == pdss->Edt() || EdtStrictSingleton == pdss->Edt()) &&
+          m_est == static_cast<const CDistributionSpecSingleton *>(pdss)->Est());
 }
-
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -74,11 +60,8 @@ CDistributionSpecStrictSingleton::FSatisfies(
 //		Print function
 //
 //---------------------------------------------------------------------------
-IOstream &
-CDistributionSpecStrictSingleton::OsPrint(IOstream &os) const
-{
-	return os << "STRICT SINGLETON (" << m_szSegmentType[m_est] << ")";
+IOstream &CDistributionSpecStrictSingleton::OsPrint(IOstream &os) const {
+  return os << "STRICT SINGLETON (" << m_szSegmentType[m_est] << ")";
 }
-
 
 // EOF

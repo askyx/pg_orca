@@ -13,10 +13,10 @@
 
 #include "gpos/base.h"
 
+#include "gpopt/operators/CLogicalDynamicGet.h"
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,53 +27,33 @@ using namespace gpos;
 //		Transform DynamicGet to DynamicTableScan
 //
 //---------------------------------------------------------------------------
-class CXformDynamicGet2DynamicTableScan : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformDynamicGet2DynamicTableScan(
-		const CXformDynamicGet2DynamicTableScan &);
+class CXformDynamicGet2DynamicTableScan : public CXformImplementation {
+ private:
+ public:
+  CXformDynamicGet2DynamicTableScan(const CXformDynamicGet2DynamicTableScan &) = delete;
 
-public:
-	// ctor
-	explicit CXformDynamicGet2DynamicTableScan(CMemoryPool *mp);
+  // ctor
+  explicit CXformDynamicGet2DynamicTableScan(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformDynamicGet2DynamicTableScan()
-	{
-	}
+  // dtor
+  ~CXformDynamicGet2DynamicTableScan() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfDynamicGet2DynamicTableScan;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfDynamicGet2DynamicTableScan; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformDynamicGet2DynamicTableScan";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformDynamicGet2DynamicTableScan"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise
-	Exfp(CExpressionHandle &  // exprhdl
-	) const
-	{
-		return CXform::ExfpHigh;
-	}
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformDynamicGet2DynamicTableScan
+};  // class CXformDynamicGet2DynamicTableScan
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformDynamicGet2DynamicTableScan_H
+#endif  // !GPOPT_CXformDynamicGet2DynamicTableScan_H
 
 // EOF

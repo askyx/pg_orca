@@ -17,10 +17,7 @@
 #include "gpos/common/CSyncHashtableAccessByKey.h"
 #include "gpos/common/CSyncHashtableIter.h"
 
-
-
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CSyncHashtableTest
@@ -30,130 +27,96 @@ namespace gpos
 //		Contains also unittests for accessor class
 //
 //---------------------------------------------------------------------------
-class CSyncHashtableTest
-{
-	// prototypes
-	struct SElem;
+class CSyncHashtableTest {
+  // prototypes
+  struct SElem;
 
-private:
-	// types used by testing functions
-	typedef CSyncHashtable<SElem, ULONG> SElemHashtable;
+ private:
+  // types used by testing functions
+  using SElemHashtable = CSyncHashtable<SElem, ULONG>;
 
-	typedef CSyncHashtableAccessByKey<SElem, ULONG> SElemHashtableAccessor;
+  using SElemHashtableAccessor = CSyncHashtableAccessByKey<SElem, ULONG>;
 
-	typedef CSyncHashtableIter<SElem, ULONG> SElemHashtableIter;
+  using SElemHashtableIter = CSyncHashtableIter<SElem, ULONG>;
 
-	typedef CSyncHashtableAccessByIter<SElem, ULONG> SElemHashtableIterAccessor;
+  using SElemHashtableIterAccessor = CSyncHashtableAccessByIter<SElem, ULONG>;
 
-	// function pointer to a hash table task
-	typedef void *(*pfuncHashtableTask)(void *);
+  // function pointer to a hash table task
+  using pfuncHashtableTask = void *(*)(void *);
 
-	//---------------------------------------------------------------------------
-	//	@class:
-	//		SElem
-	//
-	//	@doc:
-	//		Local class for hashtable tests;
-	//
-	//---------------------------------------------------------------------------
-	struct SElem
-	{
-	private:
-		// element's unique id
-		ULONG m_id;
+  //---------------------------------------------------------------------------
+  //	@class:
+  //		SElem
+  //
+  //	@doc:
+  //		Local class for hashtable tests;
+  //
+  //---------------------------------------------------------------------------
+  struct SElem {
+   private:
+    // element's unique id
+    ULONG m_id;
 
-	public:
-		// generic link
-		SLink m_link;
+   public:
+    // generic link
+    SLink m_link;
 
-		// hash key
-		ULONG m_ulKey;
+    // hash key
+    ULONG m_ulKey;
 
-		// invalid key
-		static const ULONG m_ulInvalid;
+    // invalid key
+    static const ULONG m_ulInvalid;
 
-		// invalid element
-		static const SElem m_elemInvalid;
+    // invalid element
+    static const SElem m_elemInvalid;
 
-		// simple hash function
-		static ULONG
-		HashValue(const ULONG &ul)
-		{
-			return ul;
-		}
+    // simple hash function
+    static ULONG HashValue(const ULONG &ul) { return ul; }
 
-		static ULONG
-		HashValue(const SElem &elem)
-		{
-			return elem.m_id;
-		}
+    static ULONG HashValue(const SElem &elem) { return elem.m_id; }
 
-		// equality for object-based comparison
-		BOOL
-		operator==(const SElem &elem) const
-		{
-			return elem.m_id == m_id;
-		}
+    // equality for object-based comparison
+    BOOL operator==(const SElem &elem) const { return elem.m_id == m_id; }
 
-		// key equality function for hashtable
-		static BOOL
-		FEqualKeys(const ULONG &ulkey, const ULONG &ulkeyOther)
-		{
-			return ulkey == ulkeyOther;
-		}
+    // key equality function for hashtable
+    static BOOL FEqualKeys(const ULONG &ulkey, const ULONG &ulkeyOther) { return ulkey == ulkeyOther; }
 
-		// element equality function for hashtable
-		static BOOL
-		Equals(const SElem &elem, const SElem &elemOther)
-		{
-			return elem == elemOther;
-		}
+    // element equality function for hashtable
+    static BOOL Equals(const SElem &elem, const SElem &elemOther) { return elem == elemOther; }
 
-		// ctor
-		SElem(ULONG id, ULONG ulKey) : m_id(id), m_ulKey(ulKey)
-		{
-		}
+    // ctor
+    SElem(ULONG id, ULONG ulKey) : m_id(id), m_ulKey(ulKey) {}
 
-		// copy ctor
-		SElem(const SElem &elem)
-		{
-			m_id = elem.m_id;
-			m_ulKey = elem.m_ulKey;
-		}
+    // copy ctor
+    SElem(const SElem &elem) {
+      m_id = elem.m_id;
+      m_ulKey = elem.m_ulKey;
+    }
 
-#ifdef GPOS_DEBUG
-		static BOOL
-		IsValid(const ULONG &ulKey)
-		{
-			return !FEqualKeys(m_ulInvalid, ulKey);
-		}
-#endif	// GPOS_DEBUG
+    SElem &operator=(const SElem &) = default;
 
-		// dummy ctor
-		SElem()
-		{
-		}
+    static BOOL IsValid(const ULONG &ulKey) { return !FEqualKeys(m_ulInvalid, ulKey); }
 
-		// Id accessor
-		ULONG
-		Id() const
-		{
-			return m_id;
-		}
+    // dummy ctor
+    SElem() = default;
 
-	};	// struct SElem
+    // Id accessor
+    ULONG
+    Id() const { return m_id; }
 
-public:
-	// actual unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
-	static GPOS_RESULT EresUnittest_Accessor();
-	static GPOS_RESULT EresUnittest_ComplexEquality();
-	static GPOS_RESULT EresUnittest_SameKeyIteration();
-	static GPOS_RESULT EresUnittest_NonConcurrentIteration();
+  };  // struct SElem
+
+ public:
+  // actual unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
+  static GPOS_RESULT EresUnittest_Accessor();
+  static GPOS_RESULT EresUnittest_ComplexEquality();
+  static GPOS_RESULT EresUnittest_SameKeyIteration();
+  static GPOS_RESULT EresUnittest_NonConcurrentIteration();
 };
 }  // namespace gpos
 
-#endif	// !GPOS_CSyncHashtableTest_H
+#endif  // !GPOS_CSyncHashtableTest_H
 
 // EOF

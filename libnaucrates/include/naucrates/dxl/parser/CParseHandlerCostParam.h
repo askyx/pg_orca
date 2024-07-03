@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,84 +27,59 @@ using namespace gpos;
 //		Parse handler for parsing cost model param
 //
 //---------------------------------------------------------------------------
-class CParseHandlerCostParam : public CParseHandlerBase
-{
-private:
-	// param name
-	CHAR *m_param_name;
+class CParseHandlerCostParam : public CParseHandlerBase {
+ private:
+  // param name
+  CHAR *m_param_name;
 
-	// param value
-	CDouble m_value;
+  // param value
+  CDouble m_value;
 
-	// lower bound value
-	CDouble m_lower_bound_val;
+  // lower bound value
+  CDouble m_lower_bound_val;
 
-	// upper bound value
-	CDouble m_upper_bound_val;
+  // upper bound value
+  CDouble m_upper_bound_val;
 
-	// private copy ctor
-	CParseHandlerCostParam(const CParseHandlerCostParam &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerCostParam(const CParseHandlerCostParam &) = delete;
 
-public:
-	// ctor
-	CParseHandlerCostParam(CMemoryPool *mp,
-						   CParseHandlerManager *parse_handler_mgr,
-						   CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerCostParam(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                         CParseHandlerBase *parse_handler_root);
 
-	// dtor
-	virtual ~CParseHandlerCostParam();
+  // dtor
+  ~CParseHandlerCostParam() override;
 
-	// return parsed param name
-	CHAR *
-	GetName() const
-	{
-		return m_param_name;
-	}
+  // return parsed param name
+  CHAR *GetName() const { return m_param_name; }
 
-	// return parsed param value
-	CDouble
-	Get() const
-	{
-		return m_value;
-	}
+  // return parsed param value
+  CDouble Get() const { return m_value; }
 
-	// return parsed param lower bound value
-	CDouble
-	GetLowerBoundVal() const
-	{
-		return m_lower_bound_val;
-	}
+  // return parsed param lower bound value
+  CDouble GetLowerBoundVal() const { return m_lower_bound_val; }
 
-	// return parsed param upper bound value
-	CDouble
-	GetUpperBoundVal() const
-	{
-		return m_upper_bound_val;
-	}
+  // return parsed param upper bound value
+  CDouble GetUpperBoundVal() const { return m_upper_bound_val; }
 
-	EDxlParseHandlerType
-	GetParseHandlerType() const
-	{
-		return EdxlphCostParam;
-	}
+  EDxlParseHandlerType GetParseHandlerType() const override { return EdxlphCostParam; }
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerCostParam_H
+#endif  // !GPDXL_CParseHandlerCostParam_H
 
 // EOF

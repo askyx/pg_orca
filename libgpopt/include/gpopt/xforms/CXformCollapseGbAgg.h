@@ -16,8 +16,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,45 +27,33 @@ using namespace gpos;
 //		Collapse two cascaded GbAgg operators into a single GbAgg
 //
 //---------------------------------------------------------------------------
-class CXformCollapseGbAgg : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformCollapseGbAgg(const CXformCollapseGbAgg &);
+class CXformCollapseGbAgg : public CXformExploration {
+ private:
+ public:
+  CXformCollapseGbAgg(const CXformCollapseGbAgg &) = delete;
 
-public:
-	// ctor
-	explicit CXformCollapseGbAgg(CMemoryPool *mp);
+  // ctor
+  explicit CXformCollapseGbAgg(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformCollapseGbAgg()
-	{
-	}
+  // dtor
+  ~CXformCollapseGbAgg() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfCollapseGbAgg;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfCollapseGbAgg; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformCollapseGbAgg";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformCollapseGbAgg"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *, CXformResult *, CExpression *) const;
+  // actual transform
+  void Transform(CXformContext *, CXformResult *, CExpression *) const override;
 
-};	// class CXformCollapseGbAgg
+};  // class CXformCollapseGbAgg
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformCollapseGbAgg_H
+#endif  // !GPOPT_CXformCollapseGbAgg_H
 
 // EOF

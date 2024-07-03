@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLScalarRecheckCondFilter.h
@@ -30,10 +30,8 @@ using namespace gpdxl;
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarRecheckCondFilter::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarRecheckCondFilter);
+const CWStringConst* CDXLScalarRecheckCondFilter::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarRecheckCondFilter);
 }
 
 // EOF

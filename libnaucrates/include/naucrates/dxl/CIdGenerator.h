@@ -22,21 +22,19 @@
 
 #include "gpos/base.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
-class CIdGenerator
-{
-private:
-	ULONG id;
+class CIdGenerator {
+ private:
+  ULONG id;
 
-public:
-	explicit CIdGenerator(ULONG);
-	ULONG next_id();
-	ULONG current_id();
+ public:
+  explicit CIdGenerator(ULONG);
+  ULONG next_id();
+  ULONG current_id() const;
 };
 }  // namespace gpdxl
-#endif	// GPDXL_CIdGenerator_H
+#endif  // GPDXL_CIdGenerator_H
 
 // EOF

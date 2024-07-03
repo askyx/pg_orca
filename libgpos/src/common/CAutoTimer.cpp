@@ -24,12 +24,9 @@ using namespace gpos;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CAutoTimer::CAutoTimer(const CHAR *sz, BOOL fPrint)
-	: m_timer_text_label(sz), m_print_text_label(fPrint)
-{
-	GPOS_ASSERT(NULL != sz);
+CAutoTimer::CAutoTimer(const CHAR *sz, BOOL fPrint) : m_timer_text_label(sz), m_print_text_label(fPrint) {
+  GPOS_ASSERT(nullptr != sz);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -39,18 +36,15 @@ CAutoTimer::CAutoTimer(const CHAR *sz, BOOL fPrint)
 //		Destructor prints time difference and label
 //
 //---------------------------------------------------------------------------
-CAutoTimer::~CAutoTimer() throw()
-{
-	if (m_print_text_label)
-	{
-		// suspend cancellation - destructors should not throw
-		CAutoSuspendAbort asa;
+CAutoTimer::~CAutoTimer() throw() {
+  if (m_print_text_label) {
+    // suspend cancellation - destructors should not throw
+    CAutoSuspendAbort asa;
 
-		ULONG ulElapsedTimeMS = m_clock.ElapsedMS();
+    ULONG ulElapsedTimeMS = m_clock.ElapsedMS();
 
-		GPOS_TRACE_FORMAT("timer:%s: %dms", m_timer_text_label,
-						  ulElapsedTimeMS);
-	}
+    GPOS_TRACE_FORMAT("timer:%s: %dms", m_timer_text_label, ulElapsedTimeMS);
+  }
 }
 
 // EOF

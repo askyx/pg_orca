@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CConstExprEvaluatorDefault.cpp
@@ -21,7 +21,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CConstExprEvaluatorDefault::~CConstExprEvaluatorDefault
@@ -30,9 +29,7 @@ using namespace gpopt;
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CConstExprEvaluatorDefault::~CConstExprEvaluatorDefault()
-{
-}
+CConstExprEvaluatorDefault::~CConstExprEvaluatorDefault() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -42,11 +39,9 @@ CConstExprEvaluatorDefault::~CConstExprEvaluatorDefault()
 //		Returns the given expression after having increased its ref count
 //
 //---------------------------------------------------------------------------
-CExpression *
-CConstExprEvaluatorDefault::PexprEval(CExpression *pexpr)
-{
-	pexpr->AddRef();
-	return pexpr;
+CExpression *CConstExprEvaluatorDefault::PexprEval(CExpression *pexpr) {
+  pexpr->AddRef();
+  return pexpr;
 }
 
 //---------------------------------------------------------------------------
@@ -57,10 +52,8 @@ CConstExprEvaluatorDefault::PexprEval(CExpression *pexpr)
 //		Returns false, since this evaluator cannot call any functions
 //
 //---------------------------------------------------------------------------
-BOOL
-CConstExprEvaluatorDefault::FCanEvalExpressions()
-{
-	return false;
+BOOL CConstExprEvaluatorDefault::FCanEvalExpressions() {
+  return false;
 }
 
 // EOF

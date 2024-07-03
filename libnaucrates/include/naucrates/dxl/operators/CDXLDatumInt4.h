@@ -22,8 +22,7 @@
 
 #include "naucrates/dxl/operators/CDXLDatum.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
@@ -37,49 +36,39 @@ class CXMLSerializer;
 //		Class for representing DXL integer datums
 //
 //---------------------------------------------------------------------------
-class CDXLDatumInt4 : public CDXLDatum
-{
-private:
-	// int4 value
-	INT m_val;
+class CDXLDatumInt4 : public CDXLDatum {
+ private:
+  // int4 value
+  INT m_val;
 
-	// private copy ctor
-	CDXLDatumInt4(const CDXLDatumInt4 &);
+ public:
+  CDXLDatumInt4(const CDXLDatumInt4 &) = delete;
 
-public:
-	// ctor
-	CDXLDatumInt4(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, INT val);
+  // ctor
+  CDXLDatumInt4(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, INT val);
 
-	// dtor
-	virtual ~CDXLDatumInt4(){};
+  // dtor
+  ~CDXLDatumInt4() override = default;
 
-	// accessor of int value
-	INT Value() const;
+  // accessor of int value
+  INT Value() const;
 
-	// serialize the datum as the given element
-	virtual void Serialize(CXMLSerializer *xml_serializer);
+  // serialize the datum as the given element
+  void Serialize(CXMLSerializer *xml_serializer) override;
 
-	// datum type
-	virtual EdxldatumType
-	GetDatumType() const
-	{
-		return CDXLDatum::EdxldatumInt4;
-	}
+  // datum type
+  EdxldatumType GetDatumType() const override { return CDXLDatum::EdxldatumInt4; }
 
-	// conversion function
-	static CDXLDatumInt4 *
-	Cast(CDXLDatum *dxl_datum)
-	{
-		GPOS_ASSERT(NULL != dxl_datum);
-		GPOS_ASSERT(CDXLDatum::EdxldatumInt4 == dxl_datum->GetDatumType());
+  // conversion function
+  static CDXLDatumInt4 *Cast(CDXLDatum *dxl_datum) {
+    GPOS_ASSERT(nullptr != dxl_datum);
+    GPOS_ASSERT(CDXLDatum::EdxldatumInt4 == dxl_datum->GetDatumType());
 
-		return dynamic_cast<CDXLDatumInt4 *>(dxl_datum);
-	}
+    return dynamic_cast<CDXLDatumInt4 *>(dxl_datum);
+  }
 };
 }  // namespace gpdxl
 
-
-
-#endif	// !GPDXL_CDXLDatumInt4_H
+#endif  // !GPDXL_CDXLDatumInt4_H
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "naucrates/base/IDatum.h"
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,37 +26,43 @@ using namespace gpos;
 //		Static unit tests for datum
 //
 //---------------------------------------------------------------------------
-class CDatumTest
-{
-private:
-	// create an oid datum
-	static IDatum *CreateOidDatum(CMemoryPool *mp, BOOL is_null);
+class CDatumTest {
+ private:
+  // create an oid datum
+  static IDatum *CreateOidDatum(CMemoryPool *mp, BOOL is_null);
 
-	// create an int2 datum
-	static IDatum *CreateInt2Datum(CMemoryPool *mp, BOOL is_null);
+  // create an int2 datum
+  static IDatum *CreateInt2Datum(CMemoryPool *mp, BOOL is_null);
 
-	// create an int4 datum
-	static IDatum *CreateInt4Datum(CMemoryPool *mp, BOOL is_null);
+  // create an int4 datum
+  static IDatum *CreateInt4Datum(CMemoryPool *mp, BOOL is_null);
 
-	// create an int8 datum
-	static IDatum *CreateInt8Datum(CMemoryPool *mp, BOOL is_null);
+  // create an int8 datum
+  static IDatum *CreateInt8Datum(CMemoryPool *mp, BOOL is_null);
 
-	// create a bool datum
-	static IDatum *CreateBoolDatum(CMemoryPool *mp, BOOL is_null);
+  // create a bool datum
+  static IDatum *CreateBoolDatum(CMemoryPool *mp, BOOL is_null);
 
-	// create a generic datum
-	static IDatum *CreateGenericDatum(CMemoryPool *mp, BOOL is_null);
+  // create a generic datum
+  static IDatum *CreateGenericDatum(CMemoryPool *mp, BOOL is_null);
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
 
-	static GPOS_RESULT EresUnittest_Basics();
+  static GPOS_RESULT EresUnittest_Basics();
 
-};	// class CDatumTest
+  static GPOS_RESULT StatsComparisonDoubleLessThan();
+
+  static GPOS_RESULT StatsComparisonDoubleEqualWithinEpsilon();
+
+  static GPOS_RESULT StatsComparisonIntLessThan();
+
+  static GPOS_RESULT StatsComparisonIntEqual();
+
+};  // class CDatumTest
 }  // namespace gpnaucrates
 
-#endif	// !GPNAUCRATES_CDatumTest_H
-
+#endif  // !GPNAUCRATES_CDatumTest_H
 
 // EOF

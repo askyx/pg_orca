@@ -14,11 +14,11 @@
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
+#include "gpos/common/DbgPrintMixin.h"
 
 #include "gpopt/base/CDrvdProp.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // forward declarations
@@ -27,7 +27,7 @@ class COperator;
 class CReqdProp;
 
 // dynamic array for required properties
-typedef CDynamicPtrArray<CReqdProp, CleanupRelease> CReqdPropArray;
+using CReqdPropArray = CDynamicPtrArray<CReqdProp, CleanupRelease>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -64,60 +64,47 @@ typedef CDynamicPtrArray<CReqdProp, CleanupRelease> CReqdPropArray;
 //		children.
 //
 //---------------------------------------------------------------------------
-class CReqdProp : public CRefCount
-{
-public:
-	// types of required properties
-	enum EPropType
-	{
-		EptRelational,
-		EptPlan,
+class CReqdProp : public CRefCount, public DbgPrintMixin<CReqdProp> {
+ public:
+  // types of required properties
+  enum EPropType {
+    EptRelational,
+    EptPlan,
 
-		EptSentinel
-	};
+    EptSentinel
+  };
 
-private:
-	// private copy ctor
-	CReqdProp(const CReqdProp &);
+ private:
+ public:
+  CReqdProp(const CReqdProp &) = delete;
 
-public:
-	// ctor
-	CReqdProp();
+  // ctor
+  CReqdProp();
 
-	// dtor
-	virtual ~CReqdProp();
+  // dtor
+  ~CReqdProp() override;
 
-	// is it a relational property?
-	virtual BOOL
-	FRelational() const
-	{
-		return false;
-	}
+  // is it a relational property?
+  virtual BOOL FRelational() const { return false; }
 
-	// is it a plan property?
-	virtual BOOL
-	FPlan() const
-	{
-		return false;
-	}
+  // is it a plan property?
+  virtual BOOL FPlan() const { return false; }
 
-	// required properties computation function
-	virtual void Compute(CMemoryPool *mp, CExpressionHandle &exprhdl,
-						 CReqdProp *prpInput, ULONG child_index,
-						 CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) = 0;
+  // required properties computation function
+  virtual void Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, ULONG child_index,
+                       CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) = 0;
 
-};	// class CReqdProp
+  virtual gpos::IOstream &OsPrint(gpos::IOstream &os) const = 0;
+
+};  // class CReqdProp
 
 // shorthand for printing
-inline IOstream &
-operator<<(IOstream &os, const CReqdProp &reqdprop)
-{
-	return reqdprop.OsPrint(os);
+inline IOstream &operator<<(IOstream &os, const CReqdProp &reqdprop) {
+  return reqdprop.OsPrint(os);
 }
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CReqdProp_H
+#endif  // !GPOPT_CReqdProp_H
 
 // EOF

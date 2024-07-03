@@ -21,8 +21,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -33,50 +32,35 @@ using namespace gpos;
 //		Class to transform logical difference all into a LASJ
 //
 //---------------------------------------------------------------------------
-class CXformDifferenceAll2LeftAntiSemiJoin : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformDifferenceAll2LeftAntiSemiJoin(
-		const CXformDifferenceAll2LeftAntiSemiJoin &);
+class CXformDifferenceAll2LeftAntiSemiJoin : public CXformExploration {
+ private:
+ public:
+  CXformDifferenceAll2LeftAntiSemiJoin(const CXformDifferenceAll2LeftAntiSemiJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformDifferenceAll2LeftAntiSemiJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformDifferenceAll2LeftAntiSemiJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformDifferenceAll2LeftAntiSemiJoin()
-	{
-	}
+  // dtor
+  ~CXformDifferenceAll2LeftAntiSemiJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfDifferenceAll2LeftAntiSemiJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfDifferenceAll2LeftAntiSemiJoin; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformDifferenceAll2LeftAntiSemiJoin";
-	}
+  const CHAR *SzId() const override { return "CXformDifferenceAll2LeftAntiSemiJoin"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise
-	Exfp(CExpressionHandle &  // exprhdl
-	) const
-	{
-		return CXform::ExfpHigh;
-	}
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &  // exprhdl
+  ) const override {
+    return CXform::ExfpHigh;
+  }
 
-	// actual transform
-	void Transform(CXformContext *, CXformResult *, CExpression *) const;
+  // actual transform
+  void Transform(CXformContext *, CXformResult *, CExpression *) const override;
 
-};	// class CXformDifferenceAll2LeftAntiSemiJoin
+};  // class CXformDifferenceAll2LeftAntiSemiJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformDifferenceAll2LeftAntiSemiJoin_H
+#endif  // !GPOPT_CXformDifferenceAll2LeftAntiSemiJoin_H
 
 // EOF

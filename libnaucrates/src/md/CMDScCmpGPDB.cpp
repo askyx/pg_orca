@@ -10,7 +10,6 @@
 //		in the MD cache
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/md/CMDScCmpGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
@@ -29,25 +28,20 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMDScCmpGPDB::CMDScCmpGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
-						   IMDId *left_mdid, IMDId *right_mdid,
-						   IMDType::ECmpType cmp_type, IMDId *mdid_op)
-	: m_mp(mp),
-	  m_mdid(mdid),
-	  m_mdname(mdname),
-	  m_mdid_left(left_mdid),
-	  m_mdid_right(right_mdid),
-	  m_comparision_type(cmp_type),
-	  m_mdid_op(mdid_op)
-{
-	GPOS_ASSERT(m_mdid->IsValid());
-	GPOS_ASSERT(m_mdid_left->IsValid());
-	GPOS_ASSERT(m_mdid_right->IsValid());
-	GPOS_ASSERT(m_mdid_op->IsValid());
-	GPOS_ASSERT(IMDType::EcmptOther != m_comparision_type);
-
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+CMDScCmpGPDB::CMDScCmpGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *left_mdid, IMDId *right_mdid,
+                           IMDType::ECmpType cmp_type, IMDId *mdid_op)
+    : m_mp(mp),
+      m_mdid(mdid),
+      m_mdname(mdname),
+      m_mdid_left(left_mdid),
+      m_mdid_right(right_mdid),
+      m_comparision_type(cmp_type),
+      m_mdid_op(mdid_op) {
+  GPOS_ASSERT(m_mdid->IsValid());
+  GPOS_ASSERT(m_mdid_left->IsValid());
+  GPOS_ASSERT(m_mdid_right->IsValid());
+  GPOS_ASSERT(m_mdid_op->IsValid());
+  GPOS_ASSERT(IMDType::EcmptOther != m_comparision_type);
 }
 
 //---------------------------------------------------------------------------
@@ -58,16 +52,23 @@ CMDScCmpGPDB::CMDScCmpGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CMDScCmpGPDB::~CMDScCmpGPDB()
-{
-	m_mdid->Release();
-	m_mdid_left->Release();
-	m_mdid_right->Release();
-	m_mdid_op->Release();
-	GPOS_DELETE(m_mdname);
-	GPOS_DELETE(m_dxl_str);
+CMDScCmpGPDB::~CMDScCmpGPDB() {
+  m_mdid->Release();
+  m_mdid_left->Release();
+  m_mdid_right->Release();
+  m_mdid_op->Release();
+  GPOS_DELETE(m_mdname);
+  if (nullptr != m_dxl_str) {
+    GPOS_DELETE(m_dxl_str);
+  }
 }
 
+const CWStringDynamic *CMDScCmpGPDB::GetStrRepr() {
+  if (nullptr == m_dxl_str) {
+    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+  }
+  return m_dxl_str;
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -77,10 +78,8 @@ CMDScCmpGPDB::~CMDScCmpGPDB()
 //		Mdid of comparison object
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScCmpGPDB::MDId() const
-{
-	return m_mdid;
+IMDId *CMDScCmpGPDB::MDId() const {
+  return m_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -91,10 +90,8 @@ CMDScCmpGPDB::MDId() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-CMDName
-CMDScCmpGPDB::Mdname() const
-{
-	return *m_mdname;
+CMDName CMDScCmpGPDB::Mdname() const {
+  return *m_mdname;
 }
 
 //---------------------------------------------------------------------------
@@ -105,10 +102,8 @@ CMDScCmpGPDB::Mdname() const
 //		Left type id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScCmpGPDB::GetLeftMdid() const
-{
-	return m_mdid_left;
+IMDId *CMDScCmpGPDB::GetLeftMdid() const {
+  return m_mdid_left;
 }
 
 //---------------------------------------------------------------------------
@@ -119,10 +114,8 @@ CMDScCmpGPDB::GetLeftMdid() const
 //		Destination type id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScCmpGPDB::GetRightMdid() const
-{
-	return m_mdid_right;
+IMDId *CMDScCmpGPDB::GetRightMdid() const {
+  return m_mdid_right;
 }
 
 //---------------------------------------------------------------------------
@@ -133,10 +126,8 @@ CMDScCmpGPDB::GetRightMdid() const
 //		Cast function id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDScCmpGPDB::MdIdOp() const
-{
-	return m_mdid_op;
+IMDId *CMDScCmpGPDB::MdIdOp() const {
+  return m_mdid_op;
 }
 
 //---------------------------------------------------------------------------
@@ -148,10 +139,8 @@ CMDScCmpGPDB::MdIdOp() const
 //		types are binary compatible
 //
 //---------------------------------------------------------------------------
-IMDType::ECmpType
-CMDScCmpGPDB::ParseCmpType() const
-{
-	return m_comparision_type;
+IMDType::ECmpType CMDScCmpGPDB::ParseCmpType() const {
+  return m_comparision_type;
 }
 
 //---------------------------------------------------------------------------
@@ -162,39 +151,26 @@ CMDScCmpGPDB::ParseCmpType() const
 //		Serialize comparison operator metadata in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CMDScCmpGPDB::Serialize(CXMLSerializer *xml_serializer) const
-{
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBMDScCmp));
+void CMDScCmpGPDB::Serialize(CXMLSerializer *xml_serializer) const {
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                              CDXLTokens::GetDXLTokenStr(EdxltokenGPDBMDScCmp));
 
-	m_mdid->Serialize(xml_serializer,
-					  CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
+  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
 
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName),
-								 m_mdname->GetMDName());
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
 
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOpCmpType),
-		IMDType::GetCmpTypeStr(m_comparision_type));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOpCmpType),
+                               IMDType::GetCmpTypeStr(m_comparision_type));
 
-	m_mdid_left->Serialize(
-		xml_serializer,
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOpLeftTypeId));
-	m_mdid_right->Serialize(
-		xml_serializer,
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOpRightTypeId));
-	m_mdid_op->Serialize(xml_serializer,
-						 CDXLTokens::GetDXLTokenStr(EdxltokenOpNo));
+  m_mdid_left->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOpLeftTypeId));
+  m_mdid_right->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOpRightTypeId));
+  m_mdid_op->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenOpNo));
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBMDScCmp));
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                               CDXLTokens::GetDXLTokenStr(EdxltokenGPDBMDScCmp));
 
-	GPOS_CHECK_ABORT;
+  GPOS_CHECK_ABORT;
 }
-
 
 #ifdef GPOS_DEBUG
 
@@ -206,22 +182,19 @@ CMDScCmpGPDB::Serialize(CXMLSerializer *xml_serializer) const
 //		Prints a metadata cache relation to the provided output
 //
 //---------------------------------------------------------------------------
-void
-CMDScCmpGPDB::DebugPrint(IOstream &os) const
-{
-	os << "ComparisonOp ";
-	GetLeftMdid()->OsPrint(os);
-	os << (Mdname()).GetMDName()->GetBuffer() << "(";
-	MdIdOp()->OsPrint(os);
-	os << ") ";
-	GetLeftMdid()->OsPrint(os);
+void CMDScCmpGPDB::DebugPrint(IOstream &os) const {
+  os << "ComparisonOp ";
+  GetLeftMdid()->OsPrint(os);
+  os << (Mdname()).GetMDName()->GetBuffer() << "(";
+  MdIdOp()->OsPrint(os);
+  os << ") ";
+  GetLeftMdid()->OsPrint(os);
 
+  os << ", type: " << IMDType::GetCmpTypeStr(m_comparision_type);
 
-	os << ", type: " << IMDType::GetCmpTypeStr(m_comparision_type);
-
-	os << std::endl;
+  os << std::endl;
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

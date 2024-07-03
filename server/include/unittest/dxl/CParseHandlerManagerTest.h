@@ -10,15 +10,12 @@
 //		during DXL parsing.
 //---------------------------------------------------------------------------
 
-
 #ifndef GPOPT_CParseHandlerManagerTest_H
 #define GPOPT_CParseHandlerManagerTest_H
 
 #include "gpos/base.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -30,16 +27,15 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 
-class CParseHandlerManagerTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
+class CParseHandlerManagerTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
 
-};	// class CParseHandlerManagerTest
+};  // class CParseHandlerManagerTest
 }  // namespace gpdxl
 
-#endif	// GPOPT_CParseHandlerManagerTest_H
+#endif  // GPOPT_CParseHandlerManagerTest_H
 
 // EOF

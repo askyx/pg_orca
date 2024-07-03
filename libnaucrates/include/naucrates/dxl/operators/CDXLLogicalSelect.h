@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDXLLogicalSelect
@@ -26,41 +25,36 @@ namespace gpdxl
 //		Class for representing DXL Logical Select operators
 //
 //---------------------------------------------------------------------------
-class CDXLLogicalSelect : public CDXLLogical
-{
-private:
-	// private copy ctor
-	CDXLLogicalSelect(CDXLLogicalSelect &);
+class CDXLLogicalSelect : public CDXLLogical {
+ private:
+ public:
+  CDXLLogicalSelect(CDXLLogicalSelect &) = delete;
 
-public:
-	// ctor/dtor
-	explicit CDXLLogicalSelect(CMemoryPool *);
+  // ctor/dtor
+  explicit CDXLLogicalSelect(CMemoryPool *);
 
-	// accessors
-	Edxlopid GetDXLOperator() const;
-	const CWStringConst *GetOpNameStr() const;
+  // accessors
+  Edxlopid GetDXLOperator() const override;
+  const CWStringConst *GetOpNameStr() const override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// conversion function
-	static CDXLLogicalSelect *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopLogicalSelect == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLLogicalSelect *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopLogicalSelect == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLLogicalSelect *>(dxl_op);
-	}
+    return dynamic_cast<CDXLLogicalSelect *>(dxl_op);
+  }
 
 #ifdef GPOS_DEBUG
-	// checks whether the operator has valid structure, i.e. number and
-	// types of child nodes
-	void AssertValid(const CDXLNode *, BOOL validate_children) const;
-#endif	// GPOS_DEBUG
+  // checks whether the operator has valid structure, i.e. number and
+  // types of child nodes
+  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLLogicalSelect_H
+#endif  // !GPDXL_CDXLLogicalSelect_H
 
 // EOF

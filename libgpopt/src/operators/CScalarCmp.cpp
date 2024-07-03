@@ -32,24 +32,18 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarCmp::CScalarCmp(CMemoryPool *mp, IMDId *mdid_op,
-					   const CWStringConst *pstrOp, IMDType::ECmpType cmp_type)
-	: CScalar(mp),
-	  m_mdid_op(mdid_op),
-	  m_pstrOp(pstrOp),
-	  m_comparision_type(cmp_type),
-	  m_returns_null_on_null_input(false)
-{
-	GPOS_ASSERT(mdid_op->IsValid());
+CScalarCmp::CScalarCmp(CMemoryPool *mp, IMDId *mdid_op, const CWStringConst *pstrOp, IMDType::ECmpType cmp_type)
+    : CScalar(mp),
+      m_mdid_op(mdid_op),
+      m_pstrOp(pstrOp),
+      m_comparision_type(cmp_type),
+      m_returns_null_on_null_input(false) {
+  GPOS_ASSERT(mdid_op->IsValid());
 
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	m_returns_null_on_null_input =
-		CMDAccessorUtils::FScalarOpReturnsNullOnNullInput(md_accessor,
-														  m_mdid_op);
-	m_fCommutative =
-		CMDAccessorUtils::FCommutativeScalarOp(md_accessor, m_mdid_op);
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  m_returns_null_on_null_input = CMDAccessorUtils::FScalarOpReturnsNullOnNullInput(md_accessor, m_mdid_op);
+  m_fCommutative = CMDAccessorUtils::FCommutativeScalarOp(md_accessor, m_mdid_op);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -59,10 +53,8 @@ CScalarCmp::CScalarCmp(CMemoryPool *mp, IMDId *mdid_op,
 //		Comparison operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CScalarCmp::Pstr() const
-{
-	return m_pstrOp;
+const CWStringConst *CScalarCmp::Pstr() const {
+  return m_pstrOp;
 }
 
 //---------------------------------------------------------------------------
@@ -73,10 +65,8 @@ CScalarCmp::Pstr() const
 //		Comparison operator metadata id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarCmp::MdIdOp() const
-{
-	return m_mdid_op;
+IMDId *CScalarCmp::MdIdOp() const {
+  return m_mdid_op;
 }
 
 //---------------------------------------------------------------------------
@@ -89,11 +79,9 @@ CScalarCmp::MdIdOp() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarCmp::HashValue() const
-{
-	return gpos::CombineHashes(COperator::HashValue(), m_mdid_op->HashValue());
+CScalarCmp::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(), m_mdid_op->HashValue());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -103,18 +91,15 @@ CScalarCmp::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarCmp::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarCmp *popScCmp = CScalarCmp::PopConvert(pop);
+BOOL CScalarCmp::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarCmp *popScCmp = CScalarCmp::PopConvert(pop);
 
-		// match if operator oid are identical
-		return m_mdid_op->Equals(popScCmp->MdIdOp());
-	}
+    // match if operator oid are identical
+    return m_mdid_op->Equals(popScCmp->MdIdOp());
+  }
 
-	return false;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -125,12 +110,9 @@ CScalarCmp::Matches(COperator *pop) const
 //		Sensitivity to order of inputs
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarCmp::FInputOrderSensitive() const
-{
-	return !m_fCommutative;
+BOOL CScalarCmp::FInputOrderSensitive() const {
+  return !m_fCommutative;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -140,13 +122,10 @@ CScalarCmp::FInputOrderSensitive() const
 //		Expression type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarCmp::MdidType() const
-{
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	return md_accessor->PtMDType<IMDTypeBool>()->MDId();
+IMDId *CScalarCmp::MdidType() const {
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  return md_accessor->PtMDType<IMDTypeBool>()->MDId();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -156,51 +135,37 @@ CScalarCmp::MdidType() const
 //		Perform boolean expression evaluation
 //
 //---------------------------------------------------------------------------
-CScalar::EBoolEvalResult
-CScalarCmp::Eber(ULongPtrArray *pdrgpulChildren) const
-{
-	if (m_returns_null_on_null_input)
-	{
-		return EberNullOnAnyNullChild(pdrgpulChildren);
-	}
+CScalar::EBoolEvalResult CScalarCmp::Eber(ULongPtrArray *pdrgpulChildren) const {
+  if (m_returns_null_on_null_input) {
+    return EberNullOnAnyNullChild(pdrgpulChildren);
+  }
 
-	return EberAny;
+  return EberAny;
 }
 
 // get metadata id of the commuted operator
-IMDId *
-CScalarCmp::PmdidCommuteOp(CMDAccessor *md_accessor, COperator *pop)
-{
-	CScalarCmp *popScalarCmp = dynamic_cast<CScalarCmp *>(pop);
-	const IMDScalarOp *pmdScalarCmpOp =
-		md_accessor->RetrieveScOp(popScalarCmp->MdIdOp());
+IMDId *CScalarCmp::PmdidCommuteOp(CMDAccessor *md_accessor, COperator *pop) {
+  CScalarCmp *popScalarCmp = dynamic_cast<CScalarCmp *>(pop);
+  const IMDScalarOp *pmdScalarCmpOp = md_accessor->RetrieveScOp(popScalarCmp->MdIdOp());
 
-	IMDId *pmdidScalarCmpCommute = pmdScalarCmpOp->GetCommuteOpMdid();
-	return pmdidScalarCmpCommute;
+  IMDId *pmdidScalarCmpCommute = pmdScalarCmpOp->GetCommuteOpMdid();
+  return pmdidScalarCmpCommute;
 }
 
 // get the string representation of a metadata object
-CWStringConst *
-CScalarCmp::Pstr(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid)
-{
-	mdid->AddRef();
-	return GPOS_NEW(mp) CWStringConst(
-		mp,
-		(md_accessor->RetrieveScOp(mdid)->Mdname().GetMDName())->GetBuffer());
+CWStringConst *CScalarCmp::Pstr(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid) {
+  mdid->AddRef();
+  return GPOS_NEW(mp) CWStringConst(mp, (md_accessor->RetrieveScOp(mdid)->Mdname().GetMDName())->GetBuffer());
 }
 
 // get commuted scalar comparision operator
-CScalarCmp *
-CScalarCmp::PopCommutedOp(CMemoryPool *mp, COperator *pop)
-{
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	IMDId *mdid = PmdidCommuteOp(md_accessor, pop);
-	if (NULL != mdid && mdid->IsValid())
-	{
-		return GPOS_NEW(mp) CScalarCmp(mp, mdid, Pstr(mp, md_accessor, mdid),
-									   CUtils::ParseCmpType(mdid));
-	}
-	return NULL;
+CScalarCmp *CScalarCmp::PopCommutedOp(CMemoryPool *mp) {
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  IMDId *mdid = PmdidCommuteOp(md_accessor, this);
+  if (nullptr != mdid && mdid->IsValid()) {
+    return GPOS_NEW(mp) CScalarCmp(mp, mdid, Pstr(mp, md_accessor, mdid), CUtils::ParseCmpType(mdid));
+  }
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -211,15 +176,12 @@ CScalarCmp::PopCommutedOp(CMemoryPool *mp, COperator *pop)
 //		Debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarCmp::OsPrint(IOstream &os) const
-{
-	os << SzId() << " (";
-	os << Pstr()->GetBuffer();
-	os << ")";
+IOstream &CScalarCmp::OsPrint(IOstream &os) const {
+  os << SzId() << " (";
+  os << Pstr()->GetBuffer();
+  os << ")";
 
-	return os;
+  return os;
 }
-
 
 // EOF

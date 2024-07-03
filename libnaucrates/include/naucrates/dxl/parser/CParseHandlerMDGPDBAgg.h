@@ -17,9 +17,7 @@
 #include "naucrates/dxl/parser/CParseHandlerMetadataObject.h"
 #include "naucrates/md/CMDAggregateGPDB.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -33,56 +31,54 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for GPDB aggregate metadata
 //
 //---------------------------------------------------------------------------
-class CParseHandlerMDGPDBAgg : public CParseHandlerMetadataObject
-{
-private:
-	// metadata id comprising of id and version info.
-	IMDId *m_mdid;
+class CParseHandlerMDGPDBAgg : public CParseHandlerMetadataObject {
+ private:
+  // metadata id comprising of id and version info.
+  IMDId *m_mdid;
 
-	// name
-	CMDName *m_mdname;
+  // name
+  CMDName *m_mdname;
 
-	// result type
-	IMDId *m_mdid_type_result;
+  // result type
+  IMDId *m_mdid_type_result;
 
-	// intermediate result type
-	IMDId *m_mdid_type_intermediate;
+  // intermediate result type
+  IMDId *m_mdid_type_intermediate;
 
-	// is aggregate ordered
-	BOOL m_is_ordered;
+  // is aggregate ordered
+  BOOL m_is_ordered;
 
-	// is aggregate splittable
-	BOOL m_is_splittable;
+  // is aggregate splittable
+  BOOL m_is_splittable;
 
-	// can we use hash aggregation to compute agg function
-	BOOL m_hash_agg_capable;
+  // can we use hash aggregation to compute agg function
+  BOOL m_hash_agg_capable;
 
-	// private copy ctor
-	CParseHandlerMDGPDBAgg(const CParseHandlerMDGPDBAgg &);
+  // is aggregate replicate slice safe for execution
+  BOOL m_is_repsafe;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-public:
-	// ctor
-	CParseHandlerMDGPDBAgg(CMemoryPool *mp,
-						   CParseHandlerManager *parse_handler_mgr,
-						   CParseHandlerBase *parse_handler_root);
+ public:
+  CParseHandlerMDGPDBAgg(const CParseHandlerMDGPDBAgg &) = delete;
+
+  // ctor
+  CParseHandlerMDGPDBAgg(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                         CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerMDGPDBAgg_H
+#endif  // !GPDXL_CParseHandlerMDGPDBAgg_H
 
 // EOF

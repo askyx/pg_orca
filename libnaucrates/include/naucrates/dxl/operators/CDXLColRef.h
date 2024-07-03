@@ -9,8 +9,6 @@
 //		Class for representing column references.
 //---------------------------------------------------------------------------
 
-
-
 #ifndef GPDXL_CDXLColRef_H
 #define GPDXL_CDXLColRef_H
 
@@ -21,8 +19,7 @@
 #include "naucrates/md/CMDName.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpmd;
 using namespace gpos;
 
@@ -31,7 +28,7 @@ class CXMLSerializer;
 class CDXLColRef;
 
 // arrays of column references
-typedef CDynamicPtrArray<CDXLColRef, CleanupRelease> CDXLColRefArray;
+using CDXLColRefArray = CDynamicPtrArray<CDXLColRef, CleanupRelease>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -41,47 +38,39 @@ typedef CDynamicPtrArray<CDXLColRef, CleanupRelease> CDXLColRefArray;
 //		Class for representing references to columns in DXL trees
 //
 //---------------------------------------------------------------------------
-class CDXLColRef : public CRefCount
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CDXLColRef : public CRefCount {
+ private:
+  // name
+  CMDName *m_mdname;
 
-	// name
-	CMDName *m_mdname;
+  // id
+  const ULONG m_id;
 
-	// id
-	const ULONG m_id;
+  // column type
+  IMDId *m_mdid_type;
 
-	// column type
-	IMDId *m_mdid_type;
+  // column type modifier
+  INT m_iTypeModifer;
 
-	// column type modifier
-	INT m_iTypeModifer;
+ public:
+  CDXLColRef(const CDXLColRef &) = delete;
 
-	// private copy ctor
-	CDXLColRef(const CDXLColRef &);
+  // ctor/dtor
+  CDXLColRef(CMDName *mdname, ULONG id, IMDId *mdid_type, INT type_modifier);
 
-public:
-	// ctor/dtor
-	CDXLColRef(CMemoryPool *mp, CMDName *mdname, ULONG id, IMDId *mdid_type,
-			   INT type_modifier);
+  ~CDXLColRef() override;
 
-	~CDXLColRef();
+  // accessors
+  const CMDName *MdName() const;
 
-	// accessors
-	const CMDName *MdName() const;
+  IMDId *MdidType() const;
 
-	IMDId *MdidType() const;
+  INT TypeModifier() const;
 
-	INT TypeModifier() const;
-
-	ULONG Id() const;
+  ULONG Id() const;
 };
 }  // namespace gpdxl
 
-
-
-#endif	// !GPDXL_CDXLColRef_H
+#endif  // !GPDXL_CDXLColRef_H
 
 // EOF

@@ -17,10 +17,8 @@
 #include "gpopt/engine/CEngine.h"
 #include "gpopt/search/CScheduler.h"
 
-
 using namespace gpos;
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -31,10 +29,8 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CSchedulerContext::CSchedulerContext()
-	: m_pmpGlobal(NULL), m_pmpLocal(NULL), m_psched(NULL), m_fInit(false)
-{
-}
 
+    = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,19 +40,16 @@ CSchedulerContext::CSchedulerContext()
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CSchedulerContext::~CSchedulerContext()
-{
-	GPOS_ASSERT_IMP(FInit(), NULL != GetGlobalMemoryPool());
-	GPOS_ASSERT_IMP(FInit(), NULL != PmpLocal());
-	GPOS_ASSERT_IMP(FInit(), NULL != Psched());
+CSchedulerContext::~CSchedulerContext() {
+  GPOS_ASSERT_IMP(FInit(), nullptr != GetGlobalMemoryPool());
+  GPOS_ASSERT_IMP(FInit(), nullptr != PmpLocal());
+  GPOS_ASSERT_IMP(FInit(), nullptr != Psched());
 
-	// release local memory pool
-	if (FInit())
-	{
-		CMemoryPoolManager::GetMemoryPoolMgr()->Destroy(PmpLocal());
-	}
+  // release local memory pool
+  if (FInit()) {
+    CMemoryPoolManager::Destroy(PmpLocal());
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -66,25 +59,21 @@ CSchedulerContext::~CSchedulerContext()
 //		Initialize scheduling context
 //
 //---------------------------------------------------------------------------
-void
-CSchedulerContext::Init(CMemoryPool *pmpGlobal, CJobFactory *pjf,
-						CScheduler *psched, CEngine *peng)
-{
-	GPOS_ASSERT(NULL != pmpGlobal);
-	GPOS_ASSERT(NULL != pjf);
-	GPOS_ASSERT(NULL != psched);
-	GPOS_ASSERT(NULL != peng);
+void CSchedulerContext::Init(CMemoryPool *pmpGlobal, CJobFactory *pjf, CScheduler *psched, CEngine *peng) {
+  GPOS_ASSERT(nullptr != pmpGlobal);
+  GPOS_ASSERT(nullptr != pjf);
+  GPOS_ASSERT(nullptr != psched);
+  GPOS_ASSERT(nullptr != peng);
 
-	GPOS_ASSERT(!FInit() && "Scheduling context is already initialized");
+  GPOS_ASSERT(!FInit() && "Scheduling context is already initialized");
 
-	m_pmpLocal = CMemoryPoolManager::GetMemoryPoolMgr()->CreateMemoryPool();
+  m_pmpLocal = CMemoryPoolManager::CreateMemoryPool();
 
-	m_pmpGlobal = pmpGlobal;
-	m_pjf = pjf;
-	m_psched = psched;
-	m_peng = peng;
-	m_fInit = true;
+  m_pmpGlobal = pmpGlobal;
+  m_pjf = pjf;
+  m_psched = psched;
+  m_peng = peng;
+  m_fInit = true;
 }
-
 
 // EOF

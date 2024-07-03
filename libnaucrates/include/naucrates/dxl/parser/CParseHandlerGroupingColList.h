@@ -17,8 +17,7 @@
 
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -32,43 +31,38 @@ XERCES_CPP_NAMESPACE_USE
 //		an Aggregate operator node.
 //
 //---------------------------------------------------------------------------
-class CParseHandlerGroupingColList : public CParseHandlerBase
-{
-private:
-	// array of grouping column ids
-	ULongPtrArray *m_grouping_colids_array;
+class CParseHandlerGroupingColList : public CParseHandlerBase {
+ private:
+  // array of grouping column ids
+  ULongPtrArray *m_grouping_colids_array;
 
-	// private copy ctor
-	CParseHandlerGroupingColList(const CParseHandlerGroupingColList &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerGroupingColList(const CParseHandlerGroupingColList &) = delete;
 
-public:
-	// ctor/dtor
-	CParseHandlerGroupingColList(CMemoryPool *mp,
-								 CParseHandlerManager *parse_handler_mgr,
-								 CParseHandlerBase *parse_handler_root);
+  // ctor/dtor
+  CParseHandlerGroupingColList(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                               CParseHandlerBase *parse_handler_root);
 
-	virtual ~CParseHandlerGroupingColList();
+  ~CParseHandlerGroupingColList() override;
 
-	// accessor
-	ULongPtrArray *GetGroupingColidArray();
+  // accessor
+  ULongPtrArray *GetGroupingColidArray();
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerGroupingColList_H
+#endif  // !GPDXL_CParseHandlerGroupingColList_H
 
 // EOF

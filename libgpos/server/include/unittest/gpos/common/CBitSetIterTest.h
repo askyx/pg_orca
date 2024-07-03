@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CBitSetIterTest
@@ -23,21 +22,20 @@ namespace gpos
 //		Static unit tests for bit set
 //
 //---------------------------------------------------------------------------
-class CBitSetIterTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
+class CBitSetIterTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
 
 #ifdef GPOS_DEBUG
-	static GPOS_RESULT EresUnittest_Uninitialized();
-	static GPOS_RESULT EresUnittest_Overrun();
-#endif	// GPOS_DEBUG
+  static GPOS_RESULT EresUnittest_Uninitialized();
+  static GPOS_RESULT EresUnittest_Overrun();
+#endif  // GPOS_DEBUG
 
-};	// class CBitSetIterTest
+};  // class CBitSetIterTest
 }  // namespace gpos
 
-#endif	// !GPOS_CBitSetIterTest_H
+#endif  // !GPOS_CBitSetIterTest_H
 
 // EOF

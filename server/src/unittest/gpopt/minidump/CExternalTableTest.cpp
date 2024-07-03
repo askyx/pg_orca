@@ -30,19 +30,17 @@
 
 using namespace gpdxl;
 
-ULONG CExternalTableTest::m_ulTestCounter = 0;	// start from first test
+ULONG CExternalTableTest::m_ulTestCounter = 0;  // start from first test
 
 // minidump files
-const CHAR *rgszExternalTableFileNames[] = {
-	"../data/dxl/minidump/ExternalTable1.mdp",
-	"../data/dxl/minidump/ExternalTable2.mdp",
-	"../data/dxl/minidump/ExternalTable3.mdp",
-	"../data/dxl/minidump/ExternalTable4.mdp",
-	"../data/dxl/minidump/ExternalTableWithFilter.mdp",
-	"../data/dxl/minidump/CTAS-with-randomly-distributed-external-table.mdp",
-	"../data/dxl/minidump/CTAS-with-hashed-distributed-external-table.mdp",
-	"../data/dxl/minidump/AggonExternalTableNoMotion.mdp"};
-
+const CHAR *rgszExternalTableFileNames[] = {"../data/dxl/minidump/ExternalTable1.mdp",
+                                            "../data/dxl/minidump/ExternalTable2.mdp",
+                                            "../data/dxl/minidump/ExternalTable3.mdp",
+                                            "../data/dxl/minidump/ExternalTable4.mdp",
+                                            "../data/dxl/minidump/ExternalTableWithFilter.mdp",
+                                            "../data/dxl/minidump/CTAS-with-randomly-distributed-external-table.mdp",
+                                            "../data/dxl/minidump/CTAS-with-hashed-distributed-external-table.mdp",
+                                            "../data/dxl/minidump/AggonExternalTableNoMotion.mdp"};
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,18 +51,17 @@ const CHAR *rgszExternalTableFileNames[] = {
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CExternalTableTest::EresUnittest()
-{
-	CUnittest rgut[] = {
-		GPOS_UNITTEST_FUNC(CExternalTableTest::EresUnittest_RunMinidumpTests),
-	};
+CExternalTableTest::EresUnittest() {
+  CUnittest rgut[] = {
+      GPOS_UNITTEST_FUNC(CExternalTableTest::EresUnittest_RunMinidumpTests),
+  };
 
-	GPOS_RESULT eres = CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
+  GPOS_RESULT eres = CUnittest::EresExecute(rgut, GPOS_ARRAY_SIZE(rgut));
 
-	// reset metadata cache
-	CMDCache::Reset();
+  // reset metadata cache
+  CMDCache::Reset();
 
-	return eres;
+  return eres;
 }
 
 //---------------------------------------------------------------------------
@@ -76,11 +73,9 @@ CExternalTableTest::EresUnittest()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CExternalTableTest::EresUnittest_RunMinidumpTests()
-{
-	return CTestUtils::EresUnittest_RunTests(
-		rgszExternalTableFileNames, &m_ulTestCounter,
-		GPOS_ARRAY_SIZE(rgszExternalTableFileNames));
+CExternalTableTest::EresUnittest_RunMinidumpTests() {
+  return CTestUtils::EresUnittest_RunTests(rgszExternalTableFileNames, &m_ulTestCounter,
+                                           GPOS_ARRAY_SIZE(rgszExternalTableFileNames));
 }
 
 // EOF

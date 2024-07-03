@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarAssertConstraintList.cpp
@@ -14,6 +14,7 @@
 
 #include "gpos/base.h"
 
+#include "gpopt/base/COptCtxt.h"
 #include "naucrates/md/IMDTypeBool.h"
 
 using namespace gpopt;
@@ -27,10 +28,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarAssertConstraintList::CScalarAssertConstraintList(CMemoryPool *mp)
-	: CScalar(mp)
-{
-}
+CScalarAssertConstraintList::CScalarAssertConstraintList(CMemoryPool *mp) : CScalar(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -40,12 +38,9 @@ CScalarAssertConstraintList::CScalarAssertConstraintList(CMemoryPool *mp)
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarAssertConstraintList::Matches(COperator *pop) const
-{
-	return pop->Eopid() == Eopid();
+BOOL CScalarAssertConstraintList::Matches(COperator *pop) const {
+  return pop->Eopid() == Eopid();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -55,12 +50,9 @@ CScalarAssertConstraintList::Matches(COperator *pop) const
 //		Type of expression's result
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarAssertConstraintList::MdidType() const
-{
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	return md_accessor->PtMDType<IMDTypeBool>()->MDId();
+IMDId *CScalarAssertConstraintList::MdidType() const {
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  return md_accessor->PtMDType<IMDTypeBool>()->MDId();
 }
-
 
 // EOF

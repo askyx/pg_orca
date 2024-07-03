@@ -10,7 +10,6 @@
 //		in the MD cache
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/md/CMDCastGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
@@ -29,26 +28,20 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMDCastGPDB::CMDCastGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
-						 IMDId *mdid_src, IMDId *mdid_dest,
-						 BOOL is_binary_coercible, IMDId *mdid_cast_func,
-						 EmdCoercepathType path_type)
-	: m_mp(mp),
-	  m_mdid(mdid),
-	  m_mdname(mdname),
-	  m_mdid_src(mdid_src),
-	  m_mdid_dest(mdid_dest),
-	  m_is_binary_coercible(is_binary_coercible),
-	  m_mdid_cast_func(mdid_cast_func),
-	  m_path_type(path_type)
-{
-	GPOS_ASSERT(m_mdid->IsValid());
-	GPOS_ASSERT(m_mdid_src->IsValid());
-	GPOS_ASSERT(m_mdid_dest->IsValid());
-	GPOS_ASSERT_IMP(!is_binary_coercible, m_mdid_cast_func->IsValid());
-
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+CMDCastGPDB::CMDCastGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *mdid_src, IMDId *mdid_dest,
+                         BOOL is_binary_coercible, IMDId *mdid_cast_func, EmdCoercepathType path_type)
+    : m_mp(mp),
+      m_mdid(mdid),
+      m_mdname(mdname),
+      m_mdid_src(mdid_src),
+      m_mdid_dest(mdid_dest),
+      m_is_binary_coercible(is_binary_coercible),
+      m_mdid_cast_func(mdid_cast_func),
+      m_path_type(path_type) {
+  GPOS_ASSERT(m_mdid->IsValid());
+  GPOS_ASSERT(m_mdid_src->IsValid());
+  GPOS_ASSERT(m_mdid_dest->IsValid());
+  GPOS_ASSERT_IMP(!is_binary_coercible && m_path_type != EmdtCoerceViaIO, m_mdid_cast_func->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -59,16 +52,23 @@ CMDCastGPDB::CMDCastGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CMDCastGPDB::~CMDCastGPDB()
-{
-	m_mdid->Release();
-	m_mdid_src->Release();
-	m_mdid_dest->Release();
-	CRefCount::SafeRelease(m_mdid_cast_func);
-	GPOS_DELETE(m_mdname);
-	GPOS_DELETE(m_dxl_str);
+CMDCastGPDB::~CMDCastGPDB() {
+  m_mdid->Release();
+  m_mdid_src->Release();
+  m_mdid_dest->Release();
+  CRefCount::SafeRelease(m_mdid_cast_func);
+  GPOS_DELETE(m_mdname);
+  if (nullptr != m_dxl_str) {
+    GPOS_DELETE(m_dxl_str);
+  }
 }
 
+const CWStringDynamic *CMDCastGPDB::GetStrRepr() {
+  if (nullptr == m_dxl_str) {
+    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+  }
+  return m_dxl_str;
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -78,10 +78,8 @@ CMDCastGPDB::~CMDCastGPDB()
 //		Mdid of cast object
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDCastGPDB::MDId() const
-{
-	return m_mdid;
+IMDId *CMDCastGPDB::MDId() const {
+  return m_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -92,10 +90,8 @@ CMDCastGPDB::MDId() const
 //		Func name
 //
 //---------------------------------------------------------------------------
-CMDName
-CMDCastGPDB::Mdname() const
-{
-	return *m_mdname;
+CMDName CMDCastGPDB::Mdname() const {
+  return *m_mdname;
 }
 
 //---------------------------------------------------------------------------
@@ -106,10 +102,8 @@ CMDCastGPDB::Mdname() const
 //		Source type id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDCastGPDB::MdidSrc() const
-{
-	return m_mdid_src;
+IMDId *CMDCastGPDB::MdidSrc() const {
+  return m_mdid_src;
 }
 
 //---------------------------------------------------------------------------
@@ -120,10 +114,8 @@ CMDCastGPDB::MdidSrc() const
 //		Destination type id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDCastGPDB::MdidDest() const
-{
-	return m_mdid_dest;
+IMDId *CMDCastGPDB::MdidDest() const {
+  return m_mdid_dest;
 }
 
 //---------------------------------------------------------------------------
@@ -134,10 +126,8 @@ CMDCastGPDB::MdidDest() const
 //		Cast function id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDCastGPDB::GetCastFuncMdId() const
-{
-	return m_mdid_cast_func;
+IMDId *CMDCastGPDB::GetCastFuncMdId() const {
+  return m_mdid_cast_func;
 }
 
 //---------------------------------------------------------------------------
@@ -149,17 +139,13 @@ CMDCastGPDB::GetCastFuncMdId() const
 //		types are binary compatible
 //
 //---------------------------------------------------------------------------
-BOOL
-CMDCastGPDB::IsBinaryCoercible() const
-{
-	return m_is_binary_coercible;
+BOOL CMDCastGPDB::IsBinaryCoercible() const {
+  return m_is_binary_coercible;
 }
 
 // returns coercion path type
-IMDCast::EmdCoercepathType
-CMDCastGPDB::GetMDPathType() const
-{
-	return m_path_type;
+IMDCast::EmdCoercepathType CMDCastGPDB::GetMDPathType() const {
+  return m_path_type;
 }
 
 //---------------------------------------------------------------------------
@@ -170,37 +156,23 @@ CMDCastGPDB::GetMDPathType() const
 //		Serialize function metadata in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CMDCastGPDB::Serialize(CXMLSerializer *xml_serializer) const
-{
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCast));
+void CMDCastGPDB::Serialize(CXMLSerializer *xml_serializer) const {
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                              CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCast));
 
-	m_mdid->Serialize(xml_serializer,
-					  CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
+  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
 
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName),
-								 m_mdname->GetMDName());
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
 
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastBinaryCoercible),
-		m_is_binary_coercible);
-	m_mdid_src->Serialize(xml_serializer,
-						  CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastSrcType));
-	m_mdid_dest->Serialize(
-		xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastDestType));
-	m_mdid_cast_func->Serialize(
-		xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastFuncId));
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastCoercePathType),
-		m_path_type);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastBinaryCoercible), m_is_binary_coercible);
+  m_mdid_src->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastSrcType));
+  m_mdid_dest->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastDestType));
+  m_mdid_cast_func->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastFuncId));
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastCoercePathType), m_path_type);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCast));
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                               CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCast));
 }
-
 
 #ifdef GPOS_DEBUG
 
@@ -212,29 +184,25 @@ CMDCastGPDB::Serialize(CXMLSerializer *xml_serializer) const
 //		Prints a metadata cache relation to the provided output
 //
 //---------------------------------------------------------------------------
-void
-CMDCastGPDB::DebugPrint(IOstream &os) const
-{
-	os << "Cast " << (Mdname()).GetMDName()->GetBuffer() << ": ";
-	MdidSrc()->OsPrint(os);
-	os << "->";
-	MdidDest()->OsPrint(os);
-	os << std::endl;
+void CMDCastGPDB::DebugPrint(IOstream &os) const {
+  os << "Cast " << (Mdname()).GetMDName()->GetBuffer() << ": ";
+  MdidSrc()->OsPrint(os);
+  os << "->";
+  MdidDest()->OsPrint(os);
+  os << std::endl;
 
-	if (m_is_binary_coercible)
-	{
-		os << ", binary-coercible";
-	}
+  if (m_is_binary_coercible) {
+    os << ", binary-coercible";
+  }
 
-	if (IMDId::IsValid(m_mdid_cast_func))
-	{
-		os << ", Cast func id: ";
-		GetCastFuncMdId()->OsPrint(os);
-	}
+  if (IMDId::IsValid(m_mdid_cast_func)) {
+    os << ", Cast func id: ";
+    GetCastFuncMdId()->OsPrint(os);
+  }
 
-	os << std::endl;
+  os << std::endl;
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

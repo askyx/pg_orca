@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		ICostModel.cpp
@@ -12,7 +12,7 @@
 #include "gpos/base.h"
 #include "gpos/string/CWStringConst.h"
 
-#include "gpdbcost/CCostModelGPDBLegacy.h"
+#include "gpdbcost/CCostModelGPDB.h"
 
 using namespace gpopt;
 using namespace gpdbcost;
@@ -28,12 +28,9 @@ using namespace gpdbcost;
 //		Create default cost model
 //
 //---------------------------------------------------------------------------
-ICostModel *
-ICostModel::PcmDefault(CMemoryPool *mp)
-{
-	return GPOS_NEW(mp) CCostModelGPDBLegacy(mp, GPOPT_DEFAULT_SEGMENT_COUNT);
+ICostModel *ICostModel::PcmDefault(CMemoryPool *mp) {
+  return GPOS_NEW(mp) CCostModelGPDB(mp, GPOPT_DEFAULT_SEGMENT_COUNT);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -43,24 +40,17 @@ ICostModel::PcmDefault(CMemoryPool *mp)
 //		Set cost model params
 //
 //---------------------------------------------------------------------------
-void
-ICostModel::SetParams(ICostModelParamsArray *pdrgpcp)
-{
-	if (NULL == pdrgpcp)
-	{
-		return;
-	}
+void ICostModel::SetParams(ICostModelParamsArray *pdrgpcp) const {
+  if (nullptr == pdrgpcp) {
+    return;
+  }
 
-	// overwrite default values of cost model parameters
-	const ULONG size = pdrgpcp->Size();
-	for (ULONG ul = 0; ul < size; ul++)
-	{
-		ICostModelParams::SCostParam *pcp = (*pdrgpcp)[ul];
-		GetCostModelParams()->SetParam(pcp->Id(), pcp->Get(),
-									   pcp->GetLowerBoundVal(),
-									   pcp->GetUpperBoundVal());
-	}
+  // overwrite default values of cost model parameters
+  const ULONG size = pdrgpcp->Size();
+  for (ULONG ul = 0; ul < size; ul++) {
+    ICostModelParams::SCostParam *pcp = (*pdrgpcp)[ul];
+    GetCostModelParams()->SetParam(pcp->Id(), pcp->Get(), pcp->GetLowerBoundVal(), pcp->GetUpperBoundVal());
+  }
 }
-
 
 // EOF

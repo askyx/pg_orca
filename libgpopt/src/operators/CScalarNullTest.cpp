@@ -15,12 +15,12 @@
 
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdPropScalar.h"
+#include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "naucrates/md/IMDTypeBool.h"
 
 using namespace gpopt;
 using namespace gpmd;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -30,12 +30,9 @@ using namespace gpmd;
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarNullTest::Matches(COperator *pop) const
-{
-	return pop->Eopid() == Eopid();
+BOOL CScalarNullTest::Matches(COperator *pop) const {
+  return pop->Eopid() == Eopid();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,14 +42,11 @@ CScalarNullTest::Matches(COperator *pop) const
 //		Expression type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarNullTest::MdidType() const
-{
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+IMDId *CScalarNullTest::MdidType() const {
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
 
-	return md_accessor->PtMDType<IMDTypeBool>()->MDId();
+  return md_accessor->PtMDType<IMDTypeBool>()->MDId();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -62,27 +56,23 @@ CScalarNullTest::MdidType() const
 //		Perform boolean expression evaluation
 //
 //---------------------------------------------------------------------------
-CScalar::EBoolEvalResult
-CScalarNullTest::Eber(ULongPtrArray *pdrgpulChildren) const
-{
-	GPOS_ASSERT(NULL != pdrgpulChildren);
-	GPOS_ASSERT(1 == pdrgpulChildren->Size());
+CScalar::EBoolEvalResult CScalarNullTest::Eber(ULongPtrArray *pdrgpulChildren) const {
+  GPOS_ASSERT(nullptr != pdrgpulChildren);
+  GPOS_ASSERT(1 == pdrgpulChildren->Size());
 
-	EBoolEvalResult eber = (EBoolEvalResult) * ((*pdrgpulChildren)[0]);
-	switch (eber)
-	{
-		case EberNull:
-			return EberTrue;
+  EBoolEvalResult eber = (EBoolEvalResult) * ((*pdrgpulChildren)[0]);
+  switch (eber) {
+    case EberNull:
+      return EberTrue;
 
-		case EberFalse:
-		case EberTrue:
-			return EberFalse;
+    case EberFalse:
+    case EberTrue:
+      return EberFalse;
 
-		case EberNotTrue:
-		default:
-			return EberAny;
-	}
+    case EberNotTrue:
+    default:
+      return EberAny;
+  }
 }
-
 
 // EOF

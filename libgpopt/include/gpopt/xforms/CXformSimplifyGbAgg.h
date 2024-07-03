@@ -16,8 +16,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -29,59 +28,42 @@ using namespace gpos;
 //		functional dependencies
 //
 //---------------------------------------------------------------------------
-class CXformSimplifyGbAgg : public CXformExploration
-{
-private:
-	// helper to check if GbAgg can be transformed to a Select
-	static BOOL FDropGbAgg(CMemoryPool *mp, CExpression *pexpr,
-						   CXformResult *pxfres);
+class CXformSimplifyGbAgg : public CXformExploration {
+ private:
+  // helper to check if GbAgg can be transformed to a Select
+  static BOOL FDropGbAgg(CMemoryPool *mp, CExpression *pexpr, CXformResult *pxfres);
 
-	// private copy ctor
-	CXformSimplifyGbAgg(const CXformSimplifyGbAgg &);
+ public:
+  CXformSimplifyGbAgg(const CXformSimplifyGbAgg &) = delete;
 
-public:
-	// ctor
-	explicit CXformSimplifyGbAgg(CMemoryPool *mp);
+  // ctor
+  explicit CXformSimplifyGbAgg(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformSimplifyGbAgg()
-	{
-	}
+  // dtor
+  ~CXformSimplifyGbAgg() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSimplifyGbAgg;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfSimplifyGbAgg; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSimplifyGbAgg";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformSimplifyGbAgg"; }
 
-	// Compatibility function for simplifying aggregates
-	virtual BOOL
-	FCompatible(CXform::EXformId exfid)
-	{
-		return (CXform::ExfSimplifyGbAgg != exfid) &&
-			   (CXform::ExfSplitDQA != exfid) &&
-			   (CXform::ExfSplitGbAgg != exfid) &&
-			   (CXform::ExfEagerAgg != exfid);
-	}
+  // Compatibility function for simplifying aggregates
+  BOOL FCompatible(CXform::EXformId exfid) override {
+    return (CXform::ExfSimplifyGbAgg != exfid) && (CXform::ExfSplitDQA != exfid) && (CXform::ExfSplitGbAgg != exfid) &&
+           (CXform::ExfEagerAgg != exfid);
+  }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *, CXformResult *, CExpression *) const;
+  // actual transform
+  void Transform(CXformContext *, CXformResult *, CExpression *) const override;
 
-};	// class CXformSimplifyGbAgg
+};  // class CXformSimplifyGbAgg
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSimplifyGbAgg_H
+#endif  // !GPOPT_CXformSimplifyGbAgg_H
 
 // EOF

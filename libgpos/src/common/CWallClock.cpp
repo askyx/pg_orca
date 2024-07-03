@@ -16,7 +16,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CWallClock::ElapsedUS
@@ -26,17 +25,14 @@ using namespace gpos;
 //
 //---------------------------------------------------------------------------
 ULONG
-CWallClock::ElapsedUS() const
-{
-	timeval time;
-	syslib::GetTimeOfDay(&time, NULL /*timezone*/);
+CWallClock::ElapsedUS() const {
+  timeval time;
+  syslib::GetTimeOfDay(&time, nullptr /*timezone*/);
 
-	ULONG diff = (ULONG)(((time.tv_sec - m_time.tv_sec) * GPOS_USEC_IN_SEC) +
-						 (time.tv_usec - m_time.tv_usec));
+  ULONG diff = (ULONG)(((time.tv_sec - m_time.tv_sec) * GPOS_USEC_IN_SEC) + (time.tv_usec - m_time.tv_usec));
 
-	return diff;
+  return diff;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -46,11 +42,8 @@ CWallClock::ElapsedUS() const
 //		Restart timer
 //
 //---------------------------------------------------------------------------
-void
-CWallClock::Restart()
-{
-	syslib::GetTimeOfDay(&m_time, NULL /*timezone*/);
+void CWallClock::Restart() {
+  syslib::GetTimeOfDay(&m_time, nullptr /*timezone*/);
 }
-
 
 // EOF

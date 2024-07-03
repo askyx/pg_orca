@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CConstExprEvaluatorDXLTest.h
@@ -23,13 +23,11 @@
 #include "gpopt/eval/IConstDXLNodeEvaluator.h"
 
 // forward decl
-namespace gpdxl
-{
+namespace gpdxl {
 class CDXLNode;
 }
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // forward decl
@@ -43,66 +41,54 @@ class CMDAccessor;
 //		Unit tests for CConstExprEvaluatorDXL
 //
 //---------------------------------------------------------------------------
-class CConstExprEvaluatorDXLTest
-{
-private:
-	class CDummyConstDXLNodeEvaluator : public IConstDXLNodeEvaluator
-	{
-	private:
-		// memory pool
-		CMemoryPool *m_mp;
+class CConstExprEvaluatorDXLTest {
+ private:
+  class CDummyConstDXLNodeEvaluator : public IConstDXLNodeEvaluator {
+   private:
+    // memory pool
+    CMemoryPool *m_mp;
 
-		// metadata accessor
-		CMDAccessor *m_pmda;
+    // metadata accessor
+    CMDAccessor *m_pmda;
 
-		// dummy value to return
-		INT m_val;
+    // dummy value to return
+    INT m_val;
 
-		// private copy ctor
-		CDummyConstDXLNodeEvaluator(const CDummyConstDXLNodeEvaluator &);
+   public:
+    CDummyConstDXLNodeEvaluator(const CDummyConstDXLNodeEvaluator &) = delete;
 
-	public:
-		// ctor
-		CDummyConstDXLNodeEvaluator(CMemoryPool *mp, CMDAccessor *md_accessor,
-									INT val)
-			: m_mp(mp), m_pmda(md_accessor), m_val(val)
-		{
-		}
+    // ctor
+    CDummyConstDXLNodeEvaluator(CMemoryPool *mp, CMDAccessor *md_accessor, INT val)
+        : m_mp(mp), m_pmda(md_accessor), m_val(val) {}
 
-		// dtor
-		virtual ~CDummyConstDXLNodeEvaluator()
-		{
-		}
+    // dtor
+    ~CDummyConstDXLNodeEvaluator() override = default;
 
-		// evaluate the given DXL node representing an expression and returns a dummy value as DXL
-		virtual gpdxl::CDXLNode *EvaluateExpr(const gpdxl::CDXLNode *pdxlnExpr);
+    // evaluate the given DXL node representing an expression and returns a dummy value as DXL
+    gpdxl::CDXLNode *EvaluateExpr(const gpdxl::CDXLNode *pdxlnExpr) override;
 
-		// can evaluate expressions
-		virtual BOOL
-		FCanEvalExpressions()
-		{
-			return true;
-		}
-	};
+    // can evaluate expressions
+    BOOL FCanEvalExpressions() override { return true; }
+  };
 
-	// value  which the dummy constant evaluator should produce
-	static const INT m_iDefaultEvalValue;
+  // value  which the dummy constant evaluator should produce
+  static const INT m_iDefaultEvalValue;
 
-public:
-	// run unittests
-	static GPOS_RESULT EresUnittest();
+ public:
+  // run unittests
+  static GPOS_RESULT EresUnittest();
 
-	// test that evaluation fails for a non scalar input
-	static GPOS_RESULT EresUnittest_NonScalar();
+  // test that evaluation fails for a non scalar input
+  static GPOS_RESULT EresUnittest_NonScalar();
 
-	// test that evaluation fails for a scalar with a nested subquery
-	static GPOS_RESULT EresUnittest_NestedSubquery();
+  // test that evaluation fails for a scalar with a nested subquery
+  static GPOS_RESULT EresUnittest_NestedSubquery();
 
-	// test that evaluation fails for a scalar with variables
-	static GPOS_RESULT EresUnittest_ScalarContainingVariables();
+  // test that evaluation fails for a scalar with variables
+  static GPOS_RESULT EresUnittest_ScalarContainingVariables();
 };
 }  // namespace gpopt
 
-#endif	// !GPOPT_CConstExprEvaluatorDXLTest_H
+#endif  // !GPOPT_CConstExprEvaluatorDXLTest_H
 
 // EOF

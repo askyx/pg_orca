@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CDoubleTest
@@ -23,19 +22,18 @@ namespace gpos
 //		Unittests for floating-point class
 //
 //---------------------------------------------------------------------------
-class CDoubleTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Arithmetic();
-	static GPOS_RESULT EresUnittest_Bool();
-	static GPOS_RESULT EresUnittest_Convert();
-	static GPOS_RESULT EresUnittest_Limits();
+class CDoubleTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Arithmetic();
+  static GPOS_RESULT EresUnittest_Bool();
+  static GPOS_RESULT EresUnittest_Convert();
+  static GPOS_RESULT EresUnittest_Limits();
 
-};	// class CDoubleTest
+};  // class CDoubleTest
 }  // namespace gpos
 
-#endif	// !GPOS_CDoubleTest_H
+#endif  // !GPOS_CDoubleTest_H
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDMLTest.h
@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,21 +24,20 @@ using namespace gpos;
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CDMLTest
-{
-private:
-	// counter used to mark last successful test
-	static ULONG m_ulDMLTestCounter;
+class CDMLTest {
+ private:
+  // counter used to mark last successful test
+  static ULONG m_ulDMLTestCounter;
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
 
-	static GPOS_RESULT EresUnittest_RunTests();
+  static GPOS_RESULT EresUnittest_RunTests();
 
-};	// class CDMLTest
+};  // class CDMLTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CDMLTest_H
+#endif  // !GPOPT_CDMLTest_H
 
 // EOF

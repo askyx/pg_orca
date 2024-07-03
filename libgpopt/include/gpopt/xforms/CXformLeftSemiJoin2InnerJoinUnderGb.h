@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 Pivotal, Inc.
+//	Copyright (C) 2013 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformLeftSemiJoin2InnerJoinUnderGb.h
@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,48 +26,33 @@ using namespace gpos;
 //		Transform left semi join to inner join under a groupby
 //
 //---------------------------------------------------------------------------
-class CXformLeftSemiJoin2InnerJoinUnderGb : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformLeftSemiJoin2InnerJoinUnderGb(
-		const CXformLeftSemiJoin2InnerJoinUnderGb &);
+class CXformLeftSemiJoin2InnerJoinUnderGb : public CXformExploration {
+ private:
+ public:
+  CXformLeftSemiJoin2InnerJoinUnderGb(const CXformLeftSemiJoin2InnerJoinUnderGb &) = delete;
 
-public:
-	// ctor
-	explicit CXformLeftSemiJoin2InnerJoinUnderGb(CMemoryPool *mp);
+  // ctor
+  explicit CXformLeftSemiJoin2InnerJoinUnderGb(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformLeftSemiJoin2InnerJoinUnderGb()
-	{
-	}
+  // dtor
+  ~CXformLeftSemiJoin2InnerJoinUnderGb() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfLeftSemiJoin2InnerJoinUnderGb;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfLeftSemiJoin2InnerJoinUnderGb; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformLeftSemiJoin2InnerJoinUnderGb";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformLeftSemiJoin2InnerJoinUnderGb"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformLeftSemiJoin2InnerJoinUnderGb
+};  // class CXformLeftSemiJoin2InnerJoinUnderGb
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformLeftSemiJoin2InnerJoinUnderGb_H
+#endif  // !GPOPT_CXformLeftSemiJoin2InnerJoinUnderGb_H
 
 // EOF

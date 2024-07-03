@@ -18,8 +18,7 @@
 
 #include "gpopt/xforms/CJoinOrder.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -30,30 +29,30 @@ using namespace gpos;
 //		Helper class for creating join orders based on cardinality of results
 //
 //---------------------------------------------------------------------------
-class CJoinOrderMinCard : public CJoinOrder
-{
-private:
-	// result component
-	SComponent *m_pcompResult;
+class CJoinOrderMinCard : public CJoinOrder {
+ private:
+  // result component
+  SComponent *m_pcompResult;
 
-public:
-	// ctor
-	CJoinOrderMinCard(CMemoryPool *mp, CExpressionArray *pdrgpexprComponents,
-					  CExpressionArray *pdrgpexprConjuncts);
+ public:
+  // ctor
+  CJoinOrderMinCard(CMemoryPool *mp, CExpressionArray *pdrgpexprComponents, CExpressionArray *pdrgpexprConjuncts);
 
-	// dtor
-	virtual ~CJoinOrderMinCard();
+  // dtor
+  ~CJoinOrderMinCard() override;
 
-	// main handler
-	virtual CExpression *PexprExpand();
+  // main handler
+  virtual CExpression *PexprExpand();
 
-	// print function
-	virtual IOstream &OsPrint(IOstream &) const;
+  // print function
+  IOstream &OsPrint(IOstream &) const;
 
-};	// class CJoinOrderMinCard
+  CXform::EXformId EOriginXForm() const override { return CXform::ExfExpandNAryJoinMinCard; }
+
+};  // class CJoinOrderMinCard
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CJoinOrderMinCard_H
+#endif  // !GPOPT_CJoinOrderMinCard_H
 
 // EOF

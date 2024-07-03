@@ -17,7 +17,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CSerializable::CSerializable
@@ -26,15 +25,13 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CSerializable::CSerializable()
-{
-	CTask *task = CTask::Self();
+CSerializable::CSerializable() {
+  CTask *task = CTask::Self();
 
-	GPOS_ASSERT(NULL != task);
+  GPOS_ASSERT(nullptr != task);
 
-	task->ConvertErrCtxt()->Register(this);
+  task->ConvertErrCtxt()->Register(this);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,14 +41,12 @@ CSerializable::CSerializable()
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CSerializable::~CSerializable()
-{
-	CTask *task = CTask::Self();
+CSerializable::~CSerializable() {
+  CTask *task = CTask::Self();
 
-	GPOS_ASSERT(NULL != task);
+  GPOS_ASSERT(nullptr != task);
 
-	task->ConvertErrCtxt()->Unregister(this);
+  task->ConvertErrCtxt()->Unregister(this);
 }
-
 
 // EOF

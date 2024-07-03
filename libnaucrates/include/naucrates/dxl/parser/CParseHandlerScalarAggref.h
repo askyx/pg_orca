@@ -18,10 +18,16 @@
 #include "naucrates/dxl/operators/CDXLScalarAggref.h"
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
+
+enum EAggrefChildIndices {
+  EdxlParseHandlerAggrefIndexArgs = 0,
+  EdxlParseHandlerAggrefIndexDirectArgs,
+  EdxlParseHandlerAggrefIndexOrder,
+  EdxlParseHandlerAggrefIndexDistinct,
+  EdxlParseHandlerAggrefIndexSentinel
+};
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -33,35 +39,30 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing a scalar aggexpr expression
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarAggref : public CParseHandlerScalarOp
-{
-private:
-	// private copy ctor
-	CParseHandlerScalarAggref(const CParseHandlerScalarAggref &);
+class CParseHandlerScalarAggref : public CParseHandlerScalarOp {
+ private:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerScalarAggref(const CParseHandlerScalarAggref &) = delete;
 
-public:
-	// ctor
-	CParseHandlerScalarAggref(CMemoryPool *mp,
-							  CParseHandlerManager *parse_handler_mgr,
-							  CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerScalarAggref(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                            CParseHandlerBase *parse_handler_root);
 };
 
 }  // namespace gpdxl
-#endif	// !GPDXL_CParseHandlerScalarAggref_H
+#endif  // !GPDXL_CParseHandlerScalarAggref_H
 
-//EOF
+// EOF

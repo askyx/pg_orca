@@ -9,8 +9,6 @@
 //		Class for representing table descriptors.
 //---------------------------------------------------------------------------
 
-
-
 #ifndef GPDXL_CDXLTableDescriptor_H
 #define GPDXL_CDXLTableDescriptor_H
 
@@ -20,8 +18,11 @@
 #include "naucrates/md/CMDName.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpdxl
-{
+#define GPDXL_ACL_UNDEFINED (gpos::ulong_max)
+// default value for m_assigned_query_id_for_target_rel - no assigned query for table descriptor
+#define UNASSIGNED_QUERYID 0
+
+namespace gpdxl {
 using namespace gpmd;
 
 //---------------------------------------------------------------------------
@@ -32,62 +33,77 @@ using namespace gpmd;
 //		Class for representing table descriptors in a DXL tablescan node.
 //
 //---------------------------------------------------------------------------
-class CDXLTableDescr : public CRefCount
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CDXLTableDescr : public CRefCount {
+ private:
+  // id and version information for the table
+  IMDId *m_mdid;
 
-	// id and version information for the table
-	IMDId *m_mdid;
+  // table name
+  CMDName *m_mdname;
 
-	// table name
-	CMDName *m_mdname;
+  // list of column descriptors
+  CDXLColDescrArray *m_dxl_column_descr_array;
 
-	// list of column descriptors
-	CDXLColDescrArray *m_dxl_column_descr_array;
+  // id of user the table needs to be accessed with
+  ULONG m_execute_as_user_id;
 
-	// id of user the table needs to be accessed with
-	ULONG m_execute_as_user_id;
+  // lock mode from the parser
+  INT m_lockmode;
 
-	// private copy ctor
-	CDXLTableDescr(const CDXLTableDescr &);
+  // acl mode from the parser
+  ULONG m_acl_mode;
 
-	void SerializeMDId(CXMLSerializer *xml_serializer) const;
+  // identifier of query to which current table belongs.
+  // This field is used for assigning current table entry with
+  // target one within DML operation. If descriptor doesn't point
+  // to the target (result) relation it has value UNASSIGNED_QUERYID
+  ULONG m_assigned_query_id_for_target_rel;
 
-public:
-	// ctor/dtor
-	CDXLTableDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
-				   ULONG ulExecuteAsUser);
+  void SerializeMDId(CXMLSerializer *xml_serializer) const;
 
-	virtual ~CDXLTableDescr();
+ public:
+  CDXLTableDescr(const CDXLTableDescr &) = delete;
 
-	// setters
-	void SetColumnDescriptors(CDXLColDescrArray *dxl_column_descr_array);
+  // ctor/dtor
+  CDXLTableDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, ULONG ulExecuteAsUser, int lockmode, ULONG acl_mode,
+                 ULONG assigned_query_id_for_target_rel = UNASSIGNED_QUERYID);
 
-	void AddColumnDescr(CDXLColDescr *pdxlcd);
+  ~CDXLTableDescr() override;
 
-	// table name
-	const CMDName *MdName() const;
+  // setters
+  void SetColumnDescriptors(CDXLColDescrArray *dxl_column_descr_array);
 
-	// table mdid
-	IMDId *MDId() const;
+  void AddColumnDescr(CDXLColDescr *pdxlcd);
 
-	// table arity
-	ULONG Arity() const;
+  // table name
+  const CMDName *MdName() const;
 
-	// user id
-	ULONG GetExecuteAsUserId() const;
+  // table mdid
+  IMDId *MDId() const;
 
-	// get the column descriptor at the given position
-	const CDXLColDescr *GetColumnDescrAt(ULONG idx) const;
+  // table arity
+  ULONG Arity() const;
 
-	// serialize to dxl format
-	void SerializeToDXL(CXMLSerializer *xml_serializer) const;
+  // user id
+  ULONG GetExecuteAsUserId() const;
+
+  // lock mode
+  INT LockMode() const;
+
+  // acl mode
+  ULONG GetAclMode() const;
+
+  // get the column descriptor at the given position
+  const CDXLColDescr *GetColumnDescrAt(ULONG idx) const;
+
+  // serialize to dxl format
+  void SerializeToDXL(CXMLSerializer *xml_serializer) const;
+
+  // get assigned query id for target relation
+  ULONG GetAssignedQueryIdForTargetRel() const;
 };
 }  // namespace gpdxl
 
-
-#endif	// !GPDXL_CDXLTableDescriptor_H
+#endif  // !GPDXL_CDXLTableDescriptor_H
 
 // EOF

@@ -9,11 +9,9 @@
 //		 Task abstraction
 //---------------------------------------------------------------------------
 
-
 #include "gpos/task/ITask.h"
 
 using namespace gpos;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -23,15 +21,12 @@ using namespace gpos;
 //		Static function to lookup ones own worker in the pool manager
 //
 //---------------------------------------------------------------------------
-ITask *
-ITask::Self()
-{
-	IWorker *worker = IWorker::Self();
-	if (NULL != worker)
-	{
-		return worker->GetTask();
-	}
-	return NULL;
+ITask *ITask::Self() {
+  IWorker *worker = IWorker::Self();
+  if (nullptr != worker) {
+    return worker->GetTask();
+  }
+  return nullptr;
 }
 
 // EOF

@@ -16,8 +16,8 @@
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdPropScalar.h"
 #include "gpopt/base/COptCtxt.h"
-#include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "naucrates/md/IMDTypeBool.h"
 
 using namespace gpopt;
 using namespace gpmd;
@@ -30,10 +30,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarSubqueryExistential::CScalarSubqueryExistential(CMemoryPool *mp)
-	: CScalar(mp)
-{
-}
+CScalarSubqueryExistential::CScalarSubqueryExistential(CMemoryPool *mp) : CScalar(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -43,10 +40,7 @@ CScalarSubqueryExistential::CScalarSubqueryExistential(CMemoryPool *mp)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarSubqueryExistential::~CScalarSubqueryExistential()
-{
-}
-
+CScalarSubqueryExistential::~CScalarSubqueryExistential() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -56,13 +50,10 @@ CScalarSubqueryExistential::~CScalarSubqueryExistential()
 //		Type of scalar's value
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarSubqueryExistential::MdidType() const
-{
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	return md_accessor->PtMDType<IMDTypeBool>()->MDId();
+IMDId *CScalarSubqueryExistential::MdidType() const {
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  return md_accessor->PtMDType<IMDTypeBool>()->MDId();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -72,14 +63,11 @@ CScalarSubqueryExistential::MdidType() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarSubqueryExistential::Matches(COperator *pop) const
-{
-	GPOS_ASSERT(NULL != pop);
+BOOL CScalarSubqueryExistential::Matches(COperator *pop) const {
+  GPOS_ASSERT(nullptr != pop);
 
-	return pop->Eopid() == Eopid();
+  return pop->Eopid() == Eopid();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -89,14 +77,12 @@ CScalarSubqueryExistential::Matches(COperator *pop) const
 //		Derive partition consumers
 //
 //---------------------------------------------------------------------------
-CPartInfo *
-CScalarSubqueryExistential::PpartinfoDerive(CMemoryPool *,	// mp,
-											CExpressionHandle &exprhdl) const
-{
-	CPartInfo *ppartinfoChild = exprhdl.DerivePartitionInfo(0);
-	GPOS_ASSERT(NULL != ppartinfoChild);
-	ppartinfoChild->AddRef();
-	return ppartinfoChild;
+CPartInfo *CScalarSubqueryExistential::PpartinfoDerive(CMemoryPool *,  // mp,
+                                                       CExpressionHandle &exprhdl) const {
+  CPartInfo *ppartinfoChild = exprhdl.DerivePartitionInfo(0);
+  GPOS_ASSERT(nullptr != ppartinfoChild);
+  ppartinfoChild->AddRef();
+  return ppartinfoChild;
 }
 
 // EOF

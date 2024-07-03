@@ -14,20 +14,16 @@
 #define GPOPT_CExpressionHandle_H
 
 #include "gpos/base.h"
-#include "gpos/common/CDynamicPtrArray.h"
-#include "gpos/common/CRefCount.h"
 
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/base/CDrvdPropRelational.h"
 #include "gpopt/base/CReqdProp.h"
-#include "gpopt/operators/CExpression.h"
 #include "gpopt/search/CGroupExpression.h"
-#include "naucrates/statistics/CStatistics.h"
+#include "naucrates/statistics/IStatistics.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 // fwd declaration
+class CExpression;
 class COperator;
 class CDrvdPropPlan;
 class CDrvdPropScalar;
@@ -36,8 +32,6 @@ class CPropConstraint;
 class CCostContext;
 
 using namespace gpos;
-
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -49,302 +43,272 @@ using namespace gpos;
 //		a handle is attached to either an expression or a group expression
 //
 //---------------------------------------------------------------------------
-class CExpressionHandle
-{
-	friend class CExpression;
+class CExpressionHandle {
+  friend class CExpression;
 
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+ private:
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// attached expression
-	CExpression *m_pexpr;
+  // attached expression
+  CExpression *m_pexpr;
 
-	// attached group expression
-	CGroupExpression *m_pgexpr;
+  // attached group expression
+  CGroupExpression *m_pgexpr;
 
-	// attached cost context
-	CCostContext *m_pcc;
+  // attached cost context
+  CCostContext *m_pcc;
 
-	// derived plan properties of the gexpr attached by a CostContext under
-	// the default CDrvdPropCtxtPlan. See DerivePlanPropsForCostContext()
-	// NB: does NOT support on-demand property derivation
-	CDrvdProp *m_pdpplan;
+  // derived plan properties of the gexpr attached by a CostContext under
+  // the default CDrvdPropCtxtPlan. See DerivePlanPropsForCostContext()
+  // NB: does NOT support on-demand property derivation
+  CDrvdProp *m_pdpplan;
 
-	// statistics of attached expr/gexpr;
-	// set during derived stats computation
-	IStatistics *m_pstats;
+  // statistics of attached expr/gexpr;
+  // set during derived stats computation
+  IStatistics *m_pstats;
 
-	// required properties of attached expr/gexpr;
-	// set during required property computation
-	CReqdProp *m_prp;
+  // required properties of attached expr/gexpr;
+  // set during required property computation
+  CReqdProp *m_prp;
 
-	// array of children's derived stats
-	IStatisticsArray *m_pdrgpstat;
+  // array of children's derived stats
+  IStatisticsArray *m_pdrgpstat;
 
-	// array of children's required properties
-	CReqdPropArray *m_pdrgprp;
+  // array of children's required properties
+  CReqdPropArray *m_pdrgprp;
 
-	// private copy ctor
-	CExpressionHandle(const CExpressionHandle &);
+  // return an array of stats objects starting from the first stats object referenced by child
+  IStatisticsArray *PdrgpstatOuterRefs(IStatisticsArray *statistics_array, ULONG child_index);
 
-	// return an array of stats objects starting from the first stats object referenced by child
-	IStatisticsArray *PdrgpstatOuterRefs(IStatisticsArray *statistics_array,
-										 ULONG child_index);
+  // check if stats are derived for attached expression and its children
+  BOOL FStatsDerived() const;
 
-	// check if stats are derived for attached expression and its children
-	BOOL FStatsDerived() const;
+  // copy stats from attached expression/group expression to local stats members
+  void CopyStats();
 
-	// copy stats from attached expression/group expression to local stats members
-	void CopyStats();
+  // return True if handle is attached to a leaf pattern
+  BOOL FAttachedToLeafPattern() const;
 
-	// return True if handle is attached to a leaf pattern
-	BOOL FAttachedToLeafPattern() const;
+  // stat derivation at root operator where handle is attached
+  void DeriveRootStats(IStatisticsArray *stats_ctxt);
 
-	// stat derivation at root operator where handle is attached
-	void DeriveRootStats(IStatisticsArray *stats_ctxt);
+ public:
+  CExpressionHandle(const CExpressionHandle &) = delete;
 
-public:
-	// ctor
-	explicit CExpressionHandle(CMemoryPool *mp);
+  // ctor
+  explicit CExpressionHandle(CMemoryPool *mp);
 
-	// dtor
-	~CExpressionHandle();
+  // dtor
+  ~CExpressionHandle();
 
-	// attach handle to a given expression
-	void Attach(CExpression *pexpr);
+  // attach handle to a given expression
+  void Attach(CExpression *pexpr);
 
-	// attach handle to a given group expression
-	void Attach(CGroupExpression *pgexpr);
+  // attach handle to a given group expression
+  void Attach(CGroupExpression *pgexpr);
 
-	// attach handle to a given cost context
-	void Attach(CCostContext *pcc);
+  // attach handle to a given cost context
+  void Attach(CCostContext *pcc);
 
-	// recursive property derivation,
-	void DeriveProps(CDrvdPropCtxt *pdpctxt);
+  // recursive property derivation,
+  void DeriveProps(CDrvdPropCtxt *pdpctxt);
 
-	// recursive stats derivation
-	void DeriveStats(IStatisticsArray *stats_ctxt,
-					 BOOL fComputeRootStats = true);
+  // recursive stats derivation
+  void DeriveStats(IStatisticsArray *stats_ctxt, BOOL fComputeRootStats = true);
 
-	// stats derivation for attached cost context
-	void DeriveCostContextStats();
+  // stats derivation for attached cost context
+  void DeriveCostContextStats();
 
-	// stats derivation using given properties and context
-	void DeriveStats(CMemoryPool *pmpLocal, CMemoryPool *pmpGlobal,
-					 CReqdPropRelational *prprel, IStatisticsArray *stats_ctxt);
+  // stats derivation using given properties and context
+  void DeriveStats(CMemoryPool *pmpLocal, CMemoryPool *pmpGlobal, CReqdPropRelational *prprel,
+                   IStatisticsArray *stats_ctxt) const;
 
-	// derive the properties of the plan carried by attached cost context,
-	// using default CDrvdPropCtxtPlan
-	void DerivePlanPropsForCostContext();
+  // derive the properties of the plan carried by attached cost context,
+  // using default CDrvdPropCtxtPlan
+  void DerivePlanPropsForCostContext();
 
-	// initialize required properties container
-	void InitReqdProps(CReqdProp *prpInput);
+  // initialize required properties container
+  void InitReqdProps(CReqdProp *prpInput);
 
-	// compute required properties of the n-th child
-	void ComputeChildReqdProps(ULONG child_index, CDrvdPropArray *pdrgpdpCtxt,
-							   ULONG ulOptReq);
+  // compute required properties of the n-th child
+  void ComputeChildReqdProps(ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq);
 
-	// copy required properties of the n-th child
-	void CopyChildReqdProps(ULONG child_index, CReqdProp *prp);
+  // copy required properties of the n-th child
+  void CopyChildReqdProps(ULONG child_index, CReqdProp *prp);
 
-	// compute required columns of the n-th child
-	void ComputeChildReqdCols(ULONG child_index, CDrvdPropArray *pdrgpdpCtxt);
-
-	// required properties computation of all children
-	void ComputeReqdProps(CReqdProp *prpInput, ULONG ulOptReq);
+  // compute required columns of the n-th child
+  void ComputeChildReqdCols(ULONG child_index, CDrvdPropArray *pdrgpdpCtxt);
 
-	// derived relational props of n-th child
-	CDrvdPropRelational *GetRelationalProperties(ULONG child_index) const;
+  // required properties computation of all children
+  void ComputeReqdProps(CReqdProp *prpInput, ULONG ulOptReq);
 
-	// derived stats of n-th child
-	IStatistics *Pstats(ULONG child_index) const;
+  // derived relational props of n-th child
+  CDrvdPropRelational *GetRelationalProperties(ULONG child_index) const;
 
-	// derived plan props of n-th child
-	CDrvdPropPlan *Pdpplan(ULONG child_index) const;
+  // derived stats of n-th child
+  IStatistics *Pstats(ULONG child_index) const;
 
-	// derived scalar props of n-th child
-	CDrvdPropScalar *GetDrvdScalarProps(ULONG child_index) const;
+  // derived plan props of n-th child
+  CDrvdPropPlan *Pdpplan(ULONG child_index) const;
 
-	// derived properties of attached expr/gexpr
-	CDrvdProp *Pdp() const;
+  // derived scalar props of n-th child
+  CDrvdPropScalar *GetDrvdScalarProps(ULONG child_index) const;
 
-	// derived relational properties of attached expr/gexpr
-	CDrvdPropRelational *GetRelationalProperties() const;
+  // derived properties of attached expr/gexpr
+  CDrvdProp *Pdp() const;
 
-	// stats of attached expr/gexpr
-	IStatistics *Pstats();
+  // derived relational properties of attached expr/gexpr
+  CDrvdPropRelational *GetRelationalProperties() const;
 
-	// required properties of attached expr/gexpr
-	CReqdProp *
-	Prp() const
-	{
-		return m_prp;
-	}
+  // stats of attached expr/gexpr
+  IStatistics *Pstats();
 
-	// check if given child is a scalar
-	BOOL FScalarChild(ULONG child_index) const;
+  // required properties of attached expr/gexpr
+  CReqdProp *Prp() const { return m_prp; }
 
-	// required relational props of n-th child
-	CReqdPropRelational *GetReqdRelationalProps(ULONG child_index) const;
+  // check if given child is a scalar
+  BOOL FScalarChild(ULONG child_index) const;
 
-	// required plan props of n-th child
-	CReqdPropPlan *Prpp(ULONG child_index) const;
+  // required relational props of n-th child
+  CReqdPropRelational *GetReqdRelationalProps(ULONG child_index) const;
 
-	// arity function
-	ULONG Arity() const;
+  // required plan props of n-th child
+  CReqdPropPlan *Prpp(ULONG child_index) const;
 
-	// index of the last non-scalar child
-	ULONG UlLastNonScalarChild() const;
+  // arity function
+  ULONG Arity() const;
 
-	// index of the first non-scalar child
-	ULONG UlFirstNonScalarChild() const;
+  // index of the last non-scalar child
+  ULONG UlLastNonScalarChild() const;
 
-	// number of non-scalar children
-	ULONG UlNonScalarChildren() const;
+  // index of the first non-scalar child
+  ULONG UlFirstNonScalarChild() const;
 
-	// accessor for operator
-	COperator *Pop() const;
+  // number of non-scalar children
+  ULONG UlNonScalarChildren() const;
 
-	// accessor for child operator
-	COperator *Pop(ULONG child_index) const;
+  // accessor for operator
+  COperator *Pop() const;
 
-	// accessor for grandchild operator
-	COperator *PopGrandchild(ULONG child_index, ULONG grandchild_index,
-							 CCostContext **grandchildContext) const;
+  // accessor for child operator
+  COperator *Pop(ULONG child_index) const;
 
-	// accessor for expression
-	CExpression *
-	Pexpr() const
-	{
-		return m_pexpr;
-	}
+  // accessor for grandchild operator
+  COperator *PopGrandchild(ULONG child_index, ULONG grandchild_index, CCostContext **grandchildContext) const;
 
-	// accessor for group expression
-	CGroupExpression *
-	Pgexpr() const
-	{
-		return m_pgexpr;
-	}
+  // accessor for expression
+  CExpression *Pexpr() const { return m_pexpr; }
 
-	// check for outer references
-	BOOL
-	HasOuterRefs()
-	{
-		return (0 < DeriveOuterReferences()->Size());
-	}
+  // accessor for group expression
+  CGroupExpression *Pgexpr() const { return m_pgexpr; }
 
-	// check if attached expression must execute on a single host
-	BOOL
-	NeedsSingletonExecution()
-	{
-		return DeriveFunctionProperties()->NeedsSingletonExecution();
-	}
+  // check for outer references
+  BOOL HasOuterRefs() const { return (0 < DeriveOuterReferences()->Size()); }
 
-	// check for outer references in the given child
-	BOOL
-	HasOuterRefs(ULONG child_index)
-	{
-		return (0 < DeriveOuterReferences(child_index)->Size());
-	}
+  // check if attached expression must execute on a single host
+  BOOL NeedsSingletonExecution() const { return DeriveFunctionProperties()->NeedsSingletonExecution(); }
 
-	// get next child index based on child optimization order, return true if such index could be found
-	BOOL FNextChildIndex(ULONG *pulChildIndex  // output: index to be changed
-	) const;
+  // check for outer references in the given child
+  BOOL HasOuterRefs(ULONG child_index) const { return (0 < DeriveOuterReferences(child_index)->Size()); }
 
-	// return the index of first child to be optimized
-	ULONG UlFirstOptimizedChildIndex() const;
+  // get next child index based on child optimization order, return true if such index could be found
+  BOOL FNextChildIndex(ULONG *pulChildIndex  // output: index to be changed
+  ) const;
 
-	// return the index of last child to be optimized
-	ULONG UlLastOptimizedChildIndex() const;
+  // return the index of first child to be optimized
+  ULONG UlFirstOptimizedChildIndex() const;
 
-	// return the index of child to be optimized next to the given child
-	ULONG UlNextOptimizedChildIndex(ULONG child_index) const;
+  // return the index of last child to be optimized
+  ULONG UlLastOptimizedChildIndex() const;
 
-	// return the index of child optimized before the given child
-	ULONG UlPreviousOptimizedChildIndex(ULONG child_index) const;
+  // return the index of child to be optimized next to the given child
+  ULONG UlNextOptimizedChildIndex(ULONG child_index) const;
 
-	// get the function properties of a child
-	CFunctionProp *PfpChild(ULONG child_index);
+  // return the index of child optimized before the given child
+  ULONG UlPreviousOptimizedChildIndex(ULONG child_index) const;
 
-	// check whether an expression's children have a volatile function
-	BOOL FChildrenHaveVolatileFuncScan();
+  // get the function properties of a child
+  CFunctionProp *PfpChild(ULONG child_index) const;
 
-	// return a representative (inexact) scalar child at given index
-	CExpression *PexprScalarRepChild(ULONG child_index) const;
+  // check whether an expression's children have a volatile function scan
+  BOOL FChildrenHaveVolatileFuncScan() const;
 
-	// return a representative (inexact) scalar expression attached to handle
-	CExpression *PexprScalarRep() const;
+  // check whether an expression's children have a volatile function
+  BOOL FChildrenHaveVolatileFunc() const;
 
-	// return an exact scalar child at given index or return null if not possible
-	CExpression *PexprScalarExactChild(ULONG child_index,
-									   BOOL error_on_null_return = false) const;
+  // return a representative (inexact) scalar child at given index
+  CExpression *PexprScalarRepChild(ULONG child_index) const;
 
-	// return an exact scalar expression attached to handle or null if not possible
-	CExpression *PexprScalarExact() const;
+  // return a representative (inexact) scalar expression attached to handle
+  CExpression *PexprScalarRep() const;
 
-	void DeriveProducerStats(ULONG child_index, CColRefSet *pcrsStat);
+  // return an exact scalar child at given index or return null if not possible
+  CExpression *PexprScalarExactChild(ULONG child_index, BOOL error_on_null_return = false) const;
 
-	// return the columns used by a logical operator internally as well
-	// as columns used by all its scalar children
-	CColRefSet *PcrsUsedColumns(CMemoryPool *mp);
+  // return an exact scalar expression attached to handle or null if not possible
+  CExpression *PexprScalarExact() const;
 
-	CColRefSet *DeriveOuterReferences();
-	CColRefSet *DeriveOuterReferences(ULONG child_index);
+  void DeriveProducerStats(ULONG child_index, CColRefSet *pcrsStat) const;
 
-	CColRefSet *DeriveOutputColumns();
-	CColRefSet *DeriveOutputColumns(ULONG child_index);
+  // return the columns used by a logical operator internally as well
+  // as columns used by all its scalar children
+  CColRefSet *PcrsUsedColumns(CMemoryPool *mp) const;
 
-	CColRefSet *DeriveNotNullColumns();
-	CColRefSet *DeriveNotNullColumns(ULONG child_index);
+  CColRefSet *DeriveOuterReferences() const;
+  CColRefSet *DeriveOuterReferences(ULONG child_index) const;
 
-	CColRefSet *DeriveCorrelatedApplyColumns();
-	CColRefSet *DeriveCorrelatedApplyColumns(ULONG child_index);
+  CColRefSet *DeriveOutputColumns() const;
+  CColRefSet *DeriveOutputColumns(ULONG child_index) const;
 
-	CMaxCard DeriveMaxCard();
-	CMaxCard DeriveMaxCard(ULONG child_index);
+  CColRefSet *DeriveNotNullColumns() const;
+  CColRefSet *DeriveNotNullColumns(ULONG child_index) const;
 
-	CKeyCollection *DeriveKeyCollection();
-	CKeyCollection *DeriveKeyCollection(ULONG child_index);
+  CColRefSet *DeriveCorrelatedApplyColumns() const;
+  CColRefSet *DeriveCorrelatedApplyColumns(ULONG child_index) const;
 
-	CPropConstraint *DerivePropertyConstraint();
-	CPropConstraint *DerivePropertyConstraint(ULONG child_index);
+  CMaxCard DeriveMaxCard() const;
+  CMaxCard DeriveMaxCard(ULONG child_index) const;
 
-	ULONG DeriveJoinDepth();
-	ULONG DeriveJoinDepth(ULONG child_index);
+  CKeyCollection *DeriveKeyCollection() const;
+  CKeyCollection *DeriveKeyCollection(ULONG child_index) const;
 
-	CFunctionProp *DeriveFunctionProperties();
-	CFunctionProp *DeriveFunctionProperties(ULONG child_index);
+  CPropConstraint *DerivePropertyConstraint() const;
+  CPropConstraint *DerivePropertyConstraint(ULONG child_index) const;
 
-	CFunctionalDependencyArray *Pdrgpfd();
-	CFunctionalDependencyArray *Pdrgpfd(ULONG child_index);
+  ULONG DeriveJoinDepth() const;
+  ULONG DeriveJoinDepth(ULONG child_index) const;
 
-	CPartInfo *DerivePartitionInfo();
-	CPartInfo *DerivePartitionInfo(ULONG child_index);
+  CFunctionProp *DeriveFunctionProperties() const;
+  CFunctionProp *DeriveFunctionProperties(ULONG child_index) const;
 
-	BOOL DeriveHasPartialIndexes();
-	BOOL DeriveHasPartialIndexes(ULONG child_index);
+  CFunctionalDependencyArray *Pdrgpfd() const;
+  CFunctionalDependencyArray *Pdrgpfd(ULONG child_index) const;
 
-	CTableDescriptor *DeriveTableDescriptor();
-	CTableDescriptor *DeriveTableDescriptor(ULONG child_index);
+  CPartInfo *DerivePartitionInfo() const;
+  CPartInfo *DerivePartitionInfo(ULONG child_index) const;
 
-	// Scalar property accessors
-	CColRefSet *DeriveDefinedColumns(ULONG child_index);
-	CColRefSet *DeriveUsedColumns(ULONG child_index);
-	CColRefSet *DeriveSetReturningFunctionColumns(ULONG child_index);
-	BOOL DeriveHasSubquery(ULONG child_index);
-	CPartInfo *DeriveScalarPartitionInfo(ULONG child_index);
-	CFunctionProp *DeriveScalarFunctionProperties(ULONG child_index);
-	BOOL DeriveHasNonScalarFunction(ULONG child_index);
-	ULONG DeriveTotalDistinctAggs(ULONG child_index);
-	BOOL DeriveHasMultipleDistinctAggs(ULONG child_index);
-	BOOL DeriveHasScalarArrayCmp(ULONG child_index);
+  CTableDescriptorHashSet *DeriveTableDescriptor() const;
+  CTableDescriptorHashSet *DeriveTableDescriptor(ULONG child_index) const;
 
-};	// class CExpressionHandle
+  // Scalar property accessors
+  CColRefSet *DeriveDefinedColumns(ULONG child_index) const;
+  CColRefSet *DeriveUsedColumns(ULONG child_index) const;
+  CColRefSet *DeriveSetReturningFunctionColumns(ULONG child_index) const;
+  BOOL DeriveHasSubquery(ULONG child_index) const;
+  CPartInfo *DeriveScalarPartitionInfo(ULONG child_index) const;
+  CFunctionProp *DeriveScalarFunctionProperties(ULONG child_index) const;
+  BOOL DeriveHasNonScalarFunction(ULONG child_index) const;
+  ULONG DeriveTotalDistinctAggs(ULONG child_index) const;
+  BOOL DeriveHasMultipleDistinctAggs(ULONG child_index) const;
+  BOOL DeriveHasScalarArrayCmp(ULONG child_index) const;
+  BOOL DeriveHasScalarFuncProject(ULONG child_index) const;
+  BOOL DeriveContainsOnlyReplicationSafeAggFuncs(ULONG child_index) const;
+
+};  // class CExpressionHandle
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CExpressionHandle_H
+#endif  // !GPOPT_CExpressionHandle_H
 
 // EOF

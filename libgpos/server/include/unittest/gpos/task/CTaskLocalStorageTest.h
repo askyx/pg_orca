@@ -15,8 +15,7 @@
 #include "gpos/common/CSyncHashtable.h"
 #include "gpos/task/CTaskLocalStorageObject.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CTaskLocalStorageTest
@@ -25,44 +24,31 @@ namespace gpos
 //		Unittest for TLS implementation
 //
 //---------------------------------------------------------------------------
-class CTaskLocalStorageTest
-{
-private:
-	//---------------------------------------------------------------------------
-	//	@class:
-	//		CTestObject
-	//
-	//	@doc:
-	//		Simple subclass of CTaskLocalStorageObject
-	//
-	//---------------------------------------------------------------------------
-	class CTestObject : public CTaskLocalStorageObject
-	{
-	public:
-		// ctor
-		CTestObject() : CTaskLocalStorageObject(CTaskLocalStorage::EtlsidxTest)
-		{
-		}
+class CTaskLocalStorageTest {
+ private:
+  //---------------------------------------------------------------------------
+  //	@class:
+  //		CTestObject
+  //
+  //	@doc:
+  //		Simple subclass of CTaskLocalStorageObject
+  //
+  //---------------------------------------------------------------------------
+  class CTestObject : public CTaskLocalStorageObject {
+   public:
+    // ctor
+    CTestObject() : CTaskLocalStorageObject(CTaskLocalStorage::EtlsidxTest) {}
+  };
 
-#ifdef GPOS_DEBUG
-		// overwrite abstract member
-		IOstream &
-		OsPrint(IOstream &os) const
-		{
-			return os;
-		}
-#endif	// GPOS_DEBUG
-	};
-
-public:
-	// actual unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
-	static GPOS_RESULT EresUnittest_TraceFlags();
+ public:
+  // actual unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
+  static GPOS_RESULT EresUnittest_TraceFlags();
 };
 
 }  // namespace gpos
 
-#endif	// !GPOS_CTaskLocalStorageTest_H
+#endif  // !GPOS_CTaskLocalStorageTest_H
 
 // EOF

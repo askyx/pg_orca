@@ -17,15 +17,14 @@
 
 #ifdef GPOS_DEBUG
 #include "gpos/error/CAutoTrace.h"
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 using namespace gpopt;
 using namespace gpmd;
 
 // string encoding of null treatment
 const CHAR rgszNullCode[][16] = {"Auto", "NULLsFirst", "NULLsLast"};
-GPOS_CPL_ASSERT(COrderSpec::EntSentinel == GPOS_ARRAY_SIZE(rgszNullCode));
-
+GPOS_CPL_ASSERT(COrderSpec::EntSentinel == GPOS_ARRAY_SIZE(rgszNullCode), "");
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -35,13 +34,10 @@ GPOS_CPL_ASSERT(COrderSpec::EntSentinel == GPOS_ARRAY_SIZE(rgszNullCode));
 //		Ctor
 //
 //---------------------------------------------------------------------------
-COrderSpec::COrderExpression::COrderExpression(gpmd::IMDId *mdid,
-											   const CColRef *colref,
-											   ENullTreatment ent)
-	: m_mdid(mdid), m_pcr(colref), m_ent(ent)
-{
-	GPOS_ASSERT(NULL != colref);
-	GPOS_ASSERT(mdid->IsValid());
+COrderSpec::COrderExpression::COrderExpression(gpmd::IMDId *mdid, const CColRef *colref, ENullTreatment ent)
+    : m_mdid(mdid), m_pcr(colref), m_ent(ent) {
+  GPOS_ASSERT(nullptr != colref);
+  GPOS_ASSERT(mdid->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -52,9 +48,8 @@ COrderSpec::COrderExpression::COrderExpression(gpmd::IMDId *mdid,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-COrderSpec::COrderExpression::~COrderExpression()
-{
-	m_mdid->Release();
+COrderSpec::COrderExpression::~COrderExpression() {
+  m_mdid->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -65,15 +60,13 @@ COrderSpec::COrderExpression::~COrderExpression()
 //		Check if order expression equal to given one;
 //
 //---------------------------------------------------------------------------
-BOOL
-COrderSpec::COrderExpression::Matches(const COrderExpression *poe) const
-{
-	GPOS_ASSERT(NULL != poe);
+BOOL COrderSpec::COrderExpression::Matches(const COrderExpression *poe) const {
+  GPOS_ASSERT(nullptr != poe);
 
-	return poe->m_mdid->Equals(m_mdid) && poe->m_pcr == m_pcr &&
-		   poe->m_ent == m_ent;
+  return poe->m_mdid->Equals(m_mdid) && poe->m_pcr == m_pcr && poe->m_ent == m_ent;
 }
 
+FORCE_GENERATE_DBGSTR(gpopt::COrderSpec::COrderExpression);
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -83,27 +76,15 @@ COrderSpec::COrderExpression::Matches(const COrderExpression *poe) const
 //		Print order expression
 //
 //---------------------------------------------------------------------------
-IOstream &
-COrderSpec::COrderExpression::OsPrint(IOstream &os) const
-{
-	os << "( ";
-	m_mdid->OsPrint(os);
-	os << ", ";
-	m_pcr->OsPrint(os);
-	os << ", " << rgszNullCode[m_ent] << " )";
+IOstream &COrderSpec::COrderExpression::OsPrint(IOstream &os) const {
+  os << "( ";
+  m_mdid->OsPrint(os);
+  os << ", ";
+  m_pcr->OsPrint(os);
+  os << ", " << rgszNullCode[m_ent] << " )";
 
-	return os;
+  return os;
 }
-
-#ifdef GPOS_DEBUG
-void
-COrderSpec::COrderExpression::DbgPrint() const
-{
-	CMemoryPool *mp = COptCtxt::PoctxtFromTLS()->Pmp();
-	CAutoTrace at(mp);
-	(void) this->OsPrint(at.Os());
-}
-#endif	// GPOS_DEBUG
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -113,11 +94,9 @@ COrderSpec::COrderExpression::DbgPrint() const
 //		Ctor
 //
 //---------------------------------------------------------------------------
-COrderSpec::COrderSpec(CMemoryPool *mp) : m_mp(mp), m_pdrgpoe(NULL)
-{
-	m_pdrgpoe = GPOS_NEW(mp) COrderExpressionArray(mp);
+COrderSpec::COrderSpec(CMemoryPool *mp) : m_mp(mp), m_pdrgpoe(nullptr) {
+  m_pdrgpoe = GPOS_NEW(mp) COrderExpressionArray(mp);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -127,11 +106,9 @@ COrderSpec::COrderSpec(CMemoryPool *mp) : m_mp(mp), m_pdrgpoe(NULL)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-COrderSpec::~COrderSpec()
-{
-	m_pdrgpoe->Release();
+COrderSpec::~COrderSpec() {
+  m_pdrgpoe->Release();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -141,13 +118,10 @@ COrderSpec::~COrderSpec()
 //		Append order expression;
 //
 //---------------------------------------------------------------------------
-void
-COrderSpec::Append(gpmd::IMDId *mdid, const CColRef *colref, ENullTreatment ent)
-{
-	COrderExpression *poe = GPOS_NEW(m_mp) COrderExpression(mdid, colref, ent);
-	m_pdrgpoe->Append(poe);
+void COrderSpec::Append(gpmd::IMDId *mdid, const CColRef *colref, ENullTreatment ent) {
+  COrderExpression *poe = GPOS_NEW(m_mp) COrderExpression(mdid, colref, ent);
+  m_pdrgpoe->Append(poe);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -157,17 +131,13 @@ COrderSpec::Append(gpmd::IMDId *mdid, const CColRef *colref, ENullTreatment ent)
 //		Check for equality between order specs
 //
 //---------------------------------------------------------------------------
-BOOL
-COrderSpec::Matches(const COrderSpec *pos) const
-{
-	BOOL fMatch =
-		m_pdrgpoe->Size() == pos->m_pdrgpoe->Size() && FSatisfies(pos);
+BOOL COrderSpec::Matches(const COrderSpec *pos) const {
+  BOOL fMatch = m_pdrgpoe->Size() == pos->m_pdrgpoe->Size() && FSatisfies(pos);
 
-	GPOS_ASSERT_IMP(fMatch, pos->FSatisfies(this));
+  GPOS_ASSERT_IMP(fMatch, pos->FSatisfies(this));
 
-	return fMatch;
+  return fMatch;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -177,20 +147,16 @@ COrderSpec::Matches(const COrderSpec *pos) const
 //		Check if this order spec satisfies the given one
 //
 //---------------------------------------------------------------------------
-BOOL
-COrderSpec::FSatisfies(const COrderSpec *pos) const
-{
-	const ULONG arity = pos->m_pdrgpoe->Size();
-	BOOL fSatisfies = (m_pdrgpoe->Size() >= arity);
+BOOL COrderSpec::FSatisfies(const COrderSpec *pos) const {
+  const ULONG arity = pos->m_pdrgpoe->Size();
+  BOOL fSatisfies = (m_pdrgpoe->Size() >= arity);
 
-	for (ULONG ul = 0; fSatisfies && ul < arity; ul++)
-	{
-		fSatisfies = (*m_pdrgpoe)[ul]->Matches((*(pos->m_pdrgpoe))[ul]);
-	}
+  for (ULONG ul = 0; fSatisfies && ul < arity; ul++) {
+    fSatisfies = (*m_pdrgpoe)[ul]->Matches((*(pos->m_pdrgpoe))[ul]);
+  }
 
-	return fSatisfies;
+  return fSatisfies;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -200,30 +166,25 @@ COrderSpec::FSatisfies(const COrderSpec *pos) const
 //		Add required enforcers enforcers to dynamic array
 //
 //---------------------------------------------------------------------------
-void
-COrderSpec::AppendEnforcers(CMemoryPool *mp,
-							CExpressionHandle &,  // exprhdl
-							CReqdPropPlan *
+void COrderSpec::AppendEnforcers(CMemoryPool *mp,
+                                 CExpressionHandle &,  // exprhdl
+                                 CReqdPropPlan *
 #ifdef GPOS_DEBUG
-								prpp
-#endif	// GPOS_DEBUG
-							,
-							CExpressionArray *pdrgpexpr, CExpression *pexpr)
-{
-	GPOS_ASSERT(NULL != prpp);
-	GPOS_ASSERT(NULL != mp);
-	GPOS_ASSERT(NULL != pdrgpexpr);
-	GPOS_ASSERT(NULL != pexpr);
-	GPOS_ASSERT(this == prpp->Peo()->PosRequired() &&
-				"required plan properties don't match enforced order spec");
+                                     prpp
+#endif  // GPOS_DEBUG
+                                 ,
+                                 CExpressionArray *pdrgpexpr, CExpression *pexpr) {
+  GPOS_ASSERT(nullptr != prpp);
+  GPOS_ASSERT(nullptr != mp);
+  GPOS_ASSERT(nullptr != pdrgpexpr);
+  GPOS_ASSERT(nullptr != pexpr);
+  GPOS_ASSERT(this == prpp->Peo()->PosRequired() && "required plan properties don't match enforced order spec");
 
-	AddRef();
-	pexpr->AddRef();
-	CExpression *pexprSort = GPOS_NEW(mp)
-		CExpression(mp, GPOS_NEW(mp) CPhysicalSort(mp, this), pexpr);
-	pdrgpexpr->Append(pexprSort);
+  AddRef();
+  pexpr->AddRef();
+  CExpression *pexprSort = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPhysicalSort(mp, this), pexpr);
+  pdrgpexpr->Append(pexprSort);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -234,21 +195,17 @@ COrderSpec::AppendEnforcers(CMemoryPool *mp,
 //
 //---------------------------------------------------------------------------
 ULONG
-COrderSpec::HashValue() const
-{
-	ULONG ulHash = 0;
-	ULONG arity = m_pdrgpoe->Size();
+COrderSpec::HashValue() const {
+  ULONG ulHash = 0;
+  ULONG arity = m_pdrgpoe->Size();
 
-	for (ULONG ul = 0; ul < arity; ul++)
-	{
-		COrderExpression *poe = (*m_pdrgpoe)[ul];
-		ulHash =
-			gpos::CombineHashes(ulHash, gpos::HashPtr<CColRef>(poe->Pcr()));
-	}
+  for (ULONG ul = 0; ul < arity; ul++) {
+    COrderExpression *poe = (*m_pdrgpoe)[ul];
+    ulHash = gpos::CombineHashes(ulHash, gpos::HashPtr<CColRef>(poe->Pcr()));
+  }
 
-	return ulHash;
+  return ulHash;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -258,48 +215,36 @@ COrderSpec::HashValue() const
 //		Return a copy of the order spec with remapped columns
 //
 //---------------------------------------------------------------------------
-COrderSpec *
-COrderSpec::PosCopyWithRemappedColumns(CMemoryPool *mp,
-									   UlongToColRefMap *colref_mapping,
-									   BOOL must_exist)
-{
-	COrderSpec *pos = GPOS_NEW(mp) COrderSpec(mp);
+COrderSpec *COrderSpec::PosCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) {
+  COrderSpec *pos = GPOS_NEW(mp) COrderSpec(mp);
 
-	const ULONG num_cols = m_pdrgpoe->Size();
-	for (ULONG ul = 0; ul < num_cols; ul++)
-	{
-		COrderExpression *poe = (*m_pdrgpoe)[ul];
-		IMDId *mdid = poe->GetMdIdSortOp();
-		mdid->AddRef();
+  const ULONG num_cols = m_pdrgpoe->Size();
+  for (ULONG ul = 0; ul < num_cols; ul++) {
+    COrderExpression *poe = (*m_pdrgpoe)[ul];
+    IMDId *mdid = poe->GetMdIdSortOp();
+    mdid->AddRef();
 
-		const CColRef *colref = poe->Pcr();
-		ULONG id = colref->Id();
-		CColRef *pcrMapped = colref_mapping->Find(&id);
-		if (NULL == pcrMapped)
-		{
-			if (must_exist)
-			{
-				CColumnFactory *col_factory = COptCtxt::PoctxtFromTLS()->Pcf();
-				// not found in hashmap, so create a new colref and add to hashmap
-				pcrMapped = col_factory->PcrCopy(colref);
+    const CColRef *colref = poe->Pcr();
+    ULONG id = colref->Id();
+    CColRef *pcrMapped = colref_mapping->Find(&id);
+    if (nullptr == pcrMapped) {
+      if (must_exist) {
+        CColumnFactory *col_factory = COptCtxt::PoctxtFromTLS()->Pcf();
+        // not found in hashmap, so create a new colref and add to hashmap
+        pcrMapped = col_factory->PcrCopy(colref);
 
-#ifdef GPOS_DEBUG
-				BOOL result =
-#endif	// GPOS_DEBUG
-					colref_mapping->Insert(GPOS_NEW(mp) ULONG(id), pcrMapped);
-				GPOS_ASSERT(result);
-			}
-			else
-			{
-				pcrMapped = const_cast<CColRef *>(colref);
-			}
-		}
+        BOOL result GPOS_ASSERTS_ONLY = colref_mapping->Insert(GPOS_NEW(mp) ULONG(id), pcrMapped);
+        GPOS_ASSERT(result);
+      } else {
+        pcrMapped = const_cast<CColRef *>(colref);
+      }
+    }
 
-		COrderSpec::ENullTreatment ent = poe->Ent();
-		pos->Append(mdid, pcrMapped, ent);
-	}
+    COrderSpec::ENullTreatment ent = poe->Ent();
+    pos->Append(mdid, pcrMapped, ent);
+  }
 
-	return pos;
+  return pos;
 }
 
 //---------------------------------------------------------------------------
@@ -310,32 +255,27 @@ COrderSpec::PosCopyWithRemappedColumns(CMemoryPool *mp,
 //		Return a copy of the order spec after excluding the given columns
 //
 //---------------------------------------------------------------------------
-COrderSpec *
-COrderSpec::PosExcludeColumns(CMemoryPool *mp, CColRefSet *pcrs)
-{
-	GPOS_ASSERT(NULL != pcrs);
+COrderSpec *COrderSpec::PosExcludeColumns(CMemoryPool *mp, CColRefSet *pcrs) {
+  GPOS_ASSERT(nullptr != pcrs);
 
-	COrderSpec *pos = GPOS_NEW(mp) COrderSpec(mp);
+  COrderSpec *pos = GPOS_NEW(mp) COrderSpec(mp);
 
-	const ULONG num_cols = m_pdrgpoe->Size();
-	for (ULONG ul = 0; ul < num_cols; ul++)
-	{
-		COrderExpression *poe = (*m_pdrgpoe)[ul];
-		const CColRef *colref = poe->Pcr();
+  const ULONG num_cols = m_pdrgpoe->Size();
+  for (ULONG ul = 0; ul < num_cols; ul++) {
+    COrderExpression *poe = (*m_pdrgpoe)[ul];
+    const CColRef *colref = poe->Pcr();
 
-		if (pcrs->FMember(colref))
-		{
-			continue;
-		}
+    if (pcrs->FMember(colref)) {
+      continue;
+    }
 
-		IMDId *mdid = poe->GetMdIdSortOp();
-		mdid->AddRef();
-		pos->Append(mdid, colref, poe->Ent());
-	}
+    IMDId *mdid = poe->GetMdIdSortOp();
+    mdid->AddRef();
+    pos->Append(mdid, colref, poe->Ent());
+  }
 
-	return pos;
+  return pos;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -345,18 +285,14 @@ COrderSpec::PosExcludeColumns(CMemoryPool *mp, CColRefSet *pcrs)
 //		Extract columns from order spec into the given column set
 //
 //---------------------------------------------------------------------------
-void
-COrderSpec::ExtractCols(CColRefSet *pcrs) const
-{
-	GPOS_ASSERT(NULL != pcrs);
+void COrderSpec::ExtractCols(CColRefSet *pcrs) const {
+  GPOS_ASSERT(nullptr != pcrs);
 
-	const ULONG ulOrderExprs = m_pdrgpoe->Size();
-	for (ULONG ul = 0; ul < ulOrderExprs; ul++)
-	{
-		pcrs->Include((*m_pdrgpoe)[ul]->Pcr());
-	}
+  const ULONG ulOrderExprs = m_pdrgpoe->Size();
+  for (ULONG ul = 0; ul < ulOrderExprs; ul++) {
+    pcrs->Include((*m_pdrgpoe)[ul]->Pcr());
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -366,15 +302,12 @@ COrderSpec::ExtractCols(CColRefSet *pcrs) const
 //		Extract colref set from order components
 //
 //---------------------------------------------------------------------------
-CColRefSet *
-COrderSpec::PcrsUsed(CMemoryPool *mp) const
-{
-	CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
-	ExtractCols(pcrs);
+CColRefSet *COrderSpec::PcrsUsed(CMemoryPool *mp) const {
+  CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
+  ExtractCols(pcrs);
 
-	return pcrs;
+  return pcrs;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -384,20 +317,17 @@ COrderSpec::PcrsUsed(CMemoryPool *mp) const
 //		Extract colref set from order specs in the given array
 //
 //---------------------------------------------------------------------------
-CColRefSet *
-COrderSpec::GetColRefSet(CMemoryPool *mp, COrderSpecArray *pdrgpos)
-{
-	GPOS_ASSERT(NULL != pdrgpos);
+CColRefSet *COrderSpec::GetColRefSet(CMemoryPool *mp, COrderSpecArray *pdrgpos) {
+  GPOS_ASSERT(nullptr != pdrgpos);
 
-	CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
-	const ULONG ulOrderSpecs = pdrgpos->Size();
-	for (ULONG ulSpec = 0; ulSpec < ulOrderSpecs; ulSpec++)
-	{
-		COrderSpec *pos = (*pdrgpos)[ulSpec];
-		pos->ExtractCols(pcrs);
-	}
+  CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
+  const ULONG ulOrderSpecs = pdrgpos->Size();
+  for (ULONG ulSpec = 0; ulSpec < ulOrderSpecs; ulSpec++) {
+    COrderSpec *pos = (*pdrgpos)[ulSpec];
+    pos->ExtractCols(pcrs);
+  }
 
-	return pcrs;
+  return pcrs;
 }
 
 //---------------------------------------------------------------------------
@@ -409,30 +339,25 @@ COrderSpec::GetColRefSet(CMemoryPool *mp, COrderSpecArray *pdrgpos)
 //		passed columns
 //
 //---------------------------------------------------------------------------
-COrderSpecArray *
-COrderSpec::PdrgposExclude(CMemoryPool *mp, COrderSpecArray *pdrgpos,
-						   CColRefSet *pcrsToExclude)
-{
-	GPOS_ASSERT(NULL != pdrgpos);
-	GPOS_ASSERT(NULL != pcrsToExclude);
+COrderSpecArray *COrderSpec::PdrgposExclude(CMemoryPool *mp, COrderSpecArray *pdrgpos, CColRefSet *pcrsToExclude) {
+  GPOS_ASSERT(nullptr != pdrgpos);
+  GPOS_ASSERT(nullptr != pcrsToExclude);
 
-	if (0 == pcrsToExclude->Size())
-	{
-		// no columns to exclude
-		pdrgpos->AddRef();
-		return pdrgpos;
-	}
+  if (0 == pcrsToExclude->Size()) {
+    // no columns to exclude
+    pdrgpos->AddRef();
+    return pdrgpos;
+  }
 
-	COrderSpecArray *pdrgposNew = GPOS_NEW(mp) COrderSpecArray(mp);
-	const ULONG ulOrderSpecs = pdrgpos->Size();
-	for (ULONG ulSpec = 0; ulSpec < ulOrderSpecs; ulSpec++)
-	{
-		COrderSpec *pos = (*pdrgpos)[ulSpec];
-		COrderSpec *posNew = pos->PosExcludeColumns(mp, pcrsToExclude);
-		pdrgposNew->Append(posNew);
-	}
+  COrderSpecArray *pdrgposNew = GPOS_NEW(mp) COrderSpecArray(mp);
+  const ULONG ulOrderSpecs = pdrgpos->Size();
+  for (ULONG ulSpec = 0; ulSpec < ulOrderSpecs; ulSpec++) {
+    COrderSpec *pos = (*pdrgpos)[ulSpec];
+    COrderSpec *posNew = pos->PosExcludeColumns(mp, pcrsToExclude);
+    pdrgposNew->Append(posNew);
+  }
 
-	return pdrgposNew;
+  return pdrgposNew;
 }
 
 //---------------------------------------------------------------------------
@@ -443,25 +368,18 @@ COrderSpec::PdrgposExclude(CMemoryPool *mp, COrderSpecArray *pdrgpos,
 //		Print order spec
 //
 //---------------------------------------------------------------------------
-IOstream &
-COrderSpec::OsPrint(IOstream &os) const
-{
-	const ULONG arity = m_pdrgpoe->Size();
-	if (0 == arity)
-	{
-		os << "<empty>";
-	}
-	else
-	{
-		for (ULONG ul = 0; ul < arity; ul++)
-		{
-			(*m_pdrgpoe)[ul]->OsPrint(os) << " ";
-		}
-	}
+IOstream &COrderSpec::OsPrint(IOstream &os) const {
+  const ULONG arity = m_pdrgpoe->Size();
+  if (0 == arity) {
+    os << "<empty>";
+  } else {
+    for (ULONG ul = 0; ul < arity; ul++) {
+      (*m_pdrgpoe)[ul]->OsPrint(os) << " ";
+    }
+  }
 
-	return os;
+  return os;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -471,30 +389,23 @@ COrderSpec::OsPrint(IOstream &os) const
 //		 Matching function over order spec arrays
 //
 //---------------------------------------------------------------------------
-BOOL
-COrderSpec::Equals(const COrderSpecArray *pdrgposFirst,
-				   const COrderSpecArray *pdrgposSecond)
-{
-	if (NULL == pdrgposFirst || NULL == pdrgposSecond)
-	{
-		return (NULL == pdrgposFirst && NULL == pdrgposSecond);
-	}
+BOOL COrderSpec::Equals(const COrderSpecArray *pdrgposFirst, const COrderSpecArray *pdrgposSecond) {
+  if (nullptr == pdrgposFirst || nullptr == pdrgposSecond) {
+    return (nullptr == pdrgposFirst && nullptr == pdrgposSecond);
+  }
 
-	if (pdrgposFirst->Size() != pdrgposSecond->Size())
-	{
-		return false;
-	}
+  if (pdrgposFirst->Size() != pdrgposSecond->Size()) {
+    return false;
+  }
 
-	const ULONG size = pdrgposFirst->Size();
-	BOOL fMatch = true;
-	for (ULONG ul = 0; fMatch && ul < size; ul++)
-	{
-		fMatch = (*pdrgposFirst)[ul]->Matches((*pdrgposSecond)[ul]);
-	}
+  const ULONG size = pdrgposFirst->Size();
+  BOOL fMatch = true;
+  for (ULONG ul = 0; fMatch && ul < size; ul++) {
+    fMatch = (*pdrgposFirst)[ul]->Matches((*pdrgposSecond)[ul]);
+  }
 
-	return fMatch;
+  return fMatch;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -505,20 +416,17 @@ COrderSpec::Equals(const COrderSpecArray *pdrgposFirst,
 //
 //---------------------------------------------------------------------------
 ULONG
-COrderSpec::HashValue(const COrderSpecArray *pdrgpos, ULONG ulMaxSize)
-{
-	GPOS_ASSERT(NULL != pdrgpos);
-	ULONG size = std::min(ulMaxSize, pdrgpos->Size());
+COrderSpec::HashValue(const COrderSpecArray *pdrgpos, ULONG ulMaxSize) {
+  GPOS_ASSERT(nullptr != pdrgpos);
+  ULONG size = std::min(ulMaxSize, pdrgpos->Size());
 
-	ULONG ulHash = 0;
-	for (ULONG ul = 0; ul < size; ul++)
-	{
-		ulHash = gpos::CombineHashes(ulHash, (*pdrgpos)[ul]->HashValue());
-	}
+  ULONG ulHash = 0;
+  for (ULONG ul = 0; ul < size; ul++) {
+    ulHash = gpos::CombineHashes(ulHash, (*pdrgpos)[ul]->HashValue());
+  }
 
-	return ulHash;
+  return ulHash;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -528,24 +436,19 @@ COrderSpec::HashValue(const COrderSpecArray *pdrgpos, ULONG ulMaxSize)
 //		 Print array of order spec objects
 //
 //---------------------------------------------------------------------------
-IOstream &
-COrderSpec::OsPrint(IOstream &os, const COrderSpecArray *pdrgpos)
-{
-	const ULONG size = pdrgpos->Size();
-	os << "[";
-	if (0 < size)
-	{
-		for (ULONG ul = 0; ul < size - 1; ul++)
-		{
-			(void) (*pdrgpos)[ul]->OsPrint(os);
-			os << ", ";
-		}
+IOstream &COrderSpec::OsPrint(IOstream &os, const COrderSpecArray *pdrgpos) {
+  const ULONG size = pdrgpos->Size();
+  os << "[";
+  if (0 < size) {
+    for (ULONG ul = 0; ul < size - 1; ul++) {
+      (void)(*pdrgpos)[ul]->OsPrint(os);
+      os << ", ";
+    }
 
-		(void) (*pdrgpos)[size - 1]->OsPrint(os);
-	}
+    (void)(*pdrgpos)[size - 1]->OsPrint(os);
+  }
 
-	return os << "]";
+  return os << "]";
 }
-
 
 // EOF

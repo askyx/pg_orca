@@ -9,16 +9,18 @@
 //		Class for representing INT4 types in GPDB
 //---------------------------------------------------------------------------
 
-
-
 #ifndef GPMD_CMDTypeInt4GPDB_H
 #define GPMD_CMDTypeInt4GPDB_H
 
 #include "gpos/base.h"
 
+#include "naucrates/md/CGPDBTypeHelper.h"
 #include "naucrates/md/IMDTypeInt4.h"
 
 #define GPDB_INT4_OID OID(23)
+#define GPDB_INT4_OPFAMILY OID(1977)
+#define GPDB_INT4_LEGACY_OPFAMILY OID(7100)
+#define GPDB_INT4_PART_OPFAMILY OID(1976)
 #define GPDB_INT4_LENGTH 4
 #define GPDB_INT4_EQ_OP OID(96)
 #define GPDB_INT4_NEQ_OP OID(518)
@@ -37,18 +39,15 @@
 #define GPDB_INT4_AGG_COUNT OID(2147)
 
 // fwd decl
-namespace gpdxl
-{
+namespace gpdxl {
 class CXMLSerializer;
 }
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 class IDatumInt4;
 }
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 using namespace gpnaucrates;
 
@@ -60,187 +59,139 @@ using namespace gpnaucrates;
 //		Class for representing INT4 types in GPDB
 //
 //---------------------------------------------------------------------------
-class CMDTypeInt4GPDB : public IMDTypeInt4
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CMDTypeInt4GPDB : public IMDTypeInt4 {
+  friend class CGPDBTypeHelper<CMDTypeInt4GPDB>;
 
-	// type id
-	IMDId *m_mdid;
+ private:
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// mdids of different operators
-	IMDId *m_mdid_op_eq;
-	IMDId *m_mdid_op_neq;
-	IMDId *m_mdid_op_lt;
-	IMDId *m_mdid_op_leq;
-	IMDId *m_mdid_op_gt;
-	IMDId *m_mdid_op_geq;
-	IMDId *m_mdid_op_cmp;
-	IMDId *m_mdid_type_array;
+  // type id
+  IMDId *m_mdid;
+  IMDId *m_distr_opfamily;
+  IMDId *m_legacy_distr_opfamily;
+  IMDId *m_part_opfamily;
 
-	// min aggregate
-	IMDId *m_mdid_min;
+  // mdids of different operators
+  IMDId *m_mdid_op_eq;
+  IMDId *m_mdid_op_neq;
+  IMDId *m_mdid_op_lt;
+  IMDId *m_mdid_op_leq;
+  IMDId *m_mdid_op_gt;
+  IMDId *m_mdid_op_geq;
+  IMDId *m_mdid_op_cmp;
+  IMDId *m_mdid_type_array;
 
-	// max aggregate
-	IMDId *m_mdid_max;
+  // min aggregate
+  IMDId *m_mdid_min;
 
-	// avg aggregate
-	IMDId *m_mdid_avg;
+  // max aggregate
+  IMDId *m_mdid_max;
 
-	// sum aggregate
-	IMDId *m_mdid_sum;
+  // avg aggregate
+  IMDId *m_mdid_avg;
 
-	// count aggregate
-	IMDId *m_mdid_count;
+  // sum aggregate
+  IMDId *m_mdid_sum;
 
-	// DXL for object
-	const CWStringDynamic *m_dxl_str;
+  // count aggregate
+  IMDId *m_mdid_count;
 
-	// type name and type
-	static CWStringConst m_str;
-	static CMDName m_mdname;
+  // DXL for object
+  const CWStringDynamic *m_dxl_str = nullptr;
 
-	// a null datum of this type (used for statistics comparison)
-	IDatum *m_datum_null;
+  // type name and type
+  static CWStringConst m_str;
+  static CMDName m_mdname;
 
-	// private copy ctor
-	CMDTypeInt4GPDB(const CMDTypeInt4GPDB &);
+  // a null datum of this type (used for statistics comparison)
+  IDatum *m_datum_null;
 
-public:
-	// ctor
-	explicit CMDTypeInt4GPDB(CMemoryPool *mp);
+ public:
+  CMDTypeInt4GPDB(const CMDTypeInt4GPDB &) = delete;
 
-	//dtor
-	virtual ~CMDTypeInt4GPDB();
+  // ctor
+  explicit CMDTypeInt4GPDB(CMemoryPool *mp);
 
-	// factory method for creating INT4 datums
-	virtual IDatumInt4 *CreateInt4Datum(CMemoryPool *mp, INT iValue,
-										BOOL is_null) const;
+  // dtor
+  ~CMDTypeInt4GPDB() override;
 
-	// accessors
-	virtual const CWStringDynamic *
-	GetStrRepr() const
-	{
-		return m_dxl_str;
-	}
+  // factory method for creating INT4 datums
+  IDatumInt4 *CreateInt4Datum(CMemoryPool *mp, INT iValue, BOOL is_null) const override;
 
-	virtual IMDId *MDId() const;
+  // accessors
+  const CWStringDynamic *GetStrRepr() override;
 
-	virtual CMDName Mdname() const;
+  IMDId *MDId() const override;
 
-	// id of specified comparison operator type
-	virtual IMDId *GetMdidForCmpType(ECmpType cmp_type) const;
+  IMDId *GetDistrOpfamilyMdid() const override;
 
-	// id of specified specified aggregate type
-	virtual IMDId *GetMdidForAggType(EAggType agg_type) const;
+  IMDId *GetPartOpfamilyMdid() const override;
 
-	virtual BOOL
-	IsRedistributable() const
-	{
-		return true;
-	}
+  CMDName Mdname() const override;
 
-	virtual BOOL
-	IsFixedLength() const
-	{
-		return true;
-	}
+  // id of specified comparison operator type
+  IMDId *GetMdidForCmpType(ECmpType cmp_type) const override;
 
-	// is type composite
-	virtual BOOL
-	IsComposite() const
-	{
-		return false;
-	}
+  // id of specified specified aggregate type
+  IMDId *GetMdidForAggType(EAggType agg_type) const override;
 
-	virtual ULONG
-	Length() const
-	{
-		return GPDB_INT4_LENGTH;
-	}
+  BOOL IsRedistributable() const override { return true; }
 
-	// return the GPDB length
-	virtual INT
-	GetGPDBLength() const
-	{
-		return GPDB_INT4_LENGTH;
-	}
+  BOOL IsFixedLength() const override { return true; }
 
-	virtual BOOL
-	IsPassedByValue() const
-	{
-		return true;
-	}
+  // is type composite
+  BOOL IsComposite() const override { return false; }
 
-	virtual const IMDId *
-	CmpOpMdid() const
-	{
-		return m_mdid_op_cmp;
-	}
+  ULONG
+  Length() const override { return GPDB_INT4_LENGTH; }
 
-	// is type hashable
-	virtual BOOL
-	IsHashable() const
-	{
-		return true;
-	}
+  // return the GPDB length
+  virtual INT GetGPDBLength() const { return GPDB_INT4_LENGTH; }
 
-	// is type merge joinable
-	virtual BOOL
-	IsMergeJoinable() const
-	{
-		return true;
-	}
+  BOOL IsPassedByValue() const override { return true; }
 
-	virtual IMDId *
-	GetArrayTypeMdid() const
-	{
-		return m_mdid_type_array;
-	}
+  const IMDId *CmpOpMdid() const override { return m_mdid_op_cmp; }
 
-	// id of the relation corresponding to a composite type
-	virtual IMDId *
-	GetBaseRelMdid() const
-	{
-		return NULL;
-	}
+  // is type hashable
+  BOOL IsHashable() const override { return true; }
 
-	// serialize object in DXL format
-	virtual void Serialize(gpdxl::CXMLSerializer *xml_serializer) const;
+  // is type merge joinable
+  BOOL IsMergeJoinable() const override { return true; }
 
-	// return the null constant for this type
-	virtual IDatum *
-	DatumNull() const
-	{
-		return m_datum_null;
-	}
+  IMDId *GetArrayTypeMdid() const override { return m_mdid_type_array; }
 
-	// transformation method for generating datum from CDXLScalarConstValue
-	virtual IDatum *GetDatumForDXLConstVal(
-		const CDXLScalarConstValue *dxl_op) const;
+  // id of the relation corresponding to a composite type
+  IMDId *GetBaseRelMdid() const override { return nullptr; }
 
-	// create typed datum from DXL datum
-	virtual IDatum *GetDatumForDXLDatum(CMemoryPool *mp,
-										const CDXLDatum *dxl_datum) const;
+  // serialize object in DXL format
+  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
-	// generate the DXL datum from IDatum
-	virtual CDXLDatum *GetDatumVal(CMemoryPool *mp, IDatum *datum) const;
+  // return the null constant for this type
+  IDatum *DatumNull() const override { return m_datum_null; }
 
-	// generate the DXL datum representing null value
-	virtual CDXLDatum *GetDXLDatumNull(CMemoryPool *mp) const;
+  // transformation method for generating datum from CDXLScalarConstValue
+  IDatum *GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_op) const override;
 
-	// generate the DXL scalar constant from IDatum
-	virtual CDXLScalarConstValue *GetDXLOpScConst(CMemoryPool *mp,
-												  IDatum *datum) const;
+  // create typed datum from DXL datum
+  IDatum *GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const override;
+
+  // generate the DXL datum from IDatum
+  CDXLDatum *GetDatumVal(CMemoryPool *mp, IDatum *datum) const override;
+
+  // generate the DXL datum representing null value
+  CDXLDatum *GetDXLDatumNull(CMemoryPool *mp) const override;
+
+  // generate the DXL scalar constant from IDatum
+  CDXLScalarConstValue *GetDXLOpScConst(CMemoryPool *mp, IDatum *datum) const override;
 
 #ifdef GPOS_DEBUG
-	// debug print of the type in the provided stream
-	virtual void DebugPrint(IOstream &os) const;
+  // debug print of the type in the provided stream
+  void DebugPrint(IOstream &os) const override;
 #endif
 };
 }  // namespace gpmd
 
-#endif	// !GPMD_CMDTypeInt4GPDB_H
+#endif  // !GPMD_CMDTypeInt4GPDB_H
 
 // EOF

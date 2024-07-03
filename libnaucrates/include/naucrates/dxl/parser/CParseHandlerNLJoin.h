@@ -17,23 +17,21 @@
 #include "naucrates/dxl/operators/CDXLPhysicalNLJoin.h"
 #include "naucrates/dxl/parser/CParseHandlerPhysicalOp.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
 
 // indices of nested loop join elements in the children array
-enum ENLJoinParseHandlerChildIndices
-{
-	EdxlParseHandlerNLJIndexProp = 0,
-	EdxlParseHandlerNLJIndexProjList,
-	EdxlParseHandlerNLJIndexFilter,
-	EdxlParseHandlerNLJIndexJoinFilter,
-	EdxlParseHandlerNLJIndexLeftChild,
-	EdxlParseHandlerNLJIndexRightChild,
-	EdxlParseHandlerNLJIndexNestLoopParams,
-	EdxlParseHandlerNLJIndexSentinel
+enum ENLJoinParseHandlerChildIndices {
+  EdxlParseHandlerNLJIndexProp = 0,
+  EdxlParseHandlerNLJIndexProjList,
+  EdxlParseHandlerNLJIndexFilter,
+  EdxlParseHandlerNLJIndexJoinFilter,
+  EdxlParseHandlerNLJIndexLeftChild,
+  EdxlParseHandlerNLJIndexRightChild,
+  EdxlParseHandlerNLJIndexNestLoopParams,
+  EdxlParseHandlerNLJIndexSentinel
 };
 
 //---------------------------------------------------------------------------
@@ -44,38 +42,32 @@ enum ENLJoinParseHandlerChildIndices
 //		Parse handler for nested loop join operators
 //
 //---------------------------------------------------------------------------
-class CParseHandlerNLJoin : public CParseHandlerPhysicalOp
-{
-private:
-	// the nested loop join operator
-	CDXLPhysicalNLJoin *m_dxl_op;
+class CParseHandlerNLJoin : public CParseHandlerPhysicalOp {
+ private:
+  // the nested loop join operator
+  CDXLPhysicalNLJoin *m_dxl_op;
 
-	// private copy ctor
-	CParseHandlerNLJoin(const CParseHandlerNLJoin &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerNLJoin(const CParseHandlerNLJoin &) = delete;
 
-public:
-	// ctor/dtor
-	CParseHandlerNLJoin(CMemoryPool *mp,
-						CParseHandlerManager *parse_handler_mgr,
-						CParseHandlerBase *parse_handler_root);
+  // ctor/dtor
+  CParseHandlerNLJoin(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerNLJoin_H
+#endif  // !GPDXL_CParseHandlerNLJoin_H
 
 // EOF

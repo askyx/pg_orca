@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2016 Pivotal Software, Inc.
+//	Copyright (C) 2016 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerWindowOids.h
@@ -17,8 +17,7 @@
 #include "gpopt/base/CWindowOids.h"
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -31,47 +30,42 @@ XERCES_CPP_NAMESPACE_USE
 //		SAX parse handler class for parsing window function oids
 //
 //---------------------------------------------------------------------------
-class CParseHandlerWindowOids : public CParseHandlerBase
-{
-private:
-	// deafult oids
-	CWindowOids *m_window_oids;
+class CParseHandlerWindowOids : public CParseHandlerBase {
+ private:
+  // deafult oids
+  CWindowOids *m_window_oids;
 
-	// private copy ctor
-	CParseHandlerWindowOids(const CParseHandlerWindowOids &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerWindowOids(const CParseHandlerWindowOids &) = delete;
 
-public:
-	// ctor
-	CParseHandlerWindowOids(CMemoryPool *mp,
-							CParseHandlerManager *parse_handler_mgr,
-							CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerWindowOids(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                          CParseHandlerBase *parse_handler_root);
 
-	// dtor
-	virtual ~CParseHandlerWindowOids();
+  // dtor
+  ~CParseHandlerWindowOids() override;
 
-	// type of the parse handler
-	virtual EDxlParseHandlerType GetParseHandlerType() const;
+  // type of the parse handler
+  EDxlParseHandlerType GetParseHandlerType() const override;
 
-	// return system specific window oids
-	CWindowOids *GetWindowOids() const;
+  // return system specific window oids
+  CWindowOids *GetWindowOids() const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerWindowOids_H
+#endif  // !GPDXL_CParseHandlerWindowOids_H
 
 // EOF

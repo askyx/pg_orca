@@ -13,10 +13,10 @@
 
 #include "gpos/base.h"
 
+#include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,54 +27,38 @@ using namespace gpos;
 //		Transform Project to ComputeScalar
 //
 //---------------------------------------------------------------------------
-class CXformImplementSequenceProject : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformImplementSequenceProject(const CXformImplementSequenceProject &);
+class CXformImplementSequenceProject : public CXformImplementation {
+ private:
+ public:
+  CXformImplementSequenceProject(const CXformImplementSequenceProject &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementSequenceProject(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementSequenceProject(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformImplementSequenceProject()
-	{
-	}
+  // dtor
+  ~CXformImplementSequenceProject() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementSequenceProject;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementSequenceProject; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementSequenceProject";
-	}
+  const CHAR *SzId() const override { return "CXformImplementSequenceProject"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise
-	Exfp(CExpressionHandle &exprhdl) const
-	{
-		if (exprhdl.DeriveHasSubquery(1))
-		{
-			return CXform::ExfpNone;
-		}
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override {
+    if (exprhdl.DeriveHasSubquery(1)) {
+      return CXform::ExfpNone;
+    }
 
-		return CXform::ExfpHigh;
-	}
+    return CXform::ExfpHigh;
+  }
 
-	// actual transform
-	virtual void Transform(CXformContext *, CXformResult *,
-						   CExpression *) const;
+  // actual transform
+  void Transform(CXformContext *, CXformResult *, CExpression *) const override;
 
-};	// class CXformImplementSequenceProject
+};  // class CXformImplementSequenceProject
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementSequenceProject_H
+#endif  // !GPOPT_CXformImplementSequenceProject_H
 
 // EOF

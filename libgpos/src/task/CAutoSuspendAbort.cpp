@@ -26,16 +26,13 @@ using namespace gpos;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CAutoSuspendAbort::CAutoSuspendAbort()
-{
-	m_task = CTask::Self();
+CAutoSuspendAbort::CAutoSuspendAbort() {
+  m_task = CTask::Self();
 
-	if (NULL != m_task)
-	{
-		m_task->SuspendAbort();
-	}
+  if (nullptr != m_task) {
+    m_task->SuspendAbort();
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,13 +42,10 @@ CAutoSuspendAbort::CAutoSuspendAbort()
 //		dtor
 //
 //---------------------------------------------------------------------------
-CAutoSuspendAbort::~CAutoSuspendAbort()
-{
-	if (NULL != m_task)
-	{
-		m_task->ResumeAbort();
-	}
+CAutoSuspendAbort::~CAutoSuspendAbort() {
+  if (nullptr != m_task) {
+    m_task->ResumeAbort();
+  }
 }
-
 
 // EOF

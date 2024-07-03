@@ -16,8 +16,7 @@
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalUnary.h"
 
-namespace gpopt
-{
+namespace gpopt {
 // fwd declaration
 class CColRefSet;
 
@@ -31,254 +30,187 @@ class CLogicalGbAgg;
 //		aggregate operator
 //
 //---------------------------------------------------------------------------
-class CLogicalGbAgg : public CLogicalUnary
-{
-protected:
-	// does local / intermediate / global aggregate generate duplicate values for the same group
-	BOOL m_fGeneratesDuplicates;
+class CLogicalGbAgg : public CLogicalUnary {
+ protected:
+  // does local / intermediate / global aggregate generate duplicate values for the same group
+  BOOL m_fGeneratesDuplicates;
 
-	// array of columns used in distinct qualified aggregates (DQA)
-	// used only in the case of intermediate aggregates
-	CColRefArray *m_pdrgpcrArgDQA;
+  // array of columns used in distinct qualified aggregates (DQA)
+  // used only in the case of intermediate aggregates
+  CColRefArray *m_pdrgpcrArgDQA;
 
-	// compute required stats columns for a GbAgg
-	CColRefSet *PcrsStatGbAgg(CMemoryPool *mp, CExpressionHandle &exprhdl,
-							  CColRefSet *pcrsInput, ULONG child_index,
-							  CColRefArray *pdrgpcrGrp) const;
+  // compute required stats columns for a GbAgg
+  CColRefSet *PcrsStatGbAgg(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput, ULONG child_index,
+                            CColRefArray *pdrgpcrGrp) const;
 
-public:
-	// the below enum specifically covers only 2 & 3 stage
-	// scalar dqa, as they are used to find the one having
-	// better cost context, rest of the aggs falls in others
-	// category.
-	enum EAggStage
-	{
-		EasTwoStageScalarDQA,
-		EasThreeStageScalarDQA,
-		EasOthers,
+ public:
+  CLogicalGbAgg(const CLogicalGbAgg &) = delete;
 
-		EasSentinel
-	};
+  // the below enum specifically covers only 2 & 3 stage
+  // scalar dqa, as they are used to find the one having
+  // better cost context, rest of the aggs falls in others
+  // category.
+  enum EAggStage {
+    EasTwoStageScalarDQA,
+    EasThreeStageScalarDQA,
+    EasOthers,
 
-	// ctor
-	explicit CLogicalGbAgg(CMemoryPool *mp);
+    EasSentinel
+  };
 
-	// ctor
-	CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array,
-				  COperator::EGbAggType egbaggtype, EAggStage aggStage);
+  // ctor
+  explicit CLogicalGbAgg(CMemoryPool *mp);
 
-	// ctor
-	CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array,
-				  COperator::EGbAggType egbaggtype, BOOL fGeneratesDuplicates,
-				  CColRefArray *pdrgpcrArgDQA, EAggStage aggStage);
+  // ctor
+  CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, COperator::EGbAggType egbaggtype, EAggStage aggStage);
 
-	// ctor
-	CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array,
-				  COperator::EGbAggType egbaggtype);
+  // ctor
+  CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, COperator::EGbAggType egbaggtype,
+                BOOL fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA, EAggStage aggStage);
 
-	// ctor
-	CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array,
-				  COperator::EGbAggType egbaggtype, BOOL fGeneratesDuplicates,
-				  CColRefArray *pdrgpcrArgDQA);
+  // ctor
+  CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, COperator::EGbAggType egbaggtype);
 
-	// ctor
-	CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array,
-				  CColRefArray *pdrgpcrMinimal,
-				  COperator::EGbAggType egbaggtype);
+  // ctor
+  CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, COperator::EGbAggType egbaggtype,
+                BOOL fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA);
 
-	// ctor
-	CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array,
-				  CColRefArray *pdrgpcrMinimal,
-				  COperator::EGbAggType egbaggtype, BOOL fGeneratesDuplicates,
-				  CColRefArray *pdrgpcrArgDQA);
+  // ctor
+  CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal,
+                COperator::EGbAggType egbaggtype);
 
-	// is this part of Two Stage Scalar DQA
-	BOOL IsTwoStageScalarDQA() const;
+  // ctor
+  CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal,
+                COperator::EGbAggType egbaggtype, BOOL fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA);
 
-	// is this part of Three Stage Scalar DQA
-	BOOL IsThreeStageScalarDQA() const;
+  // is this part of Two Stage Scalar DQA
+  BOOL IsTwoStageScalarDQA() const;
 
-	// return the m_aggStage
-	EAggStage
-	AggStage() const
-	{
-		return m_aggStage;
-	}
+  // is this part of Three Stage Scalar DQA
+  BOOL IsThreeStageScalarDQA() const;
 
-	// dtor
-	virtual ~CLogicalGbAgg();
+  // return the m_aggStage
+  EAggStage AggStage() const { return m_aggStage; }
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalGbAgg;
-	}
+  // dtor
+  ~CLogicalGbAgg() override;
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalGbAgg";
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalGbAgg; }
 
-	// does this aggregate generate duplicate values for the same group
-	virtual BOOL
-	FGeneratesDuplicates() const
-	{
-		return m_fGeneratesDuplicates;
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalGbAgg"; }
 
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // does this aggregate generate duplicate values for the same group
+  virtual BOOL FGeneratesDuplicates() const { return m_fGeneratesDuplicates; }
 
-	// hash function
-	virtual ULONG HashValue() const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// grouping columns accessor
-	CColRefArray *
-	Pdrgpcr() const
-	{
-		return m_pdrgpcr;
-	}
+  // hash function
+  ULONG HashValue() const override;
 
-	// array of columns used in distinct qualified aggregates (DQA)
-	CColRefArray *
-	PdrgpcrArgDQA() const
-	{
-		return m_pdrgpcrArgDQA;
-	}
+  // grouping columns accessor
+  CColRefArray *Pdrgpcr() const { return m_pdrgpcr; }
 
-	// aggregate type
-	COperator::EGbAggType
-	Egbaggtype() const
-	{
-		return m_egbaggtype;
-	}
+  // array of columns used in distinct qualified aggregates (DQA)
+  CColRefArray *PdrgpcrArgDQA() const { return m_pdrgpcrArgDQA; }
 
-	// is a global aggregate?
-	BOOL
-	FGlobal() const
-	{
-		return (COperator::EgbaggtypeGlobal == m_egbaggtype);
-	}
+  // aggregate type
+  COperator::EGbAggType Egbaggtype() const { return m_egbaggtype; }
 
-	// minimal grouping columns accessor
-	CColRefArray *
-	PdrgpcrMinimal() const
-	{
-		return m_pdrgpcrMinimal;
-	}
+  // is a global aggregate?
+  BOOL FGlobal() const { return (COperator::EgbaggtypeGlobal == m_egbaggtype); }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // minimal grouping columns accessor
+  CColRefArray *PdrgpcrMinimal() const { return m_pdrgpcrMinimal; }
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	// derive output columns
-	virtual CColRefSet *DeriveOutputColumns(CMemoryPool *, CExpressionHandle &);
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive outer references
-	virtual CColRefSet *DeriveOuterReferences(CMemoryPool *mp,
-											  CExpressionHandle &exprhdl);
+  // derive output columns
+  CColRefSet *DeriveOutputColumns(CMemoryPool *, CExpressionHandle &) override;
 
-	// derive not null columns
-	virtual CColRefSet *DeriveNotNullColumns(CMemoryPool *mp,
-											 CExpressionHandle &exprhdl) const;
+  // derive outer references
+  CColRefSet *DeriveOuterReferences(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
-	// derive key collections
-	virtual CKeyCollection *DeriveKeyCollection(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  // derive not null columns
+  CColRefSet *DeriveNotNullColumns(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive max card
-	virtual CMaxCard DeriveMaxCard(CMemoryPool *mp,
-								   CExpressionHandle &exprhdl) const;
+  // derive key collections
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// derive constraint property
-	virtual CPropConstraint *DerivePropertyConstraint(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  // derive max card
+  CMaxCard DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// compute required stats columns of the n-th child
-	//-------------------------------------------------------------------------------------
-	// Required Relational Properties
-	//-------------------------------------------------------------------------------------
+  // derive constraint property
+  CPropConstraint *DerivePropertyConstraint(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// compute required stat columns of the n-th child
-	virtual CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								 CColRefSet *pcrsInput,
-								 ULONG child_index) const;
+  // compute required stats columns of the n-th child
+  //-------------------------------------------------------------------------------------
+  // Required Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  // compute required stat columns of the n-th child
+  CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
+                       ULONG child_index) const override;
 
-	// candidate set of xforms
-	CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// derive statistics
-	virtual IStatistics *PstatsDerive(CMemoryPool *mp,
-									  CExpressionHandle &exprhdl,
-									  IStatisticsArray *stats_ctxt) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	// stat promise
-	virtual EStatPromise
-	Esp(CExpressionHandle &) const
-	{
-		return CLogical::EspHigh;
-	}
+  // derive statistics
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  // stat promise
+  EStatPromise Esp(CExpressionHandle &) const override { return CLogical::EspHigh; }
 
-	// conversion function
-	static CLogicalGbAgg *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalGbAgg == pop->Eopid() ||
-					EopLogicalGbAggDeduplicate == pop->Eopid());
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-		return dynamic_cast<CLogicalGbAgg *>(pop);
-	}
+  // conversion function
+  static CLogicalGbAgg *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalGbAgg == pop->Eopid() || EopLogicalGbAggDeduplicate == pop->Eopid());
 
-	// debug print
-	virtual IOstream &OsPrint(IOstream &os) const;
+    return dynamic_cast<CLogicalGbAgg *>(pop);
+  }
 
-	// derive statistics
-	static IStatistics *PstatsDerive(CMemoryPool *mp, IStatistics *child_stats,
-									 CColRefArray *pdrgpcrGroupingCols,
-									 ULongPtrArray *pdrgpulComputedCols,
-									 CBitSet *keys);
+  // debug print
+  IOstream &OsPrint(IOstream &os) const override;
 
-	// print group by aggregate type
-	static IOstream &OsPrintGbAggType(IOstream &os,
-									  COperator::EGbAggType egbaggtype);
+  // derive statistics
+  static IStatistics *PstatsDerive(CMemoryPool *mp, IStatistics *child_stats, CColRefArray *pdrgpcrGroupingCols,
+                                   ULongPtrArray *pdrgpulComputedCols, CBitSet *keys);
 
-private:
-	// private copy ctor
-	CLogicalGbAgg(const CLogicalGbAgg &);
+  // print group by aggregate type
+  static IOstream &OsPrintGbAggType(IOstream &os, COperator::EGbAggType egbaggtype);
 
-	// array of grouping columns
-	CColRefArray *m_pdrgpcr;
+ private:
+  // array of grouping columns
+  CColRefArray *m_pdrgpcr;
 
-	// minimal grouping columns based on FD's
-	CColRefArray *m_pdrgpcrMinimal;
+  // minimal grouping columns based on FD's
+  CColRefArray *m_pdrgpcrMinimal;
 
-	// local / intermediate / global aggregate
-	COperator::EGbAggType m_egbaggtype;
+  // local / intermediate / global aggregate
+  COperator::EGbAggType m_egbaggtype;
 
-	// which type of multi-stage agg it is
-	EAggStage m_aggStage;
+  // which type of multi-stage agg it is
+  EAggStage m_aggStage;
 
-};	// class CLogicalGbAgg
+};  // class CLogicalGbAgg
 
 }  // namespace gpopt
 
-
-#endif	// !GPOS_CLogicalGbAgg_H
+#endif  // !GPOS_CLogicalGbAgg_H
 
 // EOF

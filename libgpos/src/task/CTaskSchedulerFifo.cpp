@@ -13,7 +13,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CTaskSchedulerFifo::Enqueue
@@ -22,13 +21,10 @@ using namespace gpos;
 //		Add task to waiting queue
 //
 //---------------------------------------------------------------------------
-void
-CTaskSchedulerFifo::Enqueue(CTask *task)
-{
-	m_task_queue.Append(task);
-	task->SetStatus(CTask::EtsQueued);
+void CTaskSchedulerFifo::Enqueue(CTask *task) {
+  m_task_queue.Append(task);
+  task->SetStatus(CTask::EtsQueued);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -38,16 +34,13 @@ CTaskSchedulerFifo::Enqueue(CTask *task)
 //		Get next task to execute
 //
 //---------------------------------------------------------------------------
-CTask *
-CTaskSchedulerFifo::Dequeue()
-{
-	GPOS_ASSERT(!m_task_queue.IsEmpty());
+CTask *CTaskSchedulerFifo::Dequeue() {
+  GPOS_ASSERT(!m_task_queue.IsEmpty());
 
-	CTask *task = m_task_queue.RemoveHead();
-	task->SetStatus(CTask::EtsDequeued);
-	return task;
+  CTask *task = m_task_queue.RemoveHead();
+  task->SetStatus(CTask::EtsDequeued);
+  return task;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -58,25 +51,20 @@ CTaskSchedulerFifo::Dequeue()
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CTaskSchedulerFifo::Cancel(CTask *task)
-{
-	// iterate until found
-	CTask *task_it = m_task_queue.First();
-	while (NULL != task_it)
-	{
-		if (task_it == task)
-		{
-			m_task_queue.Remove(task_it);
-			task_it->Cancel();
+CTaskSchedulerFifo::Cancel(CTask *task) {
+  // iterate until found
+  CTask *task_it = m_task_queue.First();
+  while (nullptr != task_it) {
+    if (task_it == task) {
+      m_task_queue.Remove(task_it);
+      task_it->Cancel();
 
-			return GPOS_OK;
-		}
-		task_it = m_task_queue.Next(task_it);
-	}
+      return GPOS_OK;
+    }
+    task_it = m_task_queue.Next(task_it);
+  }
 
-	return GPOS_NOT_FOUND;
+  return GPOS_NOT_FOUND;
 }
-
-
 
 // EOF

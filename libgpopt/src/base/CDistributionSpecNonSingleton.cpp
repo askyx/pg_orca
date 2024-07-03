@@ -15,11 +15,11 @@
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CDistributionSpecStrictRandom.h"
 #include "gpopt/base/CUtils.h"
+#include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPhysicalMotionRandom.h"
 #include "naucrates/traceflags/traceflags.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,11 +29,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDistributionSpecNonSingleton::CDistributionSpecNonSingleton()
-	: m_fAllowReplicated(true)
-{
-}
-
+CDistributionSpecNonSingleton::CDistributionSpecNonSingleton() = default;
 
 //---------------------------------------------------------------------------
 //     @function:
@@ -43,12 +39,8 @@ CDistributionSpecNonSingleton::CDistributionSpecNonSingleton()
 //             Ctor
 //
 //---------------------------------------------------------------------------
-CDistributionSpecNonSingleton::CDistributionSpecNonSingleton(
-	BOOL fAllowReplicated)
-	: m_fAllowReplicated(fAllowReplicated)
-{
-}
-
+CDistributionSpecNonSingleton::CDistributionSpecNonSingleton(BOOL fAllowReplicated)
+    : m_fAllowReplicated(fAllowReplicated) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -58,13 +50,11 @@ CDistributionSpecNonSingleton::CDistributionSpecNonSingleton(
 //		Check if this distribution spec satisfies the given one
 //
 //---------------------------------------------------------------------------
-BOOL
-CDistributionSpecNonSingleton::FSatisfies(const CDistributionSpec *	 // pds
-) const
-{
-	GPOS_ASSERT(!"Non-Singleton distribution cannot be derived");
+BOOL CDistributionSpecNonSingleton::FSatisfies(const CDistributionSpec *  // pds
+) const {
+  GPOS_ASSERT(!"Non-Singleton distribution cannot be derived");
 
-	return false;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -77,40 +67,48 @@ CDistributionSpecNonSingleton::FSatisfies(const CDistributionSpec *	 // pds
 //		on segments
 //
 //---------------------------------------------------------------------------
-void
-CDistributionSpecNonSingleton::AppendEnforcers(CMemoryPool *mp,
-											   CExpressionHandle &,	 // exprhdl
-											   CReqdPropPlan *
+void CDistributionSpecNonSingleton::AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                    CReqdPropPlan *
 #ifdef GPOS_DEBUG
-												   prpp
-#endif	// GPOS_DEBUG
-											   ,
-											   CExpressionArray *pdrgpexpr,
-											   CExpression *pexpr)
-{
-	GPOS_ASSERT(NULL != mp);
-	GPOS_ASSERT(NULL != prpp);
-	GPOS_ASSERT(NULL != pdrgpexpr);
-	GPOS_ASSERT(NULL != pexpr);
-	GPOS_ASSERT(!GPOS_FTRACE(EopttraceDisableMotions));
-	GPOS_ASSERT(
-		this == prpp->Ped()->PdsRequired() &&
-		"required plan properties don't match enforced distribution spec");
+                                                        prpp
+#endif  // GPOS_DEBUG
+                                                    ,
+                                                    CExpressionArray *pdrgpexpr, CExpression *pexpr) {
+  GPOS_ASSERT(nullptr != mp);
+  GPOS_ASSERT(nullptr != prpp);
+  GPOS_ASSERT(nullptr != pdrgpexpr);
+  GPOS_ASSERT(nullptr != pexpr);
+  GPOS_ASSERT(!GPOS_FTRACE(EopttraceDisableMotions));
+  GPOS_ASSERT(this == prpp->Ped()->PdsRequired() && "required plan properties don't match enforced distribution spec");
 
+  if (GPOS_FTRACE(EopttraceDisableMotionRandom)) {
+    // random Motion is disabled
+    return;
+  }
 
-	if (GPOS_FTRACE(EopttraceDisableMotionRandom))
-	{
-		// random Motion is disabled
-		return;
-	}
+  CDistributionSpec *expr_dist_spec = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Pds();
+  CDistributionSpecRandom *random_dist_spec = nullptr;
 
-	// add a random distribution enforcer
-	CDistributionSpecStrictRandom *pdsrandom =
-		GPOS_NEW(mp) CDistributionSpecStrictRandom();
-	pexpr->AddRef();
-	CExpression *pexprMotion = GPOS_NEW(mp) CExpression(
-		mp, GPOS_NEW(mp) CPhysicalMotionRandom(mp, pdsrandom), pexpr);
-	pdrgpexpr->Append(pexprMotion);
+  // random motions on top of universal specs are converted to hash filters,
+  // and shouldn't be strict random distributions or we may not properly distribute tuples.
+  // See comment in CDistributionSpecRandom::AppendEnforcers for details
+  if (CUtils::FDuplicateHazardDistributionSpec(expr_dist_spec)) {
+    // the motion node is enforced on top of a child
+    // deriving universal spec or replicated distribution, this motion node
+    // will be translated to a result node with hash filter to remove
+    // duplicates, therefore we also need to mark it as duplicate sensitive
+    random_dist_spec = GPOS_NEW(mp) CDistributionSpecRandom();
+    random_dist_spec->MarkDuplicateSensitive();
+  } else {
+    // the motion added in this enforcer will translate to
+    // a redistribute motion
+    random_dist_spec = GPOS_NEW(mp) CDistributionSpecStrictRandom();
+  }
+
+  pexpr->AddRef();
+  CExpression *pexprMotion =
+      GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPhysicalMotionRandom(mp, random_dist_spec), pexpr);
+  pdrgpexpr->Append(pexprMotion);
 }
 
 //---------------------------------------------------------------------------
@@ -121,15 +119,12 @@ CDistributionSpecNonSingleton::AppendEnforcers(CMemoryPool *mp,
 //		Print function
 //
 //---------------------------------------------------------------------------
-IOstream &
-CDistributionSpecNonSingleton::OsPrint(IOstream &os) const
-{
-	os << "NON-SINGLETON ";
-	if (!m_fAllowReplicated)
-	{
-		os << " (NON-REPLICATED)";
-	}
-	return os;
+IOstream &CDistributionSpecNonSingleton::OsPrint(IOstream &os) const {
+  os << "NON-SINGLETON ";
+  if (!m_fAllowReplicated) {
+    os << " (NON-REPLICATED)";
+  }
+  return os;
 }
 
 // EOF

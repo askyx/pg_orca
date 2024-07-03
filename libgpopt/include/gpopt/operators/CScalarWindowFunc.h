@@ -20,12 +20,10 @@
 #include "gpos/base.h"
 
 #include "gpopt/base/CDrvdProp.h"
-#include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CScalarFunc.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 using namespace gpmd;
 
@@ -37,120 +35,82 @@ using namespace gpmd;
 //		Class for scalar window function
 //
 //---------------------------------------------------------------------------
-class CScalarWindowFunc : public CScalarFunc
-{
-public:
-	// window stage
-	enum EWinStage
-	{
-		EwsImmediate,
-		EwsPreliminary,
-		EwsRowKey,
+class CScalarWindowFunc : public CScalarFunc {
+ public:
+  // window stage
+  enum EWinStage {
+    EwsImmediate,
+    EwsPreliminary,
+    EwsRowKey,
 
-		EwsSentinel
-	};
+    EwsSentinel
+  };
 
-private:
-	// window stage
-	EWinStage m_ewinstage;
+ private:
+  // window stage
+  EWinStage m_ewinstage;
 
-	// distinct window computation
-	BOOL m_is_distinct;
+  // distinct window computation
+  BOOL m_is_distinct;
 
-	/* TRUE if argument list was really '*' */
-	BOOL m_is_star_arg;
+  /* TRUE if argument list was really '*' */
+  BOOL m_is_star_arg;
 
-	/* is function a simple aggregate? */
-	BOOL m_is_simple_agg;
+  /* is function a simple aggregate? */
+  BOOL m_is_simple_agg;
 
-	// aggregate window function, e.g. count(*) over()
-	BOOL m_fAgg;
+  // aggregate window function, e.g. count(*) over()
+  BOOL m_fAgg;
 
-	// private copy ctor
-	CScalarWindowFunc(const CScalarWindowFunc &);
+ public:
+  CScalarWindowFunc(const CScalarWindowFunc &) = delete;
 
-public:
-	// ctor
-	CScalarWindowFunc(CMemoryPool *mp, IMDId *mdid_func,
-					  IMDId *mdid_return_type, const CWStringConst *pstrFunc,
-					  EWinStage ewinstage, BOOL is_distinct, BOOL is_star_arg,
-					  BOOL is_simple_agg);
+  // ctor
+  CScalarWindowFunc(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, const CWStringConst *pstrFunc,
+                    EWinStage ewinstage, BOOL is_distinct, BOOL is_star_arg, BOOL is_simple_agg);
 
-	// dtor
-	virtual ~CScalarWindowFunc()
-	{
-	}
+  // dtor
+  ~CScalarWindowFunc() override = default;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopScalarWindowFunc;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopScalarWindowFunc; }
 
-	// return a string for window function
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CScalarWindowFunc";
-	}
+  // return a string for window function
+  const CHAR *SzId() const override { return "CScalarWindowFunc"; }
 
-	EWinStage
-	Ews() const
-	{
-		return m_ewinstage;
-	}
+  EWinStage Ews() const { return m_ewinstage; }
 
-	// operator specific hash function
-	ULONG HashValue() const;
+  // operator specific hash function
+  ULONG HashValue() const override;
 
-	// match function
-	BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// conversion function
-	static CScalarWindowFunc *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarWindowFunc == pop->Eopid());
+  // conversion function
+  static CScalarWindowFunc *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarWindowFunc == pop->Eopid());
 
-		return reinterpret_cast<CScalarWindowFunc *>(pop);
-	}
+    return dynamic_cast<CScalarWindowFunc *>(pop);
+  }
 
-	// does window function definition include Distinct?
-	BOOL
-	IsDistinct() const
-	{
-		return m_is_distinct;
-	}
+  // does window function definition include Distinct?
+  BOOL IsDistinct() const { return m_is_distinct; }
 
-	BOOL
-	IsStarArg() const
-	{
-		return m_is_star_arg;
-	}
+  BOOL IsStarArg() const { return m_is_star_arg; }
 
-	BOOL
-	IsSimpleAgg() const
-	{
-		return m_is_simple_agg;
-	}
+  BOOL IsSimpleAgg() const { return m_is_simple_agg; }
 
-	// is window function defined as Aggregate?
-	BOOL
-	FAgg() const
-	{
-		return m_fAgg;
-	}
+  // is window function defined as Aggregate?
+  BOOL FAgg() const { return m_fAgg; }
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // print
+  IOstream &OsPrint(IOstream &os) const override;
 
-
-};	// class CScalarWindowFunc
+};  // class CScalarWindowFunc
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CScalarWindowFunc_H
+#endif  // !GPOPT_CScalarWindowFunc_H
 
 // EOF

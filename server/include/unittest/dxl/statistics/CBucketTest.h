@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2018 Pivotal Inc.
+//	Copyright (C) 2018 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CBucketTest.h
@@ -13,8 +13,7 @@
 
 #include "naucrates/statistics/CBucket.h"
 
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 //---------------------------------------------------------------------------
 //	@class:
 //		CBucketTest
@@ -23,78 +22,100 @@ namespace gpnaucrates
 //		Static unit testing operations on histogram buckets
 //
 //---------------------------------------------------------------------------
-class CBucketTest
-{
-private:
-	// test case for intersection of buckets
-	struct SBucketsIntersectTestElem
-	{
-		// lower bound of bucket 1
-		INT m_iLb1;
+class CBucketTest {
+ private:
+  // test case for intersection of buckets
+  struct SBucketsIntersectTestElem {
+    // lower bound of bucket 1
+    INT m_iLb1;
 
-		// upper bound of bucket 1
-		INT m_iUb1;
+    // upper bound of bucket 1
+    INT m_iUb1;
 
-		// is lower bound of bucket 1 closed
-		BOOL m_fLb1Closed;
+    // is lower bound of bucket 1 closed
+    BOOL m_fLb1Closed;
 
-		// is upper bound of bucket 1 closed
-		BOOL m_fUb1Closed;
+    // is upper bound of bucket 1 closed
+    BOOL m_fUb1Closed;
 
-		// lower bound of bucket 2
-		INT m_iLb2;
+    CDouble m_frequency1;
 
-		// upper bound of bucket 2
-		INT m_iUb2;
+    CDouble m_distinct1;
 
-		// is lower bound of bucket 2 closed
-		BOOL m_fLb2Closed;
+    // lower bound of bucket 2
+    INT m_iLb2;
 
-		// is upper bound of bucket 2 closed
-		BOOL m_fUb2Closed;
+    // upper bound of bucket 2
+    INT m_iUb2;
 
-		// result of the bucket intersect test
-		BOOL fIntersect;
+    // is lower bound of bucket 2 closed
+    BOOL m_fLb2Closed;
 
-		// lower bound of output bucket
-		INT m_iLbOutput;
+    // is upper bound of bucket 2 closed
+    BOOL m_fUb2Closed;
 
-		// upper bound of output bucket
-		INT m_iUbOutput;
+    CDouble m_frequency2;
 
-		// is lower bound of output bucket closed
-		BOOL m_fLbOutputClosed;
+    CDouble m_distinct2;
 
-		// is upper bound of output bucket closed
-		BOOL m_fUbOutputClosed;
+    // result of the bucket intersect test
+    BOOL fIntersect;
 
-	};	// SBucketsIntersectTestElem
+    // lower bound of output bucket
+    INT m_iLbOutput;
 
-	// do the bucket boundaries match
-	static BOOL FMatchBucketBoundary(CBucket *bucket1, CBucket *bucket2);
+    // upper bound of output bucket
+    INT m_iUbOutput;
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
+    // is lower bound of output bucket closed
+    BOOL m_fLbOutputClosed;
 
-	// bucket basic tests
-	static GPOS_RESULT EresUnittest_CBucketInt4();
+    // is upper bound of output bucket closed
+    BOOL m_fUbOutputClosed;
 
-	static GPOS_RESULT EresUnittest_CBucketBool();
+    CDouble m_frequencyOutput;
 
-	// bucket intersect
-	static GPOS_RESULT EresUnittest_CBucketIntersect();
+    CDouble m_distinctOutput;
 
-	// bucket scaling tests
-	static GPOS_RESULT EresUnittest_CBucketScale();
+  };  // SBucketsIntersectTestElem
 
-	// bucket difference tests
-	static GPOS_RESULT EresUnittest_CBucketDifference();
+  // do the bucket boundaries match
+  static BOOL FMatchBucket(CBucket *bucket1, CBucket *bucket2);
 
-};	// class CBucketTest
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+
+  // bucket basic tests
+  static GPOS_RESULT EresUnittest_CBucketInt4();
+
+  static GPOS_RESULT EresUnittest_CBucketBool();
+
+  // bucket intersect
+  static GPOS_RESULT EresUnittest_CBucketIntersect();
+
+  // bucket scaling tests
+  static GPOS_RESULT EresUnittest_CBucketScale();
+
+  // bucket difference tests
+  static GPOS_RESULT EresUnittest_CBucketDifference();
+
+  static GPOS_RESULT EresUnittest_CBucketMergeCommutativityUnion();
+
+  static GPOS_RESULT EresUnittest_CBucketMergeCommutativitySameLowerBounds();
+
+  static GPOS_RESULT EresUnittest_CBucketMergeCommutativitySameUpperBounds();
+
+  static GPOS_RESULT EresUnittest_CBucketMergeCommutativityUnionAll();
+
+  static GPOS_RESULT EresUnittest_CBucketMergeCommutativityDoubleDatum();
+
+  static GPOS_RESULT EresUnittest_CBucketMergeCommutativityDoubleDatumSameLowerBounds();
+
+  static GPOS_RESULT EresUnittest_CBucketMergeCommutativityDoubleDatumSameUpperBounds();
+};  // class CBucketTest
 }  // namespace gpnaucrates
 
-#endif	// !GPNAUCRATES_CBucketTest_H
-
+#endif  // !GPNAUCRATES_CBucketTest_H
 
 // EOF

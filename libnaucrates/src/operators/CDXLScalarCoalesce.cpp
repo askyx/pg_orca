@@ -27,10 +27,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarCoalesce::CDXLScalarCoalesce(CMemoryPool *mp, IMDId *mdid_type)
-	: CDXLScalar(mp), m_mdid_type(mdid_type)
-{
-	GPOS_ASSERT(m_mdid_type->IsValid());
+CDXLScalarCoalesce::CDXLScalarCoalesce(CMemoryPool *mp, IMDId *mdid_type) : CDXLScalar(mp), m_mdid_type(mdid_type) {
+  GPOS_ASSERT(m_mdid_type->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -41,9 +39,8 @@ CDXLScalarCoalesce::CDXLScalarCoalesce(CMemoryPool *mp, IMDId *mdid_type)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLScalarCoalesce::~CDXLScalarCoalesce()
-{
-	m_mdid_type->Release();
+CDXLScalarCoalesce::~CDXLScalarCoalesce() {
+  m_mdid_type->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -54,10 +51,8 @@ CDXLScalarCoalesce::~CDXLScalarCoalesce()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarCoalesce::GetDXLOperator() const
-{
-	return EdxlopScalarCoalesce;
+Edxlopid CDXLScalarCoalesce::GetDXLOperator() const {
+  return EdxlopScalarCoalesce;
 }
 
 //---------------------------------------------------------------------------
@@ -68,10 +63,8 @@ CDXLScalarCoalesce::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarCoalesce::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarCoalesce);
+const CWStringConst *CDXLScalarCoalesce::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarCoalesce);
 }
 
 //---------------------------------------------------------------------------
@@ -82,19 +75,13 @@ CDXLScalarCoalesce::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarCoalesce::SerializeToDXL(CXMLSerializer *xml_serializer,
-								   const CDXLNode *node) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarCoalesce::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	m_mdid_type->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-	node->SerializeChildrenToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  node->SerializeChildrenToDXL(xml_serializer);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------
@@ -105,11 +92,8 @@ CDXLScalarCoalesce::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLScalarCoalesce::HasBoolResult(CMDAccessor *md_accessor) const
-{
-	return (IMDType::EtiBool ==
-			md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
+BOOL CDXLScalarCoalesce::HasBoolResult(CMDAccessor *md_accessor) const {
+  return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
 }
 
 #ifdef GPOS_DEBUG
@@ -121,26 +105,19 @@ CDXLScalarCoalesce::HasBoolResult(CMDAccessor *md_accessor) const
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarCoalesce::AssertValid(const CDXLNode *node,
-								BOOL validate_children) const
-{
-	GPOS_ASSERT(0 < node->Arity());
+void CDXLScalarCoalesce::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+  GPOS_ASSERT(0 < node->Arity());
 
-	const ULONG arity = node->Arity();
-	for (ULONG ul = 0; ul < arity; ++ul)
-	{
-		CDXLNode *child_dxlnode = (*node)[ul];
-		GPOS_ASSERT(EdxloptypeScalar ==
-					child_dxlnode->GetOperator()->GetDXLOperatorType());
+  const ULONG arity = node->Arity();
+  for (ULONG ul = 0; ul < arity; ++ul) {
+    CDXLNode *child_dxlnode = (*node)[ul];
+    GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-		if (validate_children)
-		{
-			child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-													  validate_children);
-		}
-	}
+    if (validate_children) {
+      child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+    }
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

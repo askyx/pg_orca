@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 Pivotal, Inc.
+//	Copyright (C) 2013 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformPushGbBelowUnion.h
@@ -13,11 +13,10 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalUnion.h"
 #include "gpopt/xforms/CXformPushGbBelowSetOp.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,48 +27,29 @@ using namespace gpos;
 //		Push grouping below Union operation
 //
 //---------------------------------------------------------------------------
-class CXformPushGbBelowUnion : public CXformPushGbBelowSetOp<CLogicalUnion>
-{
-private:
-	// private copy ctor
-	CXformPushGbBelowUnion(const CXformPushGbBelowUnion &);
+class CXformPushGbBelowUnion : public CXformPushGbBelowSetOp<CLogicalUnion> {
+ private:
+ public:
+  CXformPushGbBelowUnion(const CXformPushGbBelowUnion &) = delete;
 
-public:
-	// ctor
-	explicit CXformPushGbBelowUnion(CMemoryPool *mp)
-		: CXformPushGbBelowSetOp<CLogicalUnion>(mp)
-	{
-	}
+  // ctor
+  explicit CXformPushGbBelowUnion(CMemoryPool *mp) : CXformPushGbBelowSetOp<CLogicalUnion>(mp) {}
 
-	// dtor
-	virtual ~CXformPushGbBelowUnion()
-	{
-	}
+  // dtor
+  ~CXformPushGbBelowUnion() override = default;
 
-	// Compatibility function
-	virtual BOOL
-	FCompatible(CXform::EXformId exfid)
-	{
-		return ExfPushGbBelowUnion != exfid;
-	}
+  // Compatibility function
+  BOOL FCompatible(CXform::EXformId exfid) override { return ExfPushGbBelowUnion != exfid; }
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfPushGbBelowUnion;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfPushGbBelowUnion; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformPushGbBelowUnion";
-	}
+  const CHAR *SzId() const override { return "CXformPushGbBelowUnion"; }
 
-};	// class CXformPushGbBelowUnion
+};  // class CXformPushGbBelowUnion
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformPushGbBelowUnion_H
+#endif  // !GPOPT_CXformPushGbBelowUnion_H
 
 // EOF

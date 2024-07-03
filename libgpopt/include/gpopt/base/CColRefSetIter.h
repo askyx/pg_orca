@@ -16,8 +16,7 @@
 
 #include "gpopt/base/CColRefSet.h"
 
-namespace gpopt
-{
+namespace gpopt {
 // fwd declarations
 class CColumnFactory;
 
@@ -30,34 +29,30 @@ class CColumnFactory;
 //		internal links
 //
 //---------------------------------------------------------------------------
-class CColRefSetIter : public CBitSetIter
-{
-private:
-	// a copy of the pointer to column factory, obtained at construction time
-	CColumnFactory *m_pcf;
+class CColRefSetIter : public CBitSetIter {
+ private:
+  // a copy of the pointer to column factory, obtained at construction time
+  CColumnFactory *m_pcf;
 
-	// private copy ctor
-	CColRefSetIter(const CColRefSetIter &);
+  // private copy ctor
+  CColRefSetIter(const CColRefSetIter &);
 
-	// current bit -- private to make super class' inaccessible
-	ULONG UlBit() const;
+  // current bit -- private to make super class' inaccessible
+  ULONG UlBit() const;
 
-public:
-	// ctor
-	explicit CColRefSetIter(const CColRefSet &bs);
+ public:
+  // ctor
+  explicit CColRefSetIter(const CColRefSet &bs);
 
-	// dtor
-	~CColRefSetIter()
-	{
-	}
+  // dtor
+  ~CColRefSetIter() = default;
 
-	// current colref
-	CColRef *Pcr() const;
+  // current colref
+  CColRef *Pcr() const;
 
-};	// class CColRefSetIter
+};  // class CColRefSetIter
 }  // namespace gpopt
 
-#endif	// !GPOS_CColRefSetIter_H
-
+#endif  // !GPOS_CColRefSetIter_H
 
 // EOF

@@ -18,7 +18,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CJobGroup::Init
@@ -27,16 +26,13 @@ using namespace gpopt;
 //		Initialize job
 //
 //---------------------------------------------------------------------------
-void
-CJobGroup::Init(CGroup *pgroup)
-{
-	GPOS_ASSERT(!FInit());
-	GPOS_ASSERT(NULL != pgroup);
+void CJobGroup::Init(CGroup *pgroup) {
+  GPOS_ASSERT(!FInit());
+  GPOS_ASSERT(nullptr != pgroup);
 
-	m_pgroup = pgroup;
-	m_pgexprLastScheduled = NULL;
+  m_pgroup = pgroup;
+  m_pgexprLastScheduled = nullptr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -46,27 +42,21 @@ CJobGroup::Init(CGroup *pgroup)
 //		Get first non-logical group expression with an unscheduled job
 //
 //---------------------------------------------------------------------------
-CGroupExpression *
-CJobGroup::PgexprFirstUnschedNonLogical()
-{
-	CGroupExpression *pgexpr = NULL;
-	{
-		CGroupProxy gp(m_pgroup);
-		if (NULL == m_pgexprLastScheduled)
-		{
-			// get first group expression
-			pgexpr = gp.PgexprSkipLogical(NULL /*pgexpr*/);
-		}
-		else
-		{
-			// get group expression next to last scheduled one
-			pgexpr = gp.PgexprSkipLogical(m_pgexprLastScheduled);
-		}
-	}
+CGroupExpression *CJobGroup::PgexprFirstUnschedNonLogical() {
+  CGroupExpression *pgexpr = nullptr;
+  {
+    CGroupProxy gp(m_pgroup);
+    if (nullptr == m_pgexprLastScheduled) {
+      // get first group expression
+      pgexpr = gp.PgexprSkipLogical(nullptr /*pgexpr*/);
+    } else {
+      // get group expression next to last scheduled one
+      pgexpr = gp.PgexprSkipLogical(m_pgexprLastScheduled);
+    }
+  }
 
-	return pgexpr;
+  return pgexpr;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -76,25 +66,20 @@ CJobGroup::PgexprFirstUnschedNonLogical()
 //		Get first logical group expression with an unscheduled job
 //
 //---------------------------------------------------------------------------
-CGroupExpression *
-CJobGroup::PgexprFirstUnschedLogical()
-{
-	CGroupExpression *pgexpr = NULL;
-	{
-		CGroupProxy gp(m_pgroup);
-		if (NULL == m_pgexprLastScheduled)
-		{
-			// get first group expression
-			pgexpr = gp.PgexprFirst();
-		}
-		else
-		{
-			// get group expression next to last scheduled one
-			pgexpr = gp.PgexprNext(m_pgexprLastScheduled);
-		}
-	}
+CGroupExpression *CJobGroup::PgexprFirstUnschedLogical() {
+  CGroupExpression *pgexpr = nullptr;
+  {
+    CGroupProxy gp(m_pgroup);
+    if (nullptr == m_pgexprLastScheduled) {
+      // get first group expression
+      pgexpr = gp.PgexprFirst();
+    } else {
+      // get group expression next to last scheduled one
+      pgexpr = gp.PgexprNext(m_pgexprLastScheduled);
+    }
+  }
 
-	return pgexpr;
+  return pgexpr;
 }
 
 // EOF

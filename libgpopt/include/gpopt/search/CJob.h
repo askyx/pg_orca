@@ -13,9 +13,10 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CList.h"
+#include "gpos/common/DbgPrintMixin.h"
+#include "gpos/task/ITask.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // prototypes
@@ -77,249 +78,172 @@ class CSchedulerContext;
 //		about how job are scheduled.
 //
 //---------------------------------------------------------------------------
-class CJob
-{
-	// friends
-	friend class CJobFactory;
-	friend class CJobQueue;
-	friend class CScheduler;
+class CJob : public DbgPrintMixin<CJob> {
+  // friends
+  friend class CJobFactory;
+  friend class CJobQueue;
+  friend class CScheduler;
 
-public:
-	// job type
-	enum EJobType
-	{
-		EjtTest = 0,
-		EjtGroupOptimization,
-		EjtGroupImplementation,
-		EjtGroupExploration,
-		EjtGroupExpressionOptimization,
-		EjtGroupExpressionImplementation,
-		EjtGroupExpressionExploration,
-		EjtTransformation,
+ public:
+  // job type
+  enum EJobType {
+    EjtTest = 0,
+    EjtGroupOptimization,
+    EjtGroupImplementation,
+    EjtGroupExploration,
+    EjtGroupExpressionOptimization,
+    EjtGroupExpressionImplementation,
+    EjtGroupExpressionExploration,
+    EjtTransformation,
 
-		EjtInvalid,
-		EjtSentinel = EjtInvalid
-	};
+    EjtInvalid,
+    EjtSentinel = EjtInvalid
+  };
 
-private:
+ private:
 #ifdef GPOS_DEBUG
-	// enum for job state
-	enum EJobState
-	{
-		EjsInit = 0,
-		EjsWaiting,
-		EjsRunning,
-		EjsSuspended,
-		EjsCompleted
-	};
-#endif	// GPOS_DEBUG
+  // enum for job state
+  enum EJobState { EjsInit = 0, EjsWaiting, EjsRunning, EjsSuspended, EjsCompleted };
+#endif  // GPOS_DEBUG
 
-	// parent job
-	CJob *m_pjParent;
+  // parent job
+  CJob *m_pjParent{nullptr};
 
-	// assigned job queue
-	CJobQueue *m_pjq;
+  // assigned job queue
+  CJobQueue *m_pjq{nullptr};
 
-	// reference counter
-	ULONG_PTR m_ulpRefs;
+  // reference counter
+  ULONG_PTR m_ulpRefs{0};
 
-	// job id - set by job factory
-	ULONG m_id;
+  // job id - set by job factory
+  ULONG m_id{0};
 
-	// job type
-	EJobType m_ejt;
+  // job type
+  EJobType m_ejt;
 
-	// flag indicating if job is initialized
-	BOOL m_fInit;
+  // flag indicating if job is initialized
+  BOOL m_fInit{false};
 
 #ifdef GPOS_DEBUG
-	// job state
-	EJobState m_ejs;
-#endif	// GPOS_DEBUG
+  // job state
+  EJobState m_ejs{EjsInit};
+#endif  // GPOS_DEBUG
 
-	//-------------------------------------------------------------------
-	// Interface for CJobFactory
-	//-------------------------------------------------------------------
+  //-------------------------------------------------------------------
+  // Interface for CJobFactory
+  //-------------------------------------------------------------------
 
-	// set type
-	void
-	SetJobType(EJobType ejt)
-	{
-		m_ejt = ejt;
-	}
+  // set type
+  void SetJobType(EJobType ejt) { m_ejt = ejt; }
 
-	//-------------------------------------------------------------------
-	// Interface for CScheduler
-	//-------------------------------------------------------------------
+  //-------------------------------------------------------------------
+  // Interface for CScheduler
+  //-------------------------------------------------------------------
 
-	// parent accessor
-	CJob *
-	PjParent() const
-	{
-		return m_pjParent;
-	}
+  // parent accessor
+  CJob *PjParent() const { return m_pjParent; }
 
-	// set parent
-	void
-	SetParent(CJob *pj)
-	{
-		GPOS_ASSERT(this != pj);
+  // set parent
+  void SetParent(CJob *pj) {
+    GPOS_ASSERT(this != pj);
 
-		m_pjParent = pj;
-	}
+    m_pjParent = pj;
+  }
 
-	// increment reference counter
-	void
-	IncRefs()
-	{
-		m_ulpRefs++;
-	}
+  // increment reference counter
+  void IncRefs() { m_ulpRefs++; }
 
-	// decrement reference counter
-	ULONG_PTR
-	UlpDecrRefs()
-	{
-		GPOS_ASSERT(0 < m_ulpRefs && "Decrement counter from 0");
-		return m_ulpRefs--;
-	}
+  // decrement reference counter
+  ULONG_PTR
+  UlpDecrRefs() {
+    GPOS_ASSERT(0 < m_ulpRefs && "Decrement counter from 0");
+    return m_ulpRefs--;
+  }
 
-	// notify parent of job completion;
-	// return true if parent is runnable;
-	BOOL FResumeParent() const;
+  // notify parent of job completion;
+  // return true if parent is runnable;
+  BOOL FResumeParent() const;
 
 #ifdef GPOS_DEBUG
-	// reference counter accessor
-	ULONG_PTR
-	UlpRefs() const
-	{
-		return m_ulpRefs;
-	}
+  // reference counter accessor
+  ULONG_PTR
+  UlpRefs() const { return m_ulpRefs; }
 
-	// check if job type is valid
-	BOOL
-	FValidType() const
-	{
-		return (EjtTest <= m_ejt && EjtSentinel > m_ejt);
-	}
+  // check if job type is valid
+  BOOL FValidType() const { return (EjtTest <= m_ejt && EjtSentinel > m_ejt); }
 
-	// get state
-	EJobState
-	Ejs() const
-	{
-		return m_ejs;
-	}
+  // get state
+  EJobState Ejs() const { return m_ejs; }
 
-	// set state
-	void
-	SetState(EJobState ejs)
-	{
-		m_ejs = ejs;
-	}
-#endif	// GPOS_DEBUG
+  // set state
+  void SetState(EJobState ejs) { m_ejs = ejs; }
+#endif  // GPOS_DEBUG
 
-	// private copy ctor
-	CJob(const CJob &);
+ protected:
+  // id accessor
+  ULONG
+  Id() const { return m_id; }
 
-protected:
-	// id accessor
-	ULONG
-	Id() const
-	{
-		return m_id;
-	}
+  // ctor
+  CJob() = default;
 
-	// ctor
-	CJob()
-		: m_pjParent(NULL),
-		  m_pjq(NULL),
-		  m_ulpRefs(0),
-		  m_id(0),
-		  m_fInit(false)
-#ifdef GPOS_DEBUG
-		  ,
-		  m_ejs(EjsInit)
-#endif	// GPOS_DEBUG
-	{
-	}
+  // dtor
+  virtual ~CJob() { GPOS_ASSERT_IMP(!ITask::Self()->HasPendingExceptions(), 0 == m_ulpRefs); }
 
-	// dtor
-	virtual ~CJob()
-	{
-		GPOS_ASSERT_IMP(!ITask::Self()->HasPendingExceptions(), 0 == m_ulpRefs);
-	}
+  // reset job
+  virtual void Reset();
 
-	// reset job
-	virtual void Reset();
+  // check if job is initialized
+  BOOL FInit() const { return m_fInit; }
 
-	// check if job is initialized
-	BOOL
-	FInit() const
-	{
-		return m_fInit;
-	}
+  // mark job as initialized
+  void SetInit() {
+    GPOS_ASSERT(false == m_fInit);
 
-	// mark job as initialized
-	void
-	SetInit()
-	{
-		GPOS_ASSERT(false == m_fInit);
+    m_fInit = true;
+  }
 
-		m_fInit = true;
-	}
+ public:
+  CJob(const CJob &) = delete;
 
-public:
-	// actual job execution given a scheduling context
-	// returns true if job completes, false if it is suspended
-	virtual BOOL FExecute(CSchedulerContext *psc) = 0;
+  // actual job execution given a scheduling context
+  // returns true if job completes, false if it is suspended
+  virtual BOOL FExecute(CSchedulerContext *psc) = 0;
 
-	// type accessor
-	EJobType
-	Ejt() const
-	{
-		return m_ejt;
-	}
+  // type accessor
+  EJobType Ejt() const { return m_ejt; }
 
-	// job queue accessor
-	CJobQueue *
-	Pjq() const
-	{
-		return m_pjq;
-	}
+  // job queue accessor
+  CJobQueue *Pjq() const { return m_pjq; }
 
-	// set job queue
-	void
-	SetJobQueue(CJobQueue *pjq)
-	{
-		GPOS_ASSERT(NULL != pjq);
-		m_pjq = pjq;
-	}
+  // set job queue
+  void SetJobQueue(CJobQueue *pjq) {
+    GPOS_ASSERT(nullptr != pjq);
+    m_pjq = pjq;
+  }
 
-	// cleanup internal state
-	virtual void
-	Cleanup()
-	{
-	}
+  // cleanup internal state
+  virtual void Cleanup() {}
 
 #ifdef GPOS_DEBUG
-	// print job description
-	virtual IOstream &OsPrint(IOstream &os);
+  // print job description
+  virtual IOstream &OsPrint(IOstream &os) const;
 
-	// link for running job list
-	SLink m_linkRunning;
+  // link for running job list
+  SLink m_linkRunning;
 
-	// link for suspended job list
-	SLink m_linkSuspended;
+  // link for suspended job list
+  SLink m_linkSuspended;
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-	// link for job queueing
-	SLink m_linkQueue;
+  // link for job queueing
+  SLink m_linkQueue;
 
-};	// class CJob
+};  // class CJob
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CJob_H
-
+#endif  // !GPOPT_CJob_H
 
 // EOF

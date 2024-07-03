@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2013 Pivotal, Inc.
+//	Copyright (C) 2013 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CLogicalGbAggDeduplicate.h
@@ -28,8 +28,7 @@
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalGbAggDeduplicate
@@ -38,117 +37,91 @@ namespace gpopt
 //		aggregate operator for deduplicating join outputs
 //
 //---------------------------------------------------------------------------
-class CLogicalGbAggDeduplicate : public CLogicalGbAgg
-{
-private:
-	// private copy ctor
-	CLogicalGbAggDeduplicate(const CLogicalGbAggDeduplicate &);
+class CLogicalGbAggDeduplicate : public CLogicalGbAgg {
+ private:
+  // array of keys from the join's child
+  CColRefArray *m_pdrgpcrKeys;
 
-	// array of keys from the join's child
-	CColRefArray *m_pdrgpcrKeys;
+ public:
+  CLogicalGbAggDeduplicate(const CLogicalGbAggDeduplicate &) = delete;
 
-public:
-	// ctor
-	explicit CLogicalGbAggDeduplicate(CMemoryPool *mp);
+  // ctor
+  explicit CLogicalGbAggDeduplicate(CMemoryPool *mp);
 
-	// ctor
-	CLogicalGbAggDeduplicate(CMemoryPool *mp, CColRefArray *colref_array,
-							 COperator::EGbAggType egbaggtype,
-							 CColRefArray *pdrgpcrKeys = NULL);
+  // ctor
+  CLogicalGbAggDeduplicate(CMemoryPool *mp, CColRefArray *colref_array, COperator::EGbAggType egbaggtype,
+                           CColRefArray *pdrgpcrKeys = nullptr);
 
-	// ctor
-	CLogicalGbAggDeduplicate(CMemoryPool *mp, CColRefArray *colref_array,
-							 CColRefArray *pdrgpcrMinimal,
-							 COperator::EGbAggType egbaggtype,
-							 CColRefArray *pdrgpcrKeys = NULL);
+  // ctor
+  CLogicalGbAggDeduplicate(CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal,
+                           COperator::EGbAggType egbaggtype, CColRefArray *pdrgpcrKeys = nullptr);
 
-	// dtor
-	virtual ~CLogicalGbAggDeduplicate();
+  // dtor
+  ~CLogicalGbAggDeduplicate() override;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalGbAggDeduplicate;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalGbAggDeduplicate; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalGbAggDeduplicate";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalGbAggDeduplicate"; }
 
-	// array of keys from the join's child that needs to be deduped
-	CColRefArray *
-	PdrgpcrKeys() const
-	{
-		return m_pdrgpcrKeys;
-	}
+  // array of keys from the join's child that needs to be deduped
+  CColRefArray *PdrgpcrKeys() const { return m_pdrgpcrKeys; }
 
-	// match function
-	virtual BOOL Matches(COperator *pop) const;
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// hash function
-	virtual ULONG HashValue() const;
+  // hash function
+  ULONG HashValue() const override;
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	//-------------------------------------------------------------------------------------
-	// Derived Relational Properties
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Derived Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// derive key collections
-	virtual CKeyCollection *DeriveKeyCollection(
-		CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  // derive key collections
+  CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-	// compute required stats columns of the n-th child
-	//-------------------------------------------------------------------------------------
-	// Required Relational Properties
-	//-------------------------------------------------------------------------------------
+  // compute required stats columns of the n-th child
+  //-------------------------------------------------------------------------------------
+  // Required Relational Properties
+  //-------------------------------------------------------------------------------------
 
-	// compute required stat columns of the n-th child
-	virtual CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								 CColRefSet *pcrsInput,
-								 ULONG child_index) const;
+  // compute required stat columns of the n-th child
+  CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
+                       ULONG child_index) const override;
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// candidate set of xforms
-	virtual CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	// derive statistics
-	virtual IStatistics *PstatsDerive(CMemoryPool *mp,
-									  CExpressionHandle &exprhdl,
-									  IStatisticsArray *stats_ctxt) const;
+  // derive statistics
+  IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// conversion function
-	static CLogicalGbAggDeduplicate *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalGbAggDeduplicate == pop->Eopid());
+  // conversion function
+  static CLogicalGbAggDeduplicate *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalGbAggDeduplicate == pop->Eopid());
 
-		return dynamic_cast<CLogicalGbAggDeduplicate *>(pop);
-	}
+    return dynamic_cast<CLogicalGbAggDeduplicate *>(pop);
+  }
 
+  // debug print
+  IOstream &OsPrint(IOstream &os) const override;
 
-	// debug print
-	virtual IOstream &OsPrint(IOstream &os) const;
-
-};	// class CLogicalGbAggDeduplicate
+};  // class CLogicalGbAggDeduplicate
 
 }  // namespace gpopt
 
-
-#endif	// !GPOS_CLogicalGbAggDeduplicate_H
+#endif  // !GPOS_CLogicalGbAggDeduplicate_H
 
 // EOF

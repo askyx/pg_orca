@@ -19,8 +19,7 @@
 #include "gpopt/operators/CPatternTree.h"
 #include "gpopt/xforms/CXformSubqJoin2Apply.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -31,47 +30,31 @@ using namespace gpos;
 //		Transform NAry Join with subquery predicates to Apply
 //
 //---------------------------------------------------------------------------
-class CXformSubqNAryJoin2Apply : public CXformSubqJoin2Apply
-{
-private:
-	// private copy ctor
-	CXformSubqNAryJoin2Apply(const CXformSubqNAryJoin2Apply &);
+class CXformSubqNAryJoin2Apply : public CXformSubqJoin2Apply {
+ private:
+ public:
+  CXformSubqNAryJoin2Apply(const CXformSubqNAryJoin2Apply &) = delete;
 
-public:
-	// ctor
-	explicit CXformSubqNAryJoin2Apply(CMemoryPool *mp)
-		: CXformSubqJoin2Apply(
-			  // pattern
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CLogicalNAryJoin(mp),
-				  GPOS_NEW(mp)
-					  CExpression(mp, GPOS_NEW(mp) CPatternMultiLeaf(mp)),
-				  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))))
-	{
-	}
+  // ctor
+  explicit CXformSubqNAryJoin2Apply(CMemoryPool *mp)
+      : CXformSubqJoin2Apply(
+            // pattern
+            GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalNAryJoin(mp),
+                                     GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternMultiLeaf(mp)),
+                                     GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp)))) {}
 
-	// dtor
-	virtual ~CXformSubqNAryJoin2Apply()
-	{
-	}
+  // dtor
+  ~CXformSubqNAryJoin2Apply() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSubqNAryJoin2Apply;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfSubqNAryJoin2Apply; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSubqNAryJoin2Apply";
-	}
+  const CHAR *SzId() const override { return "CXformSubqNAryJoin2Apply"; }
 
-};	// class CXformSubqNAryJoin2Apply
+};  // class CXformSubqNAryJoin2Apply
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSubqNAryJoin2Apply_H
+#endif  // !GPOPT_CXformSubqNAryJoin2Apply_H
 
 // EOF

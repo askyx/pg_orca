@@ -20,6 +20,8 @@
 
 using namespace gpopt;
 
+FORCE_GENERATE_DBGSTR(COperator);
+
 // generate unique operator ids
 ULONG COperator::m_aulOpIdCounter(0);
 
@@ -31,12 +33,9 @@ ULONG COperator::m_aulOpIdCounter(0);
 //		ctor
 //
 //---------------------------------------------------------------------------
-COperator::COperator(CMemoryPool *mp)
-	: m_ulOpId(m_aulOpIdCounter++), m_mp(mp), m_fPattern(false)
-{
-	GPOS_ASSERT(NULL != mp);
+COperator::COperator(CMemoryPool *mp) : m_ulOpId(m_aulOpIdCounter++), m_mp(mp), m_fPattern(false) {
+  GPOS_ASSERT(nullptr != mp);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -47,13 +46,11 @@ COperator::COperator(CMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 ULONG
-COperator::HashValue() const
-{
-	ULONG ulEopid = (ULONG) Eopid();
+COperator::HashValue() const {
+  ULONG ulEopid = (ULONG)Eopid();
 
-	return gpos::HashValue<ULONG>(&ulEopid);
+  return gpos::HashValue<ULONG>(&ulEopid);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -63,38 +60,9 @@ COperator::HashValue() const
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-COperator::OsPrint(IOstream &os) const
-{
-	os << this->SzId();
-	return os;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		COperator::EfdaDeriveFromChildren
-//
-//	@doc:
-//		Derive data access function property from child expressions
-//
-//---------------------------------------------------------------------------
-IMDFunction::EFuncDataAcc
-COperator::EfdaDeriveFromChildren(CExpressionHandle &exprhdl,
-								  IMDFunction::EFuncDataAcc efdaDefault)
-{
-	IMDFunction::EFuncDataAcc efda = efdaDefault;
-
-	const ULONG arity = exprhdl.Arity();
-	for (ULONG ul = 0; ul < arity; ul++)
-	{
-		IMDFunction::EFuncDataAcc efdaChild = exprhdl.PfpChild(ul)->Efda();
-		if (efdaChild > efda)
-		{
-			efda = efdaChild;
-		}
-	}
-
-	return efda;
+IOstream &COperator::OsPrint(IOstream &os) const {
+  os << this->SzId();
+  return os;
 }
 
 //---------------------------------------------------------------------------
@@ -105,23 +73,18 @@ COperator::EfdaDeriveFromChildren(CExpressionHandle &exprhdl,
 //		Derive stability function property from child expressions
 //
 //---------------------------------------------------------------------------
-IMDFunction::EFuncStbl
-COperator::EfsDeriveFromChildren(CExpressionHandle &exprhdl,
-								 IMDFunction::EFuncStbl efsDefault)
-{
-	IMDFunction::EFuncStbl efs = efsDefault;
+IMDFunction::EFuncStbl COperator::EfsDeriveFromChildren(CExpressionHandle &exprhdl, IMDFunction::EFuncStbl efsDefault) {
+  IMDFunction::EFuncStbl efs = efsDefault;
 
-	const ULONG arity = exprhdl.Arity();
-	for (ULONG ul = 0; ul < arity; ul++)
-	{
-		IMDFunction::EFuncStbl efsChild = exprhdl.PfpChild(ul)->Efs();
-		if (efsChild > efs)
-		{
-			efs = efsChild;
-		}
-	}
+  const ULONG arity = exprhdl.Arity();
+  for (ULONG ul = 0; ul < arity; ul++) {
+    IMDFunction::EFuncStbl efsChild = exprhdl.PfpChild(ul)->Efs();
+    if (efsChild > efs) {
+      efs = efsChild;
+    }
+  }
 
-	return efs;
+  return efs;
 }
 
 //---------------------------------------------------------------------------
@@ -132,20 +95,35 @@ COperator::EfsDeriveFromChildren(CExpressionHandle &exprhdl,
 //		Derive function properties from child expressions
 //
 //---------------------------------------------------------------------------
-CFunctionProp *
-COperator::PfpDeriveFromChildren(CMemoryPool *mp, CExpressionHandle &exprhdl,
-								 IMDFunction::EFuncStbl efsDefault,
-								 IMDFunction::EFuncDataAcc efdaDefault,
-								 BOOL fHasVolatileFunctionScan, BOOL fScan)
-{
-	IMDFunction::EFuncStbl efs = EfsDeriveFromChildren(exprhdl, efsDefault);
-	IMDFunction::EFuncDataAcc efda =
-		EfdaDeriveFromChildren(exprhdl, efdaDefault);
+CFunctionProp *COperator::PfpDeriveFromChildren(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                IMDFunction::EFuncStbl efsDefault, BOOL fHasVolatileFunctionScan,
+                                                BOOL fScan) {
+  IMDFunction::EFuncStbl efs = EfsDeriveFromChildren(exprhdl, efsDefault);
 
-	return GPOS_NEW(mp) CFunctionProp(
-		efs, efda,
-		fHasVolatileFunctionScan || exprhdl.FChildrenHaveVolatileFuncScan(),
-		fScan);
+  return GPOS_NEW(mp) CFunctionProp(efs, fHasVolatileFunctionScan || exprhdl.FChildrenHaveVolatileFuncScan(), fScan);
+}
+
+//---------------------------------------------------------------------------
+//	@function:
+//		COperator::DeriveTableDescriptor
+//
+//	@doc:
+//		Derive table descriptor for tables used by operator
+//
+//---------------------------------------------------------------------------
+CTableDescriptorHashSet *COperator::DeriveTableDescriptor(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
+  CTableDescriptorHashSet *table_descriptor_set = GPOS_NEW(mp) CTableDescriptorHashSet(mp);
+
+  for (ULONG ul = 0; ul < exprhdl.Arity(); ul++) {
+    CTableDescriptorHashSetIter hsiter(exprhdl.DeriveTableDescriptor(ul));
+    while (hsiter.Advance()) {
+      CTableDescriptor *ptabdesc = const_cast<CTableDescriptor *>(hsiter.Get());
+      if (table_descriptor_set->Insert(ptabdesc)) {
+        ptabdesc->AddRef();
+      }
+    }
+  }
+  return table_descriptor_set;
 }
 
 //---------------------------------------------------------------------------
@@ -156,11 +134,9 @@ COperator::PfpDeriveFromChildren(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Return an addref'ed copy of the operator
 //
 //---------------------------------------------------------------------------
-COperator *
-COperator::PopCopyDefault()
-{
-	this->AddRef();
-	return this;
+COperator *COperator::PopCopyDefault() {
+  this->AddRef();
+  return this;
 }
 
 // EOF

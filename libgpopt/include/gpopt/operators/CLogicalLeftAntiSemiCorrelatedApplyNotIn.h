@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CLogicalLeftAntiSemiCorrelatedApplyNotIn.h
@@ -19,8 +19,7 @@
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalLeftAntiSemiApplyNotIn.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CLogicalLeftAntiSemiCorrelatedApplyNotIn
@@ -29,85 +28,56 @@ namespace gpopt
 //		Logical Apply operator used in correlated execution of NOT IN/ALL subqueries
 //
 //---------------------------------------------------------------------------
-class CLogicalLeftAntiSemiCorrelatedApplyNotIn
-	: public CLogicalLeftAntiSemiApplyNotIn
-{
-private:
-	// private copy ctor
-	CLogicalLeftAntiSemiCorrelatedApplyNotIn(
-		const CLogicalLeftAntiSemiCorrelatedApplyNotIn &);
+class CLogicalLeftAntiSemiCorrelatedApplyNotIn : public CLogicalLeftAntiSemiApplyNotIn {
+ private:
+ public:
+  CLogicalLeftAntiSemiCorrelatedApplyNotIn(const CLogicalLeftAntiSemiCorrelatedApplyNotIn &) = delete;
 
-public:
-	// ctor
-	explicit CLogicalLeftAntiSemiCorrelatedApplyNotIn(CMemoryPool *mp)
-		: CLogicalLeftAntiSemiApplyNotIn(mp)
-	{
-	}
+  // ctor
+  explicit CLogicalLeftAntiSemiCorrelatedApplyNotIn(CMemoryPool *mp) : CLogicalLeftAntiSemiApplyNotIn(mp) {}
 
-	// ctor
-	CLogicalLeftAntiSemiCorrelatedApplyNotIn(CMemoryPool *mp,
-											 CColRefArray *pdrgpcrInner,
-											 EOperatorId eopidOriginSubq)
-		: CLogicalLeftAntiSemiApplyNotIn(mp, pdrgpcrInner, eopidOriginSubq)
-	{
-	}
+  // ctor
+  CLogicalLeftAntiSemiCorrelatedApplyNotIn(CMemoryPool *mp, CColRefArray *pdrgpcrInner, EOperatorId eopidOriginSubq)
+      : CLogicalLeftAntiSemiApplyNotIn(mp, pdrgpcrInner, eopidOriginSubq) {}
 
-	// dtor
-	virtual ~CLogicalLeftAntiSemiCorrelatedApplyNotIn()
-	{
-	}
+  // dtor
+  ~CLogicalLeftAntiSemiCorrelatedApplyNotIn() override = default;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopLogicalLeftAntiSemiCorrelatedApplyNotIn;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopLogicalLeftAntiSemiCorrelatedApplyNotIn; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CLogicalLeftAntiSemiCorrelatedApplyNotIn";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CLogicalLeftAntiSemiCorrelatedApplyNotIn"; }
 
-	//-------------------------------------------------------------------------------------
-	// Transformations
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  // Transformations
+  //-------------------------------------------------------------------------------------
 
-	// candidate set of xforms
-	virtual CXformSet *PxfsCandidates(CMemoryPool *mp) const;
+  // candidate set of xforms
+  CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
-	//-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
+  //-------------------------------------------------------------------------------------
 
-	// return true if operator is a correlated apply
-	virtual BOOL
-	FCorrelated() const
-	{
-		return true;
-	}
+  // return true if operator is a correlated apply
+  BOOL FCorrelated() const override { return true; }
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *PopCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
-	// conversion function
-	static CLogicalLeftAntiSemiCorrelatedApplyNotIn *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopLogicalLeftAntiSemiCorrelatedApplyNotIn == pop->Eopid());
+  // conversion function
+  static CLogicalLeftAntiSemiCorrelatedApplyNotIn *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopLogicalLeftAntiSemiCorrelatedApplyNotIn == pop->Eopid());
 
-		return dynamic_cast<CLogicalLeftAntiSemiCorrelatedApplyNotIn *>(pop);
-	}
+    return dynamic_cast<CLogicalLeftAntiSemiCorrelatedApplyNotIn *>(pop);
+  }
 
-};	// class CLogicalLeftAntiSemiCorrelatedApplyNotIn
+};  // class CLogicalLeftAntiSemiCorrelatedApplyNotIn
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CLogicalLeftAntiSemiCorrelatedApplyNotIn_H
+#endif  // !GPOPT_CLogicalLeftAntiSemiCorrelatedApplyNotIn_H
 
 // EOF

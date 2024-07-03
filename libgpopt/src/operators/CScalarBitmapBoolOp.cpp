@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CScalarBitmapBoolOp.cpp
@@ -27,8 +27,8 @@
 
 using namespace gpopt;
 
-const WCHAR CScalarBitmapBoolOp::m_rgwszBitmapOpType[EbitmapboolSentinel][30] =
-	{GPOS_WSZ_LIT("BitmapAnd"), GPOS_WSZ_LIT("BitmapOr")};
+const WCHAR CScalarBitmapBoolOp::m_rgwszBitmapOpType[EbitmapboolSentinel][30] = {GPOS_WSZ_LIT("BitmapAnd"),
+                                                                                 GPOS_WSZ_LIT("BitmapOr")};
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -39,16 +39,11 @@ const WCHAR CScalarBitmapBoolOp::m_rgwszBitmapOpType[EbitmapboolSentinel][30] =
 //		Takes ownership of the bitmap type id.
 //
 //---------------------------------------------------------------------------
-CScalarBitmapBoolOp::CScalarBitmapBoolOp(CMemoryPool *mp,
-										 EBitmapBoolOp ebitmapboolop,
-										 IMDId *pmdidBitmapType)
-	: CScalar(mp),
-	  m_ebitmapboolop(ebitmapboolop),
-	  m_pmdidBitmapType(pmdidBitmapType)
-{
-	GPOS_ASSERT(NULL != mp);
-	GPOS_ASSERT(EbitmapboolSentinel > ebitmapboolop);
-	GPOS_ASSERT(NULL != pmdidBitmapType);
+CScalarBitmapBoolOp::CScalarBitmapBoolOp(CMemoryPool *mp, EBitmapBoolOp ebitmapboolop, IMDId *pmdidBitmapType)
+    : CScalar(mp), m_ebitmapboolop(ebitmapboolop), m_pmdidBitmapType(pmdidBitmapType) {
+  GPOS_ASSERT(nullptr != mp);
+  GPOS_ASSERT(EbitmapboolSentinel > ebitmapboolop);
+  GPOS_ASSERT(nullptr != pmdidBitmapType);
 }
 
 //---------------------------------------------------------------------------
@@ -59,9 +54,8 @@ CScalarBitmapBoolOp::CScalarBitmapBoolOp(CMemoryPool *mp,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarBitmapBoolOp::~CScalarBitmapBoolOp()
-{
-	m_pmdidBitmapType->Release();
+CScalarBitmapBoolOp::~CScalarBitmapBoolOp() {
+  m_pmdidBitmapType->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -73,13 +67,10 @@ CScalarBitmapBoolOp::~CScalarBitmapBoolOp()
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarBitmapBoolOp::HashValue() const
-{
-	ULONG ulBoolop = (ULONG) Ebitmapboolop();
-	return gpos::CombineHashes(COperator::HashValue(),
-							   gpos::HashValue<ULONG>(&ulBoolop));
+CScalarBitmapBoolOp::HashValue() const {
+  ULONG ulBoolop = (ULONG)Ebitmapboolop();
+  return gpos::CombineHashes(COperator::HashValue(), gpos::HashValue<ULONG>(&ulBoolop));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -89,17 +80,13 @@ CScalarBitmapBoolOp::HashValue() const
 //		Match this operator with the given one.
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarBitmapBoolOp::Matches(COperator *pop) const
-{
-	if (pop->Eopid() != Eopid())
-	{
-		return false;
-	}
-	CScalarBitmapBoolOp *popBitmapBoolOp = PopConvert(pop);
+BOOL CScalarBitmapBoolOp::Matches(COperator *pop) const {
+  if (pop->Eopid() != Eopid()) {
+    return false;
+  }
+  CScalarBitmapBoolOp *popBitmapBoolOp = PopConvert(pop);
 
-	return popBitmapBoolOp->Ebitmapboolop() == Ebitmapboolop() &&
-		   popBitmapBoolOp->MdidType()->Equals(m_pmdidBitmapType);
+  return popBitmapBoolOp->Ebitmapboolop() == Ebitmapboolop() && popBitmapBoolOp->MdidType()->Equals(m_pmdidBitmapType);
 }
 
 //---------------------------------------------------------------------------
@@ -110,14 +97,12 @@ CScalarBitmapBoolOp::Matches(COperator *pop) const
 //		Debug print of this operator
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarBitmapBoolOp::OsPrint(IOstream &os) const
-{
-	os << SzId() << " (";
-	os << m_rgwszBitmapOpType[m_ebitmapboolop];
-	os << ")";
+IOstream &CScalarBitmapBoolOp::OsPrint(IOstream &os) const {
+  os << SzId() << " (";
+  os << m_rgwszBitmapOpType[m_ebitmapboolop];
+  os << ")";
 
-	return os;
+  return os;
 }
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLDatumInt2.h
@@ -22,8 +22,7 @@
 
 #include "naucrates/dxl/operators/CDXLDatum.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
@@ -37,47 +36,39 @@ class CXMLSerializer;
 //		Class for representing DXL short integer datums
 //
 //---------------------------------------------------------------------------
-class CDXLDatumInt2 : public CDXLDatum
-{
-private:
-	// int2 value
-	SINT m_val;
+class CDXLDatumInt2 : public CDXLDatum {
+ private:
+  // int2 value
+  SINT m_val;
 
-	// private copy ctor
-	CDXLDatumInt2(const CDXLDatumInt2 &);
+ public:
+  CDXLDatumInt2(const CDXLDatumInt2 &) = delete;
 
-public:
-	// ctor
-	CDXLDatumInt2(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, SINT val);
+  // ctor
+  CDXLDatumInt2(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, SINT val);
 
-	// dtor
-	virtual ~CDXLDatumInt2(){};
+  // dtor
+  ~CDXLDatumInt2() override = default;
 
-	// accessor of int value
-	SINT Value() const;
+  // accessor of int value
+  SINT Value() const;
 
-	// serialize the datum as the given element
-	virtual void Serialize(CXMLSerializer *xml_serializer);
+  // serialize the datum as the given element
+  void Serialize(CXMLSerializer *xml_serializer) override;
 
-	// datum type
-	virtual EdxldatumType
-	GetDatumType() const
-	{
-		return CDXLDatum::EdxldatumInt2;
-	}
+  // datum type
+  EdxldatumType GetDatumType() const override { return CDXLDatum::EdxldatumInt2; }
 
-	// conversion function
-	static CDXLDatumInt2 *
-	Cast(CDXLDatum *dxl_datum)
-	{
-		GPOS_ASSERT(NULL != dxl_datum);
-		GPOS_ASSERT(CDXLDatum::EdxldatumInt2 == dxl_datum->GetDatumType());
+  // conversion function
+  static CDXLDatumInt2 *Cast(CDXLDatum *dxl_datum) {
+    GPOS_ASSERT(nullptr != dxl_datum);
+    GPOS_ASSERT(CDXLDatum::EdxldatumInt2 == dxl_datum->GetDatumType());
 
-		return dynamic_cast<CDXLDatumInt2 *>(dxl_datum);
-	}
+    return dynamic_cast<CDXLDatumInt2 *>(dxl_datum);
+  }
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLDatumInt2_H
+#endif  // !GPDXL_CDXLDatumInt2_H
 
 // EOF

@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,18 +24,16 @@ using namespace gpos;
 //		Static unit tests for max card computation
 //
 //---------------------------------------------------------------------------
-class CMaxCardTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
-	static GPOS_RESULT EresUnittest_RunMinidumpTests();
+class CMaxCardTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
+  static GPOS_RESULT EresUnittest_RunMinidumpTests();
 
-};	// class CMaxCardTest
+};  // class CMaxCardTest
 }  // namespace gpopt
 
-#endif	// !GPOS_CMaxCardTest_H
-
+#endif  // !GPOS_CMaxCardTest_H
 
 // EOF

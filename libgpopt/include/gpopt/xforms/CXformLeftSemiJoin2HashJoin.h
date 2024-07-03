@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,47 +26,33 @@ using namespace gpos;
 //		Transform left semi join to left semi hash join
 //
 //---------------------------------------------------------------------------
-class CXformLeftSemiJoin2HashJoin : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformLeftSemiJoin2HashJoin(const CXformLeftSemiJoin2HashJoin &);
+class CXformLeftSemiJoin2HashJoin : public CXformImplementation {
+ private:
+ public:
+  CXformLeftSemiJoin2HashJoin(const CXformLeftSemiJoin2HashJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformLeftSemiJoin2HashJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformLeftSemiJoin2HashJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformLeftSemiJoin2HashJoin()
-	{
-	}
+  // dtor
+  ~CXformLeftSemiJoin2HashJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfLeftSemiJoin2HashJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfLeftSemiJoin2HashJoin; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformLeftSemiJoin2HashJoin";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformLeftSemiJoin2HashJoin"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformLeftSemiJoin2HashJoin
+};  // class CXformLeftSemiJoin2HashJoin
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformLeftSemiJoin2HashJoin_H
+#endif  // !GPOPT_CXformLeftSemiJoin2HashJoin_H
 
 // EOF

@@ -16,7 +16,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CRewindabilitySpec::CRewindabilitySpec
@@ -25,12 +24,9 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CRewindabilitySpec::CRewindabilitySpec(ERewindabilityType rewindability_type,
-									   EMotionHazardType motion_hazard)
-	: m_rewindability(rewindability_type), m_motion_hazard(motion_hazard)
-{
-}
-
+CRewindabilitySpec::CRewindabilitySpec(ERewindabilityType rewindability_type, EMotionHazardType motion_hazard,
+                                       BOOL origin_nl_join)
+    : m_rewindability(rewindability_type), m_motion_hazard(motion_hazard), m_origin_nl_join(origin_nl_join) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -40,10 +36,7 @@ CRewindabilitySpec::CRewindabilitySpec(ERewindabilityType rewindability_type,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CRewindabilitySpec::~CRewindabilitySpec()
-{
-}
-
+CRewindabilitySpec::~CRewindabilitySpec() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,14 +46,11 @@ CRewindabilitySpec::~CRewindabilitySpec()
 //		Check for equality between rewindability specs
 //
 //---------------------------------------------------------------------------
-BOOL
-CRewindabilitySpec::Matches(const CRewindabilitySpec *prs) const
-{
-	GPOS_ASSERT(NULL != prs);
+BOOL CRewindabilitySpec::Matches(const CRewindabilitySpec *prs) const {
+  GPOS_ASSERT(nullptr != prs);
 
-	return Ert() == prs->Ert() && Emht() == prs->Emht();
+  return Ert() == prs->Ert() && Emht() == prs->Emht();
 }
-
 
 //	Check if this rewindability spec satisfies the given one
 //	based on following satisfiability rules:
@@ -92,48 +82,39 @@ CRewindabilitySpec::Matches(const CRewindabilitySpec *prs) const
 //	| Motion    | T        | F      |
 //	+-----------+----------+--------+
 
-BOOL
-CRewindabilitySpec::FSatisfies(const CRewindabilitySpec *prs) const
-{
-	// ErtNone requests always satisfied (row 1 in table 1)
-	if (prs->Ert() == ErtNone)
-	{
-		return true;
-	}
-	// ErtNone derived op cannot satisfy rewindable or rescannable requests
-	// (rows 2-4, col 1 in table 1)
-	else if (Ert() == ErtNone)
-	{
-		return false;
-	}
-	// A rewindable/MarkRestore request cannot be satisfied by a rescannable op
-	// (row 3-4 col 2 in table 1)
-	if (Ert() == ErtRescannable &&
-		(prs->Ert() == ErtRewindable || prs->Ert() == ErtMarkRestore))
-	{
-		return false;
-	}
-	// A MarkRestore request cannot be satisified by a rewindable op
-	// (row 4 col 3 in table 1)
-	if (Ert() == ErtRewindable && prs->Ert() == ErtMarkRestore)
-	{
-		return false;
-	}
-	// For the rest, check motion hazard satisfiability:
+BOOL CRewindabilitySpec::FSatisfies(const CRewindabilitySpec *prs) const {
+  // ErtNone requests always satisfied (row 1 in table 1)
+  if (prs->Ert() == ErtNone) {
+    return true;
+  }
+  // ErtNone derived op cannot satisfy rewindable or rescannable requests
+  // (rows 2-4, col 1 in table 1)
+  else if (Ert() == ErtNone) {
+    return false;
+  }
+  // A rewindable/MarkRestore request cannot be satisfied by a rescannable op
+  // (row 3-4 col 2 in table 1)
+  if (Ert() == ErtRescannable && (prs->Ert() == ErtRewindable || prs->Ert() == ErtMarkRestore)) {
+    return false;
+  }
+  // A MarkRestore request cannot be satisified by a rewindable op
+  // (row 4 col 3 in table 1)
+  if (Ert() == ErtRewindable && prs->Ert() == ErtMarkRestore) {
+    return false;
+  }
+  // For the rest, check motion hazard satisfiability:
 
-	// A request to handle motion hazard cannot be satisfied by an op that
-	// derived a motion hazard (row 2 col 2 in table 2)
-	if (prs->HasMotionHazard() && HasMotionHazard())
-	{
-		return false;
-	}
+  // A request to handle motion hazard cannot be satisfied by an op that
+  // derived a motion hazard (row 2 col 2 in table 2)
+  if (prs->HasMotionHazard() && HasMotionHazard()) {
+    return false;
+  }
 
-	// A request without motion hazard handling is satisfied. Also, a op that
-	// derived no motion hazard is satisfied
-	// (row 1 in table 2 & row 2 col 1 in table 2)
-	return true;
+  // A request without motion hazard handling is satisfied. Also, a op that
+  // derived no motion hazard is satisfied
+  // (row 1 in table 2 & row 2 col 1 in table 2)
+  return true;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -144,13 +125,10 @@ CRewindabilitySpec::FSatisfies(const CRewindabilitySpec *prs) const
 //
 //---------------------------------------------------------------------------
 ULONG
-CRewindabilitySpec::HashValue() const
-{
-	return gpos::CombineHashes(
-		gpos::HashValue<ERewindabilityType>(&m_rewindability),
-		gpos::HashValue<EMotionHazardType>(&m_motion_hazard));
+CRewindabilitySpec::HashValue() const {
+  return gpos::CombineHashes(gpos::HashValue<ERewindabilityType>(&m_rewindability),
+                             gpos::HashValue<EMotionHazardType>(&m_motion_hazard));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -160,39 +138,29 @@ CRewindabilitySpec::HashValue() const
 //		Add required enforcers to dynamic array
 //
 //---------------------------------------------------------------------------
-void
-CRewindabilitySpec::AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl,
-									CReqdPropPlan *prpp,
-									CExpressionArray *pdrgpexpr,
-									CExpression *pexpr)
-{
-	GPOS_ASSERT(NULL != prpp);
-	GPOS_ASSERT(NULL != mp);
-	GPOS_ASSERT(NULL != pdrgpexpr);
-	GPOS_ASSERT(NULL != pexpr);
-	GPOS_ASSERT(
-		this == prpp->Per()->PrsRequired() &&
-		"required plan properties don't match enforced rewindability spec");
+void CRewindabilitySpec::AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpp,
+                                         CExpressionArray *pdrgpexpr, CExpression *pexpr) {
+  GPOS_ASSERT(nullptr != prpp);
+  GPOS_ASSERT(nullptr != mp);
+  GPOS_ASSERT(nullptr != pdrgpexpr);
+  GPOS_ASSERT(nullptr != pexpr);
+  GPOS_ASSERT(this == prpp->Per()->PrsRequired() && "required plan properties don't match enforced rewindability spec");
 
-	CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
+  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
 
-	BOOL eager = false;
-	if (!GPOS_FTRACE(EopttraceMotionHazardHandling) ||
-		(prpp->Per()->PrsRequired()->HasMotionHazard() &&
-		 prs->HasMotionHazard()))
-	{
-		// If motion hazard handling is disabled then we always want a blocking spool.
-		// otherwise, create a blocking spool *only if* the request alerts about motion
-		// hazard and the group expression imposes a motion hazard as well, to prevent deadlock
-		eager = true;
-	}
+  BOOL eager = false;
+  if (!GPOS_FTRACE(EopttraceMotionHazardHandling) ||
+      (prpp->Per()->PrsRequired()->HasMotionHazard() && prs->HasMotionHazard())) {
+    // If motion hazard handling is disabled then we always want a blocking spool.
+    // otherwise, create a blocking spool *only if* the request alerts about motion
+    // hazard and the group expression imposes a motion hazard as well, to prevent deadlock
+    eager = true;
+  }
 
-	pexpr->AddRef();
-	CExpression *pexprSpool = GPOS_NEW(mp)
-		CExpression(mp, GPOS_NEW(mp) CPhysicalSpool(mp, eager), pexpr);
-	pdrgpexpr->Append(pexprSpool);
+  pexpr->AddRef();
+  CExpression *pexprSpool = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPhysicalSpool(mp, eager), pexpr);
+  pdrgpexpr->Append(pexprSpool);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -202,49 +170,44 @@ CRewindabilitySpec::AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Print rewindability spec
 //
 //---------------------------------------------------------------------------
-IOstream &
-CRewindabilitySpec::OsPrint(IOstream &os) const
-{
-	switch (Ert())
-	{
-		case ErtRewindable:
-			os << "REWINDABLE";
-			break;
+IOstream &CRewindabilitySpec::OsPrint(IOstream &os) const {
+  switch (Ert()) {
+    case ErtRewindable:
+      os << "REWINDABLE";
+      break;
 
-		case ErtRescannable:
-			os << "RESCANNABLE";
-			break;
+    case ErtRescannable:
+      os << "RESCANNABLE";
+      break;
 
-		case ErtNone:
-			os << "NONE";
-			break;
+    case ErtNone:
+      os << "NONE";
+      break;
 
-		case ErtMarkRestore:
-			os << "MARK-RESTORE";
-			break;
+    case ErtMarkRestore:
+      os << "MARK-RESTORE";
+      break;
 
-		default:
-			GPOS_ASSERT(!"Unrecognized rewindability type");
-			return os;
-	}
+    default:
+      GPOS_ASSERT(!"Unrecognized rewindability type");
+      return os;
+  }
 
-	switch (Emht())
-	{
-		case EmhtMotion:
-			os << " MOTION";
-			break;
+  switch (Emht()) {
+    case EmhtMotion:
+      os << " MOTION";
+      break;
 
-		case EmhtNoMotion:
-			os << " NO-MOTION";
-			break;
+    case EmhtNoMotion:
+      os << " NO-MOTION";
+      break;
 
-		default:
-			GPOS_ASSERT(!"Unrecognized motion hazard type");
-			break;
-	}
+    default:
+      GPOS_ASSERT(!"Unrecognized motion hazard type");
+      break;
+  }
 
-	return os;
+  return os;
 }
-
 
 // EOF

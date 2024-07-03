@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerScalarCoerceToDomain.h
@@ -18,9 +18,7 @@
 #include "naucrates/dxl/operators/CDXLScalarCoerceToDomain.h"
 #include "naucrates/dxl/parser/CParseHandlerScalarOp.h"
 
-
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -33,38 +31,32 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for parsing CoerceToDomain operator
 //
 //---------------------------------------------------------------------------
-class CParseHandlerScalarCoerceToDomain : public CParseHandlerScalarOp
-{
-private:
-	// private copy ctor
-	CParseHandlerScalarCoerceToDomain(
-		const CParseHandlerScalarCoerceToDomain &);
+class CParseHandlerScalarCoerceToDomain : public CParseHandlerScalarOp {
+ private:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerScalarCoerceToDomain(const CParseHandlerScalarCoerceToDomain &) = delete;
 
-public:
-	// ctor/dtor
-	CParseHandlerScalarCoerceToDomain(CMemoryPool *mp,
-									  CParseHandlerManager *parse_handler_mgr,
-									  CParseHandlerBase *parse_handler_root);
+  // ctor/dtor
+  CParseHandlerScalarCoerceToDomain(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                    CParseHandlerBase *parse_handler_root);
 
-	virtual ~CParseHandlerScalarCoerceToDomain(){};
+  ~CParseHandlerScalarCoerceToDomain() override = default;
 };
 
 }  // namespace gpdxl
-#endif	// GPDXL_CParseHandlerScalarCoerceToDomain_H
+#endif  // GPDXL_CParseHandlerScalarCoerceToDomain_H
 
-//EOF
+// EOF

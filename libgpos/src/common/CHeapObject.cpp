@@ -16,7 +16,6 @@
 
 using namespace gpos;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CHeapObject::CHeapObject
@@ -25,9 +24,6 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CHeapObject::CHeapObject()
-{
-}
-
+CHeapObject::CHeapObject() = default;
 
 // EOF

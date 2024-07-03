@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2016 Pivotal, Inc.
+//	Copyright (C) 2016 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CEscapeMechanismTest.h
@@ -14,8 +14,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CEscapeMechanismTest
@@ -24,21 +23,20 @@ namespace gpopt
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CEscapeMechanismTest
-{
-private:
-	// counter used to mark last successful test
-	static gpos::ULONG m_ulEscapeMechanismTestCounter;
+class CEscapeMechanismTest {
+ private:
+  // counter used to mark last successful test
+  static gpos::ULONG m_ulEscapeMechanismTestCounter;
 
-public:
-	// unittests
-	static gpos::GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static gpos::GPOS_RESULT EresUnittest();
 
-	static gpos::GPOS_RESULT EresUnittest_RunTests();
+  static gpos::GPOS_RESULT EresUnittest_RunTests();
 
-};	// class CEscapeMechanismTest
+};  // class CEscapeMechanismTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CEscapeMechanismTest_H
+#endif  // !GPOPT_CEscapeMechanismTest_H
 
 // EOF

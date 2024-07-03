@@ -15,8 +15,7 @@
 
 #define GPOS_MSGTAB_SIZE 4096
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CMessageTable
@@ -25,63 +24,49 @@ namespace gpos
 //		Maintains error messages for a given locale
 //
 //---------------------------------------------------------------------------
-class CMessageTable
-{
-	// short hand for message tables
-	typedef CSyncHashtable<CMessage, CException> MessageTable;
+class CMessageTable {
+  // short hand for message tables
+  using MessageTable = CSyncHashtable<CMessage, CException>;
 
-	// short hand for message table accessor
-	typedef CSyncHashtableAccessByKey<CMessage, CException> MTAccessor;
+  // short hand for message table accessor
+  using MTAccessor = CSyncHashtableAccessByKey<CMessage, CException>;
 
-	// message hashtable
-	MessageTable m_hash_table;
+  // message hashtable
+  MessageTable m_hash_table;
 
-	// private copy ctor
-	CMessageTable(const CMessageTable &);
+ public:
+  CMessageTable(const CMessageTable &) = delete;
 
-public:
-	// ctor
-	CMessageTable(CMemoryPool *mp, ULONG size, ELocale locale);
+  // ctor
+  CMessageTable(CMemoryPool *mp, ULONG size, ELocale locale);
 
-	// lookup message by error/local
-	CMessage *LookupMessage(CException exc);
+  // lookup message by error/local
+  CMessage *LookupMessage(CException exc);
 
-	// insert message
-	void AddMessage(CMessage *msg);
+  // insert message
+  void AddMessage(CMessage *msg);
 
-	// simple comparison
-	BOOL
-	operator==(const CMessageTable &mt) const
-	{
-		return m_locale == mt.m_locale;
-	}
+  // simple comparison
+  BOOL operator==(const CMessageTable &mt) const { return m_locale == mt.m_locale; }
 
-	// equality function -- needed for hashtable
-	static BOOL
-	Equals(const ELocale &locale, const ELocale &other_locale)
-	{
-		return locale == other_locale;
-	}
+  // equality function -- needed for hashtable
+  static BOOL Equals(const ELocale &locale, const ELocale &other_locale) { return locale == other_locale; }
 
-	// basic hash function
-	static ULONG
-	HashValue(const ELocale &locale)
-	{
-		return (ULONG) locale;
-	}
+  // basic hash function
+  static ULONG HashValue(const ELocale &locale) { return (ULONG)locale; }
 
-	// link object
-	SLink m_link;
+  // link object
+  SLink m_link;
 
-	// locale
-	ELocale m_locale;
+  // locale
+  ELocale m_locale;
 
-	// invalid locale
-	static const ELocale m_invalid_locale;
+  // invalid locale
+  static const ELocale m_invalid_locale;
 
-};	// class CMessageTable
+};  // class CMessageTable
 }  // namespace gpos
 
-#endif	// !GPOS_CMessageTable_H
+#endif  // !GPOS_CMessageTable_H
 
 // EOF

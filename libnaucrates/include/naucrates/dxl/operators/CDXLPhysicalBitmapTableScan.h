@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLPhysicalBitmapTableScan.h
@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/operators/CDXLPhysicalAbstractBitmapScan.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 // fwd declarations
@@ -32,51 +31,38 @@ class CXMLSerializer;
 //		Class for representing DXL bitmap table scan operators
 //
 //---------------------------------------------------------------------------
-class CDXLPhysicalBitmapTableScan : public CDXLPhysicalAbstractBitmapScan
-{
-private:
-	// private copy ctor
-	CDXLPhysicalBitmapTableScan(const CDXLPhysicalBitmapTableScan &);
+class CDXLPhysicalBitmapTableScan : public CDXLPhysicalAbstractBitmapScan {
+ private:
+ public:
+  CDXLPhysicalBitmapTableScan(const CDXLPhysicalBitmapTableScan &) = delete;
 
-public:
-	// ctors
-	CDXLPhysicalBitmapTableScan(CMemoryPool *mp, CDXLTableDescr *table_descr)
-		: CDXLPhysicalAbstractBitmapScan(mp, table_descr)
-	{
-	}
+  // ctors
+  CDXLPhysicalBitmapTableScan(CMemoryPool *mp, CDXLTableDescr *table_descr)
+      : CDXLPhysicalAbstractBitmapScan(mp, table_descr) {}
 
-	// dtor
-	virtual ~CDXLPhysicalBitmapTableScan()
-	{
-	}
+  // dtor
+  ~CDXLPhysicalBitmapTableScan() override = default;
 
-	// operator type
-	virtual Edxlopid
-	GetDXLOperator() const
-	{
-		return EdxlopPhysicalBitmapTableScan;
-	}
+  // operator type
+  Edxlopid GetDXLOperator() const override { return EdxlopPhysicalBitmapTableScan; }
 
-	// operator name
-	virtual const CWStringConst *GetOpNameStr() const;
+  // operator name
+  const CWStringConst *GetOpNameStr() const override;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *dxlnode) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
-	// conversion function
-	static CDXLPhysicalBitmapTableScan *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopPhysicalBitmapTableScan == dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLPhysicalBitmapTableScan *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopPhysicalBitmapTableScan == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLPhysicalBitmapTableScan *>(dxl_op);
-	}
+    return dynamic_cast<CDXLPhysicalBitmapTableScan *>(dxl_op);
+  }
 
-};	// class CDXLPhysicalBitmapTableScan
+};  // class CDXLPhysicalBitmapTableScan
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLPhysicalBitmapTableScan_H
+#endif  // !GPDXL_CDXLPhysicalBitmapTableScan_H
 
 // EOF

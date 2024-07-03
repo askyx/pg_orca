@@ -26,15 +26,11 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalWindow::CDXLPhysicalWindow(CMemoryPool *mp,
-									   ULongPtrArray *part_by_colid_array,
-									   CDXLWindowKeyArray *window_key_array)
-	: CDXLPhysical(mp),
-	  m_part_by_colid_array(part_by_colid_array),
-	  m_dxl_window_key_array(window_key_array)
-{
-	GPOS_ASSERT(NULL != m_part_by_colid_array);
-	GPOS_ASSERT(NULL != m_dxl_window_key_array);
+CDXLPhysicalWindow::CDXLPhysicalWindow(CMemoryPool *mp, ULongPtrArray *part_by_colid_array,
+                                       CDXLWindowKeyArray *window_key_array)
+    : CDXLPhysical(mp), m_part_by_colid_array(part_by_colid_array), m_dxl_window_key_array(window_key_array) {
+  GPOS_ASSERT(nullptr != m_part_by_colid_array);
+  GPOS_ASSERT(nullptr != m_dxl_window_key_array);
 }
 
 //---------------------------------------------------------------------------
@@ -45,10 +41,9 @@ CDXLPhysicalWindow::CDXLPhysicalWindow(CMemoryPool *mp,
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalWindow::~CDXLPhysicalWindow()
-{
-	m_part_by_colid_array->Release();
-	m_dxl_window_key_array->Release();
+CDXLPhysicalWindow::~CDXLPhysicalWindow() {
+  m_part_by_colid_array->Release();
+  m_dxl_window_key_array->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -59,10 +54,8 @@ CDXLPhysicalWindow::~CDXLPhysicalWindow()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLPhysicalWindow::GetDXLOperator() const
-{
-	return EdxlopPhysicalWindow;
+Edxlopid CDXLPhysicalWindow::GetDXLOperator() const {
+  return EdxlopPhysicalWindow;
 }
 
 //---------------------------------------------------------------------------
@@ -73,10 +66,8 @@ CDXLPhysicalWindow::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLPhysicalWindow::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalWindow);
+const CWStringConst *CDXLPhysicalWindow::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalWindow);
 }
 
 //---------------------------------------------------------------------------
@@ -88,9 +79,8 @@ CDXLPhysicalWindow::GetOpNameStr() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CDXLPhysicalWindow::PartByColsCount() const
-{
-	return m_part_by_colid_array->Size();
+CDXLPhysicalWindow::PartByColsCount() const {
+  return m_part_by_colid_array->Size();
 }
 
 //---------------------------------------------------------------------------
@@ -102,9 +92,8 @@ CDXLPhysicalWindow::PartByColsCount() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CDXLPhysicalWindow::WindowKeysCount() const
-{
-	return m_dxl_window_key_array->Size();
+CDXLPhysicalWindow::WindowKeysCount() const {
+  return m_dxl_window_key_array->Size();
 }
 
 //---------------------------------------------------------------------------
@@ -115,11 +104,9 @@ CDXLPhysicalWindow::WindowKeysCount() const
 //		Return the window key at a given position
 //
 //---------------------------------------------------------------------------
-CDXLWindowKey *
-CDXLPhysicalWindow::GetDXLWindowKeyAt(ULONG position) const
-{
-	GPOS_ASSERT(position <= m_dxl_window_key_array->Size());
-	return (*m_dxl_window_key_array)[position];
+CDXLWindowKey *CDXLPhysicalWindow::GetDXLWindowKeyAt(ULONG position) const {
+  GPOS_ASSERT(position <= m_dxl_window_key_array->Size());
+  return (*m_dxl_window_key_array)[position];
 }
 
 //---------------------------------------------------------------------------
@@ -130,46 +117,33 @@ CDXLPhysicalWindow::GetDXLWindowKeyAt(ULONG position) const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalWindow::SerializeToDXL(CXMLSerializer *xml_serializer,
-								   const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLPhysicalWindow::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 
-	// serialize partition keys
-	CWStringDynamic *part_by_cols_str =
-		CDXLUtils::Serialize(m_mp, m_part_by_colid_array);
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPartKeys),
-								 part_by_cols_str);
-	GPOS_DELETE(part_by_cols_str);
+  // serialize partition keys
+  CWStringDynamic *part_by_cols_str = CDXLUtils::Serialize(m_mp, m_part_by_colid_array);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPartKeys), part_by_cols_str);
+  GPOS_DELETE(part_by_cols_str);
 
-	// serialize properties
-	dxlnode->SerializePropertiesToDXL(xml_serializer);
+  // serialize properties
+  dxlnode->SerializePropertiesToDXL(xml_serializer);
 
-	// serialize children
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
+  // serialize children
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
 
-	// serialize the list of window keys
-	const CWStringConst *window_keys_list_str =
-		CDXLTokens::GetDXLTokenStr(EdxltokenWindowKeyList);
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		window_keys_list_str);
-	const ULONG size = m_dxl_window_key_array->Size();
-	for (ULONG ul = 0; ul < size; ul++)
-	{
-		CDXLWindowKey *window_key_dxlnode = (*m_dxl_window_key_array)[ul];
-		window_key_dxlnode->SerializeToDXL(xml_serializer);
-	}
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		window_keys_list_str);
+  // serialize the list of window keys
+  const CWStringConst *window_keys_list_str = CDXLTokens::GetDXLTokenStr(EdxltokenWindowKeyList);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), window_keys_list_str);
+  const ULONG size = m_dxl_window_key_array->Size();
+  for (ULONG ul = 0; ul < size; ul++) {
+    CDXLWindowKey *window_key_dxlnode = (*m_dxl_window_key_array)[ul];
+    window_key_dxlnode->SerializeToDXL(xml_serializer);
+  }
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), window_keys_list_str);
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -181,22 +155,17 @@ CDXLPhysicalWindow::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalWindow::AssertValid(const CDXLNode *dxlnode,
-								BOOL validate_children) const
-{
-	// assert proj list and filter are valid
-	CDXLPhysical::AssertValid(dxlnode, validate_children);
-	GPOS_ASSERT(NULL != m_part_by_colid_array);
-	GPOS_ASSERT(NULL != m_dxl_window_key_array);
-	GPOS_ASSERT(EdxlwindowIndexSentinel == dxlnode->Arity());
-	CDXLNode *child_dxlnode = (*dxlnode)[EdxlwindowIndexChild];
-	if (validate_children)
-	{
-		child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-												  validate_children);
-	}
+void CDXLPhysicalWindow::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  // assert proj list and filter are valid
+  CDXLPhysical::AssertValid(dxlnode, validate_children);
+  GPOS_ASSERT(nullptr != m_part_by_colid_array);
+  GPOS_ASSERT(nullptr != m_dxl_window_key_array);
+  GPOS_ASSERT(EdxlwindowIndexSentinel == dxlnode->Arity());
+  CDXLNode *child_dxlnode = (*dxlnode)[EdxlwindowIndexChild];
+  if (validate_children) {
+    child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

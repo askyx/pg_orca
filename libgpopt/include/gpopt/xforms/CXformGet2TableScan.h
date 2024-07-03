@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,47 +26,33 @@ using namespace gpos;
 //		Transform Get to TableScan
 //
 //---------------------------------------------------------------------------
-class CXformGet2TableScan : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformGet2TableScan(const CXformGet2TableScan &);
+class CXformGet2TableScan : public CXformImplementation {
+ private:
+ public:
+  CXformGet2TableScan(const CXformGet2TableScan &) = delete;
 
-public:
-	// ctor
-	explicit CXformGet2TableScan(CMemoryPool *);
+  // ctor
+  explicit CXformGet2TableScan(CMemoryPool *);
 
-	// dtor
-	virtual ~CXformGet2TableScan()
-	{
-	}
+  // dtor
+  ~CXformGet2TableScan() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfGet2TableScan;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfGet2TableScan; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformGet2TableScan";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformGet2TableScan"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformGet2TableScan
+};  // class CXformGet2TableScan
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformGet2TableScan_H
+#endif  // !GPOPT_CXformGet2TableScan_H
 
 // EOF

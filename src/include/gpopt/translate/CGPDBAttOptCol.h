@@ -21,8 +21,7 @@
 #include "gpopt/translate/CGPDBAttInfo.h"
 #include "gpopt/translate/COptColInfo.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -33,50 +32,39 @@ using namespace gpos;
 //		Class to represent pair of GPDB var info to optimizer col info
 //
 //---------------------------------------------------------------------------
-class CGPDBAttOptCol : public CRefCount
-{
-private:
-	// gpdb att info
-	CGPDBAttInfo *m_gpdb_att_info;
+class CGPDBAttOptCol : public CRefCount {
+ private:
+  // gpdb att info
+  CGPDBAttInfo *m_gpdb_att_info;
 
-	// optimizer col info
-	COptColInfo *m_opt_col_info;
+  // optimizer col info
+  COptColInfo *m_opt_col_info;
 
-public:
-	CGPDBAttOptCol(const CGPDBAttOptCol &) = delete;
+ public:
+  CGPDBAttOptCol(const CGPDBAttOptCol &) = delete;
 
-	// ctor
-	CGPDBAttOptCol(CGPDBAttInfo *gpdb_att_info, COptColInfo *opt_col_info)
-		: m_gpdb_att_info(gpdb_att_info), m_opt_col_info(opt_col_info)
-	{
-		GPOS_ASSERT(NULL != m_gpdb_att_info);
-		GPOS_ASSERT(NULL != m_opt_col_info);
-	}
+  // ctor
+  CGPDBAttOptCol(CGPDBAttInfo *gpdb_att_info, COptColInfo *opt_col_info)
+      : m_gpdb_att_info(gpdb_att_info), m_opt_col_info(opt_col_info) {
+    GPOS_ASSERT(nullptr != m_gpdb_att_info);
+    GPOS_ASSERT(nullptr != m_opt_col_info);
+  }
 
-	// d'tor
-	~CGPDBAttOptCol() override
-	{
-		m_gpdb_att_info->Release();
-		m_opt_col_info->Release();
-	}
+  // d'tor
+  ~CGPDBAttOptCol() override {
+    m_gpdb_att_info->Release();
+    m_opt_col_info->Release();
+  }
 
-	// accessor
-	const CGPDBAttInfo *
-	GetGPDBAttInfo() const
-	{
-		return m_gpdb_att_info;
-	}
+  // accessor
+  const CGPDBAttInfo *GetGPDBAttInfo() const { return m_gpdb_att_info; }
 
-	// accessor
-	const COptColInfo *
-	GetOptColInfo() const
-	{
-		return m_opt_col_info;
-	}
+  // accessor
+  const COptColInfo *GetOptColInfo() const { return m_opt_col_info; }
 };
 
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CGPDBAttOptCol_H
+#endif  // !GPDXL_CGPDBAttOptCol_H
 
 // EOF

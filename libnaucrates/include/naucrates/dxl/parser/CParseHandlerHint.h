@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2016 Pivotal Software, Inc.
+//	Copyright (C) 2016 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CParseHandlerHint.h
@@ -17,8 +17,7 @@
 #include "gpopt/engine/CHint.h"
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -31,46 +30,41 @@ XERCES_CPP_NAMESPACE_USE
 //		SAX parse handler class for parsing hint configuration options
 //
 //---------------------------------------------------------------------------
-class CParseHandlerHint : public CParseHandlerBase
-{
-private:
-	// hint configuration
-	CHint *m_hint;
+class CParseHandlerHint : public CParseHandlerBase {
+ private:
+  // hint configuration
+  CHint *m_hint;
 
-	// private copy ctor
-	CParseHandlerHint(const CParseHandlerHint &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerHint(const CParseHandlerHint &) = delete;
 
-public:
-	// ctor
-	CParseHandlerHint(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-					  CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerHint(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr, CParseHandlerBase *parse_handler_root);
 
-	// dtor
-	virtual ~CParseHandlerHint();
+  // dtor
+  ~CParseHandlerHint() override;
 
-	// type of the parse handler
-	virtual EDxlParseHandlerType GetParseHandlerType() const;
+  // type of the parse handler
+  EDxlParseHandlerType GetParseHandlerType() const override;
 
-	// hint configuration
-	CHint *GetHint() const;
+  // hint configuration
+  CHint *GetHint() const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerHint_H
+#endif  // !GPDXL_CParseHandlerHint_H
 
 // EOF

@@ -22,7 +22,7 @@ SELECT * FROM my_tq_agg_small tq WHERE 110 >= tq.ets;
   <dxl:Thread Id="0">
     <dxl:OptimizerConfig>
       <dxl:EnumeratorConfig Id="0" PlanSamples="0" CostThreshold="0"/>
-      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000"/>
+      <dxl:StatisticsConfig DampingFactorFilter="0.750000" DampingFactorJoin="0.010000" DampingFactorGroupBy="0.750000" MaxStatsBuckets="100"/>
       <dxl:CTEConfig CTEInliningCutoff="0"/> 
       <dxl:WindowOids RowNumber="7000" Rank="7001"/>
       <dxl:CostModelConfig CostModelType="1" SegmentsForCosting="3">
@@ -30,7 +30,8 @@ SELECT * FROM my_tq_agg_small tq WHERE 110 >= tq.ets;
           <dxl:CostParam Name="NLJFactor" Value="1.000000" LowerBound="0.500000" UpperBound="1.500000"/>
         </dxl:CostParams>
       </dxl:CostModelConfig>
-      <dxl:TraceFlags Value="103027,102013,102024,102025,102119,102128,102129,103014,103015"/>
+      <dxl:PlanHint/>
+      <dxl:TraceFlags Value="102001,102002,102003,102013,102024,102025,102119,102128,102129,102144,103014,103015,103027,103033"/>
     </dxl:OptimizerConfig>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:RelationStatistics Mdid="2.31763855.1.1" Name="my_tq_agg_small" Rows="1.000000" EmptyRelation="false"/>
@@ -46,94 +47,68 @@ SELECT * FROM my_tq_agg_small tq WHERE 110 >= tq.ets;
           <dxl:Opfamily Mdid="0.3027.1.0"/>
         </dxl:Opfamilies>
       </dxl:GPDBScalarOp>
-      <dxl:Relation Mdid="0.31763855.1.0" Name="my_tq_agg_small" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="11,5">
+      <dxl:Relation Mdid="6.31763855.1.0" Name="my_tq_agg_small" IsTemporary="false" Rows="1.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="11,5">
         <dxl:Columns>
           <dxl:Column Name="ets" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="sym" Attno="2" Mdid="0.1043.1.0" Nullable="true" ColWidth="16">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="bid_price" Attno="3" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ask_price" Attno="4" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="end_ts" Attno="5" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.31763881.1.0" IsPartial="false"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
-      <dxl:Relation Mdid="0.31763855.1.1" Name="my_tq_agg_small" IsTemporary="false" HasOids="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="11,5">
+      <dxl:Relation Mdid="6.31763855.1.1" Name="my_tq_agg_small" IsTemporary="false" Rows="1.000000" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="11,5">
         <dxl:Columns>
           <dxl:Column Name="ets" Attno="1" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="sym" Attno="2" Mdid="0.1043.1.0" Nullable="true" ColWidth="16">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="bid_price" Attno="3" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ask_price" Attno="4" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="end_ts" Attno="5" Mdid="0.23.1.0" Nullable="true" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList>
           <dxl:IndexInfo Mdid="0.31763881.1.0" IsPartial="false"/>
         </dxl:IndexInfoList>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:GPDBScalarOp Mdid="0.525.1.0" Name="&gt;=" ComparisonType="GEq" ReturnsNullOnNullInput="true">
@@ -260,7 +235,7 @@ SELECT * FROM my_tq_agg_small tq WHERE 110 >= tq.ets;
           <dxl:UpperBound Closed="true" TypeMdid="0.23.1.0" Value="1200"/>
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
-      <dxl:Index Mdid="0.31763881.1.0" Name="my_idx" IsClustered="false" IndexType="Bitmap" IndexItemType="0.2283.1.0" KeyColumns="0" IncludedColumns="0,1,2,3,4,5,6,7,8,9,10,11">
+      <dxl:Index Mdid="0.31763881.1.0" Name="my_idx" IsClustered="false" IndexType="Bitmap" IndexItemType="0.2283.1.0" KeyColumns="0" IncludedColumns="" ReturnableColumns="">
         <dxl:Opfamilies>
           <dxl:Opfamily Mdid="0.3027.1.0"/>
         </dxl:Opfamilies>
@@ -311,7 +286,7 @@ SELECT * FROM my_tq_agg_small tq WHERE 110 >= tq.ets;
           <dxl:ConstValue TypeMdid="0.23.1.0" Value="110"/>
         </dxl:Comparison>
         <dxl:LogicalGet>
-          <dxl:TableDescriptor Mdid="0.31763855.1.1" TableName="my_tq_agg_small">
+          <dxl:TableDescriptor Mdid="6.31763855.1.1" TableName="my_tq_agg_small">
             <dxl:Columns>
               <dxl:Column ColId="1" Attno="1" ColName="ets" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="2" Attno="2" ColName="sym" TypeMdid="0.1043.1.0" ColWidth="16"/>
@@ -333,7 +308,7 @@ SELECT * FROM my_tq_agg_small tq WHERE 110 >= tq.ets;
     <dxl:Plan Id="0" SpaceSize="1">
       <dxl:GatherMotion InputSegments="0,1,2" OutputSegments="-1">
         <dxl:Properties>
-          <dxl:Cost StartupCost="0" TotalCost="68.129420" Rows="1.000000" Width="32"/>
+          <dxl:Cost StartupCost="0" TotalCost="391.295838" Rows="1.000000" Width="32"/>
         </dxl:Properties>
         <dxl:ProjList>
           <dxl:ProjElem ColId="0" Alias="ets">
@@ -356,7 +331,7 @@ SELECT * FROM my_tq_agg_small tq WHERE 110 >= tq.ets;
         <dxl:SortingColumnList/>
         <dxl:BitmapTableScan>
           <dxl:Properties>
-            <dxl:Cost StartupCost="0" TotalCost="68.129281" Rows="1.000000" Width="32"/>
+            <dxl:Cost StartupCost="0" TotalCost="391.295699" Rows="1.000000" Width="32"/>
           </dxl:Properties>
           <dxl:ProjList>
             <dxl:ProjElem ColId="0" Alias="ets">
@@ -391,7 +366,7 @@ SELECT * FROM my_tq_agg_small tq WHERE 110 >= tq.ets;
             </dxl:IndexCondList>
             <dxl:IndexDescriptor Mdid="0.31763881.1.0" IndexName="my_idx"/>
           </dxl:BitmapIndexProbe>
-          <dxl:TableDescriptor Mdid="0.31763855.1.1" TableName="my_tq_agg_small">
+          <dxl:TableDescriptor Mdid="6.31763855.1.1" TableName="my_tq_agg_small">
             <dxl:Columns>
               <dxl:Column ColId="0" Attno="1" ColName="ets" TypeMdid="0.23.1.0"/>
               <dxl:Column ColId="1" Attno="2" ColName="sym" TypeMdid="0.1043.1.0" ColWidth="16"/>

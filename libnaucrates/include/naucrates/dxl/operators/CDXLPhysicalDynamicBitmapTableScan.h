@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal, Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLPhysicalDynamicBitmapTableScan.h
@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/operators/CDXLPhysicalAbstractBitmapScan.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 // fwd declarations
@@ -32,79 +31,49 @@ class CXMLSerializer;
 //		Class for representing DXL bitmap table scan operators
 //
 //---------------------------------------------------------------------------
-class CDXLPhysicalDynamicBitmapTableScan : public CDXLPhysicalAbstractBitmapScan
-{
-private:
-	// id of partition index structure
-	ULONG m_part_index_id;
+class CDXLPhysicalDynamicBitmapTableScan : public CDXLPhysicalAbstractBitmapScan {
+ private:
+  IMdIdArray *m_part_mdids;
 
-	// printable partition index id
-	ULONG m_part_index_id_printable;
+  ULongPtrArray *m_selector_ids = nullptr;
 
-	// private copy ctor
-	CDXLPhysicalDynamicBitmapTableScan(
-		const CDXLPhysicalDynamicBitmapTableScan &);
+ public:
+  CDXLPhysicalDynamicBitmapTableScan(const CDXLPhysicalDynamicBitmapTableScan &) = delete;
 
-public:
-	// ctor
-	CDXLPhysicalDynamicBitmapTableScan(CMemoryPool *mp,
-									   CDXLTableDescr *table_descr,
-									   ULONG part_idx_id,
-									   ULONG part_idx_id_printable)
-		: CDXLPhysicalAbstractBitmapScan(mp, table_descr),
-		  m_part_index_id(part_idx_id),
-		  m_part_index_id_printable(part_idx_id_printable)
-	{
-		GPOS_ASSERT(NULL != table_descr);
-	}
+  // ctor
+  CDXLPhysicalDynamicBitmapTableScan(CMemoryPool *mp, CDXLTableDescr *table_descr, IMdIdArray *part_mdids,
+                                     ULongPtrArray *selector_ids)
+      : CDXLPhysicalAbstractBitmapScan(mp, table_descr), m_part_mdids(part_mdids), m_selector_ids(selector_ids) {
+    GPOS_ASSERT(nullptr != table_descr);
+  }
 
-	// dtor
-	virtual ~CDXLPhysicalDynamicBitmapTableScan()
-	{
-	}
+  // dtor
+  ~CDXLPhysicalDynamicBitmapTableScan() override;
 
-	// operator type
-	virtual Edxlopid
-	GetDXLOperator() const
-	{
-		return EdxlopPhysicalDynamicBitmapTableScan;
-	}
+  // operator type
+  Edxlopid GetDXLOperator() const override { return EdxlopPhysicalDynamicBitmapTableScan; }
 
-	// operator name
-	virtual const CWStringConst *GetOpNameStr() const;
+  // operator name
+  const CWStringConst *GetOpNameStr() const override;
 
-	// partition index id
-	ULONG
-	GetPartIndexId() const
-	{
-		return m_part_index_id;
-	}
+  IMdIdArray *GetParts() const;
 
-	// printable partition index id
-	ULONG
-	GetPartIndexIdPrintable() const
-	{
-		return m_part_index_id_printable;
-	}
+  const ULongPtrArray *GetSelectorIds() const { return m_selector_ids; }
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *xml_serializer,
-								const CDXLNode *node) const;
+  // serialize operator in DXL format
+  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
-	// conversion function
-	static CDXLPhysicalDynamicBitmapTableScan *
-	Cast(CDXLOperator *dxl_op)
-	{
-		GPOS_ASSERT(NULL != dxl_op);
-		GPOS_ASSERT(EdxlopPhysicalDynamicBitmapTableScan ==
-					dxl_op->GetDXLOperator());
+  // conversion function
+  static CDXLPhysicalDynamicBitmapTableScan *Cast(CDXLOperator *dxl_op) {
+    GPOS_ASSERT(nullptr != dxl_op);
+    GPOS_ASSERT(EdxlopPhysicalDynamicBitmapTableScan == dxl_op->GetDXLOperator());
 
-		return dynamic_cast<CDXLPhysicalDynamicBitmapTableScan *>(dxl_op);
-	}
+    return dynamic_cast<CDXLPhysicalDynamicBitmapTableScan *>(dxl_op);
+  }
 
-};	// class CDXLPhysicalDynamicBitmapTableScan
+};  // class CDXLPhysicalDynamicBitmapTableScan
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLPhysicalDynamicBitmapTableScan_H
+#endif  // !GPDXL_CDXLPhysicalDynamicBitmapTableScan_H
 
 // EOF

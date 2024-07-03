@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,17 +24,16 @@ using namespace gpos;
 //		Static unit tests
 //
 //---------------------------------------------------------------------------
-class CNameTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
-	static GPOS_RESULT EresUnittest_Ownership();
+class CNameTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
+  static GPOS_RESULT EresUnittest_Ownership();
 
-};	// class CNameTest
+};  // class CNameTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CNameTest_H
+#endif  // !GPOPT_CNameTest_H
 
 // EOF

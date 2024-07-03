@@ -15,10 +15,10 @@
 
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CColRefTable.h"
-
+#include "gpopt/base/COptCtxt.h"
+#include "gpopt/operators/CScalarFunc.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,12 +29,9 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarIdent::HashValue() const
-{
-	return gpos::CombineHashes(COperator::HashValue(),
-							   gpos::HashPtr<CColRef>(m_pcr));
+CScalarIdent::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(), gpos::HashPtr<CColRef>(m_pcr));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,20 +41,16 @@ CScalarIdent::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarIdent::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarIdent *popIdent = CScalarIdent::PopConvert(pop);
+BOOL CScalarIdent::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarIdent *popIdent = CScalarIdent::PopConvert(pop);
 
-		// match if column reference is same
-		return Pcr() == popIdent->Pcr();
-	}
+    // match if column reference is same
+    return Pcr() == popIdent->Pcr();
+  }
 
-	return false;
+  return false;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -67,11 +60,9 @@ CScalarIdent::Matches(COperator *pop) const
 //		Not called for leaf operators
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarIdent::FInputOrderSensitive() const
-{
-	GPOS_ASSERT(!"Unexpected call of function FInputOrderSensitive");
-	return false;
+BOOL CScalarIdent::FInputOrderSensitive() const {
+  GPOS_ASSERT(!"Unexpected call of function FInputOrderSensitive");
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -82,35 +73,25 @@ CScalarIdent::FInputOrderSensitive() const
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CScalarIdent::PopCopyWithRemappedColumns(CMemoryPool *mp,
-										 UlongToColRefMap *colref_mapping,
-										 BOOL must_exist)
-{
-	ULONG id = m_pcr->Id();
-	CColRef *colref = colref_mapping->Find(&id);
-	if (NULL == colref)
-	{
-		if (must_exist)
-		{
-			// not found in hashmap, so create a new colref and add to hashmap
-			CColumnFactory *col_factory = COptCtxt::PoctxtFromTLS()->Pcf();
+COperator *CScalarIdent::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
+                                                    BOOL must_exist) {
+  ULONG id = m_pcr->Id();
+  CColRef *colref = colref_mapping->Find(&id);
+  if (nullptr == colref) {
+    if (must_exist) {
+      // not found in hashmap, so create a new colref and add to hashmap
+      CColumnFactory *col_factory = COptCtxt::PoctxtFromTLS()->Pcf();
 
-			colref = col_factory->PcrCopy(m_pcr);
+      colref = col_factory->PcrCopy(m_pcr);
 
-#ifdef GPOS_DEBUG
-			BOOL result =
-#endif	// GPOS_DEBUG
-				colref_mapping->Insert(GPOS_NEW(mp) ULONG(id), colref);
-			GPOS_ASSERT(result);
-		}
-		else
-		{
-			colref = const_cast<CColRef *>(m_pcr);
-		}
-	}
+      BOOL result GPOS_ASSERTS_ONLY = colref_mapping->Insert(GPOS_NEW(mp) ULONG(id), colref);
+      GPOS_ASSERT(result);
+    } else {
+      colref = const_cast<CColRef *>(m_pcr);
+    }
+  }
 
-	return GPOS_NEW(mp) CScalarIdent(mp, colref);
+  return GPOS_NEW(mp) CScalarIdent(mp, colref);
 }
 
 //---------------------------------------------------------------------------
@@ -121,16 +102,12 @@ CScalarIdent::PopCopyWithRemappedColumns(CMemoryPool *mp,
 //		Expression type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarIdent::MdidType() const
-{
-	return m_pcr->RetrieveType()->MDId();
+IMDId *CScalarIdent::MdidType() const {
+  return m_pcr->RetrieveType()->MDId();
 }
 
-INT
-CScalarIdent::TypeModifier() const
-{
-	return m_pcr->TypeModifier();
+INT CScalarIdent::TypeModifier() const {
+  return m_pcr->TypeModifier();
 }
 
 //---------------------------------------------------------------------------
@@ -141,39 +118,66 @@ CScalarIdent::TypeModifier() const
 // 		Is the given expression a scalar cast of a scalar identifier
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarIdent::FCastedScId(CExpression *pexpr)
-{
-	GPOS_ASSERT(NULL != pexpr);
+BOOL CScalarIdent::FCastedScId(CExpression *pexpr) {
+  GPOS_ASSERT(nullptr != pexpr);
 
-	// cast(col1)
-	if (COperator::EopScalarCast == pexpr->Pop()->Eopid())
-	{
-		if (COperator::EopScalarIdent == (*pexpr)[0]->Pop()->Eopid())
-		{
-			return true;
-		}
-	}
+  // cast(col1)
+  if (COperator::EopScalarCast == pexpr->Pop()->Eopid()) {
+    if (COperator::EopScalarIdent == (*pexpr)[0]->Pop()->Eopid()) {
+      return true;
+    }
+  }
 
-	return false;
+  return false;
 }
 
-BOOL
-CScalarIdent::FCastedScId(CExpression *pexpr, CColRef *colref)
-{
-	GPOS_ASSERT(NULL != pexpr);
-	GPOS_ASSERT(NULL != colref);
+BOOL CScalarIdent::FCastedScId(CExpression *pexpr, CColRef *colref) {
+  GPOS_ASSERT(nullptr != pexpr);
+  GPOS_ASSERT(nullptr != colref);
 
-	if (!FCastedScId(pexpr))
-	{
-		return false;
-	}
+  if (!FCastedScId(pexpr)) {
+    return false;
+  }
 
-	CScalarIdent *pScIdent = CScalarIdent::PopConvert((*pexpr)[0]->Pop());
+  CScalarIdent *pScIdent = CScalarIdent::PopConvert((*pexpr)[0]->Pop());
 
-	return colref == pScIdent->Pcr();
+  return colref == pScIdent->Pcr();
 }
 
+//---------------------------------------------------------------------------
+//	@function:
+//		CScalarIdent::FAllowedFuncScId
+//
+//	@doc:
+// 		Is the given expression a scalar func (which is an increasing function
+//		allowed for partition selection) of a scalar identifier
+//
+//---------------------------------------------------------------------------
+BOOL CScalarIdent::FAllowedFuncScId(CExpression *pexpr) {
+  GPOS_ASSERT(nullptr != pexpr);
+
+  if (COperator::EopScalarFunc == pexpr->Pop()->Eopid() && pexpr->Arity() > 0 &&
+      COperator::EopScalarIdent == (*pexpr)[0]->Pop()->Eopid()) {
+    CScalarFunc *func = CScalarFunc::PopConvert(pexpr->Pop());
+    CMDIdGPDB *funcmdid = CMDIdGPDB::CastMdid(func->FuncMdId());
+    CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+    return md_accessor->RetrieveFunc(funcmdid)->IsAllowedForPS();
+  }
+  return false;
+}
+
+BOOL CScalarIdent::FAllowedFuncScId(CExpression *pexpr, CColRef *colref) {
+  GPOS_ASSERT(nullptr != pexpr);
+  GPOS_ASSERT(nullptr != colref);
+
+  if (!FAllowedFuncScId(pexpr)) {
+    return false;
+  }
+
+  CScalarIdent *pScIdent = CScalarIdent::PopConvert((*pexpr)[0]->Pop());
+
+  return colref == pScIdent->Pcr();
+}
 //---------------------------------------------------------------------------
 //	@function:
 //		CScalarIdent::OsPrint
@@ -182,13 +186,11 @@ CScalarIdent::FCastedScId(CExpression *pexpr, CColRef *colref)
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarIdent::OsPrint(IOstream &os) const
-{
-	os << SzId() << " ";
-	m_pcr->OsPrint(os);
+IOstream &CScalarIdent::OsPrint(IOstream &os) const {
+  os << SzId() << " ";
+  m_pcr->OsPrint(os);
 
-	return os;
+  return os;
 }
 
 // EOF

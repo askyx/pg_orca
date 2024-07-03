@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,49 +26,36 @@ using namespace gpos;
 //		Implement TVF
 //
 //---------------------------------------------------------------------------
-class CXformImplementTVF : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformImplementTVF(const CXformImplementTVF &);
+class CXformImplementTVF : public CXformImplementation {
+ private:
+ public:
+  CXformImplementTVF(const CXformImplementTVF &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementTVF(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementTVF(CMemoryPool *mp);
 
-	// ctor
-	explicit CXformImplementTVF(CExpression *pexprPattern);
+  // ctor
+  explicit CXformImplementTVF(CExpression *pexprPattern);
 
-	// dtor
-	virtual ~CXformImplementTVF()
-	{
-	}
+  // dtor
+  ~CXformImplementTVF() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementTVF;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementTVF; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementTVF";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformImplementTVF"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformImplementTVF
+};  // class CXformImplementTVF
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementTVF_H
+#endif  // !GPOPT_CXformImplementTVF_H
 
 // EOF

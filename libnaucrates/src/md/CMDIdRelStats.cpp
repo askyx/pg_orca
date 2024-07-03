@@ -9,7 +9,6 @@
 //		Implementation of mdids for relation statistics
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/md/CMDIdRelStats.h"
 
 #include "naucrates/dxl/xml/CXMLSerializer.h"
@@ -26,11 +25,7 @@ using namespace gpmd;
 //
 //---------------------------------------------------------------------------
 CMDIdRelStats::CMDIdRelStats(CMDIdGPDB *rel_mdid)
-	: m_rel_mdid(rel_mdid), m_str(m_mdid_array, GPOS_ARRAY_SIZE(m_mdid_array))
-{
-	// serialize mdid into static string
-	Serialize();
-}
+    : m_rel_mdid(rel_mdid), m_str(m_mdid_array, GPOS_ARRAY_SIZE(m_mdid_array)) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -40,9 +35,8 @@ CMDIdRelStats::CMDIdRelStats(CMDIdGPDB *rel_mdid)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CMDIdRelStats::~CMDIdRelStats()
-{
-	m_rel_mdid->Release();
+CMDIdRelStats::~CMDIdRelStats() {
+  m_rel_mdid->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -53,13 +47,15 @@ CMDIdRelStats::~CMDIdRelStats()
 //		Serialize mdid into static string
 //
 //---------------------------------------------------------------------------
-void
-CMDIdRelStats::Serialize()
-{
-	// serialize mdid as SystemType.Oid.Major.Minor
-	m_str.AppendFormat(GPOS_WSZ_LIT("%d.%d.%d.%d"), MdidType(),
-					   m_rel_mdid->Oid(), m_rel_mdid->VersionMajor(),
-					   m_rel_mdid->VersionMinor());
+void CMDIdRelStats::Serialize() const {
+  if (m_str.Length() > 0) {
+    return;
+  }
+
+  m_str.Reset();
+  // serialize mdid as SystemType.Oid.Major.Minor
+  m_str.AppendFormat(GPOS_WSZ_LIT("%d.%d.%d.%d"), MdidType(), m_rel_mdid->Oid(), m_rel_mdid->VersionMajor(),
+                     m_rel_mdid->VersionMinor());
 }
 
 //---------------------------------------------------------------------------
@@ -70,10 +66,9 @@ CMDIdRelStats::Serialize()
 //		Returns the string representation of the mdid
 //
 //---------------------------------------------------------------------------
-const WCHAR *
-CMDIdRelStats::GetBuffer() const
-{
-	return m_str.GetBuffer();
+const WCHAR *CMDIdRelStats::GetBuffer() const {
+  Serialize();
+  return m_str.GetBuffer();
 }
 
 //---------------------------------------------------------------------------
@@ -84,10 +79,8 @@ CMDIdRelStats::GetBuffer() const
 //		Returns the base relation id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDIdRelStats::GetRelMdId() const
-{
-	return m_rel_mdid;
+IMDId *CMDIdRelStats::GetRelMdId() const {
+  return m_rel_mdid;
 }
 
 //---------------------------------------------------------------------------
@@ -98,17 +91,14 @@ CMDIdRelStats::GetRelMdId() const
 //		Checks if the mdids are equal
 //
 //---------------------------------------------------------------------------
-BOOL
-CMDIdRelStats::Equals(const IMDId *mdid) const
-{
-	if (NULL == mdid || EmdidRelStats != mdid->MdidType())
-	{
-		return false;
-	}
+BOOL CMDIdRelStats::Equals(const IMDId *mdid) const {
+  if (nullptr == mdid || EmdidRelStats != mdid->MdidType()) {
+    return false;
+  }
 
-	const CMDIdRelStats *rel_stats_mdid = CMDIdRelStats::CastMdid(mdid);
+  const CMDIdRelStats *rel_stats_mdid = CMDIdRelStats::CastMdid(mdid);
 
-	return m_rel_mdid->Equals(rel_stats_mdid->GetRelMdId());
+  return m_rel_mdid->Equals(rel_stats_mdid->GetRelMdId());
 }
 
 //---------------------------------------------------------------------------
@@ -119,11 +109,9 @@ CMDIdRelStats::Equals(const IMDId *mdid) const
 //		Serializes the mdid as the value of the given attribute
 //
 //---------------------------------------------------------------------------
-void
-CMDIdRelStats::Serialize(CXMLSerializer *xml_serializer,
-						 const CWStringConst *attribute_str) const
-{
-	xml_serializer->AddAttribute(attribute_str, &m_str);
+void CMDIdRelStats::Serialize(CXMLSerializer *xml_serializer, const CWStringConst *attribute_str) const {
+  Serialize();
+  xml_serializer->AddAttribute(attribute_str, &m_str);
 }
 
 //---------------------------------------------------------------------------
@@ -134,11 +122,9 @@ CMDIdRelStats::Serialize(CXMLSerializer *xml_serializer,
 //		Debug print of the id in the provided stream
 //
 //---------------------------------------------------------------------------
-IOstream &
-CMDIdRelStats::OsPrint(IOstream &os) const
-{
-	os << "(" << m_str.GetBuffer() << ")";
-	return os;
+IOstream &CMDIdRelStats::OsPrint(IOstream &os) const {
+  os << "(" << GetBuffer() << ")";
+  return os;
 }
 
 // EOF

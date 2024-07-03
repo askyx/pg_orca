@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,45 +26,32 @@ using namespace gpos;
 //		Transform Logical Update to Logical DML
 //
 //---------------------------------------------------------------------------
-class CXformUpdate2DML : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformUpdate2DML(const CXformUpdate2DML &);
+class CXformUpdate2DML : public CXformExploration {
+ private:
+ public:
+  CXformUpdate2DML(const CXformUpdate2DML &) = delete;
 
-public:
-	// ctor
-	explicit CXformUpdate2DML(CMemoryPool *mp);
+  // ctor
+  explicit CXformUpdate2DML(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformUpdate2DML()
-	{
-	}
+  // dtor
+  ~CXformUpdate2DML() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfUpdate2DML;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfUpdate2DML; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformUpdate2DML";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformUpdate2DML"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformUpdate2DML
+};  // class CXformUpdate2DML
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformUpdate2DML_H
+#endif  // !GPOPT_CXformUpdate2DML_H
 
 // EOF

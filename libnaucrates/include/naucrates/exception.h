@@ -14,77 +14,58 @@
 #include "gpos/memory/CMemoryPool.h"
 #include "gpos/types.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 // major exception types - reserve range 200-1000
-enum ExMajor
-{
-	ExmaDXL = 200,
-	ExmaMD = 300,
-	ExmaComm = 400,
-	ExmaGPDB = 500,
-	ExmaConstExprEval = 600,
+enum ExMajor {
+  ExmaDXL = 200,
+  ExmaMD = 300,
+  ExmaComm = 400,
+  ExmaGPDB = 500,
+  ExmaConstExprEval = 600,
 
-	ExmaSentinel
+  ExmaSentinel
 };
 
 // minor exception types
-enum ExMinor
-{
-	// DXL-parsing related errors
-	ExmiDXLUnexpectedTag,
-	ExmiDXLMissingAttribute,
-	ExmiDXLInvalidAttributeValue,
-	ExmiDXLUnrecognizedOperator,
-	ExmiDXLUnrecognizedType,
-	ExmiDXLUnrecognizedCompOperator,
-	ExmiDXLValidationError,
-	ExmiDXLXercesParseError,
-	ExmiDXLIncorrectNumberOfChildren,
-	ExmiPlStmt2DXLConversion,
-	ExmiDXL2PlStmtConversion,
-	ExmiDXL2PlStmtExternalScanError,
-	ExmiDXL2PlStmtMissingPlanForSubPlanTranslation,
-	ExmiQuery2DXLAttributeNotFound,
-	ExmiQuery2DXLUnsupportedFeature,
-	ExmiQuery2DXLDuplicateRTE,
-	ExmiQuery2DXLMissingValue,
-	ExmiQuery2DXLNotNullViolation,
-	ExmiQuery2DXLError,
-	ExmiExpr2DXLUnsupportedFeature,
-	ExmiExpr2DXLAttributeNotFound,
-	ExmiDXL2PlStmtAttributeNotFound,
-	ExmiDXL2ExprAttributeNotFound,
+enum ExMinor {
+  // DXL-parsing related errors
+  ExmiDXLUnexpectedTag,
+  ExmiDXLMissingAttribute,
+  ExmiDXLInvalidAttributeValue,
+  ExmiDXLUnrecognizedOperator,
+  ExmiDXLUnrecognizedType,
+  ExmiDXLUnrecognizedCompOperator,
+  ExmiDXLValidationError,
+  ExmiDXLXercesParseError,
+  ExmiDXLIncorrectNumberOfChildren,
+  ExmiDXL2PlStmtConversion,
+  ExmiQuery2DXLAttributeNotFound,
+  ExmiQuery2DXLUnsupportedFeature,
+  ExmiQuery2DXLError,
+  ExmiExpr2DXLUnsupportedFeature,
+  ExmiExpr2DXLAttributeNotFound,
+  ExmiDXL2PlStmtAttributeNotFound,
+  ExmiDXL2ExprAttributeNotFound,
 
-	// MD related errors
-	ExmiMDCacheEntryDuplicate,
-	ExmiMDCacheEntryNotFound,
-	ExmiMDObjUnsupported,
+  // MD related errors
+  ExmiMDCacheEntryDuplicate,
+  ExmiMDCacheEntryNotFound,
+  ExmiMDObjUnsupported,
 
-	// communication related errors
-	ExmiCommPropagateError,
-	ExmiCommUnexpectedMessage,
+  // GPDB-related exceptions
+  ExmiGPDBError,
 
-	// GPDB-related exceptions
-	ExmiGPDBError,
+  // exceptions related to constant expression evaluation
+  ExmiConstExprEvalNonConst,
 
-	// exceptions related to constant expression evaluation
-	ExmiConstExprEvalNonConst,
-
-	// ORCA Exceptions that need to be reported as ERROR to GPDB
-	ExmiOptimizerError,
-	ExmiNoAvailableMemory,
-	ExmiInvalidComparisonTypeCode,
-
-	ExmiDXLSentinel
+  ExmiDXLSentinel
 };
 
 // message initialization for GPOS exceptions
-gpos::GPOS_RESULT EresExceptionInit(gpos::CMemoryPool *mp);
+void EresExceptionInit(gpos::CMemoryPool *mp);
 
 }  // namespace gpdxl
 
-#endif	// !DXL_exception_H
-
+#endif  // !DXL_exception_H
 
 // EOF

@@ -16,9 +16,7 @@
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // fwd declarations
@@ -26,7 +24,7 @@ class CDrvdPropCtxt;
 class CDrvdProp;
 
 // dynamic array for properties
-typedef CDynamicPtrArray<CDrvdPropCtxt, CleanupRelease> CDrvdPropCtxtArray;
+using CDrvdPropCtxtArray = CDynamicPtrArray<CDrvdPropCtxt, CleanupRelease>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -37,88 +35,60 @@ typedef CDynamicPtrArray<CDrvdPropCtxt, CleanupRelease> CDrvdPropCtxtArray;
 //		property derivation
 //
 //---------------------------------------------------------------------------
-class CDrvdPropCtxt : public CRefCount
-{
-private:
-	// private copy ctor
-	CDrvdPropCtxt(const CDrvdPropCtxt &);
+class CDrvdPropCtxt : public CRefCount {
+ private:
+ protected:
+  // memory pool
+  CMemoryPool *m_mp;
 
-protected:
-	// memory pool
-	CMemoryPool *m_mp;
+  // copy function
+  virtual CDrvdPropCtxt *PdpctxtCopy(CMemoryPool *mp) const = 0;
 
-	// copy function
-	virtual CDrvdPropCtxt *PdpctxtCopy(CMemoryPool *mp) const = 0;
+  // add props to context
+  virtual void AddProps(CDrvdProp *pdp) = 0;
 
-	// add props to context
-	virtual void AddProps(CDrvdProp *pdp) = 0;
+ public:
+  CDrvdPropCtxt(const CDrvdPropCtxt &) = delete;
 
-public:
-	// ctor
-	CDrvdPropCtxt(CMemoryPool *mp) : m_mp(mp)
-	{
-	}
+  // ctor
+  CDrvdPropCtxt(CMemoryPool *mp) : m_mp(mp) {}
 
-	// dtor
-	virtual ~CDrvdPropCtxt()
-	{
-	}
+  // dtor
+  ~CDrvdPropCtxt() override = default;
 
 #ifdef GPOS_DEBUG
 
-	// is it a relational property context?
-	virtual BOOL
-	FRelational() const
-	{
-		return false;
-	}
+  // is it a relational property context?
+  virtual BOOL FRelational() const { return false; }
 
-	// is it a plan property context?
-	virtual BOOL
-	FPlan() const
-	{
-		return false;
-	}
+  // is it a plan property context?
+  virtual BOOL FPlan() const { return false; }
 
-	// is it a scalar property context?
-	virtual BOOL
-	FScalar() const
-	{
-		return false;
-	}
+  // is it a scalar property context?
+  virtual BOOL FScalar() const { return false; }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-	// copy function
-	static CDrvdPropCtxt *
-	PdpctxtCopy(CMemoryPool *mp, CDrvdPropCtxt *pdpctxt)
-	{
-		if (NULL == pdpctxt)
-		{
-			return NULL;
-		}
+  // copy function
+  static CDrvdPropCtxt *PdpctxtCopy(CMemoryPool *mp, CDrvdPropCtxt *pdpctxt) {
+    if (nullptr == pdpctxt) {
+      return nullptr;
+    }
 
-		return pdpctxt->PdpctxtCopy(mp);
-	}
+    return pdpctxt->PdpctxtCopy(mp);
+  }
 
-	// add derived props to context
-	static void
-	AddDerivedProps(CDrvdProp *pdp, CDrvdPropCtxt *pdpctxt)
-	{
-		if (NULL != pdpctxt)
-		{
-			pdpctxt->AddProps(pdp);
-		}
-	}
+  // add derived props to context
+  static void AddDerivedProps(CDrvdProp *pdp, CDrvdPropCtxt *pdpctxt) {
+    if (nullptr != pdpctxt) {
+      pdpctxt->AddProps(pdp);
+    }
+  }
 
-};	// class CDrvdPropCtxt
-
-// shorthand for printing
-IOstream &operator<<(IOstream &os, CDrvdPropCtxt &drvdpropctxt);
+};  // class CDrvdPropCtxt
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CDrvdPropCtxt_H
+#endif  // !GPOPT_CDrvdPropCtxt_H
 
 // EOF

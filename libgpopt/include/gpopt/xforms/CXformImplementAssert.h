@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,46 +26,33 @@ using namespace gpos;
 //		Implement Assert
 //
 //---------------------------------------------------------------------------
-class CXformImplementAssert : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformImplementAssert(const CXformImplementAssert &);
+class CXformImplementAssert : public CXformImplementation {
+ private:
+ public:
+  CXformImplementAssert(const CXformImplementAssert &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementAssert(CMemoryPool *mp);
+  // ctor
+  explicit CXformImplementAssert(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformImplementAssert()
-	{
-	}
+  // dtor
+  ~CXformImplementAssert() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementAssert;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementAssert; }
 
-	// xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementAssert";
-	}
+  // xform name
+  const CHAR *SzId() const override { return "CXformImplementAssert"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *, CXformResult *,
-						   CExpression *) const;
+  // actual transform
+  void Transform(CXformContext *, CXformResult *, CExpression *) const override;
 
-};	// class CXformImplementAssert
+};  // class CXformImplementAssert
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformImplementAssert_H
+#endif  // !GPOPT_CXformImplementAssert_H
 
 // EOF

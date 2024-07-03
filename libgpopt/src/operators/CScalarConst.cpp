@@ -30,12 +30,9 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarConst::CScalarConst(CMemoryPool *mp, IDatum *datum)
-	: CScalar(mp), m_pdatum(datum)
-{
-	GPOS_ASSERT(NULL != datum);
+CScalarConst::CScalarConst(CMemoryPool *mp, IDatum *datum) : CScalar(mp), m_pdatum(datum) {
+  GPOS_ASSERT(nullptr != datum);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,11 +42,9 @@ CScalarConst::CScalarConst(CMemoryPool *mp, IDatum *datum)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarConst::~CScalarConst()
-{
-	m_pdatum->Release();
+CScalarConst::~CScalarConst() {
+  m_pdatum->Release();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -61,9 +56,8 @@ CScalarConst::~CScalarConst()
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarConst::HashValue() const
-{
-	return gpos::CombineHashes(COperator::HashValue(), m_pdatum->HashValue());
+CScalarConst::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(), m_pdatum->HashValue());
 }
 
 //---------------------------------------------------------------------------
@@ -74,18 +68,15 @@ CScalarConst::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarConst::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarConst *psconst = CScalarConst::PopConvert(pop);
+BOOL CScalarConst::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarConst *psconst = CScalarConst::PopConvert(pop);
 
-		// match if constant values are the same
-		return GetDatum()->Matches(psconst->GetDatum());
-	}
+    // match if constant values are the same
+    return GetDatum()->Matches(psconst->GetDatum());
+  }
 
-	return false;
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -96,12 +87,9 @@ CScalarConst::Matches(COperator *pop) const
 //		Expression type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarConst::MdidType() const
-{
-	return m_pdatum->MDId();
+IMDId *CScalarConst::MdidType() const {
+  return m_pdatum->MDId();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -111,15 +99,12 @@ CScalarConst::MdidType() const
 //		Debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarConst::OsPrint(IOstream &os) const
-{
-	os << SzId() << " (";
-	m_pdatum->OsPrint(os);
-	os << ")";
-	return os;
+IOstream &CScalarConst::OsPrint(IOstream &os) const {
+  os << SzId() << " (";
+  m_pdatum->OsPrint(os);
+  os << ")";
+  return os;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -129,23 +114,18 @@ CScalarConst::OsPrint(IOstream &os) const
 // 		Is the given expression a cast of a constant expression
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarConst::FCastedConst(CExpression *pexpr)
-{
-	GPOS_ASSERT(NULL != pexpr);
+BOOL CScalarConst::FCastedConst(CExpression *pexpr) {
+  GPOS_ASSERT(nullptr != pexpr);
 
-	// cast(constant)
-	if (COperator::EopScalarCast == pexpr->Pop()->Eopid())
-	{
-		if (COperator::EopScalarConst == (*pexpr)[0]->Pop()->Eopid())
-		{
-			return true;
-		}
-	}
+  // cast(constant)
+  if (COperator::EopScalarCast == pexpr->Pop()->Eopid()) {
+    if (COperator::EopScalarConst == (*pexpr)[0]->Pop()->Eopid()) {
+      return true;
+    }
+  }
 
-	return false;
+  return false;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -156,28 +136,24 @@ CScalarConst::FCastedConst(CExpression *pexpr)
 // 		Else return NULL.
 //
 //---------------------------------------------------------------------------
-CScalarConst *
-CScalarConst::PopExtractFromConstOrCastConst(CExpression *pexpr)
-{
-	GPOS_ASSERT(NULL != pexpr);
+CScalarConst *CScalarConst::PopExtractFromConstOrCastConst(CExpression *pexpr) {
+  GPOS_ASSERT(nullptr != pexpr);
 
-	BOOL fScConst = COperator::EopScalarConst == pexpr->Pop()->Eopid();
-	BOOL fCastedScConst = CScalarConst::FCastedConst(pexpr);
+  BOOL fScConst = COperator::EopScalarConst == pexpr->Pop()->Eopid();
+  BOOL fCastedScConst = CScalarConst::FCastedConst(pexpr);
 
-	// constant or cast(constant)
-	if (!fScConst && !fCastedScConst)
-	{
-		return NULL;
-	}
+  // constant or cast(constant)
+  if (!fScConst && !fCastedScConst) {
+    return nullptr;
+  }
 
-	if (fScConst)
-	{
-		return CScalarConst::PopConvert(pexpr->Pop());
-	}
+  if (fScConst) {
+    return CScalarConst::PopConvert(pexpr->Pop());
+  }
 
-	GPOS_ASSERT(fCastedScConst);
+  GPOS_ASSERT(fCastedScConst);
 
-	return CScalarConst::PopConvert((*pexpr)[0]->Pop());
+  return CScalarConst::PopConvert((*pexpr)[0]->Pop());
 }
 
 //---------------------------------------------------------------------------
@@ -188,34 +164,26 @@ CScalarConst::PopExtractFromConstOrCastConst(CExpression *pexpr)
 //		Perform boolean expression evaluation
 //
 //---------------------------------------------------------------------------
-CScalar::EBoolEvalResult
-CScalarConst::Eber(ULongPtrArray *	//pdrgpulChildren
-) const
-{
-	if (m_pdatum->IsNull())
-	{
-		return EberNull;
-	}
+CScalar::EBoolEvalResult CScalarConst::Eber(ULongPtrArray *  // pdrgpulChildren
+) const {
+  if (m_pdatum->IsNull()) {
+    return EberNull;
+  }
 
-	if (IMDType::EtiBool == m_pdatum->GetDatumType())
-	{
-		IDatumBool *pdatumBool = dynamic_cast<IDatumBool *>(m_pdatum);
-		if (pdatumBool->GetValue())
-		{
-			return EberTrue;
-		}
+  if (IMDType::EtiBool == m_pdatum->GetDatumType()) {
+    IDatumBool *pdatumBool = dynamic_cast<IDatumBool *>(m_pdatum);
+    if (pdatumBool->GetValue()) {
+      return EberTrue;
+    }
 
-		return EberFalse;
-	}
+    return EberFalse;
+  }
 
-	return EberAny;
+  return EberAny;
 }
 
-INT
-CScalarConst::TypeModifier() const
-{
-	return m_pdatum->TypeModifier();
+INT CScalarConst::TypeModifier() const {
+  return m_pdatum->TypeModifier();
 }
-
 
 // EOF

@@ -29,11 +29,9 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalCTEProducer::CDXLPhysicalCTEProducer(
-	CMemoryPool *mp, ULONG id, ULongPtrArray *output_colids_array)
-	: CDXLPhysical(mp), m_id(id), m_output_colids_array(output_colids_array)
-{
-	GPOS_ASSERT(NULL != output_colids_array);
+CDXLPhysicalCTEProducer::CDXLPhysicalCTEProducer(CMemoryPool *mp, ULONG id, ULongPtrArray *output_colids_array)
+    : CDXLPhysical(mp), m_id(id), m_output_colids_array(output_colids_array) {
+  GPOS_ASSERT(nullptr != output_colids_array);
 }
 
 //---------------------------------------------------------------------------
@@ -44,9 +42,8 @@ CDXLPhysicalCTEProducer::CDXLPhysicalCTEProducer(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalCTEProducer::~CDXLPhysicalCTEProducer()
-{
-	m_output_colids_array->Release();
+CDXLPhysicalCTEProducer::~CDXLPhysicalCTEProducer() {
+  m_output_colids_array->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -57,10 +54,8 @@ CDXLPhysicalCTEProducer::~CDXLPhysicalCTEProducer()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLPhysicalCTEProducer::GetDXLOperator() const
-{
-	return EdxlopPhysicalCTEProducer;
+Edxlopid CDXLPhysicalCTEProducer::GetDXLOperator() const {
+  return EdxlopPhysicalCTEProducer;
 }
 
 //---------------------------------------------------------------------------
@@ -71,10 +66,8 @@ CDXLPhysicalCTEProducer::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLPhysicalCTEProducer::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalCTEProducer);
+const CWStringConst *CDXLPhysicalCTEProducer::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalCTEProducer);
 }
 
 //---------------------------------------------------------------------------
@@ -85,29 +78,21 @@ CDXLPhysicalCTEProducer::GetOpNameStr() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalCTEProducer::SerializeToDXL(CXMLSerializer *xml_serializer,
-										const CDXLNode *dxlnode) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLPhysicalCTEProducer::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCTEId),
-								 Id());
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCTEId), Id());
 
-	CWStringDynamic *pstrColIds =
-		CDXLUtils::Serialize(m_mp, m_output_colids_array);
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColumns),
-								 pstrColIds);
-	GPOS_DELETE(pstrColIds);
+  CWStringDynamic *pstrColIds = CDXLUtils::Serialize(m_mp, m_output_colids_array);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColumns), pstrColIds);
+  GPOS_DELETE(pstrColIds);
 
-	// serialize properties
-	dxlnode->SerializePropertiesToDXL(xml_serializer);
+  // serialize properties
+  dxlnode->SerializePropertiesToDXL(xml_serializer);
 
-	dxlnode->SerializeChildrenToDXL(xml_serializer);
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  dxlnode->SerializeChildrenToDXL(xml_serializer);
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG
@@ -119,27 +104,20 @@ CDXLPhysicalCTEProducer::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLPhysicalCTEProducer::AssertValid(const CDXLNode *dxlnode,
-									 BOOL validate_children) const
-{
-	GPOS_ASSERT(2 == dxlnode->Arity());
+void CDXLPhysicalCTEProducer::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+  GPOS_ASSERT(2 == dxlnode->Arity());
 
-	CDXLNode *pdxlnPrL = (*dxlnode)[0];
-	CDXLNode *child_dxlnode = (*dxlnode)[1];
+  CDXLNode *pdxlnPrL = (*dxlnode)[0];
+  CDXLNode *child_dxlnode = (*dxlnode)[1];
 
-	GPOS_ASSERT(EdxlopScalarProjectList ==
-				pdxlnPrL->GetOperator()->GetDXLOperator());
-	GPOS_ASSERT(EdxloptypePhysical ==
-				child_dxlnode->GetOperator()->GetDXLOperatorType());
+  GPOS_ASSERT(EdxlopScalarProjectList == pdxlnPrL->GetOperator()->GetDXLOperator());
+  GPOS_ASSERT(EdxloptypePhysical == child_dxlnode->GetOperator()->GetDXLOperatorType());
 
-	if (validate_children)
-	{
-		pdxlnPrL->GetOperator()->AssertValid(pdxlnPrL, validate_children);
-		child_dxlnode->GetOperator()->AssertValid(child_dxlnode,
-												  validate_children);
-	}
+  if (validate_children) {
+    pdxlnPrL->GetOperator()->AssertValid(pdxlnPrL, validate_children);
+    child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
+  }
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

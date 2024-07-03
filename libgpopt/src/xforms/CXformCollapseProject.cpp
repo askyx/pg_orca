@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformCollapseProject.cpp
@@ -13,10 +13,11 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalProject.h"
+#include "gpopt/operators/CPatternLeaf.h"
+#include "gpopt/operators/CPatternTree.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -27,24 +28,17 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformCollapseProject::CXformCollapseProject(CMemoryPool *mp)
-	: CXformExploration(
-		  // pattern
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CLogicalProject(mp),
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CLogicalProject(mp),
-				  GPOS_NEW(mp) CExpression(
-					  mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // relational child
-				  GPOS_NEW(mp) CExpression(
-					  mp, GPOS_NEW(mp) CPatternTree(mp))  // scalar project list
-				  ),
-			  GPOS_NEW(mp) CExpression(
-				  mp, GPOS_NEW(mp) CPatternTree(mp))  // scalar project list
-			  ))
-{
-}
-
-
+    : CXformExploration(
+          // pattern
+          GPOS_NEW(mp)
+              CExpression(mp, GPOS_NEW(mp) CLogicalProject(mp),
+                          GPOS_NEW(mp) CExpression(
+                              mp, GPOS_NEW(mp) CLogicalProject(mp),
+                              GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // relational child
+                              GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // scalar project list
+                              ),
+                          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))  // scalar project list
+                          )) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -54,13 +48,10 @@ CXformCollapseProject::CXformCollapseProject(CMemoryPool *mp)
 //		Compute xform promise for a given expression handle;
 //
 //---------------------------------------------------------------------------
-CXform::EXformPromise
-CXformCollapseProject::Exfp(CExpressionHandle &	 //exprhdl
-) const
-{
-	return CXform::ExfpHigh;
+CXform::EXformPromise CXformCollapseProject::Exfp(CExpressionHandle &  // exprhdl
+) const {
+  return CXform::ExfpHigh;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -70,22 +61,18 @@ CXformCollapseProject::Exfp(CExpressionHandle &	 //exprhdl
 //		Actual transformation to collapse projects
 //
 //---------------------------------------------------------------------------
-void
-CXformCollapseProject::Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-								 CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(NULL != pxfres);
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformCollapseProject::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(nullptr != pxfres);
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CMemoryPool *mp = pxfctxt->Pmp();
+  CMemoryPool *mp = pxfctxt->Pmp();
 
-	CExpression *pexprCollapsed = CUtils::PexprCollapseProjects(mp, pexpr);
+  CExpression *pexprCollapsed = CUtils::PexprCollapseProjects(mp, pexpr);
 
-	if (NULL != pexprCollapsed)
-	{
-		pxfres->Add(pexprCollapsed);
-	}
+  if (nullptr != pexprCollapsed) {
+    pxfres->Add(pexprCollapsed);
+  }
 }
 
 // EOF

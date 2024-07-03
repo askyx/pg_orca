@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CLogicalLeftSemiApplyIn.cpp
@@ -23,17 +23,13 @@ using namespace gpopt;
 //		Get candidate xforms
 //
 //---------------------------------------------------------------------------
-CXformSet *
-CLogicalLeftSemiApplyIn::PxfsCandidates(CMemoryPool *mp) const
-{
-	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	(void) xform_set->ExchangeSet(CXform::ExfLeftSemiApplyIn2LeftSemiJoin);
-	(void) xform_set->ExchangeSet(
-		CXform::ExfLeftSemiApplyInWithExternalCorrs2InnerJoin);
-	(void) xform_set->ExchangeSet(
-		CXform::ExfLeftSemiApplyIn2LeftSemiJoinNoCorrelations);
+CXformSet *CLogicalLeftSemiApplyIn::PxfsCandidates(CMemoryPool *mp) const {
+  CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
+  (void)xform_set->ExchangeSet(CXform::ExfLeftSemiApplyIn2LeftSemiJoin);
+  (void)xform_set->ExchangeSet(CXform::ExfLeftSemiApplyInWithExternalCorrs2InnerJoin);
+  (void)xform_set->ExchangeSet(CXform::ExfLeftSemiApplyIn2LeftSemiJoinNoCorrelations);
 
-	return xform_set;
+  return xform_set;
 }
 
 //---------------------------------------------------------------------------
@@ -44,15 +40,11 @@ CLogicalLeftSemiApplyIn::PxfsCandidates(CMemoryPool *mp) const
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *
-CLogicalLeftSemiApplyIn::PopCopyWithRemappedColumns(
-	CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist)
-{
-	CColRefArray *pdrgpcrInner =
-		CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
+COperator *CLogicalLeftSemiApplyIn::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
+                                                               BOOL must_exist) {
+  CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
-	return GPOS_NEW(mp)
-		CLogicalLeftSemiApplyIn(mp, pdrgpcrInner, m_eopidOriginSubq);
+  return GPOS_NEW(mp) CLogicalLeftSemiApplyIn(mp, pdrgpcrInner, m_eopidOriginSubq);
 }
 
 // EOF

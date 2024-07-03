@@ -16,8 +16,7 @@
 
 #include "gpopt/operators/CPatternTree.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,39 +27,27 @@ using namespace gpos;
 //		context container
 //
 //---------------------------------------------------------------------------
-class CXformContext : public CRefCount
-{
-private:
-	// Memory pool
-	CMemoryPool *m_mp;
+class CXformContext : public CRefCount {
+ private:
+  // Memory pool
+  CMemoryPool *m_mp;
 
-	// private copy ctor
-	CXformContext(const CXformContext &);
+ public:
+  CXformContext(const CXformContext &) = delete;
 
-public:
-	// ctor
-	explicit CXformContext(CMemoryPool *mp) : m_mp(mp)
-	{
-	}
+  // ctor
+  explicit CXformContext(CMemoryPool *mp) : m_mp(mp) {}
 
-	// dtor
-	~CXformContext()
-	{
-	}
+  // dtor
+  ~CXformContext() override = default;
 
+  // accessor
+  inline CMemoryPool *Pmp() const { return m_mp; }
 
-	// accessor
-	inline CMemoryPool *
-	Pmp() const
-	{
-		return m_mp;
-	}
-
-};	// class CXformContext
+};  // class CXformContext
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformContext_H
+#endif  // !GPOPT_CXformContext_H
 
 // EOF

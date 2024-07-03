@@ -15,8 +15,7 @@
 
 #include "gpopt/base/CConstraint.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 using namespace gpmd;
 
@@ -28,80 +27,57 @@ using namespace gpmd;
 //		Representation of a negation constraint
 //
 //---------------------------------------------------------------------------
-class CConstraintNegation : public CConstraint
-{
-private:
-	// child constraint
-	CConstraint *m_pcnstr;
+class CConstraintNegation : public CConstraint {
+ private:
+  // child constraint
+  CConstraint *m_pcnstr;
 
-	// hidden copy ctor
-	CConstraintNegation(const CConstraintNegation &);
+ public:
+  CConstraintNegation(const CConstraintNegation &) = delete;
 
-public:
-	// ctor
-	CConstraintNegation(CMemoryPool *mp, CConstraint *pcnstr);
+  // ctor
+  CConstraintNegation(CMemoryPool *mp, CConstraint *pcnstr);
 
-	// dtor
-	virtual ~CConstraintNegation();
+  // dtor
+  ~CConstraintNegation() override;
 
-	// constraint type accessor
-	virtual EConstraintType
-	Ect() const
-	{
-		return CConstraint::EctNegation;
-	}
+  // constraint type accessor
+  EConstraintType Ect() const override { return CConstraint::EctNegation; }
 
-	// child constraint
-	CConstraint *
-	PcnstrChild() const
-	{
-		return m_pcnstr;
-	}
+  // child constraint
+  CConstraint *PcnstrChild() const { return m_pcnstr; }
 
-	// is this constraint a contradiction
-	virtual BOOL
-	FContradiction() const
-	{
-		return m_pcnstr->IsConstraintUnbounded();
-	}
+  // is this constraint a contradiction
+  BOOL FContradiction() const override { return m_pcnstr->IsConstraintUnbounded(); }
 
-	// is this constraint unbounded
-	virtual BOOL
-	IsConstraintUnbounded() const
-	{
-		return m_pcnstr->FContradiction();
-	}
+  // is this constraint unbounded
+  BOOL IsConstraintUnbounded() const override { return m_pcnstr->FContradiction(); }
 
-	// scalar expression
-	virtual CExpression *PexprScalar(CMemoryPool *mp);
+  // scalar expression
+  CExpression *PexprScalar(CMemoryPool *mp) override;
 
-	// check if there is a constraint on the given column
-	virtual BOOL
-	FConstraint(const CColRef *colref) const
-	{
-		return m_pcnstr->FConstraint(colref);
-	}
+  // check if there is a constraint on the given column
+  BOOL FConstraint(const CColRef *colref) const override { return m_pcnstr->FConstraint(colref); }
 
-	// return a copy of the constraint with remapped columns
-	virtual CConstraint *PcnstrCopyWithRemappedColumns(
-		CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  // return a copy of the constraint with remapped columns
+  CConstraint *PcnstrCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
+                                             BOOL must_exist) override;
 
-	// return constraint on a given column
-	virtual CConstraint *Pcnstr(CMemoryPool *mp, const CColRef *colref);
+  // return constraint on a given column
+  CConstraint *Pcnstr(CMemoryPool *mp, const CColRef *colref) override;
 
-	// return constraint on a given column set
-	virtual CConstraint *Pcnstr(CMemoryPool *mp, CColRefSet *pcrs);
+  // return constraint on a given column set
+  CConstraint *Pcnstr(CMemoryPool *mp, CColRefSet *pcrs) override;
 
-	// return a clone of the constraint for a different column
-	virtual CConstraint *PcnstrRemapForColumn(CMemoryPool *mp,
-											  CColRef *colref) const;
+  // return a clone of the constraint for a different column
+  CConstraint *PcnstrRemapForColumn(CMemoryPool *mp, CColRef *colref) const override;
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // print
+  IOstream &OsPrint(IOstream &os) const override;
 
-};	// class CConstraintNegation
+};  // class CConstraintNegation
 }  // namespace gpopt
 
-#endif	// !GPOPT_CConstraintNegation_H
+#endif  // !GPOPT_CConstraintNegation_H
 
 // EOF

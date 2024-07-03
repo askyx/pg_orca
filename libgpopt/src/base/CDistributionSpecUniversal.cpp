@@ -1,91 +1,67 @@
 //	Greenplum Database
-//	Copyright (C) 2016 Pivotal Software, Inc.
+//	Copyright (C) 2016 VMware, Inc. or its affiliates.
 
 #include "gpopt/base/CDistributionSpecUniversal.h"
 
-namespace gpopt
-{
-gpopt::CDistributionSpecUniversal::CDistributionSpecUniversal()
-{
+namespace gpopt {
+gpopt::CDistributionSpecUniversal::CDistributionSpecUniversal() = default;
+
+CDistributionSpec::EDistributionType CDistributionSpecUniversal::Edt() const {
+  return CDistributionSpec::EdtUniversal;
 }
 
-CDistributionSpec::EDistributionType
-CDistributionSpecUniversal::Edt() const
-{
-	return CDistributionSpec::EdtUniversal;
+BOOL CDistributionSpecUniversal::FSatisfies(const CDistributionSpec *pds) const {
+  // universal distribution does not satisfy duplicate-sensitive
+  // hash distributions
+  if (CDistributionSpec::EdtHashed == pds->Edt() &&
+      (CDistributionSpecHashed::PdsConvert(pds))->IsDuplicateSensitive()) {
+    return false;
+  }
+
+  // universal distribution does not satisfy duplicate-sensitive
+  // random distributions
+  if (CDistributionSpec::EdtRandom == pds->Edt() &&
+      (CDistributionSpecRandom::PdsConvert(pds))->IsDuplicateSensitive()) {
+    return false;
+  }
+
+  if (CDistributionSpec::EdtNonSingleton == pds->Edt()) {
+    // universal distribution does not satisfy non-singleton distribution
+    return false;
+  }
+
+  return true;
 }
 
-BOOL
-CDistributionSpecUniversal::FSatisfies(const CDistributionSpec *pds) const
-{
-	// universal distribution does not satisfy duplicate-sensitive
-	// hash distributions
-	if (CDistributionSpec::EdtHashed == pds->Edt() &&
-		(CDistributionSpecHashed::PdsConvert(pds))->IsDuplicateSensitive())
-	{
-		return false;
-	}
-
-	// universal distribution does not satisfy duplicate-sensitive
-	// random distributions
-	if (CDistributionSpec::EdtRandom == pds->Edt() &&
-		(CDistributionSpecRandom::PdsConvert(pds))->IsDuplicateSensitive())
-	{
-		return false;
-	}
-
-	if (CDistributionSpec::EdtNonSingleton == pds->Edt())
-	{
-		// universal distribution does not satisfy non-singleton distribution
-		return false;
-	}
-
-	return true;
+BOOL CDistributionSpecUniversal::FRequirable() const {
+  return false;
 }
 
-BOOL
-CDistributionSpecUniversal::FRequirable() const
-{
-	return false;
+BOOL CDistributionSpecUniversal::Matches(const CDistributionSpec *pds) const {
+  // universal distribution needs to match replicated / singleton requests
+  // to avoid generating duplicates
+  EDistributionType edt = pds->Edt();
+  return (CDistributionSpec::EdtUniversal == edt || CDistributionSpec::EdtSingleton == edt ||
+          CDistributionSpec::EdtStrictReplicated == edt || CDistributionSpec::EdtReplicated == edt);
 }
 
-BOOL
-CDistributionSpecUniversal::Matches(const CDistributionSpec *pds) const
-{
-	// universal distribution needs to match replicated / singleton requests
-	// to avoid generating duplicates
-	EDistributionType edt = pds->Edt();
-	return (CDistributionSpec::EdtUniversal == edt ||
-			CDistributionSpec::EdtSingleton == edt ||
-			CDistributionSpec::EdtReplicated == edt);
+void CDistributionSpecUniversal::AppendEnforcers(CMemoryPool *, CExpressionHandle &, CReqdPropPlan *,
+                                                 CExpressionArray *, CExpression *) {
+  GPOS_ASSERT(!"attempt to enforce UNIVERSAL distribution");
 }
 
-void
-CDistributionSpecUniversal::AppendEnforcers(CMemoryPool *, CExpressionHandle &,
-											CReqdPropPlan *, CExpressionArray *,
-											CExpression *)
-{
-	GPOS_ASSERT(!"attempt to enforce UNIVERSAL distribution");
+IOstream &CDistributionSpecUniversal::OsPrint(IOstream &os) const {
+  return os << "UNIVERSAL ";
 }
 
-IOstream &
-CDistributionSpecUniversal::OsPrint(IOstream &os) const
-{
-	return os << "UNIVERSAL ";
+CDistributionSpec::EDistributionPartitioningType CDistributionSpecUniversal::Edpt() const {
+  return EdptNonPartitioned;
 }
 
-CDistributionSpec::EDistributionPartitioningType
-CDistributionSpecUniversal::Edpt() const
-{
-	return EdptNonPartitioned;
-}
+CDistributionSpecUniversal *CDistributionSpecUniversal::PdsConvert(CDistributionSpec *pds) {
+  GPOS_ASSERT(nullptr != pds);
+  GPOS_ASSERT(EdtAny == pds->Edt());
 
-CDistributionSpecUniversal *
-CDistributionSpecUniversal::PdsConvert(CDistributionSpec *pds)
-{
-	GPOS_ASSERT(NULL != pds);
-	GPOS_ASSERT(EdtAny == pds->Edt());
-
-	return dynamic_cast<CDistributionSpecUniversal *>(pds);
+  return dynamic_cast<CDistributionSpecUniversal *>(pds);
 }
 }  // namespace gpopt

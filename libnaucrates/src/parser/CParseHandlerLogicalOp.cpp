@@ -15,7 +15,6 @@
 
 using namespace gpdxl;
 
-
 XERCES_CPP_NAMESPACE_USE
 
 //---------------------------------------------------------------------------
@@ -26,12 +25,9 @@ XERCES_CPP_NAMESPACE_USE
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CParseHandlerLogicalOp::CParseHandlerLogicalOp(
-	CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
-	CParseHandlerBase *parse_handler_root)
-	: CParseHandlerOp(mp, parse_handler_mgr, parse_handler_root)
-{
-}
+CParseHandlerLogicalOp::CParseHandlerLogicalOp(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                                               CParseHandlerBase *parse_handler_root)
+    : CParseHandlerOp(mp, parse_handler_mgr, parse_handler_root) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -43,26 +39,19 @@ CParseHandlerLogicalOp::CParseHandlerLogicalOp(
 //		function for the respective operator type.
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerLogicalOp::StartElement(const XMLCh *const element_uri,
-									 const XMLCh *const element_local_name,
-									 const XMLCh *const element_qname,
-									 const Attributes &attrs)
-{
-	// instantiate the parse handler
-	CParseHandlerBase *logical_op_parse_handler =
-		CParseHandlerFactory::GetParseHandler(m_mp, element_local_name,
-											  m_parse_handler_mgr, this);
+void CParseHandlerLogicalOp::StartElement(const XMLCh *const element_uri, const XMLCh *const element_local_name,
+                                          const XMLCh *const element_qname, const Attributes &attrs) {
+  // instantiate the parse handler
+  CParseHandlerBase *logical_op_parse_handler =
+      CParseHandlerFactory::GetParseHandler(m_mp, element_local_name, m_parse_handler_mgr, this);
 
-	GPOS_ASSERT(NULL != logical_op_parse_handler);
+  GPOS_ASSERT(nullptr != logical_op_parse_handler);
 
-	// activate the parse handler
-	m_parse_handler_mgr->ReplaceHandler(logical_op_parse_handler,
-										m_parse_handler_root);
+  // activate the parse handler
+  m_parse_handler_mgr->ReplaceHandler(logical_op_parse_handler, m_parse_handler_root);
 
-	// pass the startElement message for the specialized parse handler to process
-	logical_op_parse_handler->startElement(element_uri, element_local_name,
-										   element_qname, attrs);
+  // pass the startElement message for the specialized parse handler to process
+  logical_op_parse_handler->startElement(element_uri, element_local_name, element_qname, attrs);
 }
 
 //---------------------------------------------------------------------------
@@ -75,13 +64,11 @@ CParseHandlerLogicalOp::StartElement(const XMLCh *const element_uri,
 //		of the parse handler for the actual physical operator type is called.
 //
 //---------------------------------------------------------------------------
-void
-CParseHandlerLogicalOp::EndElement(const XMLCh *const,	// element_uri,
-								   const XMLCh *const,	// element_local_name,
-								   const XMLCh *const	// element_qname
-)
-{
-	GPOS_ASSERT(!"Invalid call of endElement inside CParseHandlerLogicalOp");
+void CParseHandlerLogicalOp::EndElement(const XMLCh *const,  // element_uri,
+                                        const XMLCh *const,  // element_local_name,
+                                        const XMLCh *const   // element_qname
+) {
+  GPOS_ASSERT(!"Invalid call of endElement inside CParseHandlerLogicalOp");
 }
 
 // EOF

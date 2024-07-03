@@ -18,13 +18,11 @@
 #include "naucrates/dxl/operators/CDXLOperator.h"
 
 // fwd declarations
-namespace gpopt
-{
+namespace gpopt {
 class CMDAccessor;
 }
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpopt;
 
 //---------------------------------------------------------------------------
@@ -35,30 +33,27 @@ using namespace gpopt;
 //		Base class for representing scalar DXL operators
 //
 //---------------------------------------------------------------------------
-class CDXLScalar : public CDXLOperator
-{
-private:
-	// private copy ctor
-	CDXLScalar(CDXLScalar &);
+class CDXLScalar : public CDXLOperator {
+ private:
+ public:
+  CDXLScalar(CDXLScalar &) = delete;
 
-public:
-	// ctor/dtor
-	explicit CDXLScalar(CMemoryPool *mp);
+  // ctor/dtor
+  explicit CDXLScalar(CMemoryPool *mp);
 
-	virtual ~CDXLScalar(){};
+  ~CDXLScalar() override = default;
 
-	Edxloptype GetDXLOperatorType() const;
+  Edxloptype GetDXLOperatorType() const override;
 
-	// does the operator return a boolean result
-	virtual BOOL HasBoolResult(CMDAccessor *md_accessor) const = 0;
+  // does the operator return a boolean result
+  virtual BOOL HasBoolResult(CMDAccessor *md_accessor) const = 0;
 
 #ifdef GPOS_DEBUG
-	virtual void AssertValid(const CDXLNode *dxlnode,
-							 BOOL validate_children) const = 0;
-#endif	// GPOS_DEBUG
+  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override = 0;
+#endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLScalar_H
+#endif  // !GPDXL_CDXLScalar_H
 
 // EOF

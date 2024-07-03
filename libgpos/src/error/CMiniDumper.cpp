@@ -27,12 +27,7 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMiniDumper::CMiniDumper(CMemoryPool *mp)
-	: m_mp(mp), m_initialized(false), m_finalized(false), m_oos(NULL)
-{
-	GPOS_ASSERT(NULL != mp);
-}
-
+CMiniDumper::CMiniDumper() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -42,22 +37,19 @@ CMiniDumper::CMiniDumper(CMemoryPool *mp)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CMiniDumper::~CMiniDumper()
-{
-	if (m_initialized)
-	{
-		CTask *task = CTask::Self();
+CMiniDumper::~CMiniDumper() {
+  if (m_initialized) {
+    CTask *task = CTask::Self();
 
-		GPOS_ASSERT(NULL != task);
+    GPOS_ASSERT(nullptr != task);
 
-		task->ConvertErrCtxt()->Unregister(
+    task->ConvertErrCtxt()->Unregister(
 #ifdef GPOS_DEBUG
-			this
-#endif	// GPOS_DEBUG
-		);
-	}
+        this
+#endif  // GPOS_DEBUG
+    );
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -67,25 +59,22 @@ CMiniDumper::~CMiniDumper()
 //		Initialize
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumper::Init(COstream *oos)
-{
-	GPOS_ASSERT(!m_initialized);
-	GPOS_ASSERT(!m_finalized);
+void CMiniDumper::Init(COstream *oos) {
+  GPOS_ASSERT(!m_initialized);
+  GPOS_ASSERT(!m_finalized);
 
-	CTask *task = CTask::Self();
+  CTask *task = CTask::Self();
 
-	GPOS_ASSERT(NULL != task);
+  GPOS_ASSERT(nullptr != task);
 
-	m_oos = oos;
+  m_oos = oos;
 
-	task->ConvertErrCtxt()->Register(this);
+  task->ConvertErrCtxt()->Register(this);
 
-	m_initialized = true;
+  m_initialized = true;
 
-	SerializeHeader();
+  SerializeHeader();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -95,17 +84,14 @@ CMiniDumper::Init(COstream *oos)
 //		Finalize
 //
 //---------------------------------------------------------------------------
-void
-CMiniDumper::Finalize()
-{
-	GPOS_ASSERT(m_initialized);
-	GPOS_ASSERT(!m_finalized);
+void CMiniDumper::Finalize() {
+  GPOS_ASSERT(m_initialized);
+  GPOS_ASSERT(!m_finalized);
 
-	SerializeFooter();
+  SerializeFooter();
 
-	m_finalized = true;
+  m_finalized = true;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -115,13 +101,10 @@ CMiniDumper::Finalize()
 //		Get stream to serialize to
 //
 //---------------------------------------------------------------------------
-COstream &
-CMiniDumper::GetOStream()
-{
-	GPOS_ASSERT(m_initialized);
+COstream &CMiniDumper::GetOStream() {
+  GPOS_ASSERT(m_initialized);
 
-	return *m_oos;
+  return *m_oos;
 }
-
 
 // EOF

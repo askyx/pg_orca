@@ -13,11 +13,11 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalLeftAntiSemiJoin.h"
+#include "gpopt/operators/CLogicalLeftSemiJoin.h"
 #include "gpopt/xforms/CXformJoinSwap.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,49 +28,30 @@ using namespace gpos;
 //		Swap cascaded semi-join and anti semi-join
 //
 //---------------------------------------------------------------------------
-class CXformSemiJoinAntiSemiJoinSwap
-	: public CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalLeftAntiSemiJoin>
-{
-private:
-	// private copy ctor
-	CXformSemiJoinAntiSemiJoinSwap(const CXformSemiJoinAntiSemiJoinSwap &);
+class CXformSemiJoinAntiSemiJoinSwap : public CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalLeftAntiSemiJoin> {
+ private:
+ public:
+  CXformSemiJoinAntiSemiJoinSwap(const CXformSemiJoinAntiSemiJoinSwap &) = delete;
 
-public:
-	// ctor
-	explicit CXformSemiJoinAntiSemiJoinSwap(CMemoryPool *mp)
-		: CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalLeftAntiSemiJoin>(mp)
-	{
-	}
+  // ctor
+  explicit CXformSemiJoinAntiSemiJoinSwap(CMemoryPool *mp)
+      : CXformJoinSwap<CLogicalLeftSemiJoin, CLogicalLeftAntiSemiJoin>(mp) {}
 
-	// dtor
-	virtual ~CXformSemiJoinAntiSemiJoinSwap()
-	{
-	}
+  // dtor
+  ~CXformSemiJoinAntiSemiJoinSwap() override = default;
 
-	// Compatibility function
-	virtual BOOL
-	FCompatible(CXform::EXformId exfid)
-	{
-		return ExfAntiSemiJoinSemiJoinSwap != exfid;
-	}
+  // Compatibility function
+  BOOL FCompatible(CXform::EXformId exfid) override { return ExfAntiSemiJoinSemiJoinSwap != exfid; }
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSemiJoinAntiSemiJoinSwap;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfSemiJoinAntiSemiJoinSwap; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSemiJoinAntiSemiJoinSwap";
-	}
+  const CHAR *SzId() const override { return "CXformSemiJoinAntiSemiJoinSwap"; }
 
-};	// class CXformSemiJoinAntiSemiJoinSwap
+};  // class CXformSemiJoinAntiSemiJoinSwap
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSemiJoinAntiSemiJoinSwap_H
+#endif  // !GPOPT_CXformSemiJoinAntiSemiJoinSwap_H
 
 // EOF

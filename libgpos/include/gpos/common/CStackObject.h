@@ -14,8 +14,7 @@
 
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CStackObject
@@ -25,13 +24,12 @@ namespace gpos
 //		constructor is protected to prevent direct instantiation of class;
 //
 //---------------------------------------------------------------------------
-class CStackObject
-{
-protected:
-	CStackObject();
+class CStackObject {
+ protected:
+  CStackObject();
 };
 }  // namespace gpos
 
-#endif	// !GPOS_CStackObject_H
+#endif  // !GPOS_CStackObject_H
 
 // EOF

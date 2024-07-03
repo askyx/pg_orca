@@ -27,10 +27,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarCaseTest::CDXLScalarCaseTest(CMemoryPool *mp, IMDId *mdid_type)
-	: CDXLScalar(mp), m_mdid_type(mdid_type)
-{
-	GPOS_ASSERT(m_mdid_type->IsValid());
+CDXLScalarCaseTest::CDXLScalarCaseTest(CMemoryPool *mp, IMDId *mdid_type) : CDXLScalar(mp), m_mdid_type(mdid_type) {
+  GPOS_ASSERT(m_mdid_type->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -41,9 +39,8 @@ CDXLScalarCaseTest::CDXLScalarCaseTest(CMemoryPool *mp, IMDId *mdid_type)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLScalarCaseTest::~CDXLScalarCaseTest()
-{
-	m_mdid_type->Release();
+CDXLScalarCaseTest::~CDXLScalarCaseTest() {
+  m_mdid_type->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -54,10 +51,8 @@ CDXLScalarCaseTest::~CDXLScalarCaseTest()
 //		Operator type
 //
 //---------------------------------------------------------------------------
-Edxlopid
-CDXLScalarCaseTest::GetDXLOperator() const
-{
-	return EdxlopScalarCaseTest;
+Edxlopid CDXLScalarCaseTest::GetDXLOperator() const {
+  return EdxlopScalarCaseTest;
 }
 
 //---------------------------------------------------------------------------
@@ -68,10 +63,8 @@ CDXLScalarCaseTest::GetDXLOperator() const
 //		Operator name
 //
 //---------------------------------------------------------------------------
-const CWStringConst *
-CDXLScalarCaseTest::GetOpNameStr() const
-{
-	return CDXLTokens::GetDXLTokenStr(EdxltokenScalarCaseTest);
+const CWStringConst *CDXLScalarCaseTest::GetOpNameStr() const {
+  return CDXLTokens::GetDXLTokenStr(EdxltokenScalarCaseTest);
 }
 
 //---------------------------------------------------------------------------
@@ -82,10 +75,8 @@ CDXLScalarCaseTest::GetOpNameStr() const
 //		Return type id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CDXLScalarCaseTest::MdidType() const
-{
-	return m_mdid_type;
+IMDId *CDXLScalarCaseTest::MdidType() const {
+  return m_mdid_type;
 }
 
 //---------------------------------------------------------------------------
@@ -96,19 +87,14 @@ CDXLScalarCaseTest::MdidType() const
 //		Serialize operator in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarCaseTest::SerializeToDXL(CXMLSerializer *xml_serializer,
-								   const CDXLNode *	 //dxlnode
-) const
-{
-	const CWStringConst *element_name = GetOpNameStr();
+void CDXLScalarCaseTest::SerializeToDXL(CXMLSerializer *xml_serializer,
+                                        const CDXLNode *  // dxlnode
+) const {
+  const CWStringConst *element_name = GetOpNameStr();
 
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-	m_mdid_type->Serialize(xml_serializer,
-						   CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
+  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------
@@ -119,11 +105,8 @@ CDXLScalarCaseTest::SerializeToDXL(CXMLSerializer *xml_serializer,
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL
-CDXLScalarCaseTest::HasBoolResult(CMDAccessor *md_accessor) const
-{
-	return (IMDType::EtiBool ==
-			md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
+BOOL CDXLScalarCaseTest::HasBoolResult(CMDAccessor *md_accessor) const {
+  return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
 }
 
 #ifdef GPOS_DEBUG
@@ -135,14 +118,12 @@ CDXLScalarCaseTest::HasBoolResult(CMDAccessor *md_accessor) const
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void
-CDXLScalarCaseTest::AssertValid(const CDXLNode *dxlnode,
-								BOOL  // validate_children
-) const
-{
-	GPOS_ASSERT(0 == dxlnode->Arity());
-	GPOS_ASSERT(m_mdid_type->IsValid());
+void CDXLScalarCaseTest::AssertValid(const CDXLNode *dxlnode,
+                                     BOOL  // validate_children
+) const {
+  GPOS_ASSERT(0 == dxlnode->Arity());
+  GPOS_ASSERT(m_mdid_type->IsValid());
 }
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

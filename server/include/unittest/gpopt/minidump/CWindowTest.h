@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2016 Pivotal Software
+//	Copyright (C) 2016 VMware, Inc. or its affiliates
 //
 //	@filename:
 //		CWindowTest.h
@@ -13,18 +13,16 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
-class CWindowTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-};	// class CWindowTest
+class CWindowTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+};  // class CWindowTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CWindowTest_H
+#endif  // !GPOPT_CWindowTest_H
 
 // EOF

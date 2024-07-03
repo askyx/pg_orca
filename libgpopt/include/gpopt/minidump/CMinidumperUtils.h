@@ -18,8 +18,7 @@
 
 using namespace gpos;
 
-namespace gpopt
-{
+namespace gpopt {
 // fwd decl
 class ICostModel;
 class CMiniDumperDXL;
@@ -34,48 +33,37 @@ class IConstExprEvaluator;
 //		Minidump utility functions
 //
 //---------------------------------------------------------------------------
-class CMinidumperUtils
-{
-public:
-	// load a minidump
-	static CDXLMinidump *PdxlmdLoad(CMemoryPool *mp, const CHAR *file_name);
+class CMinidumperUtils {
+ public:
+  // load a minidump
+  static CDXLMinidump *PdxlmdLoad(CMemoryPool *mp, const CHAR *file_name);
 
-	// generate a minidump file name in the provided buffer
-	static void GenerateMinidumpFileName(CHAR *buf, ULONG length,
-										 ULONG ulSessionId, ULONG ulCmdId,
-										 const CHAR *szMinidumpFileName = NULL);
+  // generate a minidump file name in the provided buffer
+  static void GenerateMinidumpFileName(CHAR *buf, ULONG length, ULONG ulSessionId, ULONG ulCmdId,
+                                       const CHAR *szMinidumpFileName = nullptr);
 
-	// finalize minidump and dump to a file
-	static void Finalize(CMiniDumperDXL *pmdp, BOOL fSerializeErrCtx);
+  // finalize minidump and dump to a file
+  static void Finalize(CMiniDumperDXL *pmdp, BOOL fSerializeErrCtx);
 
-	// load and execute the minidump in the specified file
-	static CDXLNode *PdxlnExecuteMinidump(CMemoryPool *mp,
-										  const CHAR *file_name,
-										  ULONG ulSegments, ULONG ulSessionId,
-										  ULONG ulCmdId,
-										  COptimizerConfig *optimizer_config,
-										  IConstExprEvaluator *pceeval = NULL);
+  // load and execute the minidump in the specified file
+  static CDXLNode *PdxlnExecuteMinidump(CMemoryPool *mp, const CHAR *file_name, ULONG ulSegments, ULONG ulSessionId,
+                                        ULONG ulCmdId, COptimizerConfig *optimizer_config,
+                                        IConstExprEvaluator *pceeval = nullptr);
 
-	// execute the given minidump
-	static CDXLNode *PdxlnExecuteMinidump(CMemoryPool *mp,
-										  CDXLMinidump *pdxlmdp,
-										  const CHAR *file_name,
-										  ULONG ulSegments, ULONG ulSessionId,
-										  ULONG ulCmdId,
-										  COptimizerConfig *optimizer_config,
-										  IConstExprEvaluator *pceeval = NULL);
+  // execute the given minidump
+  static CDXLNode *PdxlnExecuteMinidump(CMemoryPool *mp, CDXLMinidump *pdxlmdp, const CHAR *file_name, ULONG ulSegments,
+                                        ULONG ulSessionId, ULONG ulCmdId, COptimizerConfig *optimizer_config,
+                                        IConstExprEvaluator *pceeval = nullptr);
 
-	// execute the given minidump using the given MD accessor
-	static CDXLNode *PdxlnExecuteMinidump(
-		CMemoryPool *mp, CMDAccessor *md_accessor, CDXLMinidump *pdxlmd,
-		const CHAR *file_name, ULONG ulSegments, ULONG ulSessionId,
-		ULONG ulCmdId, COptimizerConfig *optimizer_config,
-		IConstExprEvaluator *pceeval);
+  // execute the given minidump using the given MD accessor
+  static CDXLNode *PdxlnExecuteMinidump(CMemoryPool *mp, CMDAccessor *md_accessor, CDXLMinidump *pdxlmd,
+                                        const CHAR *file_name, ULONG ulSegments, ULONG ulSessionId, ULONG ulCmdId,
+                                        COptimizerConfig *optimizer_config, IConstExprEvaluator *pceeval);
 
-};	// class CMinidumperUtils
+};  // class CMinidumperUtils
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CMiniDumperUtils_H
+#endif  // !GPOPT_CMiniDumperUtils_H
 
 // EOF

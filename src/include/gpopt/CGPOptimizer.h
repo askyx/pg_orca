@@ -23,32 +23,29 @@ extern "C" {
 #include "nodes/plannodes.h"
 }
 
-class CGPOptimizer
-{
-public:
-	// optimize given query using GP optimizer
-	static PlannedStmt *GPOPTOptimizedPlan(
-		Query *query,
-		bool *
-			had_unexpected_failure	// output : set to true if optimizer unexpectedly failed to produce plan
-	);
+class CGPOptimizer {
+ public:
+  // optimize given query using GP optimizer
+  static PlannedStmt *GPOPTOptimizedPlan(
+      Query *query,
+      bool *had_unexpected_failure  // output : set to true if optimizer unexpectedly failed to produce plan
+  );
 
-	// serialize planned statement into DXL
-	static char *SerializeDXLPlan(Query *query);
+  // serialize planned statement into DXL
+  static char *SerializeDXLPlan(Query *query);
 
-	// gpopt initialize and terminate
-	static void InitGPOPT();
+  // gpopt initialize and terminate
+  static void InitGPOPT();
 
-	static void TerminateGPOPT();
+  static void TerminateGPOPT();
 };
 
 extern "C" {
 
-extern PlannedStmt *GPOPTOptimizedPlan(Query *query,
-									   bool *had_unexpected_failure);
+extern PlannedStmt *GPOPTOptimizedPlan(Query *query, bool *had_unexpected_failure);
 extern char *SerializeDXLPlan(Query *query);
 extern void InitGPOPT();
 extern void TerminateGPOPT();
 }
 
-#endif	// CGPOptimizer_H
+#endif  // CGPOptimizer_H

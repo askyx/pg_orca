@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,17 +24,15 @@ using namespace gpos;
 //		Static unit tests for functional dependencies
 //
 //---------------------------------------------------------------------------
-class CFunctionalDependencyTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
+class CFunctionalDependencyTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
 
-};	// class CFunctionalDependencyTest
+};  // class CFunctionalDependencyTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CFunctionalDependencyTest_H
-
+#endif  // !GPOPT_CFunctionalDependencyTest_H
 
 // EOF

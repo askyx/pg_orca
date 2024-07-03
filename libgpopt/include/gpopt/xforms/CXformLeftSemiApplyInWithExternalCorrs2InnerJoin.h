@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CXformLeftSemiApplyInWithExternalCorrs2InnerJoin.h
@@ -16,12 +16,9 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
 #include "gpopt/xforms/CXformLeftSemiApplyWithExternalCorrs2InnerJoin.h"
 
-
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -32,53 +29,32 @@ using namespace gpos;
 //		Transform Apply into Join by decorrelating the inner side
 //
 //---------------------------------------------------------------------------
-class CXformLeftSemiApplyInWithExternalCorrs2InnerJoin
-	: public CXformLeftSemiApplyWithExternalCorrs2InnerJoin
-{
-private:
-	// private copy ctor
-	CXformLeftSemiApplyInWithExternalCorrs2InnerJoin(
-		const CXformLeftSemiApplyInWithExternalCorrs2InnerJoin &);
+class CXformLeftSemiApplyInWithExternalCorrs2InnerJoin : public CXformLeftSemiApplyWithExternalCorrs2InnerJoin {
+ private:
+ public:
+  CXformLeftSemiApplyInWithExternalCorrs2InnerJoin(const CXformLeftSemiApplyInWithExternalCorrs2InnerJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformLeftSemiApplyInWithExternalCorrs2InnerJoin(CMemoryPool *mp)
-		: CXformLeftSemiApplyWithExternalCorrs2InnerJoin(
-			  mp, GPOS_NEW(mp) CExpression(
-					  mp, GPOS_NEW(mp) CLogicalLeftSemiApplyIn(mp),
-					  GPOS_NEW(mp) CExpression(
-						  mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
-					  GPOS_NEW(mp) CExpression(
-						  mp, GPOS_NEW(mp) CPatternTree(mp)),  // right child
-					  GPOS_NEW(mp) CExpression(
-						  mp, GPOS_NEW(mp) CPatternTree(mp))  // predicate
-					  ))
-	{
-	}
+  // ctor
+  explicit CXformLeftSemiApplyInWithExternalCorrs2InnerJoin(CMemoryPool *mp)
+      : CXformLeftSemiApplyWithExternalCorrs2InnerJoin(
+            mp, GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalLeftSemiApplyIn(mp),
+                                         GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
+                                         GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp)),  // right child
+                                         GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternTree(mp))   // predicate
+                                         )) {}
 
-	// dtor
-	virtual ~CXformLeftSemiApplyInWithExternalCorrs2InnerJoin()
-	{
-	}
+  // dtor
+  ~CXformLeftSemiApplyInWithExternalCorrs2InnerJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfLeftSemiApplyInWithExternalCorrs2InnerJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfLeftSemiApplyInWithExternalCorrs2InnerJoin; }
 
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformLeftSemiApplyInWithExternalCorrs2InnerJoin";
-	}
+  const CHAR *SzId() const override { return "CXformLeftSemiApplyInWithExternalCorrs2InnerJoin"; }
 
-
-};	// class CXformLeftSemiApplyInWithExternalCorrs2InnerJoin
+};  // class CXformLeftSemiApplyInWithExternalCorrs2InnerJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformLeftSemiApplyInWithExternalCorrs2InnerJoin_H
+#endif  // !GPOPT_CXformLeftSemiApplyInWithExternalCorrs2InnerJoin_H
 
 // EOF

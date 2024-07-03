@@ -13,7 +13,7 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalTVF.h"
 
 using namespace gpopt;
 
@@ -26,10 +26,8 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformImplementTVFNoArgs::CXformImplementTVFNoArgs(CMemoryPool *mp)
-	: CXformImplementTVF(
-		  // pattern
-		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalTVF(mp)))
-{
-}
+    : CXformImplementTVF(
+          // pattern
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalTVF(mp))) {}
 
 // EOF

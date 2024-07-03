@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,17 +24,15 @@ using namespace gpos;
 //		Static unit tests for order specs
 //
 //---------------------------------------------------------------------------
-class COrderSpecTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
+class COrderSpecTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
 
-};	// class COrderSpecTest
+};  // class COrderSpecTest
 }  // namespace gpopt
 
-#endif	// !GPOS_COrderSpecTest_H
-
+#endif  // !GPOS_COrderSpecTest_H
 
 // EOF

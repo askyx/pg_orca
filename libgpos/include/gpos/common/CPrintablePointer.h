@@ -1,44 +1,31 @@
-//	Copyright (C) 2017 Pivotal Software, Inc.
+//	Copyright (C) 2017 VMware, Inc. or its affiliates.
 
 #ifndef GPOS_CPrintablePointer_H
 #define GPOS_CPrintablePointer_H
 
 #include "gpos/io/IOstream.h"
 
-namespace gpos
-{
+namespace gpos {
 template <typename T>
-class CPrintablePointer
-{
-private:
-	T *m_obj;
-	friend IOstream &
-	operator<<(IOstream &os, CPrintablePointer p)
-	{
-		if (p.m_obj)
-		{
-			return os << *p.m_obj;
-		}
-		else
-		{
-			return os;
-		}
-	}
+class CPrintablePointer {
+ private:
+  T *m_obj;
+  friend IOstream &operator<<(IOstream &os, CPrintablePointer p) {
+    if (p.m_obj) {
+      return os << *p.m_obj;
+    } else {
+      return os;
+    }
+  }
 
-public:
-	explicit CPrintablePointer(T *obj) : m_obj(obj)
-	{
-	}
-	CPrintablePointer(const CPrintablePointer &pointer) : m_obj(pointer.m_obj)
-	{
-	}
+ public:
+  explicit CPrintablePointer(T *obj) : m_obj(obj) {}
+  CPrintablePointer(const CPrintablePointer &pointer) : m_obj(pointer.m_obj) {}
 };
 
 template <typename T>
-CPrintablePointer<T>
-GetPrintablePtr(T *obj)
-{
-	return CPrintablePointer<T>(obj);
+CPrintablePointer<T> GetPrintablePtr(T *obj) {
+  return CPrintablePointer<T>(obj);
 }
 }  // namespace gpos
-#endif	// GPOS_CPrintablePointer_H
+#endif  // GPOS_CPrintablePointer_H

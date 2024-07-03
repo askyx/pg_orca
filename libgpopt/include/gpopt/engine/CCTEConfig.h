@@ -16,8 +16,7 @@
 #include "gpos/common/CRefCount.h"
 #include "gpos/memory/CMemoryPool.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,39 +27,27 @@ using namespace gpos;
 //		CTE configurations
 //
 //---------------------------------------------------------------------------
-class CCTEConfig : public CRefCount
-{
-private:
-	// CTE inlining cut-off
-	ULONG m_ulCTEInliningCutoff;
+class CCTEConfig : public CRefCount {
+ private:
+  // CTE inlining cut-off
+  ULONG m_ulCTEInliningCutoff;
 
-	// private copy ctor
-	CCTEConfig(const CCTEConfig &);
+ public:
+  CCTEConfig(const CCTEConfig &) = delete;
 
-public:
-	// ctor
-	CCTEConfig(ULONG cte_inlining_cut_off)
-		: m_ulCTEInliningCutoff(cte_inlining_cut_off)
-	{
-	}
+  // ctor
+  CCTEConfig(ULONG cte_inlining_cut_off) : m_ulCTEInliningCutoff(cte_inlining_cut_off) {}
 
-	// CTE inlining cut-off
-	ULONG
-	UlCTEInliningCutoff() const
-	{
-		return m_ulCTEInliningCutoff;
-	}
+  // CTE inlining cut-off
+  ULONG
+  UlCTEInliningCutoff() const { return m_ulCTEInliningCutoff; }
 
-	// generate default optimizer configurations
-	static CCTEConfig *
-	PcteconfDefault(CMemoryPool *mp)
-	{
-		return GPOS_NEW(mp) CCTEConfig(0 /* cte_inlining_cut_off */);
-	}
+  // generate default optimizer configurations
+  static CCTEConfig *PcteconfDefault(CMemoryPool *mp) { return GPOS_NEW(mp) CCTEConfig(0 /* cte_inlining_cut_off */); }
 
-};	// class CCTEConfig
+};  // class CCTEConfig
 }  // namespace gpopt
 
-#endif	// !GPOPT_CCTEConfig_H
+#endif  // !GPOPT_CCTEConfig_H
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,46 +27,33 @@ using namespace gpos;
 //		of NAry-join
 //
 //---------------------------------------------------------------------------
-class CXformPushDownLeftOuterJoin : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformPushDownLeftOuterJoin(const CXformPushDownLeftOuterJoin &);
+class CXformPushDownLeftOuterJoin : public CXformExploration {
+ private:
+ public:
+  CXformPushDownLeftOuterJoin(const CXformPushDownLeftOuterJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformPushDownLeftOuterJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformPushDownLeftOuterJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformPushDownLeftOuterJoin()
-	{
-	}
+  // dtor
+  ~CXformPushDownLeftOuterJoin() override = default;
 
-	// xform promise
-	virtual CXform::EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // xform promise
+  CXform::EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfPushDownLeftOuterJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfPushDownLeftOuterJoin; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformPushDownLeftOuterJoin";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformPushDownLeftOuterJoin"; }
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformPushDownLeftOuterJoin
+};  // class CXformPushDownLeftOuterJoin
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformPushDownLeftOuterJoin_H
+#endif  // !GPOPT_CXformPushDownLeftOuterJoin_H
 
 // EOF

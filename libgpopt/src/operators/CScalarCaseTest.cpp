@@ -24,10 +24,8 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarCaseTest::CScalarCaseTest(CMemoryPool *mp, IMDId *mdid_type)
-	: CScalar(mp), m_mdid_type(mdid_type)
-{
-	GPOS_ASSERT(mdid_type->IsValid());
+CScalarCaseTest::CScalarCaseTest(CMemoryPool *mp, IMDId *mdid_type) : CScalar(mp), m_mdid_type(mdid_type) {
+  GPOS_ASSERT(mdid_type->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -38,9 +36,8 @@ CScalarCaseTest::CScalarCaseTest(CMemoryPool *mp, IMDId *mdid_type)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CScalarCaseTest::~CScalarCaseTest()
-{
-	m_mdid_type->Release();
+CScalarCaseTest::~CScalarCaseTest() {
+  m_mdid_type->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -53,10 +50,8 @@ CScalarCaseTest::~CScalarCaseTest()
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarCaseTest::HashValue() const
-{
-	return gpos::CombineHashes(COperator::HashValue(),
-							   m_mdid_type->HashValue());
+CScalarCaseTest::HashValue() const {
+  return gpos::CombineHashes(COperator::HashValue(), m_mdid_type->HashValue());
 }
 
 //---------------------------------------------------------------------------
@@ -67,11 +62,9 @@ CScalarCaseTest::HashValue() const
 //		Not called for leaf operators
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarCaseTest::FInputOrderSensitive() const
-{
-	GPOS_ASSERT(!"Unexpected call of function FInputOrderSensitive");
-	return false;
+BOOL CScalarCaseTest::FInputOrderSensitive() const {
+  GPOS_ASSERT(!"Unexpected call of function FInputOrderSensitive");
+  return false;
 }
 
 //---------------------------------------------------------------------------
@@ -82,18 +75,15 @@ CScalarCaseTest::FInputOrderSensitive() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarCaseTest::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarCaseTest *popScCaseTest = CScalarCaseTest::PopConvert(pop);
+BOOL CScalarCaseTest::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarCaseTest *popScCaseTest = CScalarCaseTest::PopConvert(pop);
 
-		// match if return types are identical
-		return popScCaseTest->MdidType()->Equals(m_mdid_type);
-	}
+    // match if return types are identical
+    return popScCaseTest->MdidType()->Equals(m_mdid_type);
+  }
 
-	return false;
+  return false;
 }
 
 // EOF

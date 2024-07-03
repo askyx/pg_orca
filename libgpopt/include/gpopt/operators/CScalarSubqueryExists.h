@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CScalarSubqueryExistential.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,50 +26,34 @@ using namespace gpos;
 //		Scalar subquery EXISTS.
 //
 //---------------------------------------------------------------------------
-class CScalarSubqueryExists : public CScalarSubqueryExistential
-{
-private:
-	// private copy ctor
-	CScalarSubqueryExists(const CScalarSubqueryExists &);
+class CScalarSubqueryExists : public CScalarSubqueryExistential {
+ private:
+ public:
+  CScalarSubqueryExists(const CScalarSubqueryExists &) = delete;
 
-public:
-	// ctor
-	CScalarSubqueryExists(CMemoryPool *mp) : CScalarSubqueryExistential(mp)
-	{
-	}
+  // ctor
+  CScalarSubqueryExists(CMemoryPool *mp) : CScalarSubqueryExistential(mp) {}
 
-	// dtor
-	virtual ~CScalarSubqueryExists()
-	{
-	}
+  // dtor
+  ~CScalarSubqueryExists() override = default;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopScalarSubqueryExists;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopScalarSubqueryExists; }
 
-	// return a string for scalar subquery
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CScalarSubqueryExists";
-	}
+  // return a string for scalar subquery
+  const CHAR *SzId() const override { return "CScalarSubqueryExists"; }
 
-	// conversion function
-	static CScalarSubqueryExists *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarSubqueryExists == pop->Eopid());
+  // conversion function
+  static CScalarSubqueryExists *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarSubqueryExists == pop->Eopid());
 
-		return reinterpret_cast<CScalarSubqueryExists *>(pop);
-	}
+    return dynamic_cast<CScalarSubqueryExists *>(pop);
+  }
 
-};	// class CScalarSubqueryExists
+};  // class CScalarSubqueryExists
 }  // namespace gpopt
 
-#endif	// !GPOPT_CScalarSubqueryExists_H
+#endif  // !GPOPT_CScalarSubqueryExists_H
 
 // EOF

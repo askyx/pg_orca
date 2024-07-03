@@ -14,7 +14,11 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalGbAgg.h"
+#include "gpopt/operators/CLogicalUnion.h"
+#include "gpopt/operators/CLogicalUnionAll.h"
+#include "gpopt/operators/CPatternMultiLeaf.h"
+#include "gpopt/operators/CScalarProjectList.h"
 
 using namespace gpopt;
 
@@ -27,12 +31,9 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformUnion2UnionAll::CXformUnion2UnionAll(CMemoryPool *mp)
-	:  // pattern
-	  CXformExploration(GPOS_NEW(mp) CExpression(
-		  mp, GPOS_NEW(mp) CLogicalUnion(mp),
-		  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternMultiLeaf(mp))))
-{
-}
+    :  // pattern
+      CXformExploration(GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalUnion(mp),
+                                                 GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternMultiLeaf(mp)))) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -42,53 +43,45 @@ CXformUnion2UnionAll::CXformUnion2UnionAll(CMemoryPool *mp)
 //		Actual transformation
 //
 //---------------------------------------------------------------------------
-void
-CXformUnion2UnionAll::Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-								CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformUnion2UnionAll::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CMemoryPool *mp = pxfctxt->Pmp();
+  CMemoryPool *mp = pxfctxt->Pmp();
 
-	// extract components
-	CLogicalUnion *popUnion = CLogicalUnion::PopConvert(pexpr->Pop());
-	CColRefArray *pdrgpcrOutput = popUnion->PdrgpcrOutput();
-	CColRef2dArray *pdrgpdrgpcrInput = popUnion->PdrgpdrgpcrInput();
+  // extract components
+  CLogicalUnion *popUnion = CLogicalUnion::PopConvert(pexpr->Pop());
+  CColRefArray *pdrgpcrOutput = popUnion->PdrgpcrOutput();
+  CColRef2dArray *pdrgpdrgpcrInput = popUnion->PdrgpdrgpcrInput();
 
-	CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
-	const ULONG arity = pexpr->Arity();
+  CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
+  const ULONG arity = pexpr->Arity();
 
-	for (ULONG ul = 0; ul < arity; ul++)
-	{
-		CExpression *pexprChild = (*pexpr)[ul];
-		pexprChild->AddRef();
-		pdrgpexpr->Append(pexprChild);
-	}
+  for (ULONG ul = 0; ul < arity; ul++) {
+    CExpression *pexprChild = (*pexpr)[ul];
+    pexprChild->AddRef();
+    pdrgpexpr->Append(pexprChild);
+  }
 
-	pdrgpcrOutput->AddRef();
-	pdrgpdrgpcrInput->AddRef();
+  pdrgpcrOutput->AddRef();
+  pdrgpdrgpcrInput->AddRef();
 
-	// assemble new logical operator
-	CExpression *pexprUnionAll = GPOS_NEW(mp) CExpression(
-		mp, GPOS_NEW(mp) CLogicalUnionAll(mp, pdrgpcrOutput, pdrgpdrgpcrInput),
-		pdrgpexpr);
+  // assemble new logical operator
+  CExpression *pexprUnionAll =
+      GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalUnionAll(mp, pdrgpcrOutput, pdrgpdrgpcrInput), pdrgpexpr);
 
-	pdrgpcrOutput->AddRef();
+  pdrgpcrOutput->AddRef();
 
-	CExpression *pexprProjList =
-		GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarProjectList(mp),
-								 GPOS_NEW(mp) CExpressionArray(mp));
+  CExpression *pexprProjList =
+      GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarProjectList(mp), GPOS_NEW(mp) CExpressionArray(mp));
 
-	CExpression *pexprAgg = GPOS_NEW(mp) CExpression(
-		mp,
-		GPOS_NEW(mp) CLogicalGbAgg(mp, pdrgpcrOutput,
-								   COperator::EgbaggtypeGlobal /*egbaggtype*/),
-		pexprUnionAll, pexprProjList);
+  CExpression *pexprAgg = GPOS_NEW(mp)
+      CExpression(mp, GPOS_NEW(mp) CLogicalGbAgg(mp, pdrgpcrOutput, COperator::EgbaggtypeGlobal /*egbaggtype*/),
+                  pexprUnionAll, pexprProjList);
 
-	// add alternative to results
-	pxfres->Add(pexprAgg);
+  // add alternative to results
+  pxfres->Add(pexprAgg);
 }
 
 // EOF

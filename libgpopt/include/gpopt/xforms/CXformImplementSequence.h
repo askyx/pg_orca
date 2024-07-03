@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformImplementation.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,52 +26,36 @@ using namespace gpos;
 //		Transform logical to physical Sequence
 //
 //---------------------------------------------------------------------------
-class CXformImplementSequence : public CXformImplementation
-{
-private:
-	// private copy ctor
-	CXformImplementSequence(const CXformImplementSequence &);
+class CXformImplementSequence : public CXformImplementation {
+ private:
+ public:
+  CXformImplementSequence(const CXformImplementSequence &) = delete;
 
-public:
-	// ctor
-	explicit CXformImplementSequence(CMemoryPool *);
+  // ctor
+  explicit CXformImplementSequence(CMemoryPool *);
 
-	// dtor
-	virtual ~CXformImplementSequence()
-	{
-	}
+  // dtor
+  ~CXformImplementSequence() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfImplementSequence;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfImplementSequence; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformImplementSequence";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformImplementSequence"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise
-	Exfp(CExpressionHandle &  // exprhdl
-	) const
-	{
-		return CXform::ExfpHigh;
-	}
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &  // exprhdl
+  ) const override {
+    return CXform::ExfpHigh;
+  }
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformImplementSequence
+};  // class CXformImplementSequence
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CXformImplementSequence_H
+#endif  // !GPOPT_CXformImplementSequence_H
 
 // EOF

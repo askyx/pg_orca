@@ -19,7 +19,6 @@
 #include "naucrates/dxl/operators/CDXLDatum.h"
 #include "naucrates/dxl/operators/CDXLDatumInt4.h"
 #include "naucrates/dxl/operators/CDXLScalarConstValue.h"
-#include "naucrates/md/CGPDBTypeHelper.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -37,30 +36,33 @@ CMDName CMDTypeInt4GPDB::m_mdname(&m_str);
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMDTypeInt4GPDB::CMDTypeInt4GPDB(CMemoryPool *mp) : m_mp(mp)
-{
-	m_mdid = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_OID);
-	m_mdid_op_eq = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_EQ_OP);
-	m_mdid_op_neq = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_NEQ_OP);
-	m_mdid_op_lt = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_LT_OP);
-	m_mdid_op_leq = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_LEQ_OP);
-	m_mdid_op_gt = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_GT_OP);
-	m_mdid_op_geq = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_GEQ_OP);
-	m_mdid_op_cmp = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_COMP_OP);
-	m_mdid_type_array = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_ARRAY_TYPE);
-	m_mdid_min = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_AGG_MIN);
-	m_mdid_max = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_AGG_MAX);
-	m_mdid_avg = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_AGG_AVG);
-	m_mdid_sum = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_AGG_SUM);
-	m_mdid_count = GPOS_NEW(mp) CMDIdGPDB(GPDB_INT4_AGG_COUNT);
+CMDTypeInt4GPDB::CMDTypeInt4GPDB(CMemoryPool *mp) : m_mp(mp) {
+  m_mdid = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_OID);
+  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
+    m_distr_opfamily = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_OPFAMILY);
+    m_legacy_distr_opfamily = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_LEGACY_OPFAMILY);
+  } else {
+    m_distr_opfamily = nullptr;
+    m_legacy_distr_opfamily = nullptr;
+  }
+  m_part_opfamily = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_PART_OPFAMILY);
+  m_mdid_op_eq = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_EQ_OP);
+  m_mdid_op_neq = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_NEQ_OP);
+  m_mdid_op_lt = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_LT_OP);
+  m_mdid_op_leq = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_LEQ_OP);
+  m_mdid_op_gt = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_GT_OP);
+  m_mdid_op_geq = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_GEQ_OP);
+  m_mdid_op_cmp = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_COMP_OP);
+  m_mdid_type_array = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_ARRAY_TYPE);
+  m_mdid_min = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_AGG_MIN);
+  m_mdid_max = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_AGG_MAX);
+  m_mdid_avg = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_AGG_AVG);
+  m_mdid_sum = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_AGG_SUM);
+  m_mdid_count = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT4_AGG_COUNT);
 
-	m_dxl_str = CDXLUtils::SerializeMDObj(
-		m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-
-	GPOS_ASSERT(GPDB_INT4_OID == CMDIdGPDB::CastMdid(m_mdid)->Oid());
-	m_mdid->AddRef();
-	m_datum_null =
-		GPOS_NEW(mp) CDatumInt4GPDB(m_mdid, 1 /* value */, true /* is_null */);
+  GPOS_ASSERT(GPDB_INT4_OID == CMDIdGPDB::CastMdid(m_mdid)->Oid());
+  m_mdid->AddRef();
+  m_datum_null = GPOS_NEW(mp) CDatumInt4GPDB(m_mdid, 1 /* value */, true /* is_null */);
 }
 
 //---------------------------------------------------------------------------
@@ -71,25 +73,35 @@ CMDTypeInt4GPDB::CMDTypeInt4GPDB(CMemoryPool *mp) : m_mp(mp)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CMDTypeInt4GPDB::~CMDTypeInt4GPDB()
-{
-	m_mdid->Release();
-	m_mdid_op_eq->Release();
-	m_mdid_op_neq->Release();
-	m_mdid_op_lt->Release();
-	m_mdid_op_leq->Release();
-	m_mdid_op_gt->Release();
-	m_mdid_op_geq->Release();
-	m_mdid_op_cmp->Release();
-	m_mdid_type_array->Release();
-	m_mdid_min->Release();
-	m_mdid_max->Release();
-	m_mdid_avg->Release();
-	m_mdid_sum->Release();
-	m_mdid_count->Release();
-	m_datum_null->Release();
+CMDTypeInt4GPDB::~CMDTypeInt4GPDB() {
+  m_mdid->Release();
+  CRefCount::SafeRelease(m_distr_opfamily);
+  CRefCount::SafeRelease(m_legacy_distr_opfamily);
+  CRefCount::SafeRelease(m_part_opfamily);
+  m_mdid_op_eq->Release();
+  m_mdid_op_neq->Release();
+  m_mdid_op_lt->Release();
+  m_mdid_op_leq->Release();
+  m_mdid_op_gt->Release();
+  m_mdid_op_geq->Release();
+  m_mdid_op_cmp->Release();
+  m_mdid_type_array->Release();
+  m_mdid_min->Release();
+  m_mdid_max->Release();
+  m_mdid_avg->Release();
+  m_mdid_sum->Release();
+  m_mdid_count->Release();
+  m_datum_null->Release();
+  if (nullptr != m_dxl_str) {
+    GPOS_DELETE(m_dxl_str);
+  }
+}
 
-	GPOS_DELETE(m_dxl_str);
+const CWStringDynamic *CMDTypeInt4GPDB::GetStrRepr() {
+  if (nullptr == m_dxl_str) {
+    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
+  }
+  return m_dxl_str;
 }
 
 //---------------------------------------------------------------------------
@@ -100,12 +112,9 @@ CMDTypeInt4GPDB::~CMDTypeInt4GPDB()
 //		Factory function for creating INT4 datums
 //
 //---------------------------------------------------------------------------
-IDatumInt4 *
-CMDTypeInt4GPDB::CreateInt4Datum(CMemoryPool *mp, INT value, BOOL is_null) const
-{
-	return GPOS_NEW(mp) CDatumInt4GPDB(m_mdid->Sysid(), value, is_null);
+IDatumInt4 *CMDTypeInt4GPDB::CreateInt4Datum(CMemoryPool *mp, INT value, BOOL is_null) const {
+  return GPOS_NEW(mp) CDatumInt4GPDB(m_mdid->Sysid(), value, is_null);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -115,10 +124,20 @@ CMDTypeInt4GPDB::CreateInt4Datum(CMemoryPool *mp, INT value, BOOL is_null) const
 //		Returns the metadata id of this type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDTypeInt4GPDB::MDId() const
-{
-	return m_mdid;
+IMDId *CMDTypeInt4GPDB::MDId() const {
+  return m_mdid;
+}
+
+IMDId *CMDTypeInt4GPDB::GetDistrOpfamilyMdid() const {
+  if (GPOS_FTRACE(EopttraceUseLegacyOpfamilies)) {
+    return m_legacy_distr_opfamily;
+  } else {
+    return m_distr_opfamily;
+  }
+}
+
+IMDId *CMDTypeInt4GPDB::GetPartOpfamilyMdid() const {
+  return m_part_opfamily;
 }
 
 //---------------------------------------------------------------------------
@@ -129,12 +148,9 @@ CMDTypeInt4GPDB::MDId() const
 //		Returns the name of this type
 //
 //---------------------------------------------------------------------------
-CMDName
-CMDTypeInt4GPDB::Mdname() const
-{
-	return CMDTypeInt4GPDB::m_mdname;
+CMDName CMDTypeInt4GPDB::Mdname() const {
+  return CMDTypeInt4GPDB::m_mdname;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -144,27 +160,24 @@ CMDTypeInt4GPDB::Mdname() const
 //		Return mdid of specified comparison operator type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDTypeInt4GPDB::GetMdidForCmpType(ECmpType cmp_type) const
-{
-	switch (cmp_type)
-	{
-		case EcmptEq:
-			return m_mdid_op_eq;
-		case EcmptNEq:
-			return m_mdid_op_neq;
-		case EcmptL:
-			return m_mdid_op_lt;
-		case EcmptLEq:
-			return m_mdid_op_leq;
-		case EcmptG:
-			return m_mdid_op_gt;
-		case EcmptGEq:
-			return m_mdid_op_geq;
-		default:
-			GPOS_ASSERT(!"Invalid operator type");
-			return NULL;
-	}
+IMDId *CMDTypeInt4GPDB::GetMdidForCmpType(ECmpType cmp_type) const {
+  switch (cmp_type) {
+    case EcmptEq:
+      return m_mdid_op_eq;
+    case EcmptNEq:
+      return m_mdid_op_neq;
+    case EcmptL:
+      return m_mdid_op_lt;
+    case EcmptLEq:
+      return m_mdid_op_leq;
+    case EcmptG:
+      return m_mdid_op_gt;
+    case EcmptGEq:
+      return m_mdid_op_geq;
+    default:
+      GPOS_ASSERT(!"Invalid operator type");
+      return nullptr;
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -175,25 +188,22 @@ CMDTypeInt4GPDB::GetMdidForCmpType(ECmpType cmp_type) const
 //		Return mdid of specified aggregate type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDTypeInt4GPDB::GetMdidForAggType(EAggType agg_type) const
-{
-	switch (agg_type)
-	{
-		case EaggMin:
-			return m_mdid_min;
-		case EaggMax:
-			return m_mdid_max;
-		case EaggAvg:
-			return m_mdid_avg;
-		case EaggSum:
-			return m_mdid_sum;
-		case EaggCount:
-			return m_mdid_count;
-		default:
-			GPOS_ASSERT(!"Invalid aggregate type");
-			return NULL;
-	}
+IMDId *CMDTypeInt4GPDB::GetMdidForAggType(EAggType agg_type) const {
+  switch (agg_type) {
+    case EaggMin:
+      return m_mdid_min;
+    case EaggMax:
+      return m_mdid_max;
+    case EaggAvg:
+      return m_mdid_avg;
+    case EaggSum:
+      return m_mdid_sum;
+    case EaggCount:
+      return m_mdid_count;
+    default:
+      GPOS_ASSERT(!"Invalid aggregate type");
+      return nullptr;
+  }
 }
 //---------------------------------------------------------------------------
 //	@function:
@@ -203,10 +213,8 @@ CMDTypeInt4GPDB::GetMdidForAggType(EAggType agg_type) const
 //		Serialize relation metadata in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CMDTypeInt4GPDB::Serialize(CXMLSerializer *xml_serializer) const
-{
-	CGPDBTypeHelper<CMDTypeInt4GPDB>::Serialize(xml_serializer, this);
+void CMDTypeInt4GPDB::Serialize(CXMLSerializer *xml_serializer) const {
+  CGPDBTypeHelper<CMDTypeInt4GPDB>::Serialize(xml_serializer, this);
 }
 
 //---------------------------------------------------------------------------
@@ -217,15 +225,10 @@ CMDTypeInt4GPDB::Serialize(CXMLSerializer *xml_serializer) const
 //		Transformation method for generating int4 datum from CDXLScalarConstValue
 //
 //---------------------------------------------------------------------------
-IDatum *
-CMDTypeInt4GPDB::GetDatumForDXLConstVal(
-	const CDXLScalarConstValue *dxl_op) const
-{
-	CDXLDatumInt4 *dxl_datum =
-		CDXLDatumInt4::Cast(const_cast<CDXLDatum *>(dxl_op->GetDatumVal()));
+IDatum *CMDTypeInt4GPDB::GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_op) const {
+  CDXLDatumInt4 *dxl_datum = CDXLDatumInt4::Cast(const_cast<CDXLDatum *>(dxl_op->GetDatumVal()));
 
-	return GPOS_NEW(m_mp) CDatumInt4GPDB(m_mdid->Sysid(), dxl_datum->Value(),
-										 dxl_datum->IsNull());
+  return GPOS_NEW(m_mp) CDatumInt4GPDB(m_mdid->Sysid(), dxl_datum->Value(), dxl_datum->IsNull());
 }
 
 //---------------------------------------------------------------------------
@@ -236,16 +239,12 @@ CMDTypeInt4GPDB::GetDatumForDXLConstVal(
 //		Construct an int4 datum from a DXL datum
 //
 //---------------------------------------------------------------------------
-IDatum *
-CMDTypeInt4GPDB::GetDatumForDXLDatum(CMemoryPool *mp,
-									 const CDXLDatum *dxl_datum) const
-{
-	CDXLDatumInt4 *int4_dxl_datum =
-		CDXLDatumInt4::Cast(const_cast<CDXLDatum *>(dxl_datum));
-	INT val = int4_dxl_datum->Value();
-	BOOL is_null = int4_dxl_datum->IsNull();
+IDatum *CMDTypeInt4GPDB::GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const {
+  CDXLDatumInt4 *int4_dxl_datum = CDXLDatumInt4::Cast(const_cast<CDXLDatum *>(dxl_datum));
+  INT val = int4_dxl_datum->Value();
+  BOOL is_null = int4_dxl_datum->IsNull();
 
-	return GPOS_NEW(mp) CDatumInt4GPDB(m_mdid->Sysid(), val, is_null);
+  return GPOS_NEW(mp) CDatumInt4GPDB(m_mdid->Sysid(), val, is_null);
 }
 
 //---------------------------------------------------------------------------
@@ -256,14 +255,11 @@ CMDTypeInt4GPDB::GetDatumForDXLDatum(CMemoryPool *mp,
 // 		Generate dxl datum
 //
 //---------------------------------------------------------------------------
-CDXLDatum *
-CMDTypeInt4GPDB::GetDatumVal(CMemoryPool *mp, IDatum *datum) const
-{
-	m_mdid->AddRef();
-	CDatumInt4GPDB *int4_datum = dynamic_cast<CDatumInt4GPDB *>(datum);
+CDXLDatum *CMDTypeInt4GPDB::GetDatumVal(CMemoryPool *mp, IDatum *datum) const {
+  m_mdid->AddRef();
+  CDatumInt4GPDB *int4_datum = dynamic_cast<CDatumInt4GPDB *>(datum);
 
-	return GPOS_NEW(mp)
-		CDXLDatumInt4(mp, m_mdid, int4_datum->IsNull(), int4_datum->Value());
+  return GPOS_NEW(mp) CDXLDatumInt4(mp, m_mdid, int4_datum->IsNull(), int4_datum->Value());
 }
 
 //---------------------------------------------------------------------------
@@ -274,16 +270,13 @@ CMDTypeInt4GPDB::GetDatumVal(CMemoryPool *mp, IDatum *datum) const
 // 		Generate a dxl scalar constant from a datum
 //
 //---------------------------------------------------------------------------
-CDXLScalarConstValue *
-CMDTypeInt4GPDB::GetDXLOpScConst(CMemoryPool *mp, IDatum *datum) const
-{
-	CDatumInt4GPDB *int4gpdb_datum = dynamic_cast<CDatumInt4GPDB *>(datum);
+CDXLScalarConstValue *CMDTypeInt4GPDB::GetDXLOpScConst(CMemoryPool *mp, IDatum *datum) const {
+  CDatumInt4GPDB *int4gpdb_datum = dynamic_cast<CDatumInt4GPDB *>(datum);
 
-	m_mdid->AddRef();
-	CDXLDatumInt4 *dxl_datum = GPOS_NEW(mp) CDXLDatumInt4(
-		mp, m_mdid, int4gpdb_datum->IsNull(), int4gpdb_datum->Value());
+  m_mdid->AddRef();
+  CDXLDatumInt4 *dxl_datum = GPOS_NEW(mp) CDXLDatumInt4(mp, m_mdid, int4gpdb_datum->IsNull(), int4gpdb_datum->Value());
 
-	return GPOS_NEW(mp) CDXLScalarConstValue(mp, dxl_datum);
+  return GPOS_NEW(mp) CDXLScalarConstValue(mp, dxl_datum);
 }
 
 //---------------------------------------------------------------------------
@@ -294,12 +287,10 @@ CMDTypeInt4GPDB::GetDXLOpScConst(CMemoryPool *mp, IDatum *datum) const
 // 		Generate dxl datum
 //
 //---------------------------------------------------------------------------
-CDXLDatum *
-CMDTypeInt4GPDB::GetDXLDatumNull(CMemoryPool *mp) const
-{
-	m_mdid->AddRef();
+CDXLDatum *CMDTypeInt4GPDB::GetDXLDatumNull(CMemoryPool *mp) const {
+  m_mdid->AddRef();
 
-	return GPOS_NEW(mp) CDXLDatumInt4(mp, m_mdid, true /*is_null*/, 1);
+  return GPOS_NEW(mp) CDXLDatumInt4(mp, m_mdid, true /*is_null*/, 1);
 }
 
 #ifdef GPOS_DEBUG
@@ -311,12 +302,10 @@ CMDTypeInt4GPDB::GetDXLDatumNull(CMemoryPool *mp) const
 //		Prints a metadata cache relation to the provided output
 //
 //---------------------------------------------------------------------------
-void
-CMDTypeInt4GPDB::DebugPrint(IOstream &os) const
-{
-	CGPDBTypeHelper<CMDTypeInt4GPDB>::DebugPrint(os, this);
+void CMDTypeInt4GPDB::DebugPrint(IOstream &os) const {
+  CGPDBTypeHelper<CMDTypeInt4GPDB>::DebugPrint(os, this);
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CPattern.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,49 +26,30 @@ using namespace gpos;
 //		Pattern that matches a variable number of trees
 //
 //---------------------------------------------------------------------------
-class CPatternMultiTree : public CPattern
-{
-private:
-	// private copy ctor
-	CPatternMultiTree(const CPatternMultiTree &);
+class CPatternMultiTree : public CPattern {
+ private:
+ public:
+  CPatternMultiTree(const CPatternMultiTree &) = delete;
 
-public:
-	// ctor
-	explicit CPatternMultiTree(CMemoryPool *mp) : CPattern(mp)
-	{
-	}
+  // ctor
+  explicit CPatternMultiTree(CMemoryPool *mp) : CPattern(mp) {}
 
-	// dtor
-	virtual ~CPatternMultiTree()
-	{
-	}
+  // dtor
+  ~CPatternMultiTree() override = default;
 
-	// check if operator is a pattern leaf
-	virtual BOOL
-	FLeaf() const
-	{
-		return false;
-	}
+  // check if operator is a pattern leaf
+  BOOL FLeaf() const override { return false; }
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPatternMultiTree;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPatternMultiTree; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPatternMultiTree";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CPatternMultiTree"; }
 
-};	// class CPatternMultiTree
+};  // class CPatternMultiTree
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CPatternMultiTree_H
+#endif  // !GPOPT_CPatternMultiTree_H
 
 // EOF

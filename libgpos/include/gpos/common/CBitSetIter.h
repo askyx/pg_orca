@@ -14,8 +14,7 @@
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@class:
 //		CBitSetIter
@@ -25,48 +24,40 @@ namespace gpos
 //		internal links
 //
 //---------------------------------------------------------------------------
-class CBitSetIter
-{
-private:
-	// bitset
-	const CBitSet &m_bs;
+class CBitSetIter {
+ private:
+  // bitset
+  const CBitSet &m_bs;
 
-	// current cursor position (in current link)
-	ULONG m_cursor;
+  // current cursor position (in current link)
+  ULONG m_cursor;
 
-	// current cursor link
-	CBitSet::CBitSetLink *m_bsl;
+  // current cursor link
+  CBitSet::CBitSetLink *m_bsl;
 
-	// is iterator active or exhausted
-	BOOL m_active;
+  // is iterator active or exhausted
+  BOOL m_active;
 
-	// private copy ctor
-	CBitSetIter(const CBitSetIter &);
+ public:
+  CBitSetIter(const CBitSetIter &) = delete;
 
-public:
-	// ctor
-	explicit CBitSetIter(const CBitSet &bs);
-	// dtor
-	~CBitSetIter()
-	{
-	}
+  // ctor
+  explicit CBitSetIter(const CBitSet &bs);
+  // dtor
+  ~CBitSetIter() = default;
 
-	// short hand for cast
-	operator BOOL() const
-	{
-		return m_active;
-	}
+  // short hand for cast
+  operator BOOL() const { return m_active; }
 
-	// move to next bit
-	BOOL Advance();
+  // move to next bit
+  BOOL Advance();
 
-	// current bit
-	ULONG Bit() const;
+  // current bit
+  ULONG Bit() const;
 
-};	// class CBitSetIter
+};  // class CBitSetIter
 }  // namespace gpos
 
-
-#endif	// !GPOS_CBitSetIter_H
+#endif  // !GPOS_CBitSetIter_H
 
 // EOF

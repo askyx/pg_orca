@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,17 +24,15 @@ using namespace gpos;
 //		Static unit tests for key collections
 //
 //---------------------------------------------------------------------------
-class CKeyCollectionTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basics();
-	static GPOS_RESULT EresUnittest_Subsumes();
-};	// class CKeyCollectionTest
+class CKeyCollectionTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basics();
+  static GPOS_RESULT EresUnittest_Subsumes();
+};  // class CKeyCollectionTest
 }  // namespace gpopt
 
-#endif	// !GPOS_CKeyCollectionTest_H
-
+#endif  // !GPOS_CKeyCollectionTest_H
 
 // EOF

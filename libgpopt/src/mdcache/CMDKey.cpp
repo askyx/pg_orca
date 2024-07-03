@@ -19,7 +19,6 @@ using namespace gpos;
 using namespace gpmd;
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CMDKey::CMDKey
@@ -28,9 +27,8 @@ using namespace gpopt;
 //		Constructs a md cache key
 //
 //---------------------------------------------------------------------------
-CMDKey::CMDKey(const IMDId *mdid) : m_mdid(mdid)
-{
-	GPOS_ASSERT(mdid->IsValid());
+CMDKey::CMDKey(const IMDId *mdid) : m_mdid(mdid) {
+  GPOS_ASSERT(mdid->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -41,10 +39,8 @@ CMDKey::CMDKey(const IMDId *mdid) : m_mdid(mdid)
 //		Equality function
 //
 //---------------------------------------------------------------------------
-BOOL
-CMDKey::Equals(const CMDKey &mdkey) const
-{
-	return mdkey.MDId()->Equals(m_mdid);
+BOOL CMDKey::Equals(const CMDKey &mdkey) const {
+  return mdkey.MDId()->Equals(m_mdid);
 }
 
 //---------------------------------------------------------------------------
@@ -55,22 +51,18 @@ CMDKey::Equals(const CMDKey &mdkey) const
 //		Equality function for using MD keys in a cache
 //
 //---------------------------------------------------------------------------
-BOOL
-CMDKey::FEqualMDKey(CMDKey *const &pvLeft, CMDKey *const &pvRight)
-{
-	if (NULL == pvLeft && NULL == pvRight)
-	{
-		return true;
-	}
+BOOL CMDKey::FEqualMDKey(CMDKey *const &pvLeft, CMDKey *const &pvRight) {
+  if (nullptr == pvLeft && nullptr == pvRight) {
+    return true;
+  }
 
-	if (NULL == pvLeft || NULL == pvRight)
-	{
-		return false;
-	}
+  if (nullptr == pvLeft || nullptr == pvRight) {
+    return false;
+  }
 
-	GPOS_ASSERT(NULL != pvLeft && NULL != pvRight);
+  GPOS_ASSERT(nullptr != pvLeft && nullptr != pvRight);
 
-	return pvLeft->MDId()->Equals(pvRight->MDId());
+  return pvLeft->MDId()->Equals(pvRight->MDId());
 }
 
 //---------------------------------------------------------------------------
@@ -82,9 +74,8 @@ CMDKey::FEqualMDKey(CMDKey *const &pvLeft, CMDKey *const &pvRight)
 //
 //---------------------------------------------------------------------------
 ULONG
-CMDKey::HashValue() const
-{
-	return m_mdid->HashValue();
+CMDKey::HashValue() const {
+  return m_mdid->HashValue();
 }
 
 //---------------------------------------------------------------------------
@@ -96,9 +87,8 @@ CMDKey::HashValue() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CMDKey::UlHashMDKey(CMDKey *const &pv)
-{
-	return pv->MDId()->HashValue();
+CMDKey::UlHashMDKey(CMDKey *const &pv) {
+  return pv->MDId()->HashValue();
 }
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal Software, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CUnittestTest.cpp
@@ -14,8 +14,7 @@
 #include "gpos/base.h"
 #include "gpos/types.h"
 
-namespace gpos
-{
+namespace gpos {
 //---------------------------------------------------------------------------
 //	@function:
 //		CUnittestTest::EresSubtest
@@ -25,16 +24,12 @@ namespace gpos
 //
 //---------------------------------------------------------------------------
 GPOS_RESULT
-CUnittestTest::EresSubtest(ULONG ulSubtest)
-{
-	if (ulSubtest * 1 == ulSubtest)
-	{
-		return GPOS_OK;
-	}
-	else
-	{
-		return GPOS_FAILED;
-	}
+CUnittestTest::EresSubtest(ULONG ulSubtest) {
+  if (ulSubtest * 1 == ulSubtest) {
+    return GPOS_OK;
+  } else {
+    return GPOS_FAILED;
+  }
 }
 
 }  // namespace gpos

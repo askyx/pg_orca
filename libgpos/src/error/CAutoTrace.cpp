@@ -11,6 +11,8 @@
 
 #include "gpos/error/CAutoTrace.h"
 
+#include "gpos/task/ITask.h"
+
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -21,10 +23,7 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CAutoTrace::CAutoTrace(CMemoryPool *mp) : m_wstr(mp), m_os(&m_wstr)
-{
-}
-
+CAutoTrace::CAutoTrace(CMemoryPool *mp) : m_wstr(mp), m_os(&m_wstr) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -34,12 +33,10 @@ CAutoTrace::CAutoTrace(CMemoryPool *mp) : m_wstr(mp), m_os(&m_wstr)
 //		Destructor prints trace message
 //
 //---------------------------------------------------------------------------
-CAutoTrace::~CAutoTrace()
-{
-	if (0 < m_wstr.Length() && !ITask::Self()->GetErrCtxt()->IsPending())
-	{
-		GPOS_TRACE(m_wstr.GetBuffer());
-	}
+CAutoTrace::~CAutoTrace() {
+  if (0 < m_wstr.Length() && !ITask::Self()->GetErrCtxt()->IsPending()) {
+    GPOS_TRACE(m_wstr.GetBuffer());
+  }
 }
 
 // EOF

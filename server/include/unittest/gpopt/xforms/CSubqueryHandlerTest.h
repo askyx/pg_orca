@@ -21,8 +21,7 @@
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/COperator.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CSubqueryHandlerTest
@@ -31,26 +30,23 @@ namespace gpopt
 //		Tests for converting subquery expressions into Apply trees
 //
 //---------------------------------------------------------------------------
-class CSubqueryHandlerTest
-{
-private:
-	// counter used to mark last successful test
-	static gpos::ULONG m_ulSubqueryHandlerMinidumpTestCounter;
+class CSubqueryHandlerTest {
+ private:
+  // counter used to mark last successful test
+  static gpos::ULONG m_ulSubqueryHandlerMinidumpTestCounter;
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Subquery2Apply();
-	static GPOS_RESULT EresUnittest_Subquery2OrTree();
-	static GPOS_RESULT EresUnittest_Subquery2AndTree();
-	static GPOS_RESULT EresUnittest_SubqueryWithConstSubqueries();
-	static GPOS_RESULT EresUnittest_SubqueryWithDisjunction();
-	static GPOS_RESULT EresUnittest_RunMinidumpTests();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Subquery2Apply();
+  static GPOS_RESULT EresUnittest_Subquery2OrTree();
+  static GPOS_RESULT EresUnittest_Subquery2AndTree();
+  static GPOS_RESULT EresUnittest_SubqueryWithDisjunction();
+  static GPOS_RESULT EresUnittest_RunMinidumpTests();
 
-};	// class CSubqueryHandlerTest
+};  // class CSubqueryHandlerTest
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CSubqueryHandlerTest_H
+#endif  // !GPOPT_CSubqueryHandlerTest_H
 
 // EOF

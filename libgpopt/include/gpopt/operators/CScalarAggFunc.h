@@ -17,18 +17,26 @@
 #include "gpopt/operators/CScalar.h"
 #include "naucrates/md/IMDId.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 using namespace gpmd;
 
-enum EAggfuncStage
-{
-	EaggfuncstageGlobal,
-	EaggfuncstageIntermediate,	// Intermediate stage of a 3-stage aggregation
-	EaggfuncstageLocal,	 // First (lower, earlier) stage of 2-stage aggregation
+enum EAggfuncStage {
+  EaggfuncstageGlobal,
+  EaggfuncstageIntermediate,  // Intermediate stage of a 3-stage aggregation
+  EaggfuncstageLocal,         // First (lower, earlier) stage of 2-stage aggregation
 
-	EaggfuncstageSentinel
+  EaggfuncstageSentinel
+};
+
+enum EAggfuncKind { EaggfunckindNormal = 0, EaggfunckindOrderedSet, EaggfunckindHypothetical };
+
+enum EAggfuncChildIndices {
+  EaggfuncIndexArgs = 0,
+  EaggfuncIndexDirectArgs,
+  EaggfuncIndexOrder,
+  EaggfuncIndexDistinct,
+  EaggfuncIndexSentinel
 };
 
 //---------------------------------------------------------------------------
@@ -39,181 +47,145 @@ enum EAggfuncStage
 //		scalar aggregate function
 //
 //---------------------------------------------------------------------------
-class CScalarAggFunc : public CScalar
-{
-private:
-	// aggregate func id
-	IMDId *m_pmdidAggFunc;
+class CScalarAggFunc : public CScalar {
+ private:
+  // aggregate func id
+  IMDId *m_pmdidAggFunc;
 
-	// resolved return type refers to a non-ambiguous type that was resolved during query
-	// parsing if the actual return type of Agg is ambiguous (e.g., AnyElement in GPDB)
-	// if resolved return type is NULL, then we can get Agg return type by looking up MD cache
-	// using Agg MDId
-	IMDId *m_pmdidResolvedRetType;
+  // resolved return type refers to a non-ambiguous type that was resolved during query
+  // parsing if the actual return type of Agg is ambiguous (e.g., AnyElement in GPDB)
+  // if resolved return type is NULL, then we can get Agg return type by looking up MD cache
+  // using Agg MDId
+  IMDId *m_pmdidResolvedRetType;
 
-	// return type obtained by looking up MD cache
-	IMDId *m_return_type_mdid;
+  // return type obtained by looking up MD cache
+  IMDId *m_return_type_mdid;
 
-	// aggregate function name
-	const CWStringConst *m_pstrAggFunc;
+  // aggregate function name
+  const CWStringConst *m_pstrAggFunc;
 
-	// distinct aggregate computation
-	BOOL m_is_distinct;
+  // distinct aggregate computation
+  BOOL m_is_distinct;
 
-	// stage of the aggregate function
-	EAggfuncStage m_eaggfuncstage;
+  EAggfuncKind m_aggkind;
 
-	// is result of splitting aggregates
-	BOOL m_fSplit;
+  ULongPtrArray *m_argtypes;
 
-	// private copy ctor
-	CScalarAggFunc(const CScalarAggFunc &);
+  // stage of the aggregate function
+  EAggfuncStage m_eaggfuncstage;
 
-public:
-	// ctor
-	CScalarAggFunc(CMemoryPool *mp, IMDId *pmdidAggFunc,
-				   IMDId *resolved_rettype, const CWStringConst *pstrAggFunc,
-				   BOOL is_distinct, EAggfuncStage eaggfuncstage, BOOL fSplit);
+  // is result of splitting aggregates
+  BOOL m_fSplit;
 
-	// dtor
-	virtual ~CScalarAggFunc()
-	{
-		m_pmdidAggFunc->Release();
-		CRefCount::SafeRelease(m_pmdidResolvedRetType);
-		CRefCount::SafeRelease(m_return_type_mdid);
-		GPOS_DELETE(m_pstrAggFunc);
-	}
+  // is aggregate replicate slice execution safe
+  BOOL m_fRepSafe;
 
+ public:
+  CScalarAggFunc(const CScalarAggFunc &) = delete;
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopScalarAggFunc;
-	}
+  // ctor
+  CScalarAggFunc(CMemoryPool *mp, IMDId *pmdidAggFunc, IMDId *resolved_rettype, const CWStringConst *pstrAggFunc,
+                 BOOL is_distinct, EAggfuncStage eaggfuncstage, BOOL fSplit, EAggfuncKind aggkind,
+                 ULongPtrArray *argtypes, BOOL fRepSafe);
 
-	// return a string for aggregate function
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CScalarAggFunc";
-	}
+  // dtor
+  ~CScalarAggFunc() override {
+    m_pmdidAggFunc->Release();
+    CRefCount::SafeRelease(m_pmdidResolvedRetType);
+    CRefCount::SafeRelease(m_return_type_mdid);
+    GPOS_DELETE(m_pstrAggFunc);
+    CRefCount::SafeRelease(m_argtypes);
+  }
 
+  // ident accessors
+  EOperatorId Eopid() const override { return EopScalarAggFunc; }
 
-	// operator specific hash function
-	ULONG HashValue() const;
+  // return a string for aggregate function
+  const CHAR *SzId() const override { return "CScalarAggFunc"; }
 
-	// match function
-	BOOL Matches(COperator *pop) const;
+  // operator specific hash function
+  ULONG HashValue() const override;
 
-	// sensitivity to order of inputs
-	BOOL
-	FInputOrderSensitive() const
-	{
-		return true;
-	}
+  // match function
+  BOOL Matches(COperator *pop) const override;
 
-	// return a copy of the operator with remapped columns
-	virtual COperator *
-	PopCopyWithRemappedColumns(CMemoryPool *,		//mp,
-							   UlongToColRefMap *,	//colref_mapping,
-							   BOOL					//must_exist
-	)
-	{
-		return PopCopyDefault();
-	}
+  // sensitivity to order of inputs
+  BOOL FInputOrderSensitive() const override { return true; }
 
-	// conversion function
-	static CScalarAggFunc *
-	PopConvert(COperator *pop)
-	{
-		GPOS_ASSERT(NULL != pop);
-		GPOS_ASSERT(EopScalarAggFunc == pop->Eopid());
+  // return a copy of the operator with remapped columns
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
+                                        UlongToColRefMap *,  // colref_mapping,
+                                        BOOL                 // must_exist
+                                        ) override {
+    return PopCopyDefault();
+  }
 
-		return reinterpret_cast<CScalarAggFunc *>(pop);
-	}
+  // conversion function
+  static CScalarAggFunc *PopConvert(COperator *pop) {
+    GPOS_ASSERT(nullptr != pop);
+    GPOS_ASSERT(EopScalarAggFunc == pop->Eopid());
 
+    return dynamic_cast<CScalarAggFunc *>(pop);
+  }
 
-	// aggregate function name
-	const CWStringConst *PstrAggFunc() const;
+  // aggregate function name
+  const CWStringConst *PstrAggFunc() const;
 
-	// aggregate func id
-	IMDId *MDId() const;
+  // aggregate func id
+  IMDId *MDId() const;
 
-	// ident accessors
-	BOOL
-	IsDistinct() const
-	{
-		return m_is_distinct;
-	}
+  // ident accessors
+  BOOL IsDistinct() const { return m_is_distinct; }
 
-	void
-	SetIsDistinct(BOOL val)
-	{
-		m_is_distinct = val;
-	}
+  void SetIsDistinct(BOOL val) { m_is_distinct = val; }
 
-	// stage of the aggregate function
-	EAggfuncStage
-	Eaggfuncstage() const
-	{
-		return m_eaggfuncstage;
-	}
+  EAggfuncKind AggKind() const { return m_aggkind; }
 
-	// global or local aggregate function
-	BOOL
-	FGlobal() const
-	{
-		return (EaggfuncstageGlobal == m_eaggfuncstage);
-	}
+  ULongPtrArray *GetArgTypes() const { return m_argtypes; }
 
-	// is result of splitting aggregates
-	BOOL
-	FSplit() const
-	{
-		return m_fSplit;
-	}
+  // stage of the aggregate function
+  EAggfuncStage Eaggfuncstage() const { return m_eaggfuncstage; }
 
-	// type of expression's result
-	virtual IMDId *
-	MdidType() const
-	{
-		if (NULL == m_pmdidResolvedRetType)
-		{
-			return m_return_type_mdid;
-		}
+  // global or local aggregate function
+  BOOL FGlobal() const { return (EaggfuncstageGlobal == m_eaggfuncstage); }
 
-		return m_pmdidResolvedRetType;
-	}
+  // is result of splitting aggregates
+  BOOL FSplit() const { return m_fSplit; }
 
-	// is return type of Agg ambiguous?
-	BOOL
-	FHasAmbiguousReturnType() const
-	{
-		return (NULL != m_pmdidResolvedRetType);
-	}
+  // is aggregate replicate slice execution safe
+  BOOL FRepSafe() const { return m_fRepSafe; }
 
-	// is function count(*)?
-	BOOL FCountStar() const;
+  // type of expression's result
+  IMDId *MdidType() const override {
+    if (nullptr == m_pmdidResolvedRetType) {
+      return m_return_type_mdid;
+    }
 
-	// is function count(Any)?
-	BOOL FCountAny() const;
+    return m_pmdidResolvedRetType;
+  }
 
-	// is function either min() or max()?
-	BOOL IsMinMax(const IMDType *mdtype) const;
+  // is return type of Agg ambiguous?
+  BOOL FHasAmbiguousReturnType() const { return (nullptr != m_pmdidResolvedRetType); }
 
-	// print
-	virtual IOstream &OsPrint(IOstream &os) const;
+  // is function count(*)?
+  BOOL FCountStar() const;
 
-	// lookup mdid of return type for given Agg function
-	static IMDId *PmdidLookupReturnType(IMDId *pmdidAggFunc, BOOL fGlobal,
-										CMDAccessor *pmdaInput = NULL);
+  // is function count(Any)?
+  BOOL FCountAny() const;
 
-};	// class CScalarAggFunc
+  // is function either min() or max()?
+  BOOL IsMinMax(const IMDType *mdtype) const;
+
+  // print
+  IOstream &OsPrint(IOstream &os) const override;
+
+  // lookup mdid of return type for given Agg function
+  static IMDId *PmdidLookupReturnType(IMDId *pmdidAggFunc, BOOL fGlobal, CMDAccessor *pmdaInput = nullptr);
+
+};  // class CScalarAggFunc
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CScalarAggFunc_H
+#endif  // !GPOPT_CScalarAggFunc_H
 
 // EOF

@@ -16,8 +16,7 @@
 #include "gpopt/metadata/CIndexDescriptor.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 
-namespace gpopt
-{
+namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CIndexDescriptorTest
@@ -26,15 +25,14 @@ namespace gpopt
 //		Static unit tests
 //
 //---------------------------------------------------------------------------
-class CIndexDescriptorTest
-{
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
-	static GPOS_RESULT EresUnittest_Basic();
-};	// class CIndexDescriptorTest
+class CIndexDescriptorTest {
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
+  static GPOS_RESULT EresUnittest_Basic();
+};  // class CIndexDescriptorTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CIndexDescriptorTest_H
+#endif  // !GPOPT_CIndexDescriptorTest_H
 
 // EOF

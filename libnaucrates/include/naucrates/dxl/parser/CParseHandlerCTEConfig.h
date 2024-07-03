@@ -17,8 +17,7 @@
 #include "gpopt/engine/CCTEConfig.h"
 #include "naucrates/dxl/parser/CParseHandlerBase.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 XERCES_CPP_NAMESPACE_USE
@@ -31,47 +30,42 @@ XERCES_CPP_NAMESPACE_USE
 //		SAX parse handler class for parsing CTE configuration options
 //
 //---------------------------------------------------------------------------
-class CParseHandlerCTEConfig : public CParseHandlerBase
-{
-private:
-	// CTE configuration
-	CCTEConfig *m_cte_conf;
+class CParseHandlerCTEConfig : public CParseHandlerBase {
+ private:
+  // CTE configuration
+  CCTEConfig *m_cte_conf;
 
-	// private copy ctor
-	CParseHandlerCTEConfig(const CParseHandlerCTEConfig &);
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ public:
+  CParseHandlerCTEConfig(const CParseHandlerCTEConfig &) = delete;
 
-public:
-	// ctor
-	CParseHandlerCTEConfig(CMemoryPool *mp,
-						   CParseHandlerManager *parse_handler_mgr,
-						   CParseHandlerBase *parse_handler_root);
+  // ctor
+  CParseHandlerCTEConfig(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                         CParseHandlerBase *parse_handler_root);
 
-	// dtor
-	virtual ~CParseHandlerCTEConfig();
+  // dtor
+  ~CParseHandlerCTEConfig() override;
 
-	// type of the parse handler
-	virtual EDxlParseHandlerType GetParseHandlerType() const;
+  // type of the parse handler
+  EDxlParseHandlerType GetParseHandlerType() const override;
 
-	// enumerator configuration
-	CCTEConfig *GetCteConf() const;
+  // enumerator configuration
+  CCTEConfig *GetCteConf() const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerCTEConfig_H
+#endif  // !GPDXL_CParseHandlerCTEConfig_H
 
 // EOF

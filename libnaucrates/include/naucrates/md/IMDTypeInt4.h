@@ -17,16 +17,13 @@
 #include "naucrates/md/IMDType.h"
 
 // fwd decl
-namespace gpnaucrates
-{
+namespace gpnaucrates {
 class IDatumInt4;
 }
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 using namespace gpnaucrates;
-
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -36,29 +33,19 @@ using namespace gpnaucrates;
 //		Interface for INT4 types in the metadata cache
 //
 //---------------------------------------------------------------------------
-class IMDTypeInt4 : public IMDType
-{
-public:
-	// type id
-	static ETypeInfo
-	GetTypeInfo()
-	{
-		return EtiInt4;
-	}
+class IMDTypeInt4 : public IMDType {
+ public:
+  // type id
+  static ETypeInfo GetTypeInfo() { return EtiInt4; }
 
-	virtual ETypeInfo
-	GetDatumType() const
-	{
-		return IMDTypeInt4::GetTypeInfo();
-	}
+  ETypeInfo GetDatumType() const override { return IMDTypeInt4::GetTypeInfo(); }
 
-	// factory function for INT4 datums
-	virtual IDatumInt4 *CreateInt4Datum(CMemoryPool *mp, INT value,
-										BOOL is_null) const = 0;
+  // factory function for INT4 datums
+  virtual IDatumInt4 *CreateInt4Datum(CMemoryPool *mp, INT value, BOOL is_null) const = 0;
 };
 
 }  // namespace gpmd
 
-#endif	// !GPMD_IMDTypeInt4_H
+#endif  // !GPMD_IMDTypeInt4_H
 
 // EOF

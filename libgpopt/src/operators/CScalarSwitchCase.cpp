@@ -13,6 +13,8 @@
 
 #include "gpos/base.h"
 
+#include "gpopt/base/COptCtxt.h"
+
 using namespace gpopt;
 using namespace gpmd;
 
@@ -24,9 +26,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarSwitchCase::CScalarSwitchCase(CMemoryPool *mp) : CScalar(mp)
-{
-}
+CScalarSwitchCase::CScalarSwitchCase(CMemoryPool *mp) : CScalar(mp) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -36,10 +36,8 @@ CScalarSwitchCase::CScalarSwitchCase(CMemoryPool *mp) : CScalar(mp)
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarSwitchCase::Matches(COperator *pop) const
-{
-	return (pop->Eopid() == Eopid());
+BOOL CScalarSwitchCase::Matches(COperator *pop) const {
+  return (pop->Eopid() == Eopid());
 }
 
 // EOF

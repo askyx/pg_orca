@@ -14,11 +14,11 @@
 #include "gpos/base.h"
 
 #include "gpopt/metadata/CTableDescriptor.h"
-#include "gpopt/operators/ops.h"
+#include "gpopt/operators/CLogicalDelete.h"
+#include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/xforms/CXformUtils.h"
 
 using namespace gpopt;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,13 +29,10 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CXformDelete2DML::CXformDelete2DML(CMemoryPool *mp)
-	: CXformExploration(
-		  // pattern
-		  GPOS_NEW(mp) CExpression(
-			  mp, GPOS_NEW(mp) CLogicalDelete(mp),
-			  GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp))))
-{
-}
+    : CXformExploration(
+          // pattern
+          GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalDelete(mp),
+                                   GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)))) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,11 +42,9 @@ CXformDelete2DML::CXformDelete2DML(CMemoryPool *mp)
 //		Compute promise of xform
 //
 //---------------------------------------------------------------------------
-CXform::EXformPromise
-CXformDelete2DML::Exfp(CExpressionHandle &	// exprhdl
-) const
-{
-	return CXform::ExfpHigh;
+CXform::EXformPromise CXformDelete2DML::Exfp(CExpressionHandle &  // exprhdl
+) const {
+  return CXform::ExfpHigh;
 }
 
 //---------------------------------------------------------------------------
@@ -60,40 +55,36 @@ CXformDelete2DML::Exfp(CExpressionHandle &	// exprhdl
 //		Actual transformation
 //
 //---------------------------------------------------------------------------
-void
-CXformDelete2DML::Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-							CExpression *pexpr) const
-{
-	GPOS_ASSERT(NULL != pxfctxt);
-	GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
-	GPOS_ASSERT(FCheckPattern(pexpr));
+void CXformDelete2DML::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const {
+  GPOS_ASSERT(nullptr != pxfctxt);
+  GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
+  GPOS_ASSERT(FCheckPattern(pexpr));
 
-	CLogicalDelete *popDelete = CLogicalDelete::PopConvert(pexpr->Pop());
-	CMemoryPool *mp = pxfctxt->Pmp();
+  CLogicalDelete *popDelete = CLogicalDelete::PopConvert(pexpr->Pop());
+  CMemoryPool *mp = pxfctxt->Pmp();
 
-	// extract components for alternative
+  // extract components for alternative
 
-	CTableDescriptor *ptabdesc = popDelete->Ptabdesc();
-	ptabdesc->AddRef();
+  CTableDescriptor *ptabdesc = popDelete->Ptabdesc();
+  ptabdesc->AddRef();
 
-	CColRefArray *colref_array = popDelete->Pdrgpcr();
-	colref_array->AddRef();
+  CColRefArray *colref_array = popDelete->Pdrgpcr();
+  colref_array->AddRef();
 
-	CColRef *pcrCtid = popDelete->PcrCtid();
+  CColRef *pcrCtid = popDelete->PcrCtid();
 
-	CColRef *pcrSegmentId = popDelete->PcrSegmentId();
+  CColRef *pcrSegmentId = popDelete->PcrSegmentId();
 
-	// child of delete operator
-	CExpression *pexprChild = (*pexpr)[0];
-	pexprChild->AddRef();
+  // child of delete operator
+  CExpression *pexprChild = (*pexpr)[0];
+  pexprChild->AddRef();
 
-	// create logical DML
-	CExpression *pexprAlt = CXformUtils::PexprLogicalDMLOverProject(
-		mp, pexprChild, CLogicalDML::EdmlDelete, ptabdesc, colref_array,
-		pcrCtid, pcrSegmentId);
+  // create logical DML
+  CExpression *pexprAlt = CXformUtils::PexprLogicalDMLOverProject(mp, pexprChild, CLogicalDML::EdmlDelete, ptabdesc,
+                                                                  colref_array, pcrCtid, pcrSegmentId);
 
-	// add alternative to transformation result
-	pxfres->Add(pexprAlt);
+  // add alternative to transformation result
+  pxfres->Add(pexprAlt);
 }
 
 // EOF

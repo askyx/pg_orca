@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,45 +26,32 @@ using namespace gpos;
 //		Transform logical CTE anchor to select with "true" predicate
 //
 //---------------------------------------------------------------------------
-class CXformCTEAnchor2TrivialSelect : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformCTEAnchor2TrivialSelect(const CXformCTEAnchor2TrivialSelect &);
+class CXformCTEAnchor2TrivialSelect : public CXformExploration {
+ private:
+ public:
+  CXformCTEAnchor2TrivialSelect(const CXformCTEAnchor2TrivialSelect &) = delete;
 
-public:
-	// ctor
-	explicit CXformCTEAnchor2TrivialSelect(CMemoryPool *mp);
+  // ctor
+  explicit CXformCTEAnchor2TrivialSelect(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformCTEAnchor2TrivialSelect()
-	{
-	}
+  // dtor
+  ~CXformCTEAnchor2TrivialSelect() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfCTEAnchor2TrivialSelect;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfCTEAnchor2TrivialSelect; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformCTEAnchor2TrivialSelect";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformCTEAnchor2TrivialSelect"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformCTEAnchor2TrivialSelect
+};  // class CXformCTEAnchor2TrivialSelect
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformCTEAnchor2TrivialSelect_H
+#endif  // !GPOPT_CXformCTEAnchor2TrivialSelect_H
 
 // EOF

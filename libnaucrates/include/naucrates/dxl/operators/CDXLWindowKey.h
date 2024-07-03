@@ -16,8 +16,7 @@
 
 #include "naucrates/dxl/operators/CDXLWindowFrame.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,54 +27,41 @@ using namespace gpos;
 //		Class for representing DXL window key
 //
 //---------------------------------------------------------------------------
-class CDXLWindowKey : public CRefCount
-{
-private:
-	// memory pool;
-	CMemoryPool *m_mp;
+class CDXLWindowKey : public CRefCount {
+ private:
+  // window frame associated with the window key
+  CDXLWindowFrame *m_window_frame_dxl{nullptr};
 
-	// window frame associated with the window key
-	CDXLWindowFrame *m_window_frame_dxl;
+  // sorting columns
+  CDXLNode *m_sort_col_list_dxlnode{nullptr};
 
-	// private copy ctor
-	CDXLWindowKey(const CDXLWindowKey &);
+ public:
+  CDXLWindowKey(const CDXLWindowKey &) = delete;
 
-	// sorting columns
-	CDXLNode *m_sort_col_list_dxlnode;
+  // ctor
+  CDXLWindowKey();
 
-public:
-	// ctor
-	explicit CDXLWindowKey(CMemoryPool *mp);
+  // dtor
+  ~CDXLWindowKey() override;
 
-	// dtor
-	virtual ~CDXLWindowKey();
+  // serialize operator in DXL format
+  virtual void SerializeToDXL(CXMLSerializer *) const;
 
-	// serialize operator in DXL format
-	virtual void SerializeToDXL(CXMLSerializer *) const;
+  // set window frame definition
+  void SetWindowFrame(CDXLWindowFrame *window_frame);
 
-	// set window frame definition
-	void SetWindowFrame(CDXLWindowFrame *window_frame);
+  // return window frame
+  CDXLWindowFrame *GetWindowFrame() const { return m_window_frame_dxl; }
 
-	// return window frame
-	CDXLWindowFrame *
-	GetWindowFrame() const
-	{
-		return m_window_frame_dxl;
-	}
+  // set the list of sort columns
+  void SetSortColList(CDXLNode *sort_col_list_dxlnode);
 
-	// set the list of sort columns
-	void SetSortColList(CDXLNode *sort_col_list_dxlnode);
-
-	// sort columns
-	CDXLNode *
-	GetSortColListDXL() const
-	{
-		return m_sort_col_list_dxlnode;
-	}
+  // sort columns
+  CDXLNode *GetSortColListDXL() const { return m_sort_col_list_dxlnode; }
 };
 
-typedef CDynamicPtrArray<CDXLWindowKey, CleanupRelease> CDXLWindowKeyArray;
+using CDXLWindowKeyArray = CDynamicPtrArray<CDXLWindowKey, CleanupRelease>;
 }  // namespace gpdxl
-#endif	// !GPDXL_CDXLWindowKey_H
+#endif  // !GPDXL_CDXLWindowKey_H
 
 // EOF

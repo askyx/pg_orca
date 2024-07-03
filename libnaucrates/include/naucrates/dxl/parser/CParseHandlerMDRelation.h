@@ -16,11 +16,9 @@
 
 #include "naucrates/dxl/parser/CParseHandlerMetadataObject.h"
 #include "naucrates/dxl/xml/dxltokens.h"
-#include "naucrates/md/CMDPartConstraintGPDB.h"
 #include "naucrates/md/CMDRelationGPDB.h"
 
-namespace gpdxl
-{
+namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 
@@ -34,92 +32,92 @@ XERCES_CPP_NAMESPACE_USE
 //		Parse handler for relation metadata
 //
 //---------------------------------------------------------------------------
-class CParseHandlerMDRelation : public CParseHandlerMetadataObject
-{
-protected:
-	// id and version of the relation
-	IMDId *m_mdid;
+class CParseHandlerMDRelation : public CParseHandlerMetadataObject {
+ protected:
+  // id and version of the relation
+  IMDId *m_mdid;
 
-	// schema name
-	CMDName *m_mdname_schema;
+  // schema name
+  CMDName *m_mdname_schema;
 
-	// table name
-	CMDName *m_mdname;
+  // table name
+  CMDName *m_mdname;
 
-	// is this a temporary relation
-	BOOL m_is_temp_table;
+  // is this a temporary relation
+  BOOL m_is_temp_table;
 
-	// does this relation have oids
-	BOOL m_has_oids;
+  // storage type
+  IMDRelation::Erelstoragetype m_rel_storage_type;
 
-	// storage type
-	IMDRelation::Erelstoragetype m_rel_storage_type;
+  // append only table version
+  IMDRelation::Erelaoversion m_rel_ao_version;
 
-	// distribution policy
-	IMDRelation::Ereldistrpolicy m_rel_distr_policy;
+  // distribution policy
+  IMDRelation::Ereldistrpolicy m_rel_distr_policy;
 
-	// distribution columns
-	ULongPtrArray *m_distr_col_array;
+  // distribution columns
+  ULongPtrArray *m_distr_col_array;
 
-	// do we need to consider a hash distributed table as random distributed
-	BOOL m_convert_hash_to_random;
+  // do we need to consider a hash distributed table as random distributed
+  BOOL m_convert_hash_to_random;
 
-	// partition keys
-	ULongPtrArray *m_partition_cols_array;
+  // partition keys
+  ULongPtrArray *m_partition_cols_array;
 
-	// partition types
-	CharPtrArray *m_str_part_types_array;
+  // partition types
+  CharPtrArray *m_str_part_types_array;
 
-	// number of partitions
-	ULONG m_num_of_partitions;
+  // key sets
+  ULongPtr2dArray *m_key_sets_arrays;
 
-	// key sets
-	ULongPtr2dArray *m_key_sets_arrays;
+  // part constraint
+  CDXLNode *m_part_constraint;
 
-	// part constraint
-	CMDPartConstraintGPDB *m_part_constraint;
+  // distribution opfamilies parse handler
+  CParseHandlerBase *m_opfamilies_parse_handler;
 
-	// levels that include default partitions
-	ULongPtrArray *m_level_with_default_part_array;
+  // child partition oids parse handler
+  CParseHandlerBase *m_child_partitions_parse_handler;
 
-	// is part constraint unbounded
-	BOOL m_part_constraint_unbounded;
+  // is part constraint unbounded
+  BOOL m_part_constraint_unbounded;
 
-	// helper function to parse main relation attributes: name, id,
-	// distribution policy and keys
-	void ParseRelationAttributes(const Attributes &attrs,
-								 Edxltoken target_elem);
+  // foreign server (if exists)
+  IMDId *m_foreign_server;
 
-	// create and activate the parse handler for the children nodes
-	void ParseChildNodes();
+  // rows
+  CDouble m_rows;
 
-private:
-	// private copy ctor
-	CParseHandlerMDRelation(const CParseHandlerMDRelation &);
+  // helper function to parse main relation attributes: name, id,
+  // distribution policy and keys
+  void ParseRelationAttributes(const Attributes &attrs, Edxltoken target_elem);
 
-	// process the start of an element
-	void StartElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname,		// element's qname
-		const Attributes &attr					// element's attributes
-	);
+  // create and activate the parse handler for the children nodes
+  void ParseChildNodes();
 
-	// process the end of an element
-	void EndElement(
-		const XMLCh *const element_uri,			// URI of element's namespace
-		const XMLCh *const element_local_name,	// local part of element's name
-		const XMLCh *const element_qname		// element's qname
-	);
+ private:
+  // process the start of an element
+  void StartElement(const XMLCh *const element_uri,         // URI of element's namespace
+                    const XMLCh *const element_local_name,  // local part of element's name
+                    const XMLCh *const element_qname,       // element's qname
+                    const Attributes &attr                  // element's attributes
+                    ) override;
 
-public:
-	// ctor
-	CParseHandlerMDRelation(CMemoryPool *mp,
-							CParseHandlerManager *parse_handler_mgr,
-							CParseHandlerBase *parse_handler_root);
+  // process the end of an element
+  void EndElement(const XMLCh *const element_uri,         // URI of element's namespace
+                  const XMLCh *const element_local_name,  // local part of element's name
+                  const XMLCh *const element_qname        // element's qname
+                  ) override;
+
+ public:
+  CParseHandlerMDRelation(const CParseHandlerMDRelation &) = delete;
+
+  // ctor
+  CParseHandlerMDRelation(CMemoryPool *mp, CParseHandlerManager *parse_handler_mgr,
+                          CParseHandlerBase *parse_handler_root);
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CParseHandlerMDRelation_H
+#endif  // !GPDXL_CParseHandlerMDRelation_H
 
 // EOF

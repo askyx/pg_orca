@@ -19,13 +19,11 @@
 #include "naucrates/md/IMDCheckConstraint.h"
 
 // fwd decl
-namespace gpdxl
-{
+namespace gpdxl {
 class CXMLSerializer;
 }
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpos;
 using namespace gpdxl;
 
@@ -37,78 +35,59 @@ using namespace gpdxl;
 //		Class representing a GPDB check constraint in a metadata cache relation
 //
 //---------------------------------------------------------------------------
-class CMDCheckConstraintGPDB : public IMDCheckConstraint
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CMDCheckConstraintGPDB : public IMDCheckConstraint {
+ private:
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// check constraint mdid
-	IMDId *m_mdid;
+  // check constraint mdid
+  IMDId *m_mdid;
 
-	// check constraint name
-	CMDName *m_mdname;
+  // check constraint name
+  CMDName *m_mdname;
 
-	// relation mdid
-	IMDId *m_rel_mdid;
+  // relation mdid
+  IMDId *m_rel_mdid;
 
-	// the DXL representation of the check constraint
-	CDXLNode *m_dxl_node;
+  // the DXL representation of the check constraint
+  CDXLNode *m_dxl_node;
 
-	// DXL for object
-	const CWStringDynamic *m_dxl_str;
+  // DXL for object
+  const CWStringDynamic *m_dxl_str = nullptr;
 
-public:
-	// ctor
-	CMDCheckConstraintGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
-						   IMDId *rel_mdid, CDXLNode *dxlnode);
+ public:
+  // ctor
+  CMDCheckConstraintGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *rel_mdid, CDXLNode *dxlnode);
 
-	// dtor
-	virtual ~CMDCheckConstraintGPDB();
+  // dtor
+  ~CMDCheckConstraintGPDB() override;
 
-	// check constraint mdid
-	virtual IMDId *
-	MDId() const
-	{
-		return m_mdid;
-	}
+  // check constraint mdid
+  IMDId *MDId() const override { return m_mdid; }
 
-	// check constraint name
-	virtual CMDName
-	Mdname() const
-	{
-		return *m_mdname;
-	}
+  // check constraint name
+  CMDName Mdname() const override { return *m_mdname; }
 
-	// mdid of the relation
-	virtual IMDId *
-	GetRelMdId() const
-	{
-		return m_rel_mdid;
-	}
+  // mdid of the relation
+  IMDId *GetRelMdId() const override { return m_rel_mdid; }
 
-	// DXL string for check constraint
-	virtual const CWStringDynamic *
-	GetStrRepr() const
-	{
-		return m_dxl_str;
-	}
+  // DXL string for check constraint
+  const CWStringDynamic *GetStrRepr() override;
 
-	// the scalar expression of the check constraint
-	virtual CExpression *GetCheckConstraintExpr(
-		CMemoryPool *mp, CMDAccessor *md_accessor,
-		CColRefArray *colref_array) const;
+  // the scalar expression of the check constraint
+  CExpression *GetCheckConstraintExpr(CMemoryPool *mp, CMDAccessor *md_accessor,
+                                      CColRefArray *colref_array) const override;
 
-	// serialize MD check constraint in DXL format given a serializer object
-	virtual void Serialize(gpdxl::CXMLSerializer *) const;
+  // serialize MD check constraint in DXL format given a serializer object
+  void Serialize(gpdxl::CXMLSerializer *) const override;
 
 #ifdef GPOS_DEBUG
-	// debug print of the MD check constraint
-	virtual void DebugPrint(IOstream &os) const;
+  // debug print of the MD check constraint
+  void DebugPrint(IOstream &os) const override;
 #endif
 };
 }  // namespace gpmd
 
-#endif	// !GPMD_CMDCheckConstraintGPDB_H
+#endif  // !GPMD_CMDCheckConstraintGPDB_H
 
 // EOF

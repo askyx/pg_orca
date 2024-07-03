@@ -22,9 +22,8 @@
 using namespace gpopt;
 using namespace gpmd;
 
-const WCHAR CScalarBoolOp::m_rgwszBool[EboolopSentinel][30] = {
-	GPOS_WSZ_LIT("EboolopAnd"), GPOS_WSZ_LIT("EboolopOr"),
-	GPOS_WSZ_LIT("EboolopNot")};
+const WCHAR CScalarBoolOp::m_rgwszBool[EboolopSentinel][30] = {GPOS_WSZ_LIT("EboolopAnd"), GPOS_WSZ_LIT("EboolopOr"),
+                                                               GPOS_WSZ_LIT("EboolopNot")};
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -36,13 +35,10 @@ const WCHAR CScalarBoolOp::m_rgwszBool[EboolopSentinel][30] = {
 //
 //---------------------------------------------------------------------------
 ULONG
-CScalarBoolOp::HashValue() const
-{
-	ULONG ulBoolop = (ULONG) Eboolop();
-	return gpos::CombineHashes(COperator::HashValue(),
-							   gpos::HashValue<ULONG>(&ulBoolop));
+CScalarBoolOp::HashValue() const {
+  ULONG ulBoolop = (ULONG)Eboolop();
+  return gpos::CombineHashes(COperator::HashValue(), gpos::HashValue<ULONG>(&ulBoolop));
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -52,20 +48,16 @@ CScalarBoolOp::HashValue() const
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarBoolOp::Matches(COperator *pop) const
-{
-	if (pop->Eopid() == Eopid())
-	{
-		CScalarBoolOp *popLog = CScalarBoolOp::PopConvert(pop);
+BOOL CScalarBoolOp::Matches(COperator *pop) const {
+  if (pop->Eopid() == Eopid()) {
+    CScalarBoolOp *popLog = CScalarBoolOp::PopConvert(pop);
 
-		// match if operators are identical
-		return Eboolop() == popLog->Eboolop();
-	}
+    // match if operators are identical
+    return Eboolop() == popLog->Eboolop();
+  }
 
-	return false;
+  return false;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -75,20 +67,17 @@ CScalarBoolOp::Matches(COperator *pop) const
 //		Is boolean operator commutative?
 //
 //---------------------------------------------------------------------------
-BOOL
-CScalarBoolOp::FCommutative(EBoolOperator eboolop)
-{
-	switch (eboolop)
-	{
-		case EboolopAnd:
-		case EboolopOr:
-			return true;
+BOOL CScalarBoolOp::FCommutative(EBoolOperator eboolop) {
+  switch (eboolop) {
+    case EboolopAnd:
+    case EboolopOr:
+      return true;
 
-		case EboolopNot:
+    case EboolopNot:
 
-		default:
-			return false;
-	}
+    default:
+      return false;
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -99,13 +88,10 @@ CScalarBoolOp::FCommutative(EBoolOperator eboolop)
 //		Expression type
 //
 //---------------------------------------------------------------------------
-IMDId *
-CScalarBoolOp::MdidType() const
-{
-	CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-	return md_accessor->PtMDType<IMDTypeBool>()->MDId();
+IMDId *CScalarBoolOp::MdidType() const {
+  CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
+  return md_accessor->PtMDType<IMDTypeBool>()->MDId();
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -115,41 +101,35 @@ CScalarBoolOp::MdidType() const
 //		Perform boolean expression evaluation
 //
 //---------------------------------------------------------------------------
-CScalar::EBoolEvalResult
-CScalarBoolOp::Eber(ULongPtrArray *pdrgpulChildren) const
-{
-	if (EboolopAnd == m_eboolop)
-	{
-		return EberConjunction(pdrgpulChildren);
-	}
+CScalar::EBoolEvalResult CScalarBoolOp::Eber(ULongPtrArray *pdrgpulChildren) const {
+  if (EboolopAnd == m_eboolop) {
+    return EberConjunction(pdrgpulChildren);
+  }
 
-	if (EboolopOr == m_eboolop)
-	{
-		return EberDisjunction(pdrgpulChildren);
-	}
+  if (EboolopOr == m_eboolop) {
+    return EberDisjunction(pdrgpulChildren);
+  }
 
-	GPOS_ASSERT(EboolopNot == m_eboolop);
-	GPOS_ASSERT(NULL != pdrgpulChildren);
-	GPOS_ASSERT(1 == pdrgpulChildren->Size());
+  GPOS_ASSERT(EboolopNot == m_eboolop);
+  GPOS_ASSERT(nullptr != pdrgpulChildren);
+  GPOS_ASSERT(1 == pdrgpulChildren->Size());
 
-	EBoolEvalResult eber = (EBoolEvalResult) * ((*pdrgpulChildren)[0]);
-	switch (eber)
-	{
-		case EberTrue:
-			return EberFalse;
+  EBoolEvalResult eber = (EBoolEvalResult) * ((*pdrgpulChildren)[0]);
+  switch (eber) {
+    case EberTrue:
+      return EberFalse;
 
-		case EberFalse:
-			return EberTrue;
+    case EberFalse:
+      return EberTrue;
 
-		case EberNull:
-			return EberNull;
+    case EberNull:
+      return EberNull;
 
-		case EberNotTrue:
-		default:
-			return EberAny;
-	}
+    case EberNotTrue:
+    default:
+      return EberAny;
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -159,15 +139,12 @@ CScalarBoolOp::Eber(ULongPtrArray *pdrgpulChildren) const
 //		debug print
 //
 //---------------------------------------------------------------------------
-IOstream &
-CScalarBoolOp::OsPrint(IOstream &os) const
-{
-	os << SzId() << " (";
-	os << m_rgwszBool[m_eboolop];
-	os << ")";
+IOstream &CScalarBoolOp::OsPrint(IOstream &os) const {
+  os << SzId() << " (";
+  os << m_rgwszBool[m_eboolop];
+  os << ")";
 
-	return os;
+  return os;
 }
-
 
 // EOF

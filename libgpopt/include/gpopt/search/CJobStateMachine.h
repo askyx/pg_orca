@@ -12,7 +12,6 @@
 #ifndef GPOPT_CJobStateMachine_H
 #define GPOPT_CJobStateMachine_H
 
-
 #include "gpos/base.h"
 #include "gpos/common/CEnumSet.h"
 #include "gpos/types.h"
@@ -21,8 +20,7 @@
 #include "gpopt/engine/CEngine.h"
 #include "gpopt/search/CSchedulerContext.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 // prototypes
@@ -74,151 +72,125 @@ class CSchedulerContext;
 //		state 1 → state 2 → state 1).
 //
 //---------------------------------------------------------------------------
-template <class TEnumState, TEnumState estSentinel, class TEnumEvent,
-		  TEnumEvent eevSentinel>
-class CJobStateMachine
-{
-private:
-	// pointer to job action function
-	typedef TEnumEvent (*PFuncAction)(CSchedulerContext *psc, CJob *pjOwner);
+template <class TEnumState, TEnumState estSentinel, class TEnumEvent, TEnumEvent eevSentinel>
+class CJobStateMachine {
+ private:
+  // pointer to job action function
+  using PFuncAction = TEnumEvent (*)(CSchedulerContext *, CJob *);
 
-	// shorthand for state machine
-	typedef CStateMachine<TEnumState, estSentinel, TEnumEvent, eevSentinel> SM;
+  // shorthand for state machine
+  using SM = CStateMachine<TEnumState, estSentinel, TEnumEvent, eevSentinel>;
 
-	// array of actions corresponding to states
-	PFuncAction m_rgPfuncAction[estSentinel];
+  // array of actions corresponding to states
+  PFuncAction m_rgPfuncAction[estSentinel];
 
-	// job state machine
-	SM m_sm;
+  // job state machine
+  SM m_sm;
 
-	// hidden copy ctor
-	CJobStateMachine(const CJobStateMachine &);
+ public:
+  CJobStateMachine(const CJobStateMachine &) = delete;
 
-public:
-	// ctor
-	CJobStateMachine<TEnumState, estSentinel, TEnumEvent, eevSentinel>(){};
+  // ctor
+  CJobStateMachine() = default;
 
-	// dtor
-	~CJobStateMachine(){};
+  // dtor
+  ~CJobStateMachine() = default;
 
-	// initialize state machine
-	void
-	Init(const TEnumEvent rgfTransitions[estSentinel][estSentinel]
+  // initialize state machine
+  void Init(const TEnumEvent rgfTransitions[estSentinel][estSentinel]
 #ifdef GPOS_DEBUG
-		 ,
-		 const WCHAR wszStates[estSentinel][GPOPT_FSM_NAME_LENGTH],
-		 const WCHAR wszEvent[estSentinel][GPOPT_FSM_NAME_LENGTH]
-#endif	// GPOS_DEBUG
-	)
-	{
-		Reset();
+            ,
+            const WCHAR wszStates[estSentinel][GPOPT_FSM_NAME_LENGTH],
+            const WCHAR wszEvent[estSentinel][GPOPT_FSM_NAME_LENGTH]
+#endif  // GPOS_DEBUG
+  ) {
+    Reset();
 
-		m_sm.Init(rgfTransitions
+    m_sm.Init(rgfTransitions
 #ifdef GPOS_DEBUG
-				  ,
-				  wszStates, wszEvent
-#endif	// GPOS_DEBUG
-		);
-	}
+              ,
+              wszStates, wszEvent
+#endif  // GPOS_DEBUG
+    );
+  }
 
-	// match action with state
-	void
-	SetAction(TEnumState est, PFuncAction pfAction)
-	{
-		GPOS_ASSERT(NULL != pfAction);
-		GPOS_ASSERT(NULL == m_rgPfuncAction[est] &&
-					"Action has been already set");
+  // match action with state
+  void SetAction(TEnumState est, PFuncAction pfAction) {
+    GPOS_ASSERT(nullptr != pfAction);
+    GPOS_ASSERT(nullptr == m_rgPfuncAction[est] && "Action has been already set");
 
-		m_rgPfuncAction[est] = pfAction;
-	}
+    m_rgPfuncAction[est] = pfAction;
+  }
 
-	// run the state machine
-	BOOL
-	FRun(CSchedulerContext *psc, CJob *pjOwner)
-	{
-		GPOS_ASSERT(NULL != psc);
-		GPOS_ASSERT(NULL != pjOwner);
+  // run the state machine
+  BOOL FRun(CSchedulerContext *psc, CJob *pjOwner) {
+    GPOS_ASSERT(nullptr != psc);
+    GPOS_ASSERT(nullptr != pjOwner);
 
-		TEnumState estCurrent = estSentinel;
-		TEnumState estNext = estSentinel;
-		do
-		{
-			// check if current search stage is timed-out
-			if (psc->Peng()->PssCurrent()->FTimedOut())
-			{
-				// cleanup job state and terminate state machine
-				pjOwner->Cleanup();
-				return true;
-			}
+    TEnumState estCurrent = estSentinel;
+    TEnumState estNext = estSentinel;
+    do {
+      // check if current search stage is timed-out
+      if (psc->Peng()->PssCurrent()->FTimedOut()) {
+        // cleanup job state and terminate state machine
+        pjOwner->Cleanup();
+        return true;
+      }
 
-			// find current state
-			estCurrent = m_sm.Estate();
+      // find current state
+      estCurrent = m_sm.Estate();
 
-			// get the function associated with current state
-			PFuncAction pfunc = m_rgPfuncAction[estCurrent];
-			GPOS_ASSERT(NULL != pfunc);
+      // get the function associated with current state
+      PFuncAction pfunc = m_rgPfuncAction[estCurrent];
+      GPOS_ASSERT(nullptr != pfunc);
 
-			// execute the function to get an event
-			TEnumEvent eev = pfunc(psc, pjOwner);
+      // execute the function to get an event
+      TEnumEvent eev = pfunc(psc, pjOwner);
 
-			// use the event to transition state machine
-			estNext = estCurrent;
-#ifdef GPOS_DEBUG
-			BOOL fSucceeded =
-#endif	// GPOS_DEBUG
-				m_sm.FTransition(eev, estNext);
+      // use the event to transition state machine
+      estNext = estCurrent;
+      BOOL fSucceeded GPOS_ASSERTS_ONLY = m_sm.FTransition(eev, estNext);
 
-			GPOS_ASSERT(fSucceeded);
-		} while (estNext != estCurrent && estNext != m_sm.TesFinal());
+      GPOS_ASSERT(fSucceeded);
+    } while (estNext != estCurrent && estNext != m_sm.TesFinal());
 
-		return (estNext == m_sm.TesFinal());
-	}
+    return (estNext == m_sm.TesFinal());
+  }
 
-	// reset state machine
-	void
-	Reset()
-	{
-		m_sm.Reset();
+  // reset state machine
+  void Reset() {
+    m_sm.Reset();
 
-		// initialize actions array
-		for (ULONG i = 0; i < estSentinel; i++)
-		{
-			m_rgPfuncAction[i] = NULL;
-		}
-	}
+    // initialize actions array
+    for (ULONG i = 0; i < estSentinel; i++) {
+      m_rgPfuncAction[i] = nullptr;
+    }
+  }
 
 #ifdef GPOS_DEBUG
-	// dump history
-	IOstream &
-	OsHistory(IOstream &os) const
-	{
-		m_sm.OsHistory(os);
-		return os;
-	}
+  // dump history
+  IOstream &OsHistory(IOstream &os) const {
+    m_sm.OsHistory(os);
+    return os;
+  }
 
-	// dump state machine diagram in graphviz format
-	IOstream &
-	OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os,
-						const WCHAR *wszTitle) const
-	{
-		(void) m_sm.OsDiagramToGraphviz(mp, os, wszTitle);
+  // dump state machine diagram in graphviz format
+  IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const WCHAR *wszTitle) const {
+    (void)m_sm.OsDiagramToGraphviz(mp, os, wszTitle);
 
-		return os;
-	}
+    return os;
+  }
 
-	// compute unreachable states
-	void
-	Unreachable(CMemoryPool *mp, TEnumState **ppestate, ULONG *pulSize) const
-	{
-		m_sm.Unreachable(mp, ppestate, pulSize);
-	}
+  // compute unreachable states
+  void Unreachable(CMemoryPool *mp, TEnumState **ppestate, ULONG *pulSize) const {
+    m_sm.Unreachable(mp, ppestate, pulSize);
+  }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-};	// class CJobStateMachine
+};  // class CJobStateMachine
 }  // namespace gpopt
 
-#endif	// !GPOPT_CJobStateMachine_H
-
+#endif  // !GPOPT_CJobStateMachine_H
 
 // EOF

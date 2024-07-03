@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dxl:DXLMessage xmlns:dxl="http://greenplum.com/dxl/2010/12/">
   <dxl:Thread Id="0">
+      <dxl:PlanHint/>
     <dxl:TraceFlags Value="103001"/>
     <dxl:Metadata SystemIds="0.GPDB">
       <dxl:Type Mdid="0.16.1.0" Name="bool" IsRedistributable="true" IsHashable="true" IsMergeJoinable="true" IsComposite="false" IsFixedLength="true" Length="1" PassByValue="true">
@@ -1152,59 +1153,42 @@
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.17142.1.1" Name="orders" Rows="15040.000000"/>
-      <dxl:Relation Mdid="0.17142.1.1" Name="orders" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="15,9">
+      <dxl:Relation Mdid="6.17142.1.1" Name="orders" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="15,9">
         <dxl:Columns>
           <dxl:Column Name="o_orderkey" Attno="1" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="o_custkey" Attno="2" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="o_orderstatus" Attno="3" Mdid="0.1042.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="o_totalprice" Attno="4" Mdid="0.1700.1.0" Nullable="false" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="o_orderdate" Attno="5" Mdid="0.1082.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="o_orderpriority" Attno="6" Mdid="0.1042.1.0" Nullable="false" ColWidth="15">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="o_clerk" Attno="7" Mdid="0.1042.1.0" Nullable="false" ColWidth="15">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="o_shippriority" Attno="8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="o_comment" Attno="9" Mdid="0.1043.1.0" Nullable="false" ColWidth="79">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.17142.1.1.13" Name="cmax" Width="4.000000"/>
@@ -1668,80 +1652,56 @@
         </dxl:StatsBucket>
       </dxl:ColumnStatistics>
       <dxl:RelationStatistics Mdid="2.17165.1.1" Name="lineitem" Rows="60398.000000"/>
-      <dxl:Relation Mdid="0.17165.1.1" Name="lineitem" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="22,16">
+      <dxl:Relation Mdid="6.17165.1.1" Name="lineitem" IsTemporary="false" StorageType="Heap" DistributionPolicy="Hash" DistributionColumns="0" Keys="22,16">
         <dxl:Columns>
           <dxl:Column Name="l_orderkey" Attno="1" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_partkey" Attno="2" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_suppkey" Attno="3" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_linenumber" Attno="4" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_quantity" Attno="5" Mdid="0.1700.1.0" Nullable="false" ColWidth="7">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_extendedprice" Attno="6" Mdid="0.1700.1.0" Nullable="false" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_discount" Attno="7" Mdid="0.1700.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_tax" Attno="8" Mdid="0.1700.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_returnflag" Attno="9" Mdid="0.1042.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_linestatus" Attno="10" Mdid="0.1042.1.0" Nullable="false" ColWidth="1">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_shipdate" Attno="11" Mdid="0.1082.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_commitdate" Attno="12" Mdid="0.1082.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_receiptdate" Attno="13" Mdid="0.1082.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_shipinstruct" Attno="14" Mdid="0.1042.1.0" Nullable="false" ColWidth="25">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_shipmode" Attno="15" Mdid="0.1042.1.0" Nullable="false" ColWidth="10">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="l_comment" Attno="16" Mdid="0.1043.1.0" Nullable="false" ColWidth="44">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="ctid" Attno="-1" Mdid="0.27.1.0" Nullable="false" ColWidth="6">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmin" Attno="-3" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmin" Attno="-4" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="xmax" Attno="-5" Mdid="0.28.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="cmax" Attno="-6" Mdid="0.29.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="tableoid" Attno="-7" Mdid="0.26.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
           <dxl:Column Name="gp_segment_id" Attno="-8" Mdid="0.23.1.0" Nullable="false" ColWidth="4">
-            <dxl:DefaultValue/>
           </dxl:Column>
         </dxl:Columns>
         <dxl:IndexInfoList/>
-        <dxl:Triggers/>
         <dxl:CheckConstraints/>
       </dxl:Relation>
       <dxl:ColumnStatistics Mdid="1.17142.1.1.15" Name="gp_segment_id" Width="4.000000"/>
@@ -1989,7 +1949,12 @@
           </dxl:GroupingColumns>
           <dxl:ProjList>
             <dxl:ProjElem ColId="40" Alias="order_count">
-              <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Normal"/>
+              <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Normal" AggKind="n" AggArgTypes="">
+                <dxl:ValuesList ParamType="aggargs"/>
+                <dxl:ValuesList ParamType="aggdirectargs"/>
+                <dxl:ValuesList ParamType="aggorder"/>
+                <dxl:ValuesList ParamType="aggdistinct"/>
+              </dxl:AggFunc>
             </dxl:ProjElem>
           </dxl:ProjList>
           <dxl:LogicalSelect>
@@ -2015,7 +1980,7 @@
                     </dxl:Comparison>
                   </dxl:And>
                   <dxl:LogicalGet>
-                    <dxl:TableDescriptor Mdid="0.17165.1.1" TableName="lineitem">
+                    <dxl:TableDescriptor Mdid="6.17165.1.1" TableName="lineitem">
                       <dxl:Columns>
                         <dxl:Column ColId="17" Attno="1" ColName="l_orderkey" TypeMdid="0.23.1.0"/>
                         <dxl:Column ColId="18" Attno="2" ColName="l_partkey" TypeMdid="0.23.1.0"/>
@@ -2047,7 +2012,7 @@
               </dxl:SubqueryExists>
             </dxl:And>
             <dxl:LogicalGet>
-              <dxl:TableDescriptor Mdid="0.17142.1.1" TableName="orders">
+              <dxl:TableDescriptor Mdid="6.17142.1.1" TableName="orders">
                 <dxl:Columns>
                   <dxl:Column ColId="1" Attno="1" ColName="o_orderkey" TypeMdid="0.23.1.0"/>
                   <dxl:Column ColId="2" Attno="2" ColName="o_custkey" TypeMdid="0.23.1.0"/>
@@ -2101,8 +2066,13 @@
               <dxl:Ident ColId="5" ColName="o_orderpriority" TypeMdid="0.1042.1.0"/>
             </dxl:ProjElem>
             <dxl:ProjElem ColId="39" Alias="order_count">
-              <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Final">
+              <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Final" AggKind="n" AggArgTypes="">
+                <dxl:ValuesList ParamType="aggargs">
                 <dxl:Ident ColId="46" ColName="ColRef_0046" TypeMdid="0.20.1.0"/>
+                </dxl:ValuesList>
+                <dxl:ValuesList ParamType="aggdirectargs"/>
+                <dxl:ValuesList ParamType="aggorder"/>
+                <dxl:ValuesList ParamType="aggdistinct"/>
               </dxl:AggFunc>
             </dxl:ProjElem>
           </dxl:ProjList>
@@ -2140,7 +2110,7 @@
               <dxl:Filter/>
               <dxl:SortingColumnList/>
               <dxl:HashExprList>
-                <dxl:HashExpr TypeMdid="0.1042.1.0">
+                <dxl:HashExpr>
                   <dxl:Ident ColId="5" ColName="o_orderpriority" TypeMdid="0.1042.1.0"/>
                 </dxl:HashExpr>
               </dxl:HashExprList>
@@ -2167,7 +2137,12 @@
                   </dxl:GroupingColumns>
                   <dxl:ProjList>
                     <dxl:ProjElem ColId="46" Alias="ColRef_0046">
-                      <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Partial"/>
+                      <dxl:AggFunc AggMdid="0.2803.1.0" AggDistinct="false" AggStage="Partial" AggKind="n" AggArgTypes="">
+                        <dxl:ValuesList ParamType="aggargs"/>
+                        <dxl:ValuesList ParamType="aggdirectargs"/>
+                        <dxl:ValuesList ParamType="aggorder"/>
+                        <dxl:ValuesList ParamType="aggdistinct"/>
+                      </dxl:AggFunc>
                     </dxl:ProjElem>
                     <dxl:ProjElem ColId="5" Alias="o_orderpriority">
                       <dxl:Ident ColId="5" ColName="o_orderpriority" TypeMdid="0.1042.1.0"/>
@@ -2215,7 +2190,7 @@
                           </dxl:Comparison>
                         </dxl:And>
                       </dxl:Filter>
-                      <dxl:TableDescriptor Mdid="0.17142.1.1" TableName="orders">
+                      <dxl:TableDescriptor Mdid="6.17142.1.1" TableName="orders">
                         <dxl:Columns>
                           <dxl:Column ColId="0" Attno="1" ColName="o_orderkey" TypeMdid="0.23.1.0"/>
                           <dxl:Column ColId="1" Attno="2" ColName="o_custkey" TypeMdid="0.23.1.0"/>
@@ -2251,7 +2226,7 @@
                           <dxl:Ident ColId="28" ColName="l_receiptdate" TypeMdid="0.1082.1.0"/>
                         </dxl:Comparison>
                       </dxl:Filter>
-                      <dxl:TableDescriptor Mdid="0.17165.1.1" TableName="lineitem">
+                      <dxl:TableDescriptor Mdid="6.17165.1.1" TableName="lineitem">
                         <dxl:Columns>
                           <dxl:Column ColId="16" Attno="1" ColName="l_orderkey" TypeMdid="0.23.1.0"/>
                           <dxl:Column ColId="17" Attno="2" ColName="l_partkey" TypeMdid="0.23.1.0"/>

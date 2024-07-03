@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDXLCtasStorageOptions.h
@@ -8,8 +8,6 @@
 //	@doc:
 //		Class for CTAS storage options
 //---------------------------------------------------------------------------
-
-
 
 #ifndef GPDXL_CDXLCTASStorageOptions_H
 #define GPDXL_CDXLCTASStorageOptions_H
@@ -22,8 +20,7 @@
 
 using namespace gpmd;
 
-namespace gpdxl
-{
+namespace gpdxl {
 // fwd decl
 class CXMLSerializer;
 
@@ -35,103 +32,91 @@ class CXMLSerializer;
 //		Class for representing CTAS storage options
 //
 //---------------------------------------------------------------------------
-class CDXLCtasStorageOptions : public CRefCount
-{
-public:
-	struct CDXLCtasOption
-	{
-		// the type of the Option encoded as an integer
-		ULONG m_type;
+class CDXLCtasStorageOptions : public CRefCount {
+ public:
+  struct CDXLCtasOption {
+    // the type of the Option encoded as an integer
+    ULONG m_type;
 
-		// option name
-		CWStringBase *m_str_name;
+    // option name
+    CWStringBase *m_str_name;
 
-		// option value
-		CWStringBase *m_str_value;
+    // option value
+    CWStringBase *m_str_value;
 
-		// does this represent a NULL value
-		BOOL m_is_null;
+    // does this represent a NULL value
+    BOOL m_is_null;
 
-		// ctor
-		CDXLCtasOption(ULONG type, CWStringBase *str_name,
-					   CWStringBase *str_value, BOOL is_null)
-			: m_type(type),
-			  m_str_name(str_name),
-			  m_str_value(str_value),
-			  m_is_null(is_null)
-		{
-			GPOS_ASSERT(NULL != str_name);
-			GPOS_ASSERT(NULL != str_value);
-		}
+    // ctor
+    CDXLCtasOption(ULONG type, CWStringBase *str_name, CWStringBase *str_value, BOOL is_null)
+        : m_type(type), m_str_name(str_name), m_str_value(str_value), m_is_null(is_null) {
+      GPOS_ASSERT(nullptr != str_name);
+      GPOS_ASSERT(nullptr != str_value);
+    }
 
-		// dtor
-		~CDXLCtasOption()
-		{
-			GPOS_DELETE(m_str_name);
-			GPOS_DELETE(m_str_value);
-		}
-	};
+    // dtor
+    ~CDXLCtasOption() {
+      GPOS_DELETE(m_str_name);
+      GPOS_DELETE(m_str_value);
+    }
+  };
 
-	typedef CDynamicPtrArray<CDXLCtasOption, CleanupDelete> CDXLCtasOptionArray;
+  using CDXLCtasOptionArray = CDynamicPtrArray<CDXLCtasOption, CleanupDelete>;
 
-	//-------------------------------------------------------------------
-	//	@enum:
-	//		ECtasOnCommitAction
-	//
-	//	@doc:
-	//		On commit specification for temporary tables created with CTAS
-	//		at the end of a transaction block
-	//
-	//-------------------------------------------------------------------
-	enum ECtasOnCommitAction
-	{
-		EctascommitNOOP,	  // no action
-		EctascommitPreserve,  // rows are preserved
-		EctascommitDelete,	  // rows are deleted
-		EctascommitDrop,	  // table is dropped
-		EctascommitSentinel
-	};
+  //-------------------------------------------------------------------
+  //	@enum:
+  //		ECtasOnCommitAction
+  //
+  //	@doc:
+  //		On commit specification for temporary tables created with CTAS
+  //		at the end of a transaction block
+  //
+  //-------------------------------------------------------------------
+  enum ECtasOnCommitAction {
+    EctascommitNOOP,      // no action
+    EctascommitPreserve,  // rows are preserved
+    EctascommitDelete,    // rows are deleted
+    EctascommitDrop,      // table is dropped
+    EctascommitSentinel
+  };
 
-private:
-	// tablespace name
-	CMDName *m_mdname_tablespace;
+ private:
+  // tablespace name
+  CMDName *m_mdname_tablespace;
 
-	// on commit action spec
-	ECtasOnCommitAction m_ctas_on_commit_action;
+  // on commit action spec
+  ECtasOnCommitAction m_ctas_on_commit_action;
 
-	// array of name-value pairs of storage options
-	CDXLCtasOptionArray *m_ctas_storage_option_array;
+  // array of name-value pairs of storage options
+  CDXLCtasOptionArray *m_ctas_storage_option_array;
 
-	// private copy ctor
-	CDXLCtasStorageOptions(const CDXLCtasStorageOptions &);
+  // string representation of OnCommit action
+  static const CWStringConst *GetOnCommitActionStr(ECtasOnCommitAction ctas_on_commit_action);
 
-	// string representation of OnCommit action
-	static const CWStringConst *GetOnCommitActionStr(
-		ECtasOnCommitAction ctas_on_commit_action);
+ public:
+  CDXLCtasStorageOptions(const CDXLCtasStorageOptions &) = delete;
 
-public:
-	// ctor
-	CDXLCtasStorageOptions(CMDName *mdname_tablespace,
-						   ECtasOnCommitAction ctas_on_commit_action,
-						   CDXLCtasOptionArray *ctas_storage_option_array);
+  // ctor
+  CDXLCtasStorageOptions(CMDName *mdname_tablespace, ECtasOnCommitAction ctas_on_commit_action,
+                         CDXLCtasOptionArray *ctas_storage_option_array);
 
-	// dtor
-	virtual ~CDXLCtasStorageOptions();
+  // dtor
+  ~CDXLCtasStorageOptions() override;
 
-	// accessor to tablespace name
-	CMDName *GetMdNameTableSpace() const;
+  // accessor to tablespace name
+  CMDName *GetMdNameTableSpace() const;
 
-	// on commit action
-	CDXLCtasStorageOptions::ECtasOnCommitAction GetOnCommitAction() const;
+  // on commit action
+  CDXLCtasStorageOptions::ECtasOnCommitAction GetOnCommitAction() const;
 
-	// accessor to options
-	CDXLCtasOptionArray *GetDXLCtasOptionArray() const;
+  // accessor to options
+  CDXLCtasOptionArray *GetDXLCtasOptionArray() const;
 
-	// serialize to DXL
-	void Serialize(CXMLSerializer *xml_serializer) const;
+  // serialize to DXL
+  void Serialize(CXMLSerializer *xml_serializer) const;
 };
 }  // namespace gpdxl
 
-#endif	// !GPDXL_CDXLCTASStorageOptions_H
+#endif  // !GPDXL_CDXLCTASStorageOptions_H
 
 // EOF

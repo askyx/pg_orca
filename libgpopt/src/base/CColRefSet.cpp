@@ -19,7 +19,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CColRefSet::CColRefSet
@@ -28,11 +27,7 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CColRefSet::CColRefSet(CMemoryPool *mp, ULONG ulSizeBits)
-	: CBitSet(mp, ulSizeBits)
-{
-}
-
+CColRefSet::CColRefSet(CMemoryPool *mp, ULONG ulSizeBits) : CBitSet(mp, ulSizeBits) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -42,10 +37,7 @@ CColRefSet::CColRefSet(CMemoryPool *mp, ULONG ulSizeBits)
 //		copy ctor;
 //
 //---------------------------------------------------------------------------
-CColRefSet::CColRefSet(CMemoryPool *mp, const CColRefSet &bs) : CBitSet(mp, bs)
-{
-}
-
+CColRefSet::CColRefSet(CMemoryPool *mp, const CColRefSet &bs) : CBitSet(mp, bs) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -55,13 +47,9 @@ CColRefSet::CColRefSet(CMemoryPool *mp, const CColRefSet &bs) : CBitSet(mp, bs)
 //		ctor, copy from col refs array
 //
 //---------------------------------------------------------------------------
-CColRefSet::CColRefSet(CMemoryPool *mp, const CColRefArray *colref_array,
-					   ULONG size)
-	: CBitSet(mp, size)
-{
-	Include(colref_array);
+CColRefSet::CColRefSet(CMemoryPool *mp, const CColRefArray *colref_array, ULONG size) : CBitSet(mp, size) {
+  Include(colref_array);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -71,9 +59,7 @@ CColRefSet::CColRefSet(CMemoryPool *mp, const CColRefArray *colref_array,
 //		dtor
 //
 //---------------------------------------------------------------------------
-CColRefSet::~CColRefSet()
-{
-}
+CColRefSet::~CColRefSet() = default;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -83,12 +69,9 @@ CColRefSet::~CColRefSet()
 //		Check if given column ref is in the set
 //
 //---------------------------------------------------------------------------
-BOOL
-CColRefSet::FMember(const CColRef *colref) const
-{
-	return CBitSet::Get(colref->Id());
+BOOL CColRefSet::FMember(const CColRef *colref) const {
+  return CBitSet::Get(colref->Id());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -98,11 +81,9 @@ CColRefSet::FMember(const CColRef *colref) const
 //		Return random member
 //
 //---------------------------------------------------------------------------
-CColRef *
-CColRefSet::PcrAny() const
-{
-	// for now return the first column
-	return PcrFirst();
+CColRef *CColRefSet::PcrAny() const {
+  // for now return the first column
+  return PcrFirst();
 }
 
 //---------------------------------------------------------------------------
@@ -113,17 +94,14 @@ CColRefSet::PcrAny() const
 //		Return first member
 //
 //---------------------------------------------------------------------------
-CColRef *
-CColRefSet::PcrFirst() const
-{
-	CColRefSetIter crsi(*this);
-	if (crsi.Advance())
-	{
-		return crsi.Pcr();
-	}
+CColRef *CColRefSet::PcrFirst() const {
+  CColRefSetIter crsi(*this);
+  if (crsi.Advance()) {
+    return crsi.Pcr();
+  }
 
-	GPOS_ASSERT(0 == Size());
-	return NULL;
+  GPOS_ASSERT(0 == Size());
+  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -134,12 +112,9 @@ CColRefSet::PcrFirst() const
 //		Include a constant column ref in set
 //
 //---------------------------------------------------------------------------
-void
-CColRefSet::Include(const CColRef *colref)
-{
-	CBitSet::ExchangeSet(colref->Id());
+void CColRefSet::Include(const CColRef *colref) {
+  CBitSet::ExchangeSet(colref->Id());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -149,16 +124,12 @@ CColRefSet::Include(const CColRef *colref)
 //		Include column refs from an array
 //
 //---------------------------------------------------------------------------
-void
-CColRefSet::Include(const CColRefArray *colref_array)
-{
-	ULONG length = colref_array->Size();
-	for (ULONG i = 0; i < length; i++)
-	{
-		Include((*colref_array)[i]);
-	}
+void CColRefSet::Include(const CColRefArray *colref_array) {
+  ULONG length = colref_array->Size();
+  for (ULONG i = 0; i < length; i++) {
+    Include((*colref_array)[i]);
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -168,16 +139,12 @@ CColRefSet::Include(const CColRefArray *colref_array)
 //		Include a set of columns in bitset
 //
 //---------------------------------------------------------------------------
-void
-CColRefSet::Include(const CColRefSet *pcrs)
-{
-	CColRefSetIter crsi(*pcrs);
-	while (crsi.Advance())
-	{
-		Include(crsi.Pcr());
-	}
+void CColRefSet::Include(const CColRefSet *pcrs) {
+  CColRefSetIter crsi(*pcrs);
+  while (crsi.Advance()) {
+    Include(crsi.Pcr());
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -187,12 +154,9 @@ CColRefSet::Include(const CColRefSet *pcrs)
 //		Remove column from bitset
 //
 //---------------------------------------------------------------------------
-void
-CColRefSet::Exclude(const CColRef *colref)
-{
-	CBitSet::ExchangeClear(colref->Id());
+void CColRefSet::Exclude(const CColRef *colref) {
+  CBitSet::ExchangeClear(colref->Id());
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -202,16 +166,12 @@ CColRefSet::Exclude(const CColRef *colref)
 //		Remove a set of columns from bitset
 //
 //---------------------------------------------------------------------------
-void
-CColRefSet::Exclude(const CColRefSet *pcrs)
-{
-	CColRefSetIter crsi(*pcrs);
-	while (crsi.Advance())
-	{
-		Exclude(crsi.Pcr());
-	}
+void CColRefSet::Exclude(const CColRefSet *pcrs) {
+  CColRefSetIter crsi(*pcrs);
+  while (crsi.Advance()) {
+    Exclude(crsi.Pcr());
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -221,15 +181,11 @@ CColRefSet::Exclude(const CColRefSet *pcrs)
 //		Remove an array of columns from bitset
 //
 //---------------------------------------------------------------------------
-void
-CColRefSet::Exclude(const CColRefArray *colref_array)
-{
-	for (ULONG i = 0; i < colref_array->Size(); i++)
-	{
-		Exclude((*colref_array)[i]);
-	}
+void CColRefSet::Exclude(const CColRefArray *colref_array) {
+  for (ULONG i = 0; i < colref_array->Size(); i++) {
+    Exclude((*colref_array)[i]);
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -239,16 +195,12 @@ CColRefSet::Exclude(const CColRefArray *colref_array)
 //		Replace column with another column in bitset
 //
 //---------------------------------------------------------------------------
-void
-CColRefSet::Replace(const CColRef *pcrOut, const CColRef *pcrIn)
-{
-	if (FMember(pcrOut))
-	{
-		Exclude(pcrOut);
-		Include(pcrIn);
-	}
+void CColRefSet::Replace(const CColRef *pcrOut, const CColRef *pcrIn) {
+  if (FMember(pcrOut)) {
+    Exclude(pcrOut);
+    Include(pcrIn);
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -258,19 +210,14 @@ CColRefSet::Replace(const CColRef *pcrOut, const CColRef *pcrIn)
 //		Replace an array of columns with another array of columns
 //
 //---------------------------------------------------------------------------
-void
-CColRefSet::Replace(const CColRefArray *pdrgpcrOut,
-					const CColRefArray *pdrgpcrIn)
-{
-	const ULONG length = pdrgpcrOut->Size();
-	GPOS_ASSERT(length == pdrgpcrIn->Size());
+void CColRefSet::Replace(const CColRefArray *pdrgpcrOut, const CColRefArray *pdrgpcrIn) {
+  const ULONG length = pdrgpcrOut->Size();
+  GPOS_ASSERT(length == pdrgpcrIn->Size());
 
-	for (ULONG ul = 0; ul < length; ul++)
-	{
-		Replace((*pdrgpcrOut)[ul], (*pdrgpcrIn)[ul]);
-	}
+  for (ULONG ul = 0; ul < length; ul++) {
+    Replace((*pdrgpcrOut)[ul], (*pdrgpcrIn)[ul]);
+  }
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -280,20 +227,35 @@ CColRefSet::Replace(const CColRefArray *pdrgpcrOut,
 //		Convert set into array
 //
 //---------------------------------------------------------------------------
-CColRefArray *
-CColRefSet::Pdrgpcr(CMemoryPool *mp) const
-{
-	CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
+CColRefArray *CColRefSet::Pdrgpcr(CMemoryPool *mp) const {
+  CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
 
-	CColRefSetIter crsi(*this);
-	while (crsi.Advance())
-	{
-		colref_array->Append(crsi.Pcr());
-	}
+  CColRefSetIter crsi(*this);
+  while (crsi.Advance()) {
+    colref_array->Append(crsi.Pcr());
+  }
 
-	return colref_array;
+  return colref_array;
 }
 
+//---------------------------------------------------------------------------
+//	@function:
+//		CColRefSet::Phmicr
+//
+//	@doc:
+//		Convert set into map
+//
+//---------------------------------------------------------------------------
+IntToColRefMap *CColRefSet::Phmicr(CMemoryPool *mp) const {
+  IntToColRefMap *phmicr = GPOS_NEW(mp) IntToColRefMap(mp);
+
+  CColRefSetIter crsi(*this);
+  while (crsi.Advance()) {
+    phmicr->Insert(GPOS_NEW(mp) INT(crsi.Pcr()->Id()), crsi.Pcr());
+  }
+
+  return phmicr;
+}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -304,25 +266,21 @@ CColRefSet::Pdrgpcr(CMemoryPool *mp) const
 //
 //---------------------------------------------------------------------------
 ULONG
-CColRefSet::HashValue()
-{
-	ULONG size = this->Size();
-	ULONG ulHash = gpos::HashValue<ULONG>(&size);
+CColRefSet::HashValue() {
+  ULONG size = this->Size();
+  ULONG ulHash = gpos::HashValue<ULONG>(&size);
 
-	// limit the number of columns used in hash computation
-	ULONG length = std::min(size, (ULONG) 8);
+  // limit the number of columns used in hash computation
+  ULONG length = std::min(size, (ULONG)8);
 
-	CColRefSetIter crsi(*this);
-	for (ULONG i = 0; i < length; i++)
-	{
-		(void) crsi.Advance();
-		ulHash =
-			gpos::CombineHashes(ulHash, gpos::HashPtr<CColRef>(crsi.Pcr()));
-	}
+  CColRefSetIter crsi(*this);
+  for (ULONG i = 0; i < length; i++) {
+    (void)crsi.Advance();
+    ulHash = gpos::CombineHashes(ulHash, gpos::HashPtr<CColRef>(crsi.Pcr()));
+  }
 
-	return ulHash;
+  return ulHash;
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -332,36 +290,29 @@ CColRefSet::HashValue()
 //		Helper function to print a colref set
 //
 //---------------------------------------------------------------------------
-IOstream &
-CColRefSet::OsPrint(IOstream &os) const
-{
-	return OsPrint(os, gpos::ulong_max);
+IOstream &CColRefSet::OsPrint(IOstream &os) const {
+  return OsPrint(os, gpos::ulong_max);
 }
 
-IOstream &
-CColRefSet::OsPrint(IOstream &os, ULONG ulLenMax) const
-{
-	ULONG length = Size();
-	ULONG ul = 0;
+IOstream &CColRefSet::OsPrint(IOstream &os, ULONG ulLenMax) const {
+  ULONG length = Size();
+  ULONG ul = 0;
 
-	CColRefSetIter crsi(*this);
-	while (crsi.Advance() && ul < std::min(length, ulLenMax))
-	{
-		CColRef *colref = crsi.Pcr();
-		colref->OsPrint(os);
-		if (ul < length - 1)
-		{
-			os << ", ";
-		}
-		ul++;
-	}
+  CColRefSetIter crsi(*this);
+  while (crsi.Advance() && ul < std::min(length, ulLenMax)) {
+    CColRef *colref = crsi.Pcr();
+    colref->OsPrint(os);
+    if (ul < length - 1) {
+      os << ", ";
+    }
+    ul++;
+  }
 
-	if (ulLenMax < length)
-	{
-		os << "...";
-	}
+  if (ulLenMax < length) {
+    os << "...";
+  }
 
-	return os;
+  return os;
 }
 
 //---------------------------------------------------------------------------
@@ -372,16 +323,13 @@ CColRefSet::OsPrint(IOstream &os, ULONG ulLenMax) const
 //		Extract array of column ids from colrefset
 //
 //---------------------------------------------------------------------------
-void
-CColRefSet::ExtractColIds(CMemoryPool *mp, ULongPtrArray *colids) const
-{
-	CColRefSetIter crsi(*this);
-	while (crsi.Advance())
-	{
-		CColRef *colref = crsi.Pcr();
-		ULONG colid = colref->Id();
-		colids->Append(GPOS_NEW(mp) ULONG(colid));
-	}
+void CColRefSet::ExtractColIds(CMemoryPool *mp, ULongPtrArray *colids) const {
+  CColRefSetIter crsi(*this);
+  while (crsi.Advance()) {
+    CColRef *colref = crsi.Pcr();
+    ULONG colid = colref->Id();
+    colids->Append(GPOS_NEW(mp) ULONG(colid));
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -393,34 +341,28 @@ CColRefSet::ExtractColIds(CMemoryPool *mp, ULongPtrArray *colids) const
 //		the given array
 //
 //---------------------------------------------------------------------------
-BOOL
-CColRefSet::FContained(const CColRefSetArray *pdrgpcrs)
-{
-	GPOS_ASSERT(NULL != pdrgpcrs);
+BOOL CColRefSet::FContained(const CColRefSetArray *pdrgpcrs) {
+  GPOS_ASSERT(nullptr != pdrgpcrs);
 
-	const ULONG length = pdrgpcrs->Size();
-	for (ULONG ul = 0; ul < length; ul++)
-	{
-		if ((*pdrgpcrs)[ul]->ContainsAll(this))
-		{
-			return true;
-		}
-	}
+  const ULONG length = pdrgpcrs->Size();
+  for (ULONG ul = 0; ul < length; ul++) {
+    if ((*pdrgpcrs)[ul]->ContainsAll(this)) {
+      return true;
+    }
+  }
 
-	return false;
+  return false;
 }
 
-BOOL
-CColRefSet::FIntersects(const CColRefSet *pcrs)
-{
-	GPOS_ASSERT(NULL != pcrs);
-	CColRefSet *intersecting_colrefset = GPOS_NEW(m_mp) CColRefSet(m_mp, *this);
-	intersecting_colrefset->Intersection(pcrs);
+BOOL CColRefSet::FIntersects(const CColRefSet *pcrs) {
+  GPOS_ASSERT(nullptr != pcrs);
+  CColRefSet *intersecting_colrefset = GPOS_NEW(m_mp) CColRefSet(m_mp, *this);
+  intersecting_colrefset->Intersection(pcrs);
 
-	BOOL intersects = intersecting_colrefset->Size() > 0;
-	intersecting_colrefset->Release();
+  BOOL intersects = intersecting_colrefset->Size() > 0;
+  intersecting_colrefset->Release();
 
-	return intersects;
+  return intersects;
 }
 
 //---------------------------------------------------------------------------
@@ -431,41 +373,33 @@ CColRefSet::FIntersects(const CColRefSet *pcrs)
 //		Are the columns in the column reference set covered by the array of
 //		column ref sets
 //---------------------------------------------------------------------------
-BOOL
-CColRefSet::FCovered(CColRefSetArray *pdrgpcrs, CColRefSet *pcrs)
-{
-	GPOS_ASSERT(NULL != pdrgpcrs);
-	GPOS_ASSERT(NULL != pcrs);
-	GPOS_ASSERT(0 < pdrgpcrs->Size());
+BOOL CColRefSet::FCovered(CColRefSetArray *pdrgpcrs, CColRefSet *pcrs) {
+  GPOS_ASSERT(nullptr != pdrgpcrs);
+  GPOS_ASSERT(nullptr != pcrs);
+  GPOS_ASSERT(0 < pdrgpcrs->Size());
 
-	if (0 == pcrs->Size())
-	{
-		return false;
-	}
+  if (0 == pcrs->Size()) {
+    return false;
+  }
 
-	CColRefSetIter crsi(*pcrs);
-	while (crsi.Advance())
-	{
-		CColRef *colref = crsi.Pcr();
-		BOOL fFound = false;
-		const ULONG length = pdrgpcrs->Size();
-		for (ULONG ul = 0; ul < length && !fFound; ul++)
-		{
-			CColRefSet *pcrs = (*pdrgpcrs)[ul];
-			if (pcrs->FMember(colref))
-			{
-				fFound = true;
-			}
-		}
+  CColRefSetIter crsi(*pcrs);
+  while (crsi.Advance()) {
+    CColRef *colref = crsi.Pcr();
+    BOOL fFound = false;
+    const ULONG length = pdrgpcrs->Size();
+    for (ULONG ul = 0; ul < length && !fFound; ul++) {
+      CColRefSet *pcrs = (*pdrgpcrs)[ul];
+      if (pcrs->FMember(colref)) {
+        fFound = true;
+      }
+    }
 
-		if (!fFound)
-		{
-			return false;
-		}
-	}
+    if (!fFound) {
+      return false;
+    }
+  }
 
-	return true;
+  return true;
 }
-
 
 // EOF

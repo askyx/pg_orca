@@ -9,7 +9,6 @@
 //		Implementation of mdids for cast functions
 //---------------------------------------------------------------------------
 
-
 #include "naucrates/md/CMDIdCast.h"
 
 #include "naucrates/dxl/xml/CXMLSerializer.h"
@@ -26,15 +25,9 @@ using namespace gpmd;
 //
 //---------------------------------------------------------------------------
 CMDIdCast::CMDIdCast(CMDIdGPDB *mdid_src, CMDIdGPDB *mdid_dest)
-	: m_mdid_src(mdid_src),
-	  m_mdid_dest(mdid_dest),
-	  m_str(m_mdid_buffer, GPOS_ARRAY_SIZE(m_mdid_buffer))
-{
-	GPOS_ASSERT(mdid_src->IsValid());
-	GPOS_ASSERT(mdid_dest->IsValid());
-
-	// serialize mdid into static string
-	Serialize();
+    : m_mdid_src(mdid_src), m_mdid_dest(mdid_dest), m_str(m_mdid_buffer, GPOS_ARRAY_SIZE(m_mdid_buffer)) {
+  GPOS_ASSERT(mdid_src->IsValid());
+  GPOS_ASSERT(mdid_dest->IsValid());
 }
 
 //---------------------------------------------------------------------------
@@ -45,10 +38,9 @@ CMDIdCast::CMDIdCast(CMDIdGPDB *mdid_src, CMDIdGPDB *mdid_dest)
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CMDIdCast::~CMDIdCast()
-{
-	m_mdid_src->Release();
-	m_mdid_dest->Release();
+CMDIdCast::~CMDIdCast() {
+  m_mdid_src->Release();
+  m_mdid_dest->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -59,15 +51,16 @@ CMDIdCast::~CMDIdCast()
 //		Serialize mdid into static string
 //
 //---------------------------------------------------------------------------
-void
-CMDIdCast::Serialize()
-{
-	// serialize mdid as SystemType.mdidSrc.mdidDest
-	m_str.AppendFormat(GPOS_WSZ_LIT("%d.%d.%d.%d;%d.%d.%d"), MdidType(),
-					   m_mdid_src->Oid(), m_mdid_src->VersionMajor(),
-					   m_mdid_src->VersionMinor(), m_mdid_dest->Oid(),
-					   m_mdid_dest->VersionMajor(),
-					   m_mdid_dest->VersionMinor());
+void CMDIdCast::Serialize() const {
+  if (m_str.Length() > 0) {
+    return;
+  }
+
+  m_str.Reset();
+  // serialize mdid as SystemType.mdidSrc.mdidDest
+  m_str.AppendFormat(GPOS_WSZ_LIT("%d.%d.%d.%d;%d.%d.%d"), MdidType(), m_mdid_src->Oid(), m_mdid_src->VersionMajor(),
+                     m_mdid_src->VersionMinor(), m_mdid_dest->Oid(), m_mdid_dest->VersionMajor(),
+                     m_mdid_dest->VersionMinor());
 }
 
 //---------------------------------------------------------------------------
@@ -78,10 +71,9 @@ CMDIdCast::Serialize()
 //		Returns the string representation of the mdid
 //
 //---------------------------------------------------------------------------
-const WCHAR *
-CMDIdCast::GetBuffer() const
-{
-	return m_str.GetBuffer();
+const WCHAR *CMDIdCast::GetBuffer() const {
+  Serialize();
+  return m_str.GetBuffer();
 }
 
 //---------------------------------------------------------------------------
@@ -92,10 +84,8 @@ CMDIdCast::GetBuffer() const
 //		Returns the source type id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDIdCast::MdidSrc() const
-{
-	return m_mdid_src;
+IMDId *CMDIdCast::MdidSrc() const {
+  return m_mdid_src;
 }
 
 //---------------------------------------------------------------------------
@@ -106,10 +96,8 @@ CMDIdCast::MdidSrc() const
 //		Returns the destination type id
 //
 //---------------------------------------------------------------------------
-IMDId *
-CMDIdCast::MdidDest() const
-{
-	return m_mdid_dest;
+IMDId *CMDIdCast::MdidDest() const {
+  return m_mdid_dest;
 }
 
 //---------------------------------------------------------------------------
@@ -120,18 +108,14 @@ CMDIdCast::MdidDest() const
 //		Checks if the mdids are equal
 //
 //---------------------------------------------------------------------------
-BOOL
-CMDIdCast::Equals(const IMDId *mdid) const
-{
-	if (NULL == mdid || EmdidCastFunc != mdid->MdidType())
-	{
-		return false;
-	}
+BOOL CMDIdCast::Equals(const IMDId *mdid) const {
+  if (nullptr == mdid || EmdidCastFunc != mdid->MdidType()) {
+    return false;
+  }
 
-	const CMDIdCast *mdid_cast_func = CMDIdCast::CastMdid(mdid);
+  const CMDIdCast *mdid_cast_func = CMDIdCast::CastMdid(mdid);
 
-	return m_mdid_src->Equals(mdid_cast_func->MdidSrc()) &&
-		   m_mdid_dest->Equals(mdid_cast_func->MdidDest());
+  return m_mdid_src->Equals(mdid_cast_func->MdidSrc()) && m_mdid_dest->Equals(mdid_cast_func->MdidDest());
 }
 
 //---------------------------------------------------------------------------
@@ -142,11 +126,9 @@ CMDIdCast::Equals(const IMDId *mdid) const
 //		Serializes the mdid as the value of the given attribute
 //
 //---------------------------------------------------------------------------
-void
-CMDIdCast::Serialize(CXMLSerializer *xml_serializer,
-					 const CWStringConst *pstrAttribute) const
-{
-	xml_serializer->AddAttribute(pstrAttribute, &m_str);
+void CMDIdCast::Serialize(CXMLSerializer *xml_serializer, const CWStringConst *pstrAttribute) const {
+  Serialize();
+  xml_serializer->AddAttribute(pstrAttribute, &m_str);
 }
 
 //---------------------------------------------------------------------------
@@ -157,11 +139,9 @@ CMDIdCast::Serialize(CXMLSerializer *xml_serializer,
 //		Debug print of the id in the provided stream
 //
 //---------------------------------------------------------------------------
-IOstream &
-CMDIdCast::OsPrint(IOstream &os) const
-{
-	os << "(" << m_str.GetBuffer() << ")";
-	return os;
+IOstream &CMDIdCast::OsPrint(IOstream &os) const {
+  os << "(" << GetBuffer() << ")";
+  return os;
 }
 
 // EOF

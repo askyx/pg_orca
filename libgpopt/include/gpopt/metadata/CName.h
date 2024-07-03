@@ -13,6 +13,7 @@
 #define GPOPT_CName_H
 
 #include "gpos/base.h"
+#include "gpos/common/DbgPrintMixin.h"
 #include "gpos/string/CWStringConst.h"
 
 #define GPOPT_NAME_QUOTE_BEGIN "\""
@@ -20,8 +21,7 @@
 
 #define GPOPT_NAME_SEPARATOR GPOS_WSZ_LIT(".")
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -34,52 +34,44 @@ using namespace gpos;
 //		enforced is zero termination of string;
 //
 //---------------------------------------------------------------------------
-class CName
-{
-private:
-	// actual name
-	const CWStringConst *m_str_name;
+class CName : public DbgPrintMixin<CName> {
+ private:
+  // actual name
+  const CWStringConst *m_str_name;
 
-	// keep track of copy status
-	BOOL m_fDeepCopy;
+  // keep track of copy status
+  BOOL m_fDeepCopy;
 
-	// deep copy function
-	void DeepCopy(CMemoryPool *mp, const CWStringConst *str);
+  // deep copy function
+  void DeepCopy(CMemoryPool *mp, const CWStringConst *str);
 
-public:
-	// ctors
-	CName(CMemoryPool *, const CWStringBase *);
-	CName(const CWStringConst *, BOOL fOwnsMemory = false);
-	CName(const CName &);
+ public:
+  // ctors
+  CName(CMemoryPool *, const CWStringBase *);
+  CName(const CWStringConst *, BOOL fOwnsMemory = false);
+  CName(const CName &);
 
-	CName(CMemoryPool *mp, const CName &);
-	CName(CMemoryPool *mp, const CName &, const CName &);
+  CName(CMemoryPool *mp, const CName &);
+  CName(CMemoryPool *mp, const CName &, const CName &);
 
-	// dtor
-	~CName();
+  // dtor
+  ~CName();
 
-	// accessors
-	const CWStringConst *
-	Pstr() const
-	{
-		return m_str_name;
-	}
+  // accessors
+  const CWStringConst *Pstr() const { return m_str_name; }
 
-	ULONG
-	Length() const
-	{
-		return m_str_name->Length();
-	}
+  ULONG
+  Length() const { return m_str_name->Length(); }
 
-	// comparison
-	BOOL Equals(const CName &) const;
+  // comparison
+  BOOL Equals(const CName &) const;
 
-	// debug print
-	IOstream &OsPrint(IOstream &) const;
+  // debug print
+  IOstream &OsPrint(IOstream &) const;
 
-};	// class CName
+};  // class CName
 }  // namespace gpopt
 
-#endif	// !GPOPT_CName_H
+#endif  // !GPOPT_CName_H
 
 // EOF

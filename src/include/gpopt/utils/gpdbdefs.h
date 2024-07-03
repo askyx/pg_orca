@@ -24,7 +24,6 @@ extern "C" {
 #include "nodes/nodes.h"
 #include "nodes/pg_list.h"
 #include "nodes/plannodes.h"
-#include "optimizer/walkers.h"
 #include "parser/parse_clause.h"
 #include "parser/parse_expr.h"
 #include "parser/parse_oper.h"
@@ -41,9 +40,6 @@ extern "C" {
 #endif
 #include "catalog/pg_operator.h"
 #include "catalog/pg_proc.h"
-#include "cdb/cdbhash.h"
-#include "cdb/cdbmutate.h"
-#include "cdb/cdbutil.h"
 #include "commands/defrem.h"
 #include "commands/trigger.h"
 #include "funcapi.h"
@@ -54,16 +50,13 @@ extern "C" {
 #include "parser/parse_coerce.h"
 #include "tcop/dest.h"
 #include "utils/elog.h"
-#include "utils/faultinjector.h"
 #include "utils/numeric.h"
 #include "utils/rel.h"
 #include "utils/selfuncs.h"
 #include "utils/typcache.h"
-#include "utils/uri.h"
 
 }  // end extern C
 
-
-#endif	// GPDBDefs_H
+#endif  // GPDBDefs_H
 
 // EOF

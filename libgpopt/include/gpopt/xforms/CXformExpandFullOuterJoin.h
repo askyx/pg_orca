@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,52 +27,38 @@ using namespace gpos;
 //		and LASJ
 //
 //---------------------------------------------------------------------------
-class CXformExpandFullOuterJoin : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformExpandFullOuterJoin(const CXformExpandFullOuterJoin &);
+class CXformExpandFullOuterJoin : public CXformExploration {
+ private:
+  // construct a join expression of two CTEs using the given CTE ids
+  // and output columns
+  static CExpression *PexprLogicalJoinOverCTEs(CMemoryPool *mp, EdxlJoinType edxljointype, ULONG ulLeftCTEId,
+                                               CColRefArray *pdrgpcrLeft, ULONG ulRightCTEId,
+                                               CColRefArray *pdrgpcrRight, CExpression *pexprScalar);
 
-	// construct a join expression of two CTEs using the given CTE ids
-	// and output columns
-	CExpression *PexprLogicalJoinOverCTEs(
-		CMemoryPool *mp, EdxlJoinType edxljointype, ULONG ulLeftCTEId,
-		CColRefArray *pdrgpcrLeft, ULONG ulRightCTEId,
-		CColRefArray *pdrgpcrRight, CExpression *pexprScalar) const;
+ public:
+  CXformExpandFullOuterJoin(const CXformExpandFullOuterJoin &) = delete;
 
-public:
-	// ctor
-	explicit CXformExpandFullOuterJoin(CMemoryPool *mp);
+  // ctor
+  explicit CXformExpandFullOuterJoin(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformExpandFullOuterJoin()
-	{
-	}
+  // dtor
+  ~CXformExpandFullOuterJoin() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfExpandFullOuterJoin;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfExpandFullOuterJoin; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformExpandFullOuterJoin";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformExpandFullOuterJoin"; }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-						   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformExpandFullOuterJoin
+};  // class CXformExpandFullOuterJoin
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformExpandFullOuterJoin_H
+#endif  // !GPOPT_CXformExpandFullOuterJoin_H
 
 // EOF

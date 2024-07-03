@@ -9,7 +9,6 @@
 //		Implementation of GPDB-specific scalar comparison operators in the MD cache
 //---------------------------------------------------------------------------
 
-
 #ifndef GPMD_CMDScCmpGPDB_H
 #define GPMD_CMDScCmpGPDB_H
 
@@ -17,8 +16,7 @@
 
 #include "naucrates/md/IMDScCmp.h"
 
-namespace gpmd
-{
+namespace gpmd {
 using namespace gpdxl;
 
 //---------------------------------------------------------------------------
@@ -30,80 +28,73 @@ using namespace gpdxl;
 //		MD cache
 //
 //---------------------------------------------------------------------------
-class CMDScCmpGPDB : public IMDScCmp
-{
-private:
-	// memory pool
-	CMemoryPool *m_mp;
+class CMDScCmpGPDB : public IMDScCmp {
+ private:
+  // memory pool
+  CMemoryPool *m_mp;
 
-	// DXL for object
-	const CWStringDynamic *m_dxl_str;
+  // DXL for object
+  const CWStringDynamic *m_dxl_str = nullptr;
 
-	// object id
-	IMDId *m_mdid;
+  // object id
+  IMDId *m_mdid;
 
-	// operator name
-	CMDName *m_mdname;
+  // operator name
+  CMDName *m_mdname;
 
-	// left type
-	IMDId *m_mdid_left;
+  // left type
+  IMDId *m_mdid_left;
 
-	// right type
-	IMDId *m_mdid_right;
+  // right type
+  IMDId *m_mdid_right;
 
-	// comparison type
-	IMDType::ECmpType m_comparision_type;
+  // comparison type
+  IMDType::ECmpType m_comparision_type;
 
-	// comparison operator id
-	IMDId *m_mdid_op;
+  // comparison operator id
+  IMDId *m_mdid_op;
 
-	// private copy ctor
-	CMDScCmpGPDB(const CMDScCmpGPDB &);
+ public:
+  CMDScCmpGPDB(const CMDScCmpGPDB &) = delete;
 
-public:
-	// ctor
-	CMDScCmpGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname,
-				 IMDId *left_mdid, IMDId *right_mdid,
-				 IMDType::ECmpType cmp_type, IMDId *mdid_op);
+  // ctor
+  CMDScCmpGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *left_mdid, IMDId *right_mdid,
+               IMDType::ECmpType cmp_type, IMDId *mdid_op);
 
-	// dtor
-	virtual ~CMDScCmpGPDB();
+  // dtor
+  ~CMDScCmpGPDB() override;
 
-	// accessors
-	virtual const CWStringDynamic *
-	GetStrRepr() const
-	{
-		return m_dxl_str;
-	}
+  // accessors
+  const CWStringDynamic *GetStrRepr() override;
 
-	// copmarison object id
-	virtual IMDId *MDId() const;
+  // copmarison object id
+  IMDId *MDId() const override;
 
-	// cast object name
-	virtual CMDName Mdname() const;
+  // cast object name
+  CMDName Mdname() const override;
 
-	// left type
-	virtual IMDId *GetLeftMdid() const;
+  // left type
+  IMDId *GetLeftMdid() const override;
 
-	// right type
-	virtual IMDId *GetRightMdid() const;
+  // right type
+  IMDId *GetRightMdid() const override;
 
-	// comparison type
-	virtual IMDType::ECmpType ParseCmpType() const;
+  // comparison type
+  IMDType::ECmpType ParseCmpType() const override;
 
-	// comparison operator id
-	virtual IMDId *MdIdOp() const;
+  // comparison operator id
+  IMDId *MdIdOp() const override;
 
-	// serialize object in DXL format
-	virtual void Serialize(gpdxl::CXMLSerializer *xml_serializer) const;
+  // serialize object in DXL format
+  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
 #ifdef GPOS_DEBUG
-	// debug print of the type in the provided stream
-	virtual void DebugPrint(IOstream &os) const;
+  // debug print of the type in the provided stream
+  void DebugPrint(IOstream &os) const override;
 #endif
 };
 }  // namespace gpmd
 
-#endif	// !GPMD_CMDScCmpGPDB_H
+#endif  // !GPMD_CMDScCmpGPDB_H
 
 // EOF

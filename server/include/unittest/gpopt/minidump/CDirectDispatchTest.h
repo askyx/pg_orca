@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2015 Pivotal, Inc.
+//	Copyright (C) 2015 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CDirectDispatchTest.h
@@ -13,8 +13,7 @@
 
 #include "gpos/base.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -25,21 +24,20 @@ using namespace gpos;
 //		Unittests
 //
 //---------------------------------------------------------------------------
-class CDirectDispatchTest
-{
-private:
-	// counter used to mark last successful test
-	static ULONG m_ulDirectDispatchCounter;
+class CDirectDispatchTest {
+ private:
+  // counter used to mark last successful test
+  static ULONG m_ulDirectDispatchCounter;
 
-public:
-	// unittests
-	static GPOS_RESULT EresUnittest();
+ public:
+  // unittests
+  static GPOS_RESULT EresUnittest();
 
-	static GPOS_RESULT EresUnittest_RunTests();
+  static GPOS_RESULT EresUnittest_RunTests();
 
-};	// class CDirectDispatchTest
+};  // class CDirectDispatchTest
 }  // namespace gpopt
 
-#endif	// !GPOPT_CDirectDispatchTest_H
+#endif  // !GPOPT_CDirectDispatchTest_H
 
 // EOF

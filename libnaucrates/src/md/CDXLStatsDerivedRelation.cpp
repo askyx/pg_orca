@@ -27,14 +27,10 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLStatsDerivedRelation::CDXLStatsDerivedRelation(
-	CDouble rows, BOOL is_empty,
-	CDXLStatsDerivedColumnArray *dxl_stats_derived_col_array)
-	: m_rows(rows),
-	  m_empty(is_empty),
-	  m_dxl_stats_derived_col_array(dxl_stats_derived_col_array)
-{
-	GPOS_ASSERT(NULL != dxl_stats_derived_col_array);
+CDXLStatsDerivedRelation::CDXLStatsDerivedRelation(CDouble rows, BOOL is_empty,
+                                                   CDXLStatsDerivedColumnArray *dxl_stats_derived_col_array)
+    : m_rows(rows), m_empty(is_empty), m_dxl_stats_derived_col_array(dxl_stats_derived_col_array) {
+  GPOS_ASSERT(nullptr != dxl_stats_derived_col_array);
 }
 
 //---------------------------------------------------------------------------
@@ -45,9 +41,8 @@ CDXLStatsDerivedRelation::CDXLStatsDerivedRelation(
 //		Dtor
 //
 //---------------------------------------------------------------------------
-CDXLStatsDerivedRelation::~CDXLStatsDerivedRelation()
-{
-	m_dxl_stats_derived_col_array->Release();
+CDXLStatsDerivedRelation::~CDXLStatsDerivedRelation() {
+  m_dxl_stats_derived_col_array->Release();
 }
 
 //---------------------------------------------------------------------------
@@ -58,10 +53,8 @@ CDXLStatsDerivedRelation::~CDXLStatsDerivedRelation()
 //		Returns the array of derived columns stats
 //
 //---------------------------------------------------------------------------
-const CDXLStatsDerivedColumnArray *
-CDXLStatsDerivedRelation::GetDXLStatsDerivedColArray() const
-{
-	return m_dxl_stats_derived_col_array;
+const CDXLStatsDerivedColumnArray *CDXLStatsDerivedRelation::GetDXLStatsDerivedColArray() const {
+  return m_dxl_stats_derived_col_array;
 }
 
 //---------------------------------------------------------------------------
@@ -72,33 +65,25 @@ CDXLStatsDerivedRelation::GetDXLStatsDerivedColArray() const
 //		Serialize bucket in DXL format
 //
 //---------------------------------------------------------------------------
-void
-CDXLStatsDerivedRelation::Serialize(CXMLSerializer *xml_serializer) const
-{
-	xml_serializer->OpenElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenStatsDerivedRelation));
+void CDXLStatsDerivedRelation::Serialize(CXMLSerializer *xml_serializer) const {
+  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                              CDXLTokens::GetDXLTokenStr(EdxltokenStatsDerivedRelation));
 
-	xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRows),
-								 m_rows);
-	xml_serializer->AddAttribute(
-		CDXLTokens::GetDXLTokenStr(EdxltokenEmptyRelation), m_empty);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRows), m_rows);
+  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenEmptyRelation), m_empty);
 
-	const ULONG arity = m_dxl_stats_derived_col_array->Size();
-	for (ULONG ul = 0; ul < arity; ul++)
-	{
-		GPOS_CHECK_ABORT;
+  const ULONG arity = m_dxl_stats_derived_col_array->Size();
+  for (ULONG ul = 0; ul < arity; ul++) {
+    GPOS_CHECK_ABORT;
 
-		CDXLStatsDerivedColumn *derived_col_stats_dxl =
-			(*m_dxl_stats_derived_col_array)[ul];
-		derived_col_stats_dxl->Serialize(xml_serializer);
+    CDXLStatsDerivedColumn *derived_col_stats_dxl = (*m_dxl_stats_derived_col_array)[ul];
+    derived_col_stats_dxl->Serialize(xml_serializer);
 
-		GPOS_CHECK_ABORT;
-	}
+    GPOS_CHECK_ABORT;
+  }
 
-	xml_serializer->CloseElement(
-		CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-		CDXLTokens::GetDXLTokenStr(EdxltokenStatsDerivedRelation));
+  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
+                               CDXLTokens::GetDXLTokenStr(EdxltokenStatsDerivedRelation));
 }
 
 #ifdef GPOS_DEBUG
@@ -110,14 +95,12 @@ CDXLStatsDerivedRelation::Serialize(CXMLSerializer *xml_serializer) const
 //		Debug print of the bucket object
 //
 //---------------------------------------------------------------------------
-void
-CDXLStatsDerivedRelation::DebugPrint(IOstream &os) const
-{
-	os << "Rows: " << Rows() << std::endl;
+void CDXLStatsDerivedRelation::DebugPrint(IOstream &os) const {
+  os << "Rows: " << Rows() << std::endl;
 
-	os << "Empty: " << IsEmpty() << std::endl;
+  os << "Empty: " << IsEmpty() << std::endl;
 }
 
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
 // EOF

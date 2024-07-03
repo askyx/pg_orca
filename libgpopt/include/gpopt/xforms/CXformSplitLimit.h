@@ -15,8 +15,7 @@
 
 #include "gpopt/xforms/CXformExploration.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -27,64 +26,46 @@ using namespace gpos;
 //		Split a global limit into pair of local and global limit
 //
 //---------------------------------------------------------------------------
-class CXformSplitLimit : public CXformExploration
-{
-private:
-	// private copy ctor
-	CXformSplitLimit(const CXformSplitLimit &);
+class CXformSplitLimit : public CXformExploration {
+ private:
+  // helper function for creating a limit expression
+  static CExpression *PexprLimit(CMemoryPool *mp,                // memory pool
+                                 CExpression *pexprRelational,   // relational child
+                                 CExpression *pexprScalarStart,  // limit offset
+                                 CExpression *pexprScalarRows,   // limit count
+                                 COrderSpec *pos,                // ordering specification
+                                 BOOL fGlobal,                   // is it a local or global limit
+                                 BOOL fHasCount,                 // does limit specify a number of rows
+                                 BOOL fTopLimitUnderDML);
 
-	// helper function for creating a limit expression
-	CExpression *PexprLimit(
-		CMemoryPool *mp,				// memory pool
-		CExpression *pexprRelational,	// relational child
-		CExpression *pexprScalarStart,	// limit offset
-		CExpression *pexprScalarRows,	// limit count
-		COrderSpec *pos,				// ordering specification
-		BOOL fGlobal,					// is it a local or global limit
-		BOOL fHasCount,					// does limit specify a number of rows
-		BOOL fTopLimitUnderDML) const;
+ public:
+  CXformSplitLimit(const CXformSplitLimit &) = delete;
 
-public:
-	// ctor
-	explicit CXformSplitLimit(CMemoryPool *mp);
+  // ctor
+  explicit CXformSplitLimit(CMemoryPool *mp);
 
-	// dtor
-	virtual ~CXformSplitLimit()
-	{
-	}
+  // dtor
+  ~CXformSplitLimit() override = default;
 
-	// ident accessors
-	virtual EXformId
-	Exfid() const
-	{
-		return ExfSplitLimit;
-	}
+  // ident accessors
+  EXformId Exfid() const override { return ExfSplitLimit; }
 
-	// return a string for xform name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CXformSplitLimit";
-	}
+  // return a string for xform name
+  const CHAR *SzId() const override { return "CXformSplitLimit"; }
 
-	// Compatibility function for splitting limit
-	virtual BOOL
-	FCompatible(CXform::EXformId exfid)
-	{
-		return (CXform::ExfSplitLimit != exfid);
-	}
+  // Compatibility function for splitting limit
+  BOOL FCompatible(CXform::EXformId exfid) override { return (CXform::ExfSplitLimit != exfid); }
 
-	// compute xform promise for a given expression handle
-	virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const;
+  // compute xform promise for a given expression handle
+  EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
-	// actual transform
-	void Transform(CXformContext *pxfctxt, CXformResult *pxfres,
-				   CExpression *pexpr) const;
+  // actual transform
+  void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-};	// class CXformSplitLimit
+};  // class CXformSplitLimit
 
 }  // namespace gpopt
 
-#endif	// !GPOPT_CXformSplitLimit_H
+#endif  // !GPOPT_CXformSplitLimit_H
 
 // EOF

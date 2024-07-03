@@ -20,9 +20,7 @@
 #include "gpos/error/CException.h"
 #include "gpos/utils.h"
 
-
 using namespace gpos;
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -32,19 +30,13 @@ using namespace gpos;
 //		Get the date and time
 //
 //---------------------------------------------------------------------------
-void
-gpos::syslib::GetTimeOfDay(TIMEVAL *tv, TIMEZONE *tz)
-{
-	GPOS_ASSERT(NULL != tv);
+void gpos::syslib::GetTimeOfDay(TIMEVAL *tv, TIMEZONE *tz) {
+  GPOS_ASSERT(nullptr != tv);
 
-#ifdef GPOS_DEBUG
-	INT res =
-#endif	// GPOS_DEBUG
-		gettimeofday(tv, tz);
+  INT res GPOS_ASSERTS_ONLY = gettimeofday(tv, tz);
 
-	GPOS_ASSERT(0 == res);
+  GPOS_ASSERT(0 == res);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -54,39 +46,13 @@ gpos::syslib::GetTimeOfDay(TIMEVAL *tv, TIMEZONE *tz)
 //		Get system and user time
 //
 //---------------------------------------------------------------------------
-void
-gpos::syslib::GetRusage(RUSAGE *usage)
-{
-	GPOS_ASSERT(NULL != usage);
+void gpos::syslib::GetRusage(RUSAGE *usage) {
+  GPOS_ASSERT(nullptr != usage);
 
-#ifdef GPOS_DEBUG
-	INT res =
-#endif	// GPOS_DEBUG
-		getrusage(RUSAGE_SELF, usage);
+  INT res GPOS_ASSERTS_ONLY = getrusage(RUSAGE_SELF, usage);
 
-	GPOS_ASSERT(0 == res);
+  GPOS_ASSERT(0 == res);
 }
-
-
-//---------------------------------------------------------------------------
-//	@function:
-//		syslib::SchedYield
-//
-//	@doc:
-//		Yield the processor
-//
-//---------------------------------------------------------------------------
-void
-gpos::syslib::SchedYield()
-{
-#ifdef GPOS_DEBUG
-	INT res =
-#endif	// GPOS_DEBUG
-		sched_yield();
-
-	GPOS_ASSERT(0 == res && "Failed to yield");
-}
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -96,12 +62,9 @@ gpos::syslib::SchedYield()
 //		Open a connection to the system logger for a program
 //
 //---------------------------------------------------------------------------
-void
-gpos::syslib::OpenLog(const CHAR *ident, INT option, INT facility)
-{
-	openlog(ident, option, facility);
+void gpos::syslib::OpenLog(const CHAR *ident, INT option, INT facility) {
+  openlog(ident, option, facility);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -111,12 +74,9 @@ gpos::syslib::OpenLog(const CHAR *ident, INT option, INT facility)
 //		Generate a log message
 //
 //---------------------------------------------------------------------------
-void
-gpos::syslib::SysLog(INT priority, const CHAR *format)
-{
-	syslog(priority, "%s", format);
+void gpos::syslib::SysLog(INT priority, const CHAR *format) {
+  syslog(priority, "%s", format);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -126,10 +86,8 @@ gpos::syslib::SysLog(INT priority, const CHAR *format)
 //		Close the descriptor being used to write to the system logger
 //
 //---------------------------------------------------------------------------
-void
-gpos::syslib::CloseLog()
-{
-	closelog();
+void gpos::syslib::CloseLog() {
+  closelog();
 }
 
 // EOF

@@ -15,8 +15,7 @@
 
 #include "gpopt/operators/CPattern.h"
 
-namespace gpopt
-{
+namespace gpopt {
 using namespace gpos;
 
 //---------------------------------------------------------------------------
@@ -28,49 +27,30 @@ using namespace gpos;
 //		union operator
 //
 //---------------------------------------------------------------------------
-class CPatternMultiLeaf : public CPattern
-{
-private:
-	// private copy ctor
-	CPatternMultiLeaf(const CPatternMultiLeaf &);
+class CPatternMultiLeaf : public CPattern {
+ private:
+ public:
+  CPatternMultiLeaf(const CPatternMultiLeaf &) = delete;
 
-public:
-	// ctor
-	explicit CPatternMultiLeaf(CMemoryPool *mp) : CPattern(mp)
-	{
-	}
+  // ctor
+  explicit CPatternMultiLeaf(CMemoryPool *mp) : CPattern(mp) {}
 
-	// dtor
-	virtual ~CPatternMultiLeaf()
-	{
-	}
+  // dtor
+  ~CPatternMultiLeaf() override = default;
 
-	// check if operator is a pattern leaf
-	virtual BOOL
-	FLeaf() const
-	{
-		return true;
-	}
+  // check if operator is a pattern leaf
+  BOOL FLeaf() const override { return true; }
 
-	// ident accessors
-	virtual EOperatorId
-	Eopid() const
-	{
-		return EopPatternMultiLeaf;
-	}
+  // ident accessors
+  EOperatorId Eopid() const override { return EopPatternMultiLeaf; }
 
-	// return a string for operator name
-	virtual const CHAR *
-	SzId() const
-	{
-		return "CPatternMultiLeaf";
-	}
+  // return a string for operator name
+  const CHAR *SzId() const override { return "CPatternMultiLeaf"; }
 
-};	// class CPatternMultiLeaf
+};  // class CPatternMultiLeaf
 
 }  // namespace gpopt
 
-
-#endif	// !GPOPT_CPatternMultiLeaf_H
+#endif  // !GPOPT_CPatternMultiLeaf_H
 
 // EOF

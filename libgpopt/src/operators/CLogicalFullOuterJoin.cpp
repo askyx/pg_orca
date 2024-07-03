@@ -19,7 +19,6 @@
 
 using namespace gpopt;
 
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CLogicalFullOuterJoin::CLogicalFullOuterJoin
@@ -28,11 +27,10 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalFullOuterJoin::CLogicalFullOuterJoin(CMemoryPool *mp) : CLogicalJoin(mp)
-{
-	GPOS_ASSERT(NULL != mp);
+CLogicalFullOuterJoin::CLogicalFullOuterJoin(CMemoryPool *mp, CXform::EXformId origin_xform)
+    : CLogicalJoin(mp, origin_xform) {
+  GPOS_ASSERT(nullptr != mp);
 }
-
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -42,26 +40,22 @@ CLogicalFullOuterJoin::CLogicalFullOuterJoin(CMemoryPool *mp) : CLogicalJoin(mp)
 //		Derive max card
 //
 //---------------------------------------------------------------------------
-CMaxCard
-CLogicalFullOuterJoin::DeriveMaxCard(CMemoryPool *,	 // mp
-									 CExpressionHandle &exprhdl) const
-{
-	CMaxCard left_child_maxcard = exprhdl.DeriveMaxCard(0);
-	CMaxCard right_child_maxcard = exprhdl.DeriveMaxCard(1);
+CMaxCard CLogicalFullOuterJoin::DeriveMaxCard(CMemoryPool *,  // mp
+                                              CExpressionHandle &exprhdl) const {
+  CMaxCard left_child_maxcard = exprhdl.DeriveMaxCard(0);
+  CMaxCard right_child_maxcard = exprhdl.DeriveMaxCard(1);
 
-	if (left_child_maxcard.Ull() > 0 && right_child_maxcard.Ull() > 0)
-	{
-		CMaxCard result_max_card = left_child_maxcard;
-		result_max_card *= right_child_maxcard;
-		return result_max_card;
-	}
+  if (left_child_maxcard.Ull() > 0 && right_child_maxcard.Ull() > 0) {
+    CMaxCard result_max_card = left_child_maxcard;
+    result_max_card *= right_child_maxcard;
+    return result_max_card;
+  }
 
-	if (left_child_maxcard <= right_child_maxcard)
-	{
-		return right_child_maxcard;
-	}
+  if (left_child_maxcard <= right_child_maxcard) {
+    return right_child_maxcard;
+  }
 
-	return left_child_maxcard;
+  return left_child_maxcard;
 }
 
 //---------------------------------------------------------------------------
@@ -72,13 +66,13 @@ CLogicalFullOuterJoin::DeriveMaxCard(CMemoryPool *,	 // mp
 //		Get candidate xforms
 //
 //---------------------------------------------------------------------------
-CXformSet *
-CLogicalFullOuterJoin::PxfsCandidates(CMemoryPool *mp) const
-{
-	CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
-	(void) xform_set->ExchangeSet(CXform::ExfExpandFullOuterJoin);
-	(void) xform_set->ExchangeSet(CXform::ExfImplementFullOuterMergeJoin);
-	return xform_set;
+CXformSet *CLogicalFullOuterJoin::PxfsCandidates(CMemoryPool *mp) const {
+  CXformSet *xform_set = GPOS_NEW(mp) CXformSet(mp);
+  (void)xform_set->ExchangeSet(CXform::ExfExpandFullOuterJoin);
+  (void)xform_set->ExchangeSet(CXform::ExfImplementFullOuterMergeJoin);
+  (void)xform_set->ExchangeSet(CXform::ExfFullJoinCommutativity);
+  (void)xform_set->ExchangeSet(CXform::ExfFullOuterJoin2HashJoin);
+  return xform_set;
 }
 
 // EOF

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //	Greenplum Database
-//	Copyright (C) 2014 Pivotal Inc.
+//	Copyright (C) 2014 VMware, Inc. or its affiliates.
 //
 //	@filename:
 //		CMDIdGPDBCtas.cpp
@@ -29,12 +29,7 @@ CMDIdGPDBCtas CMDIdGPDBCtas::m_mdid_invalid_key(0);
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMDIdGPDBCtas::CMDIdGPDBCtas(OID oid)
-	: CMDIdGPDB(CSystemId(IMDId::EmdidGPDB, GPMD_GPDB_CTAS_SYSID), oid)
-{
-	Serialize();
-}
-
+CMDIdGPDBCtas::CMDIdGPDBCtas(OID oid) : CMDIdGPDB(CSystemId(IMDId::EmdidGeneral, GPMD_GPDB_CTAS_SYSID), oid) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -44,12 +39,9 @@ CMDIdGPDBCtas::CMDIdGPDBCtas(OID oid)
 //		Copy constructor
 //
 //---------------------------------------------------------------------------
-CMDIdGPDBCtas::CMDIdGPDBCtas(const CMDIdGPDBCtas &mdid_source)
-	: CMDIdGPDB(mdid_source.Sysid(), mdid_source.Oid())
-{
-	GPOS_ASSERT(mdid_source.IsValid());
-	GPOS_ASSERT(IMDId::EmdidGPDBCtas == mdid_source.MdidType());
-	Serialize();
+CMDIdGPDBCtas::CMDIdGPDBCtas(const CMDIdGPDBCtas &mdid_source) : CMDIdGPDB(mdid_source.Sysid(), mdid_source.Oid()) {
+  GPOS_ASSERT(mdid_source.IsValid());
+  GPOS_ASSERT(IMDId::EmdidGPDBCtas == mdid_source.MdidType());
 }
 
 //---------------------------------------------------------------------------
@@ -61,18 +53,14 @@ CMDIdGPDBCtas::CMDIdGPDBCtas(const CMDIdGPDBCtas &mdid_source)
 //		of the same object
 //
 //---------------------------------------------------------------------------
-BOOL
-CMDIdGPDBCtas::Equals(const IMDId *mdid) const
-{
-	if (NULL == mdid || EmdidGPDBCtas != mdid->MdidType())
-	{
-		return false;
-	}
+BOOL CMDIdGPDBCtas::Equals(const IMDId *mdid) const {
+  if (nullptr == mdid || EmdidGPDBCtas != mdid->MdidType()) {
+    return false;
+  }
 
-	const CMDIdGPDBCtas *mdidGPDBCTAS =
-		CMDIdGPDBCtas::CastMdid(const_cast<IMDId *>(mdid));
+  const CMDIdGPDBCtas *mdidGPDBCTAS = CMDIdGPDBCtas::CastMdid(const_cast<IMDId *>(mdid));
 
-	return m_oid == mdidGPDBCTAS->Oid();
+  return m_oid == mdidGPDBCTAS->Oid();
 }
 
 //---------------------------------------------------------------------------
@@ -83,10 +71,8 @@ CMDIdGPDBCtas::Equals(const IMDId *mdid) const
 //		Is the mdid valid
 //
 //---------------------------------------------------------------------------
-BOOL
-CMDIdGPDBCtas::IsValid() const
-{
-	return !Equals(&CMDIdGPDBCtas::m_mdid_invalid_key);
+BOOL CMDIdGPDBCtas::IsValid() const {
+  return !Equals(&CMDIdGPDBCtas::m_mdid_invalid_key);
 }
 
 //---------------------------------------------------------------------------
@@ -97,11 +83,9 @@ CMDIdGPDBCtas::IsValid() const
 //		Debug print of the id in the provided stream
 //
 //---------------------------------------------------------------------------
-IOstream &
-CMDIdGPDBCtas::OsPrint(IOstream &os) const
-{
-	os << "(" << Oid() << "," << VersionMajor() << "." << VersionMinor() << ")";
-	return os;
+IOstream &CMDIdGPDBCtas::OsPrint(IOstream &os) const {
+  os << "(" << Oid() << "," << VersionMajor() << "." << VersionMinor() << ")";
+  return os;
 }
 
 // EOF

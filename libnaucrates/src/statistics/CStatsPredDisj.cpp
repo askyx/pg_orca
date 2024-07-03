@@ -25,11 +25,9 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CStatsPredDisj::CStatsPredDisj(CStatsPredPtrArry *disj_pred_stats_array)
-	: CStatsPred(gpos::ulong_max),
-	  m_disj_pred_stats_array(disj_pred_stats_array)
-{
-	GPOS_ASSERT(NULL != disj_pred_stats_array);
-	m_colid = CStatisticsUtils::GetColId(disj_pred_stats_array);
+    : CStatsPred(gpos::ulong_max), m_disj_pred_stats_array(disj_pred_stats_array) {
+  GPOS_ASSERT(nullptr != disj_pred_stats_array);
+  m_colid = CStatisticsUtils::GetColId(disj_pred_stats_array);
 }
 
 //---------------------------------------------------------------------------
@@ -40,10 +38,8 @@ CStatsPredDisj::CStatsPredDisj(CStatsPredPtrArry *disj_pred_stats_array)
 //		Return the point filter at a particular position
 //
 //---------------------------------------------------------------------------
-CStatsPred *
-CStatsPredDisj::GetPredStats(ULONG pos) const
-{
-	return (*m_disj_pred_stats_array)[pos];
+CStatsPred *CStatsPredDisj::GetPredStats(ULONG pos) const {
+  return (*m_disj_pred_stats_array)[pos];
 }
 
 //---------------------------------------------------------------------------
@@ -54,14 +50,11 @@ CStatsPredDisj::GetPredStats(ULONG pos) const
 //		Sort the components of the disjunction
 //
 //---------------------------------------------------------------------------
-void
-CStatsPredDisj::Sort() const
-{
-	if (1 < GetNumPreds())
-	{
-		// sort the filters on column ids
-		m_disj_pred_stats_array->Sort(CStatsPred::StatsPredSortCmpFunc);
-	}
+void CStatsPredDisj::Sort() const {
+  if (1 < GetNumPreds()) {
+    // sort the filters on column ids
+    m_disj_pred_stats_array->Sort(CStatsPred::StatsPredSortCmpFunc);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -73,9 +66,8 @@ CStatsPredDisj::Sort() const
 //
 //---------------------------------------------------------------------------
 ULONG
-CStatsPredDisj::GetColId() const
-{
-	return m_colid;
+CStatsPredDisj::GetColId() const {
+  return m_colid;
 }
 
 // EOF

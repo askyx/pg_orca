@@ -19,18 +19,15 @@
 #include "gpos/error/CAutoTrace.h"
 
 #include "gpopt/base/COptCtxt.h"
-#endif	// GPOS_DEBUG
+#endif  // GPOS_DEBUG
 
-namespace gpopt
-{
-CDrvdProp::CDrvdProp()
-{
-}
+FORCE_GENERATE_DBGSTR(gpopt::CDrvdProp);
 
-IOstream &
-operator<<(IOstream &os, const CDrvdProp &drvdprop)
-{
-	return drvdprop.OsPrint(os);
+namespace gpopt {
+CDrvdProp::CDrvdProp() = default;
+
+IOstream &operator<<(IOstream &os, const CDrvdProp &drvdprop) {
+  return drvdprop.OsPrint(os);
 }
 
 }  // namespace gpopt
