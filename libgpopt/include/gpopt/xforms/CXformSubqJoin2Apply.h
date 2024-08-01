@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformSubqJoin2Apply_H
 #define GPOPT_CXformSubqJoin2Apply_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformSubqueryUnnest.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

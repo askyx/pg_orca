@@ -11,10 +11,9 @@
 
 #include "gpopt/operators/CLogicalUnionAll.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/CUnionAllStatsProcessor.h"
 
 using namespace gpopt;

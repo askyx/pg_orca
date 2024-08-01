@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalAssert_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/errorcodes.h"
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
@@ -54,7 +53,6 @@ class CDXLPhysicalAssert : public CDXLPhysical {
   const CHAR *GetSQLState() const { return m_sql_state; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and

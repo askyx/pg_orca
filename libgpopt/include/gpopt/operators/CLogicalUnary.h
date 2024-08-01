@@ -11,10 +11,9 @@
 #ifndef GPOS_CLogicalUnary_H
 #define GPOS_CLogicalUnary_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogical.h"
+#include "gpos/base.h"
 #include "naucrates/base/IDatum.h"
 
 namespace gpopt {

@@ -18,18 +18,16 @@
 #ifndef GPOS_CJoinTypeHint_H
 #define GPOS_CJoinTypeHint_H
 
-#include "gpos/base.h"
-#include "gpos/common/CDynamicPtrArray.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/exception.h"
 #include "gpopt/hints/IHint.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/COperator.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "gpos/base.h"
+#include "gpos/common/CDynamicPtrArray.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
-class CJoinTypeHint : public IHint, public DbgPrintMixin<CJoinTypeHint> {
+class CJoinTypeHint : public IHint {
  public:
   enum JoinType {
     HINT_KEYWORD_NESTLOOP,
@@ -63,8 +61,6 @@ class CJoinTypeHint : public IHint, public DbgPrintMixin<CJoinTypeHint> {
   BOOL SatisfiesOperator(COperator *op);
 
   IOstream &OsPrint(IOstream &os) const;
-
-  void Serialize(CXMLSerializer *xml_serializer);
 };
 
 using JoinTypeHintList = CDynamicPtrArray<CJoinTypeHint, CleanupRelease>;

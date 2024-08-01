@@ -11,19 +11,15 @@
 
 #include "gpopt/base/CReqdProp.h"
 
+#include "gpopt/operators/COperator.h"
 #include "gpos/base.h"
 
-#include "gpopt/operators/COperator.h"
-
 #ifdef GPOS_DEBUG
-#include "gpos/error/CAutoTrace.h"
-
 #include "gpopt/base/COptCtxt.h"
+#include "gpos/error/CAutoTrace.h"
 #endif  // GPOS_DEBUG
 
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CReqdProp);
 
 //---------------------------------------------------------------------------
 //	@function:

@@ -11,16 +11,14 @@
 #ifndef GPOPT_CJoinOrderDPv2_H
 #define GPOPT_CJoinOrderDPv2_H
 
-#include "gpos/base.h"
-#include "gpos/common/CBitSet.h"
-#include "gpos/common/CHashMap.h"
-#include "gpos/common/DbgPrintMixin.h"
-#include "gpos/io/IOstream.h"
-
 #include "gpopt/base/CKHeap.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/xforms/CJoinOrder.h"
+#include "gpos/base.h"
+#include "gpos/common/CBitSet.h"
+#include "gpos/common/CHashMap.h"
+#include "gpos/io/IOstream.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -43,7 +41,7 @@ using namespace gpos;
 //				a result expression, each of these sets will be associated
 //				with a CGroup in MEMO.
 //---------------------------------------------------------------------------
-class CJoinOrderDPv2 : public CJoinOrder, public gpos::DbgPrintMixin<CJoinOrderDPv2> {
+class CJoinOrderDPv2 : public CJoinOrder {
  private:
   // Data structures for DPv2 join enumeration:
   //

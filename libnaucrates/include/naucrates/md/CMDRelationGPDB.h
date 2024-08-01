@@ -14,15 +14,12 @@
 
 #include "gpos/base.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/md/CMDColumn.h"
 #include "naucrates/md/CMDName.h"
 #include "naucrates/md/IMDColumn.h"
 #include "naucrates/md/IMDRelation.h"
 
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -135,7 +132,6 @@ class CMDRelationGPDB : public IMDRelation {
   ~CMDRelationGPDB() override;
 
   // accessors
-  const CWStringDynamic *GetStrRepr() override;
 
   // the metadata id
   IMDId *MDId() const override;
@@ -221,7 +217,6 @@ class CMDRelationGPDB : public IMDRelation {
   IMDId *IndexMDidAt(ULONG pos) const override;
 
   // serialize metadata relation in DXL format given a serializer object
-  void Serialize(gpdxl::CXMLSerializer *) const override;
 
   // number of check constraints
   ULONG CheckConstraintCount() const override;

@@ -19,9 +19,8 @@
 #ifndef GPOPT_CScalarArrayCoerceExpr_H
 #define GPOPT_CScalarArrayCoerceExpr_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CScalarCoerceBase.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

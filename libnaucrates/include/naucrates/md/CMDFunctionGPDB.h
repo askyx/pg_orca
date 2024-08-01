@@ -13,8 +13,7 @@
 #define GPMD_CMDFunctionGPDB_H
 
 #include "gpos/base.h"
-
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 #include "naucrates/md/IMDFunction.h"
 
 namespace gpmd {
@@ -87,7 +86,6 @@ class CMDFunctionGPDB : public IMDFunction {
   ~CMDFunctionGPDB() override;
 
   // accessors
-  const CWStringDynamic *GetStrRepr() override;
 
   // function id
   IMDId *MDId() const override;
@@ -116,7 +114,6 @@ class CMDFunctionGPDB : public IMDFunction {
   BOOL ReturnsSet() const override;
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
 #ifdef GPOS_DEBUG
   // debug print of the type in the provided stream

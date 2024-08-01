@@ -13,8 +13,6 @@
 
 #include "gpos/string/CWStringDynamic.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpdxl;
 
@@ -154,69 +152,6 @@ const CDXLColDescr *CDXLTableDescr::GetColumnDescrAt(ULONG idx) const {
   GPOS_ASSERT(idx < Arity());
 
   return (*m_dxl_column_descr_array)[idx];
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLTableDescr::SerializeMDId
-//
-//	@doc:
-//		Serialize the metadata id in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLTableDescr::SerializeMDId(CXMLSerializer *xml_serializer) const {
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLTableDescr::SerializeToDXL
-//
-//	@doc:
-//		Serialize table descriptor in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLTableDescr::SerializeToDXL(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenTableDescr));
-
-  SerializeMDId(xml_serializer);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTableName), m_mdname->GetMDName());
-
-  if (GPDXL_DEFAULT_USERID != m_execute_as_user_id) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenExecuteAsUser), m_execute_as_user_id);
-  }
-
-  if (GPDXL_INVALID_LOCKMODE != LockMode()) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenLockMode), LockMode());
-  }
-
-  if (GPDXL_ACL_UNDEFINED != GetAclMode()) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAclMode), GetAclMode());
-  }
-
-  if (UNASSIGNED_QUERYID != m_assigned_query_id_for_target_rel) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAssignedQueryIdForTargetRel),
-                                 m_assigned_query_id_for_target_rel);
-  }
-
-  // serialize columns
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-  GPOS_ASSERT(nullptr != m_dxl_column_descr_array);
-
-  const ULONG arity = Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
-    CDXLColDescr *pdxlcd = (*m_dxl_column_descr_array)[ul];
-    pdxlcd->SerializeToDXL(xml_serializer);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenTableDescr));
 }
 
 //---------------------------------------------------------------------------

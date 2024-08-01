@@ -13,7 +13,6 @@
 #define GPMD_CMDTypeInt2GPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CGPDBTypeHelper.h"
 #include "naucrates/md/IMDTypeInt2.h"
 
@@ -39,9 +38,7 @@
 #define GPDB_INT2_AGG_COUNT OID(2147)
 
 // fwd decl
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpnaucrates {
 class IDatumInt2;
@@ -120,7 +117,6 @@ class CMDTypeInt2GPDB : public IMDTypeInt2 {
   IDatumInt2 *CreateInt2Datum(CMemoryPool *mp, SINT value, BOOL is_null) const override;
 
   // accessors
-  const CWStringDynamic *GetStrRepr() override;
 
   // accessor of metadata id
   IMDId *MDId() const override;
@@ -173,7 +169,6 @@ class CMDTypeInt2GPDB : public IMDTypeInt2 {
   IMDId *GetBaseRelMdid() const override { return nullptr; }
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
   // return the null constant for this type
   IDatum *DatumNull() const override { return m_datum_null; }

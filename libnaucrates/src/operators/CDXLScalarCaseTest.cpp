@@ -13,7 +13,6 @@
 
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpopt;
 using namespace gpos;
@@ -77,24 +76,6 @@ const CWStringConst *CDXLScalarCaseTest::GetOpNameStr() const {
 //---------------------------------------------------------------------------
 IMDId *CDXLScalarCaseTest::MdidType() const {
   return m_mdid_type;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarCaseTest::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarCaseTest::SerializeToDXL(CXMLSerializer *xml_serializer,
-                                        const CDXLNode *  // dxlnode
-) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------

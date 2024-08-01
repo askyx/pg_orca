@@ -11,11 +11,10 @@
 
 #include "gpopt/base/CColRefSetIter.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CAutoRef.h"
-
 #include "gpopt/base/CAutoOptCtxt.h"
 #include "gpopt/base/CColumnFactory.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoRef.h"
 
 using namespace gpopt;
 

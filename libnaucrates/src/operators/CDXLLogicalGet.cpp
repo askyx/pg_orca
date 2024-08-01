@@ -13,7 +13,6 @@
 #include "naucrates/dxl/operators/CDXLLogicalGet.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
@@ -76,29 +75,6 @@ const CWStringConst *CDXLLogicalGet::GetOpNameStr() const {
 //---------------------------------------------------------------------------
 CDXLTableDescr *CDXLLogicalGet::GetDXLTableDescr() const {
   return m_dxl_table_descr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalGet::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalGet::SerializeToDXL(CXMLSerializer *xml_serializer,
-                                    const CDXLNode *  // dxlnode
-) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSecurityQuals), m_has_security_quals);
-
-  // serialize table descriptor
-  m_dxl_table_descr->SerializeToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------

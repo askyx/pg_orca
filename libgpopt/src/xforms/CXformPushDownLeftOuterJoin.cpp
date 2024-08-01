@@ -11,8 +11,6 @@
 
 #include "gpopt/xforms/CXformPushDownLeftOuterJoin.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CLogicalLeftOuterJoin.h"
 #include "gpopt/operators/CLogicalNAryJoin.h"
@@ -21,6 +19,7 @@
 #include "gpopt/operators/CPatternMultiLeaf.h"
 #include "gpopt/operators/CPatternTree.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

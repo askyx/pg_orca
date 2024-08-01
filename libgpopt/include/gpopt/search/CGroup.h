@@ -11,17 +11,16 @@
 #ifndef GPOPT_CGroup_H
 #define GPOPT_CGroup_H
 
-#include "gpos/base.h"
-#include "gpos/common/CDynamicPtrArray.h"
-#include "gpos/common/CSyncHashtable.h"
-#include "gpos/common/CSyncList.h"
-
 #include "gpopt/base/CCostContext.h"
 #include "gpopt/base/COptimizationContext.h"
 #include "gpopt/base/CReqdPropPlan.h"
 #include "gpopt/operators/CLogical.h"
 #include "gpopt/search/CJobQueue.h"
 #include "gpopt/search/CTreeMap.h"
+#include "gpos/base.h"
+#include "gpos/common/CDynamicPtrArray.h"
+#include "gpos/common/CSyncHashtable.h"
+#include "gpos/common/CSyncList.h"
 
 #define GPOPT_INVALID_GROUP_ID gpos::ulong_max
 
@@ -65,7 +64,7 @@ enum EOptimizationLevel {
 //		Group of equivalent expressions in the Memo structure
 //
 //---------------------------------------------------------------------------
-class CGroup : public CRefCount, public DbgPrintMixin<CGroup> {
+class CGroup : public CRefCount {
   friend class CGroupProxy;
 
  public:

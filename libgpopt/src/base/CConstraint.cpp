@@ -11,9 +11,6 @@
 
 #include "gpopt/base/CConstraint.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CAutoRef.h"
-
 #include "gpopt/base/CCastUtils.h"
 #include "gpopt/base/CColConstraintsArrayMapper.h"
 #include "gpopt/base/CColConstraintsHashMapper.h"
@@ -31,12 +28,12 @@
 #include "gpopt/operators/CScalarCmp.h"
 #include "gpopt/operators/CScalarIdent.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoRef.h"
 #include "naucrates/md/IMDScalarOp.h"
 #include "naucrates/md/IMDType.h"
 
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CConstraint);
 
 // initialize constant true
 BOOL CConstraint::m_fTrue(true);

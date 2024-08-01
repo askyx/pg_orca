@@ -11,9 +11,8 @@
 #ifndef GPOPT_CScalarIsDistinctFrom_H
 #define GPOPT_CScalarIsDistinctFrom_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CScalarCmp.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

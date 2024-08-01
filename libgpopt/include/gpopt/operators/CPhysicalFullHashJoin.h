@@ -16,9 +16,8 @@
 #ifndef GPOPT_CPhysicalFullHashJoin_H
 #define GPOPT_CPhysicalFullHashJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalHashJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
@@ -46,12 +45,6 @@ class CPhysicalFullHashJoin : public CPhysicalHashJoin {
 
   // return a string for operator name
   const CHAR *SzId() const override { return "CPhysicalFullHashJoin"; }
-
-  // compute required distribution of the n-th child
-  CEnfdDistribution *Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput, ULONG child_index,
-                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // conversion function
   static CPhysicalFullHashJoin *PopConvert(COperator *pop) {

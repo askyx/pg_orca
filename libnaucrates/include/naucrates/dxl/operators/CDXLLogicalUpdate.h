@@ -13,7 +13,6 @@
 #define GPDXL_CDXLLogicalUpdate_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
 namespace gpdxl {
@@ -87,7 +86,6 @@ class CDXLLogicalUpdate : public CDXLLogical {
 #endif  // GPOS_DEBUG
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLLogicalUpdate *Cast(CDXLOperator *dxl_op) {

@@ -13,7 +13,6 @@
 #define GPMD_CMDTypeBoolGPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/base/IDatumBool.h"
 #include "naucrates/md/CGPDBTypeHelper.h"
 #include "naucrates/md/IMDTypeBool.h"
@@ -38,9 +37,7 @@
 #define GPDB_BOOL_AGG_COUNT OID(2147)
 
 // fwd decl
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -112,7 +109,6 @@ class CMDTypeBoolGPDB : public IMDTypeBool {
   ~CMDTypeBoolGPDB() override;
 
   // accessors
-  const CWStringDynamic *GetStrRepr() override;
 
   // type id
   IMDId *MDId() const override;
@@ -173,7 +169,6 @@ class CMDTypeBoolGPDB : public IMDTypeBool {
   IDatum *GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const override;
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
   // transformation function to generate datum from CDXLScalarConstValue
   IDatum *GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_op) const override;

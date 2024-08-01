@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformSelect2BitmapBoolOp_H
 #define GPOPT_CXformSelect2BitmapBoolOp_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

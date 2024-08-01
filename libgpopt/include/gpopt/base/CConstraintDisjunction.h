@@ -12,9 +12,8 @@
 #ifndef GPOPT_CConstraintDisjunction_H
 #define GPOPT_CConstraintDisjunction_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CConstraint.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

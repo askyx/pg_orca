@@ -11,8 +11,6 @@
 
 #include "gpopt/base/CCastUtils.h"
 
-#include "gpos/memory/CAutoMemoryPool.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/mdcache/CMDAccessorUtils.h"
@@ -20,6 +18,7 @@
 #include "gpopt/operators/CScalarArrayCoerceExpr.h"
 #include "gpopt/operators/CScalarCast.h"
 #include "gpopt/operators/CScalarIdent.h"
+#include "gpos/memory/CAutoMemoryPool.h"
 #include "naucrates/md/CMDArrayCoerceCastGPDB.h"
 #include "naucrates/md/IMDCast.h"
 #include "naucrates/md/IMDIndex.h"

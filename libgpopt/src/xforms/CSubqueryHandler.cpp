@@ -25,8 +25,6 @@
 
 #include "gpopt/xforms/CSubqueryHandler.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/exception.h"
@@ -53,6 +51,7 @@
 #include "gpopt/operators/CScalarSubqueryAny.h"
 #include "gpopt/operators/CScalarSubqueryQuantified.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDScalarOp.h"
 #include "naucrates/md/IMDTypeBool.h"
 #include "naucrates/md/IMDTypeInt8.h"
@@ -510,7 +509,7 @@ BOOL CSubqueryHandler::FGenerateCorrelatedApplyForScalarSubquery(CMemoryPool *mp
 //| 			R		=			==>				INNER-APPLY
 //= 				/	|
 ///		|		/	| 				a	GrpBy
-///R		GrpBy
+/// R		GrpBy
 // a	 x 					/		|
 // /	| 					S	x:=sum(b) S	x:=sum(b)
 //
@@ -1206,7 +1205,7 @@ BOOL CSubqueryHandler::FCreateCorrelatedApplyForExistOrQuant(CMemoryPool *mp, CE
 //
 //			SELECT									SELECT
 //			/		|								/ |
-//R =
+// R =
 //==>		LEFT-SEMI-APPLY		true 				/	|
 ///		| 				R.a	ANY R		SELECT 					/
 // |						/	 | 					S	S.b S	  =
@@ -1566,7 +1565,7 @@ CExpression *CSubqueryHandler::AddOrReplaceLimitOne(CMemoryPool *mp, CExpression
 //
 //				SELECT										SELECT
 //				/		| /			| 				R
-//EXISTS		==> LEFT-SEMI-APPLY		true 							|
+// EXISTS		==> LEFT-SEMI-APPLY		true 							|
 // /		| 							S R		S
 //
 //

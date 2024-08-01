@@ -11,15 +11,12 @@
 
 #include "gpopt/operators/CPhysicalFullMergeJoin.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCastUtils.h"
-#include "gpopt/base/CDistributionSpecHashed.h"
-#include "gpopt/base/CDistributionSpecNonSingleton.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/operators/CScalarIdent.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -47,62 +44,6 @@ CPhysicalFullMergeJoin::CPhysicalFullMergeJoin(CMemoryPool *mp, CExpressionArray
 CPhysicalFullMergeJoin::~CPhysicalFullMergeJoin() {
   m_outer_merge_clauses->Release();
   m_inner_merge_clauses->Release();
-}
-
-CDistributionSpec *CPhysicalFullMergeJoin::PdsRequired(CMemoryPool *mp GPOS_UNUSED,
-                                                       CExpressionHandle &exprhdl GPOS_UNUSED,
-                                                       CDistributionSpec *pdsRequired GPOS_UNUSED,
-                                                       ULONG child_index GPOS_UNUSED,
-                                                       CDrvdPropArray *,  // pdrgpdpCtxt,
-                                                       ULONG ulOptReq GPOS_UNUSED) const {
-  GPOS_RAISE(CException::ExmaInvalid, CException::ExmiInvalid,
-             GPOS_WSZ_LIT("PdsRequired should not be called for CPhysicalFullMergeJoin"));
-  return nullptr;
-}
-
-CEnfdDistribution *CPhysicalFullMergeJoin::Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput,
-                                               ULONG child_index, CDrvdPropArray *pdrgpdpCtxt GPOS_UNUSED,
-                                               ULONG ulOptReq) {
-  GPOS_ASSERT(2 > child_index);
-
-  CDistributionSpec *const pdsRequired = prppInput->Ped()->PdsRequired();
-
-  // if expression has to execute on a single host then we need a gather
-  if (exprhdl.NeedsSingletonExecution() || exprhdl.HasOuterRefs()) {
-    return GPOS_NEW(mp)
-        CEnfdDistribution(PdsRequireSingleton(mp, exprhdl, pdsRequired, child_index), CEnfdDistribution::EdmExact);
-  }
-
-  BOOL nulls_collocated = true;
-  if (CPredicateUtils::ExprContainsOnlyStrictComparisons(
-          mp, exprhdl.PexprScalarExactChild(2, true /*error_on_null_return*/))) {
-    // There is no need to require NULL rows to be collocated if the merge clauses
-    // only contain STRICT operators. This is because any NULL row will automatically
-    // not match any row on the other side.
-    nulls_collocated = false;
-  }
-
-  CExpressionArray *clauses = (child_index == 0) ? m_outer_merge_clauses : m_inner_merge_clauses;
-
-  // TODO: Handle matching/ equivalent distribution spec (e.g using pdsRequired)
-  ULONG num_hash_reqs = std::min((ULONG)GPOPT_MAX_HASH_DIST_REQUESTS, clauses->Size());
-  if (ulOptReq < num_hash_reqs) {
-    CExpressionArray *pdrgpexprCurrent = GPOS_NEW(mp) CExpressionArray(mp);
-    CExpression *expr = (*clauses)[ulOptReq];
-    expr->AddRef();
-    pdrgpexprCurrent->Append(expr);
-
-    CDistributionSpecHashed *pds = GPOS_NEW(mp) CDistributionSpecHashed(pdrgpexprCurrent, nulls_collocated);
-    return GPOS_NEW(mp) CEnfdDistribution(pds, CEnfdDistribution::EdmExact);
-  } else if (ulOptReq == num_hash_reqs) {
-    clauses->AddRef();
-    CDistributionSpecHashed *pds = GPOS_NEW(mp) CDistributionSpecHashed(clauses, nulls_collocated);
-    return GPOS_NEW(mp) CEnfdDistribution(pds, CEnfdDistribution::EdmExact);
-  } else {
-    GPOS_ASSERT(ulOptReq == (num_hash_reqs + 1));
-    return GPOS_NEW(mp)
-        CEnfdDistribution(PdsRequireSingleton(mp, exprhdl, pdsRequired, child_index), CEnfdDistribution::EdmExact);
-  }
 }
 
 COrderSpec *CPhysicalFullMergeJoin::PosRequired(CMemoryPool *mp,
@@ -183,47 +124,4 @@ CEnfdProp::EPropEnforcingType CPhysicalFullMergeJoin::EpetOrder(CExpressionHandl
   // the sense that nulls maybe interleaved;
   // any order requirements have to be enforced on top
   return CEnfdProp::EpetRequired;
-}
-
-CEnfdDistribution::EDistributionMatching CPhysicalFullMergeJoin::Edm(CReqdPropPlan *,   // prppInput
-                                                                     ULONG,             // child_index,
-                                                                     CDrvdPropArray *,  // pdrgpdpCtxt,
-                                                                     ULONG              // ulOptReq
-) {
-  return CEnfdDistribution::EdmExact;
-}
-
-CDistributionSpec *CPhysicalFullMergeJoin::PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  CDistributionSpec *pdsOuter = exprhdl.Pdpplan(0 /*child_index*/)->Pds();
-  CDistributionSpec *pdsInner = exprhdl.Pdpplan(1 /*child_index*/)->Pds();
-
-  if (CDistributionSpec::EdtHashed == pdsOuter->Edt() && CDistributionSpec::EdtHashed == pdsInner->Edt()) {
-    // Merge join requires either both sides to be hashed ...
-    CDistributionSpecHashed *pdshashedOuter = CDistributionSpecHashed::PdsConvert(pdsOuter);
-    CDistributionSpecHashed *pdshashedInner = CDistributionSpecHashed::PdsConvert(pdsInner);
-
-    // Create a hash spec similar to the outer spec, but with fNullsColocated = false because
-    // nulls appear as the results get computed, so we cannot verify that they will be colocated.
-    CDistributionSpecHashed *pdsDeriveOuter = pdshashedOuter->Copy(mp, false /* fNullsCollocated*/);
-
-    // NB: Logic is similar to CPhysicalInnerHashJoin::PdsDeriveFromHashedChildren()
-    if (pdshashedOuter->IsCoveredBy(m_outer_merge_clauses) && pdshashedInner->IsCoveredBy(m_inner_merge_clauses)) {
-      CDistributionSpecHashed *pdsDeriveInner = pdshashedInner->Copy(mp, false /* fNullsCollocated*/);
-      CDistributionSpecHashed *pdsCombined = pdsDeriveOuter->Combine(mp, pdsDeriveInner);
-      pdsDeriveOuter->Release();
-      pdsDeriveInner->Release();
-      return pdsCombined;
-    } else {
-      return pdsDeriveOuter;
-    }
-  }
-
-  // ... or both sides to be singleton/universal
-  GPOS_ASSERT(CDistributionSpec::EdtSingleton == pdsOuter->Edt() ||
-              CDistributionSpec::EdtStrictSingleton == pdsOuter->Edt() ||
-              CDistributionSpec::EdtUniversal == pdsOuter->Edt());
-
-  // otherwise, pass through outer distribution
-  pdsOuter->AddRef();
-  return pdsOuter;
 }

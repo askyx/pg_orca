@@ -14,22 +14,18 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "nodes/parsenodes.h"
-#include "nodes/plannodes.h"
-#include "nodes/primnodes.h"
-#include "utils/date.h"
-#include "utils/datum.h"
-#include "utils/guc.h"
-#include "utils/uuid.h"
+#include <nodes/parsenodes.h>
+#include <nodes/plannodes.h>
+#include <nodes/primnodes.h>
+#include <utils/date.h>
+#include <utils/datum.h>
+#include <utils/guc.h>
+#include <utils/uuid.h>
 }
 
 #include <vector>
-
-#include "gpos/base.h"
-#include "gpos/common/CAutoP.h"
-#include "gpos/string/CWStringDynamic.h"
 
 #include "gpopt/base/CUtils.h"
 #include "gpopt/gpdbwrappers.h"
@@ -38,6 +34,9 @@ extern "C" {
 #include "gpopt/translate/CTranslatorQueryToDXL.h"
 #include "gpopt/translate/CTranslatorScalarToDXL.h"
 #include "gpopt/translate/CTranslatorUtils.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoP.h"
+#include "gpos/string/CWStringDynamic.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLDatumBool.h"
 #include "naucrates/dxl/operators/CDXLDatumInt2.h"
@@ -811,7 +810,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateMinMaxExprToDXL(const Expr *expr,
 void CTranslatorScalarToDXL::TranslateScalarChildren(CDXLNode *dxlnode, List *list,
                                                      const CMappingVarColId *var_colid_mapping) {
   ListCell *lc = nullptr;
-  ForEach(lc, list) {
+  foreach (lc, list) {
     Expr *child_expr = (Expr *)lfirst(lc);
     CDXLNode *child_node = TranslateScalarToDXL(child_expr, var_colid_mapping);
     GPOS_ASSERT(nullptr != child_node);
@@ -870,7 +869,7 @@ CDXLNode *CTranslatorScalarToDXL::CreateScalarSwitchFromCaseExpr(const CaseExpr 
 
   // translate the cases
   ListCell *lc = nullptr;
-  ForEach(lc, case_expr->args) {
+  foreach (lc, case_expr->args) {
     CaseWhen *expr = (CaseWhen *)lfirst(lc);
 
     CDXLScalarSwitchCase *swtich_case = GPOS_NEW(m_mp) CDXLScalarSwitchCase(m_mp);
@@ -1140,7 +1139,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateFuncExprToDXL(const Expr *expr, const
   const IMDFunction *md_func = m_md_accessor->RetrieveFunc(mdid_func);
   if (IMDFunction::EfsVolatile == md_func->GetFuncStability()) {
     ListCell *lc = nullptr;
-    ForEach(lc, func_expr->args) {
+    foreach (lc, func_expr->args) {
       Node *arg_node = (Node *)lfirst(lc);
       if (CTranslatorUtils::HasSubquery(arg_node)) {
         GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiQuery2DXLUnsupportedFeature,
@@ -1205,7 +1204,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateAggrefToDXL(const Expr *expr, const C
   // translate argtypes
   ULongPtrArray *aggargtypes_values = GPOS_NEW(m_mp) ULongPtrArray(m_mp);
   ListCell *lc;
-  ForEach(lc, aggref->aggargtypes) {
+  foreach (lc, aggref->aggargtypes) {
     ULONG *poid = GPOS_NEW(m_mp) ULONG(lfirst_oid(lc));
 
     aggargtypes_values->Append(poid);
@@ -1226,8 +1225,9 @@ CDXLNode *CTranslatorScalarToDXL::TranslateAggrefToDXL(const Expr *expr, const C
   CDXLScalarValuesList *args_values = GPOS_NEW(m_mp) CDXLScalarValuesList(m_mp);
   CDXLNode *args_value_list_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, args_values);
   int i = 0;
-  ForEachWithCount(lc, aggref->args, i) {
+  foreach (lc, aggref->args) {
     TargetEntry *tle = (TargetEntry *)lfirst(lc);
+    i++;
     CDXLNode *child_node = TranslateScalarToDXL(tle->expr, var_colid_mapping);
     GPOS_ASSERT(nullptr != child_node);
     args_value_list_dxlnode->AddChild(child_node);
@@ -1245,7 +1245,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateAggrefToDXL(const Expr *expr, const C
   // translate direct args
   CDXLScalarValuesList *dargs_values = GPOS_NEW(m_mp) CDXLScalarValuesList(m_mp);
   CDXLNode *dargs_value_list_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, dargs_values);
-  ForEach(lc, aggref->aggdirectargs) {
+  foreach (lc, aggref->aggdirectargs) {
     Expr *expr = (Expr *)lfirst(lc);
     CDXLNode *child_node = TranslateScalarToDXL(expr, var_colid_mapping);
     GPOS_ASSERT(nullptr != child_node);
@@ -1256,7 +1256,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateAggrefToDXL(const Expr *expr, const C
   // translate sort group clause
   CDXLScalarValuesList *sgc_values = GPOS_NEW(m_mp) CDXLScalarValuesList(m_mp);
   CDXLNode *sgc_value_list_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, sgc_values);
-  ForEach(lc, aggref->aggorder) {
+  foreach (lc, aggref->aggorder) {
     Expr *expr = (Expr *)gpdb::CopyObject(lfirst(lc));
     // Set SortGroupClause->tleSortGroupRef to corresponding index into
     // targetlist. This avoids needing a separate structure to store this
@@ -1272,7 +1272,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateAggrefToDXL(const Expr *expr, const C
   // translate distinct
   CDXLScalarValuesList *aggdistinct_values = GPOS_NEW(m_mp) CDXLScalarValuesList(m_mp);
   CDXLNode *aggdistinct_value_list_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, aggdistinct_values);
-  ForEach(lc, aggref->aggdistinct) {
+  foreach (lc, aggref->aggdistinct) {
     Expr *expr = (Expr *)gpdb::CopyObject(lfirst(lc));
     // Set SortGroupClause->tleSortGroupRef to corresponding index into
     // targetlist. This avoids needing a separate structure to store this
@@ -1726,13 +1726,13 @@ CDXLNode *CTranslatorScalarToDXL::TranslateArrayRefToDXL(const Expr *expr, const
   // to indicate omitted array boundaries. Need to add support for them, but until then,
   // bail out.
   ListCell *lc;
-  ForEach(lc, parrayref->reflowerindexpr) {
+  foreach (lc, parrayref->reflowerindexpr) {
     Expr *child_expr = (Expr *)lfirst(lc);
     if (child_expr == nullptr) {
       GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiQuery2DXLUnsupportedFeature, GPOS_WSZ_LIT("Omitted array bound"));
     }
   }
-  ForEach(lc, parrayref->refupperindexpr) {
+  foreach (lc, parrayref->refupperindexpr) {
     Expr *child_expr = (Expr *)lfirst(lc);
     if (child_expr == nullptr) {
       GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiQuery2DXLUnsupportedFeature, GPOS_WSZ_LIT("Omitted array bound"));

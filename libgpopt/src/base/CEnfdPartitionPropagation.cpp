@@ -11,11 +11,10 @@
 
 #include "gpopt/base/CEnfdPartitionPropagation.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CReqdPropPlan.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CPhysical.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

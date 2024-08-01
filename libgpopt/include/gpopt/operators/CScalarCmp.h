@@ -11,10 +11,9 @@
 #ifndef GPOPT_CScalarCmp_H
 #define GPOPT_CScalarCmp_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDType.h"
 

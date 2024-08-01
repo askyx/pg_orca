@@ -11,10 +11,8 @@
 
 #include "gpopt/operators/CPhysicalLeftSemiHashJoin.h"
 
-#include "gpos/base.h"
-
-#include "gpopt/base/CDistributionSpecHashed.h"
 #include "gpopt/base/CUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

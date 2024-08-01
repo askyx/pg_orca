@@ -3,11 +3,10 @@
 
 #include "gpopt/base/CDatumSortedSet.h"
 
-#include "gpos/common/CAutoRef.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/COperator.h"
 #include "gpopt/operators/CScalarConst.h"
+#include "gpos/common/CAutoRef.h"
 
 using namespace gpopt;
 

@@ -17,11 +17,10 @@
 #ifndef GPDXL_CTranslatorDXLToScalar_H
 #define GPDXL_CTranslatorDXLToScalar_H
 
-#include "gpos/base.h"
-
 #include "gpopt/translate/CContextDXLToPlStmt.h"
 #include "gpopt/translate/CMappingColIdVar.h"
 #include "gpopt/translate/CMappingElementColIdParamId.h"
+#include "gpos/base.h"
 #include "naucrates/dxl/operators/CDXLDatum.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLScalarArrayRefIndexList.h"
@@ -76,9 +75,6 @@ class CTranslatorDXLToScalar {
 
   // indicates whether a sublink was encountered during translation of the scalar subtree
   BOOL m_has_subqueries;
-
-  // number of segments
-  ULONG m_num_of_segments;
 
   // translate a CDXLScalarArrayComp into a GPDB ScalarArrayOpExpr
   Expr *TranslateDXLScalarArrayCompToScalar(const CDXLNode *scalar_array_cmp_node, CMappingColIdVar *colid_var);
@@ -189,7 +185,7 @@ class CTranslatorDXLToScalar {
   };
 
   // ctor
-  CTranslatorDXLToScalar(CMemoryPool *mp, CMDAccessor *md_accessor, ULONG num_segments);
+  CTranslatorDXLToScalar(CMemoryPool *mp, CMDAccessor *md_accessor);
 
   // translate DXL scalar operator node into an Expr expression
   // This function is called during the translation of DXL->Query or DXL->Query

@@ -15,18 +15,12 @@
 
 #include "naucrates/dxl/xml/dxltokens.h"
 
-#include "naucrates/dxl/xml/CDXLMemoryManager.h"
-
 using namespace gpdxl;
 
 // static member initialization
 CDXLTokens::SStrMapElem *CDXLTokens::m_pstrmap = nullptr;
 
-CDXLTokens::SXMLStrMapElem *CDXLTokens::m_pxmlszmap = nullptr;
-
 CMemoryPool *CDXLTokens::m_mp = nullptr;
-
-CDXLMemoryManager *CDXLTokens::m_dxl_memory_manager = nullptr;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -38,12 +32,9 @@ CDXLMemoryManager *CDXLTokens::m_dxl_memory_manager = nullptr;
 //---------------------------------------------------------------------------
 void CDXLTokens::Init(CMemoryPool *mp) {
   GPOS_ASSERT(nullptr != mp);
-  GPOS_ASSERT(nullptr == m_dxl_memory_manager);
   GPOS_ASSERT(nullptr == m_mp);
 
   m_mp = mp;
-
-  m_dxl_memory_manager = GPOS_NEW(m_mp) CDXLMemoryManager(m_mp);
 
   SWszMapElem rgStrMap[] = {
       {EdxltokenDXLMessage, GPOS_WSZ_LIT("DXLMessage")},
@@ -113,11 +104,6 @@ void CDXLTokens::Init(CMemoryPool *mp) {
       {EdxltokenPhysicalNLJoin, GPOS_WSZ_LIT("NestedLoopJoin")},
       {EdxltokenPhysicalNLJoinIndex, GPOS_WSZ_LIT("IndexNestedLoopJoin")},
       {EdxltokenPhysicalMergeJoin, GPOS_WSZ_LIT("MergeJoin")},
-      {EdxltokenPhysicalGatherMotion, GPOS_WSZ_LIT("GatherMotion")},
-      {EdxltokenPhysicalBroadcastMotion, GPOS_WSZ_LIT("BroadcastMotion")},
-      {EdxltokenPhysicalRedistributeMotion, GPOS_WSZ_LIT("RedistributeMotion")},
-      {EdxltokenPhysicalRoutedDistributeMotion, GPOS_WSZ_LIT("RoutedDistributeMotion")},
-      {EdxltokenPhysicalRandomMotion, GPOS_WSZ_LIT("RandomMotion")},
       {EdxltokenPhysicalLimit, GPOS_WSZ_LIT("Limit")},
       {EdxltokenPhysicalSort, GPOS_WSZ_LIT("Sort")},
       {EdxltokenPhysicalAggregate, GPOS_WSZ_LIT("Aggregate")},
@@ -770,13 +756,11 @@ void CDXLTokens::Init(CMemoryPool *mp) {
   };
 
   m_pstrmap = GPOS_NEW_ARRAY(m_mp, SStrMapElem, EdxltokenSentinel);
-  m_pxmlszmap = GPOS_NEW_ARRAY(m_mp, SXMLStrMapElem, EdxltokenSentinel);
 
   for (ULONG ul = 0; ul < GPOS_ARRAY_SIZE(rgStrMap); ul++) {
     SWszMapElem mapelem = rgStrMap[ul];
 
     m_pstrmap[mapelem.m_edxlt].m_pstr = GPOS_NEW(m_mp) CWStringConst(m_mp, mapelem.m_wsz);
-    m_pxmlszmap[mapelem.m_edxlt].m_xmlsz = XmlstrFromWsz(mapelem.m_wsz);
   }
 }
 
@@ -790,8 +774,6 @@ void CDXLTokens::Init(CMemoryPool *mp) {
 //---------------------------------------------------------------------------
 void CDXLTokens::Terminate() {
   GPOS_DELETE_ARRAY(m_pstrmap);
-  GPOS_DELETE_ARRAY(m_pxmlszmap);
-  GPOS_DELETE(m_dxl_memory_manager);
 }
 
 //---------------------------------------------------------------------------
@@ -810,43 +792,3 @@ const CWStringConst *CDXLTokens::GetDXLTokenStr(Edxltoken token_type) {
 
   return str;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLTokens::XmlstrToken
-//
-//	@doc:
-//		Returns the token with the given token id in XMLCh* format
-//
-//---------------------------------------------------------------------------
-const XMLCh *CDXLTokens::XmlstrToken(Edxltoken token_type) {
-  GPOS_ASSERT(nullptr != m_pxmlszmap && "Token map not initialized yet");
-
-  const XMLCh *xml_val = m_pxmlszmap[token_type].m_xmlsz;
-  GPOS_ASSERT(nullptr != xml_val);
-
-  return xml_val;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLTokens::XmlstrFromWsz
-//
-//	@doc:
-//		Creates an XMLCh* string from the specified wide character array in the
-//		provided memory pool.
-//
-//---------------------------------------------------------------------------
-XMLCh *CDXLTokens::XmlstrFromWsz(const WCHAR *wsz) {
-  ULONG length = GPOS_WSZ_LENGTH(wsz);
-  CHAR *sz = GPOS_NEW_ARRAY(m_mp, CHAR, 1 + length);
-
-  LINT iLen GPOS_ASSERTS_ONLY = clib::Wcstombs(sz, const_cast<WCHAR *>(wsz), 1 + length);
-
-  GPOS_ASSERT(0 <= iLen);
-  XMLCh *pxmlsz = XMLString::transcode(sz, m_dxl_memory_manager);
-  GPOS_DELETE_ARRAY(sz);
-  return pxmlsz;
-}
-
-// EOF

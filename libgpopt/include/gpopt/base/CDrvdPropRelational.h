@@ -11,9 +11,6 @@
 #ifndef GPOPT_CDrvdPropRelational_H
 #define GPOPT_CDrvdPropRelational_H
 
-#include "gpos/base.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/base/CFunctionProp.h"
@@ -21,6 +18,8 @@
 #include "gpopt/base/CMaxCard.h"
 #include "gpopt/base/CPropConstraint.h"
 #include "gpopt/metadata/CTableDescriptor.h"
+#include "gpos/base.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 using namespace gpos;

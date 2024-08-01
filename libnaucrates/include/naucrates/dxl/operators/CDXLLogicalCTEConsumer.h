@@ -12,7 +12,6 @@
 #define GPDXL_CDXLLogicalCTEConsumer_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
 namespace gpdxl {
@@ -54,7 +53,6 @@ class CDXLLogicalCTEConsumer : public CDXLLogical {
   ULongPtrArray *GetOutputColIdsArray() const { return m_output_colids_array; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // check if given column is defined by operator
   BOOL IsColDefined(ULONG colid) const override;

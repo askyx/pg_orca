@@ -11,15 +11,12 @@
 
 #include "naucrates/statistics/CPoint.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/mdcache/CMDAccessor.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/CStatistics.h"
 
 using namespace gpnaucrates;
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CPoint);
 
 //---------------------------------------------------------------------------
 //	@function:

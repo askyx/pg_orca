@@ -13,7 +13,6 @@
 #define GPMD_CSystemId_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDId.h"
 
 #define GPDXL_SYSID_LENGTH 10

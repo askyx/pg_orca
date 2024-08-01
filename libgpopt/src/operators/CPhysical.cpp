@@ -13,21 +13,14 @@
 
 #include <cwchar>
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCTEMap.h"
 #include "gpopt/base/CCTEReq.h"
-#include "gpopt/base/CDistributionSpecAny.h"
-#include "gpopt/base/CDistributionSpecHashed.h"
-#include "gpopt/base/CDistributionSpecRandom.h"
-#include "gpopt/base/CDistributionSpecReplicated.h"
-#include "gpopt/base/CDistributionSpecSingleton.h"
-#include "gpopt/base/CDistributionSpecUniversal.h"
 #include "gpopt/base/CDrvdPropPlan.h"
 #include "gpopt/base/CReqdPropPlan.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CScalarIdent.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -215,87 +208,6 @@ BOOL CPhysical::CReqdColsRequest::Equals(const CReqdColsRequest *prcrFst, const 
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysical::PdsCompute
-//
-//	@doc:
-//		Compute the distribution spec given the table descriptor
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysical::PdsCompute(CMemoryPool *mp, const CTableDescriptor *ptabdesc, CColRefArray *pdrgpcrOutput,
-                                         CColRef *pcr_segment_id) {
-  CDistributionSpec *pds = nullptr;
-
-  switch (ptabdesc->GetRelDistribution()) {
-    case IMDRelation::EreldistrCoordinatorOnly:
-      pds = GPOS_NEW(mp) CDistributionSpecSingleton(CDistributionSpecSingleton::EstCoordinator);
-      break;
-
-    case IMDRelation::EreldistrUniversal:
-      pds = GPOS_NEW(mp) CDistributionSpecUniversal();
-      break;
-
-    case IMDRelation::EreldistrRandom: {
-      // We calculate gp_segment_id directly through ptabdesc by
-      // finding the column Attno that matches the string in question
-      if (pcr_segment_id == nullptr) {
-        for (ULONG i = 0; i < pdrgpcrOutput->Size(); i++) {
-          if (wcscmp((*pdrgpcrOutput)[i]->Name().Pstr()->GetBuffer(), L"gp_segment_id") == 0) {
-            pcr_segment_id = (*pdrgpcrOutput)[i];
-          }
-        }
-      }
-
-      pds = GPOS_NEW(mp) CDistributionSpecRandom(pcr_segment_id);
-      break;
-    }
-
-    case IMDRelation::EreldistrHash: {
-      const CColumnDescriptorArray *pdrgpcoldesc = ptabdesc->PdrgpcoldescDist();
-      CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
-
-      const ULONG size = pdrgpcoldesc->Size();
-      for (ULONG ul = 0; ul < size; ul++) {
-        CColumnDescriptor *pcoldesc = (*pdrgpcoldesc)[ul];
-        ULONG ulPos = gpopt::CTableDescriptor::UlPos(pcoldesc, ptabdesc->Pdrgpcoldesc());
-
-        GPOS_ASSERT(ulPos < ptabdesc->Pdrgpcoldesc()->Size() && "Column not found");
-
-        CColRef *colref = (*pdrgpcrOutput)[ulPos];
-        colref_array->Append(colref);
-      }
-
-      CExpressionArray *pdrgpexpr = CUtils::PdrgpexprScalarIdents(mp, colref_array);
-      colref_array->Release();
-
-      IMdIdArray *opfamilies = nullptr;
-      if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-        opfamilies = GPOS_NEW(mp) IMdIdArray(mp);
-        for (ULONG ul = 0; ul < size; ul++) {
-          IMDId *opfamily = (*ptabdesc->DistrOpfamilies())[ul];
-          GPOS_ASSERT(nullptr != opfamily && opfamily->IsValid());
-          opfamily->AddRef();
-          opfamilies->Append(opfamily);
-        }
-        GPOS_ASSERT(opfamilies->Size() == pdrgpexpr->Size());
-      }
-
-      pds = GPOS_NEW(mp) CDistributionSpecHashed(pdrgpexpr, true /*fNullsColocated*/, opfamilies);
-      break;
-    }
-
-    case IMDRelation::EreldistrReplicated:
-      return GPOS_NEW(mp) CDistributionSpecReplicated(CDistributionSpec::EdtStrictReplicated);
-      break;
-
-    default:
-      GPOS_ASSERT(!"Invalid distribution policy");
-  }
-
-  return pds;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysical::PosPassThru
 //
 //	@doc:
@@ -310,82 +222,6 @@ COrderSpec *CPhysical::PosPassThru(CMemoryPool *,        // mp
   posRequired->AddRef();
 
   return posRequired;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysical::PdsPassThru
-//
-//	@doc:
-//		Helper for a simple case of computing child's required distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysical::PdsPassThru(CMemoryPool *,        // mp
-                                          CExpressionHandle &,  // exprhdl
-                                          CDistributionSpec *pdsRequired,
-                                          ULONG  // child_index
-) {
-  pdsRequired->AddRef();
-
-  return pdsRequired;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysical::PdsSingletonExecutionOrReplicated
-//
-//	@doc:
-//		Helper for computing child's required distribution - Singleton or Replicated
-//		1. If the expression must execute on single host - require Singleton
-//		2. If the expression has outer references        - require Singleton or Replicated
-//		                                                   based on the optimization request
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysical::PdsRequireSingletonOrReplicated(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                              CDistributionSpec *pdsRequired, ULONG child_index,
-                                                              ULONG ulOptReq) {
-  GPOS_ASSERT(3 > ulOptReq);
-
-  // if expression has to execute on a single host then we need a gather motion
-  if (exprhdl.NeedsSingletonExecution()) {
-    return PdsRequireSingleton(mp, exprhdl, pdsRequired, child_index);
-  }
-
-  // if there are outer references, then we need a broadcast (or a gather)
-  if (exprhdl.HasOuterRefs()) {
-    if (0 == ulOptReq) {
-      return GPOS_NEW(mp) CDistributionSpecReplicated(CDistributionSpec::EdtReplicated);
-    }
-
-    return GPOS_NEW(mp) CDistributionSpecSingleton();
-  }
-
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysical::PdsUnary
-//
-//	@doc:
-//		Helper for computing child's required distribution in unary operators
-//		with a scalar child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysical::PdsUnary(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                       ULONG child_index, ULONG ulOptReq) {
-  GPOS_ASSERT(0 == child_index);
-  GPOS_ASSERT(2 > ulOptReq);
-
-  // check if singleton/replicated distribution needs to be requested
-  CDistributionSpec *pds = PdsRequireSingletonOrReplicated(mp, exprhdl, pdsRequired, child_index, ulOptReq);
-  if (nullptr != pds) {
-    return pds;
-  }
-
-  // operator does not have distribution requirements, required distribution
-  // will be enforced on its output
-  return GPOS_NEW(mp) CDistributionSpecAny(exprhdl.Pop()->Eopid());
 }
 
 //---------------------------------------------------------------------------
@@ -419,21 +255,6 @@ COrderSpec *CPhysical::PosDerivePassThruOuter(CExpressionHandle &exprhdl) {
   pos->AddRef();
 
   return pos;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysical::PdsDerivePassThruOuter
-//
-//	@doc:
-//		Helper for common case of distribution derivation
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysical::PdsDerivePassThruOuter(CExpressionHandle &exprhdl) {
-  CDistributionSpec *pds = exprhdl.Pdpplan(0 /*child_index*/)->Pds();
-  pds->AddRef();
-
-  return pds;
 }
 
 //---------------------------------------------------------------------------
@@ -516,23 +337,6 @@ BOOL CPhysical::FUnaryProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *p
   CColRefSet *pcrsOutput = exprhdl.DeriveOutputColumns(0 /*child_index*/);
 
   return pcrsOutput->ContainsAll(pcrsRequired);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysical::PdssMatching
-//
-//	@doc:
-//		Compute a singleton distribution matching the given distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpecSingleton *CPhysical::PdssMatching(CMemoryPool *mp, CDistributionSpecSingleton *pdss) {
-  CDistributionSpecSingleton::ESegmentType est = CDistributionSpecSingleton::EstSegment;
-  if (pdss->FOnCoordinator()) {
-    est = CDistributionSpecSingleton::EstCoordinator;
-  }
-
-  return GPOS_NEW(mp) CDistributionSpecSingleton(est);
 }
 
 //---------------------------------------------------------------------------
@@ -672,31 +476,6 @@ BOOL CPhysical::FProvidesReqdCTEs(CExpressionHandle &exprhdl, const CCTEReq *pct
   return pcmDrvd->FSatisfies(pcter);
 }
 
-CEnfdProp::EPropEnforcingType CPhysical::EpetDistribution(CExpressionHandle &exprhdl,
-                                                          const CEnfdDistribution *ped) const {
-  GPOS_ASSERT(nullptr != ped);
-
-  // get distribution delivered by the physical node
-  CDistributionSpec *pds = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Pds();
-  if (ped->FCompatible(pds)) {
-    // required distribution is already provided
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  // required distribution will be enforced on Assert's output
-  return CEnfdProp::EpetRequired;
-}
-
-// Generate a singleton distribution spec request
-CDistributionSpec *CPhysical::PdsRequireSingleton(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pds,
-                                                  ULONG child_index) {
-  if (CDistributionSpec::EdtSingleton == pds->Edt()) {
-    return PdsPassThru(mp, exprhdl, pds, child_index);
-  }
-
-  return GPOS_NEW(mp) CDistributionSpecSingleton();
-}
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CPhysical::GetSkew
@@ -706,68 +485,11 @@ CDistributionSpec *CPhysical::PdsRequireSingleton(CMemoryPool *mp, CExpressionHa
 //		distribution spec
 //
 //---------------------------------------------------------------------------
-CDouble CPhysical::GetSkew(IStatistics *stats, CDistributionSpec *pds) {
+CDouble CPhysical::GetSkew(IStatistics *stats) {
   CDouble dSkew = 1.0;
-  if (CDistributionSpec::EdtHashed == pds->Edt()) {
-    CDistributionSpecHashed *pdshashed = CDistributionSpecHashed::PdsConvert(pds);
-    const CExpressionArray *pdrgpexpr = pdshashed->Pdrgpexpr();
-    const ULONG size = pdrgpexpr->Size();
-    for (ULONG ul = 0; ul < size; ul++) {
-      CExpression *pexpr = (*pdrgpexpr)[ul];
-      if (COperator::EopScalarIdent == pexpr->Pop()->Eopid()) {
-        // consider only hashed distribution direct columns for now
-        CScalarIdent *popScId = CScalarIdent::PopConvert(pexpr->Pop());
-        ULONG colid = popScId->Pcr()->Id();
-        CDouble dSkewCol = stats->GetSkew(colid);
-        if (dSkewCol > dSkew) {
-          dSkew = dSkewCol;
-        }
-      }
-    }
-  }
+  (void)stats;
 
   return CDouble(dSkew);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysical::FChildrenHaveCompatibleDistributions
-//
-//	@doc:
-//		Returns true iff the delivered distributions of the children are
-//		compatible among themselves.
-//
-//---------------------------------------------------------------------------
-BOOL CPhysical::FCompatibleChildrenDistributions(const CExpressionHandle &exprhdl) const {
-  GPOS_ASSERT(exprhdl.Pop() == this);
-  BOOL fSingletonOrUniversalChild = false;
-  BOOL fNotSingletonOrUniversalDistributedChild = false;
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
-    if (!exprhdl.FScalarChild(ul)) {
-      CDrvdPropPlan *pdpplanChild = exprhdl.Pdpplan(ul);
-
-      // an operator cannot have a singleton or universal distributed child
-      // and one distributed on multiple nodes
-      // this assumption is safe for all current operators, but it can be
-      // too conservative: we could allow for instance the following cases
-      // * LeftOuterJoin (universal, distributed)
-      // * AntiSemiJoin  (universal, distributed)
-      // These cases can be enabled if considered necessary by overriding
-      // this function.
-      if (CDistributionSpec::EdtUniversal == pdpplanChild->Pds()->Edt() ||
-          pdpplanChild->Pds()->FSingletonOrStrictSingleton()) {
-        fSingletonOrUniversalChild = true;
-      } else {
-        fNotSingletonOrUniversalDistributedChild = true;
-      }
-      if (fSingletonOrUniversalChild && fNotSingletonOrUniversalDistributedChild) {
-        return false;
-      }
-    }
-  }
-
-  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -790,11 +512,6 @@ BOOL CPhysical::FUnaryUsesDefinedColumns(CColRefSet *pcrs, CExpressionHandle &ex
   return !pcrs->IsDisjoint(exprhdl.DeriveDefinedColumns(1));
 }
 
-CEnfdDistribution::EDistributionMatching CPhysical::Edm(CReqdPropPlan *, ULONG, CDrvdPropArray *, ULONG) {
-  // by default, request distribution satisfaction
-  return CEnfdDistribution::EdmSatisfy;
-}
-
 CEnfdOrder::EOrderMatching CPhysical::Eom(CReqdPropPlan *, ULONG, CDrvdPropArray *, ULONG) {
   // request satisfaction by default
   return CEnfdOrder::EomSatisfy;
@@ -803,14 +520,6 @@ CEnfdOrder::EOrderMatching CPhysical::Eom(CReqdPropPlan *, ULONG, CDrvdPropArray
 CEnfdRewindability::ERewindabilityMatching CPhysical::Erm(CReqdPropPlan *, ULONG, CDrvdPropArray *, ULONG) {
   // request satisfaction by default
   return CEnfdRewindability::ErmSatisfy;
-}
-
-CEnfdDistribution *CPhysical::Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput,
-                                  ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulDistrReq) {
-  return GPOS_NEW(mp)
-      CEnfdDistribution(PdsRequired(mp, exprhdl, prppInput->Ped()->PdsRequired(), child_index, pdrgpdpCtxt, ulDistrReq),
-                        Edm(prppInput, child_index, pdrgpdpCtxt, ulDistrReq));
-  ;
 }
 
 CPartitionPropagationSpec *CPhysical::PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,

@@ -11,8 +11,6 @@
 
 #include "naucrates/md/CMDIdRelStats.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpmd;
 
@@ -99,19 +97,6 @@ BOOL CMDIdRelStats::Equals(const IMDId *mdid) const {
   const CMDIdRelStats *rel_stats_mdid = CMDIdRelStats::CastMdid(mdid);
 
   return m_rel_mdid->Equals(rel_stats_mdid->GetRelMdId());
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDIdRelStats::Serialize
-//
-//	@doc:
-//		Serializes the mdid as the value of the given attribute
-//
-//---------------------------------------------------------------------------
-void CMDIdRelStats::Serialize(CXMLSerializer *xml_serializer, const CWStringConst *attribute_str) const {
-  Serialize();
-  xml_serializer->AddAttribute(attribute_str, &m_str);
 }
 
 //---------------------------------------------------------------------------

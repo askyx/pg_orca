@@ -17,17 +17,16 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "nodes/parsenodes.h"
-#include "nodes/plannodes.h"
-#include "utils/rel.h"
+#include <nodes/parsenodes.h>
+#include <nodes/plannodes.h>
+#include <utils/rel.h>
 }
-
-#include "gpos/base.h"
 
 #include "gpopt/gpdbwrappers.h"
 #include "gpopt/translate/CContextDXLToPlStmt.h"
+#include "gpos/base.h"
 #include "naucrates/exception.h"
 
 using namespace gpdxl;
@@ -330,8 +329,9 @@ Index CContextDXLToPlStmt::FindRTE(Oid reloid) {
   ListCell *lc;
   int idx = 0;
 
-  ForEachWithCount(lc, m_rtable_entries_list, idx) {
+  foreach (lc, m_rtable_entries_list) {
     RangeTblEntry *rte = (RangeTblEntry *)lfirst(lc);
+    idx++;
     if (rte->relid == reloid) {
       return idx + 1;
     }

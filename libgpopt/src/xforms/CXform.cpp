@@ -11,13 +11,10 @@
 
 #include "gpopt/xforms/CXform.h"
 
+#include "gpopt/operators/CExpressionHandle.h"
 #include "gpos/base.h"
 
-#include "gpopt/operators/CExpressionHandle.h"
-
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CXform);
 
 //---------------------------------------------------------------------------
 //	@function:

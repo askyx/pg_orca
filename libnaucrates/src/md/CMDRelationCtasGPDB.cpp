@@ -13,7 +13,6 @@
 
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLCtasStorageOptions.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -103,13 +102,6 @@ CMDRelationCtasGPDB::~CMDRelationCtasGPDB() {
   m_vartypemod_array->Release();
   m_distr_opfamilies->Release();
   m_distr_opclasses->Release();
-}
-
-const CWStringDynamic *CMDRelationCtasGPDB::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
 }
 
 //---------------------------------------------------------------------------
@@ -259,72 +251,6 @@ IMDId *CMDRelationCtasGPDB::GetDistrOpfamilyAt(ULONG pos) const {
 
   GPOS_ASSERT(pos < m_distr_opfamilies->Size());
   return (*m_distr_opfamilies)[pos];
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDRelationCtasGPDB::Serialize
-//
-//	@doc:
-//		Serialize relation metadata in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDRelationCtasGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenRelationCTAS));
-
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  if (nullptr != m_mdname_schema) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSchema), m_mdname_schema->GetMDName());
-  }
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRelTemporary), m_is_temp_table);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRelStorageType),
-                               IMDRelation::GetStorageTypeStr(m_rel_storage_type));
-
-  // serialize vartypmod list
-  CWStringDynamic *var_typemod_list_array = CDXLUtils::Serialize(m_mp, m_vartypemod_array);
-  GPOS_ASSERT(nullptr != var_typemod_list_array);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenVarTypeModList), var_typemod_list_array);
-  GPOS_DELETE(var_typemod_list_array);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrPolicy),
-                               GetDistrPolicyStr(m_rel_distr_policy));
-
-  if (EreldistrHash == m_rel_distr_policy) {
-    GPOS_ASSERT(nullptr != m_distr_col_array);
-
-    // serialize distribution columns
-    CWStringDynamic *distr_col_array = ColumnsToStr(m_mp, m_distr_col_array);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenDistrColumns), distr_col_array);
-    GPOS_DELETE(distr_col_array);
-  }
-
-  // serialize columns
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-  const ULONG columns = m_md_col_array->Size();
-  for (ULONG ul = 0; ul < columns; ul++) {
-    CMDColumn *mdcol = (*m_md_col_array)[ul];
-    mdcol->Serialize(xml_serializer);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-
-  m_dxl_ctas_storage_option->Serialize(xml_serializer);
-
-  // serialize distribution opfamilies
-
-  SerializeMDIdList(xml_serializer, m_distr_opfamilies, CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrOpfamilies),
-                    CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrOpfamily));
-
-  SerializeMDIdList(xml_serializer, m_distr_opclasses, CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrOpclasses),
-                    CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrOpclass));
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenRelationCTAS));
 }
 
 #ifdef GPOS_DEBUG

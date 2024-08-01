@@ -11,11 +11,10 @@
 
 #include "gpopt/operators/CLogicalNAryJoin.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColumnFactory.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/CStatisticsUtils.h"
 
 using namespace gpopt;

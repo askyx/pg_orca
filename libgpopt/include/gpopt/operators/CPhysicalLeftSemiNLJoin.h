@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPhysicalLeftSemiNLJoin_H
 #define GPOPT_CPhysicalLeftSemiNLJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalNLJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

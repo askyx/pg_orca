@@ -11,12 +11,12 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "nodes/parsenodes.h"
-#include "partitioning/partdesc.h"
-#include "utils/partcache.h"
-#include "utils/rel.h"
+#include <nodes/parsenodes.h>
+#include <partitioning/partdesc.h>
+#include <utils/partcache.h>
+#include <utils/rel.h>
 }
 
 #include "gpopt/gpdbwrappers.h"
@@ -59,7 +59,7 @@ List *CPartPruneStepsBuilder::CreatePartPruneInfos(CDXLNode *filterNode, Relatio
 }
 
 PartitionedRelPruneInfo *CPartPruneStepsBuilder::CreatePartPruneInfoForOneLevel(CDXLNode *filterNode) {
-  PartitionedRelPruneInfo *pinfo = MakeNode(PartitionedRelPruneInfo);
+  PartitionedRelPruneInfo *pinfo = makeNode(PartitionedRelPruneInfo);
   pinfo->rtindex = m_rtindex;
   pinfo->nparts = gpdb::GPDBRelationRetrievePartitionDesc(m_relation)->nparts;
 
@@ -114,7 +114,7 @@ List *CPartPruneStepsBuilder::PartPruneStepFromScalarCmp(CDXLNode *node, int *st
   // the partition column, and RHS contains the translatable expression
   Expr *expr = m_translator_dxl_to_scalar->TranslateDXLToScalar((*node)[1], m_colid_var_mapping);
 
-  PartitionPruneStepOp *step = MakeNode(PartitionPruneStepOp);
+  PartitionPruneStepOp *step = makeNode(PartitionPruneStepOp);
   step->step.step_id = (*step_id)++;
   step->opstrategy = strategy_num;
 
@@ -163,7 +163,7 @@ List *CPartPruneStepsBuilder::PartPruneStepFromScalarBoolExpr(CDXLNode *node, in
     stepids = gpdb::LAppendInt(stepids, last_step->step_id);
   }
 
-  PartitionPruneStepCombine *step = MakeNode(PartitionPruneStepCombine);
+  PartitionPruneStepCombine *step = makeNode(PartitionPruneStepCombine);
   step->step.step_id = (*step_id)++;
   step->source_stepids = stepids;
   step->combineOp = combineOp;

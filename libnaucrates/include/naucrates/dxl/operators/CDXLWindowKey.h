@@ -13,7 +13,6 @@
 #define GPDXL_CDXLWindowKey_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLWindowFrame.h"
 
 namespace gpdxl {
@@ -45,10 +44,11 @@ class CDXLWindowKey : public CRefCount {
   ~CDXLWindowKey() override;
 
   // serialize operator in DXL format
-  virtual void SerializeToDXL(CXMLSerializer *) const;
+  virtual
 
-  // set window frame definition
-  void SetWindowFrame(CDXLWindowFrame *window_frame);
+      // set window frame definition
+      void
+      SetWindowFrame(CDXLWindowFrame *window_frame);
 
   // return window frame
   CDXLWindowFrame *GetWindowFrame() const { return m_window_frame_dxl; }

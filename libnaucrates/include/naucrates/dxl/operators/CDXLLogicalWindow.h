@@ -13,7 +13,6 @@
 #define GPDXL_CDXLLogicalWindow_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLWindowSpec.h"
@@ -53,7 +52,6 @@ class CDXLLogicalWindow : public CDXLLogical {
   CDXLWindowSpec *GetWindowKeyAt(ULONG idx) const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLLogicalWindow *Cast(CDXLOperator *dxl_op) {

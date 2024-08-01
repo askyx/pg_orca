@@ -11,11 +11,10 @@
 
 #include "gpopt/operators/CScalar.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CDrvdPropScalar.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

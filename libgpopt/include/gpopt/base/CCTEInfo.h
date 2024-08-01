@@ -11,14 +11,13 @@
 #ifndef GPOPT_CCTEInfo_H
 #define GPOPT_CCTEInfo_H
 
-#include "gpos/base.h"
-#include "gpos/common/CHashMap.h"
-#include "gpos/common/CStack.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CColumnFactory.h"
 #include "gpopt/operators/CExpression.h"
+#include "gpos/base.h"
+#include "gpos/common/CHashMap.h"
+#include "gpos/common/CStack.h"
 
 namespace gpopt {
 // fwd declarations

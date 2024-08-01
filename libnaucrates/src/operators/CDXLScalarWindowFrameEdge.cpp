@@ -12,7 +12,6 @@
 #include "naucrates/dxl/operators/CDXLScalarWindowFrameEdge.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -87,30 +86,6 @@ const CWStringConst *CDXLScalarWindowFrameEdge::GetFrameBoundaryStr(EdxlFrameBou
 
   GPOS_ASSERT(!"Unrecognized window frame boundary");
   return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarWindowFrameEdge::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarWindowFrameEdge::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  if (m_leading_edge) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowLeadingBoundary),
-                                 GetFrameBoundaryStr(m_dxl_frame_boundary));
-  } else {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowTrailingBoundary),
-                                 GetFrameBoundaryStr(m_dxl_frame_boundary));
-  }
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

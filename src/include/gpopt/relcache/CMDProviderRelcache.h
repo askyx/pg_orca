@@ -18,7 +18,6 @@
 
 #include "gpos/base.h"
 #include "gpos/string/CWStringBase.h"
-
 #include "naucrates/md/CSystemId.h"
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDProvider.h"
@@ -47,9 +46,6 @@ class CMDProviderRelcache : public IMDProvider {
   CMDProviderRelcache() = default;
 
   ~CMDProviderRelcache() override = default;
-
-  // returns the DXL string of the requested metadata object
-  CWStringBase *GetMDObjDXLStr(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *md_id) const override;
 
   // return the requested metadata object
   IMDCacheObject *GetMDObj(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid,

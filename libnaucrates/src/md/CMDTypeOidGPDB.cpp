@@ -13,7 +13,6 @@
 #include "naucrates/md/CMDTypeOidGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/base/CDatumOidGPDB.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLDatum.h"
@@ -100,12 +99,6 @@ CMDTypeOidGPDB::~CMDTypeOidGPDB() {
   }
 }
 
-const CWStringDynamic *CMDTypeOidGPDB::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
-}
 //---------------------------------------------------------------------------
 //	@function:
 //		CMDTypeOidGPDB::GetDatum
@@ -206,18 +199,6 @@ IMDId *CMDTypeOidGPDB::GetMdidForAggType(EAggType agg_type) const {
       GPOS_ASSERT(!"Invalid aggregate type");
       return nullptr;
   }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDTypeOidGPDB::Serialize
-//
-//	@doc:
-//		Serialize relation metadata in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDTypeOidGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  CGPDBTypeHelper<CMDTypeOidGPDB>::Serialize(xml_serializer, this);
 }
 
 //---------------------------------------------------------------------------

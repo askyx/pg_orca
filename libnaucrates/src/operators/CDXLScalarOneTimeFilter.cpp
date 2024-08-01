@@ -12,7 +12,6 @@
 #include "naucrates/dxl/operators/CDXLScalarOneTimeFilter.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -50,24 +49,3 @@ Edxlopid CDXLScalarOneTimeFilter::GetDXLOperator() const {
 const CWStringConst *CDXLScalarOneTimeFilter::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarOneTimeFilter);
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarOneTimeFilter::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarOneTimeFilter::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serilize children
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-}
-
-// EOF

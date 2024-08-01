@@ -12,10 +12,8 @@
 #include "naucrates/dxl/operators/CDXLPhysicalCTEConsumer.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
@@ -68,31 +66,6 @@ Edxlopid CDXLPhysicalCTEConsumer::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLPhysicalCTEConsumer::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalCTEConsumer);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalCTEConsumer::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalCTEConsumer::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCTEId), Id());
-
-  CWStringDynamic *str_colids = CDXLUtils::Serialize(m_mp, m_output_colids_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColumns), str_colids);
-  GPOS_DELETE(str_colids);
-
-  // serialize properties
-  dxlnode->SerializePropertiesToDXL(xml_serializer);
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

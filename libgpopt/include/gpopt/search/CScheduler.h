@@ -11,11 +11,10 @@
 #ifndef GPOPT_CScheduler_H
 #define GPOPT_CScheduler_H
 
+#include "gpopt/search/CJob.h"
 #include "gpos/base.h"
 #include "gpos/common/CSyncList.h"
 #include "gpos/common/CSyncPool.h"
-
-#include "gpopt/search/CJob.h"
 
 #define OPT_SCHED_QUEUED_RUNNING_RATIO 10
 #define OPT_SCHED_CFA 100

@@ -14,7 +14,6 @@
 #define GPDXL_CDXLLogicalGet_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
 
@@ -50,7 +49,6 @@ class CDXLLogicalGet : public CDXLLogical {
   CDXLTableDescr *GetDXLTableDescr() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // check if given column is defined by operator
   BOOL IsColDefined(ULONG colid) const override;

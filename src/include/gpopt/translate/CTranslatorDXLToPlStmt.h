@@ -17,21 +17,19 @@
 #define GPDXL_CTranslatorDxlToPlStmt_H
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 }
 
-#include "gpos/base.h"
-
+#include "access/attnum.h"
 #include "gpopt/translate/CContextDXLToPlStmt.h"
 #include "gpopt/translate/CDXLTranslateContext.h"
 #include "gpopt/translate/CDXLTranslateContextBaseTable.h"
 #include "gpopt/translate/CMappingColIdVarPlStmt.h"
 #include "gpopt/translate/CTranslatorDXLToScalar.h"
+#include "gpos/base.h"
 #include "naucrates/dxl/CIdGenerator.h"
 #include "naucrates/dxl/operators/CDXLCtasStorageOptions.h"
 #include "naucrates/dxl/operators/CDXLPhysicalIndexScan.h"
-
-#include "access/attnum.h"
 #include "nodes/nodes.h"
 #include "nodes/plannodes.h"
 
@@ -130,9 +128,6 @@ class CTranslatorDXLToPlStmt {
   // or NULL for select queries
   List *m_result_rel_list;
 
-  // number of segments
-  ULONG m_num_of_segments;
-
   // partition selector counter
   ULONG m_partition_selector_counter;
 
@@ -153,8 +148,7 @@ class CTranslatorDXLToPlStmt {
 
  public:
   // ctor
-  CTranslatorDXLToPlStmt(CMemoryPool *mp, CMDAccessor *md_accessor, CContextDXLToPlStmt *dxl_to_plstmt_context,
-                         ULONG num_of_segments);
+  CTranslatorDXLToPlStmt(CMemoryPool *mp, CMDAccessor *md_accessor, CContextDXLToPlStmt *dxl_to_plstmt_context);
 
   // dtor
   ~CTranslatorDXLToPlStmt();
@@ -224,13 +218,6 @@ class CTranslatorDXLToPlStmt {
   // translate DXL merge join into a MergeJoin node
   Plan *TranslateDXLMergeJoin(
       const CDXLNode *merge_join_dxlnode, CDXLTranslateContext *output_context,
-      CDXLTranslationContextArray *ctxt_translation_prev_siblings  // translation contexts of previous siblings
-  );
-
-  // translate DXL duplicate sensitive redistribute motion node into
-  // GPDB result node with hash filters
-  Plan *TranslateDXLRedistributeMotionToResultHashFilters(
-      const CDXLNode *motion_dxlnode, CDXLTranslateContext *output_context,
       CDXLTranslationContextArray *ctxt_translation_prev_siblings  // translation contexts of previous siblings
   );
 

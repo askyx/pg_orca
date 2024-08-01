@@ -13,8 +13,6 @@
 #ifndef GPOPT_CExpressionPreprocessor_H
 #define GPOPT_CExpressionPreprocessor_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColumnFactory.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/hints/CJoinHint.h"
@@ -23,6 +21,7 @@
 #include "gpopt/operators/CScalarBoolOp.h"
 #include "gpopt/operators/CScalarConst.h"
 #include "gpopt/operators/CScalarIdent.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -166,8 +165,6 @@ class CExpressionPreprocessor {
 
   // reorder the scalar cmp children to ensure that left child is Scalar Ident and right Child is Scalar Const
   static CExpression *PexprReorderScalarCmpChildren(CMemoryPool *mp, CExpression *pexpr);
-
-  static CExpression *PrunePartitions(CMemoryPool *mp, CExpression *expr);
 
   static CConstraint *PcnstrFromChildPartition(const IMDRelation *partrel, CColRefArray *pdrgpcrOutput,
                                                ColRefToUlongMap *col_mapping);

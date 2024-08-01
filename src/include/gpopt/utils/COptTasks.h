@@ -15,11 +15,10 @@
 #ifndef COptTasks_H
 #define COptTasks_H
 
-#include "gpos/error/CException.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/search/CSearchStage.h"
 #include "gpopt/translate/CTranslatorUtils.h"
+#include "gpos/error/CException.h"
 
 extern bool optimizer_print_query;
 extern bool optimizer_print_plan;
@@ -48,11 +47,7 @@ extern bool optimizer_use_gpdb_allocators;
 
 extern bool optimizer_enable_nljoin;
 extern bool optimizer_enable_indexjoin;
-extern bool optimizer_enable_motions_coordinatoronly_queries;
-extern bool optimizer_enable_motions;
-extern bool optimizer_enable_motion_broadcast;
-extern bool optimizer_enable_motion_gather;
-extern bool optimizer_enable_motion_redistribute;
+
 extern bool optimizer_enable_sort;
 extern bool optimizer_enable_materialize;
 extern bool optimizer_enable_partition_propagation;
@@ -74,10 +69,6 @@ extern bool optimizer_enable_dml;
 extern bool optimizer_enable_dml_constraints;
 extern bool optimizer_enable_coordinator_only_queries;
 extern bool optimizer_enable_hashjoin;
-extern bool optimizer_enable_dynamictablescan;
-extern bool optimizer_enable_dynamicindexscan;
-extern bool optimizer_enable_dynamicindexonlyscan;
-extern bool optimizer_enable_dynamicbitmapscan;
 extern bool optimizer_enable_indexscan;
 extern bool optimizer_enable_indexonlyscan;
 extern bool optimizer_enable_tablescan;
@@ -194,9 +185,6 @@ struct SOptContext {
   // is generating a plan object required ?
   BOOL m_should_generate_plan_stmt{false};
 
-  // is serializing a plan to DXL required ?
-  BOOL m_should_serialize_plan_dxl{false};
-
   // did the optimizer fail unexpectedly?
   BOOL m_is_unexpected_failure{false};
 
@@ -239,9 +227,6 @@ class COptTasks {
   static PlannedStmt *ConvertToPlanStmtFromDXL(CMemoryPool *mp, CMDAccessor *md_accessor, const Query *orig_query,
                                                const CDXLNode *dxlnode, bool can_set_tag,
                                                DistributionHashOpsKind distribution_hashops);
-
-  // load search strategy from given path
-  static CSearchStageArray *LoadSearchStrategy(CMemoryPool *mp, char *path);
 
   // helper for converting wide character string to regular string
   static CHAR *CreateMultiByteCharStringFromWCString(const WCHAR *wcstr);

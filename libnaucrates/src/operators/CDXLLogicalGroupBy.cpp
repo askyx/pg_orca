@@ -12,7 +12,7 @@
 
 #include "naucrates/dxl/operators/CDXLLogicalGroupBy.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -99,57 +99,6 @@ void CDXLLogicalGroupBy::SetGroupingColumns(ULongPtrArray *grouping_colid_array)
 //---------------------------------------------------------------------------
 const ULongPtrArray *CDXLLogicalGroupBy::GetGroupingColidArray() const {
   return m_grouping_colid_array;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalGroupBy::SerializeGrpColsToDXL
-//
-//	@doc:
-//		Serialize grouping column indices in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalGroupBy::SerializeGrpColsToDXL(CXMLSerializer *xml_serializer) const {
-  if (nullptr != m_grouping_colid_array) {
-    const CWStringConst *grouping_cols_str = CDXLTokens::GetDXLTokenStr(EdxltokenGroupingCols);
-    const CWStringConst *grouping_col_str = CDXLTokens::GetDXLTokenStr(EdxltokenGroupingCol);
-
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), grouping_cols_str);
-
-    for (ULONG idx = 0; idx < m_grouping_colid_array->Size(); idx++) {
-      GPOS_ASSERT(nullptr != (*m_grouping_colid_array)[idx]);
-      ULONG grouping_col = *((*m_grouping_colid_array)[idx]);
-
-      xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), grouping_col_str);
-      xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), grouping_col);
-
-      xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), grouping_col_str);
-    }
-
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), grouping_cols_str);
-  }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalGroupBy::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalGroupBy::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serialize grouping columns
-  SerializeGrpColsToDXL(xml_serializer);
-
-  // serialize children
-  node->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

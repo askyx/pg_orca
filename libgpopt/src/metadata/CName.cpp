@@ -19,8 +19,6 @@
 
 using namespace gpopt;
 
-FORCE_GENERATE_DBGSTR(CName);
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CName::CName

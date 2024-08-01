@@ -13,7 +13,6 @@
 
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 #include "naucrates/md/IMDType.h"
 
@@ -108,30 +107,6 @@ const CWStringConst *CDXLScalarBitmapBoolOp::GetOpNameStr() const {
   }
 
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarBitmapOr);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarBitmapBoolOp::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarBitmapBoolOp::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  GPOS_CHECK_ABORT;
-
-  const CWStringConst *element_name = GetOpNameStr();
-
-  GPOS_ASSERT(nullptr != element_name);
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  GPOS_CHECK_ABORT;
 }
 
 #ifdef GPOS_DEBUG

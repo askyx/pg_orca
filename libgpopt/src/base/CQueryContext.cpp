@@ -11,18 +11,14 @@
 
 #include "gpopt/base/CQueryContext.h"
 
+#include "gpopt/base/CColRefSetIter.h"
+#include "gpopt/base/CColumnFactory.h"
+#include "gpopt/base/COptCtxt.h"
+#include "gpopt/operators/CLogicalLimit.h"
 #include "gpos/base.h"
 #include "gpos/error/CAutoTrace.h"
 
-#include "gpopt/base/CColRefSetIter.h"
-#include "gpopt/base/CColumnFactory.h"
-#include "gpopt/base/CDistributionSpecAny.h"
-#include "gpopt/base/COptCtxt.h"
-#include "gpopt/operators/CLogicalLimit.h"
-
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CQueryContext);
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -187,18 +183,8 @@ CQueryContext *CQueryContext::PqcGenerate(CMemoryPool *mp, CExpression *pexpr,
     pos = GPOS_NEW(mp) COrderSpec(mp);
   }
 
-  CDistributionSpec *pds = nullptr;
-
   BOOL fDML = CUtils::FLogicalDML(pexpr->Pop());
   poptctxt->MarkDMLQuery(fDML);
-
-  // DML commands do not have distribution requirement. Otherwise the
-  // distribution requirement is Singleton.
-  if (fDML) {
-    pds = GPOS_NEW(mp) CDistributionSpecAny(COperator::EopSentinel);
-  } else {
-    pds = GPOS_NEW(mp) CDistributionSpecSingleton(CDistributionSpecSingleton::EstCoordinator);
-  }
 
   // By default, no rewindability requirement needs to be satisfied at the top level
   CRewindabilitySpec *prs =
@@ -209,7 +195,6 @@ CQueryContext *CQueryContext::PqcGenerate(CMemoryPool *mp, CExpression *pexpr,
 
   // Ensure order, distribution and rewindability meet 'satisfy' matching at the top level
   CEnfdOrder *peo = GPOS_NEW(mp) CEnfdOrder(pos, CEnfdOrder::EomSatisfy);
-  CEnfdDistribution *ped = GPOS_NEW(mp) CEnfdDistribution(pds, CEnfdDistribution::EdmSatisfy);
   CEnfdRewindability *per = GPOS_NEW(mp) CEnfdRewindability(prs, CEnfdRewindability::ErmSatisfy);
   CEnfdPartitionPropagation *pepp =
       GPOS_NEW(mp) CEnfdPartitionPropagation(ppps, CEnfdPartitionPropagation::EppmSatisfy);
@@ -221,7 +206,7 @@ CQueryContext *CQueryContext::PqcGenerate(CMemoryPool *mp, CExpression *pexpr,
   // constructed later based on derived relation properties (CPartInfo) by
   // CReqdPropPlan::InitReqdPartitionPropagation().
 
-  CReqdPropPlan *prpp = GPOS_NEW(mp) CReqdPropPlan(pcrs, peo, ped, per, pepp, pcter);
+  CReqdPropPlan *prpp = GPOS_NEW(mp) CReqdPropPlan(pcrs, peo, per, pepp, pcter);
 
   // Finally, create the CQueryContext
   pdrgpmdname->AddRef();

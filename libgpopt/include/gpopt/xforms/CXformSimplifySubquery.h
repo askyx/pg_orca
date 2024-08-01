@@ -12,9 +12,8 @@
 #ifndef GPOPT_CXformSimplifySubquery_H
 #define GPOPT_CXformSimplifySubquery_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

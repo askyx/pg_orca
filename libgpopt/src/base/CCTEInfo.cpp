@@ -11,14 +11,13 @@
 
 #include "gpopt/base/CCTEInfo.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCTEReq.h"
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CQueryContext.h"
 #include "gpopt/operators/CExpressionPreprocessor.h"
 #include "gpopt/operators/CLogicalCTEConsumer.h"
 #include "gpopt/operators/CLogicalCTEProducer.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

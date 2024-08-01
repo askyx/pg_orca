@@ -17,8 +17,6 @@
 
 #include "naucrates/dxl/operators/CDXLDatumInt2.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpdxl;
 
@@ -44,22 +42,3 @@ CDXLDatumInt2::CDXLDatumInt2(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, SI
 SINT CDXLDatumInt2::Value() const {
   return m_val;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLDatumInt2::Serialize
-//
-//	@doc:
-//		Serialize datum in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLDatumInt2::Serialize(CXMLSerializer *xml_serializer) {
-  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-  if (!m_is_null) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue), m_val);
-  } else {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
-  }
-}
-
-// EOF

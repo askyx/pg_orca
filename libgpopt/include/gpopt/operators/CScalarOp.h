@@ -12,10 +12,9 @@
 #ifndef GPOPT_CScalarOp_H
 #define GPOPT_CScalarOp_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDId.h"
 
 namespace gpopt {

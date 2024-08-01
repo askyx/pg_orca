@@ -15,12 +15,9 @@
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
 #include "gpos/common/CDynamicPtrArray.h"
-
 #include "naucrates/dxl/operators/CDXLDatum.h"
 
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -54,10 +51,6 @@ class CDXLBucket : public CRefCount {
   // distinct values
   CDouble m_distinct;
 
-  // serialize the bucket boundary
-  static void SerializeBoundaryValue(CXMLSerializer *xml_serializer, const CWStringConst *elem_str,
-                                     CDXLDatum *dxl_datum, BOOL is_bound_closed);
-
  public:
   CDXLBucket(const CDXLBucket &) = delete;
 
@@ -87,7 +80,6 @@ class CDXLBucket : public CRefCount {
   CDouble GetNumDistinct() const;
 
   // serialize bucket in DXL format
-  void Serialize(gpdxl::CXMLSerializer *) const;
 
 #ifdef GPOS_DEBUG
   // debug print of the bucket

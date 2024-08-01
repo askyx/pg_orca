@@ -11,11 +11,10 @@
 
 #include "gpopt/xforms/CXformSelect2Filter.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalSelect.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalFilter.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

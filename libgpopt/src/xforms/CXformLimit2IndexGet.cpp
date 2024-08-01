@@ -12,12 +12,11 @@
 
 #include "gpopt/xforms/CXformLimit2IndexGet.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalGet.h"
 #include "gpopt/operators/CLogicalLimit.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 #include "naucrates/md/CMDIndexGPDB.h"
 #include "naucrates/md/CMDRelationGPDB.h"
 

@@ -11,11 +11,6 @@
 
 #include "gpopt/xforms/CXformUtils.h"
 
-#include "gpos/base.h"
-#include "gpos/error/CMessage.h"
-#include "gpos/error/CMessageRepository.h"
-#include "gpos/memory/CAutoMemoryPool.h"
-
 #include "gpopt/base/CConstraintConjunction.h"
 #include "gpopt/base/CConstraintNegation.h"
 #include "gpopt/base/CKeyCollection.h"
@@ -27,9 +22,6 @@
 #include "gpopt/operators/CLogicalBitmapTableGet.h"
 #include "gpopt/operators/CLogicalCTEConsumer.h"
 #include "gpopt/operators/CLogicalCTEProducer.h"
-#include "gpopt/operators/CLogicalDynamicBitmapTableGet.h"
-#include "gpopt/operators/CLogicalDynamicGet.h"
-#include "gpopt/operators/CLogicalDynamicIndexOnlyGet.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CLogicalGbAggDeduplicate.h"
 #include "gpopt/operators/CLogicalGet.h"
@@ -59,6 +51,10 @@
 #include "gpopt/xforms/CDecorrelator.h"
 #include "gpopt/xforms/CSubqueryHandler.h"
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
+#include "gpos/error/CMessage.h"
+#include "gpos/error/CMessageRepository.h"
+#include "gpos/memory/CAutoMemoryPool.h"
 #include "naucrates/base/CDatumInt8GPDB.h"
 #include "naucrates/md/CMDIdGPDB.h"
 #include "naucrates/md/IMDCheckConstraint.h"
@@ -283,56 +279,6 @@ CColRefSet *CXformUtils::PcrsFKey(CMemoryPool *mp, CExpression *pexprOuter, CExp
   pdrgpexpr->Release();
 
   return pcrsFKey;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CXformUtils::PexprRedundantSelectForDynamicIndex
-//
-//	@doc:
-// 		Add a redundant SELECT node on top of Dynamic (Bitmap) IndexGet to
-//		to be able to use index predicate in partition elimination
-//
-//---------------------------------------------------------------------------
-CExpression *CXformUtils::PexprRedundantSelectForDynamicIndex(
-    CMemoryPool *mp,
-    CExpression *pexpr  // input expression is a dynamic (bitmap) IndexGet with an optional Select on top
-) {
-  GPOS_ASSERT(nullptr != pexpr);
-
-  COperator::EOperatorId op_id = pexpr->Pop()->Eopid();
-  GPOS_ASSERT(COperator::EopLogicalDynamicIndexGet == op_id || COperator::EopLogicalDynamicIndexOnlyGet == op_id ||
-              COperator::EopLogicalDynamicBitmapTableGet == op_id || COperator::EopLogicalSelect == op_id);
-
-  CExpression *pexprRedundantScalar = nullptr;
-  if (COperator::EopLogicalDynamicIndexGet == op_id || COperator::EopLogicalDynamicIndexOnlyGet == op_id ||
-      COperator::EopLogicalDynamicBitmapTableGet == op_id) {
-    // no residual predicate, use index lookup predicate only
-    pexpr->AddRef();
-    // reuse index lookup predicate
-    (*pexpr)[0]->AddRef();
-    pexprRedundantScalar = (*pexpr)[0];
-
-    return GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalSelect(mp), pexpr, pexprRedundantScalar);
-  }
-
-  // there is a residual predicate in a SELECT node on top of DynamicIndexGet,
-  // we create a conjunction of both residual predicate and index lookup predicate
-  CExpression *pexprChild = (*pexpr)[0];
-#ifdef GPOS_DEBUG
-  COperator::EOperatorId eopidChild = pexprChild->Pop()->Eopid();
-  GPOS_ASSERT(COperator::EopLogicalDynamicIndexGet == eopidChild ||
-              COperator::EopLogicalDynamicIndexOnlyGet == eopidChild ||
-              COperator::EopLogicalDynamicBitmapTableGet == eopidChild);
-#endif  // GPOS_DEBUG
-
-  CExpression *pexprIndexLookupPred = (*pexprChild)[0];
-  CExpression *pexprResidualPred = (*pexpr)[1];
-  pexprRedundantScalar = CPredicateUtils::PexprConjunction(mp, pexprIndexLookupPred, pexprResidualPred);
-
-  pexprChild->AddRef();
-
-  return GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalSelect(mp), pexprChild, pexprRedundantScalar);
 }
 
 #ifdef GPOS_DEBUG
@@ -1631,15 +1577,6 @@ CExpression *CXformUtils::PexprRowNumber(CMemoryPool *mp) {
 //---------------------------------------------------------------------------
 CExpression *CXformUtils::PexprWindowWithRowNumber(CMemoryPool *mp, CExpression *pexprWindowChild,
                                                    CColRefArray *pdrgpcrInput) {
-  // partitioning information
-  CDistributionSpec *pds = nullptr;
-  if (nullptr != pdrgpcrInput && 0 < pdrgpcrInput->Size()) {
-    CExpressionArray *pdrgpexprInput = CUtils::PdrgpexprScalarIdents(mp, pdrgpcrInput);
-    pds = GPOS_NEW(mp) CDistributionSpecHashed(pdrgpexprInput, true /* fNullsCollocated */);
-  } else {
-    pds = GPOS_NEW(mp) CDistributionSpecSingleton(CDistributionSpecSingleton::EstCoordinator);
-  }
-
   // window frames
   CWindowFrameArray *pdrgpwf = GPOS_NEW(mp) CWindowFrameArray(mp);
 
@@ -1664,7 +1601,7 @@ CExpression *CXformUtils::PexprWindowWithRowNumber(CMemoryPool *mp, CExpression 
   // generate the project list
   CExpression *pexprProjList = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarProjectList(mp), pexprProjElem);
 
-  CLogicalSequenceProject *popLgSequence = GPOS_NEW(mp) CLogicalSequenceProject(mp, pds, pdrgpos, pdrgpwf);
+  CLogicalSequenceProject *popLgSequence = GPOS_NEW(mp) CLogicalSequenceProject(mp, pdrgpos, pdrgpwf);
 
   pexprWindowChild->AddRef();
   CExpression *pexprLgSequence = GPOS_NEW(mp) CExpression(mp, popLgSequence, pexprWindowChild, pexprProjList);
@@ -1963,9 +1900,7 @@ CExpression *CXformUtils::PexprBuildBtreeIndexPlan(CMemoryPool *mp, CMDAccessor 
   GPOS_ASSERT(nullptr != pmdrel);
 
   COperator::EOperatorId op_id = pexprGet->Pop()->Eopid();
-  GPOS_ASSERT(CLogical::EopLogicalGet == op_id || CLogical::EopLogicalDynamicGet == op_id);
-
-  BOOL fDynamicGet = (COperator::EopLogicalDynamicGet == op_id);
+  GPOS_ASSERT(CLogical::EopLogicalGet == op_id);
 
   CTableDescriptorHashSet *ptabdescset = pexprGet->DeriveTableDescriptor();
   GPOS_ASSERT(1 == ptabdescset->Size());
@@ -1973,9 +1908,6 @@ CExpression *CXformUtils::PexprBuildBtreeIndexPlan(CMemoryPool *mp, CMDAccessor 
 
   CColRefArray *pdrgpcrOutput = nullptr;
   CWStringConst *alias = nullptr;
-  ULONG ulPartIndex = gpos::ulong_max;
-  CColRef2dArray *pdrgpdrgpcrPart = nullptr;
-  IMdIdArray *partition_mdids = nullptr;
 
   if (ptabdesc->RetrieveRelStorageType() != IMDRelation::ErelstorageHeap &&
       (pmdindex->IndexType() == IMDIndex::EmdindGist || pmdindex->IndexType() == IMDIndex::EmdindHash)) {
@@ -1983,16 +1915,7 @@ CExpression *CXformUtils::PexprBuildBtreeIndexPlan(CMemoryPool *mp, CMDAccessor 
     return nullptr;
   }
 
-  if (fDynamicGet) {
-    CLogicalDynamicGet *popDynamicGet = CLogicalDynamicGet::PopConvert(pexprGet->Pop());
-
-    ulPartIndex = popDynamicGet->ScanId();
-    pdrgpcrOutput = popDynamicGet->PdrgpcrOutput();
-    GPOS_ASSERT(nullptr != pdrgpcrOutput);
-    alias = GPOS_NEW(mp) CWStringConst(mp, popDynamicGet->Name().Pstr()->GetBuffer());
-    pdrgpdrgpcrPart = popDynamicGet->PdrgpdrgpcrPart();
-    partition_mdids = popDynamicGet->GetPartitionMdids();
-  } else {
+  {
     CLogicalGet *popGet = CLogicalGet::PopConvert(pexprGet->Pop());
     pdrgpcrOutput = popGet->PdrgpcrOutput();
     GPOS_ASSERT(nullptr != pdrgpcrOutput);
@@ -2063,41 +1986,7 @@ CExpression *CXformUtils::PexprBuildBtreeIndexPlan(CMemoryPool *mp, CMDAccessor 
   // create the logical (dynamic) bitmap table get operator
   CLogical *popLogicalGet = nullptr;
 
-  if (fDynamicGet) {
-    pdrgpdrgpcrPart->AddRef();
-    partition_mdids->AddRef();
-    if (indexonly) {
-      popLogicalGet = PopDynamicBtreeIndexOpConstructor<CLogicalDynamicIndexOnlyGet>(
-          mp, pmdindex, ptabdesc, ulOriginOpId, GPOS_NEW(mp) CName(mp, CName(alias)), ulPartIndex, pdrgpcrOutput,
-          pdrgpdrgpcrPart, partition_mdids, ulUnindexedPredColCount);
-      if (!CHintUtils::SatisfiesPlanHints(CLogicalDynamicIndexOnlyGet::PopConvert(popLogicalGet),
-                                          COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
-        // clean up
-        GPOS_DELETE(alias);
-        pdrgppcrIndexCols->Release();
-        pdrgpexprResidual->Release();
-        pdrgpexprIndex->Release();
-        outer_refs_in_index_get->Release();
-        popLogicalGet->Release();
-        return nullptr;
-      }
-    } else {
-      popLogicalGet = PopDynamicBtreeIndexOpConstructor<CLogicalDynamicIndexGet>(
-          mp, pmdindex, ptabdesc, ulOriginOpId, GPOS_NEW(mp) CName(mp, CName(alias)), ulPartIndex, pdrgpcrOutput,
-          pdrgpdrgpcrPart, partition_mdids, ulUnindexedPredColCount);
-      if (!CHintUtils::SatisfiesPlanHints(CLogicalDynamicIndexGet::PopConvert(popLogicalGet),
-                                          COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
-        // clean up
-        GPOS_DELETE(alias);
-        pdrgppcrIndexCols->Release();
-        pdrgpexprResidual->Release();
-        pdrgpexprIndex->Release();
-        outer_refs_in_index_get->Release();
-        popLogicalGet->Release();
-        return nullptr;
-      }
-    }
-  } else {
+  {
     if (indexonly) {
       popLogicalGet = PopStaticBtreeIndexOpConstructor<CLogicalIndexOnlyGet>(
           mp, pmdindex, ptabdesc, ulOriginOpId, GPOS_NEW(mp) CName(mp, CName(alias)), pdrgpcrOutput,
@@ -2819,9 +2708,7 @@ CExpression *CXformUtils::PexprSelect2BitmapBoolOp(CMemoryPool *mp, CExpression 
 CExpression *CXformUtils::PexprBitmapTableGet(CMemoryPool *mp, CLogical *popGet, ULONG ulOriginOpId,
                                               CTableDescriptor *ptabdesc, CExpression *pexprScalar,
                                               CColRefSet *outer_refs, CColRefSet *pcrsReqd) {
-  GPOS_ASSERT(COperator::EopLogicalGet == popGet->Eopid() || COperator::EopLogicalDynamicGet == popGet->Eopid());
-
-  BOOL fDynamicGet = (COperator::EopLogicalDynamicGet == popGet->Eopid());
+  GPOS_ASSERT(COperator::EopLogicalGet == popGet->Eopid());
 
   BOOL fConjunction = CPredicateUtils::FAnd(pexprScalar);
 
@@ -2858,16 +2745,7 @@ CExpression *CXformUtils::PexprBitmapTableGet(CMemoryPool *mp, CLogical *popGet,
     // create a bitmap table scan on top
     CLogical *popBitmapTableGet = nullptr;
 
-    if (fDynamicGet) {
-      CLogicalDynamicGet *popDynamicGet = CLogicalDynamicGet::PopConvert(popGet);
-      popDynamicGet->PdrgpdrgpcrPart()->AddRef();
-      popDynamicGet->GetPartitionMdids()->AddRef();
-      popBitmapTableGet = GPOS_NEW(mp)
-          CLogicalDynamicBitmapTableGet(mp, ptabdesc, ulOriginOpId, pname, popDynamicGet->ScanId(), pdrgpcrOutput,
-                                        popDynamicGet->PdrgpdrgpcrPart(), popDynamicGet->GetPartitionMdids());
-    } else {
-      popBitmapTableGet = GPOS_NEW(mp) CLogicalBitmapTableGet(mp, ptabdesc, ulOriginOpId, pname, pdrgpcrOutput);
-    }
+    popBitmapTableGet = GPOS_NEW(mp) CLogicalBitmapTableGet(mp, ptabdesc, ulOriginOpId, pname, pdrgpcrOutput);
     pexprResult = GPOS_NEW(mp) CExpression(mp, popBitmapTableGet, pexprRecheck, pexprBitmap);
 
     if (nullptr != pexprResidual) {
@@ -3440,18 +3318,6 @@ BOOL CXformUtils::FCoverIndex(CMemoryPool *mp, CIndexDescriptor *pindexdesc, CTa
   for (ULONG i = 0; i < pdrgpcrOutput->Size(); i++) {
     CColRef *col = (*pdrgpcrOutput)[i];
 
-    // In most cases we want to treat system columns unconditionally as
-    // used. This is because certain transforms like those for DML or
-    // CXformPushGbBelowJoin use unique keys in the derived properties,
-    // even if they are not referenced in the query. Those keys are system
-    // columns gp_segment_id and ctid. We also treat distribution columns
-    // as used, since they appear in the CDistributionSpecHashed of
-    // physical properties and therefore might be used in the plan.
-    //
-    // NB: Because 'pexpr' is not a scalar expression, we cannot derive
-    // scalar properties (e.g. PcrsUsed/DeriveUsedColumns). So instead, we
-    // check the used columns via GetUsage. DeriveOutputColumns could also
-    // work, but would need a flag to include system/distribution columns.
     if (col->GetUsage(true /*check_system_cols*/, true /*check_distribution_col*/) == CColRef::EUsed) {
       output_cols->Include(col);
     }

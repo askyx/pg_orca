@@ -11,12 +11,10 @@
 
 #include "gpopt/operators/CPhysicalForeignScan.h"
 
-#include "gpos/base.h"
-
-#include "gpopt/base/CDistributionSpecRandom.h"
 #include "gpopt/metadata/CName.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

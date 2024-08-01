@@ -15,7 +15,6 @@
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/string/CWStringConst.h"
-
 #include "naucrates/dxl/gpdb_types.h"
 #include "naucrates/md/CMDIdGPDB.h"
 #include "naucrates/md/CSystemId.h"
@@ -82,9 +81,6 @@ class CMDIdCast : public IMDId {
 
   // is the mdid valid
   BOOL IsValid() const override { return IMDId::IsValid(m_mdid_src) && IMDId::IsValid(m_mdid_dest); }
-
-  // serialize mdid in DXL as the value of the specified attribute
-  void Serialize(CXMLSerializer *xml_serializer, const CWStringConst *pstrAttribute) const override;
 
   // debug print of the metadata id
   IOstream &OsPrint(IOstream &os) const override;

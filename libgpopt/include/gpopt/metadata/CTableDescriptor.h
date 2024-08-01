@@ -12,12 +12,11 @@
 #ifndef GPOPT_CTableDescriptor_H
 #define GPOPT_CTableDescriptor_H
 
+#include "gpopt/base/CColRef.h"
+#include "gpopt/metadata/CColumnDescriptor.h"
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
 #include "gpos/common/CDynamicPtrArray.h"
-
-#include "gpopt/base/CColRef.h"
-#include "gpopt/metadata/CColumnDescriptor.h"
 #include "naucrates/md/CMDRelationGPDB.h"
 #include "naucrates/md/IMDId.h"
 
@@ -39,7 +38,7 @@ using CBitSetArray = CDynamicPtrArray<CBitSet, CleanupRelease>;
 //		metadata abstraction for tables
 //
 //---------------------------------------------------------------------------
-class CTableDescriptor : public CRefCount, public DbgPrintMixin<CTableDescriptor> {
+class CTableDescriptor : public CRefCount {
  private:
   // memory pool
   CMemoryPool *m_mp;

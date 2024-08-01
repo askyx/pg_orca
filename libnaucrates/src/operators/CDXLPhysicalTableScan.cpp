@@ -12,7 +12,7 @@
 #include "naucrates/dxl/operators/CDXLPhysicalTableScan.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -99,31 +99,6 @@ const CWStringConst *CDXLPhysicalTableScan::GetOpNameStr() const {
 //---------------------------------------------------------------------------
 const CDXLTableDescr *CDXLPhysicalTableScan::GetDXLTableDescr() {
   return m_dxl_table_descr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalTableScan::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalTableScan::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serialize properties
-  dxlnode->SerializePropertiesToDXL(xml_serializer);
-
-  // serialize children
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  // serialize table descriptor
-  m_dxl_table_descr->SerializeToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

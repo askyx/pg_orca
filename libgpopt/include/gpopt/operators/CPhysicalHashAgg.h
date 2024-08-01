@@ -11,13 +11,11 @@
 #ifndef GPOS_CPhysicalHashAgg_H
 #define GPOS_CPhysicalHashAgg_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalAgg.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declaration
-class CDistributionSpec;
 
 //---------------------------------------------------------------------------
 //	@class:

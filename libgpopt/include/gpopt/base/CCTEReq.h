@@ -15,13 +15,12 @@
 #ifndef GPOPT_CCTEReq_H
 #define GPOPT_CCTEReq_H
 
+#include "gpopt/base/CCTEMap.h"
+#include "gpopt/base/CDrvdPropPlan.h"
 #include "gpos/base.h"
 #include "gpos/common/CHashMap.h"
 #include "gpos/common/CHashMapIter.h"
 #include "gpos/common/CRefCount.h"
-
-#include "gpopt/base/CCTEMap.h"
-#include "gpopt/base/CDrvdPropPlan.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -34,7 +33,7 @@ using namespace gpos;
 //		CTE requirements
 //
 //---------------------------------------------------------------------------
-class CCTEReq : public CRefCount, public DbgPrintMixin<CCTEReq> {
+class CCTEReq : public CRefCount {
  private:
   //---------------------------------------------------------------------------
   //	@class:
@@ -44,7 +43,7 @@ class CCTEReq : public CRefCount, public DbgPrintMixin<CCTEReq> {
   //		A single entry in the CTE requirement
   //
   //---------------------------------------------------------------------------
-  class CCTEReqEntry : public CRefCount, public DbgPrintMixin<CCTEReqEntry> {
+  class CCTEReqEntry : public CRefCount {
    private:
     // cte id
     ULONG m_id;

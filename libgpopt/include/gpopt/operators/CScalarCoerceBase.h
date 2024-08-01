@@ -17,9 +17,8 @@
 #ifndef GPOPT_CScalarCoerceBase_H
 #define GPOPT_CScalarCoerceBase_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

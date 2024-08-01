@@ -12,11 +12,10 @@
 #ifndef GPOPT_CAutoOptCtxt_H
 #define GPOPT_CAutoOptCtxt_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColumnFactory.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/mdcache/CMDAccessor.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -13,7 +13,6 @@
 #define GPMD_CMDScalarOpGPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDScalarOp.h"
 
 namespace gpmd {
@@ -90,7 +89,6 @@ class CMDScalarOpGPDB : public IMDScalarOp {
   ~CMDScalarOpGPDB() override;
 
   // accessors
-  const CWStringDynamic *GetStrRepr() override;
 
   // operator id
   IMDId *MDId() const override;
@@ -131,7 +129,6 @@ class CMDScalarOpGPDB : public IMDScalarOp {
   IMDType::ECmpType ParseCmpType() const override;
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
   // number of classes this operator belongs to
   ULONG OpfamiliesCount() const override;

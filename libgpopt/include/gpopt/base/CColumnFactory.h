@@ -11,12 +11,11 @@
 #ifndef GPOPT_CColumnFactory_H
 #define GPOPT_CColumnFactory_H
 
+#include "gpopt/base/CColRefSet.h"
+#include "gpopt/metadata/CColumnDescriptor.h"
 #include "gpos/base.h"
 #include "gpos/common/CList.h"
 #include "gpos/common/CSyncHashtable.h"
-
-#include "gpopt/base/CColRefSet.h"
-#include "gpopt/metadata/CColumnDescriptor.h"
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDType.h"
 

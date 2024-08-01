@@ -12,16 +12,15 @@
 #ifndef GPOPT_CXform_H
 #define GPOPT_CXform_H
 
-#include "gpos/base.h"
-#include "gpos/common/CEnumSet.h"
-#include "gpos/common/CEnumSetIter.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CPhysical.h"
 #include "gpopt/xforms/CXform.h"
 #include "gpopt/xforms/CXformContext.h"
 #include "gpopt/xforms/CXformResult.h"
+#include "gpos/base.h"
+#include "gpos/common/CEnumSet.h"
+#include "gpos/common/CEnumSetIter.h"
+#include "gpos/common/CRefCount.h"
 #include "naucrates/traceflags/traceflags.h"
 
 // Macro for enabling and disabling xforms
@@ -42,7 +41,7 @@ using namespace gpos;
 //		base class for all transformations
 //
 //---------------------------------------------------------------------------
-class CXform : public CRefCount, public DbgPrintMixin<CXform> {
+class CXform : public CRefCount {
  private:
   // pattern
   CExpression *m_pexpr;
@@ -65,8 +64,6 @@ class CXform : public CRefCount, public DbgPrintMixin<CXform> {
     ExfExpandNAryJoinDP,
     ExfGet2TableScan,
     ExfIndexGet2IndexScan,
-    ExfDynamicGet2DynamicTableScan,
-    ExfDynamicIndexGet2DynamicIndexScan,
     ExfImplementSequence,
     ExfImplementConstTableGet,
     ExfUnnestTVF,
@@ -74,8 +71,6 @@ class CXform : public CRefCount, public DbgPrintMixin<CXform> {
     ExfImplementTVFNoArgs,
     ExfSelect2Filter,
     ExfSelect2IndexGet,
-    ExfSelect2DynamicIndexGet,
-    ExfSelect2PartialDynamicIndexGet____removed,
     ExfSimplifySelectWithSubquery,
     ExfSimplifyProjectWithSubquery,
     ExfSelect2Apply,
@@ -84,7 +79,6 @@ class CXform : public CRefCount, public DbgPrintMixin<CXform> {
     ExfSubqJoin2Apply,
     ExfSubqNAryJoin2Apply,
     ExfInnerJoin2IndexGetApply____removed,
-    ExfInnerJoin2DynamicIndexGetApply____removed,
     ExfInnerApplyWithOuterKey2InnerJoin,
     ExfInnerJoin2NLJoin____removed,
     ExfImplementIndexApply,
@@ -175,10 +169,7 @@ class CXform : public CRefCount, public DbgPrintMixin<CXform> {
     ExfExpandFullOuterJoin,
     ExfForeignGet2ForeignScan,
     ExfSelect2BitmapBoolOp,
-    ExfSelect2DynamicBitmapBoolOp,
     ExfImplementBitmapTableGet,
-    ExfImplementDynamicBitmapTableGet,
-    ExfInnerJoin2PartialDynamicIndexGetApply____removed,
     ExfLeftOuter2InnerUnionAllLeftAntiSemiJoin,
     ExfImplementLeftSemiCorrelatedApply,
     ExfImplementLeftSemiCorrelatedApplyIn,
@@ -191,11 +182,7 @@ class CXform : public CRefCount, public DbgPrintMixin<CXform> {
     ExfImplementPartitionSelector,
     ExfMaxOneRow2Assert,
     ExfInnerJoinWithInnerSelect2IndexGetApply____removed,
-    ExfInnerJoinWithInnerSelect2DynamicIndexGetApply____removed,
-    ExfInnerJoinWithInnerSelect2PartialDynamicIndexGetApply____removed,
-    ExfInnerJoin2DynamicBitmapIndexGetApply____removed,
     ExfInnerJoinWithInnerSelect2BitmapIndexGetApply____removed,
-    ExfInnerJoinWithInnerSelect2DynamicBitmapIndexGetApply____removed,
     ExfGbAggWithMDQA2Join,
     ExfCollapseProject,
     ExfRemoveSubqDistinct,
@@ -207,28 +194,19 @@ class CXform : public CRefCount, public DbgPrintMixin<CXform> {
     ExfEagerAgg,
     ExfExpandNAryJoinDPv2,
     ExfImplementFullOuterMergeJoin,
-    ExfLeftOuterJoin2DynamicBitmapIndexGetApply____removed,
-    ExfLeftOuterJoin2DynamicIndexGetApply____removed,
-    ExfLeftOuterJoinWithInnerSelect2DynamicBitmapIndexGetApply____removed,
-    ExfLeftOuterJoinWithInnerSelect2DynamicIndexGetApply____removed,
     ExfIndexOnlyGet2IndexOnlyScan,
     ExfJoin2BitmapIndexGetApply,
     ExfJoin2IndexGetApply,
     ExfMultiExternalGet2MultiExternalScan____removed,
-    ExfExpandDynamicGetWithExternalPartitions____removed,
     ExfLeftJoin2RightJoin,
     ExfRightOuterJoin2HashJoin,
     ExfImplementInnerJoin,
-    ExfDynamicForeignGet2DynamicForeignScan,
-    ExfExpandDynamicGetWithForeignPartitions,
     ExfPushJoinBelowLeftUnionAll,
     ExfPushJoinBelowRightUnionAll,
     ExfLimit2IndexGet,
-    ExfDynamicIndexOnlyGet2DynamicIndexOnlyScan,
     ExfMinMax2IndexGet,
     ExfMinMax2IndexOnlyGet,
     ExfSelect2IndexOnlyGet,
-    ExfSelect2DynamicIndexOnlyGet,
     ExfLimit2IndexOnlyGet,
     ExfFullOuterJoin2HashJoin,
     ExfFullJoinCommutativity,

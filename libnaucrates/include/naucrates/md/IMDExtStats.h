@@ -13,7 +13,6 @@
 #define GPMD_IMDExtStats_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CMDDependency.h"
 #include "naucrates/md/CMDNDistinct.h"
 #include "naucrates/md/IMDCacheObject.h"
@@ -21,7 +20,7 @@
 
 namespace gpdxl {
 // fwd declaration
-class CXMLSerializer;
+
 }  // namespace gpdxl
 
 namespace gpmd {

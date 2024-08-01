@@ -11,11 +11,10 @@
 #ifndef GPOPT_CScalarSortGroupClause_H
 #define GPOPT_CScalarSortGroupClause_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

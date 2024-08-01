@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarProjElem_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/CMDName.h"
 
@@ -58,7 +57,6 @@ class CDXLScalarProjElem : public CDXLScalar {
   const CMDName *GetMdNameAlias() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const override;
 
   // check if given column is defined by operator
   BOOL IsColDefined(ULONG colid) const override { return (Id() == colid); }

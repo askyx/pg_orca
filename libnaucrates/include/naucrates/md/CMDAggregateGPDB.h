@@ -13,8 +13,6 @@
 #define GPMD_CMDAggregateGPDB_H
 
 #include "gpos/base.h"
-
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/md/IMDAggregate.h"
 
 namespace gpmd {
@@ -72,7 +70,6 @@ class CMDAggregateGPDB : public IMDAggregate {
   ~CMDAggregateGPDB() override;
 
   // string representation of object
-  const CWStringDynamic *GetStrRepr() override;
 
   // aggregate id
   IMDId *MDId() const override;
@@ -87,7 +84,6 @@ class CMDAggregateGPDB : public IMDAggregate {
   IMDId *GetIntermediateResultTypeMdid() const override;
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
   // is an ordered aggregate
   BOOL IsOrdered() const override { return m_is_ordered; }

@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysical_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLOperator.h"
 #include "naucrates/dxl/operators/CDXLPhysicalProperties.h"
 
@@ -21,7 +20,7 @@ namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
-class CXMLSerializer;
+
 //---------------------------------------------------------------------------
 //	@class:
 //		CDXLPhysical

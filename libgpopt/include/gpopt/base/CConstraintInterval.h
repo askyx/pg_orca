@@ -13,14 +13,13 @@
 #ifndef GPOPT_CConstraintInterval_H
 #define GPOPT_CConstraintInterval_H
 
-#include "gpos/base.h"
-#include "gpos/error/CAutoTrace.h"
-#include "gpos/task/CAutoTraceFlag.h"
-
 #include "gpopt/base/CConstraint.h"
 #include "gpopt/base/CRange.h"
 #include "gpopt/operators/CScalarArrayCmp.h"
 #include "gpopt/operators/CScalarConst.h"
+#include "gpos/base.h"
+#include "gpos/error/CAutoTrace.h"
+#include "gpos/task/CAutoTraceFlag.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 #include "naucrates/md/IMDIndex.h"
 #include "naucrates/traceflags/traceflags.h"

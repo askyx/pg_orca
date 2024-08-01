@@ -11,10 +11,9 @@
 
 #include "gpopt/operators/CPhysicalIndexOnlyScan.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

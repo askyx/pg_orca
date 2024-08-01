@@ -18,13 +18,11 @@
 #ifndef GPOPT_CPhysicalBitmapTableScan_H
 #define GPOPT_CPhysicalBitmapTableScan_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalScan.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations
-class CDistributionSpec;
 class CTableDescriptor;
 
 //---------------------------------------------------------------------------

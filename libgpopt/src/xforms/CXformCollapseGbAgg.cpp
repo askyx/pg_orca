@@ -12,13 +12,12 @@
 
 #include "gpopt/xforms/CXformCollapseGbAgg.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/COperator.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
 
 using namespace gpmd;
 using namespace gpopt;

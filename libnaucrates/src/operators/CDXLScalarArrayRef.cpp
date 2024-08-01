@@ -13,7 +13,6 @@
 
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -79,50 +78,6 @@ const CWStringConst *CDXLScalarArrayRef::GetOpNameStr() const {
 
 INT CDXLScalarArrayRef::TypeModifier() const {
   return m_type_modifier;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarArrayRef::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarArrayRef::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  m_elem_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenArrayElementType));
-  if (default_type_modifier != TypeModifier()) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
-  }
-  m_array_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenArrayType));
-  m_return_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-
-  // serialize child nodes
-  const ULONG arity = dxlnode->Arity();
-  GPOS_ASSERT(3 == arity || 4 == arity);
-
-  // first 2 children are index lists
-  (*dxlnode)[0]->SerializeToDXL(xml_serializer);
-  (*dxlnode)[1]->SerializeToDXL(xml_serializer);
-
-  // 3rd child is the ref expression
-  const CWStringConst *pstrRefExpr = CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayRefExpr);
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrRefExpr);
-  (*dxlnode)[2]->SerializeToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrRefExpr);
-
-  // 4th child is the optional assign expression
-  const CWStringConst *pstrAssignExpr = CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayRefAssignExpr);
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrAssignExpr);
-  if (4 == arity) {
-    (*dxlnode)[3]->SerializeToDXL(xml_serializer);
-  }
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrAssignExpr);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------

@@ -9,10 +9,9 @@
 //		Management of the global xform set
 //---------------------------------------------------------------------------
 
+#include "gpopt/xforms/xforms.h"
 #include "gpos/base.h"
 #include "gpos/memory/CMemoryPoolManager.h"
-
-#include "gpopt/xforms/xforms.h"
 
 using namespace gpopt;
 
@@ -128,8 +127,6 @@ void CXformFactory::Instantiate() {
   Add(GPOS_NEW(m_mp) CXformExpandNAryJoinDP(m_mp));
   Add(GPOS_NEW(m_mp) CXformGet2TableScan(m_mp));
   Add(GPOS_NEW(m_mp) CXformIndexGet2IndexScan(m_mp));
-  Add(GPOS_NEW(m_mp) CXformDynamicGet2DynamicTableScan(m_mp));
-  Add(GPOS_NEW(m_mp) CXformDynamicIndexGet2DynamicIndexScan(m_mp));
   Add(GPOS_NEW(m_mp) CXformImplementSequence(m_mp));
   Add(GPOS_NEW(m_mp) CXformImplementConstTableGet(m_mp));
   Add(GPOS_NEW(m_mp) CXformUnnestTVF(m_mp));
@@ -137,8 +134,6 @@ void CXformFactory::Instantiate() {
   Add(GPOS_NEW(m_mp) CXformImplementTVFNoArgs(m_mp));
   Add(GPOS_NEW(m_mp) CXformSelect2Filter(m_mp));
   Add(GPOS_NEW(m_mp) CXformSelect2IndexGet(m_mp));
-  Add(GPOS_NEW(m_mp) CXformSelect2DynamicIndexGet(m_mp));
-  SkipUnused(1);
   Add(GPOS_NEW(m_mp) CXformSimplifySelectWithSubquery(m_mp));
   Add(GPOS_NEW(m_mp) CXformSimplifyProjectWithSubquery(m_mp));
   Add(GPOS_NEW(m_mp) CXformSelect2Apply(m_mp));
@@ -146,7 +141,7 @@ void CXformFactory::Instantiate() {
   Add(GPOS_NEW(m_mp) CXformGbAgg2Apply(m_mp));
   Add(GPOS_NEW(m_mp) CXformSubqJoin2Apply(m_mp));
   Add(GPOS_NEW(m_mp) CXformSubqNAryJoin2Apply(m_mp));
-  SkipUnused(2);
+  SkipUnused(1);
   Add(GPOS_NEW(m_mp) CXformInnerApplyWithOuterKey2InnerJoin(m_mp));
   SkipUnused(1);
   Add(GPOS_NEW(m_mp) CXformImplementIndexApply(m_mp));
@@ -237,10 +232,7 @@ void CXformFactory::Instantiate() {
   Add(GPOS_NEW(m_mp) CXformExpandFullOuterJoin(m_mp));
   Add(GPOS_NEW(m_mp) CXformForeignGet2ForeignScan(m_mp));
   Add(GPOS_NEW(m_mp) CXformSelect2BitmapBoolOp(m_mp));
-  Add(GPOS_NEW(m_mp) CXformSelect2DynamicBitmapBoolOp(m_mp));
   Add(GPOS_NEW(m_mp) CXformImplementBitmapTableGet(m_mp));
-  Add(GPOS_NEW(m_mp) CXformImplementDynamicBitmapTableGet(m_mp));
-  SkipUnused(1);
   Add(GPOS_NEW(m_mp) CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin(m_mp));
   Add(GPOS_NEW(m_mp) CXformImplementLeftSemiCorrelatedApply(m_mp));
   Add(GPOS_NEW(m_mp) CXformImplementLeftSemiCorrelatedApplyIn(m_mp));
@@ -251,7 +243,7 @@ void CXformFactory::Instantiate() {
   Add(GPOS_NEW(m_mp) CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations(m_mp));
   SkipUnused(2);
   Add(GPOS_NEW(m_mp) CXformMaxOneRow2Assert(m_mp));
-  SkipUnused(6);
+  SkipUnused(2);
   Add(GPOS_NEW(m_mp) CXformGbAggWithMDQA2Join(m_mp));
   Add(GPOS_NEW(m_mp) CXformCollapseProject(m_mp));
   Add(GPOS_NEW(m_mp) CXformRemoveSubqDistinct(m_mp));
@@ -260,24 +252,19 @@ void CXformFactory::Instantiate() {
   Add(GPOS_NEW(m_mp) CXformEagerAgg(m_mp));
   Add(GPOS_NEW(m_mp) CXformExpandNAryJoinDPv2(m_mp));
   Add(GPOS_NEW(m_mp) CXformImplementFullOuterMergeJoin(m_mp));
-  SkipUnused(4);
   Add(GPOS_NEW(m_mp) CXformIndexOnlyGet2IndexOnlyScan(m_mp));
   Add(GPOS_NEW(m_mp) CXformJoin2BitmapIndexGetApply(m_mp));
   Add(GPOS_NEW(m_mp) CXformJoin2IndexGetApply(m_mp));
-  SkipUnused(2);
+  SkipUnused(1);
   Add(GPOS_NEW(m_mp) CXformLeftJoin2RightJoin(m_mp));
   Add(GPOS_NEW(m_mp) CXformRightOuterJoin2HashJoin(m_mp));
   Add(GPOS_NEW(m_mp) CXformImplementInnerJoin(m_mp));
-  Add(GPOS_NEW(m_mp) CXformDynamicForeignGet2DynamicForeignScan(m_mp));
-  Add(GPOS_NEW(m_mp) CXformExpandDynamicGetWithForeignPartitions(m_mp));
   Add(GPOS_NEW(m_mp) CXformPushJoinBelowLeftUnionAll(m_mp));
   Add(GPOS_NEW(m_mp) CXformPushJoinBelowRightUnionAll(m_mp));
   Add(GPOS_NEW(m_mp) CXformLimit2IndexGet(m_mp));
-  Add(GPOS_NEW(m_mp) CXformDynamicIndexOnlyGet2DynamicIndexOnlyScan(m_mp));
   Add(GPOS_NEW(m_mp) CXformMinMax2IndexGet(m_mp));
   Add(GPOS_NEW(m_mp) CXformMinMax2IndexOnlyGet(m_mp));
   Add(GPOS_NEW(m_mp) CXformSelect2IndexOnlyGet(m_mp));
-  Add(GPOS_NEW(m_mp) CXformSelect2DynamicIndexOnlyGet(m_mp));
   Add(GPOS_NEW(m_mp) CXformLimit2IndexOnlyGet(m_mp));
   Add(GPOS_NEW(m_mp) CXformFullOuterJoin2HashJoin(m_mp));
   Add(GPOS_NEW(m_mp) CXformFullJoinCommutativity(m_mp));

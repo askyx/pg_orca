@@ -11,10 +11,9 @@
 #ifndef GPOPT_CLogicalLeftSemiApplyIn_H
 #define GPOPT_CLogicalLeftSemiApplyIn_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalLeftSemiApply.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

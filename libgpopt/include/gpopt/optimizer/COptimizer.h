@@ -11,10 +11,9 @@
 #ifndef GPOPT_COptimizer_H
 #define GPOPT_COptimizer_H
 
-#include "gpos/base.h"
-
 #include "gpopt/eval/CConstExprEvaluatorDefault.h"
 #include "gpopt/search/CSearchStage.h"
+#include "gpos/base.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 
 namespace gpdxl {
@@ -53,7 +52,7 @@ class COptimizer {
 
   // translate an optimizer expression into a DXL tree
   static CDXLNode *CreateDXLNode(CMemoryPool *mp, CMDAccessor *md_accessor, CExpression *pexpr,
-                                 CColRefArray *colref_array, CMDNameArray *pdrgpmdname, ULONG ulHosts);
+                                 CColRefArray *colref_array, CMDNameArray *pdrgpmdname);
 
   // helper function to print query expression
   static void PrintQuery(CMemoryPool *mp, CExpression *pexprTranslated, CQueryContext *pqc);
@@ -61,14 +60,11 @@ class COptimizer {
   // helper function to print query plan
   static void PrintPlan(CMemoryPool *mp, CExpression *pexprPlan);
 
-  // helper function to dump plan samples
-  static void DumpSamples(CMemoryPool *mp, CEnumeratorConfig *pec, ULONG ulSessionId, ULONG ulCmdId);
-
   // print query or plan tree
   static void PrintQueryOrPlan(CMemoryPool *mp, CExpression *pexpr, CQueryContext *pqc = nullptr);
 
   // Check for a plan with CTE, if both CTEProducer and CTEConsumer are executed on the same locality.
-  static void CheckCTEConsistency(CMemoryPool *mp, CExpression *pexpr);
+  static void CheckCTEConsistency(CMemoryPool *mp);
 
  public:
   // main optimizer function
@@ -77,13 +73,9 @@ class COptimizer {
                                  const CDXLNode *query,
                                  const CDXLNodeArray *query_output_dxlnode_array,  // required output columns
                                  const CDXLNodeArray *cte_producers,
-                                 IConstExprEvaluator *pceeval,             // constant expression evaluator
-                                 ULONG ulHosts,                            // number of hosts (data nodes) in the system
-                                 ULONG ulSessionId,                        // session id used for logging and minidumps
-                                 ULONG ulCmdId,                            // command id used for logging and minidumps
-                                 CSearchStageArray *search_stage_array,    // search strategy
-                                 COptimizerConfig *optimizer_config,       // optimizer configurations
-                                 const CHAR *szMinidumpFileName = nullptr  // name of minidump file to be created
+                                 IConstExprEvaluator *pceeval,           // constant expression evaluator
+                                 CSearchStageArray *search_stage_array,  // search strategy
+                                 COptimizerConfig *optimizer_config      // optimizer configurations
   );
 };  // class COptimizer
 }  // namespace gpopt

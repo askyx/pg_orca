@@ -12,12 +12,11 @@
 #ifndef GPOPT_CCostContext_H
 #define GPOPT_CCostContext_H
 
-#include "gpos/base.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/COptimizationContext.h"
 #include "gpopt/cost/CCost.h"
 #include "gpopt/cost/ICostModel.h"
+#include "gpos/base.h"
+#include "gpos/common/CRefCount.h"
 
 // infinite plan cost
 #define GPOPT_INFINITE_COST CCost(1e+100)
@@ -49,7 +48,7 @@ using CONST_COSTCTXT_PTR = const CCostContext *;
 //		Cost context
 //
 //---------------------------------------------------------------------------
-class CCostContext : public CRefCount, public DbgPrintMixin<CCostContext> {
+class CCostContext : public CRefCount {
  public:
   // states of cost context
   enum EState {

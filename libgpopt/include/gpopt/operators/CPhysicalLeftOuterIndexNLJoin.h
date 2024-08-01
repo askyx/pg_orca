@@ -7,9 +7,8 @@
 #ifndef GPOPT_CPhysicalLeftOuterIndexNLJoin_H
 #define GPOPT_CPhysicalLeftOuterIndexNLJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalLeftOuterNLJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 class CPhysicalLeftOuterIndexNLJoin : public CPhysicalLeftOuterNLJoin {
@@ -29,9 +28,6 @@ class CPhysicalLeftOuterIndexNLJoin : public CPhysicalLeftOuterNLJoin {
   // dtor
   ~CPhysicalLeftOuterIndexNLJoin() override;
 
-  CEnfdProp::EPropEnforcingType EpetDistribution(CExpressionHandle &exprhdl,
-                                                 const CEnfdDistribution *ped) const override;
-
   // ident accessors
   EOperatorId Eopid() const override { return EopPhysicalLeftOuterIndexNLJoin; }
 
@@ -43,13 +39,6 @@ class CPhysicalLeftOuterIndexNLJoin : public CPhysicalLeftOuterNLJoin {
 
   // outer column references accessor
   CColRefArray *PdrgPcrOuterRefs() const { return m_pdrgpcrOuterRefs; }
-
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
-
-  CEnfdDistribution *Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput, ULONG child_index,
-                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulDistrReq) override;
 
   // execution order of children
   EChildExecOrder Eceo() const override {

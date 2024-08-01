@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalSequence_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 #include "naucrates/dxl/operators/CDXLSpoolInfo.h"
 
@@ -42,7 +41,6 @@ class CDXLPhysicalSequence : public CDXLPhysical {
   const CWStringConst *GetOpNameStr() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLPhysicalSequence *Cast(CDXLOperator *dxl_op) {

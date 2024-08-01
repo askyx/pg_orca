@@ -11,9 +11,8 @@
 #ifndef GPOPT_CLogicalInsert_H
 #define GPOPT_CLogicalInsert_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations

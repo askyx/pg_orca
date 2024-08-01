@@ -11,13 +11,11 @@
 #ifndef GPOS_CPhysicalSplit_H
 #define GPOS_CPhysicalSplit_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declaration
-class CDistributionSpec;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -117,10 +115,6 @@ class CPhysicalSplit : public CPhysical {
   CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
-
   // compute required rewindability of the n-th child
   CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
                                   ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
@@ -131,9 +125,6 @@ class CPhysicalSplit : public CPhysical {
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties
   //-------------------------------------------------------------------------------------
-
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // derive rewindability
   CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;

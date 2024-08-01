@@ -16,8 +16,6 @@
 
 using namespace gpos;
 
-FORCE_GENERATE_DBGSTR(CMessage);
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CMessage::CMessage

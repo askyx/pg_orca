@@ -16,14 +16,14 @@
 #define GPDB_gpdbwrappers_H
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "access/amapi.h"
-#include "access/attnum.h"
-#include "optimizer/plancat.h"
-#include "parser/parse_coerce.h"
-#include "statistics/statistics.h"
-#include "utils/lsyscache.h"
+#include <access/amapi.h>
+#include <access/attnum.h>
+#include <optimizer/plancat.h>
+#include <parser/parse_coerce.h>
+#include <statistics/statistics.h>
+#include <utils/lsyscache.h>
 }
 
 #include "gpos/types.h"
@@ -651,20 +651,6 @@ gpos::BOOL WalkQueryTree(Query *query, bool (*walker)(Node *node, void *context)
 
 }  // namespace gpdb
 
-#define ForEach(cell, l) for ((cell) = gpdb::ListHead(l); (cell) != NULL; (cell) = lnext(l, cell))
-
-#define ForBoth(cell1, list1, cell2, list2)                                                                  \
-  for ((cell1) = gpdb::ListHead(list1), (cell2) = gpdb::ListHead(list2); (cell1) != NULL && (cell2) != NULL; \
-       (cell1) = lnext(list1, cell1), (cell2) = lnext(list2, cell2))
-
-#define ForThree(cell1, list1, cell2, list2, cell3, list3)                                                \
-  for ((cell1) = gpdb::ListHead(list1), (cell2) = gpdb::ListHead(list2), (cell3) = gpdb::ListHead(list3); \
-       (cell1) != NULL && (cell2) != NULL && (cell3) != NULL;                                             \
-       (cell1) = lnext(list1, cell1), (cell2) = lnext(list2, cell2), (cell3) = lnext(list3, cell3))
-
-#define ForEachWithCount(cell, list, counter) \
-  for ((cell) = gpdb::ListHead(list), (counter) = 0; (cell) != NULL; (cell) = lnext(list, cell), ++(counter))
-
 #define ListMake1(x1) gpdb::LPrepend(x1, NIL)
 
 #define ListMake2(x1, x2) gpdb::LPrepend(x1, ListMake1(x2))
@@ -710,8 +696,6 @@ extern PGDLLIMPORT Node *newNodeMacroHolder;
   (AssertMacro((size) >= sizeof(Node)), /* need the tag, at least */ \
    newNodeMacroHolder = (Node *)Palloc0Fast(size), newNodeMacroHolder->type = (tag), newNodeMacroHolder)
 #endif  // __GNUC__
-
-#define MakeNode(_type_) ((_type_ *)NewNode(sizeof(_type_), T_##_type_))
 
 #define PStrDup(str) gpdb::MemCtxtStrdup(CurrentMemoryContext, (str))
 

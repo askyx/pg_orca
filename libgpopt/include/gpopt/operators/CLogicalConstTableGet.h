@@ -11,9 +11,8 @@
 #ifndef GPOPT_CLogicalConstTableGet_H
 #define GPOPT_CLogicalConstTableGet_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // dynamic array of datum arrays -- array owns elements

@@ -18,7 +18,6 @@
 #define GPDXL_CDXLScalarCoerceBase_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -79,7 +78,6 @@ class CDXLScalarCoerceBase : public CDXLScalar {
 #endif  // GPOS_DEBUG
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 };
 }  // namespace gpdxl
 

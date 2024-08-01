@@ -14,7 +14,6 @@
 
 #include "gpos/base.h"
 #include "gpos/string/CWStringConst.h"
-
 #include "naucrates/md/IMDId.h"
 
 namespace gpopt {

@@ -24,32 +24,31 @@
 
 #include <limits>  // std::numeric_limits
 
+#include "catalog/pg_collation.h"
+#include "gpopt/utils/gpdbdefs.h"
 #include "gpos/base.h"
 #include "gpos/error/CAutoExceptionStack.h"
 #include "gpos/error/CException.h"
-
-#include "gpopt/utils/gpdbdefs.h"
 #include "naucrates/exception.h"
-
-#include "catalog/pg_collation.h"
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "access/amapi.h"
-#include "access/genam.h"
-#include "catalog/pg_inherits.h"
-#include "foreign/fdwapi.h"
-#include "nodes/nodeFuncs.h"
-#include "optimizer/clauses.h"
-#include "optimizer/optimizer.h"
-#include "optimizer/plancat.h"
-#include "optimizer/subselect.h"
-#include "parser/parse_agg.h"
-#include "partitioning/partdesc.h"
-#include "storage/lmgr.h"
-#include "utils/fmgroids.h"
-#include "utils/memutils.h"
-#include "utils/partcache.h"
+#include <access/amapi.h>
+#include <access/genam.h>
+#include <catalog/pg_aggregate.h>
+#include <catalog/pg_inherits.h>
+#include <foreign/fdwapi.h>
+#include <nodes/nodeFuncs.h>
+#include <optimizer/clauses.h>
+#include <optimizer/optimizer.h>
+#include <optimizer/plancat.h>
+#include <optimizer/subselect.h>
+#include <parser/parse_agg.h>
+#include <partitioning/partdesc.h>
+#include <storage/lmgr.h>
+#include <utils/fmgroids.h>
+#include <utils/memutils.h>
+#include <utils/partcache.h>
 }
 #define GP_WRAP_START                                                                     \
   sigjmp_buf local_sigjmp_buf;                                                            \
@@ -438,13 +437,16 @@ bool gpdb::FunctionExists(Oid oid) {
 }
 
 Oid gpdb::GetAggIntermediateResultType(Oid aggid) {
-  GP_WRAP_START;
-  {
-    /* catalog tables: pg_aggregate */
-    return (aggid);
-  }
-  GP_WRAP_END;
-  return 0;
+  HeapTuple tp;
+  Oid result;
+
+  tp = SearchSysCache1(AGGFNOID, ObjectIdGetDatum(aggid));
+  if (!HeapTupleIsValid(tp))
+    elog(ERROR, "cache lookup failed for aggregate %u", aggid);
+
+  result = ((Form_pg_aggregate)GETSTRUCT(tp))->aggtranstype;
+  ReleaseSysCache(tp);
+  return result;
 }
 
 int gpdb::GetAggregateArgTypes(Aggref *aggref, Oid *inputTypes) {
@@ -625,12 +627,19 @@ Node *gpdb::GetRelationPartConstraints(Relation rel) {
 
 bool gpdb::GetCastFunc(Oid src_oid, Oid dest_oid, bool *is_binary_coercible, Oid *cast_fn_oid,
                        CoercionPathType *pathtype) {
-  GP_WRAP_START;
-  {
-    /* catalog tables: pg_cast */
-    return false;
+  if (IsBinaryCoercible(src_oid, dest_oid)) {
+    *is_binary_coercible = true;
+    *cast_fn_oid = 0;
+    return true;
   }
-  GP_WRAP_END;
+
+  *is_binary_coercible = false;
+
+  *pathtype = find_coercion_pathway(dest_oid, src_oid, COERCION_IMPLICIT, cast_fn_oid);
+  if (*pathtype == COERCION_PATH_RELABELTYPE)
+    *is_binary_coercible = true;
+  if (*pathtype != COERCION_PATH_NONE)
+    return true;
   return false;
 }
 
@@ -1366,11 +1375,20 @@ TargetEntry *gpdb::FindFirstMatchingMemberInTargetList(Node *node, List *targetl
 }
 
 List *gpdb::FindMatchingMembersInTargetList(Node *node, List *targetlist) {
-  GP_WRAP_START;
-  { return targetlist; }
-  GP_WRAP_END;
+  List *tlist = NIL;
+  ListCell *temp = NULL;
 
-  return NIL;
+  foreach (temp, targetlist) {
+    TargetEntry *tlentry = (TargetEntry *)lfirst(temp);
+
+    Assert(IsA(tlentry, TargetEntry));
+
+    if (equal(node, tlentry->expr)) {
+      tlist = lappend(tlist, tlentry);
+    }
+  }
+
+  return tlist;
 }
 
 bool gpdb::Equals(void *p1, void *p2) {

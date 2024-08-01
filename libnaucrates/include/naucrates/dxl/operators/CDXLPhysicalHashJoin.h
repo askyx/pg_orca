@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalHashJoin_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLPhysicalJoin.h"
 
 namespace gpdxl {
@@ -49,7 +48,6 @@ class CDXLPhysicalHashJoin : public CDXLPhysicalJoin {
   const CWStringConst *GetOpNameStr() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLPhysicalHashJoin *Cast(CDXLOperator *dxl_op) {

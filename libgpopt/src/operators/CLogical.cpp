@@ -11,8 +11,6 @@
 
 #include "gpopt/operators/CLogical.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CColRefSetIter.h"
@@ -26,9 +24,6 @@
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalApply.h"
 #include "gpopt/operators/CLogicalBitmapTableGet.h"
-#include "gpopt/operators/CLogicalDynamicBitmapTableGet.h"
-#include "gpopt/operators/CLogicalDynamicForeignGet.h"
-#include "gpopt/operators/CLogicalDynamicGet.h"
 #include "gpopt/operators/CLogicalForeignGet.h"
 #include "gpopt/operators/CLogicalGet.h"
 #include "gpopt/operators/CLogicalNAryJoin.h"
@@ -37,6 +32,7 @@
 #include "gpopt/operators/CScalarIdent.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDCheckConstraint.h"
 #include "naucrates/md/IMDColumn.h"
 #include "naucrates/md/IMDIndex.h"
@@ -1056,16 +1052,10 @@ CTableDescriptor *CLogical::PtabdescFromTableGet(COperator *pop) {
   switch (pop->Eopid()) {
     case CLogical::EopLogicalGet:
       return CLogicalGet::PopConvert(pop)->Ptabdesc();
-    case CLogical::EopLogicalDynamicGet:
-      return CLogicalDynamicGet::PopConvert(pop)->Ptabdesc();
     case CLogical::EopLogicalBitmapTableGet:
       return CLogicalBitmapTableGet::PopConvert(pop)->Ptabdesc();
     case CLogical::EopLogicalForeignGet:
       return CLogicalForeignGet::PopConvert(pop)->Ptabdesc();
-    case CLogical::EopLogicalDynamicForeignGet:
-      return CLogicalDynamicForeignGet::PopConvert(pop)->Ptabdesc();
-    case CLogical::EopLogicalDynamicBitmapTableGet:
-      return CLogicalDynamicBitmapTableGet::PopConvert(pop)->Ptabdesc();
     case CLogical::EopLogicalSelect:
       return CLogicalSelect::PopConvert(pop)->Ptabdesc();
     default:
@@ -1083,13 +1073,9 @@ CTableDescriptor *CLogical::PtabdescFromTableGet(COperator *pop) {
 //---------------------------------------------------------------------------
 CColRefArray *CLogical::PdrgpcrOutputFromLogicalGet(CLogical *pop) {
   GPOS_ASSERT(nullptr != pop);
-  GPOS_ASSERT(COperator::EopLogicalGet == pop->Eopid() || COperator::EopLogicalDynamicGet == pop->Eopid());
+  GPOS_ASSERT(COperator::EopLogicalGet == pop->Eopid());
 
-  if (COperator::EopLogicalGet == pop->Eopid()) {
-    return CLogicalGet::PopConvert(pop)->PdrgpcrOutput();
-  }
-
-  return CLogicalDynamicGet::PopConvert(pop)->PdrgpcrOutput();
+  return CLogicalGet::PopConvert(pop)->PdrgpcrOutput();
 }
 
 //---------------------------------------------------------------------------
@@ -1102,13 +1088,9 @@ CColRefArray *CLogical::PdrgpcrOutputFromLogicalGet(CLogical *pop) {
 //---------------------------------------------------------------------------
 const CName &CLogical::NameFromLogicalGet(CLogical *pop) {
   GPOS_ASSERT(nullptr != pop);
-  GPOS_ASSERT(COperator::EopLogicalGet == pop->Eopid() || COperator::EopLogicalDynamicGet == pop->Eopid());
+  GPOS_ASSERT(COperator::EopLogicalGet == pop->Eopid());
 
-  if (COperator::EopLogicalGet == pop->Eopid()) {
-    return CLogicalGet::PopConvert(pop)->Name();
-  }
-
-  return CLogicalDynamicGet::PopConvert(pop)->Name();
+  return CLogicalGet::PopConvert(pop)->Name();
 }
 
 //---------------------------------------------------------------------------

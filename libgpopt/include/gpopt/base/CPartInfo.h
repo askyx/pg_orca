@@ -11,10 +11,9 @@
 #ifndef GPOPT_CPartInfo_H
 #define GPOPT_CPartInfo_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CPartKeys.h"
+#include "gpos/base.h"
 
 // fwd decl
 namespace gpmd {
@@ -33,7 +32,7 @@ using namespace gpmd;
 //		Derived partition information at the logical level
 //
 //---------------------------------------------------------------------------
-class CPartInfo : public CRefCount, public DbgPrintMixin<CPartInfo> {
+class CPartInfo : public CRefCount {
  private:
   //---------------------------------------------------------------------------
   //	@class:
@@ -43,7 +42,7 @@ class CPartInfo : public CRefCount, public DbgPrintMixin<CPartInfo> {
   //		A single entry of the CPartInfo
   //
   //---------------------------------------------------------------------------
-  class CPartInfoEntry : public CRefCount, public DbgPrintMixin<CPartInfoEntry> {
+  class CPartInfoEntry : public CRefCount {
    private:
     // scan id
     ULONG m_scan_id;

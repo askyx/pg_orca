@@ -11,12 +11,6 @@
 
 #include "gpopt/xforms/CJoinOrderDPv2.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CBitSet.h"
-#include "gpos/common/CBitSetIter.h"
-#include "gpos/common/clibwrapper.h"
-#include "gpos/error/CAutoTrace.h"
-
 #include "gpopt/base/CDrvdPropScalar.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
@@ -30,6 +24,11 @@
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/operators/CScalarNAryJoinPredList.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/base.h"
+#include "gpos/common/CBitSet.h"
+#include "gpos/common/CBitSetIter.h"
+#include "gpos/common/clibwrapper.h"
+#include "gpos/error/CAutoTrace.h"
 #include "naucrates/md/CMDIdRelStats.h"
 #include "naucrates/md/IMDRelStats.h"
 #include "naucrates/statistics/CJoinStatsProcessor.h"
@@ -806,9 +805,7 @@ CDouble CJoinOrderDPv2::CostJoinWithPartitionSelection(SExpressionInfo *join_exp
   // for a non-select node (won't even come here) ==> 0.0, in effect
   // for a select(get) ==> 1 - (row count of select / row count of get)
   CDouble percent_reduction = .9;  // an arbitary default if the logical operator is not a simple select
-  ICostModel *cost_model = COptCtxt::PoctxtFromTLS()->GetCostModel();
-  CDouble num_segments = cost_model->UlHosts();
-  CDouble distribution_cost_factor = (num_segments * BCAST_RECV_COST + BCAST_SEND_COST) / SEQ_SCAN_COST;
+  CDouble distribution_cost_factor = (BCAST_RECV_COST + BCAST_SEND_COST) / SEQ_SCAN_COST;
   CDouble broadcast_cost = part_selector_group_info->m_cardinality * distribution_cost_factor;
 
   // penalize broadcast if it exceeds broadcast threshold (specified via GUC), just like
@@ -1546,8 +1543,6 @@ BOOL CJoinOrderDPv2::LevelIsFull(ULONG level) {
 
   return li->m_top_k_groups->IsLimitExceeded();
 }
-
-FORCE_GENERATE_DBGSTR(gpopt::CJoinOrderDPv2);
 
 //---------------------------------------------------------------------------
 //	@function:

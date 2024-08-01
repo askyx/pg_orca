@@ -13,9 +13,7 @@
 #include "naucrates/md/CMDArrayCoerceCastGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpmd;
 using namespace gpdxl;
@@ -40,13 +38,7 @@ CMDArrayCoerceCastGPDB::~CMDArrayCoerceCastGPDB() {
   }
   m_mdid_src_elemtype->Release();
 }
-// accessors
-const CWStringDynamic *CMDArrayCoerceCastGPDB::Pstr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
-}
+
 // return type modifier
 INT CMDArrayCoerceCastGPDB::TypeModifier() const {
   return m_type_modifier;
@@ -70,35 +62,6 @@ INT CMDArrayCoerceCastGPDB::Location() const {
 // return src basetype mdid
 IMDId *CMDArrayCoerceCastGPDB::GetSrcElemTypeMdId() const {
   return m_mdid_src_elemtype;
-}
-
-// serialize function metadata in DXL format
-void CMDArrayCoerceCastGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenGPDBArrayCoerceCast));
-
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastCoercePathType), m_path_type);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastBinaryCoercible), m_is_binary_coercible);
-
-  m_mdid_src->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastSrcType));
-  m_mdid_dest->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastDestType));
-  m_mdid_cast_func->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastFuncId));
-  m_mdid_src_elemtype->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBCastSrcElemType));
-
-  if (default_type_modifier != TypeModifier()) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
-  }
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsExplicit), m_is_explicit);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCoercionForm), (ULONG)m_dxl_coerce_format);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenLocation), m_location);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenGPDBArrayCoerceCast));
 }
 
 #ifdef GPOS_DEBUG

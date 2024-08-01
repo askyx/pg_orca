@@ -20,14 +20,12 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
-
 #include "naucrates/dxl/operators/CDXLDatumGeneric.h"
 
 namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
-class CXMLSerializer;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -53,7 +51,6 @@ class CDXLDatumStatsLintMappable : public CDXLDatumGeneric {
   ~CDXLDatumStatsLintMappable() override = default;
 
   // serialize the datum as the given element
-  void Serialize(CXMLSerializer *xml_serializer) override;
 
   // datum type
   EdxldatumType GetDatumType() const override { return CDXLDatum::EdxldatumStatsLintMappable; }

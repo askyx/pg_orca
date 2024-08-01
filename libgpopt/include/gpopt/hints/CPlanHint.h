@@ -11,10 +11,6 @@
 #ifndef GPOS_CPlanHint_H
 #define GPOS_CPlanHint_H
 
-#include "gpos/base.h"
-#include "gpos/common/CDynamicPtrArray.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/hints/CJoinHint.h"
 #include "gpopt/hints/CJoinTypeHint.h"
 #include "gpopt/hints/CRowHint.h"
@@ -23,14 +19,16 @@
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/COperator.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "gpos/base.h"
+#include "gpos/common/CDynamicPtrArray.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
 //	@class:
 //		CPlanHint
 //---------------------------------------------------------------------------
-class CPlanHint : public CRefCount, public DbgPrintMixin<CPlanHint> {
+class CPlanHint : public CRefCount {
  private:
   CMemoryPool *m_mp{nullptr};
 
@@ -81,7 +79,6 @@ class CPlanHint : public CRefCount, public DbgPrintMixin<CPlanHint> {
 
   IOstream &OsPrint(IOstream &os) const;
 
-  void Serialize(CXMLSerializer *xml_serializer) const;
 };  // class CPlanHint
 
 }  // namespace gpopt

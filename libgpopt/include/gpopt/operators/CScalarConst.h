@@ -11,11 +11,10 @@
 #ifndef GPOPT_CScalarConst_H
 #define GPOPT_CScalarConst_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 #include "naucrates/base/IDatum.h"
 
 namespace gpopt {

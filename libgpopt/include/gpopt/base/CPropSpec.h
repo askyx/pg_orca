@@ -11,10 +11,9 @@
 #ifndef GPOPT_CPropSpec_H
 #define GPOPT_CPropSpec_H
 
+#include "gpopt/operators/CExpression.h"
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
-
-#include "gpopt/operators/CExpression.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -30,12 +29,11 @@ class CReqdPropPlan;
 //		Property specification
 //
 //---------------------------------------------------------------------------
-class CPropSpec : public CRefCount, public DbgPrintMixin<CPropSpec> {
+class CPropSpec : public CRefCount {
  public:
   // property type
   enum EPropSpecType {
     EpstOrder,
-    EpstDistribution,
     EpstRewindability,
     EpstPartPropagation,
 
@@ -76,8 +74,6 @@ inline IOstream &operator<<(IOstream &os, const CPropSpec &ospec) {
 }
 
 }  // namespace gpopt
-
-FORCE_GENERATE_DBGSTR(gpopt::CPropSpec);
 
 #endif  // !GPOPT_CPropSpec_H
 

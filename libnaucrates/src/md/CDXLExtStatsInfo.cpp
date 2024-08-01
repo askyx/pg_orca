@@ -15,9 +15,7 @@
 #include "gpos/common/CAutoP.h"
 #include "gpos/common/CAutoRef.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -59,47 +57,6 @@ IMDId *CDXLExtStatsInfo::MDId() const {
 //---------------------------------------------------------------------------
 CMDName CDXLExtStatsInfo::Mdname() const {
   return *m_mdname;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLExtStatsInfo::GetMDName
-//
-//	@doc:
-//		Returns the DXL string for this object
-//
-//---------------------------------------------------------------------------
-const CWStringDynamic *CDXLExtStatsInfo::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLExtStatsInfo::Serialize
-//
-//	@doc:
-//		Serialize extended stats info in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLExtStatsInfo::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenRelationExtendedStats));
-
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-
-  // serialize stat infos
-  for (ULONG i = 0; i < m_extstats_info_array->Size(); i++) {
-    (*m_extstats_info_array)[i]->Serialize(xml_serializer);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenRelationExtendedStats));
-
-  GPOS_CHECK_ABORT;
 }
 
 //---------------------------------------------------------------------------

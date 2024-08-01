@@ -12,10 +12,9 @@
 #ifndef GPOPT_CJobQueue_H
 #define GPOPT_CJobQueue_H
 
+#include "gpopt/search/CJob.h"
 #include "gpos/base.h"
 #include "gpos/common/CList.h"
-
-#include "gpopt/search/CJob.h"
 
 namespace gpopt {
 using namespace gpos;

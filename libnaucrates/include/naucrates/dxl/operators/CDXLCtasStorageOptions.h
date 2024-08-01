@@ -15,14 +15,12 @@
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
-
 #include "naucrates/md/CMDName.h"
 
 using namespace gpmd;
 
 namespace gpdxl {
 // fwd decl
-class CXMLSerializer;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -113,7 +111,6 @@ class CDXLCtasStorageOptions : public CRefCount {
   CDXLCtasOptionArray *GetDXLCtasOptionArray() const;
 
   // serialize to DXL
-  void Serialize(CXMLSerializer *xml_serializer) const;
 };
 }  // namespace gpdxl
 

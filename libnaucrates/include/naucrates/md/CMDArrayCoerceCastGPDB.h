@@ -14,7 +14,6 @@
 #define GPMD_CMDArrayCoerceCastGPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/CMDCastGPDB.h"
 
@@ -53,9 +52,6 @@ class CMDArrayCoerceCastGPDB : public CMDCastGPDB {
   // dtor
   ~CMDArrayCoerceCastGPDB() override;
 
-  // accessors
-  virtual const CWStringDynamic *Pstr();
-
   // return type modifier
   virtual INT TypeModifier() const;
 
@@ -71,7 +67,6 @@ class CMDArrayCoerceCastGPDB : public CMDCastGPDB {
   virtual IMDId *GetSrcElemTypeMdId() const;
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
 #ifdef GPOS_DEBUG
   // debug print of the type in the provided stream

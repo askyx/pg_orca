@@ -15,7 +15,7 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 }
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "gpopt/relcache/CMDProviderRelcache.h"
@@ -26,11 +26,6 @@ extern "C" {
 using namespace gpos;
 using namespace gpdxl;
 using namespace gpmd;
-
-CWStringBase *CMDProviderRelcache::GetMDObjDXLStr(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *md_id) const {
-  // not used
-  return nullptr;
-}
 
 // return the requested metadata object
 IMDCacheObject *CMDProviderRelcache::GetMDObj(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid,

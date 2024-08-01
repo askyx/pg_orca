@@ -11,12 +11,11 @@
 #ifndef GPOPT_CXformLeftSemiApplyIn2LeftSemiJoin_H
 #define GPOPT_CXformLeftSemiApplyIn2LeftSemiJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalLeftSemiApplyIn.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPatternTree.h"
 #include "gpopt/xforms/CXformLeftSemiApply2LeftSemiJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

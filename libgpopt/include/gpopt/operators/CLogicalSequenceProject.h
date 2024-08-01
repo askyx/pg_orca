@@ -11,15 +11,13 @@
 #ifndef GPOS_CLogicalSequenceProject_H
 #define GPOS_CLogicalSequenceProject_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/base/CWindowFrame.h"
 #include "gpopt/operators/CLogicalUnary.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations
-class CDistributionSpec;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -31,9 +29,6 @@ class CDistributionSpec;
 //---------------------------------------------------------------------------
 class CLogicalSequenceProject : public CLogicalUnary {
  private:
-  // partition by keys
-  CDistributionSpec *m_pds;
-
   // order specs of child window functions
   COrderSpecArray *m_pdrgpos;
 
@@ -56,8 +51,7 @@ class CLogicalSequenceProject : public CLogicalUnary {
   CLogicalSequenceProject(const CLogicalSequenceProject &) = delete;
 
   // ctor
-  CLogicalSequenceProject(CMemoryPool *mp, CDistributionSpec *pds, COrderSpecArray *pdrgpos,
-                          CWindowFrameArray *pdrgpwf);
+  CLogicalSequenceProject(CMemoryPool *mp, COrderSpecArray *pdrgpos, CWindowFrameArray *pdrgpwf);
 
   // ctor for pattern
   explicit CLogicalSequenceProject(CMemoryPool *mp);
@@ -70,9 +64,6 @@ class CLogicalSequenceProject : public CLogicalUnary {
 
   // operator name
   const CHAR *SzId() const override { return "CLogicalSequenceProject"; }
-
-  // distribution spec
-  CDistributionSpec *Pds() const { return m_pds; }
 
   // order by keys
   COrderSpecArray *Pdrgpos() const { return m_pdrgpos; }

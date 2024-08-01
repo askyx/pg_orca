@@ -11,8 +11,6 @@
 
 #include "naucrates/dxl/operators/CDXLOperatorCost.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpdxl;
 
@@ -73,18 +71,3 @@ void CDXLOperatorCost::SetCost(CWStringDynamic *cost_str) {
   GPOS_DELETE(m_total_cost_str);
   m_total_cost_str = cost_str;
 }
-
-void CDXLOperatorCost::SerializeToDXL(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenCost));
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenStartupCost), m_startup_cost_str);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTotalCost), m_total_cost_str);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRows), m_rows_out_str);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWidth), m_width_str);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenCost));
-}
-
-// EOF

@@ -12,13 +12,12 @@
 
 #include "gpopt/xforms/CXformImplementInnerJoin.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalInnerHashJoin.h"
 #include "gpopt/operators/CPhysicalInnerNLJoin.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

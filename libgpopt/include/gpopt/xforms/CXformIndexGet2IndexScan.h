@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformIndexGet2IndexScan_H
 #define GPOPT_CXformIndexGet2IndexScan_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformImplementation.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

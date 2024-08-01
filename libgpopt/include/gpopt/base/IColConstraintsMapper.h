@@ -4,9 +4,8 @@
 #ifndef GPOPT_IColConstraintsMapper_H
 #define GPOPT_IColConstraintsMapper_H
 
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/CConstraint.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 class IColConstraintsMapper : public CRefCount {

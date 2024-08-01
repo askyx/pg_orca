@@ -13,7 +13,6 @@
 #define GPDXL_CDXLLogicalGroupBy_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 
@@ -30,9 +29,6 @@ class CDXLLogicalGroupBy : public CDXLLogical {
  private:
   // grouping column ids
   ULongPtrArray *m_grouping_colid_array;
-
-  // serialize output grouping columns indices in DXL
-  void SerializeGrpColsToDXL(CXMLSerializer *) const;
 
  public:
   CDXLLogicalGroupBy(CDXLLogicalGroupBy &) = delete;
@@ -53,7 +49,6 @@ class CDXLLogicalGroupBy : public CDXLLogical {
   void SetGroupingColumns(ULongPtrArray *);
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLLogicalGroupBy *Cast(CDXLOperator *dxl_op) {

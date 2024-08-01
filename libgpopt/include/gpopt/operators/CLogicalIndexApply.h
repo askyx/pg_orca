@@ -10,10 +10,9 @@
 #ifndef GPOPT_CLogicalIndexApply_H
 #define GPOPT_CLogicalIndexApply_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalApply.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 class CLogicalIndexApply : public CLogicalApply {

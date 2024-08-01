@@ -13,16 +13,15 @@
 //
 //---------------------------------------------------------------------------
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "nodes/primnodes.h"
-#include "nodes/value.h"
+#include <nodes/primnodes.h>
+#include <nodes/value.h>
 }
-#include "gpos/error/CAutoTrace.h"
-
 #include "gpopt/gpdbwrappers.h"
 #include "gpopt/translate/CMappingVarColId.h"
 #include "gpopt/translate/CTranslatorUtils.h"
+#include "gpos/error/CAutoTrace.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLScalarIdent.h"
 #include "naucrates/dxl/operators/CDXLScalarProjElem.h"
@@ -196,7 +195,7 @@ void CMappingVarColId::Load(ULONG query_level, ULONG RTE_index, CIdGenerator *id
   ULONG i = 0;
 
   // add mapping information for columns
-  ForEach(col_name, col_names) {
+  foreach (col_name, col_names) {
     Value *value = (Value *)lfirst(col_name);
     CHAR *col_name_char_array = strVal(value);
 
@@ -244,7 +243,7 @@ void CMappingVarColId::LoadDerivedTblColumns(ULONG query_level, ULONG RTE_index,
 
   ULONG drvd_tbl_col_counter = 0;  // counter for the dynamic array of DXL nodes
   ListCell *lc = nullptr;
-  ForEach(lc, target_list) {
+  foreach (lc, target_list) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
     if (!target_entry->resjunk) {
       GPOS_ASSERT(0 < target_entry->resno);
@@ -274,7 +273,7 @@ void CMappingVarColId::LoadCTEColumns(ULONG query_level, ULONG RTE_index, const 
 
   ULONG idx = 0;
   ListCell *lc = nullptr;
-  ForEach(lc, target_list) {
+  foreach (lc, target_list) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
     if (!target_entry->resjunk) {
       GPOS_ASSERT(0 < target_entry->resno);

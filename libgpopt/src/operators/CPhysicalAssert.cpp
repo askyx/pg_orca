@@ -11,11 +11,10 @@
 
 #include "gpopt/operators/CPhysicalAssert.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CRewindabilitySpec.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -88,30 +87,6 @@ COrderSpec *CPhysicalAssert::PosRequired(CMemoryPool *mp, CExpressionHandle &exp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalAssert::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalAssert::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                CDistributionSpec *pdsRequired, ULONG child_index,
-                                                CDrvdPropArray *,  // pdrgpdpCtxt
-                                                ULONG ulOptReq) const {
-  CDistributionSpec::EDistributionType edt = pdsRequired->Edt();
-
-  // pass through singleton and broadcast requests
-  if (CDistributionSpec::EdtSingleton == edt || CDistributionSpec::EdtStrictSingleton == edt ||
-      CDistributionSpec::EdtReplicated == edt || CDistributionSpec::EdtStrictReplicated == edt) {
-    pdsRequired->AddRef();
-    return pdsRequired;
-  }
-
-  return CPhysical::PdsUnary(mp, exprhdl, pdsRequired, child_index, ulOptReq);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalAssert::PrsRequired
 //
 //	@doc:
@@ -162,19 +137,6 @@ CCTEReq *CPhysicalAssert::PcteRequired(CMemoryPool *,        // mp,
 COrderSpec *CPhysicalAssert::PosDerive(CMemoryPool *,  // mp
                                        CExpressionHandle &exprhdl) const {
   return PosDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalAssert::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalAssert::PdsDerive(CMemoryPool *,  // mp
-                                              CExpressionHandle &exprhdl) const {
-  return PdsDerivePassThruOuter(exprhdl);
 }
 
 //---------------------------------------------------------------------------

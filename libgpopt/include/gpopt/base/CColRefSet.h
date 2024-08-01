@@ -11,10 +11,9 @@
 #ifndef GPOS_CColRefSet_H
 #define GPOS_CColRefSet_H
 
+#include "gpopt/base/CColRef.h"
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
-
-#include "gpopt/base/CColRef.h"
 
 #define GPOPT_COLREFSET_SIZE 1024
 

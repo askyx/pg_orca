@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarAssertConstraintList_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -43,7 +42,6 @@ class CDXLScalarAssertConstraintList : public CDXLScalar {
   const CWStringConst *GetOpNameStr() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // does the operator return a boolean result
   BOOL HasBoolResult(CMDAccessor *  // md_accessor

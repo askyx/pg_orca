@@ -12,24 +12,12 @@ namespace gpopt {
 // See gpopt::CPhysicalSerialUnionAll for its serial sibling.
 class CPhysicalParallelUnionAll : public CPhysicalUnionAll {
  private:
-  // array of child hashed distributions -- used locally for distribution derivation
-  CDistributionSpecArray *const m_pdrgpds;
-
  public:
   CPhysicalParallelUnionAll(CMemoryPool *mp, CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrInput);
 
   EOperatorId Eopid() const override;
 
   const CHAR *SzId() const override;
-
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
-
-  CEnfdDistribution::EDistributionMatching Edm(CReqdPropPlan *,   // prppInput
-                                               ULONG,             // child_index
-                                               CDrvdPropArray *,  // pdrgpdpCtxt
-                                               ULONG              // ulOptReq
-                                               ) override;
 
   ~CPhysicalParallelUnionAll() override;
 };

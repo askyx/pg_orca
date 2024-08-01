@@ -18,9 +18,8 @@
 #ifndef GPOPT_CLogicalBitmapTableGet_H
 #define GPOPT_CLogicalBitmapTableGet_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations

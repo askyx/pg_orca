@@ -12,9 +12,6 @@
 
 #include "gpopt/xforms/CXformGbAggWithMDQA2Join.h"
 
-#include "gpos/base.h"
-#include "gpos/memory/CAutoMemoryPool.h"
-
 #include "gpopt/base/CKeyCollection.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
@@ -23,6 +20,8 @@
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/COperator.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
+#include "gpos/memory/CAutoMemoryPool.h"
 
 using namespace gpmd;
 using namespace gpopt;

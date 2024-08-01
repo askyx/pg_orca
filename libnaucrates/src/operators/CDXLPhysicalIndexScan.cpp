@@ -12,7 +12,6 @@
 #include "naucrates/dxl/operators/CDXLPhysicalIndexScan.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/md/IMDCacheObject.h"
 
 using namespace gpos;
@@ -108,41 +107,6 @@ EdxlIndexScanDirection CDXLPhysicalIndexScan::GetIndexScanDir() const {
 //---------------------------------------------------------------------------
 const CDXLTableDescr *CDXLPhysicalIndexScan::GetDXLTableDescr() const {
   return m_dxl_table_descr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalIndexScan::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalIndexScan::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexScanDirection),
-                               CDXLOperator::GetIdxScanDirectionStr(m_index_scan_dir));
-
-  // serialize properties
-  node->SerializePropertiesToDXL(xml_serializer);
-
-  // serialize children
-  node->SerializeChildrenToDXL(xml_serializer);
-
-  // serialize partition mdids (null in this case)
-  IMdIdArray *empty = GPOS_NEW(m_mp) IMdIdArray(m_mp);
-  IMDCacheObject::SerializeMDIdList(xml_serializer, empty, CDXLTokens::GetDXLTokenStr(EdxltokenPartitions),
-                                    CDXLTokens::GetDXLTokenStr(EdxltokenPartition));
-  empty->Release();
-  // serialize index descriptor
-  m_dxl_index_descr->SerializeToDXL(xml_serializer);
-
-  // serialize table descriptor
-  m_dxl_table_descr->SerializeToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

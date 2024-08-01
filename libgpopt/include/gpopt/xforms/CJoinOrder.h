@@ -11,11 +11,10 @@
 #ifndef GPOPT_CJoinOrder_H
 #define GPOPT_CJoinOrder_H
 
-#include "gpos/base.h"
-#include "gpos/io/IOstream.h"
-
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/xforms/CXform.h"
+#include "gpos/base.h"
+#include "gpos/io/IOstream.h"
 
 // id for component created for relational nodes which are not
 // the child of LOJ
@@ -49,7 +48,7 @@ class CJoinOrder {
   //		Struct to capture edge
   //
   //---------------------------------------------------------------------------
-  struct SEdge : public CRefCount, public DbgPrintMixin<SEdge> {
+  struct SEdge : public CRefCount {
     // cover of edge
     CBitSet *m_pbs;
 
@@ -84,7 +83,7 @@ class CJoinOrder {
   //		Struct to capture component
   //
   //---------------------------------------------------------------------------
-  struct SComponent : public CRefCount, public DbgPrintMixin<SComponent> {
+  struct SComponent : public CRefCount {
     // cover
     CBitSet *m_pbs;
 

@@ -15,7 +15,6 @@
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
-
 #include "naucrates/md/CSystemId.h"
 #include "naucrates/md/IMDFunction.h"
 #include "naucrates/md/IMDType.h"
@@ -91,9 +90,6 @@ class CMDRequest : public CRefCount {
 
   // array of type info requests
   SMDTypeRequestArray *GetMDTypeRequestArray() const { return m_mdtype_request_array; }
-
-  // serialize request in DXL format
-  virtual void Serialize(gpdxl::CXMLSerializer *xml_serializer);
 };
 }  // namespace gpmd
 

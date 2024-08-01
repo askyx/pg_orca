@@ -85,8 +85,6 @@ void CException::Raise(const CHAR *filename, ULONG line, ULONG major, ULONG mino
     err_ctxt->Record(exc, va_list);
 
     VA_END(va_list);
-
-    err_ctxt->Serialize();
   }
 
   Raise(exc);
@@ -112,7 +110,6 @@ void CException::Reraise(CException exc, BOOL propagate) {
     // an exception thrown by a child task
     if (propagate) {
       err_ctxt->GetStackDescriptor()->BackTrace();
-      err_ctxt->Serialize();
     }
   }
 

@@ -14,14 +14,11 @@
 
 #include "gpos/base.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/md/CMDName.h"
 #include "naucrates/md/IMDCheckConstraint.h"
 
 // fwd decl
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -72,14 +69,12 @@ class CMDCheckConstraintGPDB : public IMDCheckConstraint {
   IMDId *GetRelMdId() const override { return m_rel_mdid; }
 
   // DXL string for check constraint
-  const CWStringDynamic *GetStrRepr() override;
 
   // the scalar expression of the check constraint
   CExpression *GetCheckConstraintExpr(CMemoryPool *mp, CMDAccessor *md_accessor,
                                       CColRefArray *colref_array) const override;
 
   // serialize MD check constraint in DXL format given a serializer object
-  void Serialize(gpdxl::CXMLSerializer *) const override;
 
 #ifdef GPOS_DEBUG
   // debug print of the MD check constraint

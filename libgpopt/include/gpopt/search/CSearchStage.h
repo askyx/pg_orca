@@ -11,11 +11,10 @@
 #ifndef GPOPT_CSearchStage_H
 #define GPOPT_CSearchStage_H
 
+#include "gpopt/xforms/CXform.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CTimerUser.h"
-
-#include "gpopt/xforms/CXform.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -35,7 +34,7 @@ using CSearchStageArray = CDynamicPtrArray<CSearchStage, CleanupDelete>;
 //		Search stage
 //
 //---------------------------------------------------------------------------
-class CSearchStage : public DbgPrintMixin<CSearchStage> {
+class CSearchStage {
  private:
   // set of xforms to be applied during stage
   CXformSet *m_xforms;

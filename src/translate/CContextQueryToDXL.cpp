@@ -13,7 +13,7 @@
 //
 //---------------------------------------------------------------------------
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 }
 
 #include "gpopt/translate/CContextQueryToDXL.h"

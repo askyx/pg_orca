@@ -7,16 +7,14 @@
 #ifndef GPOPT_CXformJoin2IndexApply_H
 #define GPOPT_CXformJoin2IndexApply_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformExploration.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;
 
 // fwd declaration
-class CLogicalDynamicGet;
 
 class CXformJoin2IndexApply : public CXformExploration {
  private:

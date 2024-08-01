@@ -12,12 +12,11 @@
 #ifndef GPOPT_CMDAccessor_H
 #define GPOPT_CMDAccessor_H
 
+#include "gpopt/engine/CStatisticsConfig.h"
+#include "gpopt/mdcache/CMDKey.h"
 #include "gpos/base.h"
 #include "gpos/memory/CCache.h"
 #include "gpos/memory/CCacheAccessor.h"
-
-#include "gpopt/engine/CStatisticsConfig.h"
-#include "gpopt/mdcache/CMDKey.h"
 #include "naucrates/md/CSystemId.h"
 #include "naucrates/md/IMDExtStats.h"
 #include "naucrates/md/IMDExtStatsInfo.h"

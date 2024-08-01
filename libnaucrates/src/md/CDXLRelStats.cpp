@@ -14,9 +14,7 @@
 #include "gpos/common/CAutoP.h"
 #include "gpos/common/CAutoRef.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -57,13 +55,6 @@ CDXLRelStats::~CDXLRelStats() {
   m_rel_stats_mdid->Release();
 }
 
-const CWStringDynamic *CDXLRelStats::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
-}
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CDXLRelStats::MDId
@@ -98,31 +89,6 @@ CMDName CDXLRelStats::Mdname() const {
 //---------------------------------------------------------------------------
 CDouble CDXLRelStats::Rows() const {
   return m_rows;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLRelStats::Serialize
-//
-//	@doc:
-//		Serialize relation stats in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLRelStats::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenRelationStats));
-
-  m_rel_stats_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRows), m_rows);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRelPages), m_relpages);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRelAllVisible), m_relallvisible);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenEmptyRelation), m_empty);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenRelationStats));
-
-  GPOS_CHECK_ABORT;
 }
 
 #ifdef GPOS_DEBUG

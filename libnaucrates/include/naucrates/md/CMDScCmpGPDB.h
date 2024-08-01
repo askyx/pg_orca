@@ -13,7 +13,6 @@
 #define GPMD_CMDScCmpGPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDScCmp.h"
 
 namespace gpmd {
@@ -65,7 +64,6 @@ class CMDScCmpGPDB : public IMDScCmp {
   ~CMDScCmpGPDB() override;
 
   // accessors
-  const CWStringDynamic *GetStrRepr() override;
 
   // copmarison object id
   IMDId *MDId() const override;
@@ -86,7 +84,6 @@ class CMDScCmpGPDB : public IMDScCmp {
   IMDId *MdIdOp() const override;
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
 #ifdef GPOS_DEBUG
   // debug print of the type in the provided stream

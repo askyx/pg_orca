@@ -11,13 +11,11 @@
 #ifndef GPOS_CColRef_H
 #define GPOS_CColRef_H
 
+#include "gpopt/metadata/CName.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CHashMap.h"
 #include "gpos/common/CList.h"
-#include "gpos/common/DbgPrintMixin.h"
-
-#include "gpopt/metadata/CName.h"
 #include "naucrates/md/IMDType.h"
 #include "naucrates/traceflags/traceflags.h"
 
@@ -51,7 +49,7 @@ using UlongToColRefMapIter = CHashMapIter<ULONG, CColRef, gpos::HashValue<ULONG>
 //		factory object
 //
 //---------------------------------------------------------------------------
-class CColRef : public gpos::DbgPrintMixin<CColRef> {
+class CColRef {
  public:
   enum EUsedStatus { EUsed, EUnused, EUnknown, ESentinel };
 

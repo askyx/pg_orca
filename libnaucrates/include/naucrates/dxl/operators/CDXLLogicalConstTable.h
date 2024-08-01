@@ -14,7 +14,6 @@
 #define GPDXL_CDXLLogicalConstTable_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLDatum.h"
 #include "naucrates/dxl/operators/CDXLLogical.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
@@ -72,7 +71,6 @@ class CDXLLogicalConstTable : public CDXLLogical {
   }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // check if given column is defined by operator
   BOOL IsColDefined(ULONG colid) const override;

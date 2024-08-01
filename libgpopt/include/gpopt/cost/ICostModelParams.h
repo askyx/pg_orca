@@ -12,12 +12,10 @@
 #ifndef GPOPT_ICostModelParams_H
 #define GPOPT_ICostModelParams_H
 
+#include "CCost.h"
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
-
 #include "naucrates/md/IMDRelation.h"
-
-#include "CCost.h"
 
 namespace gpopt {
 using namespace gpos;

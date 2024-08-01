@@ -11,10 +11,9 @@
 #ifndef GPOPT_CReqdPropPlan_H
 #define GPOPT_CReqdPropPlan_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CReqdProp.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -24,7 +23,6 @@ class CColRefSet;
 class CDrvdPropRelational;
 class CDrvdPropPlan;
 class CEnfdOrder;
-class CEnfdDistribution;
 class CEnfdRewindability;
 class CEnfdPartitionPropagation;
 class CExpressionHandle;
@@ -49,9 +47,6 @@ class CReqdPropPlan : public CReqdProp {
   // required sort order
   CEnfdOrder *m_peo{nullptr};
 
-  // required distribution
-  CEnfdDistribution *m_ped{nullptr};
-
   // required rewindability
   CEnfdRewindability *m_per{nullptr};
 
@@ -68,8 +63,8 @@ class CReqdPropPlan : public CReqdProp {
   CReqdPropPlan() = default;
 
   // ctor
-  CReqdPropPlan(CColRefSet *pcrs, CEnfdOrder *peo, CEnfdDistribution *ped, CEnfdRewindability *per,
-                CEnfdPartitionPropagation *pepp, CCTEReq *pcter);
+  CReqdPropPlan(CColRefSet *pcrs, CEnfdOrder *peo, CEnfdRewindability *per, CEnfdPartitionPropagation *pepp,
+                CCTEReq *pcter);
 
   // dtor
   ~CReqdPropPlan() override;
@@ -97,9 +92,6 @@ class CReqdPropPlan : public CReqdProp {
 
   // required order accessor
   CEnfdOrder *Peo() const { return m_peo; }
-
-  // required distribution accessor
-  CEnfdDistribution *Ped() const { return m_ped; }
 
   // required rewindability accessor
   CEnfdRewindability *Per() const { return m_per; }

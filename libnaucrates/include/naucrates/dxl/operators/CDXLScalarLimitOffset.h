@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarLimitOffset_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
 namespace gpdxl {
@@ -40,9 +39,6 @@ class CDXLScalarLimitOffset : public CDXLScalar {
 
   // name of the DXL operator
   const CWStringConst *GetOpNameStr() const override;
-
-  // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const override;
 
   // conversion function
   static CDXLScalarLimitOffset *Cast(CDXLOperator *dxl_op) {

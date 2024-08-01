@@ -11,11 +11,10 @@
 
 #include "gpopt/operators/CScalarArray.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdPropScalar.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDAggregate.h"
 
 using namespace gpopt;

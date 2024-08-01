@@ -11,11 +11,10 @@
 #ifndef GPOPT_CWindowFrame_H
 #define GPOPT_CWindowFrame_H
 
-#include "gpos/base.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CPropSpec.h"
+#include "gpos/base.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 // type definition of corresponding dynamic pointer array
@@ -32,7 +31,7 @@ using namespace gpos;
 //		Description of window frame
 //
 //---------------------------------------------------------------------------
-class CWindowFrame : public CRefCount, public DbgPrintMixin<CWindowFrame> {
+class CWindowFrame : public CRefCount {
  public:
   // specification method
   enum EFrameSpec {

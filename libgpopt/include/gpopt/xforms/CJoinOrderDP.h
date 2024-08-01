@@ -11,15 +11,13 @@
 #ifndef GPOPT_CJoinOrderDP_H
 #define GPOPT_CJoinOrderDP_H
 
-#include "gpos/base.h"
-#include "gpos/common/CBitSet.h"
-#include "gpos/common/CHashMap.h"
-#include "gpos/common/DbgPrintMixin.h"
-#include "gpos/io/IOstream.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/xforms/CJoinOrder.h"
+#include "gpos/base.h"
+#include "gpos/common/CBitSet.h"
+#include "gpos/common/CHashMap.h"
+#include "gpos/io/IOstream.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -32,7 +30,7 @@ using namespace gpos;
 //		Helper class for creating join orders using dynamic programming
 //
 //---------------------------------------------------------------------------
-class CJoinOrderDP : public CJoinOrder, public gpos::DbgPrintMixin<CJoinOrderDP> {
+class CJoinOrderDP : public CJoinOrder {
  private:
   //---------------------------------------------------------------------------
   //	@struct:

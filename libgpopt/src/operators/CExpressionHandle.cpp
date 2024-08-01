@@ -1,7 +1,5 @@
 #include "gpopt/operators/CExpressionHandle.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCTEReq.h"
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CCostContext.h"
@@ -19,6 +17,7 @@
 #include "gpopt/operators/CPattern.h"
 #include "gpopt/operators/CPhysicalCTEConsumer.h"
 #include "gpopt/operators/CPhysicalScan.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/CStatisticsUtils.h"
 
 using namespace gpnaucrates;

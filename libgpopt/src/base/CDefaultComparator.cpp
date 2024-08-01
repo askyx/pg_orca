@@ -17,13 +17,12 @@
 
 #include "gpopt/base/CDefaultComparator.h"
 
-#include "gpos/memory/CAutoMemoryPool.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/eval/IConstExprEvaluator.h"
 #include "gpopt/exception.h"
 #include "gpopt/mdcache/CMDAccessor.h"
+#include "gpos/memory/CAutoMemoryPool.h"
 #include "naucrates/base/IDatum.h"
 #include "naucrates/base/IDatumBool.h"
 #include "naucrates/md/IMDId.h"

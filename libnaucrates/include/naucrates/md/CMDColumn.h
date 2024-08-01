@@ -13,14 +13,13 @@
 #define GPMD_CDXLColumn_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CMDName.h"
 #include "naucrates/md/IMDColumn.h"
 
 // fwd decl
 namespace gpdxl {
 class CDXLNode;
-class CXMLSerializer;
+
 }  // namespace gpdxl
 
 namespace gpmd {
@@ -89,11 +88,12 @@ class CMDColumn : public IMDColumn {
   BOOL IsDropped() const override;
 
   // serialize metadata object in DXL format given a serializer object
-  virtual void Serialize(gpdxl::CXMLSerializer *) const;
+  virtual
 
 #ifdef GPOS_DEBUG
-  // debug print of the column
-  void DebugPrint(IOstream &os) const override;
+      // debug print of the column
+      void
+      DebugPrint(IOstream &os) const override;
 #endif
 };
 

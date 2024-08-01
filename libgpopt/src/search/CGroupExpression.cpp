@@ -11,13 +11,6 @@
 
 #include "gpopt/search/CGroupExpression.h"
 
-#include "gpos/base.h"
-#include "gpos/error/CAutoTrace.h"
-#include "gpos/io/COstreamString.h"
-#include "gpos/string/CWStringDynamic.h"
-#include "gpos/task/CAutoSuspendAbort.h"
-#include "gpos/task/CWorker.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/COptimizationContext.h"
 #include "gpopt/base/CUtils.h"
@@ -27,11 +20,15 @@
 #include "gpopt/search/CGroupProxy.h"
 #include "gpopt/xforms/CXformFactory.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
+#include "gpos/error/CAutoTrace.h"
+#include "gpos/io/COstreamString.h"
+#include "gpos/string/CWStringDynamic.h"
+#include "gpos/task/CAutoSuspendAbort.h"
+#include "gpos/task/CWorker.h"
 #include "naucrates/traceflags/traceflags.h"
 
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CGroupExpression);
 
 #define GPOPT_COSTCTXT_HT_BUCKETS 100
 

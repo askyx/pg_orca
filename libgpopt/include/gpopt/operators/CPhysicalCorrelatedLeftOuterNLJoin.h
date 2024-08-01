@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPhysicalCorrelatedLeftOuterNLJoin_H
 #define GPOPT_CPhysicalCorrelatedLeftOuterNLJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalLeftOuterNLJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
@@ -62,37 +61,10 @@ class CPhysicalCorrelatedLeftOuterNLJoin : public CPhysicalLeftOuterNLJoin {
     return false;
   }
 
-  CEnfdDistribution *Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput, ULONG child_index,
-                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override {
-    return PedCorrelatedJoin(mp, exprhdl, prppInput, child_index, pdrgpdpCtxt, ulOptReq);
-  }
-
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *,        // mp
-                                 CExpressionHandle &,  // exprhdl,
-                                 CDistributionSpec *,  // pdsRequired,
-                                 ULONG,                // child_index,
-                                 CDrvdPropArray *,     // pdrgpdpCtxt,
-                                 ULONG                 // ulOptReq
-  ) const override {
-    GPOS_RAISE(CException::ExmaInvalid, CException::ExmiInvalid,
-               GPOS_WSZ_LIT("PdsRequired should not be called for CPhysicalCorrelatedLeftOuterNLJoin"));
-    return nullptr;
-  }
-
   // compute required rewindability of the n-th child
   CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
                                   ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override {
     return PrsRequiredCorrelatedJoin(mp, exprhdl, prsRequired, child_index, pdrgpdpCtxt, ulOptReq);
-  }
-
-  // distribution matching type
-  CEnfdDistribution::EDistributionMatching Edm(CReqdPropPlan *,   // prppInput
-                                               ULONG,             // child_index
-                                               CDrvdPropArray *,  // pdrgpdpCtxt
-                                               ULONG              // ulOptReq
-                                               ) override {
-    return CEnfdDistribution::EdmSatisfy;
   }
 
   // return true if operator is a correlated NL Join

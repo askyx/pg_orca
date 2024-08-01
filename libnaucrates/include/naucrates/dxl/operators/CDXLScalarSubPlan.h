@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarSubPlan_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLColRef.h"
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
@@ -89,7 +88,6 @@ class CDXLScalarSubPlan : public CDXLScalar {
   BOOL FOuterParam() const { return m_outer_param; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLScalarSubPlan *Cast(CDXLOperator *dxl_op) {

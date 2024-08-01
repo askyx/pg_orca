@@ -11,11 +11,10 @@
 #ifndef GPOPT_CXformAntiSemiJoinNotInAntiSemiJoinSwap_H
 #define GPOPT_CXformAntiSemiJoinNotInAntiSemiJoinSwap_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalLeftAntiSemiJoin.h"
 #include "gpopt/operators/CLogicalLeftAntiSemiJoinNotIn.h"
 #include "gpopt/xforms/CXformJoinSwap.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

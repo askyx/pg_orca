@@ -11,10 +11,9 @@
 
 #include "gpopt/operators/CScalarSwitch.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/mdcache/CMDAccessorUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 using namespace gpmd;

@@ -5,9 +5,8 @@
 #ifndef GPOS_MemoryPoolAllocator_H
 #define GPOS_MemoryPoolAllocator_H
 
-#include "gpos/memory/CMemoryPool.h"
-
 #include "gpopt/base/COptCtxt.h"
+#include "gpos/memory/CMemoryPool.h"
 
 namespace gpos {
 template <class T>

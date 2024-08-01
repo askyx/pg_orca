@@ -11,12 +11,9 @@
 
 #include "gpopt/operators/CPhysicalHashAggDeduplicate.h"
 
-#include "gpos/base.h"
-
-#include "gpopt/base/CDistributionSpecAny.h"
-#include "gpopt/base/CDistributionSpecRandom.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

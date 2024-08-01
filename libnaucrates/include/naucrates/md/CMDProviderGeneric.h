@@ -13,7 +13,6 @@
 #define GPMD_CMDProviderGeneric_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDType.h"
 

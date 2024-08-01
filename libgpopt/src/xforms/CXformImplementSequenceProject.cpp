@@ -11,11 +11,10 @@
 
 #include "gpopt/xforms/CXformImplementSequenceProject.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalSequenceProject.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalSequenceProject.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -60,16 +59,14 @@ void CXformImplementSequenceProject::Transform(CXformContext *pxfctxt, CXformRes
 
   // extract members of logical sequence project operator
   CLogicalSequenceProject *popLogicalSequenceProject = CLogicalSequenceProject::PopConvert(pexpr->Pop());
-  CDistributionSpec *pds = popLogicalSequenceProject->Pds();
   COrderSpecArray *pdrgpos = popLogicalSequenceProject->Pdrgpos();
   CWindowFrameArray *pdrgpwf = popLogicalSequenceProject->Pdrgpwf();
-  pds->AddRef();
   pdrgpos->AddRef();
   pdrgpwf->AddRef();
 
   // assemble physical operator
   CExpression *pexprSequenceProject = GPOS_NEW(mp)
-      CExpression(mp, GPOS_NEW(mp) CPhysicalSequenceProject(mp, pds, pdrgpos, pdrgpwf), pexprRelational, pexprScalar);
+      CExpression(mp, GPOS_NEW(mp) CPhysicalSequenceProject(mp, pdrgpos, pdrgpwf), pexprRelational, pexprScalar);
 
   // add alternative to results
   pxfres->Add(pexprSequenceProject);

@@ -13,7 +13,6 @@
 #define GPDXL_CDXLLogicalCTAS_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 #include "naucrates/dxl/operators/CDXLLogical.h"
 #include "naucrates/md/IMDRelation.h"
@@ -143,7 +142,6 @@ class CDXLLogicalCTAS : public CDXLLogical {
   BOOL IsColDefined(ULONG colid) const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLLogicalCTAS *Cast(CDXLOperator *dxl_op) {

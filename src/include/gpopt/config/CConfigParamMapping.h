@@ -18,7 +18,6 @@
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
 #include "gpos/memory/CMemoryPool.h"
-
 #include "naucrates/traceflags/traceflags.h"
 
 using namespace gpos;

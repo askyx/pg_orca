@@ -11,10 +11,9 @@
 
 #include "gpopt/base/CEnfdOrder.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CReqdPropPlan.h"
 #include "gpopt/operators/CPhysicalSort.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

@@ -18,9 +18,8 @@
 #ifndef GPOPT_CXformImplementBitmapTableGet_H
 #define GPOPT_CXformImplementBitmapTableGet_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformImplementation.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

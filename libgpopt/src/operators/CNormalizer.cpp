@@ -11,9 +11,6 @@
 
 #include "gpopt/operators/CNormalizer.h"
 
-#include "gpos/base.h"
-#include "gpos/memory/CAutoMemoryPool.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CLogical.h"
@@ -30,6 +27,8 @@
 #include "gpopt/operators/CScalarNAryJoinPredList.h"
 #include "gpopt/operators/CScalarProjectElement.h"
 #include "gpopt/operators/CScalarProjectList.h"
+#include "gpos/base.h"
+#include "gpos/memory/CAutoMemoryPool.h"
 
 using namespace gpopt;
 
@@ -66,21 +65,7 @@ BOOL CNormalizer::FPushableThruSeqPrjChild(CExpression *pexprSeqPrj, CExpression
   GPOS_ASSERT(nullptr != pexprPred);
   GPOS_ASSERT(CLogical::EopLogicalSequenceProject == pexprSeqPrj->Pop()->Eopid());
 
-  CDistributionSpec *pds = CLogicalSequenceProject::PopConvert(pexprSeqPrj->Pop())->Pds();
-
   BOOL fPushable = false;
-  if (CDistributionSpec::EdtHashed == pds->Edt()) {
-    GPOS_ASSERT(nullptr == CDistributionSpecHashed::PdsConvert(pds)->PdshashedEquiv());
-    CAutoMemoryPool amp;
-    CMemoryPool *mp = amp.Pmp();
-    CColRefSet *pcrsUsed = pexprPred->DeriveUsedColumns();
-    CColRefSet *pcrsPartCols = CUtils::PcrsExtractColumns(mp, CDistributionSpecHashed::PdsConvert(pds)->Pdrgpexpr());
-    if (pcrsPartCols->ContainsAll(pcrsUsed)) {
-      // predicate is pushable if used columns are included in partition-by expression
-      fPushable = true;
-    }
-    pcrsPartCols->Release();
-  }
 
   return fPushable;
 }

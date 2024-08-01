@@ -15,7 +15,6 @@
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
 #include "gpos/common/CDynamicPtrArray.h"
-
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
 
@@ -58,7 +57,6 @@ class CDXLPhysicalAppend : public CDXLPhysical {
   BOOL IsZapped() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLPhysicalAppend *Cast(CDXLOperator *dxl_op) {

@@ -11,13 +11,9 @@
 
 #include "gpopt/operators/CPhysicalLimit.h"
 
-#include "gpos/base.h"
-
-#include "gpopt/base/CDistributionSpecAny.h"
-#include "gpopt/base/CDistributionSpecReplicated.h"
-#include "gpopt/base/CDistributionSpecSingleton.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -129,69 +125,6 @@ COrderSpec *CPhysicalLimit::PosRequired(CMemoryPool *,        // mp
   return m_pos;
 }
 
-CDistributionSpec *CPhysicalLimit::PdsRequired(CMemoryPool *, CExpressionHandle &, CDistributionSpec *, ULONG,
-                                               CDrvdPropArray *, ULONG) const {
-  // FIXME: this method will (and should) _never_ be called
-  // sweep through all 38 overrides of PdsRequired and switch to Ped()
-  GPOS_RAISE(CException::ExmaInvalid, CException::ExmiInvalid,
-             GPOS_WSZ_LIT("PdsRequired should not be called for CPhysicalLimit"));
-  return nullptr;
-}
-
-CEnfdDistribution *CPhysicalLimit::Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput,
-                                       ULONG child_index,
-                                       CDrvdPropArray *,  // pdrgpdpCtxt
-                                       ULONG              // ulDistrReq
-) {
-  GPOS_ASSERT(0 == child_index);
-
-  CDistributionSpec *const pdsInput = prppInput->Ped()->PdsRequired();
-
-  if (FGlobal()) {
-    // TODO:  - Mar 19, 2012; Cleanup: move this check to the caller
-    if (exprhdl.HasOuterRefs()) {
-      return GPOS_NEW(mp)
-          CEnfdDistribution(PdsPassThru(mp, exprhdl, pdsInput, child_index), CEnfdDistribution::EdmSatisfy);
-    }
-
-    CExpression *pexprOffset = exprhdl.PexprScalarExactChild(1 /*child_index*/, true /*error_on_null_return*/);
-    if (!m_fHasCount && CUtils::FScalarConstIntZero(pexprOffset)) {
-      // pass through input distribution if it has no count nor offset and is not
-      // a singleton
-      if (CDistributionSpec::EdtSingleton != pdsInput->Edt() &&
-          CDistributionSpec::EdtStrictSingleton != pdsInput->Edt()) {
-        return GPOS_NEW(mp)
-            CEnfdDistribution(PdsPassThru(mp, exprhdl, pdsInput, child_index), CEnfdDistribution::EdmSatisfy);
-      }
-
-      return GPOS_NEW(mp)
-          CEnfdDistribution(GPOS_NEW(mp) CDistributionSpecAny(this->Eopid()), CEnfdDistribution::EdmSatisfy);
-    }
-    if (CDistributionSpec::EdtSingleton == pdsInput->Edt()) {
-      // pass through input distribution if it is a singleton (and it has count or offset)
-      return GPOS_NEW(mp)
-          CEnfdDistribution(PdsPassThru(mp, exprhdl, pdsInput, child_index), CEnfdDistribution::EdmSatisfy);
-    }
-
-    // otherwise, require a singleton explicitly
-    return GPOS_NEW(mp) CEnfdDistribution(GPOS_NEW(mp) CDistributionSpecSingleton(), CEnfdDistribution::EdmSatisfy);
-  }
-
-  // if expression has to execute on a single host then we need a gather
-  if (exprhdl.NeedsSingletonExecution()) {
-    return GPOS_NEW(mp)
-        CEnfdDistribution(PdsRequireSingleton(mp, exprhdl, pdsInput, child_index), CEnfdDistribution::EdmSatisfy);
-  }
-
-  // no local limits are generated if there are outer references, so if this
-  // is a local limit, there should be no outer references
-  GPOS_ASSERT(0 == exprhdl.DeriveOuterReferences()->Size());
-
-  // for local limit, we impose no distribution requirements
-  return GPOS_NEW(mp)
-      CEnfdDistribution(GPOS_NEW(mp) CDistributionSpecAny(this->Eopid()), CEnfdDistribution::EdmSatisfy);
-}
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CPhysicalLimit::PrsRequired
@@ -276,32 +209,6 @@ COrderSpec *CPhysicalLimit::PosDerive(CMemoryPool *,       // mp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalLimit::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalLimit::PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  CDistributionSpec *pdsOuter = exprhdl.Pdpplan(0)->Pds();
-
-  if (CDistributionSpec::EdtStrictReplicated == pdsOuter->Edt()) {
-    // Limit functions can give unstable results and therefore cannot
-    // guarantee strictly replicated data. For example,
-    //
-    //   SELECT * FROM foo WHERE a<>1 LIMIT 1;
-    //
-    // In this case, if the child was replicated, we can no longer
-    // guarantee that property and must now derive tainted replicated.
-    return GPOS_NEW(mp) CDistributionSpecReplicated(CDistributionSpec::EdtTaintedReplicated);
-  } else {
-    pdsOuter->AddRef();
-    return pdsOuter;
-  }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalLimit::PrsDerive
 //
 //	@doc:
@@ -331,34 +238,6 @@ CEnfdProp::EPropEnforcingType CPhysicalLimit::EpetOrder(CExpressionHandle &,  //
   }
 
   // required order will be enforced on limit's output
-  return CEnfdProp::EpetRequired;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalLimit::EpetDistribution
-//
-//	@doc:
-//		Return the enforcing type for distribution property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalLimit::EpetDistribution(CExpressionHandle &exprhdl,
-                                                               const CEnfdDistribution *ped) const {
-  GPOS_ASSERT(nullptr != ped);
-
-  // get distribution delivered by the limit node
-  CDistributionSpec *pds = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Pds();
-
-  if (ped->FCompatible(pds)) {
-    if (m_fGlobal) {
-      return CEnfdProp::EpetUnnecessary;
-    }
-
-    // prohibit the plan if local limit already delivers the enforced distribution, since
-    // otherwise we would create two limits with no intermediate motion operators
-    return CEnfdProp::EpetProhibited;
-  }
-
   return CEnfdProp::EpetRequired;
 }
 

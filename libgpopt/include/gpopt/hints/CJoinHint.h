@@ -33,18 +33,16 @@
 #ifndef GPOS_CJoinHint_H
 #define GPOS_CJoinHint_H
 
-#include "gpos/base.h"
-#include "gpos/common/CDynamicPtrArray.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/exception.h"
 #include "gpopt/hints/IHint.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/COperator.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "gpos/base.h"
+#include "gpos/common/CDynamicPtrArray.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
-class CJoinHint : public IHint, public DbgPrintMixin<CJoinHint> {
+class CJoinHint : public IHint {
  public:
   // JoinNode represent join order over a set of relations
   //
@@ -61,7 +59,7 @@ class CJoinHint : public IHint, public DbgPrintMixin<CJoinHint> {
   //                  /    \          .
   //         [JoinNode]    [JoinNode]
   //             t2            t1
-  class JoinNode : public CRefCount, public DbgPrintMixin<JoinNode> {
+  class JoinNode : public CRefCount {
    private:
     // alias or table name. null if non-leaf node.
     CWStringConst *m_name{nullptr};
@@ -115,8 +113,6 @@ class CJoinHint : public IHint, public DbgPrintMixin<CJoinHint> {
   const CJoinHint::JoinNode *GetJoinNode() const { return m_join_node; }
 
   IOstream &OsPrint(IOstream &os) const;
-
-  void Serialize(CXMLSerializer *xml_serializer);
 };
 
 using JoinHintList = CDynamicPtrArray<CJoinHint, CleanupRelease>;

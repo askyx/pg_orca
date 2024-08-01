@@ -12,7 +12,6 @@
 #define GPNAUCRATES_CDatumInt8GPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/base/IDatumInt8.h"
 #include "naucrates/md/CMDTypeInt8GPDB.h"
 

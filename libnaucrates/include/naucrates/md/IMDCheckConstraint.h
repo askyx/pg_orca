@@ -12,9 +12,8 @@
 #ifndef GPMD_IMDCheckConstraint_H
 #define GPMD_IMDCheckConstraint_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDCacheObject.h"
 
 // fwd decl

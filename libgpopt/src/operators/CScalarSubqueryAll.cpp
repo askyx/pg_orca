@@ -11,9 +11,8 @@
 
 #include "gpopt/operators/CScalarSubqueryAll.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

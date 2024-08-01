@@ -11,8 +11,6 @@
 
 #include "naucrates/dxl/operators/CDXLPhysicalJoin.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpdxl;
 

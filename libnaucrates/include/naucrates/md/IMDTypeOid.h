@@ -13,7 +13,6 @@
 #define GPMD_IMDTypeOid_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDType.h"
 
 // fwd decl

@@ -11,12 +11,11 @@
 #ifndef GPOPT_CIndexDescriptor_H
 #define GPOPT_CIndexDescriptor_H
 
-#include "gpos/base.h"
-#include "gpos/common/CDynamicPtrArray.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/metadata/CColumnDescriptor.h"
 #include "gpopt/metadata/CTableDescriptor.h"
+#include "gpos/base.h"
+#include "gpos/common/CDynamicPtrArray.h"
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDIndex.h"
 
@@ -32,7 +31,7 @@ using namespace gpmd;
 //		Base class for index descriptor
 //
 //---------------------------------------------------------------------------
-class CIndexDescriptor : public CRefCount, public DbgPrintMixin<CIndexDescriptor> {
+class CIndexDescriptor : public CRefCount {
  private:
   // mdid of the index
   IMDId *m_pmdidIndex;

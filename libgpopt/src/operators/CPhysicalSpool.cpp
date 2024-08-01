@@ -11,9 +11,8 @@
 
 #include "gpopt/operators/CPhysicalSpool.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -71,24 +70,6 @@ COrderSpec *CPhysicalSpool::PosRequired(CMemoryPool *mp, CExpressionHandle &expr
   GPOS_ASSERT(0 == child_index);
 
   return PosPassThru(mp, exprhdl, posRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalSpool::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalSpool::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                               CDistributionSpec *pdsRequired, ULONG child_index,
-                                               CDrvdPropArray *,  // pdrgpdpCtxt
-                                               ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  return PdsPassThru(mp, exprhdl, pdsRequired, child_index);
 }
 
 //---------------------------------------------------------------------------
@@ -167,19 +148,6 @@ COrderSpec *CPhysicalSpool::PosDerive(CMemoryPool *,  // mp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalSpool::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//--------------------------------------------------------------------------
-CDistributionSpec *CPhysicalSpool::PdsDerive(CMemoryPool *,  // mp
-                                             CExpressionHandle &exprhdl) const {
-  return PdsDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalSpool::PrsDerive
 //
 //	@doc:
@@ -249,27 +217,6 @@ CEnfdProp::EPropEnforcingType CPhysicalSpool::EpetOrder(CExpressionHandle &,  //
   GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
 
   // spool is order-preserving, sort enforcers have already been added
-  return CEnfdProp::EpetUnnecessary;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalSpool::EpetDistribution
-//
-//	@doc:
-//		Return the enforcing type for distribution property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalSpool::EpetDistribution(CExpressionHandle & /*exprhdl*/,
-                                                               const CEnfdDistribution *
-#ifdef GPOS_DEBUG
-                                                                   ped
-#endif  // GPOS_DEBUG
-) const {
-  GPOS_ASSERT(nullptr != ped);
-
-  // spool is distribution-preserving,
-  // distribution enforcers have already been added
   return CEnfdProp::EpetUnnecessary;
 }
 

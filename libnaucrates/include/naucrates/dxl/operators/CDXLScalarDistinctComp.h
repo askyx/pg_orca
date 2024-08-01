@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarDistinctComp_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalarComp.h"
 
 namespace gpdxl {
@@ -43,7 +42,6 @@ class CDXLScalarDistinctComp : public CDXLScalarComp {
   const CWStringConst *GetOpNameStr() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLScalarDistinctComp *Cast(CDXLOperator *dxl_op) {

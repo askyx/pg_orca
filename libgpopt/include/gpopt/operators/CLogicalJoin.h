@@ -11,10 +11,9 @@
 #ifndef GPOS_CLogicalJoin_H
 #define GPOS_CLogicalJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

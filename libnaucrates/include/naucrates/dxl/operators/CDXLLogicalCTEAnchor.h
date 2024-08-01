@@ -12,7 +12,6 @@
 #define GPDXL_CDXLLogicalCTEAnchor_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
 namespace gpdxl {
@@ -46,7 +45,6 @@ class CDXLLogicalCTEAnchor : public CDXLLogical {
   Id() const { return m_id; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and

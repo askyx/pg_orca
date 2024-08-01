@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformImplementSequence_H
 #define GPOPT_CXformImplementSequence_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformImplementation.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

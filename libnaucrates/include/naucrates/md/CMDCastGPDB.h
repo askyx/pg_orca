@@ -13,7 +13,6 @@
 #define GPMD_CMDCastGPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDCast.h"
 
 namespace gpmd {
@@ -68,7 +67,6 @@ class CMDCastGPDB : public IMDCast {
   ~CMDCastGPDB() override;
 
   // accessors
-  const CWStringDynamic *GetStrRepr() override;
 
   // cast object id
   IMDId *MDId() const override;
@@ -92,7 +90,6 @@ class CMDCastGPDB : public IMDCast {
   IMDId *GetCastFuncMdId() const override;
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
 #ifdef GPOS_DEBUG
   // debug print of the type in the provided stream

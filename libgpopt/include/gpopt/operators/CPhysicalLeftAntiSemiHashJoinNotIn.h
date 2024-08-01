@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPhysicalLeftAntiSemiHashJoinNotIn_H
 #define GPOPT_CPhysicalLeftAntiSemiHashJoinNotIn_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalLeftAntiSemiHashJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
@@ -43,13 +42,6 @@ class CPhysicalLeftAntiSemiHashJoinNotIn : public CPhysicalLeftAntiSemiHashJoin 
   //-------------------------------------------------------------------------------------
   // Required Plan Properties
   //-------------------------------------------------------------------------------------
-
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
-
-  CEnfdDistribution *Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput, ULONG child_index,
-                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulDistrReq) override;
 
   //-------------------------------------------------------------------------------------
   //-------------------------------------------------------------------------------------

@@ -18,9 +18,8 @@
 #ifndef GPOS_CLogicalLeftAntiSemiJoinNotIn_H
 #define GPOS_CLogicalLeftAntiSemiJoinNotIn_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalLeftAntiSemiJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

@@ -11,10 +11,9 @@
 
 #include "gpopt/operators/CPhysicalStreamAggDeduplicate.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

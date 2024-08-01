@@ -18,8 +18,6 @@
 
 using namespace gpopt;
 
-FORCE_GENERATE_DBGSTR(CJoinTypeHint);
-
 BOOL CJoinTypeHint::SatisfiesOperator(COperator *op) {
   BOOL is_satisfied = true;
 
@@ -83,26 +81,4 @@ IOstream &CJoinTypeHint::OsPrint(IOstream &os) const {
   os << CHintUtils::JoinTypeHintEnumToString(m_type);
 
   return os;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CJoinTypeHint::Serialize
-//
-//	@doc:
-//		Serialize the object
-//---------------------------------------------------------------------------
-void CJoinTypeHint::Serialize(CXMLSerializer *xml_serializer) {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenJoinTypeHint));
-
-  CWStringDynamic *aliases = CDXLUtils::SerializeToCommaSeparatedString(m_mp, GetAliasNames());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAlias), aliases);
-  GPOS_DELETE(aliases);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenJoinType),
-                               CHintUtils::JoinTypeHintEnumToString(m_type));
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenJoinTypeHint));
 }

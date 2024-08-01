@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarBooleanTest_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
 namespace gpdxl {
@@ -58,7 +57,6 @@ class CDXLScalarBooleanTest : public CDXLScalar {
   EdxlBooleanTestType GetDxlBoolTypeStr() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLScalarBooleanTest *Cast(CDXLOperator *dxl_op) {

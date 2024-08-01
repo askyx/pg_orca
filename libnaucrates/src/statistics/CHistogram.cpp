@@ -11,12 +11,11 @@
 
 #include "naucrates/statistics/CHistogram.h"
 
+#include "gpopt/base/CColRef.h"
+#include "gpopt/base/COptCtxt.h"
 #include "gpos/common/syslibwrapper.h"
 #include "gpos/io/COstreamString.h"
 #include "gpos/string/CWStringDynamic.h"
-
-#include "gpopt/base/CColRef.h"
-#include "gpopt/base/COptCtxt.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLScalarConstValue.h"
 #include "naucrates/statistics/CLeftAntiSemiJoinStatsProcessor.h"
@@ -112,8 +111,6 @@ void CHistogram::SetNullFrequency(CDouble null_freq) {
   GPOS_ASSERT(CDouble(0.0) <= null_freq && CDouble(1.0) >= null_freq);
   m_null_freq = null_freq;
 }
-
-FORCE_GENERATE_DBGSTR(gpnaucrates::CHistogram);
 
 //	print function
 IOstream &CHistogram::OsPrint(IOstream &os) const {

@@ -11,9 +11,8 @@
 #ifndef GPOS_CPhysicalHashAggDeduplicate_H
 #define GPOS_CPhysicalHashAggDeduplicate_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalHashAgg.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
@@ -60,14 +59,6 @@ class CPhysicalHashAggDeduplicate : public CPhysicalHashAgg {
                            ULONG              // ulOptReq
                            ) override {
     return PcrsRequiredAgg(mp, exprhdl, pcrsRequired, child_index, m_pdrgpcrKeys);
-  }
-
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index,
-                                 CDrvdPropArray *,  // pdrgpdpCtxt,
-                                 ULONG ulOptReq) const override {
-    return PdsRequiredAgg(mp, exprhdl, pdsRequired, child_index, ulOptReq, m_pdrgpcrKeys, m_pdrgpcrKeys);
   }
 
   //-------------------------------------------------------------------------------------

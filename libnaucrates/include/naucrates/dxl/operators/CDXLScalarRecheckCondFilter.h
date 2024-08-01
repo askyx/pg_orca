@@ -19,7 +19,6 @@
 #define GPDXL_CDXLScalarRecheckCondFilter_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalarFilter.h"
 
 namespace gpdxl {

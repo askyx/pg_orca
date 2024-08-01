@@ -11,10 +11,9 @@
 #ifndef GPOPT_CScalarProjectElement_H
 #define GPOPT_CScalarProjectElement_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -36,7 +35,7 @@ class CScalarProjectElement : public CScalar {
  public:
   CScalarProjectElement(const CScalarProjectElement &) = delete;
 
-  CScalarProjectElement(CMemoryPool *mp) : CScalar(mp) {}
+  CScalarProjectElement(CMemoryPool *mp) : CScalar(mp), m_pcr(nullptr) {}
 
   // ctor
   CScalarProjectElement(CMemoryPool *mp, CColRef *colref) : CScalar(mp), m_pcr(colref) {

@@ -11,13 +11,11 @@
 
 #include "gpopt/operators/CPhysicalConstTableGet.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCTEMap.h"
-#include "gpopt/base/CDistributionSpecUniversal.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -106,25 +104,6 @@ COrderSpec *CPhysicalConstTableGet::PosRequired(CMemoryPool *,        // mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalConstTableGet::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalConstTableGet::PdsRequired(CMemoryPool *,        // mp,
-                                                       CExpressionHandle &,  // exprhdl,
-                                                       CDistributionSpec *,  // pdsRequired,
-                                                       ULONG,                // child_index
-                                                       CDrvdPropArray *,     // pdrgpdpCtxt
-                                                       ULONG                 // ulOptReq
-) const {
-  GPOS_ASSERT(!"CPhysicalConstTableGet has no children");
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalConstTableGet::PrsRequired
 //
 //	@doc:
@@ -197,20 +176,6 @@ COrderSpec *CPhysicalConstTableGet::PosDerive(CMemoryPool *mp,
                                               CExpressionHandle &  // exprhdl
 ) const {
   return GPOS_NEW(mp) COrderSpec(mp);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalConstTableGet::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalConstTableGet::PdsDerive(CMemoryPool *mp,
-                                                     CExpressionHandle &  // exprhdl
-) const {
-  return GPOS_NEW(mp) CDistributionSpecUniversal();
 }
 
 //---------------------------------------------------------------------------

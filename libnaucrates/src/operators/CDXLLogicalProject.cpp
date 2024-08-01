@@ -13,7 +13,6 @@
 #include "naucrates/dxl/operators/CDXLLogicalProject.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -77,30 +76,6 @@ void CDXLLogicalProject::SetAliasName(CMDName *mdname) {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLLogicalProject::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenLogicalProject);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalProject::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalProject::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serialize alias
-  if (nullptr != m_mdname_alias) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenDerivedTableName), m_mdname_alias->GetMDName());
-  }
-
-  // serialize children
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

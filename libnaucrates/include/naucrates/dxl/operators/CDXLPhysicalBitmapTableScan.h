@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalBitmapTableScan_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLPhysicalAbstractBitmapScan.h"
 
 namespace gpdxl {
@@ -21,7 +20,6 @@ using namespace gpos;
 
 // fwd declarations
 class CDXLTableDescr;
-class CXMLSerializer;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -50,7 +48,6 @@ class CDXLPhysicalBitmapTableScan : public CDXLPhysicalAbstractBitmapScan {
   const CWStringConst *GetOpNameStr() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLPhysicalBitmapTableScan *Cast(CDXLOperator *dxl_op) {

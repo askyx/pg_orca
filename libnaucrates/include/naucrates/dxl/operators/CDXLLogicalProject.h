@@ -13,7 +13,6 @@
 #define GPDXL_CDXLLogicalProject_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
 namespace gpdxl {
@@ -42,7 +41,6 @@ class CDXLLogicalProject : public CDXLLogical {
   const CMDName *MdName() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxl_node) const override;
 
   // set alias name
   void SetAliasName(CMDName *);

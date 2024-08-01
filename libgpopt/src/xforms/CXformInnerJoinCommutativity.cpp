@@ -11,13 +11,12 @@
 
 #include "gpopt/xforms/CXformInnerJoinCommutativity.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/hints/CPlanHint.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

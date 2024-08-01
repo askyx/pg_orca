@@ -12,18 +12,12 @@
 
 #include "naucrates/init.h"
 
-#include <xercesc/framework/MemBufInputSource.hpp>
-#include <xercesc/util/XMLString.hpp>
-
-#include "naucrates/dxl/parser/CParseHandlerFactory.h"
-#include "naucrates/dxl/xml/CDXLMemoryManager.h"
+#include "gpos/memory/CMemoryPoolManager.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 #include "naucrates/exception.h"
 
 using namespace gpos;
 using namespace gpdxl;
-
-static CDXLMemoryManager *dxl_memory_manager = nullptr;
 
 static CMemoryPool *pmpXerces = nullptr;
 
@@ -54,21 +48,8 @@ void InitDXL() {
   GPOS_ASSERT(nullptr != pmpXerces);
   GPOS_ASSERT(nullptr != pmpDXL);
 
-  // setup own memory manager
-  dxl_memory_manager = GPOS_NEW(pmpXerces) CDXLMemoryManager(pmpXerces);
-
-  // initialize Xerces, if this fails library initialization should crash here
-  XMLPlatformUtils::Initialize(XMLUni::fgXercescDefaultLocale,  // locale
-                               nullptr,                         // nlsHome: location for message files
-                               nullptr,                         // panicHandler
-                               dxl_memory_manager               // memoryManager
-  );
-
   // initialize DXL tokens
   CDXLTokens::Init(pmpDXL);
-
-  // initialize parse handler mappings
-  CParseHandlerFactory::Init(pmpDXL);
 
   m_ulpInitDXL++;
 }
@@ -91,12 +72,7 @@ void ShutdownDXL() {
 
   m_ulpShutdownDXL++;
 
-  XMLPlatformUtils::Terminate();
-
   CDXLTokens::Terminate();
-
-  GPOS_DELETE(dxl_memory_manager);
-  dxl_memory_manager = nullptr;
 }
 
 //---------------------------------------------------------------------------

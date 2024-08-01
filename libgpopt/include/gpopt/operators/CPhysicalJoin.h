@@ -11,15 +11,11 @@
 #ifndef GPOPT_CPhysicalJoin_H
 #define GPOPT_CPhysicalJoin_H
 
-#include "gpos/base.h"
-
-#include "gpopt/base/CDistributionSpec.h"
 #include "gpopt/operators/CPhysical.h"
 #include "gpopt/xforms/CXform.h"
+#include "gpos/base.h"
 
 namespace gpopt {
-// fwd declarations
-class CDistributionSpecSingleton;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -51,10 +47,6 @@ class CPhysicalJoin : public CPhysical {
   // helper to check if given child index correspond to first child to be optimized
   BOOL FFirstChildToOptimize(ULONG child_index) const;
 
-  // helper to compute required distribution of correlated join's children
-  CEnfdDistribution *PedCorrelatedJoin(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput,
-                                       ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq);
-
   // helper to compute required rewindability of correlated join's children
   static CRewindabilitySpec *PrsRequiredCorrelatedJoin(CMemoryPool *mp, CExpressionHandle &exprhdl,
                                                        CRewindabilitySpec *prsRequired, ULONG child_index,
@@ -75,10 +67,6 @@ class CPhysicalJoin : public CPhysical {
   static BOOL FPredKeysSeparated(CExpression *pexprOuter, CExpression *pexprInner, CExpression *pexprPredOuter,
                                  CExpression *pexprPredInner);
 
-  static CEnfdDistribution *PedInnerHashedFromOuterHashed(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                          CEnfdDistribution::EDistributionMatching dmatch,
-                                                          CDrvdProp *outerDrvdProp);
-
  public:
   // match function
   BOOL Matches(COperator *pop) const override;
@@ -98,19 +86,8 @@ class CPhysicalJoin : public CPhysical {
   CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
-
-  CEnfdDistribution *Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput, ULONG child_index,
-                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulDistrReq) override;
-
   // check if required columns are included in output columns
   BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
-
-  // distribution matching type
-  CEnfdDistribution::EDistributionMatching Edm(CReqdPropPlan *prppInput, ULONG child_index, CDrvdPropArray *pdrgpdpCtxt,
-                                               ULONG ulOptReq) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties
@@ -121,9 +98,6 @@ class CPhysicalJoin : public CPhysical {
                         CExpressionHandle &exprhdl) const override {
     return PosDerivePassThruOuter(exprhdl);
   }
-
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // derive rewindability
   CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;

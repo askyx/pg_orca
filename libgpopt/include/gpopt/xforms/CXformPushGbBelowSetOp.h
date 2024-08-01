@@ -11,13 +11,12 @@
 #ifndef GPOPT_CXformPushGbBelowSetOp_H
 #define GPOPT_CXformPushGbBelowSetOp_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CPatternMultiLeaf.h"
 #include "gpopt/operators/CPatternTree.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

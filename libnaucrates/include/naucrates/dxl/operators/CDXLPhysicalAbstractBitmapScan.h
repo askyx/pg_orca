@@ -14,7 +14,6 @@
 #define GPDXL_CDXLPhysicalAbstractBitmapScan_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
 namespace gpdxl {
@@ -24,7 +23,6 @@ enum Edxlbs { EdxlbsIndexProjList = 0, EdxlbsIndexFilter, EdxlbsIndexRecheckCond
 
 // fwd declarations
 class CDXLTableDescr;
-class CXMLSerializer;
 
 //---------------------------------------------------------------------------
 //	@class:

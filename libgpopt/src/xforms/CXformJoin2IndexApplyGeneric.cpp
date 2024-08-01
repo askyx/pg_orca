@@ -7,12 +7,10 @@
 
 #include "gpopt/xforms/CXformJoin2IndexApplyGeneric.h"
 
-#include "gpos/common/CAutoRef.h"
-
 #include "gpopt/operators/CLogicalApply.h"
-#include "gpopt/operators/CLogicalDynamicGet.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CLogicalGet.h"
+#include "gpos/common/CAutoRef.h"
 
 using namespace gpmd;
 using namespace gpopt;
@@ -145,7 +143,6 @@ void CXformJoin2IndexApplyGeneric::Transform(CXformContext *pxfctxt, CXformResul
   // info on the get node (a get node or a dynamic get)
   CTableDescriptor *ptabdescInner = nullptr;
   const CColRefSet *distributionCols = nullptr;
-  CLogicalDynamicGet *popDynamicGet = nullptr;
   CAutoRef<CColRefSet> groupingColsToCheck;
 
   // walk down the right child tree, accepting some unary operators
@@ -233,31 +230,6 @@ void CXformJoin2IndexApplyGeneric::Transform(CXformContext *pxfctxt, CXformResul
         // expressions. This can lead to data leak as we always want our security
         // quals to be executed first.
         if (popGet->HasSecurityQuals()) {
-          return;
-        }
-
-        if (nullptr != groupingColsToCheck.Value() &&
-            (!groupingColsToCheck->ContainsAll(distributionCols) ||
-             ptabdescInner->GetRelDistribution() == IMDRelation::EreldistrRandom)) {
-          // the grouping columns are not a superset of the distribution columns,
-          // or distribution columns are empty when the table is randomly distributed
-          return;
-        }
-      } break;
-
-      case COperator::EopLogicalDynamicGet: {
-        popDynamicGet = CLogicalDynamicGet::PopConvert(pexprCurrInnerChild->Pop());
-        ptabdescInner = popDynamicGet->Ptabdesc();
-        distributionCols = popDynamicGet->PcrsDist();
-        pexprGet = pexprCurrInnerChild;
-
-        // We need to early exit when the relation contains security quals
-        // because we are adding the security quals when translating from DXL to
-        // Planned Statement as a filter. If we don't early exit then it may happen
-        // that we generate a plan where the index condition contains non-leakproof
-        // expressions. This can lead to data leak as we always want our security
-        // quals to be executed first.
-        if (popDynamicGet->HasSecurityQuals()) {
           return;
         }
 

@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformSelect2Apply_H
 #define GPOPT_CXformSelect2Apply_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformSubqueryUnnest.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

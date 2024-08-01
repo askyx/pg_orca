@@ -13,9 +13,7 @@
 #include "naucrates/md/CMDScalarOpGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -76,13 +74,6 @@ CMDScalarOpGPDB::~CMDScalarOpGPDB() {
     GPOS_DELETE(m_dxl_str);
   }
   m_mdid_opfamilies_array->Release();
-}
-
-const CWStringDynamic *CMDScalarOpGPDB::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
 }
 
 //---------------------------------------------------------------------------
@@ -221,50 +212,6 @@ BOOL CMDScalarOpGPDB::IsNDVPreserving() const {
 //---------------------------------------------------------------------------
 IMDType::ECmpType CMDScalarOpGPDB::ParseCmpType() const {
   return m_comparision_type;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDScalarOpGPDB::Serialize
-//
-//	@doc:
-//		Serialize scalar op metadata in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDScalarOpGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOp));
-
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOpCmpType),
-                               IMDType::GetCmpTypeStr(m_comparision_type));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenReturnsNullOnNullInput),
-                               m_returns_null_on_null_input);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsNDVPreserving), m_is_ndv_preserving);
-
-  Edxltoken dxl_token_array[8] = {EdxltokenGPDBScalarOpLeftTypeId,   EdxltokenGPDBScalarOpRightTypeId,
-                                  EdxltokenGPDBScalarOpResultTypeId, EdxltokenGPDBScalarOpFuncId,
-                                  EdxltokenGPDBScalarOpCommOpId,     EdxltokenGPDBScalarOpInverseOpId,
-                                  EdxltokenGPDBScalarOpHashOpfamily, EdxltokenGPDBScalarOpLegacyHashOpfamily};
-
-  IMDId *mdid_array[8] = {m_mdid_type_left,   m_mdid_type_right,  m_mdid_type_result,   m_func_mdid,
-                          m_mdid_commute_opr, m_mdid_inverse_opr, m_mdid_hash_opfamily, m_mdid_legacy_hash_opfamily};
-
-  for (ULONG ul = 0; ul < GPOS_ARRAY_SIZE(dxl_token_array); ul++) {
-    SerializeMDIdAsElem(xml_serializer, CDXLTokens::GetDXLTokenStr(dxl_token_array[ul]), mdid_array[ul]);
-
-    GPOS_CHECK_ABORT;
-  }
-
-  // serialize opfamilies information
-  if (0 < m_mdid_opfamilies_array->Size()) {
-    SerializeMDIdList(xml_serializer, m_mdid_opfamilies_array, CDXLTokens::GetDXLTokenStr(EdxltokenOpfamilies),
-                      CDXLTokens::GetDXLTokenStr(EdxltokenOpfamily));
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenGPDBScalarOp));
 }
 
 //---------------------------------------------------------------------------

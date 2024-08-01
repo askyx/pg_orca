@@ -11,11 +11,9 @@
 
 #include "gpopt/operators/CPhysicalLeftOuterHashJoin.h"
 
-#include "gpos/base.h"
-
-#include "gpopt/base/CDistributionSpecHashed.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -42,16 +40,3 @@ CPhysicalLeftOuterHashJoin::CPhysicalLeftOuterHashJoin(CMemoryPool *mp, CExpress
 //
 //---------------------------------------------------------------------------
 CPhysicalLeftOuterHashJoin::~CPhysicalLeftOuterHashJoin() = default;
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalJoin::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalLeftOuterHashJoin::PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  return PdsDeriveForOuterJoin(mp, exprhdl);
-}
-// EOF

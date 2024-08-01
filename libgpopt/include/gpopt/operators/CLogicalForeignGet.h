@@ -11,9 +11,8 @@
 #ifndef GPOPT_CLogicalForeignGet_H
 #define GPOPT_CLogicalForeignGet_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalGet.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations

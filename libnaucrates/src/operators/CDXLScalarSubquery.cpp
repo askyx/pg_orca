@@ -12,9 +12,7 @@
 #include "naucrates/dxl/operators/CDXLScalarSubquery.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -61,25 +59,6 @@ Edxlopid CDXLScalarSubquery::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLScalarSubquery::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarSubquery);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarSubquery::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarSubquery::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serialize computed column id
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), m_colid);
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

@@ -12,7 +12,6 @@
 #define GPNAUCRATES_CDatumGenericGPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/base/IDatumGeneric.h"
 #include "naucrates/md/CMDTypeGenericGPDB.h"
 

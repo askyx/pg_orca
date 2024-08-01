@@ -12,10 +12,9 @@
 #ifndef GPOPT_CLogicalDifferenceAll_H
 #define GPOPT_CLogicalDifferenceAll_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalSetOp.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

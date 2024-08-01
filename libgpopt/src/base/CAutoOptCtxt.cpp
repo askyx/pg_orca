@@ -11,11 +11,10 @@
 
 #include "gpopt/base/CAutoOptCtxt.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/cost/ICostModel.h"
 #include "gpopt/eval/CConstExprEvaluatorDefault.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

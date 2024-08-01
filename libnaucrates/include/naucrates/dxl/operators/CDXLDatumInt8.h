@@ -19,14 +19,12 @@
 #define GPDXL_CDXLDatumInt8_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLDatum.h"
 
 namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
-class CXMLSerializer;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -54,7 +52,6 @@ class CDXLDatumInt8 : public CDXLDatum {
   LINT Value() const;
 
   // serialize the datum as the given element
-  void Serialize(CXMLSerializer *xml_serializer) override;
 
   // datum type
   EdxldatumType GetDatumType() const override { return CDXLDatum::EdxldatumInt8; }

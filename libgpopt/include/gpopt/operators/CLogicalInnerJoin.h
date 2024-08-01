@@ -11,9 +11,8 @@
 #ifndef GPOS_CLogicalInnerJoin_H
 #define GPOS_CLogicalInnerJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declaration

@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformLeftSemiJoin2InnerJoinUnderGb_H
 #define GPOPT_CXformLeftSemiJoin2InnerJoinUnderGb_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

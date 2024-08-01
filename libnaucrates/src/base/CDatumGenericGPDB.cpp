@@ -11,12 +11,11 @@
 
 #include "naucrates/base/CDatumGenericGPDB.h"
 
+#include "gpopt/base/COptCtxt.h"
+#include "gpopt/mdcache/CMDAccessor.h"
 #include "gpos/base.h"
 #include "gpos/common/clibwrapper.h"
 #include "gpos/string/CWStringDynamic.h"
-
-#include "gpopt/base/COptCtxt.h"
-#include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/md/CMDIdGPDB.h"
 #include "naucrates/md/IMDType.h"
 #include "naucrates/statistics/CScaleFactorUtils.h"

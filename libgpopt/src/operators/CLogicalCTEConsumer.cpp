@@ -11,14 +11,13 @@
 
 #include "gpopt/operators/CLogicalCTEConsumer.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CKeyCollection.h"
 #include "gpopt/base/CMaxCard.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalCTEProducer.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

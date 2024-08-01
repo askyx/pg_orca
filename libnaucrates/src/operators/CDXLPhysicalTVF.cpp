@@ -12,9 +12,7 @@
 #include "naucrates/dxl/operators/CDXLPhysicalTVF.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -71,30 +69,6 @@ Edxlopid CDXLPhysicalTVF::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLPhysicalTVF::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalTVF);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalTVF::SerializeToDXL
-//
-//	@doc:
-//		Serialize function descriptor in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalTVF::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  m_func_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenFuncId));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), func_name);
-  m_return_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-
-  // serialize properties
-  dxlnode->SerializePropertiesToDXL(xml_serializer);
-
-  // serialize children
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

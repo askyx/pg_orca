@@ -12,9 +12,8 @@
 #ifndef GPOPT_CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations_H
 #define GPOPT_CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformLeftSemiApply2LeftSemiJoinNoCorrelations.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

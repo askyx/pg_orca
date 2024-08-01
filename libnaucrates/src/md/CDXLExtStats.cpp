@@ -14,9 +14,7 @@
 #include "gpos/common/CAutoP.h"
 #include "gpos/common/CAutoRef.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -63,60 +61,6 @@ IMDId *CDXLExtStats::MDId() const {
 //---------------------------------------------------------------------------
 CMDName CDXLExtStats::Mdname() const {
   return *m_mdname;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLExtStats::GetMDName
-//
-//	@doc:
-//		Returns the DXL string for this object
-//
-//---------------------------------------------------------------------------
-const CWStringDynamic *CDXLExtStats::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLExtStats::Serialize
-//
-//	@doc:
-//		Serialize extended stats in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLExtStats::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenExtendedStats));
-
-  m_rel_stats_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-
-  // serialize dependencies
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenMVDependencyList));
-  for (ULONG i = 0; i < m_dependency_array->Size(); i++) {
-    (*m_dependency_array)[i]->Serialize(xml_serializer);
-  }
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenMVDependencyList));
-
-  // serialize ndistincts
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenMVNDistinctList));
-  for (ULONG i = 0; i < m_ndistinct_array->Size(); i++) {
-    (*m_ndistinct_array)[i]->Serialize(xml_serializer);
-  }
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenMVNDistinctList));
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenExtendedStats));
-
-  GPOS_CHECK_ABORT;
 }
 
 //---------------------------------------------------------------------------

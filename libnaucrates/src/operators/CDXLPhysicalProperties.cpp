@@ -11,8 +11,6 @@
 
 #include "naucrates/dxl/operators/CDXLPhysicalProperties.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpdxl;
 
 //---------------------------------------------------------------------------
@@ -35,25 +33,6 @@ CDXLPhysicalProperties::CDXLPhysicalProperties(CDXLOperatorCost *cost) : CDXLPro
 //---------------------------------------------------------------------------
 CDXLPhysicalProperties::~CDXLPhysicalProperties() {
   CRefCount::SafeRelease(m_operator_cost_dxl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalProperties::SerializePropertiesToDXL
-//
-//	@doc:
-//		Serialize operator properties in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalProperties::SerializePropertiesToDXL(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenProperties));
-
-  m_operator_cost_dxl->SerializeToDXL(xml_serializer);
-  SerializeStatsToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenProperties));
 }
 
 //---------------------------------------------------------------------------

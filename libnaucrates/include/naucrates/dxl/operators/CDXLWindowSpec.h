@@ -14,7 +14,6 @@
 #define GPDXL_CDXLWindowSpec_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLWindowFrame.h"
 #include "naucrates/md/CMDName.h"
@@ -59,9 +58,6 @@ class CDXLWindowSpec : public CRefCount {
 
   // dtor
   ~CDXLWindowSpec() override;
-
-  // serialize operator in DXL format
-  virtual void SerializeToDXL(CXMLSerializer *) const;
 
   // set window frame definition
   void SetWindowFrame(CDXLWindowFrame *window_frame);

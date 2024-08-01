@@ -14,12 +14,9 @@
 #include "gpos/base.h"
 
 #ifdef GPOS_DEBUG
-#include "gpos/error/CAutoTrace.h"
-
 #include "gpopt/base/COptCtxt.h"
+#include "gpos/error/CAutoTrace.h"
 #endif  // GPOS_DEBUG
-
-FORCE_GENERATE_DBGSTR(gpopt::CEnfdProp);
 
 namespace gpopt {
 IOstream &operator<<(IOstream &os, CEnfdProp &efdprop) {

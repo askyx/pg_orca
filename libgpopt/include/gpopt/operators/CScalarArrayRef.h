@@ -11,9 +11,8 @@
 #ifndef GPOPT_CScalarArrayRef_H
 #define GPOPT_CScalarArrayRef_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDId.h"
 
 namespace gpopt {

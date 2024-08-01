@@ -14,7 +14,6 @@
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -75,41 +74,6 @@ Edxlopid CDXLPhysicalSplit::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLPhysicalSplit::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalSplit);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalSplit::SerializeToDXL
-//
-//	@doc:
-//		Serialize function descriptor in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalSplit::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  CWStringDynamic *delete_cols = CDXLUtils::Serialize(m_mp, m_deletion_colid_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenDeleteCols), delete_cols);
-  GPOS_DELETE(delete_cols);
-
-  CWStringDynamic *insert_cols = CDXLUtils::Serialize(m_mp, m_insert_colid_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenInsertCols), insert_cols);
-  GPOS_DELETE(insert_cols);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenActionColId), m_action_colid);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCtidColId), m_ctid_colid);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGpSegmentIdColId), m_segid_colid);
-
-  dxlnode->SerializePropertiesToDXL(xml_serializer);
-
-  // serialize project list
-  (*dxlnode)[0]->SerializeToDXL(xml_serializer);
-
-  // serialize physical child
-  (*dxlnode)[1]->SerializeToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

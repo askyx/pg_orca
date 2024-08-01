@@ -11,8 +11,6 @@
 
 #include "naucrates/statistics/CStatsPredUtils.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCastUtils.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
@@ -23,6 +21,7 @@
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/operators/CScalarCmp.h"
 #include "gpopt/operators/CScalarIdent.h"
+#include "gpos/base.h"
 #include "naucrates/base/IDatumBool.h"
 #include "naucrates/md/IMDScalarOp.h"
 #include "naucrates/md/IMDType.h"

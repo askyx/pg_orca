@@ -18,7 +18,6 @@
 #include "naucrates/dxl/operators/CDXLDatumGeneric.h"
 
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -60,25 +59,3 @@ CDXLDatumGeneric::~CDXLDatumGeneric() {
 const BYTE *CDXLDatumGeneric::GetByteArray() const {
   return m_byte_array;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLDatumGeneric::Serialize
-//
-//	@doc:
-//		Serialize datum in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLDatumGeneric::Serialize(CXMLSerializer *xml_serializer) {
-  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-  if (default_type_modifier != TypeModifier()) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), m_type_modifier);
-  }
-  if (!m_is_null) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue), m_is_null, GetByteArray(), Length());
-  } else {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
-  }
-}
-
-// EOF

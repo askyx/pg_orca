@@ -15,8 +15,6 @@
 
 using namespace gpopt;
 
-FORCE_GENERATE_DBGSTR(CXformResult);
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CXformResult::CXformResult

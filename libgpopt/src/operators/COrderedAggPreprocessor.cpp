@@ -11,8 +11,6 @@
 
 #include "gpopt/operators/COrderedAggPreprocessor.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CLogicalCTEAnchor.h"
@@ -29,6 +27,7 @@
 #include "gpopt/operators/CScalarValuesList.h"
 #include "gpopt/operators/CScalarWindowFunc.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

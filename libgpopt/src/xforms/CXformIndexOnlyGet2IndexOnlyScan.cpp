@@ -13,8 +13,6 @@
 
 #include <cwchar>
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/hints/CHintUtils.h"
 #include "gpopt/metadata/CIndexDescriptor.h"
@@ -25,6 +23,7 @@
 #include "gpopt/operators/CPhysicalIndexOnlyScan.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 #include "naucrates/md/CMDIndexGPDB.h"
 
 using namespace gpopt;

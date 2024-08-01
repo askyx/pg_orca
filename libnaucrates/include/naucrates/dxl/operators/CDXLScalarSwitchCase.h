@@ -14,7 +14,6 @@
 #define GPDXL_CDXLScalarSwitchCase_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -48,7 +47,6 @@ class CDXLScalarSwitchCase : public CDXLScalar {
   Edxlopid GetDXLOperator() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLScalarSwitchCase *Cast(CDXLOperator *dxl_op) {

@@ -11,12 +11,10 @@
 #ifndef GPOPT_CPhysicalScan_H
 #define GPOPT_CPhysicalScan_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCTEMap.h"
-#include "gpopt/base/CDistributionSpecHashed.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPhysical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations
@@ -41,9 +39,6 @@ class CPhysicalScan : public CPhysical {
 
   // output columns
   CColRefArray *m_pdrgpcrOutput;
-
-  // distribution
-  CDistributionSpec *m_pds;
 
   // stats of base table -- used for costing
   // if operator is index scan, this is the stats of table on which index is created
@@ -118,18 +113,6 @@ class CPhysicalScan : public CPhysical {
     return nullptr;
   }
 
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *,        // mp
-                                 CExpressionHandle &,  // exprhdl
-                                 CDistributionSpec *,  // pdsRequired
-                                 ULONG,                // child_index
-                                 CDrvdPropArray *,     // pdrgpdpCtxt
-                                 ULONG                 // ulOptReq
-  ) const override {
-    GPOS_ASSERT(!"CPhysicalScan has no children");
-    return nullptr;
-  }
-
   // compute required rewindability of the n-th child
   CRewindabilitySpec *PrsRequired(CMemoryPool *,         // mp
                                   CExpressionHandle &,   // exprhdl
@@ -157,9 +140,6 @@ class CPhysicalScan : public CPhysical {
     return GPOS_NEW(mp) COrderSpec(mp);
   }
 
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
-
   // derive cte map
   CCTEMap *PcmDerive(CMemoryPool *mp,
                      CExpressionHandle &  // exprhdl
@@ -181,10 +161,6 @@ class CPhysicalScan : public CPhysical {
 
   // return order property enforcing type for this operator
   CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const override;
-
-  // return distribution property enforcing type for this operator
-  CEnfdProp::EPropEnforcingType EpetDistribution(CExpressionHandle &exprhdl,
-                                                 const CEnfdDistribution *ped) const override;
 
   // return rewindability property enforcing type for this operator
   CEnfdProp::EPropEnforcingType EpetRewindability(CExpressionHandle &,        // exprhdl

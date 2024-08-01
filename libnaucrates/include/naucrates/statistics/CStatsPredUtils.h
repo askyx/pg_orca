@@ -11,10 +11,9 @@
 #ifndef GPOPT_CStatsPredUtils_H
 #define GPOPT_CStatsPredUtils_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/operators/CExpression.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/CStatsPred.h"
 
 namespace gpopt {

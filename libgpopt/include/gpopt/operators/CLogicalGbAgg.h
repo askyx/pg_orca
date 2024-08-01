@@ -11,10 +11,9 @@
 #ifndef GPOS_CLogicalGbAgg_H
 #define GPOS_CLogicalGbAgg_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalUnary.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declaration

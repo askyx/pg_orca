@@ -11,16 +11,13 @@
 
 #include "gpopt/operators/COperator.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CDrvdPropRelational.h"
 #include "gpopt/base/CReqdPropRelational.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(COperator);
 
 // generate unique operator ids
 ULONG COperator::m_aulOpIdCounter(0);

@@ -12,10 +12,9 @@
 #ifndef GPOPT_CConstraintConjunction_H
 #define GPOPT_CConstraintConjunction_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CConstraint.h"
 #include "gpopt/base/CRange.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

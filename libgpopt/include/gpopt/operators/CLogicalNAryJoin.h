@@ -11,9 +11,8 @@
 #ifndef GPOS_CLogicalNAryJoin_H
 #define GPOS_CLogicalNAryJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

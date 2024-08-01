@@ -14,12 +14,12 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "nodes/makefuncs.h"
-#include "nodes/nodeFuncs.h"
-#include "nodes/parsenodes.h"
-#include "nodes/plannodes.h"
+#include <nodes/makefuncs.h>
+#include <nodes/nodeFuncs.h>
+#include <nodes/parsenodes.h>
+#include <nodes/plannodes.h>
 }
 
 #include "gpopt/base/CUtils.h"
@@ -52,7 +52,7 @@ BOOL CQueryMutators::NeedsProjListNormalization(const Query *query) {
   SContextTLWalker context(query->targetList, query->groupClause);
 
   ListCell *lc = nullptr;
-  ForEach(lc, query->targetList) {
+  foreach (lc, query->targetList) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
 
     if (ShouldFallback((Node *)target_entry->expr, &context)) {
@@ -150,7 +150,7 @@ Query *CQueryMutators::NormalizeGroupByProjList(CMemoryPool *mp, CMDAccessor *md
   ListCell *lc = nullptr;
 
   // first normalize grouping columns
-  ForEach(lc, target_list_copy) {
+  foreach (lc, target_list_copy) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
     GPOS_ASSERT(nullptr != target_entry);
 
@@ -161,7 +161,7 @@ Query *CQueryMutators::NormalizeGroupByProjList(CMemoryPool *mp, CMDAccessor *md
 
   lc = nullptr;
   // normalize remaining project elements
-  ForEach(lc, target_list_copy) {
+  foreach (lc, target_list_copy) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
     GPOS_ASSERT(nullptr != target_entry);
 
@@ -315,7 +315,7 @@ Node *CQueryMutators::RunGroupingColMutator(Node *node, SContextGrpbyPlMutator *
     BOOL is_agg = context->m_is_mutating_agg_arg;
     context->m_is_mutating_agg_arg = true;
 
-    ForEach(lc, old_aggref->args) {
+    foreach (lc, old_aggref->args) {
       Node *arg = (Node *)gpdb::CopyObject((Node *)lfirst(lc));
       GPOS_ASSERT(nullptr != arg);
       // traverse each argument and fix levels up when needed
@@ -342,7 +342,7 @@ Node *CQueryMutators::RunGroupingColMutator(Node *node, SContextGrpbyPlMutator *
   if (IsA(node, SubLink)) {
     SubLink *old_sublink = (SubLink *)node;
 
-    SubLink *new_sublink = MakeNode(SubLink);
+    SubLink *new_sublink = makeNode(SubLink);
     new_sublink->subLinkType = old_sublink->subLinkType;
     new_sublink->location = old_sublink->location;
     new_sublink->operName = (List *)gpdb::CopyObject(old_sublink->operName);
@@ -390,7 +390,7 @@ Node *CQueryMutators::RunGroupingColMutator(Node *node, SContextGrpbyPlMutator *
     // fix the outer reference in derived table entries
     List *rtable = query->rtable;
     ListCell *lc = nullptr;
-    ForEach(lc, rtable) {
+    foreach (lc, rtable) {
       RangeTblEntry *rte = (RangeTblEntry *)lfirst(lc);
 
       if (RTE_SUBQUERY == rte->rtekind) {
@@ -508,7 +508,7 @@ Node *CQueryMutators::RunExtractAggregatesMutator(Node *node, SContextGrpbyPlMut
       List *new_args = NIL;
       ListCell *lc = nullptr;
 
-      ForEach(lc, old_aggref->args) {
+      foreach (lc, old_aggref->args) {
         Node *arg = (Node *)lfirst(lc);
         GPOS_ASSERT(nullptr != arg);
         // traverse each argument and fix levels up when needed
@@ -658,7 +658,7 @@ Node *CQueryMutators::RunExtractAggregatesMutator(Node *node, SContextGrpbyPlMut
   if (IsA(node, SubLink)) {
     SubLink *old_sublink = (SubLink *)node;
 
-    SubLink *new_sublink = MakeNode(SubLink);
+    SubLink *new_sublink = makeNode(SubLink);
     new_sublink->subLinkType = old_sublink->subLinkType;
     new_sublink->location = old_sublink->location;
     new_sublink->operName = (List *)gpdb::CopyObject(old_sublink->operName);
@@ -689,7 +689,7 @@ Node *CQueryMutators::RunExtractAggregatesMutator(Node *node, SContextGrpbyPlMut
                                          QTW_IGNORE_RT_SUBQUERIES);
 
     ListCell *lc;
-    ForEach(lc, query->rtable) {
+    foreach (lc, query->rtable) {
       RangeTblEntry *rte = (RangeTblEntry *)lfirst(lc);
 
       if (RTE_SUBQUERY == rte->rtekind) {
@@ -765,7 +765,7 @@ Node *CQueryMutators::FindNodeInGroupByTargetList(Node *node, SContextGrpbyPlMut
 //		Make a copy of the aggref (minus the arguments)
 //---------------------------------------------------------------------------
 Aggref *CQueryMutators::FlatCopyAggref(Aggref *old_aggref) {
-  Aggref *new_aggref = MakeNode(Aggref);
+  Aggref *new_aggref = makeNode(Aggref);
 
   *new_aggref = *old_aggref;
 
@@ -817,7 +817,7 @@ Query *CQueryMutators::NormalizeHaving(CMemoryPool *mp, CMDAccessor *md_accessor
   // into the target list of the RTE as well as the new top most query
   ListCell *lc = nullptr;
   ULONG num_target_entries = 1;
-  ForEach(lc, derived_table_query->targetList) {
+  foreach (lc, derived_table_query->targetList) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
     GPOS_ASSERT(nullptr != target_entry);
 
@@ -851,7 +851,7 @@ Query *CQueryMutators::NormalizeHaving(CMemoryPool *mp, CMDAccessor *md_accessor
     // subquery is equivalent to select XXXX FROM CONST-TABLE
     // (where XXXX is the original subquery's target list)
 
-    Query *new_subquery = MakeNode(Query);
+    Query *new_subquery = makeNode(Query);
 
     new_subquery->commandType = CMD_SELECT;
     new_subquery->targetList = NIL;
@@ -861,7 +861,7 @@ Query *CQueryMutators::NormalizeHaving(CMemoryPool *mp, CMDAccessor *md_accessor
     new_subquery->hasSubLinks = false;
 
     ListCell *lc = nullptr;
-    ForEach(lc, rte->subquery->targetList) {
+    foreach (lc, rte->subquery->targetList) {
       TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
       GPOS_ASSERT(nullptr != target_entry);
 
@@ -873,7 +873,7 @@ Query *CQueryMutators::NormalizeHaving(CMemoryPool *mp, CMDAccessor *md_accessor
     gpdb::GPDBFree(rte->subquery);
 
     rte->subquery = new_subquery;
-    rte->subquery->jointree = MakeNode(FromExpr);
+    rte->subquery->jointree = makeNode(FromExpr);
     rte->subquery->groupClause = NIL;
     rte->subquery->groupingSets = NIL;
     rte->subquery->sortClause = NIL;
@@ -1030,7 +1030,7 @@ Query *CQueryMutators::ConvertToDerivedTable(const Query *original_query, BOOL s
 
   // Step 4: Create a new, single range table entry for the upper query
 
-  RangeTblEntry *rte = MakeNode(RangeTblEntry);
+  RangeTblEntry *rte = makeNode(RangeTblEntry);
   rte->rtekind = RTE_SUBQUERY;
 
   rte->subquery = lower_query;
@@ -1038,17 +1038,17 @@ Query *CQueryMutators::ConvertToDerivedTable(const Query *original_query, BOOL s
   rte->subquery->cteList = NIL;
 
   // create a new range table reference for the new RTE
-  RangeTblRef *rtref = MakeNode(RangeTblRef);
+  RangeTblRef *rtref = makeNode(RangeTblRef);
   rtref->rtindex = 1;
 
   // Step 5: Create a new upper query with the new RTE in its from clause
 
-  Query *upper_query = MakeNode(Query);
+  Query *upper_query = makeNode(Query);
 
   upper_query->cteList = original_cte_list;
   upper_query->rtable = gpdb::LAppend(upper_query->rtable, rte);
 
-  FromExpr *fromexpr = MakeNode(FromExpr);
+  FromExpr *fromexpr = makeNode(FromExpr);
   fromexpr->quals = nullptr;
   fromexpr->fromlist = gpdb::LAppend(fromexpr->fromlist, rtref);
 
@@ -1086,7 +1086,7 @@ Query *CQueryMutators::EliminateDistinctClause(const Query *query) {
   ListCell *lc = nullptr;
 
   // build the project list of the new top-level query
-  ForEach(lc, target_entries) {
+  foreach (lc, target_entries) {
     ULONG resno = gpdb::ListLength(new_query->targetList) + 1;
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
     GPOS_ASSERT(nullptr != target_entry);
@@ -1118,11 +1118,11 @@ Query *CQueryMutators::EliminateDistinctClause(const Query *query) {
   }
 
   ListCell *pl = nullptr;
-  ForEach(pl, query->distinctClause) {
+  foreach (pl, query->distinctClause) {
     SortGroupClause *sort_group_clause = (SortGroupClause *)lfirst(pl);
     GPOS_ASSERT(nullptr != sort_group_clause);
 
-    SortGroupClause *new_sort_group_clause = MakeNode(SortGroupClause);
+    SortGroupClause *new_sort_group_clause = makeNode(SortGroupClause);
     new_sort_group_clause->tleSortGroupRef = sort_group_clause->tleSortGroupRef;
     new_sort_group_clause->eqop = sort_group_clause->eqop;
     new_sort_group_clause->sortop = sort_group_clause->sortop;
@@ -1152,7 +1152,7 @@ BOOL CQueryMutators::NeedsProjListWindowNormalization(const Query *query) {
   }
 
   ListCell *lc = nullptr;
-  ForEach(lc, query->targetList) {
+  foreach (lc, query->targetList) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
 
     if (!CTranslatorUtils::IsReferencedInWindowSpec(target_entry, query->windowClause) &&
@@ -1206,7 +1206,7 @@ Query *CQueryMutators::NormalizeWindowProjList(CMemoryPool *mp, CMDAccessor *md_
   SContextGrpbyPlMutator projlist_context(mp, md_accessor, lower_query, nullptr);
   ListCell *lc = nullptr;
   List *target_entries = lower_query->targetList;
-  ForEach(lc, target_entries) {
+  foreach (lc, target_entries) {
     // If this target entry is referenced in a window spec, is a var or is a window function,
     // add it to the lower target list. Adjust the outer refs to ancestors of the orginal
     // query by adding one to the varlevelsup. Add a var to the upper target list to refer

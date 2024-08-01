@@ -26,9 +26,8 @@
 #ifndef GPOPT_CScalarAssertConstraintList_H
 #define GPOPT_CScalarAssertConstraintList_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDId.h"
 
 namespace gpopt {

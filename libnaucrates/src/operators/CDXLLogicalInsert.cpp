@@ -12,11 +12,9 @@
 #include "naucrates/dxl/operators/CDXLLogicalInsert.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -70,31 +68,6 @@ Edxlopid CDXLLogicalInsert::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLLogicalInsert::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenLogicalInsert);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalInsert::SerializeToDXL
-//
-//	@doc:
-//		Serialize function descriptor in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalInsert::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  CWStringDynamic *src_colids = CDXLUtils::Serialize(m_mp, m_src_colids_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenInsertCols), src_colids);
-  GPOS_DELETE(src_colids);
-
-  // serialize table descriptor
-  m_dxl_table_descr->SerializeToDXL(xml_serializer);
-
-  // serialize arguments
-  node->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

@@ -12,11 +12,9 @@
 #ifndef GPOPT_COrderSpec_H
 #define GPOPT_COrderSpec_H
 
-#include "gpos/base.h"
-#include "gpos/common/DbgPrintMixin.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CPropSpec.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDId.h"
 
 namespace gpopt {
@@ -63,7 +61,7 @@ class COrderSpec : public CPropSpec {
   //			3. definition of NULL treatment
   //
   //---------------------------------------------------------------------------
-  class COrderExpression : public gpos::DbgPrintMixin<COrderExpression> {
+  class COrderExpression {
    private:
     // MD id of sort operator
     gpmd::IMDId *m_mdid;

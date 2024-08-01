@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformImplementDML_H
 #define GPOPT_CXformImplementDML_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformImplementation.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

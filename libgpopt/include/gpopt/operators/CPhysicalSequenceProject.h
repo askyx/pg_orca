@@ -11,14 +11,12 @@
 #ifndef GPOPT_CPhysicalSequenceProject_H
 #define GPOPT_CPhysicalSequenceProject_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CWindowFrame.h"
 #include "gpopt/operators/CPhysical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations
-class CDistributionSpec;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -30,9 +28,6 @@ class CDistributionSpec;
 //---------------------------------------------------------------------------
 class CPhysicalSequenceProject : public CPhysical {
  private:
-  // partition by keys
-  CDistributionSpec *m_pds;
-
   // order specs of child window functions
   COrderSpecArray *m_pdrgpos;
 
@@ -55,8 +50,7 @@ class CPhysicalSequenceProject : public CPhysical {
   CPhysicalSequenceProject(const CPhysicalSequenceProject &) = delete;
 
   // ctor
-  CPhysicalSequenceProject(CMemoryPool *mp, CDistributionSpec *pds, COrderSpecArray *pdrgpos,
-                           CWindowFrameArray *pdrgpwf);
+  CPhysicalSequenceProject(CMemoryPool *mp, COrderSpecArray *pdrgpos, CWindowFrameArray *pdrgpwf);
 
   // dtor
   ~CPhysicalSequenceProject() override;
@@ -66,9 +60,6 @@ class CPhysicalSequenceProject : public CPhysical {
 
   // operator name
   const CHAR *SzId() const override { return "CPhysicalSequenceProject"; }
-
-  // partition by keys
-  CDistributionSpec *Pds() const { return m_pds; }
 
   // order by keys
   COrderSpecArray *Pdrgpos() const { return m_pdrgpos; }
@@ -101,10 +92,6 @@ class CPhysicalSequenceProject : public CPhysical {
   COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
-
   // compute required rewindability of the n-th child
   CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
                                   ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
@@ -118,9 +105,6 @@ class CPhysicalSequenceProject : public CPhysical {
 
   // derive sort order
   COrderSpec *PosDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
-
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // derive rewindability
   CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;

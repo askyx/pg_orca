@@ -21,8 +21,6 @@
 #include "gpos/common/CDouble.h"
 #include "gpos/string/CWStringDynamic.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 namespace gpmd {
 using namespace gpos;
 using namespace gpdxl;
@@ -54,21 +52,6 @@ class CMDDependency : public CRefCount {
     str->AppendFormat(GPOS_WSZ_LIT("%d"), *(*m_from_attno)[size - 1]);
 
     return str;
-  }
-
-  // serialize metadata dependency in DXL format given a serializer object
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) {
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                CDXLTokens::GetDXLTokenStr(EdxltokenMVDependency));
-
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenDegree), m_degree);
-    CWStringDynamic *from_attnos_str = FromAttnosToStr();
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenFrom), from_attnos_str);
-    GPOS_DELETE(from_attnos_str);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTo), m_to_attno);
-
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                 CDXLTokens::GetDXLTokenStr(EdxltokenMVDependency));
   }
 
   IntPtrArray *GetFromAttno() const { return m_from_attno; }

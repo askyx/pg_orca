@@ -9,16 +9,12 @@
 //		Cost model implementation
 //---------------------------------------------------------------------------
 
+#include "gpdbcost/CCostModelGPDB.h"
 #include "gpos/base.h"
 #include "gpos/string/CWStringConst.h"
 
-#include "gpdbcost/CCostModelGPDB.h"
-
 using namespace gpopt;
 using namespace gpdbcost;
-
-// default number segments for the cost model
-#define GPOPT_DEFAULT_SEGMENT_COUNT 2
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -29,7 +25,7 @@ using namespace gpdbcost;
 //
 //---------------------------------------------------------------------------
 ICostModel *ICostModel::PcmDefault(CMemoryPool *mp) {
-  return GPOS_NEW(mp) CCostModelGPDB(mp, GPOPT_DEFAULT_SEGMENT_COUNT);
+  return GPOS_NEW(mp) CCostModelGPDB(mp);
 }
 
 //---------------------------------------------------------------------------

@@ -11,10 +11,9 @@
 #ifndef GPOPT_CColumnDescriptor_H
 #define GPOPT_CColumnDescriptor_H
 
+#include "gpopt/metadata/CName.h"
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
-
-#include "gpopt/metadata/CName.h"
 #include "naucrates/md/IMDType.h"
 
 namespace gpopt {
@@ -30,7 +29,7 @@ using namespace gpmd;
 //		column descriptor;
 //
 //---------------------------------------------------------------------------
-class CColumnDescriptor : public CRefCount, public DbgPrintMixin<CColumnDescriptor> {
+class CColumnDescriptor : public CRefCount {
  private:
   // type information
   const IMDType *m_pmdtype;

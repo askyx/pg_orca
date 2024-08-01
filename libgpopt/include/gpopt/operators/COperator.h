@@ -11,16 +11,15 @@
 #ifndef GPOPT_COperator_H
 #define GPOPT_COperator_H
 
-#include "gpos/base.h"
-#include "gpos/common/CHashMap.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/base/CFunctionProp.h"
 #include "gpopt/base/CReqdPropPlan.h"
 #include "gpopt/base/CReqdPropRelational.h"
 #include "gpopt/metadata/CTableDescriptor.h"
+#include "gpos/base.h"
+#include "gpos/common/CHashMap.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -45,7 +44,7 @@ using ColRefToColRefMap =
 //		base class for all operators
 //
 //---------------------------------------------------------------------------
-class COperator : public CRefCount, public DbgPrintMixin<COperator> {
+class COperator : public CRefCount {
  private:
  protected:
   // operator id that is unique over all instances of all operator types
@@ -115,8 +114,6 @@ class COperator : public CRefCount, public DbgPrintMixin<COperator> {
     EopLogicalLeftAntiSemiCorrelatedApplyNotIn,
     EopLogicalRightOuterJoin,
     EopLogicalConstTableGet,
-    EopLogicalDynamicGet,
-    EopLogicalDynamicIndexGet,
     EopLogicalSequence,
     EopLogicalTVF,
     EopLogicalCTEAnchor,
@@ -201,13 +198,11 @@ class COperator : public CRefCount, public DbgPrintMixin<COperator> {
     EopPhysicalLeftAntiSemiNLJoinNotIn,
     EopPhysicalCorrelatedNotInLeftAntiSemiNLJoin,
     EopPhysicalFullMergeJoin,
-    EopPhysicalDynamicTableScan,
     EopPhysicalSequence,
     EopPhysicalTVF,
     EopPhysicalCTEProducer,
     EopPhysicalCTEConsumer,
     EopPhysicalSequenceProject,
-    EopPhysicalDynamicIndexScan,
 
     EopPhysicalInnerHashJoin,
     EopPhysicalLeftOuterHashJoin,
@@ -216,12 +211,6 @@ class COperator : public CRefCount, public DbgPrintMixin<COperator> {
     EopPhysicalLeftAntiSemiHashJoinNotIn,
     EopPhysicalRightOuterHashJoin,
     EopPhysicalFullHashJoin,
-
-    EopPhysicalMotionGather,
-    EopPhysicalMotionBroadcast,
-    EopPhysicalMotionHashDistribute,
-    EopPhysicalMotionRoutedDistribute,
-    EopPhysicalMotionRandom,
 
     EopPhysicalHashAgg,
     EopPhysicalHashAggDeduplicate,
@@ -251,15 +240,7 @@ class COperator : public CRefCount, public DbgPrintMixin<COperator> {
     EopPatternMultiTree,
     EopPatternNode,
 
-    EopLogicalDynamicBitmapTableGet,
-    EopPhysicalDynamicBitmapTableScan,
-
-    EopLogicalDynamicForeignGet,
-    EopPhysicalDynamicForeignScan,
-    EopPhysicalDynamicIndexOnlyScan,
-
     EopLogicalIndexOnlyGet,
-    EopLogicalDynamicIndexOnlyGet,
     EopSentinel
   };
 

@@ -14,7 +14,6 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
-
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
 namespace gpdxl {
@@ -109,7 +108,6 @@ class CDXLPhysicalDML : public CDXLPhysical {
 #endif  // GPOS_DEBUG
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLPhysicalDML *Cast(CDXLOperator *dxl_op) {

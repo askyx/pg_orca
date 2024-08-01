@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformImplementCTEConsumer_H
 #define GPOPT_CXformImplementCTEConsumer_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformImplementation.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

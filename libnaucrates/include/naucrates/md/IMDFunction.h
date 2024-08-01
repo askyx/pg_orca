@@ -13,7 +13,6 @@
 #define GPMD_IMDFunction_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDCacheObject.h"
 
 namespace gpmd {

@@ -17,10 +17,9 @@
 #ifndef GPOPT_CScalarWindowFunc_H
 #define GPOPT_CScalarWindowFunc_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/operators/CScalarFunc.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDId.h"
 
 namespace gpopt {

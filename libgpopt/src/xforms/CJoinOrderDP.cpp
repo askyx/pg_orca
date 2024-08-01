@@ -11,12 +11,6 @@
 
 #include "gpopt/xforms/CJoinOrderDP.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CBitSet.h"
-#include "gpos/common/CBitSetIter.h"
-#include "gpos/common/clibwrapper.h"
-#include "gpos/error/CAutoTrace.h"
-
 #include "gpopt/base/CDrvdPropScalar.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/exception.h"
@@ -24,6 +18,11 @@
 #include "gpopt/operators/CNormalizer.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
+#include "gpos/common/CBitSet.h"
+#include "gpos/common/CBitSetIter.h"
+#include "gpos/common/clibwrapper.h"
+#include "gpos/error/CAutoTrace.h"
 
 using namespace gpopt;
 
@@ -783,8 +782,6 @@ CExpression *CJoinOrderDP::PexprExpand() {
 
   return pexprResult;
 }
-
-FORCE_GENERATE_DBGSTR(gpopt::CJoinOrderDP);
 
 //---------------------------------------------------------------------------
 //	@function:

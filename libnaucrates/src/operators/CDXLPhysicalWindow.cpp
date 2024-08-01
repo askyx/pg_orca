@@ -13,7 +13,6 @@
 
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -107,43 +106,6 @@ CDXLPhysicalWindow::WindowKeysCount() const {
 CDXLWindowKey *CDXLPhysicalWindow::GetDXLWindowKeyAt(ULONG position) const {
   GPOS_ASSERT(position <= m_dxl_window_key_array->Size());
   return (*m_dxl_window_key_array)[position];
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalWindow::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalWindow::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serialize partition keys
-  CWStringDynamic *part_by_cols_str = CDXLUtils::Serialize(m_mp, m_part_by_colid_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPartKeys), part_by_cols_str);
-  GPOS_DELETE(part_by_cols_str);
-
-  // serialize properties
-  dxlnode->SerializePropertiesToDXL(xml_serializer);
-
-  // serialize children
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  // serialize the list of window keys
-  const CWStringConst *window_keys_list_str = CDXLTokens::GetDXLTokenStr(EdxltokenWindowKeyList);
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), window_keys_list_str);
-  const ULONG size = m_dxl_window_key_array->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
-    CDXLWindowKey *window_key_dxlnode = (*m_dxl_window_key_array)[ul];
-    window_key_dxlnode->SerializeToDXL(xml_serializer);
-  }
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), window_keys_list_str);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

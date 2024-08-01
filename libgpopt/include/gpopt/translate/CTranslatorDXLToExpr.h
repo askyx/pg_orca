@@ -12,9 +12,6 @@
 #ifndef GPOPT_CTranslatorDXLToExpr_H
 #define GPOPT_CTranslatorDXLToExpr_H
 
-#include "gpos/base.h"
-#include "gpos/common/CHashMap.h"
-
 #include "gpopt/base/CQueryContext.h"
 #include "gpopt/base/CWindowFrame.h"
 #include "gpopt/mdcache/CMDAccessor.h"
@@ -25,6 +22,8 @@
 #include "gpopt/operators/CScalarCmp.h"
 #include "gpopt/operators/CScalarWindowFunc.h"
 #include "gpopt/translate/CTranslatorDXLToExprUtils.h"
+#include "gpos/base.h"
+#include "gpos/common/CHashMap.h"
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLScalarArrayRefIndexList.h"

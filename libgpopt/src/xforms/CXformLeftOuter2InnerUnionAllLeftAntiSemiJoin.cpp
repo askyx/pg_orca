@@ -33,8 +33,6 @@
 
 #include "gpopt/xforms/CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin.h"
 
-#include "gpos/memory/CAutoMemoryPool.h"
-
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CLogicalCTEAnchor.h"
@@ -46,6 +44,7 @@
 #include "gpopt/operators/CPatternTree.h"
 #include "gpopt/operators/CScalarProjectList.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/memory/CAutoMemoryPool.h"
 #include "naucrates/traceflags/traceflags.h"
 
 using namespace gpopt;

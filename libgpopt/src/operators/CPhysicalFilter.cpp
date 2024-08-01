@@ -11,14 +11,10 @@
 
 #include "gpopt/operators/CPhysicalFilter.h"
 
-#include "gpos/base.h"
-
-#include "gpopt/base/CDistributionSpecAny.h"
-#include "gpopt/base/CDistributionSpecNonSingleton.h"
-#include "gpopt/base/CDistributionSpecReplicated.h"
 #include "gpopt/base/CPartInfo.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -87,39 +83,6 @@ COrderSpec *CPhysicalFilter::PosRequired(CMemoryPool *mp, CExpressionHandle &exp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalFilter::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalFilter::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                CDistributionSpec *pdsRequired, ULONG child_index,
-                                                CDrvdPropArray *,  // pdrgpdpCtxt
-                                                ULONG ulOptReq) const {
-  if (CDistributionSpec::EdtAny == pdsRequired->Edt() &&
-      CDistributionSpecAny::PdsConvert(pdsRequired)->FAllowOuterRefs() && !exprhdl.NeedsSingletonExecution()) {
-    // this situation arises when we have Filter on top of (Dynamic)IndexScan,
-    // in this case, we impose no distribution requirements even with the presence of outer references,
-    // the reason is that the Filter must be the inner child of IndexNLJoin and
-    // we need to have outer references referring to join's outer child
-    pdsRequired->AddRef();
-    return pdsRequired;
-  }
-
-  if (CDistributionSpec::EdtNonSingleton == pdsRequired->Edt() &&
-      !CDistributionSpecNonSingleton::PdsConvert(pdsRequired)->FAllowReplicated()) {
-    // this situation arises when we have Filter inside inlined CTE,
-    // in this case, we need to push down non-singleton with not allowed replicated through Filter
-    pdsRequired->AddRef();
-    return pdsRequired;
-  }
-
-  return CPhysical::PdsUnary(mp, exprhdl, pdsRequired, child_index, ulOptReq);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalFilter::PrsRequired
 //
 //	@doc:
@@ -173,78 +136,6 @@ CCTEReq *CPhysicalFilter::PcteRequired(CMemoryPool *,        // mp,
 COrderSpec *CPhysicalFilter::PosDerive(CMemoryPool *,  // mp
                                        CExpressionHandle &exprhdl) const {
   return PosDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalFilter::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalFilter::PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  CDistributionSpec *pdsChild = PdsDerivePassThruOuter(exprhdl);
-
-  if (CDistributionSpec::EdtStrictReplicated == pdsChild->Edt() &&
-      IMDFunction::EfsVolatile == exprhdl.DeriveScalarFunctionProperties(1)->Efs()) {
-    pdsChild->Release();
-    return GPOS_NEW(mp) CDistributionSpecReplicated(CDistributionSpec::EdtTaintedReplicated);
-  }
-
-  if (CDistributionSpec::EdtHashed == pdsChild->Edt() && exprhdl.HasOuterRefs()) {
-    CExpression *pexprFilterPred = exprhdl.PexprScalarExactChild(1, true /*error_on_null_return*/);
-
-    CDistributionSpecHashed *pdshashedOriginal = CDistributionSpecHashed::PdsConvert(pdsChild);
-    CDistributionSpecHashed *pdshashedEquiv = pdshashedOriginal->PdshashedEquiv();
-
-    // If the child op is an IndexScan on multi-key distributed table, the
-    // derived distribution spec may contain an incomplete equivalent
-    // distribution spec (see CPhysicalScan::PdsDerive()). In that case, try to
-    // complete the spec here.
-    // Also, if there is no equivalent spec, try to find a predicate on the
-    // filter op itself, that can be used to create a complete equivalent spec
-    // here.
-    if (nullptr == pdshashedEquiv || !pdshashedOriginal->HasCompleteEquivSpec(mp)) {
-      CDistributionSpecHashed *pdshashed;
-
-      // use the original preds if no equivalent spec exists
-      if (nullptr == pdshashedEquiv) {
-        pdshashed = pdshashedOriginal;
-      }
-      // use the filter preds to complete the incomplete spec
-      else {
-        GPOS_ASSERT(!pdshashedOriginal->HasCompleteEquivSpec(mp));
-        pdshashed = pdshashedEquiv;
-      }
-
-      CDistributionSpecHashed *pdshashedComplete = CDistributionSpecHashed::TryToCompleteEquivSpec(
-          mp, pdshashed, pexprFilterPred, exprhdl.DeriveOuterReferences());
-
-      CExpressionArray *pdrgpexprOriginal = pdshashedOriginal->Pdrgpexpr();
-      pdrgpexprOriginal->AddRef();
-      IMdIdArray *opfamiliesOriginal = pdshashedOriginal->Opfamilies();
-      if (nullptr != opfamiliesOriginal) {
-        opfamiliesOriginal->AddRef();
-      }
-
-      CDistributionSpecHashed *pdsResult;
-      if (nullptr == pdshashedComplete) {
-        // could not complete the spec, return the original without any equiv spec
-        pdsResult = GPOS_NEW(mp)
-            CDistributionSpecHashed(pdrgpexprOriginal, pdshashedOriginal->FNullsColocated(), opfamiliesOriginal);
-      } else {
-        // return the original with the completed equiv spec
-        pdsResult = GPOS_NEW(mp) CDistributionSpecHashed(pdrgpexprOriginal, pdshashedOriginal->FNullsColocated(),
-                                                         pdshashedComplete, opfamiliesOriginal);
-      }
-
-      pdsChild->Release();
-      return pdsResult;
-    }
-  }
-
-  return pdsChild;
 }
 
 //---------------------------------------------------------------------------

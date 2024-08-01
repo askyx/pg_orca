@@ -11,9 +11,8 @@
 
 #include "gpopt/operators/CLogicalUnary.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/CProjectStatsProcessor.h"
 
 using namespace gpopt;

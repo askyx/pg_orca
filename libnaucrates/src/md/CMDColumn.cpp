@@ -13,7 +13,6 @@
 #include "naucrates/md/CMDColumn.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -111,39 +110,6 @@ BOOL CMDColumn::IsNullable() const {
 //---------------------------------------------------------------------------
 BOOL CMDColumn::IsDropped() const {
   return m_is_dropped;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDColumn::Serialize
-//
-//	@doc:
-//		Serialize column metadata in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDColumn::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenColumn));
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAttno), m_attno);
-
-  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  if (default_type_modifier != TypeModifier()) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
-  }
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColumnNullable), m_is_nullable);
-  if (gpos::ulong_max != m_length) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColWidth), m_length);
-  }
-
-  if (m_is_dropped) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColDropped), m_is_dropped);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenColumn));
 }
 
 #ifdef GPOS_DEBUG

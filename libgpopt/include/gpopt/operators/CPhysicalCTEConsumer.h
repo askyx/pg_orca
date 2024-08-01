@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPhysicalCTEConsumer_H
 #define GPOPT_CPhysicalCTEConsumer_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
@@ -84,10 +83,6 @@ class CPhysicalCTEConsumer : public CPhysical {
   COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
-
   // compute required rewindability of the n-th child
   CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
                                   ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
@@ -101,9 +96,6 @@ class CPhysicalCTEConsumer : public CPhysical {
 
   // derive sort order
   COrderSpec *PosDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
-
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // derive rewindability
   CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;

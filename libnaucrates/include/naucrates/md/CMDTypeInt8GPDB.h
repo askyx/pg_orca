@@ -13,7 +13,6 @@
 #define GPMD_CMDTypeInt8GPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CGPDBTypeHelper.h"
 #include "naucrates/md/IMDTypeInt8.h"
 
@@ -38,9 +37,7 @@
 #define GPDB_INT8_AGG_COUNT OID(2147)
 
 // fwd decl
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpnaucrates {
 class IDatumInt8;
@@ -118,7 +115,6 @@ class CMDTypeInt8GPDB : public IMDTypeInt8 {
   IDatumInt8 *CreateInt8Datum(CMemoryPool *mp, LINT value, BOOL is_null) const override;
 
   // accessors
-  const CWStringDynamic *GetStrRepr() override;
 
   // type id
   IMDId *MDId() const override;
@@ -165,7 +161,6 @@ class CMDTypeInt8GPDB : public IMDTypeInt8 {
   IMDId *GetBaseRelMdid() const override { return nullptr; }
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
   // return the null constant for this type
   IDatum *DatumNull() const override { return m_datum_null; }

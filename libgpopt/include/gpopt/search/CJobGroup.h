@@ -11,9 +11,8 @@
 #ifndef GPOPT_CJobGroup_H
 #define GPOPT_CJobGroup_H
 
-#include "gpos/base.h"
-
 #include "gpopt/search/CJob.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -11,9 +11,8 @@
 
 #include "gpopt/operators/CLogicalApply.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

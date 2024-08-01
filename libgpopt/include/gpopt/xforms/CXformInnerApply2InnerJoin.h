@@ -11,11 +11,10 @@
 #ifndef GPOPT_CXformInnerApply2InnerJoin_H
 #define GPOPT_CXformInnerApply2InnerJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalInnerApply.h"
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/xforms/CXformApply2Join.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

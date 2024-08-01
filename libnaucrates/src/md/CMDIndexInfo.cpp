@@ -11,8 +11,6 @@
 
 #include "naucrates/md/CMDIndexInfo.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpdxl;
 using namespace gpmd;
 
@@ -34,18 +32,6 @@ IMDId *CMDIndexInfo::MDId() const {
 // is the index partial
 BOOL CMDIndexInfo::IsPartial() const {
   return m_is_partial;
-}
-
-// serialize indexinfo in DXL format
-void CMDIndexInfo::Serialize(gpdxl::CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenIndexInfo));
-
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexPartial), m_is_partial);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenIndexInfo));
 }
 
 #ifdef GPOS_DEBUG

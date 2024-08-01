@@ -14,7 +14,7 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
-
+#include "naucrates/dxl/xml/dxltokens.h"
 #include "naucrates/md/CDXLStatsDerivedRelation.h"
 
 namespace gpdxl {
@@ -23,7 +23,6 @@ using namespace gpmd;
 
 // fwd decl
 class CDXLNode;
-class CXMLSerializer;
 
 enum Edxlopid {
   EdxlopLogicalGet,
@@ -123,7 +122,6 @@ enum Edxlopid {
   EdxlopPhysicalProjection,
   EdxlopPhysicalTableScan,
   EdxlopPhysicalBitmapTableScan,
-  EdxlopPhysicalDynamicBitmapTableScan,
   EdxlopPhysicalForeignScan,
   EdxlopPhysicalIndexScan,
   EdxlopPhysicalIndexOnlyScan,
@@ -142,11 +140,7 @@ enum Edxlopid {
   EdxlopPhysicalSort,
   EdxlopPhysicalAppend,
   EdxlopPhysicalMaterialize,
-  EdxlopPhysicalDynamicForeignScan,
   EdxlopPhysicalSequence,
-  EdxlopPhysicalDynamicTableScan,
-  EdxlopPhysicalDynamicIndexScan,
-  EdxlopPhysicalDynamicIndexOnlyScan,
   EdxlopPhysicalPartitionSelector,
   EdxlopPhysicalTVF,
   EdxlopPhysicalWindow,
@@ -222,10 +216,6 @@ class CDXLOperator : public CRefCount {
   virtual const CWStringConst *GetOpNameStr() const = 0;
 
   virtual Edxloptype GetDXLOperatorType() const = 0;
-
-  // serialize operator in DXL format given a serializer object and the
-  // host DXL node, providing access to the operator's children
-  virtual void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const = 0;
 
   // check if given column is defined by operator
   virtual BOOL IsColDefined(ULONG  // colid

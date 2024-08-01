@@ -11,14 +11,13 @@
 #ifndef GPOPT_CTranslatorExprToDXLUtils_H
 #define GPOPT_CTranslatorExprToDXLUtils_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CRange.h"
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CLogicalConstTableGet.h"
 #include "gpopt/translate/CTranslatorExprToDXL.h"
+#include "gpos/base.h"
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLScalarBoolExpr.h"
@@ -144,10 +143,6 @@ class CTranslatorExprToDXLUtils {
   // set statistics of the operator
   static void SetStats(CMemoryPool *mp, CMDAccessor *md_accessor, CDXLNode *dxlnode, const IStatistics *stats,
                        BOOL fRoot);
-
-  // set direct dispatch info of the operator
-  static void SetDirectDispatchInfo(CMemoryPool *mp, CMDAccessor *md_accessor, CDXLNode *dxlnode, CExpression *pexpr,
-                                    CDistributionSpecArray *pdrgpdsBaseTables);
 
   // is the aggregate a local hash aggregate that is safe to stream
   static BOOL FLocalHashAggStreamSafe(CExpression *pexprAgg);

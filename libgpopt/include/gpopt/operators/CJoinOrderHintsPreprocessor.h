@@ -12,12 +12,11 @@
 #ifndef GPOPT_CJoinOrderHintsPreprocessor_H
 #define GPOPT_CJoinOrderHintsPreprocessor_H
 
-#include "gpos/base.h"
-#include "gpos/memory/set.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/hints/CHintUtils.h"
 #include "gpopt/operators/CExpression.h"
+#include "gpos/base.h"
+#include "gpos/memory/set.h"
 
 namespace gpopt {
 class CJoinOrderHintsPreprocessor {

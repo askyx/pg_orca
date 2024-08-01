@@ -9,17 +9,8 @@
 //		Implementation of expressions
 //---------------------------------------------------------------------------
 
-#include "gpos/base.h"
-#include "gpos/error/CAutoTrace.h"
-#include "gpos/io/COstreamString.h"
-#include "gpos/string/CWStringDynamic.h"
-#include "gpos/task/CAutoSuspendAbort.h"
-#include "gpos/task/CAutoTraceFlag.h"
-#include "gpos/task/CWorker.h"
-
 #include "gpopt/base/CAutoOptCtxt.h"
 #include "gpopt/base/CColRefSet.h"
-#include "gpopt/base/CDistributionSpec.h"
 #include "gpopt/base/CDrvdPropCtxtPlan.h"
 #include "gpopt/base/CDrvdPropCtxtRelational.h"
 #include "gpopt/base/CDrvdPropRelational.h"
@@ -34,6 +25,13 @@
 #include "gpopt/operators/CPatternNode.h"
 #include "gpopt/operators/CPhysicalCTEProducer.h"
 #include "gpopt/search/CGroupExpression.h"
+#include "gpos/base.h"
+#include "gpos/error/CAutoTrace.h"
+#include "gpos/io/COstreamString.h"
+#include "gpos/string/CWStringDynamic.h"
+#include "gpos/task/CAutoSuspendAbort.h"
+#include "gpos/task/CAutoTraceFlag.h"
+#include "gpos/task/CWorker.h"
 #include "naucrates/statistics/CStatistics.h"
 #include "naucrates/traceflags/traceflags.h"
 
@@ -888,8 +886,6 @@ void CExpression::DbgPrintWithProperties() const {
   (void)this->OsPrint(at.Os());
 }
 
-FORCE_GENERATE_DBGSTR(gpopt::CExpression);
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CExpression::OsPrint
@@ -1087,41 +1083,7 @@ BOOL CExpression::FValidPlan(const CReqdPropPlan *prpp, CDrvdPropCtxtPlan *pdpct
 
   CDrvdPropRelational *pdprel = GetDrvdPropRelational();
 
-  return prpp->FCompatible(exprhdl, CPhysical::PopConvert(m_pop), pdprel, pdpplan) &&
-         FValidChildrenDistribution(pdpctxtplan);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CExpression::FValidChildrenDistribution
-//
-//	@doc:
-//		Check if the distributions of all children are compatible.
-//
-//---------------------------------------------------------------------------
-BOOL CExpression::FValidChildrenDistribution(CDrvdPropCtxtPlan *pdpctxtplan) {
-  GPOS_ASSERT(Pop()->FPhysical());
-
-  CPhysical *pop = CPhysical::PopConvert(Pop());
-  CExpressionHandle exprhdl(m_mp);
-  exprhdl.Attach(this);
-  exprhdl.DeriveProps(pdpctxtplan);
-
-  if (!pop->FCompatibleChildrenDistributions(exprhdl)) {
-    return false;
-  }
-
-  // we cannot enforce a motion gather if the input is already on the coordinator
-  if (COperator::EopPhysicalMotionGather == Pop()->Eopid()) {
-    CExpression *pexprChild = (*this)[0];
-    CDrvdPropPlan *pdpplanChild = CDrvdPropPlan::Pdpplan(pexprChild->PdpDerive(pdpctxtplan));
-    if (CDistributionSpec::EdtSingleton == pdpplanChild->Pds()->Edt() ||
-        CDistributionSpec::EdtStrictSingleton == pdpplanChild->Pds()->Edt()) {
-      return false;
-    }
-  }
-
-  return true;
+  return prpp->FCompatible(exprhdl, CPhysical::PopConvert(m_pop), pdprel, pdpplan);
 }
 
 CColRefSet *CExpression::DeriveOuterReferences() {

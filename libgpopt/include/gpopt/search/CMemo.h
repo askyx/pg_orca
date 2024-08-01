@@ -11,13 +11,11 @@
 #ifndef GPOPT_CMemo_H
 #define GPOPT_CMemo_H
 
+#include "gpopt/search/CGroupExpression.h"
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
 #include "gpos/common/CSyncHashtable.h"
 #include "gpos/common/CSyncList.h"
-#include "gpos/common/DbgPrintMixin.h"
-
-#include "gpopt/search/CGroupExpression.h"
 
 namespace gpopt {
 class CGroup;
@@ -40,7 +38,7 @@ using namespace gpos;
 //		Dynamic programming table
 //
 //---------------------------------------------------------------------------
-class CMemo : public gpos::DbgPrintMixin<CMemo> {
+class CMemo {
  private:
   // definition of hash table key accessor
   using ShtAcc = CSyncHashtableAccessByKey<CGroupExpression, CGroupExpression>;

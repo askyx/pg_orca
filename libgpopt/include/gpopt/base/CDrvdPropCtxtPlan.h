@@ -13,10 +13,9 @@
 #ifndef GPOPT_CDrvdPropCtxtPlan_H
 #define GPOPT_CDrvdPropCtxtPlan_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCTEMap.h"
 #include "gpopt/base/CDrvdPropCtxt.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

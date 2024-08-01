@@ -12,7 +12,7 @@
 #include "naucrates/dxl/operators/CDXLPhysicalHashJoin.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -49,30 +49,6 @@ Edxlopid CDXLPhysicalHashJoin::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLPhysicalHashJoin::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalHashJoin);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalHashJoin::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalHashJoin::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenJoinType), GetJoinTypeNameStr());
-
-  // serialize properties
-  node->SerializePropertiesToDXL(xml_serializer);
-
-  // serialize children
-  node->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

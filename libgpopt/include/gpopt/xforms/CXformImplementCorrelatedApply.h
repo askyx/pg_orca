@@ -11,11 +11,10 @@
 #ifndef GPOPT_CXformImplementCorrelatedApply_H
 #define GPOPT_CXformImplementCorrelatedApply_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/xforms/CXformImplementation.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

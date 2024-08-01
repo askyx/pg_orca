@@ -19,8 +19,6 @@
 
 #include "gpos/string/CWStringDynamic.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpdxl;
 
@@ -50,23 +48,3 @@ CDXLDatumInt8::CDXLDatumInt8(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, LI
 LINT CDXLDatumInt8::Value() const {
   return m_val;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLDatumInt8::Serialize
-//
-//	@doc:
-//		Serialize datum in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLDatumInt8::Serialize(CXMLSerializer *xml_serializer) {
-  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-
-  if (!m_is_null) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue), m_val);
-  } else {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), true);
-  }
-}
-
-// EOF

@@ -11,9 +11,6 @@
 
 #include "gpopt/xforms/CXformUnnestTVF.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CHashMap.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalCTEAnchor.h"
 #include "gpopt/operators/CLogicalCTEConsumer.h"
@@ -22,6 +19,8 @@
 #include "gpopt/operators/CPatternMultiTree.h"
 #include "gpopt/operators/CScalarProjectElement.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
+#include "gpos/common/CHashMap.h"
 
 using namespace gpopt;
 

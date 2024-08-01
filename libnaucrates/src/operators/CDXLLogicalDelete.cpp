@@ -12,11 +12,9 @@
 #include "naucrates/dxl/operators/CDXLLogicalDelete.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -75,31 +73,6 @@ Edxlopid CDXLLogicalDelete::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLLogicalDelete::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenLogicalDelete);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalDelete::SerializeToDXL
-//
-//	@doc:
-//		Serialize function descriptor in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalDelete::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  CWStringDynamic *deletion_colids = CDXLUtils::Serialize(m_mp, m_deletion_colid_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenDeleteCols), deletion_colids);
-  GPOS_DELETE(deletion_colids);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCtidColId), m_ctid_colid);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGpSegmentIdColId), m_segid_colid);
-
-  m_dxl_table_descr->SerializeToDXL(xml_serializer);
-  node->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

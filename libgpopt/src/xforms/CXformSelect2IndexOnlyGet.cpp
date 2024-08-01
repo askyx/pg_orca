@@ -11,12 +11,11 @@
 
 #include "gpopt/xforms/CXformSelect2IndexOnlyGet.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalGet.h"
 #include "gpopt/operators/CLogicalSelect.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 #include "naucrates/md/CMDIndexGPDB.h"
 #include "naucrates/md/CMDRelationGPDB.h"
 

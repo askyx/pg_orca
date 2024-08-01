@@ -11,8 +11,6 @@
 
 #include "naucrates/dxl/operators/CDXLOperator.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpdxl;
 using namespace gpmd;
 

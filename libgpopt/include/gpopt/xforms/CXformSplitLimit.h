@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformSplitLimit_H
 #define GPOPT_CXformSplitLimit_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

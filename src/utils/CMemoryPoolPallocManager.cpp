@@ -12,9 +12,9 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "utils/memutils.h"
+#include <utils/memutils.h>
 }
 
 #include "gpopt/utils/CMemoryPoolPalloc.h"

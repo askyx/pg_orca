@@ -12,10 +12,8 @@
 #include "naucrates/dxl/operators/CDXLPhysicalAppend.h"
 
 #include "gpos/common/CBitSetIter.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -77,31 +75,6 @@ BOOL CDXLPhysicalAppend::IsUsedInUpdDel() const {
 //---------------------------------------------------------------------------
 BOOL CDXLPhysicalAppend::IsZapped() const {
   return m_is_zapped;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalAppend::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalAppend::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAppendIsTarget), m_used_in_upd_del);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAppendIsZapped), m_is_zapped);
-
-  // serialize properties
-  dxlnode->SerializePropertiesToDXL(xml_serializer);
-
-  // serialize children
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

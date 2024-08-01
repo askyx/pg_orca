@@ -13,10 +13,8 @@
 #include "naucrates/dxl/operators/CDXLLogicalCTEConsumer.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
@@ -89,29 +87,6 @@ BOOL CDXLLogicalCTEConsumer::IsColDefined(ULONG colid) const {
   }
 
   return false;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalCTEConsumer::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalCTEConsumer::SerializeToDXL(CXMLSerializer *xml_serializer,
-                                            const CDXLNode *  // dxlnode
-) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCTEId), Id());
-
-  CWStringDynamic *str_colids = CDXLUtils::Serialize(m_mp, m_output_colids_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColumns), str_colids);
-  GPOS_DELETE(str_colids);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

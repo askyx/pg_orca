@@ -12,13 +12,11 @@
 #ifndef GPOPT_COptimizationContext_H
 #define GPOPT_COptimizationContext_H
 
-#include "gpos/base.h"
-#include "gpos/common/DbgPrintMixin.h"
-#include "gpos/task/CAutoTraceFlag.h"
-
 #include "gpopt/base/CReqdPropPlan.h"
 #include "gpopt/base/CReqdPropRelational.h"
 #include "gpopt/search/CJobQueue.h"
+#include "gpos/base.h"
+#include "gpos/task/CAutoTraceFlag.h"
 #include "naucrates/statistics/IStatistics.h"
 
 #define GPOPT_INVALID_OPTCTXT_ID gpos::ulong_max
@@ -47,7 +45,7 @@ using COptimizationContextArray = CDynamicPtrArray<COptimizationContext, Cleanup
 //		Optimization context
 //
 //---------------------------------------------------------------------------
-class COptimizationContext : public CRefCount, public DbgPrintMixin<COptimizationContext> {
+class COptimizationContext : public CRefCount {
  public:
   // states of optimization context
   enum EState {
@@ -108,10 +106,6 @@ class COptimizationContext : public CRefCount, public DbgPrintMixin<COptimizatio
   // check if Sort node should be optimized for the given context
   static BOOL FOptimizeSort(CMemoryPool *mp, CGroupExpression *pgexprParent, CGroupExpression *pgexprSort,
                             COptimizationContext *poc, ULONG ulSearchStages);
-
-  // check if Motion node should be optimized for the given context
-  static BOOL FOptimizeMotion(CMemoryPool *mp, CGroupExpression *pgexprParent, CGroupExpression *pgexprMotion,
-                              COptimizationContext *poc, ULONG ulSearchStages);
 
   // check if NL join node should be optimized for the given context
   static BOOL FOptimizeNLJoin(CMemoryPool *mp, CGroupExpression *pgexprParent, CGroupExpression *pgexprMotion,

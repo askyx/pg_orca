@@ -15,13 +15,10 @@
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/md/CMDExtStatsInfo.h"
 #include "naucrates/md/IMDExtStatsInfo.h"
 
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -65,10 +62,8 @@ class CDXLExtStatsInfo : public IMDExtStatsInfo {
   CMDName Mdname() const override;
 
   // DXL string representation of cache object
-  const CWStringDynamic *GetStrRepr() override;
 
   // serialize relation stats in DXL format given a serializer object
-  void Serialize(gpdxl::CXMLSerializer *) const override;
 
   CMDExtStatsInfoArray *GetExtStatInfoArray() const override { return m_extstats_info_array; }
 

@@ -13,7 +13,6 @@
 #define GPMD_IMDScalarOp_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDCacheObject.h"
 #include "naucrates/md/IMDType.h"
 

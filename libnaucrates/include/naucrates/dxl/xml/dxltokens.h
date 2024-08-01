@@ -14,20 +14,12 @@
 #ifndef GPDXL_dxltokens_H
 #define GPDXL_dxltokens_H
 
-#include <xercesc/sax2/DefaultHandler.hpp>
-#include <xercesc/util/XMLUniDefs.hpp>
-
 #include "gpos/base.h"
 #include "gpos/common/CHashMap.h"
 #include "gpos/string/CWStringConst.h"
 
 namespace gpdxl {
 using namespace gpos;
-
-XERCES_CPP_NAMESPACE_USE
-
-// fwd decl
-class CDXLMemoryManager;
 
 enum Edxltoken {
   EdxltokenDXLMessage,
@@ -102,11 +94,6 @@ enum Edxltoken {
   EdxltokenPhysicalNLJoin,
   EdxltokenPhysicalNLJoinIndex,
   EdxltokenPhysicalMergeJoin,
-  EdxltokenPhysicalGatherMotion,
-  EdxltokenPhysicalBroadcastMotion,
-  EdxltokenPhysicalRedistributeMotion,
-  EdxltokenPhysicalRoutedDistributeMotion,
-  EdxltokenPhysicalRandomMotion,
   EdxltokenPhysicalSort,
   EdxltokenPhysicalLimit,
   EdxltokenPhysicalResult,
@@ -805,44 +792,15 @@ class CDXLTokens {
     ~SStrMapElem() { GPOS_DELETE(m_pstr); }
   };
 
-  // element for mapping Edxltoken to XML string
-  struct SXMLStrMapElem {
-    Edxltoken m_edxlt{EdxltokenSentinel};
-    XMLCh *m_xmlsz{nullptr};
-
-    // ctor
-    SXMLStrMapElem() = default;
-
-    // ctor
-    SXMLStrMapElem(Edxltoken edxlt, XMLCh *xml_val) : m_edxlt(edxlt), m_xmlsz(xml_val) {
-      GPOS_ASSERT(edxlt < EdxltokenSentinel);
-      GPOS_ASSERT(nullptr != xml_val);
-    }
-
-    // dtor
-    ~SXMLStrMapElem() { GPOS_DELETE_ARRAY(reinterpret_cast<BYTE *>(m_xmlsz)); }
-  };
-
   // array maintaining the mapping Edxltoken -> CWStringConst
   static SStrMapElem *m_pstrmap;
-
-  // array maintaining the mapping Edxltoken -> XML string
-  static SXMLStrMapElem *m_pxmlszmap;
 
   // memory pool -- not owned
   static CMemoryPool *m_mp;
 
-  // local dxl memory manager
-  static CDXLMemoryManager *m_dxl_memory_manager;
-
-  // create a string in Xerces XMLCh* format
-  static XMLCh *XmlstrFromWsz(const WCHAR *wsz);
-
  public:
   // retrieve a token in CWStringConst and XMLCh* format, respectively
   static const CWStringConst *GetDXLTokenStr(Edxltoken token_type);
-
-  static const XMLCh *XmlstrToken(Edxltoken token_type);
 
   // initialize constants. Must be called before constants are accessed.
   static void Init(CMemoryPool *mp);

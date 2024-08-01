@@ -13,10 +13,8 @@
 #define GPNAUCRATES_CBucket_H
 
 #include "gpos/base.h"
-#include "gpos/common/DbgPrintMixin.h"
 #include "gpos/error/CAutoTrace.h"
 #include "gpos/task/CTask.h"
-
 #include "naucrates/statistics/CPoint.h"
 #include "naucrates/statistics/IBucket.h"
 
@@ -42,7 +40,7 @@ using CBucketArray = CDynamicPtrArray<CBucket, CleanupDelete>;
 //
 //---------------------------------------------------------------------------
 
-class CBucket : public IBucket, public gpos::DbgPrintMixin<CBucket> {
+class CBucket : public IBucket {
  private:
   // lower bound of bucket
   CPoint *m_bucket_lower_bound;

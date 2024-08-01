@@ -11,11 +11,10 @@
 #ifndef GPOPT_CJobGroupExpressionOptimization_H
 #define GPOPT_CJobGroupExpressionOptimization_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COptimizationContext.h"
 #include "gpopt/search/CJobGroupExpression.h"
 #include "gpopt/search/CJobStateMachine.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -13,7 +13,6 @@
 #define GPDXL_CDXLLogicalDelete_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
 namespace gpdxl {
@@ -81,7 +80,6 @@ class CDXLLogicalDelete : public CDXLLogical {
 #endif  // GPOS_DEBUG
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLLogicalDelete *Cast(CDXLOperator *dxl_op) {

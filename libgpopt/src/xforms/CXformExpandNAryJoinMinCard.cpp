@@ -12,8 +12,6 @@
 
 #include "gpopt/xforms/CXformExpandNAryJoinMinCard.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CLogicalNAryJoin.h"
 #include "gpopt/operators/CNormalizer.h"
@@ -22,6 +20,7 @@
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/xforms/CJoinOrderMinCard.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

@@ -5,7 +5,6 @@
 #define GPOPT_CPhysicalUnionAll_H
 
 #include "gpopt/base/CColRefSet.h"
-#include "gpopt/base/CDistributionSpecHashed.h"
 #include "gpopt/operators/COperator.h"
 #include "gpopt/operators/CPhysical.h"
 
@@ -21,11 +20,6 @@ class CPhysicalUnionAll : public CPhysical {
   // set representation of input columns
   CColRefSetArray *m_pdrgpcrsInput;
 
-  // array of child hashed distributions -- used locally for distribution derivation
-  CDistributionSpecArray *m_pdrgpds;
-
-  void PopulateDistrSpecs(CMemoryPool *mp, CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrInput);
-
   // map given array of scalar ident expressions to positions of UnionAll input columns in the given child;
   ULongPtrArray *PdrgpulMap(CMemoryPool *mp, CExpressionArray *pdrgpexpr, ULONG child_index) const;
 
@@ -33,25 +27,6 @@ class CPhysicalUnionAll : public CPhysical {
   // into an equivalent ColRefSet, expressed in terms
   // of input number n
   CColRefSet *MapOutputColRefsToInput(CMemoryPool *mp, CColRefSet *out_col_refs, ULONG child_index);
-
-  // derive hashed distribution from child operators
-  CDistributionSpecHashed *PdshashedDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const;
-
-  // derive strict random distribution spec if all the children of the parallel union all
-  // node derive strict random; derive null spec otherwise
-  static CDistributionSpecRandom *PdsStrictRandomParallelUnionAllChildren(CMemoryPool *mp,
-                                                                          CExpressionHandle &expr_handle);
-
-  // compute output hashed distribution matching the outer child's hashed distribution
-  CDistributionSpecHashed *PdsMatching(CMemoryPool *mp, const ULongPtrArray *pdrgpulOuter) const;
-
-  // derive output distribution based on child distribution
-  static CDistributionSpec *PdsDeriveFromChildren(CMemoryPool *mp, CExpressionHandle &exprhdl);
-
- protected:
-  // compute required hashed distribution of the n-th child
-  CDistributionSpecHashed *PdshashedPassThru(CMemoryPool *mp, CDistributionSpecHashed *pdshashedRequired,
-                                             ULONG child_index) const;
 
  public:
   CPhysicalUnionAll(CMemoryPool *mp, CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrInput);
@@ -111,9 +86,6 @@ class CPhysicalUnionAll : public CPhysical {
 
   // derive sort order
   COrderSpec *PosDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
-
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // derive rewindability
   CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;

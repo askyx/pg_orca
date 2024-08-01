@@ -22,13 +22,9 @@
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
-#include "gpopt/operators/CPhysicalDynamicIndexOnlyScan.h"
-#include "gpopt/operators/CPhysicalDynamicIndexScan.h"
 #include "gpopt/operators/CPhysicalHashAgg.h"
 #include "gpopt/operators/CPhysicalIndexOnlyScan.h"
 #include "gpopt/operators/CPhysicalIndexScan.h"
-#include "gpopt/operators/CPhysicalMotion.h"
-#include "gpopt/operators/CPhysicalMotionBroadcast.h"
 #include "gpopt/operators/CPhysicalPartitionSelector.h"
 #include "gpopt/operators/CPhysicalSequenceProject.h"
 #include "gpopt/operators/CPhysicalStreamAgg.h"
@@ -50,10 +46,7 @@ using namespace gpdbcost;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CCostModelGPDB::CCostModelGPDB(CMemoryPool *mp, ULONG ulSegments, CCostModelParamsGPDB *pcp)
-    : m_mp(mp), m_num_of_segments(ulSegments) {
-  // GPOS_ASSERT(0 < ulSegments);
-
+CCostModelGPDB::CCostModelGPDB(CMemoryPool *mp, CCostModelParamsGPDB *pcp) : m_mp(mp) {
   if (nullptr == pcp) {
     m_cost_model_params = GPOS_NEW(mp) CCostModelParamsGPDB(mp);
   } else {
@@ -72,7 +65,7 @@ CCostModelGPDB::CCostModelGPDB(CMemoryPool *mp, ULONG ulSegments, CCostModelPara
 //
 //---------------------------------------------------------------------------
 CDouble CCostModelGPDB::DRowsPerHost(CDouble dRowsTotal) const {
-  return dRowsTotal / m_num_of_segments;
+  return dRowsTotal;
 }
 
 //---------------------------------------------------------------------------
@@ -252,30 +245,8 @@ CCost CCostModelGPDB::CostChildren(CMemoryPool *mp, CExpressionHandle &exprhdl, 
       COperator *scanOp = popChild;
 
       if (fFilterParent) {
-        CPhysicalPartitionSelector *ps = dynamic_cast<CPhysicalPartitionSelector *>(popChild);
-
-        if (ps) {
-          CCostContext *grandchildContext = nullptr;
-
-          scanOp = exprhdl.PopGrandchild(ul, 0, &grandchildContext);
-          CPhysicalDynamicScan *scan = dynamic_cast<CPhysicalDynamicScan *>(scanOp);
-
-          if (scan && scan->ScanId() == ps->ScanId() && grandchildContext) {
-            // We have a filter on top of a partition selector on top of a scan.
-            // Base the scan output cost on the combination (filter + part sel + scan)
-            // on the rows that are produced by the scan, since the runtime execution
-            // plan with be sequence(part_sel, scan+filter). Note that the cost of
-            // the partition selector is ignored here. It may be higher than that of
-            // the complete tree (filter + part sel + scan).
-            // See method CTranslatorExprToDXL::PdxlnPartitionSelectorWithInlinedCondition()
-            // for how we inline the predicate into the dynamic table scan.
-            dCostChild = grandchildContext->Cost().Get();
-            dScanRows = pci->Rows();
-          }
-        } else {
-          // if parent is filter, compute scan output cost based on rows produced by Filter operator
-          dScanRows = pci->Rows();
-        }
+        // if parent is filter, compute scan output cost based on rows produced by Filter operator
+        dScanRows = pci->Rows();
       }
 
       if (CUtils::FPhysicalScan(scanOp)) {
@@ -515,7 +486,7 @@ CCost CCostModelGPDB::CostStreamAgg(CMemoryPool *mp, CExpressionHandle &exprhdl,
   DOUBLE num_output_rows = pci->Rows();  // estimated output rows
   CPhysicalStreamAgg *popAgg = CPhysicalStreamAgg::PopConvert(exprhdl.Pop());
   if ((COperator::EgbaggtypeLocal == popAgg->Egbaggtype()) && popAgg->FGeneratesDuplicates()) {
-    num_output_rows = num_output_rows * pcmgpdb->UlHosts();
+    num_output_rows = num_output_rows;
   }
 
   // streamAgg cost is correlated with num_input_rows and width of input
@@ -670,7 +641,7 @@ CCost CCostModelGPDB::CostHashAgg(CMemoryPool *mp, CExpressionHandle &exprhdl, c
   DOUBLE num_output_rows = pci->Rows();  // estimated output rows
   CPhysicalHashAgg *popAgg = CPhysicalHashAgg::PopConvert(exprhdl.Pop());
   if ((COperator::EgbaggtypeLocal == popAgg->Egbaggtype()) && popAgg->FGeneratesDuplicates()) {
-    num_output_rows = num_output_rows * pcmgpdb->UlHosts();
+    num_output_rows = num_output_rows;
   }
 
   // get the number of grouping columns
@@ -813,8 +784,6 @@ CCost CCostModelGPDB::CostHashJoin(CMemoryPool *mp, CExpressionHandle &exprhdl, 
   }
   CCost costChild = CostChildren(mp, exprhdl, pci, pcmgpdb->GetCostModelParams());
 
-  COptimizerConfig *optimizer_config = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig();
-
   // The skew ratio represents the ratio of tuples on the skewed segment
   // to the expected tuples if data is distributed uniformly For example,
   // a skew ratio of 2 would mean there are twice as many tuples on a
@@ -822,109 +791,6 @@ CCost CCostModelGPDB::CostHashJoin(CMemoryPool *mp, CExpressionHandle &exprhdl, 
   // We'll then multiply this ratio by the child's cost to account for
   // the increased tuples on a segment
   CDouble skew_ratio = 1;
-  ULONG arity = exprhdl.Arity();
-
-  if (GPOS_FTRACE(EopttraceDiscardRedistributeHashJoin)) {
-    for (ULONG ul = 0; ul < arity - 1; ul++) {
-      COperator *popChild = exprhdl.Pop(ul);
-      if (nullptr != popChild && COperator::EopPhysicalMotionHashDistribute == popChild->Eopid()) {
-        return CCost(GPOS_FP_ABS_MAX);
-      }
-    }
-  }
-
-  // Hashjoin with skewed HashRedistribute below them are expensive
-  // find out if there is a skewed redistribute child of this HashJoin.
-  if (!GPOS_FTRACE(EopttracePenalizeSkewedHashJoin)) {
-    for (ULONG ul = 0; ul < arity - 1; ++ul) {
-      COperator *popChild = exprhdl.Pop(ul);
-      if (nullptr == popChild || COperator::EopPhysicalMotionHashDistribute != popChild->Eopid()) {
-        continue;
-      }
-
-      CPhysicalMotion *motion = CPhysicalMotion::PopConvert(popChild);
-      CColRefSet *columns = motion->Pds()->PcrsUsed(mp);
-      GPOS_ASSERT(columns->Size() > 0);
-
-      // we decide if there is a skew by calculating the NDVs and frequency of nulls of the HashRedistribute
-      CDouble ndv = 1.0;
-      CDouble nullFreq = 1.0;
-      CColRefSetIter iter(*columns);
-      while (iter.Advance()) {
-        CColRef *colref = iter.Pcr();
-        ndv = ndv * pci->Pcstats(ul)->GetNDVs(colref);
-        nullFreq = nullFreq * pci->Pcstats(ul)->GetNullFreq(colref);
-      }
-
-      // if the NDVs are less than number of segments then
-      // there is definitely skew. NDV < 1 implies no stats
-      // exist for the columns involved. So we don't want to
-      // take any decision. In case of a skew, penalize the
-      // local cost of HashJoin with
-      // a skew ratio = (num of segments)/ndv
-      //
-      // Note: if multiple values have skew, we
-      // don't consider that some values may hash to the same
-      // segment. This is definitely possible in practice,
-      // but hopefully considering skew of a single value is
-      // enough to choose a more optimal plan. Revisit this
-      // if we see poor plans in user workloads.
-      if (ndv < pcmgpdb->UlHosts() && (ndv >= 1)) {
-        CDouble sk = pcmgpdb->UlHosts() / ndv;
-        skew_ratio = CDouble(std::max(sk.Get(), skew_ratio.Get()));
-      }
-
-      // if the null frequency for this column is greater
-      // than 5% of values (arbitrary), we consider possible
-      // skew. Because distributing on a single value can
-      // cause skew, we also need to consider distributing on
-      // the null value. For example, if 40% of the values
-      // are null, then  at minimum 40% of the values would
-      // go on a single segment. If there are 2 segments, we
-      // would expect 70% of the values (40% [the nulls]+ 60%
-      // [other values] * 50%) to be on the skewed segment
-      //
-      // The formula for skew ratio is derived as follows:
-      // skewed_percent: null_fraction + (1/num_segments)
-      // expected_percent_if_uniform: 1/num_segments
-      // skew_ratio = skewed_percent / expected_percent_if_uniform
-      //
-      // As the null fraction (percentage of the nulls in the
-      // sample) or the number of segments increase, the skew
-      // ratio also increases.
-      if (nullFreq > .05) {
-        CDouble skewed_percent = nullFreq + (1.0 / pcmgpdb->UlHosts());
-        CDouble expected_percent_if_uniform = 1.0 / pcmgpdb->UlHosts();
-        CDouble sk = skewed_percent / expected_percent_if_uniform;
-        skew_ratio = CDouble(std::max(sk.Get(), skew_ratio.Get()));
-      }
-
-      ULONG skew_factor = optimizer_config->GetHint()->UlSkewFactor();
-      if (skew_factor > 0) {
-        // If user specified skew multiplier is larger than 0
-        // Compute skew
-        IStatistics *pcstats = pci->Pcstats(ul)->Pstats();
-        // User specified skew factor is fed to a power function,
-        // whose ouptut becomes the final skew multiplier.
-        // This allows fine tuning when the skew factor is small,
-        // and coarse tuning when the skew factor is big.
-        // The multiplier caps at 1.0307^(100-1) = 20
-        // The base 1.0307 is so chosen that if the data is slightly
-        // skewed, i.e., skew calculated from the histogram is a
-        // little above 1, while we get a multiplier of 20 if we max out
-        // the skew factor at 100
-        skew_factor = pow(1.0307, (skew_factor - 1));
-        CDouble sk1 = skew_factor * CPhysical::GetSkew(pcstats, motion->Pds());
-        skew_ratio = CDouble(std::max(sk1.Get(), skew_ratio.Get()));
-      } else {
-        // If user specified skew multiplier is 0
-        // Cap the skew to avoid gather motions
-        skew_ratio = CDouble(std::min(dPenalizeHJSkewUpperLimit.Get(), skew_ratio.Get()));
-      }
-
-      columns->Release();
-    }
-  }
 
   return costChild + CCost(costLocal.Get() * skew_ratio);
 }
@@ -1150,92 +1016,6 @@ CCost CCostModelGPDB::CostNLJoin(CMemoryPool *mp, CExpressionHandle &exprhdl, co
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CCostModelGPDB::CostMotion
-//
-//	@doc:
-//		Cost of motion
-//
-//---------------------------------------------------------------------------
-CCost CCostModelGPDB::CostMotion(CMemoryPool *mp, CExpressionHandle &exprhdl, const CCostModelGPDB *pcmgpdb,
-                                 const SCostingInfo *pci) {
-  GPOS_ASSERT(nullptr != pcmgpdb);
-  GPOS_ASSERT(nullptr != pci);
-
-  COperator::EOperatorId op_id = exprhdl.Pop()->Eopid();
-  GPOS_ASSERT(COperator::EopPhysicalMotionGather == op_id || COperator::EopPhysicalMotionBroadcast == op_id ||
-              COperator::EopPhysicalMotionHashDistribute == op_id || COperator::EopPhysicalMotionRandom == op_id ||
-              COperator::EopPhysicalMotionRoutedDistribute == op_id);
-
-  const DOUBLE num_rows_outer = pci->PdRows()[0];
-  const DOUBLE dWidthOuter = pci->GetWidth()[0];
-
-  // motion cost contains three parts: sending cost, interconnect cost, and receiving cost.
-  // TODO 2014-03-18
-  // in current cost model, interconnect cost is tied with receiving cost. Because we
-  // only have one set calibration results in the dimension of the number of segments.
-  // Once we calibrate the cost model with different number of segments, I will update
-  // the function.
-
-  CDouble dSendCostUnit(0);
-  CDouble dRecvCostUnit(0);
-  CDouble recvCost(0);
-
-  CCost costLocal(0);
-  if (COperator::EopPhysicalMotionBroadcast == op_id) {
-    // broadcast cost is amplified by the number of segments
-    dSendCostUnit = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpBroadcastSendCostUnit)->Get();
-    dRecvCostUnit = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpBroadcastRecvCostUnit)->Get();
-
-    recvCost = num_rows_outer * dWidthOuter * pcmgpdb->UlHosts() * dRecvCostUnit;
-  } else if (COperator::EopPhysicalMotionHashDistribute == op_id || COperator::EopPhysicalMotionRandom == op_id ||
-             COperator::EopPhysicalMotionRoutedDistribute == op_id) {
-    dSendCostUnit = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpRedistributeSendCostUnit)->Get();
-    dRecvCostUnit = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpRedistributeRecvCostUnit)->Get();
-
-    // Adjust the cost of no-op hashed distribution to correctly reflect that no tuple movement is needed
-    CPhysicalMotion *pMotion = CPhysicalMotion::PopConvert(exprhdl.Pop());
-    CDistributionSpec *pds = pMotion->Pds();
-    if (CDistributionSpec::EdtHashedNoOp == pds->Edt()) {
-      // promote the plan with redistribution on same distributed columns of base table for parallel append
-      dSendCostUnit = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpNoOpCostUnit)->Get();
-      dRecvCostUnit = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpNoOpCostUnit)->Get();
-    }
-
-    recvCost = pci->Rows() * pci->Width() * dRecvCostUnit;
-  } else if (COperator::EopPhysicalMotionGather == op_id) {
-    dSendCostUnit = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpGatherSendCostUnit)->Get();
-    dRecvCostUnit = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpGatherRecvCostUnit)->Get();
-
-    recvCost = num_rows_outer * dWidthOuter * pcmgpdb->UlHosts() * dRecvCostUnit;
-  }
-
-  GPOS_ASSERT(0 <= dSendCostUnit);
-  GPOS_ASSERT(0 <= dRecvCostUnit);
-
-  costLocal = CCost(pci->NumRebinds() * (num_rows_outer * dWidthOuter * dSendCostUnit + recvCost));
-
-  if (COperator::EopPhysicalMotionBroadcast == op_id) {
-    CPhysicalMotionBroadcast *physical_broadcast = CPhysicalMotionBroadcast::PopConvert(exprhdl.Pop());
-    COptimizerConfig *optimizer_config = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig();
-    ULONG broadcast_threshold = optimizer_config->GetHint()->UlBroadcastThreshold();
-
-    // if the broadcast threshold is 0, don't penalize
-    // also, if the replicated distribution is set to ignore the broadcast
-    // threshold (e.g. it's under a LASJ not-in) don't penalize
-    if (broadcast_threshold > 0 && num_rows_outer > broadcast_threshold &&
-        !CDistributionSpecReplicated::PdsConvert(physical_broadcast->Pds())->FIgnoreBroadcastThreshold()) {
-      DOUBLE ulPenalizationFactor = 100000000000000.0;
-      costLocal = CCost(ulPenalizationFactor);
-    }
-  }
-
-  CCost costChild = CostChildren(mp, exprhdl, pci, pcmgpdb->GetCostModelParams());
-
-  return costLocal + costChild;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CCostModelGPDB::CostSequenceProject
 //
 //	@doc:
@@ -1399,7 +1179,7 @@ CCost CCostModelGPDB::CostIndexScan(CMemoryPool *mp GPOS_UNUSED, CExpressionHand
 
   COperator *pop = exprhdl.Pop();
   COperator::EOperatorId op_id = pop->Eopid();
-  GPOS_ASSERT(COperator::EopPhysicalIndexScan == op_id || COperator::EopPhysicalDynamicIndexScan == op_id);
+  GPOS_ASSERT(COperator::EopPhysicalIndexScan == op_id);
 
   IMDId *rel_mdid = CPhysicalScan::PopConvert(pop)->Ptabdesc()->MDId();
 
@@ -1432,11 +1212,6 @@ CCost CCostModelGPDB::CostIndexScan(CMemoryPool *mp GPOS_UNUSED, CExpressionHand
   if (COperator::EopPhysicalIndexScan == op_id) {
     // For Index Scan
     CPhysicalIndexScan *ptr = CPhysicalIndexScan::PopConvert(pop);
-    GetCommonIndexData(ptr, ulIndexKeys, ulIncludedColWidth, pdrgpcrIndexColumns, stats, md_accessor, mp);
-    ulUnindexedPredCount = ptr->ResidualPredicateSize();
-  } else {
-    // For Dynamic Index Scan
-    CPhysicalDynamicIndexScan *ptr = CPhysicalDynamicIndexScan::PopConvert(pop);
     GetCommonIndexData(ptr, ulIndexKeys, ulIncludedColWidth, pdrgpcrIndexColumns, stats, md_accessor, mp);
     ulUnindexedPredCount = ptr->ResidualPredicateSize();
   }
@@ -1476,8 +1251,7 @@ CCost CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,    // mp
   GPOS_ASSERT(nullptr != pci);
 
   COperator *pop = exprhdl.Pop();
-  GPOS_ASSERT(COperator::EopPhysicalIndexOnlyScan == pop->Eopid() ||
-              COperator::EopPhysicalDynamicIndexOnlyScan == pop->Eopid());
+  GPOS_ASSERT(COperator::EopPhysicalIndexOnlyScan == pop->Eopid());
 
   IMDId *rel_mdid = CPhysicalScan::PopConvert(pop)->Ptabdesc()->MDId();
 
@@ -1537,9 +1311,6 @@ CCost CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,    // mp
 
   if (COperator::EopPhysicalIndexOnlyScan == pop->Eopid()) {
     CPhysicalIndexOnlyScan *ptr = CPhysicalIndexOnlyScan::PopConvert(pop);
-    GetCommonIndexData(ptr, ulIndexKeys, ulIncludedColWidth, pdrgpcrIndexColumns, stats, md_accessor, mp);
-  } else {
-    CPhysicalDynamicIndexOnlyScan *ptr = CPhysicalDynamicIndexOnlyScan::PopConvert(pop);
     GetCommonIndexData(ptr, ulIndexKeys, ulIncludedColWidth, pdrgpcrIndexColumns, stats, md_accessor, mp);
   }
 
@@ -1607,8 +1378,7 @@ CCost CCostModelGPDB::CostBitmapTableScan(CMemoryPool *mp, CExpressionHandle &ex
                                           const SCostingInfo *pci) {
   GPOS_ASSERT(nullptr != pcmgpdb);
   GPOS_ASSERT(nullptr != pci);
-  GPOS_ASSERT(COperator::EopPhysicalBitmapTableScan == exprhdl.Pop()->Eopid() ||
-              COperator::EopPhysicalDynamicBitmapTableScan == exprhdl.Pop()->Eopid());
+  GPOS_ASSERT(COperator::EopPhysicalBitmapTableScan == exprhdl.Pop()->Eopid());
 
   CCost result(0.0);
   CExpression *pexprIndexCond = exprhdl.PexprScalarRepChild(1 /*child_index*/);
@@ -1795,8 +1565,7 @@ CCost CCostModelGPDB::CostScan(CMemoryPool *,  // mp
 
   COperator *pop = exprhdl.Pop();
   COperator::EOperatorId op_id = pop->Eopid();
-  GPOS_ASSERT(COperator::EopPhysicalTableScan == op_id || COperator::EopPhysicalDynamicTableScan == op_id ||
-              COperator::EopPhysicalForeignScan == op_id || COperator::EopPhysicalDynamicForeignScan == op_id);
+  GPOS_ASSERT(COperator::EopPhysicalTableScan == op_id || COperator::EopPhysicalForeignScan == op_id);
 
   const CDouble dInitScan = pcmgpdb->GetCostModelParams()->PcpLookup(CCostModelParamsGPDB::EcpInitScanFactor)->Get();
   const CDouble dTableWidth = CPhysicalScan::PopConvert(pop)->PstatsBaseTable()->Width();
@@ -1808,9 +1577,7 @@ CCost CCostModelGPDB::CostScan(CMemoryPool *,  // mp
 
   switch (op_id) {
     case COperator::EopPhysicalTableScan:
-    case COperator::EopPhysicalDynamicTableScan:
     case COperator::EopPhysicalForeignScan:
-    case COperator::EopPhysicalDynamicForeignScan:
       // table scan cost considers only retrieving tuple cost,
       // since we scan the entire table here, the cost is correlated with table rows and table width,
       // since Scan's parent operator may be a filter that will be pushed into Scan node in GPDB plan,
@@ -1878,9 +1645,7 @@ CCost CCostModelGPDB::Cost(CExpressionHandle &exprhdl,  // handle gives access t
       __builtin_unreachable();
     }
     case COperator::EopPhysicalTableScan:
-    case COperator::EopPhysicalDynamicTableScan:
     case COperator::EopPhysicalForeignScan:
-    case COperator::EopPhysicalDynamicForeignScan:
 
     {
       return CostScan(m_mp, exprhdl, this, pci);
@@ -1890,18 +1655,15 @@ CCost CCostModelGPDB::Cost(CExpressionHandle &exprhdl,  // handle gives access t
       return CostFilter(m_mp, exprhdl, this, pci);
     }
 
-    case COperator::EopPhysicalDynamicIndexOnlyScan:
     case COperator::EopPhysicalIndexOnlyScan: {
       return CostIndexOnlyScan(m_mp, exprhdl, this, pci);
     }
 
-    case COperator::EopPhysicalIndexScan:
-    case COperator::EopPhysicalDynamicIndexScan: {
+    case COperator::EopPhysicalIndexScan: {
       return CostIndexScan(m_mp, exprhdl, this, pci);
     }
 
-    case COperator::EopPhysicalBitmapTableScan:
-    case COperator::EopPhysicalDynamicBitmapTableScan: {
+    case COperator::EopPhysicalBitmapTableScan: {
       return CostBitmapTableScan(m_mp, exprhdl, this, pci);
     }
 
@@ -1966,14 +1728,6 @@ CCost CCostModelGPDB::Cost(CExpressionHandle &exprhdl,  // handle gives access t
     case COperator::EopPhysicalInnerIndexNLJoin:
     case COperator::EopPhysicalLeftOuterIndexNLJoin: {
       return CostIndexNLJoin(m_mp, exprhdl, this, pci);
-    }
-
-    case COperator::EopPhysicalMotionGather:
-    case COperator::EopPhysicalMotionBroadcast:
-    case COperator::EopPhysicalMotionHashDistribute:
-    case COperator::EopPhysicalMotionRandom:
-    case COperator::EopPhysicalMotionRoutedDistribute: {
-      return CostMotion(m_mp, exprhdl, this, pci);
     }
 
     case COperator::EopPhysicalInnerNLJoin:

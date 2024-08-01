@@ -17,8 +17,6 @@
 
 #include "naucrates/dxl/operators/CDXLDatum.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpdxl;
 
@@ -63,19 +61,3 @@ ULONG
 CDXLDatum::Length() const {
   return m_length;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLDatum::Serialize
-//
-//	@doc:
-//		Serialize datum in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLDatum::Serialize(CXMLSerializer *xml_serializer, const CWStringConst *datum_string) {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), datum_string);
-  Serialize(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), datum_string);
-}
-
-// EOF

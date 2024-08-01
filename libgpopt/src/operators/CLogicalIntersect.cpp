@@ -11,13 +11,12 @@
 
 #include "gpopt/operators/CLogicalIntersect.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CKeyCollection.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CLogicalIntersectAll.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

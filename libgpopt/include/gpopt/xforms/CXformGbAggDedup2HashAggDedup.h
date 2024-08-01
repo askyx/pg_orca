@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformGbAggDedup2HashAggDedup_H
 #define GPOPT_CXformGbAggDedup2HashAggDedup_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformGbAgg2HashAgg.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

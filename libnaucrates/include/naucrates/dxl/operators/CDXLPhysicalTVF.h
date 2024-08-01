@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalTVF_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 #include "naucrates/md/IMDId.h"
@@ -63,7 +62,6 @@ class CDXLPhysicalTVF : public CDXLPhysical {
   IMDId *ReturnTypeMdId() const { return m_return_type_mdid; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLPhysicalTVF *Cast(CDXLOperator *dxl_op) {

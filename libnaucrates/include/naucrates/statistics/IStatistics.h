@@ -11,11 +11,10 @@
 #ifndef GPNAUCRATES_IStatistics_H
 #define GPNAUCRATES_IStatistics_H
 
+#include "gpopt/base/CColRef.h"
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
 #include "gpos/common/CHashMapIter.h"
-
-#include "gpopt/base/CColRef.h"
 #include "naucrates/md/CDXLStatsDerivedRelation.h"
 #include "naucrates/statistics/CHistogram.h"
 #include "naucrates/statistics/CStatsPred.h"

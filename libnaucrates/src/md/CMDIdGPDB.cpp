@@ -11,8 +11,6 @@
 
 #include "naucrates/md/CMDIdGPDB.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpmd;
 
@@ -262,19 +260,6 @@ BOOL CMDIdGPDB::IsValid() const {
   const CMDIdGPDB *invalid = &CMDIdGPDB::m_mdid_invalid_key;
   return !(m_oid == invalid->Oid() && m_major_version == invalid->VersionMajor() &&
            m_minor_version == invalid->VersionMinor());
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDIdGPDB::Serialize
-//
-//	@doc:
-//		Serializes the mdid as the value of the given attribute
-//
-//---------------------------------------------------------------------------
-void CMDIdGPDB::Serialize(CXMLSerializer *xml_serializer, const CWStringConst *attribute_str) const {
-  Serialize();
-  xml_serializer->AddAttribute(attribute_str, &m_str);
 }
 
 //---------------------------------------------------------------------------

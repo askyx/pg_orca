@@ -14,7 +14,6 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
-
 #include "naucrates/md/CMDIdGPDB.h"
 #include "naucrates/md/CMDName.h"
 
@@ -22,7 +21,7 @@ namespace gpdxl {
 using namespace gpmd;
 
 // fwd decl
-class CXMLSerializer;
+
 class CDXLColDescr;
 
 using CDXLColDescrArray = CDynamicPtrArray<CDXLColDescr, CleanupRelease>;
@@ -86,8 +85,6 @@ class CDXLColDescr : public CRefCount {
 
   // column width
   ULONG Width() const;
-
-  void SerializeToDXL(CXMLSerializer *xml_serializer) const;
 };
 
 }  // namespace gpdxl

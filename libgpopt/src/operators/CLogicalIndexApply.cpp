@@ -8,7 +8,6 @@
 #include "gpopt/operators/CLogicalIndexApply.h"
 
 #include "gpos/base.h"
-
 #include "naucrates/statistics/CJoinStatsProcessor.h"
 
 using namespace gpopt;

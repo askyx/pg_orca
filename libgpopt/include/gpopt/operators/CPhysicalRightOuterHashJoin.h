@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPhysicalRightOuterHashJoin_H
 #define GPOPT_CPhysicalRightOuterHashJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalHashJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
@@ -26,13 +25,9 @@ namespace gpopt {
 //---------------------------------------------------------------------------
 class CPhysicalRightOuterHashJoin : public CPhysicalHashJoin {
  private:
-  // helper for deriving hash join distribution from hashed children
-  CDistributionSpec *PdsDeriveFromHashedChildren(CMemoryPool *mp, CDistributionSpec *pdsOuter,
-                                                 CDistributionSpec *pdsInner) const;
-
  protected:
   // create optimization requests
-  void CreateOptRequests(CMemoryPool *mp) override;
+  void CreateOptRequests() override;
 
  public:
   CPhysicalRightOuterHashJoin(const CPhysicalRightOuterHashJoin &) = delete;
@@ -44,8 +39,6 @@ class CPhysicalRightOuterHashJoin : public CPhysicalHashJoin {
 
   // dtor
   ~CPhysicalRightOuterHashJoin() override;
-
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // ident accessors
   EOperatorId Eopid() const override { return EopPhysicalRightOuterHashJoin; }
@@ -63,10 +56,6 @@ class CPhysicalRightOuterHashJoin : public CPhysicalHashJoin {
   //-------------------------------------------------------------------------------------
   // Required Plan Properties
   //-------------------------------------------------------------------------------------
-
-  // compute required distribution of the n-th child
-  CEnfdDistribution *Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput, ULONG child_index,
-                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
 
   CPartitionPropagationSpec *PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
                                           CPartitionPropagationSpec *pppsRequired, ULONG child_index,

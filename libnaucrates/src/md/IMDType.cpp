@@ -12,7 +12,6 @@
 #include "naucrates/md/IMDType.h"
 
 #include "gpos/string/CWStringConst.h"
-
 #include "naucrates/base/IDatum.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 #include "naucrates/statistics/CStatistics.h"

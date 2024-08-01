@@ -11,14 +11,13 @@
 #ifndef GPOPT_CStatisticsUtils_H
 #define GPOPT_CStatisticsUtils_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/engine/CStatisticsConfig.h"
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CLogical.h"
 #include "gpopt/operators/CScalarBoolOp.h"
+#include "gpos/base.h"
 #include "naucrates/base/IDatum.h"
 #include "naucrates/statistics/CStatistics.h"
 #include "naucrates/statistics/CStatsPredDisj.h"
@@ -169,10 +168,6 @@ class CStatisticsUtils {
   // helper method to print the hash map of histograms
   static void PrintHistogramMap(IOstream &os, UlongToHistogramMap *col_histogram_mapping);
 #endif  // GPOS_DEBUG
-
-  // derive statistics of dynamic scan based on part-selector stats in the given map
-  static IStatistics *DeriveStatsForDynamicScan(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG scan_id,
-                                                CPartitionPropagationSpec *pps_reqd);
 
   // derive statistics of (dynamic) index-get
   static IStatistics *DeriveStatsForIndexGet(CMemoryPool *mp, CExpressionHandle &exprhdl,

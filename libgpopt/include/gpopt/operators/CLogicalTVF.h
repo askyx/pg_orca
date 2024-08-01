@@ -11,10 +11,9 @@
 #ifndef GPOPT_CLogicalTVF_H
 #define GPOPT_CLogicalTVF_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/operators/CLogical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

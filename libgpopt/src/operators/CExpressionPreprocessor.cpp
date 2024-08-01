@@ -12,10 +12,6 @@
 
 #include "gpopt/operators/CExpressionPreprocessor.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CAutoRef.h"
-#include "gpos/common/CAutoTimer.h"
-
 #include "gpopt/base/CCastUtils.h"
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CColRefTable.h"
@@ -32,7 +28,6 @@
 #include "gpopt/operators/CLogicalCTEConsumer.h"
 #include "gpopt/operators/CLogicalCTEProducer.h"
 #include "gpopt/operators/CLogicalConstTableGet.h"
-#include "gpopt/operators/CLogicalDynamicGet.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/CLogicalLimit.h"
@@ -58,6 +53,9 @@
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/translate/CTranslatorDXLToExpr.h"
 #include "gpopt/xforms/CXform.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoRef.h"
+#include "gpos/common/CAutoTimer.h"
 #include "naucrates/md/IMDScalarOp.h"
 #include "naucrates/md/IMDType.h"
 #include "naucrates/statistics/CStatistics.h"
@@ -2290,109 +2288,6 @@ CExpression *CExpressionPreprocessor::PexprExistWithPredFromINSubq(CMemoryPool *
   return pexprNew;
 }
 
-CExpression *CExpressionPreprocessor::PrunePartitions(CMemoryPool *mp, CExpression *expr) {
-  GPOS_ASSERT(nullptr != expr);
-  CMDAccessor *mda = COptCtxt::PoctxtFromTLS()->Pmda();
-
-  COperator *pop = expr->Pop();
-  if (pop->Eopid() == COperator::EopLogicalSelect && (*expr)[0]->Pop()->Eopid() == COperator::EopLogicalDynamicGet) {
-    CExpression *filter_pred = (*expr)[1];
-    CLogicalDynamicGet *dyn_get = CLogicalDynamicGet::PopConvert((*expr)[0]->Pop());
-
-    CColRefSetArray *pdrgpcrsChild = nullptr;
-    // As of now, partition's default opfamily is btree
-    // ORCA doesn't support hash partition yet
-    CConstraint *pred_cnstr = CConstraint::PcnstrFromScalarExpr(mp, filter_pred, &pdrgpcrsChild,
-                                                                false /* infer_nulls_as*/, IMDIndex::EmdindBtree);
-    CRefCount::SafeRelease(pdrgpcrsChild);
-
-    IMdIdArray *selected_partition_mdids = GPOS_NEW(mp) IMdIdArray(mp);
-    CConstraintArray *selected_partition_cnstrs = GPOS_NEW(mp) CConstraintArray(mp);
-
-    IMdIdArray *foreign_server_mdids = GPOS_NEW(mp) IMdIdArray(mp);
-    IMdIdArray *all_partition_mdids = dyn_get->GetPartitionMdids();
-    for (ULONG ul = 0; ul < all_partition_mdids->Size(); ++ul) {
-      IMDId *part_mdid = (*all_partition_mdids)[ul];
-      const IMDRelation *partrel = mda->RetrieveRel(part_mdid);
-
-      CConstraint *rel_cnstr =
-          PcnstrFromChildPartition(partrel, dyn_get->PdrgpcrOutput(), (*dyn_get->GetRootColMappingPerPart())[ul]);
-
-      CConstraint *pcnstr = nullptr;
-      {
-        CConstraintArray *preds = GPOS_NEW(mp) CConstraintArray(mp);
-        if (pred_cnstr != nullptr) {
-          pred_cnstr->AddRef();
-          preds->Append(pred_cnstr);
-        }
-        if (rel_cnstr != nullptr) {
-          preds->Append(rel_cnstr);
-        }
-        pcnstr = CConstraint::PcnstrConjunction(mp, preds);
-      }
-
-      // Include the partition if it's not a contradiction, or if it's
-      // undefined (e.g only has default partition)
-      if (nullptr == pcnstr || !pcnstr->FContradiction()) {
-        IMDId *foreign_server_mdid = (*dyn_get->ForeignServerMdIds())[ul];
-        foreign_server_mdid->AddRef();
-        foreign_server_mdids->Append(foreign_server_mdid);
-        part_mdid->AddRef();
-        selected_partition_mdids->Append(part_mdid);
-        rel_cnstr =
-            PcnstrFromChildPartition(partrel, dyn_get->PdrgpcrOutput(), (*dyn_get->GetRootColMappingPerPart())[ul]);
-        if (rel_cnstr) {
-          selected_partition_cnstrs->Append(rel_cnstr);
-        }
-      }
-      CRefCount::SafeRelease(pcnstr);
-    }
-    CRefCount::SafeRelease(pred_cnstr);
-
-    if (selected_partition_mdids->Size() == 0) {
-      // Return const false if there are no partitions left to scan
-      selected_partition_mdids->Release();
-      selected_partition_cnstrs->Release();
-      foreign_server_mdids->Release();
-      CColRefArray *colref_array = expr->DeriveOutputColumns()->Pdrgpcr(mp);
-
-      IDatum2dArray *pdrgpdrgpdatum = GPOS_NEW(mp) IDatum2dArray(mp);
-      COperator *popCTG = GPOS_NEW(mp) CLogicalConstTableGet(mp, colref_array, pdrgpdrgpdatum);
-      return GPOS_NEW(mp) CExpression(mp, popCTG);
-    }
-
-    CName *new_alias = GPOS_NEW(mp) CName(mp, dyn_get->Name());
-    dyn_get->Ptabdesc()->AddRef();
-    dyn_get->PdrgpcrOutput()->AddRef();
-    dyn_get->PdrgpdrgpcrPart()->AddRef();
-
-    CConstraint *selected_part_cnstr_disj = CConstraint::PcnstrDisjunction(mp, selected_partition_cnstrs);
-
-    CLogicalDynamicGet *new_dyn_get = GPOS_NEW(mp) CLogicalDynamicGet(
-        mp, new_alias, dyn_get->Ptabdesc(), dyn_get->ScanId(), dyn_get->PdrgpcrOutput(), dyn_get->PdrgpdrgpcrPart(),
-        selected_partition_mdids, selected_part_cnstr_disj, true, foreign_server_mdids, dyn_get->HasSecurityQuals());
-
-    CExpressionArray *select_children = GPOS_NEW(mp) CExpressionArray(mp);
-    select_children->Append(GPOS_NEW(mp) CExpression(mp, new_dyn_get));
-    select_children->Append(PrunePartitions(mp, filter_pred));
-
-    pop->AddRef();
-    return GPOS_NEW(mp) CExpression(mp, pop, select_children);
-  }
-
-  // process children
-  CExpressionArray *children = GPOS_NEW(mp) CExpressionArray(mp);
-
-  for (ULONG ul = 0; ul < expr->Arity(); ul++) {
-    CExpression *expr_child = (*expr)[ul];
-    CExpression *new_expr_child = PrunePartitions(mp, expr_child);
-    children->Append(new_expr_child);
-  }
-
-  pop->AddRef();
-  return GPOS_NEW(mp) CExpression(mp, pop, children);
-}
-
 // Translate the part constraint of a child partition into an ORCA expr using
 // corresponding colrefs of the root table, instead of those from the child
 // partition.
@@ -2863,14 +2758,9 @@ CExpression *CExpressionPreprocessor::PexprPreprocess(
   GPOS_CHECK_ABORT;
   pexprSubquery->Release();
 
-  // prune partitions
-  CExpression *pexprPrunedPartitions = PrunePartitions(mp, pexprExistWithPredFromINSubq);
-  GPOS_CHECK_ABORT;
-  pexprExistWithPredFromINSubq->Release();
-
   // swap logical select over logical project
-  CExpression *pexprTransposeSelectAndProject = PexprTransposeSelectAndProject(mp, pexprPrunedPartitions);
-  pexprPrunedPartitions->Release();
+  CExpression *pexprTransposeSelectAndProject = PexprTransposeSelectAndProject(mp, pexprExistWithPredFromINSubq);
+  pexprExistWithPredFromINSubq->Release();
 
   // convert split update to inplace update
   CExpression *pexprSplitUpdateToInplace = ConvertSplitUpdateToInPlaceUpdate(mp, pexprTransposeSelectAndProject);

@@ -12,9 +12,7 @@
 #include "naucrates/md/CDXLStatsDerivedColumn.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/statistics/CStatistics.h"
 
 using namespace gpdxl;
@@ -66,38 +64,6 @@ CDXLStatsDerivedColumn::~CDXLStatsDerivedColumn() {
 //---------------------------------------------------------------------------
 const CDXLBucketArray *CDXLStatsDerivedColumn::TransformHistogramToDXLBucketArray() const {
   return m_dxl_stats_bucket_array;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLStatsDerivedColumn::Serialize
-//
-//	@doc:
-//		Serialize bucket in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLStatsDerivedColumn::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenStatsDerivedColumn));
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), m_colid);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWidth), m_width);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColNullFreq), m_null_freq);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColNdvRemain), m_distinct_remaining);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColFreqRemain), m_freq_remaining);
-
-  const ULONG num_of_buckets = m_dxl_stats_bucket_array->Size();
-  for (ULONG ul = 0; ul < num_of_buckets; ul++) {
-    GPOS_CHECK_ABORT;
-
-    CDXLBucket *dxl_bucket = (*m_dxl_stats_bucket_array)[ul];
-    dxl_bucket->Serialize(xml_serializer);
-
-    GPOS_CHECK_ABORT;
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenStatsDerivedColumn));
 }
 
 #ifdef GPOS_DEBUG

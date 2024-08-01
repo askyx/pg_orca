@@ -19,14 +19,12 @@
 #define GPDXL_CDXLDatumBool_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLDatum.h"
 
 namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
-class CXMLSerializer;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -51,7 +49,6 @@ class CDXLDatumBool : public CDXLDatum {
   ~CDXLDatumBool() override = default;
 
   // serialize the datum as the given element
-  void Serialize(CXMLSerializer *xml_serializer) override;
 
   // datum type
   EdxldatumType GetDatumType() const override { return CDXLDatum::EdxldatumBool; }

@@ -13,7 +13,6 @@
 #include "naucrates/dxl/operators/CDXLLogicalConstTable.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
@@ -103,54 +102,6 @@ CDXLColDescr *CDXLLogicalConstTable::GetColumnDescrAt(ULONG idx) const {
 ULONG
 CDXLLogicalConstTable::Arity() const {
   return m_col_descr_array->Size();
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalConstTable::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalConstTable::SerializeToDXL(CXMLSerializer *xml_serializer,
-                                           const CDXLNode *  // dxlnode
-) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serialize columns
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-
-  for (ULONG idx = 0; idx < Arity(); idx++) {
-    CDXLColDescr *col_descr = (*m_col_descr_array)[idx];
-    col_descr->SerializeToDXL(xml_serializer);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-
-  const CWStringConst *pstrElemNameConstTuple = CDXLTokens::GetDXLTokenStr(EdxltokenConstTuple);
-  const CWStringConst *pstrElemNameDatum = CDXLTokens::GetDXLTokenStr(EdxltokenDatum);
-
-  const ULONG num_of_tuples = m_const_tuples_datum_array->Size();
-  for (ULONG tuple_idx = 0; tuple_idx < num_of_tuples; tuple_idx++) {
-    // serialize a const tuple
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrElemNameConstTuple);
-    CDXLDatumArray *pdrgpdxldatum = (*m_const_tuples_datum_array)[tuple_idx];
-
-    const ULONG num_of_cols = pdrgpdxldatum->Size();
-    for (ULONG idx = 0; idx < num_of_cols; idx++) {
-      CDXLDatum *dxl_datum = (*pdrgpdxldatum)[idx];
-      dxl_datum->Serialize(xml_serializer, pstrElemNameDatum);
-    }
-
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrElemNameConstTuple);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------

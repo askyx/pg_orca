@@ -11,12 +11,11 @@
 
 #include "gpopt/xforms/CXformImplementLimit.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalLimit.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalLimit.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

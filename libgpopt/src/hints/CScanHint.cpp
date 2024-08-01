@@ -17,8 +17,6 @@
 
 using namespace gpopt;
 
-FORCE_GENERATE_DBGSTR(CScanHint);
-
 BOOL CScanHint::SatisfiesOperator(COperator *op) {
   BOOL is_satisfied = true;
 
@@ -26,31 +24,27 @@ BOOL CScanHint::SatisfiesOperator(COperator *op) {
   while (type_info.Advance() && is_satisfied) {
     switch (type_info.TBit()) {
       case SeqScan: {
-        is_satisfied = op->Eopid() == COperator::EopLogicalDynamicGet || op->Eopid() == COperator::EopLogicalGet;
+        is_satisfied = op->Eopid() == COperator::EopLogicalGet;
         break;
       }
       case NoSeqScan: {
-        is_satisfied = op->Eopid() != COperator::EopLogicalDynamicGet && op->Eopid() != COperator::EopLogicalGet;
+        is_satisfied = op->Eopid() != COperator::EopLogicalGet;
         break;
       }
       case IndexScan: {
-        is_satisfied =
-            op->Eopid() == COperator::EopLogicalDynamicIndexGet || op->Eopid() == COperator::EopLogicalIndexGet;
+        is_satisfied = op->Eopid() == COperator::EopLogicalIndexGet;
         break;
       }
       case NoIndexScan: {
-        is_satisfied =
-            op->Eopid() != COperator::EopLogicalDynamicIndexGet && op->Eopid() != COperator::EopLogicalIndexGet;
+        is_satisfied = op->Eopid() != COperator::EopLogicalIndexGet;
         break;
       }
       case IndexOnlyScan: {
-        is_satisfied =
-            op->Eopid() == COperator::EopLogicalDynamicIndexOnlyGet || op->Eopid() == COperator::EopLogicalIndexOnlyGet;
+        is_satisfied = op->Eopid() == COperator::EopLogicalIndexOnlyGet;
         break;
       }
       case NoIndexOnlyScan: {
-        is_satisfied =
-            op->Eopid() != COperator::EopLogicalDynamicIndexOnlyGet && op->Eopid() != COperator::EopLogicalIndexOnlyGet;
+        is_satisfied = op->Eopid() != COperator::EopLogicalIndexOnlyGet;
         break;
       }
       case BitmapScan: {
@@ -88,24 +82,4 @@ IOstream &CScanHint::OsPrint(IOstream &os) const {
 
   os << "]";
   return os;
-}
-
-void CScanHint::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenScanHint));
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAlias), GetName());
-
-  CWStringDynamic *hints = CDXLUtils::Serialize(m_mp, m_types, CHintUtils::ScanHintEnumToString);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenOpName), hints);
-  GPOS_DELETE(hints);
-
-  if (GetIndexNames()->Size() > 0) {
-    CWStringDynamic *indexes = CDXLUtils::SerializeToCommaSeparatedString(m_mp, GetIndexNames());
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexName), indexes);
-    GPOS_DELETE(indexes);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenScanHint));
 }

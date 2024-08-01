@@ -12,9 +12,8 @@
 #ifndef GPMD_IMDPartConstraint_H
 #define GPMD_IMDPartConstraint_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDInterface.h"
 
 // fwd decl
@@ -46,9 +45,6 @@ class IMDPartConstraint : public IMDInterface {
 
   // is constraint unbounded
   virtual BOOL IsConstraintUnbounded() const = 0;
-
-  // serialize constraint in DXL format
-  virtual void Serialize(CXMLSerializer *xml_serializer) const = 0;
 };
 }  // namespace gpmd
 

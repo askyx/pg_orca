@@ -18,10 +18,8 @@
 #include "naucrates/dxl/operators/CDXLLogicalWindow.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -87,35 +85,6 @@ const CWStringConst *CDXLLogicalWindow::GetOpNameStr() const {
 CDXLWindowSpec *CDXLLogicalWindow::GetWindowKeyAt(ULONG idx) const {
   GPOS_ASSERT(idx <= m_window_spec_array->Size());
   return (*m_window_spec_array)[idx];
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalWindow::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalWindow::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serialize the list of window specifications
-  const CWStringConst *window_spec_list_str = CDXLTokens::GetDXLTokenStr(EdxltokenWindowSpecList);
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), window_spec_list_str);
-  const ULONG size = m_window_spec_array->Size();
-  for (ULONG idx = 0; idx < size; idx++) {
-    CDXLWindowSpec *window_spec = (*m_window_spec_array)[idx];
-    window_spec->SerializeToDXL(xml_serializer);
-  }
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), window_spec_list_str);
-
-  // serialize children
-  node->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

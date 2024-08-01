@@ -19,7 +19,6 @@
 #define GPDXL_CDXLScalarCast_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -78,7 +77,6 @@ class CDXLScalarCast : public CDXLScalar {
 #endif  // GPOS_DEBUG
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 };
 }  // namespace gpdxl
 

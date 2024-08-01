@@ -4,12 +4,11 @@
 
 #include "gpopt/xforms/CXformImplementFullOuterMergeJoin.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalFullOuterJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalFullMergeJoin.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

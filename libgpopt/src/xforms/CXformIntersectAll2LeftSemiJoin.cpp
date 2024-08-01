@@ -11,8 +11,6 @@
 
 #include "gpopt/xforms/CXformIntersectAll2LeftSemiJoin.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefComputed.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/exception.h"
@@ -21,6 +19,7 @@
 #include "gpopt/operators/COperator.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpmd;
 using namespace gpopt;

@@ -14,9 +14,9 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "utils/guc.h"
+#include <utils/guc.h>
 }
 
 #include "gpopt/config/CConfigParamMapping.h"
@@ -39,63 +39,55 @@ bool optimizer_print_optimization_context;
 bool optimizer_print_optimization_stats;
 bool optimizer_print_xform_results;
 
-bool optimizer;
-bool optimizer_log;
 int optimizer_log_failure;
-bool optimizer_control = true;
-bool optimizer_trace_fallback;
-bool optimizer_partition_selection_log;
 int optimizer_minidump;
 int optimizer_cost_model;
-bool optimizer_metadata_caching;
 int optimizer_mdcache_size;
-bool optimizer_use_gpdb_allocators;
+bool optimizer;
+bool optimizer_log;
+bool optimizer_control;
+bool optimizer_trace_fallback;
+bool optimizer_partition_selection_log;
+bool optimizer_metadata_caching;
+bool optimizer_use_gpdb_allocators = true;
 
-bool optimizer_enable_nljoin;
-bool optimizer_enable_indexjoin;
-bool optimizer_enable_motions_coordinatoronly_queries;
-bool optimizer_enable_motions;
-bool optimizer_enable_motion_broadcast;
-bool optimizer_enable_motion_gather;
-bool optimizer_enable_motion_redistribute;
-bool optimizer_enable_sort;
-bool optimizer_enable_materialize;
-bool optimizer_enable_partition_propagation;
-bool optimizer_enable_partition_selection;
-bool optimizer_enable_outerjoin_rewrite;
-bool optimizer_enable_multiple_distinct_aggs;
-bool optimizer_enable_direct_dispatch;
-bool optimizer_enable_hashjoin_redistribute_broadcast_children;
-bool optimizer_enable_broadcast_nestloop_outer_child;
-bool optimizer_discard_redistribute_hashjoin;
-bool optimizer_enable_streaming_material;
-bool optimizer_enable_gather_on_segment_for_dml;
-bool optimizer_enable_assert_maxonerow;
-bool optimizer_enable_constant_expression_evaluation;
-bool optimizer_enable_bitmapscan;
-bool optimizer_enable_outerjoin_to_unionall_rewrite;
-bool optimizer_enable_ctas;
-bool optimizer_enable_dml;
-bool optimizer_enable_dml_constraints;
-bool optimizer_enable_coordinator_only_queries;
-bool optimizer_enable_hashjoin;
-bool optimizer_enable_dynamictablescan;
-bool optimizer_enable_dynamicindexscan;
-bool optimizer_enable_dynamicindexonlyscan;
-bool optimizer_enable_dynamicbitmapscan;
-bool optimizer_enable_indexscan;
-bool optimizer_enable_indexonlyscan;
-bool optimizer_enable_tablescan;
-bool optimizer_enable_hashagg;
-bool optimizer_enable_groupagg;
-bool optimizer_expand_fulljoin;
-bool optimizer_enable_mergejoin;
-bool optimizer_enable_redistribute_nestloop_loj_inner_child;
-bool optimizer_force_comprehensive_join_implementation;
-bool optimizer_enable_replicated_table;
-bool optimizer_enable_foreign_table;
-bool optimizer_enable_right_outer_join;
-bool optimizer_enable_query_parameter;
+bool optimizer_enable_nljoin = true;
+bool optimizer_enable_indexjoin = true;
+
+bool optimizer_enable_sort = true;
+bool optimizer_enable_materialize = true;
+bool optimizer_enable_partition_propagation = true;
+bool optimizer_enable_partition_selection = true;
+bool optimizer_enable_outerjoin_rewrite = true;
+bool optimizer_enable_multiple_distinct_aggs = true;
+bool optimizer_enable_direct_dispatch = true;
+bool optimizer_enable_hashjoin_redistribute_broadcast_children = true;
+bool optimizer_enable_broadcast_nestloop_outer_child = true;
+bool optimizer_discard_redistribute_hashjoin = true;
+bool optimizer_enable_streaming_material = true;
+bool optimizer_enable_gather_on_segment_for_dml = true;
+bool optimizer_enable_assert_maxonerow = true;
+bool optimizer_enable_constant_expression_evaluation = true;
+bool optimizer_enable_bitmapscan = true;
+bool optimizer_enable_outerjoin_to_unionall_rewrite = true;
+bool optimizer_enable_ctas = true;
+bool optimizer_enable_dml = true;
+bool optimizer_enable_dml_constraints = true;
+bool optimizer_enable_coordinator_only_queries = true;
+bool optimizer_enable_hashjoin = true;
+bool optimizer_enable_indexscan = true;
+bool optimizer_enable_indexonlyscan = true;
+bool optimizer_enable_tablescan = true;
+bool optimizer_enable_hashagg = true;
+bool optimizer_enable_groupagg = true;
+bool optimizer_expand_fulljoin = true;
+bool optimizer_enable_mergejoin = true;
+bool optimizer_enable_redistribute_nestloop_loj_inner_child = true;
+bool optimizer_force_comprehensive_join_implementation = true;
+bool optimizer_enable_replicated_table = true;
+bool optimizer_enable_foreign_table = true;
+bool optimizer_enable_right_outer_join = true;
+bool optimizer_enable_query_parameter = true;
 
 bool optimizer_extract_dxl_stats;
 bool optimizer_extract_dxl_stats_all_nodes;
@@ -209,30 +201,6 @@ CConfigParamMapping::SConfigMappingElem CConfigParamMapping::m_elements[] = {
      (bool *)&optimizer_minidump,
      false,  // m_negate_param
      GPOS_WSZ_LIT("Generate optimizer minidump.")},
-
-    {EopttraceDisableMotions, &optimizer_enable_motions,
-     true,  // m_negate_param
-     GPOS_WSZ_LIT("Disable motion nodes in optimizer.")},
-
-    {EopttraceDisableMotionBroadcast, &optimizer_enable_motion_broadcast,
-     true,  // m_negate_param
-     GPOS_WSZ_LIT("Disable motion broadcast nodes in optimizer.")},
-
-    {EopttraceDisableMotionGather, &optimizer_enable_motion_gather,
-     true,  // m_negate_param
-     GPOS_WSZ_LIT("Disable motion gather nodes in optimizer.")},
-
-    {EopttraceDisableMotionHashDistribute, &optimizer_enable_motion_redistribute,
-     true,  // m_negate_param
-     GPOS_WSZ_LIT("Disable motion hash-distribute nodes in optimizer.")},
-
-    {EopttraceDisableMotionRandom, &optimizer_enable_motion_redistribute,
-     true,  // m_negate_param
-     GPOS_WSZ_LIT("Disable motion random nodes in optimizer.")},
-
-    {EopttraceDisableMotionRountedDistribute, &optimizer_enable_motion_redistribute,
-     true,  // m_negate_param
-     GPOS_WSZ_LIT("Disable motion routed-distribute nodes in optimizer.")},
 
     {EopttraceDisableSort, &optimizer_enable_sort,
      true,  // m_negate_param
@@ -455,11 +423,6 @@ CBitSet *CConfigParamMapping::PackConfigParamInBitset(CMemoryPool *mp,
     bitmap_index_bitset->Release();
   }
 
-  // disable dynamic bitmap scan if the corresponding GUC is turned off
-  if (!optimizer_enable_dynamicbitmapscan) {
-    traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfSelect2DynamicBitmapBoolOp));
-  }
-
   // disable outerjoin to unionall transformation if GUC is turned off
   if (!optimizer_enable_outerjoin_to_unionall_rewrite) {
     traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfLeftOuter2InnerUnionAllLeftAntiSemiJoin));
@@ -475,11 +438,6 @@ CBitSet *CConfigParamMapping::PackConfigParamInBitset(CMemoryPool *mp,
     CBitSet *hash_join_bitste = CXform::PbsHashJoinXforms(mp);
     traceflag_bitset->Union(hash_join_bitste);
     hash_join_bitste->Release();
-  }
-
-  if (!optimizer_enable_dynamictablescan) {
-    // disable dynamic table scan if the corresponding GUC is turned off
-    traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfDynamicGet2DynamicTableScan));
   }
 
   if (!optimizer_enable_tablescan) {
@@ -502,16 +460,6 @@ CBitSet *CConfigParamMapping::PackConfigParamInBitset(CMemoryPool *mp,
   if (!optimizer_enable_indexonlyscan) {
     // disable index only scan if the corresponding GUC is turned off
     traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfIndexOnlyGet2IndexOnlyScan));
-  }
-
-  if (!optimizer_enable_dynamicindexscan) {
-    // disable dynamic index scan if the corresponding GUC is turned off
-    traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfDynamicIndexGet2DynamicIndexScan));
-  }
-
-  if (!optimizer_enable_dynamicindexonlyscan) {
-    // disable dynamic index only scan if the corresponding GUC is turned off
-    traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfDynamicIndexOnlyGet2DynamicIndexOnlyScan));
   }
 
   if (!optimizer_enable_hashagg) {

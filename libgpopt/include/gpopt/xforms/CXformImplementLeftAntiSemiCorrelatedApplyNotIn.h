@@ -12,11 +12,10 @@
 #ifndef GPOPT_CXformImplementLeftAntiSemiCorrelatedApplyNotIn_H
 #define GPOPT_CXformImplementLeftAntiSemiCorrelatedApplyNotIn_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalLeftAntiSemiCorrelatedApplyNotIn.h"
 #include "gpopt/operators/CPhysicalCorrelatedNotInLeftAntiSemiNLJoin.h"
 #include "gpopt/xforms/CXformImplementCorrelatedApply.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -11,10 +11,6 @@
 
 #include "gpopt/operators/CLogicalGet.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CAutoP.h"
-#include "gpos/common/CDynamicPtrArray.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CColRefTable.h"
@@ -24,6 +20,9 @@
 #include "gpopt/metadata/CName.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoP.h"
+#include "gpos/common/CDynamicPtrArray.h"
 #include "naucrates/statistics/CStatistics.h"
 
 using namespace gpopt;

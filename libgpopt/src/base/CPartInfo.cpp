@@ -11,15 +11,11 @@
 
 #include "gpopt/base/CPartInfo.h"
 
+#include "gpopt/base/CUtils.h"
 #include "gpos/base.h"
 #include "gpos/error/CAutoTrace.h"
 
-#include "gpopt/base/CUtils.h"
-
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CPartInfo);
-FORCE_GENERATE_DBGSTR(CPartInfo::CPartInfoEntry);
 
 //---------------------------------------------------------------------------
 //	@function:

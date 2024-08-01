@@ -11,9 +11,8 @@
 #ifndef GPOPT_CScalarNullIf_H
 #define GPOPT_CScalarNullIf_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

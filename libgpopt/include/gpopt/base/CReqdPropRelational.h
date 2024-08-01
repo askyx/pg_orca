@@ -11,10 +11,9 @@
 #ifndef GPOPT_CReqdPropRelational_H
 #define GPOPT_CReqdPropRelational_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CReqdProp.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -11,11 +11,10 @@
 
 #include "naucrates/base/CDatumOidGPDB.h"
 
-#include "gpos/base.h"
-#include "gpos/string/CWStringDynamic.h"
-
 #include "gpopt/base/CAutoOptCtxt.h"
 #include "gpopt/mdcache/CMDAccessor.h"
+#include "gpos/base.h"
+#include "gpos/string/CWStringDynamic.h"
 #include "naucrates/dxl/gpdb_types.h"
 #include "naucrates/md/CMDIdGPDB.h"
 #include "naucrates/md/CMDTypeOidGPDB.h"

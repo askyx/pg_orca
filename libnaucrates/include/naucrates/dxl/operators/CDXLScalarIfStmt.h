@@ -14,7 +14,6 @@
 #define GPDXL_CDXLScalarIfStmt_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -53,7 +52,6 @@ class CDXLScalarIfStmt : public CDXLScalar {
   Edxlopid GetDXLOperator() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLScalarIfStmt *Cast(CDXLOperator *dxl_op) {

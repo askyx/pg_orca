@@ -13,7 +13,6 @@
 
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/md/IMDAggregate.h"
 
 using namespace gpopt;
@@ -109,35 +108,3 @@ const CWStringConst *CDXLWindowFrame::PstrFS(EdxlFrameSpec edxlfs) {
 
   return CDXLTokens::GetDXLTokenStr(EdxltokenWindowFSRange);
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLWindowFrame::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLWindowFrame::SerializeToDXL(CXMLSerializer *xml_serializer) const {
-  const CWStringConst *element_name = CDXLTokens::GetDXLTokenStr(EdxltokenWindowFrame);
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // add attributes
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowFrameSpec), PstrFS(m_dxl_win_frame_spec));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowExclusionStrategy),
-                               PstrES(m_dxl_frame_exclusion_strategy));
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowStartInRangeOid), m_start_in_range_func);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowEndInRangeOid), m_end_in_range_func);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowInRangeColl), m_in_range_coll);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowInRangeAsc), m_in_range_asc);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowInRangeNullsFirst), m_in_range_nulls_first);
-
-  // add the values representing the window boundary
-  m_dxlnode_trailing->SerializeToDXL(xml_serializer);
-  m_dxlnode_leading->SerializeToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-}
-
-// EOF

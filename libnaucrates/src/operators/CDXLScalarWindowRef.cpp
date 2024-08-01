@@ -13,7 +13,6 @@
 
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/md/IMDAggregate.h"
 
 using namespace gpopt;
@@ -108,31 +107,6 @@ const CWStringConst *CDXLScalarWindowRef::GetWindStageStr() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLScalarWindowRef::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarWindowref);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarWindowRef::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarWindowRef::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  m_func_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenWindowrefOid));
-  m_return_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowrefDistinct), m_is_distinct);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowrefStarArg), m_is_star_arg);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowrefSimpleAgg), m_is_simple_agg);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowrefStrategy), GetWindStageStr());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWindowrefWinSpecPos), m_win_spec_pos);
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------

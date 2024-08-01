@@ -11,9 +11,8 @@
 
 #include "gpopt/xforms/CXformImplementTVFNoArgs.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalTVF.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

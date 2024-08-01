@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalIndexScan_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLIndexDescr.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLPhysical.h"
@@ -68,7 +67,6 @@ class CDXLPhysicalIndexScan : public CDXLPhysical {
   virtual EdxlIndexScanDirection GetIndexScanDir() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLPhysicalIndexScan *Cast(CDXLOperator *dxl_op) {

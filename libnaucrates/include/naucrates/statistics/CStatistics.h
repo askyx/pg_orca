@@ -14,7 +14,6 @@
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/md/IMDExtStatsInfo.h"
 #include "naucrates/statistics/CHistogram.h"
 #include "naucrates/statistics/CStatsPredArrayCmp.h"
@@ -57,7 +56,7 @@ using UlongToUlongPtrArrayMapIter = CHashMapIter<ULONG, ULongPtrArray, gpos::Has
 //	@doc:
 //		Abstract statistics API
 //---------------------------------------------------------------------------
-class CStatistics : public IStatistics, public DbgPrintMixin<CStatistics> {
+class CStatistics : public IStatistics {
  public:
   // method used to compute for columns of each source it corresponding
   // the cardinality upper bound

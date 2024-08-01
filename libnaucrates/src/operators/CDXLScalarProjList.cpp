@@ -11,7 +11,7 @@
 #include "naucrates/dxl/operators/CDXLScalarProjList.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -48,21 +48,6 @@ Edxlopid CDXLScalarProjList::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLScalarProjList::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarProjList);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarProjList::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarProjList::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

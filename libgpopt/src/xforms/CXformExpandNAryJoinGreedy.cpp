@@ -13,8 +13,6 @@
 
 #include "gpopt/xforms/CXformExpandNAryJoinGreedy.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionUtils.h"
 #include "gpopt/operators/CLogicalNAryJoin.h"
@@ -23,6 +21,7 @@
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/xforms/CJoinOrderGreedy.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

@@ -11,8 +11,6 @@
 #ifndef GPOPT_CXformApply2Join_H
 #define GPOPT_CXformApply2Join_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalInnerCorrelatedApply.h"
 #include "gpopt/operators/CLogicalLeftAntiSemiCorrelatedApply.h"
 #include "gpopt/operators/CLogicalLeftOuterCorrelatedApply.h"
@@ -24,6 +22,7 @@
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/xforms/CDecorrelator.h"
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

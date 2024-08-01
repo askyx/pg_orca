@@ -11,11 +11,10 @@
 
 #include "gpopt/operators/CLogicalMaxOneRow.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

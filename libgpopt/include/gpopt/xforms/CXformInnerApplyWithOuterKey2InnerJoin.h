@@ -12,10 +12,9 @@
 #ifndef GPOPT_CXformInnerApplyWithOuterKey2InnerJoin_H
 #define GPOPT_CXformInnerApplyWithOuterKey2InnerJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CDecorrelator.h"
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

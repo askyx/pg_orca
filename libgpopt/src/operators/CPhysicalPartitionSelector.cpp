@@ -11,13 +11,11 @@
 
 #include "gpopt/operators/CPhysicalPartitionSelector.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
-#include "gpopt/base/CDistributionSpecAny.h"
 #include "gpopt/base/CDrvdPropCtxtPlan.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -126,34 +124,6 @@ COrderSpec *CPhysicalPartitionSelector::PosRequired(CMemoryPool *mp, CExpression
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalPartitionSelector::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalPartitionSelector::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                           CDistributionSpec *pdsInput, ULONG child_index,
-                                                           CDrvdPropArray *,  // pdrgpdpCtxt
-                                                           ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  CPartInfo *ppartinfo = exprhdl.DerivePartitionInfo();
-  BOOL fCovered = ppartinfo->FContainsScanId(m_scan_id);
-
-  if (fCovered) {
-    // if partition consumer is defined below, do not pass distribution
-    // requirements down as this will cause the consumer and enforcer to be
-    // in separate slices
-    return GPOS_NEW(mp) CDistributionSpecAny(this->Eopid());
-  }
-
-  return PdsPassThru(mp, exprhdl, pdsInput, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalPartitionSelector::PrsRequired
 //
 //	@doc:
@@ -233,19 +203,6 @@ COrderSpec *CPhysicalPartitionSelector::PosDerive(CMemoryPool *,  // mp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalPartitionSelector::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalPartitionSelector::PdsDerive(CMemoryPool *,  // mp
-                                                         CExpressionHandle &exprhdl) const {
-  return PdsDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalPartitionSelector::PrsDerive
 //
 //	@doc:
@@ -268,33 +225,6 @@ CPartitionPropagationSpec *CPhysicalPartitionSelector::PppsDerive(CMemoryPool *m
   selector_ids->Release();
 
   return pps_result;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalPartitionSelector::EpetDistribution
-//
-//	@doc:
-//		Return the enforcing type for distribution property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalPartitionSelector::EpetDistribution(CExpressionHandle &exprhdl,
-                                                                           const CEnfdDistribution *ped) const {
-  CDrvdPropPlan *pdpplan = exprhdl.Pdpplan(0 /* child_index */);
-
-  if (ped->FCompatible(pdpplan->Pds())) {
-    // required distribution established by the operator
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  CPartitionPropagationSpec *ppps = pdpplan->Ppps();
-
-  if (!ppps->Contains(m_scan_id)) {
-    // ensure we don't create a plan with a motion on top of a partition selector
-    return CEnfdProp::EpetProhibited;
-  }
-  // part consumer found below: enforce distribution on top of part resolver
-  return CEnfdProp::EpetRequired;
 }
 
 //---------------------------------------------------------------------------

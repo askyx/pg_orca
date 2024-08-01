@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarArrayComp_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalarComp.h"
 
 namespace gpdxl {
@@ -54,7 +53,6 @@ class CDXLScalarArrayComp : public CDXLScalarComp {
   EdxlArrayCompType GetDXLArrayCmpType() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLScalarArrayComp *Cast(CDXLOperator *dxl_op) {

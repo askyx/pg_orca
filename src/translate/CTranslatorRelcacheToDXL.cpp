@@ -14,32 +14,27 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "access/heapam.h"
-#include "catalog/heap.h"
-#include "catalog/namespace.h"
-#include "catalog/pg_am.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_statistic.h"
-#include "catalog/pg_statistic_ext.h"
-#include "partitioning/partdesc.h"
-#include "utils/array.h"
-#include "utils/datum.h"
-#include "utils/elog.h"
-#include "utils/guc.h"
-#include "utils/lsyscache.h"
-#include "utils/partcache.h"
-#include "utils/rel.h"
-#include "utils/relcache.h"
-#include "utils/syscache.h"
-#include "utils/typcache.h"
+#include <access/heapam.h>
+#include <catalog/heap.h>
+#include <catalog/namespace.h>
+#include <catalog/pg_am.h>
+#include <catalog/pg_proc.h>
+#include <catalog/pg_statistic.h>
+#include <catalog/pg_statistic_ext.h>
+#include <partitioning/partdesc.h>
+#include <utils/array.h>
+#include <utils/datum.h>
+#include <utils/elog.h>
+#include <utils/guc.h>
+#include <utils/lsyscache.h>
+#include <utils/partcache.h>
+#include <utils/rel.h>
+#include <utils/relcache.h>
+#include <utils/syscache.h>
+#include <utils/typcache.h>
 }
-
-#include "gpos/base.h"
-#include "gpos/common/CAutoRef.h"
-#include "gpos/error/CException.h"
-#include "gpos/io/COstreamString.h"
 
 #include "gpopt/base/CUtils.h"
 #include "gpopt/gpdbwrappers.h"
@@ -47,6 +42,10 @@ extern "C" {
 #include "gpopt/translate/CTranslatorRelcacheToDXL.h"
 #include "gpopt/translate/CTranslatorScalarToDXL.h"
 #include "gpopt/translate/CTranslatorUtils.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoRef.h"
+#include "gpos/error/CException.h"
+#include "gpos/io/COstreamString.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/gpdb_types.h"
 #include "naucrates/dxl/xml/dxltokens.h"
@@ -236,7 +235,7 @@ CMDIndexInfoArray *CTranslatorRelcacheToDXL::RetrieveRelIndexInfo(CMemoryPool *m
 
   ListCell *lc = nullptr;
 
-  ForEach(lc, index_oids) {
+  foreach (lc, index_oids) {
     OID index_oid = lfirst_oid(lc);
 
     // only add supported indexes
@@ -276,7 +275,7 @@ IMdIdArray *CTranslatorRelcacheToDXL::RetrieveRelCheckConstraints(CMemoryPool *m
   List *check_constraints = gpdb::GetCheckConstraintOids(oid);
 
   ListCell *lc = nullptr;
-  ForEach(lc, check_constraints) {
+  foreach (lc, check_constraints) {
     OID check_constraint_oid = lfirst_oid(lc);
     GPOS_ASSERT(0 != check_constraint_oid);
     CMDIdGPDB *mdid_check_constraint = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidCheckConstraint, check_constraint_oid);
@@ -370,7 +369,7 @@ IMDCacheObject *CTranslatorRelcacheToDXL::RetrieveExtStatsInfo(CMemoryPool *mp, 
   List *extstats = gpdb::GetExtStats(rel.get());
 
   ListCell *lc = nullptr;
-  ForEach(lc, extstats) {
+  foreach (lc, extstats) {
     StatisticExtInfo *info = (StatisticExtInfo *)lfirst(lc);
 
     CBitSet *keys = GPOS_NEW(mp) CBitSet(mp);
@@ -1123,7 +1122,7 @@ CMDFunctionGPDB *CTranslatorRelcacheToDXL::RetrieveFunc(CMemoryPool *mp, IMDId *
     ListCell *lc = nullptr;
     arg_type_mdids = GPOS_NEW(mp) IMdIdArray(mp);
 
-    ForEach(lc, out_arg_types_list) {
+    foreach (lc, out_arg_types_list) {
       OID oidArgType = lfirst_oid(lc);
       GPOS_ASSERT(InvalidOid != oidArgType);
       CMDIdGPDB *pmdidArgType = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, oidArgType);
@@ -2104,13 +2103,13 @@ ULongPtr2dArray *CTranslatorRelcacheToDXL::RetrieveRelKeysets(CMemoryPool *mp, O
   List *rel_keys = gpdb::GetRelationKeys(oid);
 
   ListCell *lc_key = nullptr;
-  ForEach(lc_key, rel_keys) {
+  foreach (lc_key, rel_keys) {
     List *key_elem_list = (List *)lfirst(lc_key);
 
     ULongPtrArray *key_set = GPOS_NEW(mp) ULongPtrArray(mp);
 
     ListCell *lc_key_elem = nullptr;
-    ForEach(lc_key_elem, key_elem_list) {
+    foreach (lc_key_elem, key_elem_list) {
       INT key_idx = lfirst_int(lc_key_elem);
       ULONG pos = GetAttributePosition(key_idx, attno_mapping);
       key_set->Append(GPOS_NEW(mp) ULONG(pos));
@@ -2342,7 +2341,7 @@ IMdIdArray *CTranslatorRelcacheToDXL::RetrieveIndexOpFamilies(CMemoryPool *mp, I
 
   ListCell *lc = nullptr;
 
-  ForEach(lc, op_families) {
+  foreach (lc, op_families) {
     OID op_family_oid = lfirst_oid(lc);
     input_col_mdids->Append(GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, op_family_oid));
   }
@@ -2364,7 +2363,7 @@ IMdIdArray *CTranslatorRelcacheToDXL::RetrieveScOpOpFamilies(CMemoryPool *mp, IM
 
   ListCell *lc = nullptr;
 
-  ForEach(lc, op_families) {
+  foreach (lc, op_families) {
     OID op_family_oid = lfirst_oid(lc);
     input_col_mdids->Append(GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, op_family_oid));
   }

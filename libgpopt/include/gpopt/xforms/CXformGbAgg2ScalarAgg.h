@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformGbAgg2ScalarAgg_H
 #define GPOPT_CXformGbAgg2ScalarAgg_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformImplementation.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

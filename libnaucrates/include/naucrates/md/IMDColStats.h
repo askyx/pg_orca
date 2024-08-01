@@ -13,7 +13,6 @@
 #define GPMD_IMDColStats_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CDXLBucket.h"
 #include "naucrates/md/IMDCacheObject.h"
 

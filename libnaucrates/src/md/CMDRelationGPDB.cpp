@@ -12,9 +12,7 @@
 #include "naucrates/md/CMDRelationGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/exception.h"
 
 using namespace gpdxl;
@@ -129,13 +127,6 @@ CMDRelationGPDB::~CMDRelationGPDB() {
   CRefCount::SafeRelease(m_colpos_nondrop_colpos_map);
   CRefCount::SafeRelease(m_attrno_nondrop_col_pos_map);
   CRefCount::SafeRelease(m_nondrop_col_pos_array);
-}
-
-const CWStringDynamic *CMDRelationGPDB::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
 }
 
 //---------------------------------------------------------------------------
@@ -519,142 +510,6 @@ IMDId *CMDRelationGPDB::ForeignServer() const {
 
 CDouble CMDRelationGPDB::Rows() const {
   return m_rows;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDRelationGPDB::Serialize
-//
-//	@doc:
-//		Serialize relation metadata in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDRelationGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  GPOS_CHECK_ABORT;
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenRelation));
-
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRelTemporary), m_is_temp_table);
-
-  if (m_rows > 0) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRows), m_rows);
-  }
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRelStorageType),
-                               IMDRelation::GetStorageTypeStr(m_rel_storage_type));
-  if (IsAORowOrColTable() || IMDRelation::ErelstorageMixedPartitioned == RetrieveRelStorageType()) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRelAppendOnlyVersion), m_rel_ao_version);
-  }
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrPolicy),
-                               GetDistrPolicyStr(m_rel_distr_policy));
-
-  if (EreldistrHash == m_rel_distr_policy) {
-    GPOS_ASSERT(nullptr != m_distr_col_array);
-
-    // serialize distribution columns
-    CWStringDynamic *distr_col_str_array = ColumnsToStr(m_mp, m_distr_col_array);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenDistrColumns), distr_col_str_array);
-    GPOS_DELETE(distr_col_str_array);
-  }
-
-  // serialize key sets
-  if (m_keyset_array != nullptr && m_keyset_array->Size() > 0) {
-    CWStringDynamic *keyset_str_array = CDXLUtils::Serialize(m_mp, m_keyset_array);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenKeys), keyset_str_array);
-    GPOS_DELETE(keyset_str_array);
-  }
-
-  if (IsPartitioned()) {
-    // Fall back, instead of segfaulting when m_partition_oids is NULL
-    // (e.g in minidumps)
-    GPOS_RTL_ASSERT(nullptr != m_partition_oids);
-
-    // serialize partition keys
-    CWStringDynamic *part_keys_str_array = CDXLUtils::Serialize(m_mp, m_partition_cols_array);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPartKeys), part_keys_str_array);
-    GPOS_DELETE(part_keys_str_array);
-  }
-
-  if (m_str_part_types_array) {
-    // serialize partition types
-    CWStringDynamic *part_types_str_array = CDXLUtils::SerializeToCommaSeparatedString(m_mp, m_str_part_types_array);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPartTypes), part_types_str_array);
-    GPOS_DELETE(part_types_str_array);
-  }
-
-  if (m_convert_hash_to_random) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenConvertHashToRandom), m_convert_hash_to_random);
-  }
-
-  if (m_foreign_server) {
-    m_foreign_server->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenRelForeignServer));
-  }
-  // serialize columns
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-  for (ULONG ul = 0; ul < m_md_col_array->Size(); ul++) {
-    CMDColumn *mdcol = (*m_md_col_array)[ul];
-    mdcol->Serialize(xml_serializer);
-
-    GPOS_CHECK_ABORT;
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-
-  // serialize index infos
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenIndexInfoList));
-  const ULONG indexes = m_mdindex_info_array->Size();
-  for (ULONG ul = 0; ul < indexes; ul++) {
-    CMDIndexInfo *index_info = (*m_mdindex_info_array)[ul];
-    index_info->Serialize(xml_serializer);
-
-    GPOS_CHECK_ABORT;
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenIndexInfoList));
-
-  // serialize check constraint information
-  SerializeMDIdList(xml_serializer, m_mdid_check_constraint_array,
-                    CDXLTokens::GetDXLTokenStr(EdxltokenCheckConstraints),
-                    CDXLTokens::GetDXLTokenStr(EdxltokenCheckConstraint));
-
-  // serialize operator class information, if present
-  if (EreldistrHash == m_rel_distr_policy && nullptr != m_distr_opfamilies) {
-    SerializeMDIdList(xml_serializer, m_distr_opfamilies, CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrOpfamilies),
-                      CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrOpfamily));
-  }
-
-  // serialize part constraint
-  if (nullptr != m_mdpart_constraint) {
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                CDXLTokens::GetDXLTokenStr(EdxltokenPartConstraint));
-
-    // serialize the scalar expression
-    if (nullptr != m_mdpart_constraint) {
-      m_mdpart_constraint->SerializeToDXL(xml_serializer);
-    }
-
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                 CDXLTokens::GetDXLTokenStr(EdxltokenPartConstraint));
-
-    GPOS_CHECK_ABORT;
-  }
-
-  if (IsPartitioned()) {
-    SerializeMDIdList(xml_serializer, m_partition_oids, CDXLTokens::GetDXLTokenStr(EdxltokenPartitions),
-                      CDXLTokens::GetDXLTokenStr(EdxltokenPartition));
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenRelation));
-
-  GPOS_CHECK_ABORT;
 }
 
 IMdIdArray *CMDRelationGPDB::ChildPartitionMdids() const {

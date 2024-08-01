@@ -15,7 +15,6 @@
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
-
 #include "naucrates/md/CMDName.h"
 #include "naucrates/md/IMDId.h"
 
@@ -24,7 +23,7 @@ using namespace gpmd;
 using namespace gpos;
 
 // fwd decl
-class CXMLSerializer;
+
 class CDXLColRef;
 
 // arrays of column references

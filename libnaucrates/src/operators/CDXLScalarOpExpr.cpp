@@ -13,7 +13,6 @@
 
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/md/IMDScalarOp.h"
 
 using namespace gpos;
@@ -121,34 +120,6 @@ BOOL CDXLScalarOpExpr::HasBoolResult(CMDAccessor *md_accessor) const {
   const IMDScalarOp *md_scalar_op = md_accessor->RetrieveScOp(m_mdid);
   IMDId *mdid = md_accessor->RetrieveFunc(md_scalar_op->FuncMdId())->GetResultTypeMdid();
   return (IMDType::EtiBool == md_accessor->RetrieveType(mdid)->GetDatumType());
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarOpExpr::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarOpExpr::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  GPOS_CHECK_ABORT;
-
-  const CWStringConst *element_name = GetOpNameStr();
-  const CWStringConst *str_opname = GetScalarOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenOpName), str_opname);
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenOpNo));
-
-  if (nullptr != m_return_type_mdid) {
-    m_return_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenOpType));
-  }
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  GPOS_CHECK_ABORT;
 }
 
 #ifdef GPOS_DEBUG

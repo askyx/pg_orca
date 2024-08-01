@@ -11,10 +11,9 @@
 #ifndef GPOPT_CJobGroupExpression_H
 #define GPOPT_CJobGroupExpression_H
 
-#include "gpos/base.h"
-
 #include "gpopt/search/CJob.h"
 #include "gpopt/xforms/CXform.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -17,13 +17,10 @@
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/gpdb_types.h"
 #include "naucrates/md/CMDName.h"
 
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -56,8 +53,6 @@ class CMDExtStatsInfo : public CRefCount {
   CWStringDynamic *KeysToStr(CMemoryPool *mp);
 
   CWStringDynamic *KindToStr(CMemoryPool *mp);
-
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer);
 
   OID GetStatOid() const { return m_stat_oid; }
 

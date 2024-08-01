@@ -11,10 +11,9 @@
 #ifndef GPOS_CPhysicalSort_H
 #define GPOS_CPhysicalSort_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/operators/CPhysical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
@@ -73,10 +72,6 @@ class CPhysicalSort : public CPhysical {
   COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
-
   // compute required rewindability of the n-th child
   CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
                                   ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
@@ -84,26 +79,12 @@ class CPhysicalSort : public CPhysical {
   // check if required columns are included in output columns
   BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
 
-  // distribution matching type
-  CEnfdDistribution::EDistributionMatching Edm(CReqdPropPlan *prppInput,
-                                               ULONG,             // child_index
-                                               CDrvdPropArray *,  // pdrgpdpCtxt
-                                               ULONG              // ulOptReq
-                                               ) override {
-    // Sort does not require Motions to be enforced on top,
-    // we need to pass down incoming matching type
-    return prppInput->Ped()->Edm();
-  }
-
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties
   //-------------------------------------------------------------------------------------
 
   // derive sort order
   COrderSpec *PosDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
-
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // derive rewindability
   CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
@@ -114,10 +95,6 @@ class CPhysicalSort : public CPhysical {
 
   // return order property enforcing type for this operator
   CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const override;
-
-  // return distribution property enforcing type for this operator
-  CEnfdProp::EPropEnforcingType EpetDistribution(CExpressionHandle &exprhdl,
-                                                 const CEnfdDistribution *ped) const override;
 
   // return rewindability property enforcing type for this operator
   CEnfdProp::EPropEnforcingType EpetRewindability(CExpressionHandle &exprhdl,

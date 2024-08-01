@@ -13,9 +13,8 @@
 #ifndef GPOPT_CDrvdPropCtxtRelational_H
 #define GPOPT_CDrvdPropCtxtRelational_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CDrvdPropCtxt.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

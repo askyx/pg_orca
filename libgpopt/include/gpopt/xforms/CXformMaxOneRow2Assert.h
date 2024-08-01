@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformMaxOneRow2Assert_H
 #define GPOPT_CXformMaxOneRow2Assert_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -11,14 +11,13 @@
 
 #include "gpopt/operators/CScalarWindowFunc.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdPropScalar.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/mdcache/CMDAccessorUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CScalarFunc.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDAggregate.h"
 #include "naucrates/md/IMDFunction.h"
 

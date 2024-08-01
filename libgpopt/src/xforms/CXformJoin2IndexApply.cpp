@@ -11,13 +11,10 @@
 
 #include "gpopt/xforms/CXformJoin2IndexApply.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CLogicalApply.h"
 #include "gpopt/operators/CLogicalCTEAnchor.h"
-#include "gpopt/operators/CLogicalDynamicGet.h"
 #include "gpopt/operators/CLogicalIndexApply.h"
 #include "gpopt/operators/CLogicalJoin.h"
 #include "gpopt/operators/CLogicalSelect.h"
@@ -26,6 +23,7 @@
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/xforms/CSubqueryHandler.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDIndex.h"
 
 using namespace gpmd;
@@ -182,16 +180,12 @@ void CXformJoin2IndexApply::CreateAlternativesForBtreeIndex(CMemoryPool *mp, CEx
                                                             CExpression *nodesToInsertAboveIndexGet,
                                                             CExpression *endOfNodesToInsertAboveIndexGet,
                                                             CColRefSet *outer_refs, CXformResult *pxfres) {
+  (void)pexprInner;
   if (nullptr != pexprLogicalIndexGet) {
     // second child has residual predicates, create an apply of outer and inner
     // and add it to xform results
     CColRefArray *colref_array = outer_refs->Pdrgpcr(mp);
     CExpression *indexGetWithOptionalSelect = pexprLogicalIndexGet;
-
-    if (COperator::EopLogicalDynamicGet == pexprInner->Pop()->Eopid()) {
-      indexGetWithOptionalSelect = CXformUtils::PexprRedundantSelectForDynamicIndex(mp, pexprLogicalIndexGet);
-      pexprLogicalIndexGet->Release();
-    }
 
     CExpression *rightChildOfApply = CXformUtils::AddALinearStackOfUnaryExpressions(
         mp, indexGetWithOptionalSelect, nodesToInsertAboveIndexGet, endOfNodesToInsertAboveIndexGet);
@@ -240,11 +234,6 @@ void CXformJoin2IndexApply::CreateHomogeneousBitmapIndexApplyAlternatives(
     // and add it to xform results
     CColRefArray *colref_array = outer_refs->Pdrgpcr(mp);
     CExpression *indexGetWithOptionalSelect = pexprLogicalIndexGet;
-
-    if (COperator::EopLogicalDynamicGet == popGet->Eopid()) {
-      indexGetWithOptionalSelect = CXformUtils::PexprRedundantSelectForDynamicIndex(mp, pexprLogicalIndexGet);
-      pexprLogicalIndexGet->Release();
-    }
 
     CExpression *rightChildOfApply = CXformUtils::AddALinearStackOfUnaryExpressions(
         mp, indexGetWithOptionalSelect, nodesToInsertAboveIndexGet, endOfNodesToInsertAboveIndexGet);

@@ -12,9 +12,8 @@
 #ifndef GPOPT_CSubqueryHandler_H
 #define GPOPT_CSubqueryHandler_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpression.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -12,7 +12,6 @@
 #include "gpos/error/CErrorContext.h"
 
 #include "gpos/error/CMessageRepository.h"
-#include "gpos/error/CMiniDumper.h"
 #include "gpos/error/CSerializable.h"
 #include "gpos/io/ioutils.h"
 #include "gpos/task/CAutoSuspendAbort.h"
@@ -30,11 +29,10 @@ GPOS_CPL_ASSERT(GPOS_ERROR_MESSAGE_BUFFER_SIZE <= GPOS_LOG_ENTRY_BUFFER_SIZE, ""
 //	@doc:
 //
 //---------------------------------------------------------------------------
-CErrorContext::CErrorContext(CMiniDumper *mini_dumper_handle)
+CErrorContext::CErrorContext()
     : m_exception(CException::m_invalid_exception),
 
-      m_static_buffer(m_error_msg, GPOS_ARRAY_SIZE(m_error_msg)),
-      m_mini_dumper_handle(mini_dumper_handle) {
+      m_static_buffer(m_error_msg, GPOS_ARRAY_SIZE(m_error_msg)) {
   m_serializable_objects_list.Init(GPOS_OFFSET(CSerializable, m_err_ctxt_link));
 }
 
@@ -149,43 +147,3 @@ void CErrorContext::CopyPropErrCtxt(const IErrorContext *err_ctxt) {
   // copy severity
   m_severity = err_ctxt->GetSeverity();
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CErrorContext::Serialize
-//
-//	@doc:
-//		Serialize registered objects
-//
-//---------------------------------------------------------------------------
-void CErrorContext::Serialize() {
-  if (m_serializing) {
-    return;
-  }
-
-  if (nullptr == m_mini_dumper_handle || m_serializable_objects_list.IsEmpty()) {
-    return;
-  }
-
-  m_serializing = true;
-
-  // Abort might throw an error, so prevent aborting to
-  // avoid recursion.
-  CAutoSuspendAbort asa;
-  // get mini-dumper's stream to serialize to
-  COstream &oos = m_mini_dumper_handle->GetOStream();
-
-  // serialize objects to reserved space
-  m_mini_dumper_handle->SerializeEntryHeader();
-
-  for (CSerializable *serializable_obj = m_serializable_objects_list.First(); nullptr != serializable_obj;
-       serializable_obj = m_serializable_objects_list.Next(serializable_obj)) {
-    serializable_obj->Serialize(oos);
-  }
-
-  m_mini_dumper_handle->SerializeEntryFooter();
-
-  m_serializing = false;
-}
-
-// EOF

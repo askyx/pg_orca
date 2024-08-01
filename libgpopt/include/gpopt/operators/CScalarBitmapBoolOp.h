@@ -18,9 +18,8 @@
 #ifndef GPOPT_CScalarBitmapBoolOp_H
 #define GPOPT_CScalarBitmapBoolOp_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

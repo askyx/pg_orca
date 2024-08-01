@@ -11,10 +11,9 @@
 #ifndef GPOPT_CScalarValuesList_H
 #define GPOPT_CScalarValuesList_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDTypeBool.h"
 

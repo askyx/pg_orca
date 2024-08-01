@@ -11,23 +11,19 @@
 
 #include "gpopt/xforms/CJoinOrder.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CBitSet.h"
-#include "gpos/common/clibwrapper.h"
-#include "gpos/io/COstreamString.h"
-#include "gpos/string/CWStringDynamic.h"
-
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CDrvdPropScalar.h"
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/CLogicalJoin.h"
 #include "gpopt/operators/CLogicalLeftOuterJoin.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
+#include "gpos/common/CBitSet.h"
+#include "gpos/common/clibwrapper.h"
+#include "gpos/io/COstreamString.h"
+#include "gpos/string/CWStringDynamic.h"
 
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CJoinOrder::SEdge);
-FORCE_GENERATE_DBGSTR(CJoinOrder::SComponent);
 
 // ctor
 CJoinOrder::SComponent::SComponent(CMemoryPool *mp, CExpression *pexpr, INT parent_loj_id, EPosition position)

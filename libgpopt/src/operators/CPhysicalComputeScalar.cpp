@@ -11,16 +11,10 @@
 
 #include "gpopt/operators/CPhysicalComputeScalar.h"
 
-#include "gpos/base.h"
-#include "gpos/memory/CAutoMemoryPool.h"
-
-#include "gpopt/base/CDistributionSpecAny.h"
-#include "gpopt/base/CDistributionSpecHashed.h"
-#include "gpopt/base/CDistributionSpecReplicated.h"
-#include "gpopt/base/CDistributionSpecRouted.h"
-#include "gpopt/base/CDistributionSpecStrictSingleton.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
+#include "gpos/memory/CAutoMemoryPool.h"
 
 using namespace gpopt;
 
@@ -128,88 +122,6 @@ COrderSpec *CPhysicalComputeScalar::PosRequired(CMemoryPool *mp, CExpressionHand
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalComputeScalar::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalComputeScalar::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                       CDistributionSpec *pdsRequired, ULONG child_index,
-                                                       CDrvdPropArray *,  // pdrgpdpCtxt
-                                                       ULONG ulOptReq) const {
-  GPOS_ASSERT(0 == child_index);
-  GPOS_ASSERT(2 > ulOptReq);
-  CDistributionSpec::EDistributionType edtRequired = pdsRequired->Edt();
-  // check whether we need singleton execution - but if the parent explicitly
-  // allowed outer refs in an "ANY" request, then that alone doesn't qualify
-  // as a reason to request singleton
-  if (exprhdl.NeedsSingletonExecution() || !(CDistributionSpec::EdtAny == edtRequired &&
-                                             (CDistributionSpecAny::PdsConvert(pdsRequired))->FAllowOuterRefs())) {
-    // check if singleton/replicated distribution needs to be requested
-    CDistributionSpec *pds = PdsRequireSingletonOrReplicated(mp, exprhdl, pdsRequired, child_index, ulOptReq);
-    if (nullptr != pds) {
-      return pds;
-    }
-  }
-
-  // if a Project operator has a call to a set function, passing a Random distribution through this
-  // Project may have the effect of not distributing the results of the set function to all nodes,
-  // but only to the nodes on which first child of the Project is distributed.
-  // to avoid that, we don't push the distribution requirement in this case and thus, for a random
-  // distribution, the result of the set function is spread uniformly over all nodes
-  if (exprhdl.DeriveHasNonScalarFunction(1)) {
-    return GPOS_NEW(mp) CDistributionSpecAny(this->Eopid());
-  }
-
-  // if required distribution uses any defined column, it has to be enforced on top of ComputeScalar,
-  // in this case, we request Any distribution from the child
-  if (CDistributionSpec::EdtHashed == edtRequired) {
-    CDistributionSpecHashed *pdshashed = CDistributionSpecHashed::PdsConvert(pdsRequired);
-    CColRefSet *pcrs = pdshashed->PcrsUsed(m_mp);
-    BOOL fUsesDefinedCols = FUnaryUsesDefinedColumns(pcrs, exprhdl);
-    pcrs->Release();
-    if (fUsesDefinedCols) {
-      return GPOS_NEW(mp) CDistributionSpecAny(this->Eopid());
-    }
-  }
-
-  if (CDistributionSpec::EdtRouted == edtRequired) {
-    CDistributionSpecRouted *pdsrouted = CDistributionSpecRouted::PdsConvert(pdsRequired);
-    CColRefSet *pcrs = GPOS_NEW(m_mp) CColRefSet(m_mp);
-    pcrs->Include(pdsrouted->Pcr());
-    BOOL fUsesDefinedCols = FUnaryUsesDefinedColumns(pcrs, exprhdl);
-    pcrs->Release();
-    if (fUsesDefinedCols) {
-      return GPOS_NEW(mp) CDistributionSpecAny(this->Eopid());
-    }
-  }
-
-  // in case of DML Insert on randomly distributed table, a motion operator
-  // must be enforced on top of compute scalar if the children does not provide
-  // strict random spec. strict random request is not pushed
-  // down through the physical childs of compute scalar as the scalar
-  // project list of the compute scalar can have TVF and if the request
-  // was pushed down through physical child, data projected by the scalar
-  // project list will not be redistributed and will be inserted into a single
-  // segment. random motion with non universal child delivers strict random spec,
-  // so in case a motion node was added it will satisfy the strict random
-  // requested by DML insert
-  if (CDistributionSpec::EdtStrictRandom == pdsRequired->Edt()) {
-    return GPOS_NEW(mp) CDistributionSpecRandom();
-  }
-
-  if (0 == ulOptReq) {
-    // Req0: required distribution will be enforced on top of ComputeScalar
-    return GPOS_NEW(mp) CDistributionSpecAny(this->Eopid());
-  }
-
-  // Req1: required distribution will be enforced on top of ComputeScalar's child
-  return PdsPassThru(mp, exprhdl, pdsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalComputeScalar::PrsRequired
 //
 //	@doc:
@@ -290,35 +202,6 @@ BOOL CPhysicalComputeScalar::FProvidesReqdCols(CExpressionHandle &exprhdl, CColR
 COrderSpec *CPhysicalComputeScalar::PosDerive(CMemoryPool *,  // mp
                                               CExpressionHandle &exprhdl) const {
   return PosDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalComputeScalar::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalComputeScalar::PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  CDistributionSpec *pds = exprhdl.Pdpplan(0 /*child_index*/)->Pds();
-
-  if (CDistributionSpec::EdtStrictReplicated == pds->Edt() &&
-      IMDFunction::EfsVolatile == exprhdl.DeriveScalarFunctionProperties(1)->Efs()) {
-    return GPOS_NEW(mp) CDistributionSpecReplicated(CDistributionSpec::EdtTaintedReplicated);
-  }
-
-  if (CDistributionSpec::EdtUniversal == pds->Edt() &&
-      IMDFunction::EfsVolatile == exprhdl.DeriveScalarFunctionProperties(1)->Efs()) {
-    if (COptCtxt::PoctxtFromTLS()->OptimizeDMLQueryWithSingletonSegment()) {
-      return GPOS_NEW(mp) CDistributionSpecStrictSingleton(CDistributionSpecSingleton::EstSegment);
-    }
-    return GPOS_NEW(mp) CDistributionSpecStrictSingleton(CDistributionSpecSingleton::EstCoordinator);
-  }
-
-  pds->AddRef();
-
-  return pds;
 }
 
 //---------------------------------------------------------------------------

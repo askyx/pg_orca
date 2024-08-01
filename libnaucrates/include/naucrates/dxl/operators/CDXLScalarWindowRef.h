@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarWindowRef_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -98,7 +97,6 @@ class CDXLScalarWindowRef : public CDXLScalar {
   const CWStringConst *GetWindStageStr() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLScalarWindowRef *Cast(CDXLOperator *dxl_op) {

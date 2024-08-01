@@ -12,12 +12,11 @@
 #ifndef GPOPT_CMDCache_H
 #define GPOPT_CMDCache_H
 
+#include "gpopt/mdcache/CMDAccessor.h"
+#include "gpopt/mdcache/CMDKey.h"
 #include "gpos/base.h"
 #include "gpos/memory/CCache.h"
 #include "gpos/memory/CCacheFactory.h"
-
-#include "gpopt/mdcache/CMDAccessor.h"
-#include "gpopt/mdcache/CMDKey.h"
 
 namespace gpopt {
 using namespace gpos;

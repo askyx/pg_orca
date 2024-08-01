@@ -11,14 +11,13 @@
 
 #include "gpopt/xforms/CXformGet2TableScan.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/hints/CHintUtils.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalGet.h"
 #include "gpopt/operators/CPhysicalTableScan.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

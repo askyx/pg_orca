@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPhysicalLeftOuterHashJoin_H
 #define GPOPT_CPhysicalLeftOuterHashJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalHashJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
@@ -41,9 +40,6 @@ class CPhysicalLeftOuterHashJoin : public CPhysicalHashJoin {
 
   // return a string for operator name
   const CHAR *SzId() const override { return "CPhysicalLeftOuterHashJoin"; }
-
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // conversion function
   static CPhysicalLeftOuterHashJoin *PopConvert(COperator *pop) {

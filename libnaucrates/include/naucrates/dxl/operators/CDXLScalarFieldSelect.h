@@ -13,7 +13,6 @@
 #define GPDXL_CDXLSCALARFIELDSELECT_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -59,7 +58,6 @@ class CDXLScalarFieldSelect : public CDXLScalar {
   const CWStringConst *GetOpNameStr() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // mdid of the field
   IMDId *GetDXLFieldType() const;

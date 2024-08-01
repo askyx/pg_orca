@@ -11,14 +11,13 @@
 
 #include "gpopt/xforms/CXformLeftAntiSemiJoin2CrossProduct.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/CLogicalLeftAntiSemiJoin.h"
 #include "gpopt/operators/CLogicalLimit.h"
 #include "gpopt/operators/CNormalizer.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

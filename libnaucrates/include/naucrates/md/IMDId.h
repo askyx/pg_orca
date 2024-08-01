@@ -17,17 +17,13 @@
 #include "gpos/common/CHashMap.h"
 #include "gpos/common/CHashSet.h"
 #include "gpos/common/CHashSetIter.h"
-#include "gpos/common/DbgPrintMixin.h"
 #include "gpos/string/CWStringConst.h"
-
 #include "naucrates/dxl/gpdb_types.h"
 
 #define GPDXL_MDID_LENGTH 100
 
 // fwd decl
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -46,7 +42,7 @@ static const INT default_type_modifier = -1;
 //		Abstract class for representing metadata objects ids
 //
 //---------------------------------------------------------------------------
-class IMDId : public CRefCount, public DbgPrintMixin<IMDId> {
+class IMDId : public CRefCount {
  private:
   // number of deletion locks -- each MDAccessor adds a new deletion lock if it uses
   // an MDId object in its internal hash-table, the deletion lock is released when
@@ -143,9 +139,6 @@ class IMDId : public CRefCount, public DbgPrintMixin<IMDId> {
   // is the mdid valid
   virtual BOOL IsValid() const = 0;
 
-  // serialize mdid in DXL as the value for the specified attribute
-  virtual void Serialize(CXMLSerializer *xml_serializer, const CWStringConst *pstrAttribute) const = 0;
-
   // safe validity function
   static BOOL IsValid(const IMDId *mdid) { return nullptr != mdid && mdid->IsValid(); }
 
@@ -165,8 +158,6 @@ using MdidHashSet = CHashSet<IMDId, IMDId::MDIdHash, IMDId::MDIdCompare, Cleanup
 using MdidHashSetIter = CHashSetIter<IMDId, IMDId::MDIdHash, IMDId::MDIdCompare, CleanupRelease<IMDId>>;
 
 }  // namespace gpmd
-
-FORCE_GENERATE_DBGSTR(gpmd::IMDId);
 
 #endif  // !GPMD_IMDId_H
 

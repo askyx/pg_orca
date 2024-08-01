@@ -11,9 +11,8 @@
 #ifndef GPNAUCRATES_CFilterStatsProcessor_H
 #define GPNAUCRATES_CFilterStatsProcessor_H
 
-#include "gpos/base.h"
-
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/CJoinStatsProcessor.h"
 #include "naucrates/statistics/CScaleFactorUtils.h"
 #include "naucrates/statistics/CStatistics.h"

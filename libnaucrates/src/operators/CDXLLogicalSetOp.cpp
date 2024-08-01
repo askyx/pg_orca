@@ -18,10 +18,8 @@
 #include "naucrates/dxl/operators/CDXLLogicalSetOp.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -113,44 +111,6 @@ const CWStringConst *CDXLLogicalSetOp::GetOpNameStr() const {
       GPOS_ASSERT(!"Unrecognized set operator type");
       return nullptr;
   }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalSetOp::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalSetOp::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serialize the array of input colid arrays
-  CWStringDynamic *input_colids_array_str = CDXLUtils::Serialize(m_mp, m_input_colids_arrays);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenInputCols), input_colids_array_str);
-  GPOS_DELETE(input_colids_array_str);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCastAcrossInputs), m_cast_across_input_req);
-
-  // serialize output columns
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-  GPOS_ASSERT(nullptr != m_col_descr_array);
-
-  const ULONG length = m_col_descr_array->Size();
-  for (ULONG idx = 0; idx < length; idx++) {
-    CDXLColDescr *col_descr_dxl = (*m_col_descr_array)[idx];
-    col_descr_dxl->SerializeToDXL(xml_serializer);
-  }
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenColumns));
-
-  // serialize children
-  node->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------

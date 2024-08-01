@@ -14,9 +14,8 @@
 #ifndef GPDXL_CContextQueryToDXL_H
 #define GPDXL_CContextQueryToDXL_H
 
-#include "gpos/base.h"
-
 #include "gpopt/translate/CTranslatorUtils.h"
+#include "gpos/base.h"
 #include "naucrates/dxl/CIdGenerator.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 

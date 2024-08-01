@@ -11,10 +11,9 @@
 #ifndef GPOPT_CEnfdRewindability_H
 #define GPOPT_CEnfdRewindability_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CEnfdProp.h"
 #include "gpopt/base/CRewindabilitySpec.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

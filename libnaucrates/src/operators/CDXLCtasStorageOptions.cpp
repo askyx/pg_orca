@@ -11,7 +11,7 @@
 
 #include "naucrates/dxl/operators/CDXLCtasStorageOptions.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -79,40 +79,6 @@ CDXLCtasStorageOptions::ECtasOnCommitAction CDXLCtasStorageOptions::GetOnCommitA
 //---------------------------------------------------------------------------
 CDXLCtasStorageOptions::CDXLCtasOptionArray *CDXLCtasStorageOptions::GetDXLCtasOptionArray() const {
   return m_ctas_storage_option_array;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLCtasStorageOptions::Serialize
-//
-//	@doc:
-//		Serialize options in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLCtasStorageOptions::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenCTASOptions));
-  if (nullptr != m_mdname_tablespace) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTablespace), m_mdname_tablespace->GetMDName());
-  }
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenOnCommitAction),
-                               GetOnCommitActionStr(m_ctas_on_commit_action));
-
-  const ULONG ulOptions = (m_ctas_storage_option_array == nullptr) ? 0 : m_ctas_storage_option_array->Size();
-  for (ULONG ul = 0; ul < ulOptions; ul++) {
-    CDXLCtasOption *dxl_ctas_storage_options = (*m_ctas_storage_option_array)[ul];
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                CDXLTokens::GetDXLTokenStr(EdxltokenCTASOption));
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCtasOptionType), dxl_ctas_storage_options->m_type);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), dxl_ctas_storage_options->m_str_name);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenValue), dxl_ctas_storage_options->m_str_value);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIsNull), dxl_ctas_storage_options->m_is_null);
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                 CDXLTokens::GetDXLTokenStr(EdxltokenCTASOption));
-  }
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenCTASOptions));
 }
 
 //---------------------------------------------------------------------------

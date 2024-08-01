@@ -11,13 +11,12 @@
 #ifndef GPOPT_CPredicateUtils_H
 #define GPOPT_CPredicateUtils_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CScalarBoolOp.h"
 #include "gpopt/operators/CScalarIdent.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDIndex.h"
 
 namespace gpopt {

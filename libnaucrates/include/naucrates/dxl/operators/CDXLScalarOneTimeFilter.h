@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarOneTimeFilter_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalarFilter.h"
 
 namespace gpdxl {
@@ -46,7 +45,6 @@ class CDXLScalarOneTimeFilter : public CDXLScalarFilter {
   }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const override;
 
   // does the operator return a boolean result
   BOOL HasBoolResult(CMDAccessor *  // md_accessor

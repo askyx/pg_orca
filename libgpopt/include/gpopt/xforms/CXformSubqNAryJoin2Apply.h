@@ -11,13 +11,12 @@
 #ifndef GPOPT_CXformSubqNAryJoin2Apply_H
 #define GPOPT_CXformSubqNAryJoin2Apply_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CLogicalNAryJoin.h"
 #include "gpopt/operators/CPatternMultiLeaf.h"
 #include "gpopt/operators/CPatternTree.h"
 #include "gpopt/xforms/CXformSubqJoin2Apply.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

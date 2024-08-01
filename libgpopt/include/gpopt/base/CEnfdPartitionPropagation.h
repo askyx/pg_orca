@@ -11,10 +11,9 @@
 #ifndef GPOPT_CEnfdPartitionPropagation_H
 #define GPOPT_CEnfdPartitionPropagation_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CEnfdProp.h"
 #include "gpopt/base/CPartitionPropagationSpec.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

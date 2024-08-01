@@ -18,42 +18,39 @@
 
 extern "C" {
 
-#include "postgres.h"
+#include <postgres.h>
 
-#include "catalog/namespace.h"
-#include "nodes/nodes.h"
-#include "nodes/pg_list.h"
-#include "nodes/plannodes.h"
-#include "parser/parse_clause.h"
-#include "parser/parse_expr.h"
-#include "parser/parse_oper.h"
-#include "parser/parse_relation.h"
-#include "parser/parsetree.h"
-#include "utils/array.h"
-#include "utils/builtins.h"
-#include "utils/datum.h"
-#include "utils/inval.h"
-#include "utils/lsyscache.h"
-#include "utils/syscache.h"
-#if 0
-#include "cdb/partitionselection.h"
-#endif
-#include "catalog/pg_operator.h"
-#include "catalog/pg_proc.h"
-#include "commands/defrem.h"
-#include "commands/trigger.h"
-#include "funcapi.h"
-#include "lib/stringinfo.h"
-#include "nodes/makefuncs.h"
-#include "optimizer/planmain.h"
-#include "optimizer/tlist.h"
-#include "parser/parse_coerce.h"
-#include "tcop/dest.h"
-#include "utils/elog.h"
-#include "utils/numeric.h"
-#include "utils/rel.h"
-#include "utils/selfuncs.h"
-#include "utils/typcache.h"
+#include <catalog/namespace.h>
+#include <catalog/pg_operator.h>
+#include <catalog/pg_proc.h>
+#include <commands/defrem.h>
+#include <commands/trigger.h>
+#include <funcapi.h>
+#include <lib/stringinfo.h>
+#include <nodes/makefuncs.h>
+#include <nodes/nodes.h>
+#include <nodes/pg_list.h>
+#include <nodes/plannodes.h>
+#include <optimizer/planmain.h>
+#include <optimizer/tlist.h>
+#include <parser/parse_clause.h>
+#include <parser/parse_coerce.h>
+#include <parser/parse_expr.h>
+#include <parser/parse_oper.h>
+#include <parser/parse_relation.h>
+#include <parser/parsetree.h>
+#include <tcop/dest.h>
+#include <utils/array.h>
+#include <utils/builtins.h>
+#include <utils/datum.h>
+#include <utils/elog.h>
+#include <utils/inval.h>
+#include <utils/lsyscache.h>
+#include <utils/numeric.h>
+#include <utils/rel.h>
+#include <utils/selfuncs.h>
+#include <utils/syscache.h>
+#include <utils/typcache.h>
 
 }  // end extern C
 

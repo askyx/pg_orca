@@ -19,14 +19,12 @@
 #define GPDXL_CDXLDirectDispatchInfo_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLDatum.h"
 
 namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
-class CXMLSerializer;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -60,7 +58,6 @@ class CDXLDirectDispatchInfo : public CRefCount {
   CDXLDatum2dArray *GetDispatchIdentifierDatumArray() const { return m_dispatch_identifer_datum_array; }
 
   // serialize the datum as the given element
-  void Serialize(CXMLSerializer *xml_serializer);
 };
 }  // namespace gpdxl
 

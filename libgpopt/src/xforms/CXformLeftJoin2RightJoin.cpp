@@ -11,9 +11,6 @@
 
 #include "gpopt/xforms/CXformLeftJoin2RightJoin.h"
 
-#include "gpos/base.h"
-#include "gpos/memory/CAutoMemoryPool.h"
-
 #include "gpopt/hints/CPlanHint.h"
 #include "gpopt/operators/CLogicalLeftOuterJoin.h"
 #include "gpopt/operators/CLogicalRightOuterJoin.h"
@@ -21,6 +18,8 @@
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/operators/CScalarProjectList.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/base.h"
+#include "gpos/memory/CAutoMemoryPool.h"
 
 using namespace gpopt;
 

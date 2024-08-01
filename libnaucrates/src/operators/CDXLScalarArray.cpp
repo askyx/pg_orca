@@ -12,7 +12,6 @@
 #include "naucrates/dxl/operators/CDXLScalarArray.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -106,27 +105,6 @@ IMDId *CDXLScalarArray::ArrayTypeMDid() const {
 //---------------------------------------------------------------------------
 BOOL CDXLScalarArray::IsMultiDimensional() const {
   return m_multi_dimensional_array;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarArray::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarArray::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  m_array_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenArrayType));
-  m_elem_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenArrayElementType));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenArrayMultiDim), m_multi_dimensional_array);
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

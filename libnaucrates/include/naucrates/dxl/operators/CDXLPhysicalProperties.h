@@ -12,7 +12,6 @@
 #define GPDXL_CDXLPhysicalProperties_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLOperatorCost.h"
 #include "naucrates/dxl/operators/CDXLProperties.h"
 
@@ -41,9 +40,6 @@ class CDXLPhysicalProperties : public CDXLProperties {
 
   // dtor
   ~CDXLPhysicalProperties() override;
-
-  // serialize properties in DXL format
-  void SerializePropertiesToDXL(CXMLSerializer *xml_serializer) const override;
 
   // accessors
   // the cost estimates for the operator node

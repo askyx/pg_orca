@@ -11,11 +11,10 @@
 
 #include "gpopt/search/CSchedulerContext.h"
 
-#include "gpos/base.h"
-#include "gpos/memory/CMemoryPoolManager.h"
-
 #include "gpopt/engine/CEngine.h"
 #include "gpopt/search/CScheduler.h"
+#include "gpos/base.h"
+#include "gpos/memory/CMemoryPoolManager.h"
 
 using namespace gpos;
 using namespace gpopt;

@@ -19,10 +19,10 @@
 #include "gpos/base.h"
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "access/tupdesc.h"
-#include "foreign/foreign.h"
+#include <access/tupdesc.h>
+#include <foreign/foreign.h>
 }
 
 #include "naucrates/dxl/gpdb_types.h"

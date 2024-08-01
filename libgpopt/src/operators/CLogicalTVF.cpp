@@ -11,13 +11,12 @@
 
 #include "gpopt/operators/CLogicalTVF.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/metadata/CName.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/CStatistics.h"
 
 using namespace gpopt;

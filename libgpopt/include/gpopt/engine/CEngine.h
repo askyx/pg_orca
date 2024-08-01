@@ -11,11 +11,10 @@
 #ifndef GPOPT_CEngine_H
 #define GPOPT_CEngine_H
 
-#include "gpos/base.h"
-
 #include "gpopt/search/CMemo.h"
 #include "gpopt/search/CSearchStage.h"
 #include "gpopt/xforms/CXform.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -40,7 +39,7 @@ class CEnumeratorConfig;
 //		Optimization engine; owns entire optimization workflow
 //
 //---------------------------------------------------------------------------
-class CEngine : public DbgPrintMixin<CEngine> {
+class CEngine {
  private:
   // memory pool
   CMemoryPool *m_mp;
@@ -153,8 +152,7 @@ class CEngine : public DbgPrintMixin<CEngine> {
   static BOOL FChildrenOptimized(COptimizationContextArray *pdrgpoc);
 
   // check if ayn of the given property enforcing types prohibits enforcement
-  static BOOL FProhibited(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetDistribution,
-                          CEnfdProp::EPropEnforcingType epetRewindability,
+  static BOOL FProhibited(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetRewindability,
                           CEnfdProp::EPropEnforcingType epetPropagation);
 
   // check whether the given memo groups can be marked as duplicates. This is
@@ -162,8 +160,8 @@ class CEngine : public DbgPrintMixin<CEngine> {
   static BOOL FPossibleDuplicateGroups(CGroup *pgroupFst, CGroup *pgroupSnd);
 
   // check if optimization is possible under the given property enforcing types
-  static BOOL FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetDistribution,
-                        CEnfdProp::EPropEnforcingType epetRewindability, CEnfdProp::EPropEnforcingType epetPropagation);
+  static BOOL FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetRewindability,
+                        CEnfdProp::EPropEnforcingType epetPropagation);
 
   // unrank the plan with the given 'plan_id' from the memo
   CExpression *PexprUnrank(ULLONG plan_id);

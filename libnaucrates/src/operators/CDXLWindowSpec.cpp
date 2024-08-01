@@ -20,7 +20,6 @@
 
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -58,41 +57,3 @@ CDXLWindowSpec::~CDXLWindowSpec() {
   CRefCount::SafeRelease(m_sort_col_list_dxlnode);
   GPOS_DELETE(m_mdname);
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLWindowSpec::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLWindowSpec::SerializeToDXL(CXMLSerializer *xml_serializer) const {
-  const CWStringConst *element_name = CDXLTokens::GetDXLTokenStr(EdxltokenWindowSpec);
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  GPOS_ASSERT(nullptr != m_partition_by_colid_array);
-
-  // serialize partition keys
-  CWStringDynamic *partition_by_colid_string = CDXLUtils::Serialize(m_mp, m_partition_by_colid_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPartKeys), partition_by_colid_string);
-  GPOS_DELETE(partition_by_colid_string);
-
-  if (nullptr != m_mdname) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAlias), m_mdname->GetMDName());
-  }
-
-  // serialize sorting columns
-  if (nullptr != m_sort_col_list_dxlnode) {
-    m_sort_col_list_dxlnode->SerializeToDXL(xml_serializer);
-  }
-
-  // serialize window frames
-  if (nullptr != m_window_frame) {
-    m_window_frame->SerializeToDXL(xml_serializer);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-}
-
-// EOF

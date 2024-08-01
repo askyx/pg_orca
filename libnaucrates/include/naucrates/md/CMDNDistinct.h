@@ -19,8 +19,6 @@
 #include "gpos/common/CDouble.h"
 #include "gpos/string/CWStringDynamic.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 namespace gpmd {
 using namespace gpos;
 using namespace gpdxl;
@@ -54,21 +52,6 @@ class CMDNDistinct : public CRefCount {
     }
 
     return str;
-  }
-
-  // serialize metadata dependency in DXL format given a serializer object
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) {
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                CDXLTokens::GetDXLTokenStr(EdxltokenMVNDistinct));
-
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenMVNDistinct), m_ndistnct_value);
-
-    CWStringDynamic *attnos_str = AttrsToStr();
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAttno), attnos_str);
-    GPOS_DELETE(attnos_str);
-
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                 CDXLTokens::GetDXLTokenStr(EdxltokenMVNDistinct));
   }
 
   CBitSet *GetAttrs() const { return m_attrs; }

@@ -12,7 +12,6 @@
 #define GPNAUCRATES_CDatumOidGPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/base/IDatumOid.h"
 
 namespace gpnaucrates {

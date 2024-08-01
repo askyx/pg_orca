@@ -12,14 +12,12 @@
 #ifndef GPOPT_ICostModel_H
 #define GPOPT_ICostModel_H
 
-#include "gpos/base.h"
-#include "gpos/common/CRefCount.h"
-
-#include "naucrates/md/IMDRelation.h"
-#include "naucrates/statistics/IStatistics.h"
-
 #include "CCost.h"
 #include "ICostModelParams.h"
+#include "gpos/base.h"
+#include "gpos/common/CRefCount.h"
+#include "naucrates/md/IMDRelation.h"
+#include "naucrates/statistics/IStatistics.h"
 
 // default number of rebinds (number of times a plan is executed due to rebinding to external parameters)
 #define GPOPT_DEFAULT_REBINDS 1
@@ -254,9 +252,6 @@ class ICostModel : public CRefCount {
     CCostingStats *Pcstats(ULONG child_index) const { return m_pdrgstatsChildren[child_index]; }
 
   };  // struct SCostingInfo
-
-  // return number of hosts (nodes) that store data
-  virtual ULONG UlHosts() const = 0;
 
   // return number of rows per host
   virtual CDouble DRowsPerHost(CDouble dRowsTotal) const = 0;

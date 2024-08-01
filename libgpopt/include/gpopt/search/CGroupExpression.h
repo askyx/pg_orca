@@ -11,14 +11,13 @@
 #ifndef GPOPT_CGroupExpression_H
 #define GPOPT_CGroupExpression_H
 
-#include "gpos/base.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/CCostContext.h"
 #include "gpopt/engine/CPartialPlan.h"
 #include "gpopt/operators/COperator.h"
 #include "gpopt/search/CGroup.h"
 #include "gpopt/xforms/CXform.h"
+#include "gpos/base.h"
+#include "gpos/common/CRefCount.h"
 
 #define GPOPT_INVALID_GEXPR_ID gpos::ulong_max
 
@@ -33,7 +32,7 @@ using namespace gpos;
 //		Expression representation inside Memo structure
 //
 //---------------------------------------------------------------------------
-class CGroupExpression : public CRefCount, public DbgPrintMixin<CGroupExpression> {
+class CGroupExpression : public CRefCount {
  public:
 #ifdef GPOS_DEBUG
   // debug print; for interactive debugging sessions only

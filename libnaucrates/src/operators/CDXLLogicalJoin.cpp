@@ -13,7 +13,6 @@
 #include "naucrates/dxl/operators/CDXLLogicalJoin.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
@@ -63,27 +62,6 @@ EdxlJoinType CDXLLogicalJoin::GetJoinType() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLLogicalJoin::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenLogicalJoin);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalJoin::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalJoin::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenJoinType), GetJoinTypeNameStr());
-
-  // serialize children
-  node->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------

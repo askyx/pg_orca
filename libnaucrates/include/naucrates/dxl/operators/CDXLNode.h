@@ -14,17 +14,16 @@
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CHashMap.h"
-
 #include "naucrates/dxl/gpdb_types.h"
 #include "naucrates/dxl/operators/CDXLProperties.h"
-
+#include "naucrates/dxl/xml/dxltokens.h"
 namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
 class CDXLNode;
 class CDXLOperator;
-class CXMLSerializer;
+
 class CDXLDirectDispatchInfo;
 
 using CDXLNodeArray = CDynamicPtrArray<CDXLNode, CleanupRelease>;
@@ -102,21 +101,11 @@ class CDXLNode : public CRefCount {
 
   void SetOperator(CDXLOperator *dxl_op);
 
-  void SerializeToDXL(CXMLSerializer *) const;
-
   // replace a given child of this DXL node with the given node
   void ReplaceChild(ULONG idx, CDXLNode *child_dxlnode);
 
-  void SerializeChildrenToDXL(CXMLSerializer *xml_serializer) const;
-
   // setter
   void SetProperties(CDXLProperties *dxl_properties);
-
-  // setter for direct dispatch info
-  void SetDirectDispatchInfo(CDXLDirectDispatchInfo *dxl_direct_dispatch_info);
-
-  // serialize properties in DXL format
-  void SerializePropertiesToDXL(CXMLSerializer *xml_serializer) const;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and

@@ -11,16 +11,15 @@
 
 #include "gpopt/base/CColumnFactory.h"
 
+#include "gpopt/base/CColRefComputed.h"
+#include "gpopt/base/CColRefTable.h"
+#include "gpopt/operators/CExpression.h"
+#include "gpopt/operators/CScalarProjectElement.h"
 #include "gpos/base.h"
 #include "gpos/common/CAutoP.h"
 #include "gpos/common/CSyncHashtableAccessByKey.h"
 #include "gpos/memory/CAutoMemoryPool.h"
 #include "gpos/string/CWStringDynamic.h"
-
-#include "gpopt/base/CColRefComputed.h"
-#include "gpopt/base/CColRefTable.h"
-#include "gpopt/operators/CExpression.h"
-#include "gpopt/operators/CScalarProjectElement.h"
 #include "naucrates/md/CMDIdGPDB.h"
 
 using namespace gpopt;

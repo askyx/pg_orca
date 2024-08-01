@@ -11,12 +11,10 @@
 #ifndef GPOPT_CReqdProp_H
 #define GPOPT_CReqdProp_H
 
+#include "gpopt/base/CDrvdProp.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
-#include "gpos/common/DbgPrintMixin.h"
-
-#include "gpopt/base/CDrvdProp.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -64,7 +62,7 @@ using CReqdPropArray = CDynamicPtrArray<CReqdProp, CleanupRelease>;
 //		children.
 //
 //---------------------------------------------------------------------------
-class CReqdProp : public CRefCount, public DbgPrintMixin<CReqdProp> {
+class CReqdProp : public CRefCount {
  public:
   // types of required properties
   enum EPropType {

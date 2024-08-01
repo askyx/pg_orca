@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformExploration_H
 #define GPOPT_CXformExploration_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXform.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

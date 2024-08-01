@@ -13,7 +13,6 @@
 #define GPDXL_CDXLTableDescriptor_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 #include "naucrates/md/CMDName.h"
 #include "naucrates/md/IMDId.h"
@@ -59,8 +58,6 @@ class CDXLTableDescr : public CRefCount {
   // to the target (result) relation it has value UNASSIGNED_QUERYID
   ULONG m_assigned_query_id_for_target_rel;
 
-  void SerializeMDId(CXMLSerializer *xml_serializer) const;
-
  public:
   CDXLTableDescr(const CDXLTableDescr &) = delete;
 
@@ -97,7 +94,6 @@ class CDXLTableDescr : public CRefCount {
   const CDXLColDescr *GetColumnDescrAt(ULONG idx) const;
 
   // serialize to dxl format
-  void SerializeToDXL(CXMLSerializer *xml_serializer) const;
 
   // get assigned query id for target relation
   ULONG GetAssignedQueryIdForTargetRel() const;

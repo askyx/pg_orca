@@ -18,12 +18,11 @@
 #ifndef GPOPT_CConstExprEvaluatorDXL_H
 #define GPOPT_CConstExprEvaluatorDXL_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/eval/IConstExprEvaluator.h"
 #include "gpopt/translate/CTranslatorDXLToExpr.h"
 #include "gpopt/translate/CTranslatorExprToDXL.h"
+#include "gpos/base.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/md/CMDName.h"
 

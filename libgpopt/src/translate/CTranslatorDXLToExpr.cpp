@@ -13,14 +13,10 @@
 
 #include "gpopt/translate/CTranslatorDXLToExpr.h"
 
-#include "gpos/common/CAutoTimer.h"
-
 #include "gpopt/base/CAutoOptCtxt.h"
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CColumnFactory.h"
-#include "gpopt/base/CDistributionSpecAny.h"
-#include "gpopt/base/CEnfdDistribution.h"
 #include "gpopt/base/CEnfdOrder.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/exception.h"
@@ -33,7 +29,6 @@
 #include "gpopt/operators/CLogicalDelete.h"
 #include "gpopt/operators/CLogicalDifference.h"
 #include "gpopt/operators/CLogicalDifferenceAll.h"
-#include "gpopt/operators/CLogicalDynamicGet.h"
 #include "gpopt/operators/CLogicalForeignGet.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CLogicalGet.h"
@@ -79,6 +74,7 @@
 #include "gpopt/operators/CScalarSwitchCase.h"
 #include "gpopt/operators/CScalarValuesList.h"
 #include "gpopt/translate/CTranslatorExprToDXLUtils.h"
+#include "gpos/common/CAutoTimer.h"
 #include "naucrates/dxl/operators/CDXLCtasStorageOptions.h"
 #include "naucrates/dxl/operators/CDXLLogicalCTAS.h"
 #include "naucrates/dxl/operators/CDXLLogicalCTEAnchor.h"
@@ -536,43 +532,7 @@ CExpression *CTranslatorDXLToExpr::PexprLogicalGet(const CDXLNode *dxlnode) {
   CLogical *popGet = nullptr;
   CColRefArray *colref_array = nullptr;
 
-  const IMDRelation *pmdrel = m_pmda->RetrieveRel(table_descr->MDId());
-  if (pmdrel->IsPartitioned()) {
-    GPOS_ASSERT(EdxlopLogicalGet == edxlopid || EdxlopLogicalForeignGet == edxlopid);
-
-    IMdIdArray *partition_mdids = pmdrel->ChildPartitionMdids();
-    IMdIdArray *foreign_server_mdids = GPOS_NEW(m_mp) IMdIdArray(m_mp);
-    for (ULONG ul = 0; ul < partition_mdids->Size(); ++ul) {
-      IMDId *part_mdid = (*partition_mdids)[ul];
-      const IMDRelation *partrel = m_pmda->RetrieveRel(part_mdid);
-
-      if (partrel->IsPartitioned()) {
-        // Multi-level partitioned tables are unsupported - fall back
-        GPOS_RAISE(gpdxl::ExmaMD, gpdxl::ExmiMDObjUnsupported, GPOS_WSZ_LIT("Multi-level partitioned tables"));
-      }
-
-      // store array of foreign partitions
-      IMDId *foreign_server_mdid = nullptr;
-      if (IMDRelation::ErelstorageForeign == partrel->RetrieveRelStorageType()) {
-        foreign_server_mdid = partrel->ForeignServer();
-        foreign_server_mdid->AddRef();
-      } else {
-        // not foreign, store as invalid mdid
-        foreign_server_mdid = GPOS_NEW(m_mp) CMDIdGPDB(CMDIdGPDB::m_mdid_invalid_key);
-      }
-      foreign_server_mdids->Append(foreign_server_mdid);
-    }
-
-    // generate a part index id
-    ULONG part_idx_id = COptCtxt::PoctxtFromTLS()->UlPartIndexNextVal();
-    partition_mdids->AddRef();
-    popGet = GPOS_NEW(m_mp)
-        CLogicalDynamicGet(m_mp, pname, ptabdesc, part_idx_id, partition_mdids, foreign_server_mdids, hasSecurityQuals);
-    CLogicalDynamicGet *popDynamicGet = CLogicalDynamicGet::PopConvert(popGet);
-
-    // get the output column references from the dynamic get
-    colref_array = popDynamicGet->PdrgpcrOutput();
-  } else {
+  {
     if (EdxlopLogicalGet == edxlopid) {
       popGet = GPOS_NEW(m_mp) CLogicalGet(m_mp, pname, ptabdesc, hasSecurityQuals);
     } else {
@@ -1528,23 +1488,7 @@ CExpression *CTranslatorDXLToExpr::PexprLogicalSeqPr(const CDXLNode *dxlnode) {
     CExpression *pexprProjList = GPOS_NEW(m_mp) CExpression(m_mp, popPrL, const_cast<CExpressionArray *>(pdrgpexpr));
 
     CColRefArray *colref_array = PdrgpcrPartitionByCol(pdxlws->GetPartitionByColIdArray());
-    CDistributionSpec *pds = nullptr;
-    if (0 < colref_array->Size()) {
-      CExpressionArray *pdrgpexprScalarIdents = CUtils::PdrgpexprScalarIdents(m_mp, colref_array);
-      pds = CDistributionSpecHashed::MakeHashedDistrSpec(m_mp, pdrgpexprScalarIdents, true /* fNullsCollocated */,
-                                                         nullptr /* pdshashedEquiv */, nullptr /* opfamilies */);
-      if (nullptr == pds) {
-        // FIXME: Handle PARTITION BY clauses that cannot be capture using CDistributionSpecHashed
-        // CScalarProjectList uses CDistributionSpecHashed to represent PARTITION BY clauses, even
-        // though the clause may use expressions that are not distributable. For now, ORCA falls
-        // back for such cases.
-        GPOS_RAISE(gpdxl::ExmaMD, gpdxl::ExmiMDObjUnsupported,
-                   GPOS_WSZ_LIT("no default hash opclasses found in window function"));
-      }
-    } else {
-      // if no partition-by columns, window functions need gathered input
-      pds = GPOS_NEW(m_mp) CDistributionSpecSingleton(CDistributionSpecSingleton::EstCoordinator);
-    }
+
     colref_array->Release();
 
     CWindowFrameArray *pdrgpwf = GPOS_NEW(m_mp) CWindowFrameArray(m_mp);
@@ -1566,7 +1510,7 @@ CExpression *CTranslatorDXLToExpr::PexprLogicalSeqPr(const CDXLNode *dxlnode) {
       pdrgpos->Append(GPOS_NEW(m_mp) COrderSpec(m_mp));
     }
 
-    CLogicalSequenceProject *popLgSequence = GPOS_NEW(m_mp) CLogicalSequenceProject(m_mp, pds, pdrgpos, pdrgpwf);
+    CLogicalSequenceProject *popLgSequence = GPOS_NEW(m_mp) CLogicalSequenceProject(m_mp, pdrgpos, pdrgpwf);
     pexprLgSequence = GPOS_NEW(m_mp) CExpression(m_mp, popLgSequence, pexprWindowChild, pexprProjList);
     pexprWindowChild = pexprLgSequence;
   }

@@ -19,9 +19,9 @@
 #include "gpos/base.h"
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "nodes/primnodes.h"
+#include <nodes/primnodes.h>
 }
 
 #include "gpopt/translate/CCTEListEntry.h"

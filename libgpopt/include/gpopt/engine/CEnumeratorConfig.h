@@ -11,11 +11,10 @@
 #ifndef GPOPT_CEnumeratorConfig_H
 #define GPOPT_CEnumeratorConfig_H
 
+#include "gpopt/cost/CCost.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
-
-#include "gpopt/cost/CCost.h"
 #include "naucrates/traceflags/traceflags.h"
 
 #define GPOPT_UNBOUNDED_COST_THRESHOLD 0.0
@@ -226,9 +225,6 @@ class CEnumeratorConfig : public CRefCount {
 
     return true;
   }
-
-  // dump samples to an output file
-  void DumpSamples(CWStringDynamic *str, ULONG ulSessionId, ULONG ulCommandId);
 
   // dump fitted cost distribution to an output file
   void DumpCostDistr(CWStringDynamic *str, ULONG ulSessionId, ULONG ulCommandId);

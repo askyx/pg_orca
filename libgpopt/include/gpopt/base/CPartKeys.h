@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPartKeys_H
 #define GPOPT_CPartKeys_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRef.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -33,7 +32,7 @@ using CPartKeysArray = CDynamicPtrArray<CPartKeys, CleanupRelease>;
 //		A collection of partitioning keys for a partitioned table
 //
 //---------------------------------------------------------------------------
-class CPartKeys : public CRefCount, public DbgPrintMixin<CPartKeys> {
+class CPartKeys : public CRefCount {
  private:
   // partitioning keys
   CColRef2dArray *m_pdrgpdrgpcr;

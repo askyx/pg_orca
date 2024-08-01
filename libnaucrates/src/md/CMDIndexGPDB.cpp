@@ -12,9 +12,7 @@
 #include "naucrates/md/CMDIndexGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/exception.h"
 #include "naucrates/md/CMDRelationGPDB.h"
 #include "naucrates/md/IMDScalarOp.h"
@@ -91,12 +89,6 @@ CMDIndexGPDB::~CMDIndexGPDB() {
   m_nulls_direction->Release();
 }
 
-const CWStringDynamic *CMDIndexGPDB::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
-}
 //---------------------------------------------------------------------------
 //	@function:
 //		CMDIndexGPDB::MDId
@@ -317,73 +309,6 @@ CMDIndexGPDB::GetIncludedColPos(ULONG column) const {
   GPOS_ASSERT("Column not found in Index's included columns");
 
   return gpos::ulong_max;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDIndexGPDB::Serialize
-//
-//	@doc:
-//		Serialize MD index in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDIndexGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenIndex));
-
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexClustered), m_clustered);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexAmCanOrder), m_amcanorder);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexType), GetDXLStr(m_index_type));
-  if (nullptr != m_mdid_item_type) {
-    m_mdid_item_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenIndexItemType));
-  }
-
-  // serialize index keys
-  CWStringDynamic *index_key_cols_str = CDXLUtils::Serialize(m_mp, m_index_key_cols_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexKeyCols), index_key_cols_str);
-  GPOS_DELETE(index_key_cols_str);
-
-  CWStringDynamic *available_cols_str = CDXLUtils::Serialize(m_mp, m_included_cols_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexIncludedCols), available_cols_str);
-  GPOS_DELETE(available_cols_str);
-
-  CWStringDynamic *returnable_cols_str = CDXLUtils::Serialize(m_mp, m_returnable_cols_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexReturnableCols), returnable_cols_str);
-  GPOS_DELETE(returnable_cols_str);
-
-  // Only if Index Access Method Support Ordering, serialize sort and nulls
-  // directions
-  if (m_amcanorder) {
-    CWStringDynamic *key_cols_sort_direction_str =
-        CDXLUtils::SerializeBooleanArray(m_mp, m_sort_direction, CDXLTokens::GetDXLTokenStr(EdxltokenIndexKeySortDESC),
-                                         CDXLTokens::GetDXLTokenStr(EdxltokenIndexKeySortASC));
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexKeysSortDirection),
-                                 key_cols_sort_direction_str);
-    GPOS_DELETE(key_cols_sort_direction_str);
-
-    CWStringDynamic *key_cols_nulls_direction_str = CDXLUtils::SerializeBooleanArray(
-        m_mp, m_nulls_direction, CDXLTokens::GetDXLTokenStr(EdxltokenIndexKeyNullsFirst),
-        CDXLTokens::GetDXLTokenStr(EdxltokenIndexKeyNullsLast));
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexKeysNullsDirection),
-                                 key_cols_nulls_direction_str);
-    GPOS_DELETE(key_cols_nulls_direction_str);
-  }
-
-  // serialize operator class information
-  SerializeMDIdList(xml_serializer, m_mdid_opfamilies_array, CDXLTokens::GetDXLTokenStr(EdxltokenOpfamilies),
-                    CDXLTokens::GetDXLTokenStr(EdxltokenOpfamily));
-
-  if (IsPartitioned()) {
-    SerializeMDIdList(xml_serializer, m_child_index_oids, CDXLTokens::GetDXLTokenStr(EdxltokenPartitions),
-                      CDXLTokens::GetDXLTokenStr(EdxltokenPartition));
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenIndex));
 }
 
 #ifdef GPOS_DEBUG

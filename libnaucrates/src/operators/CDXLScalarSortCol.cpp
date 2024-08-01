@@ -12,7 +12,6 @@
 
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -107,27 +106,6 @@ IMDId *CDXLScalarSortCol::GetMdIdSortOp() const {
 //---------------------------------------------------------------------------
 BOOL CDXLScalarSortCol::IsSortedNullsFirst() const {
   return m_must_sort_nulls_first;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarSortCol::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarSortCol::SerializeToDXL(CXMLSerializer *xml_serializer,
-                                       const CDXLNode *  // dxlnode
-) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), m_colid);
-  m_mdid_sort_op->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenSortOpId));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSortOpName), m_sort_op_name_str);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSortNullsFirst), m_must_sort_nulls_first);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

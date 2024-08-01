@@ -11,11 +11,10 @@
 
 #include "naucrates/statistics/CScaleFactorUtils.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/exception.h"
 #include "gpopt/operators/CExpressionUtils.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/CStatistics.h"
 
 using namespace gpopt;

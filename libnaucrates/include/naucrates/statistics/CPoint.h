@@ -13,7 +13,6 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
-
 #include "naucrates/base/IDatum.h"
 
 namespace gpopt {
@@ -32,7 +31,7 @@ using namespace gpopt;
 //	@doc:
 //		One dimensional point in the datum space
 //---------------------------------------------------------------------------
-class CPoint : public CRefCount, public DbgPrintMixin<CPoint> {
+class CPoint : public CRefCount {
  private:
   // datum corresponding to the point
   IDatum *m_datum;

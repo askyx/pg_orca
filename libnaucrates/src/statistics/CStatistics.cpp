@@ -11,10 +11,6 @@
 
 #include "naucrates/statistics/CStatistics.h"
 
-#include "gpos/common/CBitSet.h"
-#include "gpos/error/CAutoTrace.h"
-#include "gpos/memory/CAutoMemoryPool.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CColumnFactory.h"
@@ -23,6 +19,9 @@
 #include "gpopt/engine/CStatisticsConfig.h"
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/common/CBitSet.h"
+#include "gpos/error/CAutoTrace.h"
+#include "gpos/memory/CAutoMemoryPool.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/statistics/CInnerJoinStatsProcessor.h"
 #include "naucrates/statistics/CJoinStatsProcessor.h"
@@ -35,8 +34,6 @@
 using namespace gpmd;
 using namespace gpdxl;
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CStatistics);
 
 // default number of rows in relation
 const CDouble CStatistics::DefaultRelationRows(1000.0);

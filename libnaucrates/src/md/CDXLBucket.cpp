@@ -12,9 +12,7 @@
 #include "naucrates/md/CDXLBucket.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -100,50 +98,6 @@ CDouble CDXLBucket::GetFrequency() const {
 //---------------------------------------------------------------------------
 CDouble CDXLBucket::GetNumDistinct() const {
   return m_distinct;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLBucket::Serialize
-//
-//	@doc:
-//		Serialize bucket in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLBucket::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenColumnStatsBucket));
-
-  xml_serializer->SetFullPrecision(true);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenStatsFrequency), m_frequency);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenStatsDistinct), m_distinct);
-
-  SerializeBoundaryValue(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenStatsBucketLowerBound),
-                         m_lower_bound_dxl_datum, m_is_lower_closed);
-  SerializeBoundaryValue(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenStatsBucketUpperBound),
-                         m_upper_bound_dxl_datum, m_is_upper_closed);
-  xml_serializer->SetFullPrecision(false);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenColumnStatsBucket));
-
-  GPOS_CHECK_ABORT;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLBucket::Serialize
-//
-//	@doc:
-//		Serialize the bucket boundary
-//
-//---------------------------------------------------------------------------
-void CDXLBucket::SerializeBoundaryValue(CXMLSerializer *xml_serializer, const CWStringConst *elem_str,
-                                        CDXLDatum *dxl_datum, BOOL is_bound_closed) {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), elem_str);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenStatsBoundClosed), is_bound_closed);
-  dxl_datum->Serialize(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), elem_str);
 }
 
 #ifdef GPOS_DEBUG

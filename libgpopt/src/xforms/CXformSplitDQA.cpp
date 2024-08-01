@@ -12,8 +12,6 @@
 
 #include "gpopt/xforms/CXformSplitDQA.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColumnFactory.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
@@ -24,6 +22,7 @@
 #include "gpopt/operators/CScalarProjectList.h"
 #include "gpopt/operators/CScalarValuesList.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDAggregate.h"
 
 using namespace gpmd;

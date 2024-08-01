@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPhysicalInnerIndexNLJoin_H
 #define GPOPT_CPhysicalInnerIndexNLJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalInnerNLJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
@@ -52,13 +51,6 @@ class CPhysicalInnerIndexNLJoin : public CPhysicalInnerNLJoin {
 
   // outer column references accessor
   CColRefArray *PdrgPcrOuterRefs() const { return m_pdrgpcrOuterRefs; }
-
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
-
-  CEnfdDistribution *Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput, ULONG child_index,
-                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulDistrReq) override;
 
   // execution order of children
   EChildExecOrder Eceo() const override {

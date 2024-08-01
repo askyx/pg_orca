@@ -11,13 +11,12 @@
 #ifndef GPOPT_CLogicalIndexOnlyGet_H
 #define GPOPT_CLogicalIndexOnlyGet_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/metadata/CIndexDescriptor.h"
 #include "gpopt/operators/CLogical.h"
 #include "gpopt/operators/CLogicalIndexGet.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations

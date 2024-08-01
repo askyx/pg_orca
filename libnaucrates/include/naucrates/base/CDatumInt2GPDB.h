@@ -12,7 +12,6 @@
 #define GPNAUCRATES_CDatumInt2GPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/base/IDatumInt2.h"
 #include "naucrates/md/CMDTypeInt2GPDB.h"
 

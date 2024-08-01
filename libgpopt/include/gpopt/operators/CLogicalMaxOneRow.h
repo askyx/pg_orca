@@ -12,9 +12,8 @@
 #ifndef GPOPT_CLogicalMaxOneRow_H
 #define GPOPT_CLogicalMaxOneRow_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

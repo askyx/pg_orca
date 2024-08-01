@@ -11,14 +11,6 @@
 
 #include "gpopt/search/CMemo.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CAutoTimer.h"
-#include "gpos/common/CSyncHashtableAccessByIter.h"
-#include "gpos/common/CSyncHashtableAccessByKey.h"
-#include "gpos/error/CAutoTrace.h"
-#include "gpos/io/COstreamString.h"
-#include "gpos/string/CWStringDynamic.h"
-
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/base/CDrvdPropCtxtPlan.h"
 #include "gpopt/base/COptCtxt.h"
@@ -29,6 +21,13 @@
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalCTEProducer.h"
 #include "gpopt/search/CGroupProxy.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoTimer.h"
+#include "gpos/common/CSyncHashtableAccessByIter.h"
+#include "gpos/common/CSyncHashtableAccessByKey.h"
+#include "gpos/error/CAutoTrace.h"
+#include "gpos/io/COstreamString.h"
+#include "gpos/string/CWStringDynamic.h"
 
 using namespace gpopt;
 
@@ -530,8 +529,6 @@ void CMemo::Trace() {
 
   GPOS_TRACE(str.GetBuffer());
 }
-
-FORCE_GENERATE_DBGSTR(gpopt::CMemo);
 
 //---------------------------------------------------------------------------
 //	@function:

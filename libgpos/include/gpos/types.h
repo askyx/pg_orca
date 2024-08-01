@@ -17,13 +17,12 @@
 #ifndef GPOS_types_H
 #define GPOS_types_H
 
+#include <iostream>
 #include <limits.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <sys/types.h>
-
-#include <iostream>
 
 #include "gpos/assert.h"
 

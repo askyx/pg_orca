@@ -11,11 +11,10 @@
 #ifndef GPOPT_CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations_H
 #define GPOPT_CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalLeftAntiSemiApply.h"
 #include "gpopt/operators/CLogicalLeftAntiSemiJoin.h"
 #include "gpopt/xforms/CXformApply2Join.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

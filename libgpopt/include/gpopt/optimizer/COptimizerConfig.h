@@ -12,16 +12,15 @@
 #ifndef GPOPT_COptimizerConfig_H
 #define GPOPT_COptimizerConfig_H
 
-#include "gpos/base.h"
-#include "gpos/common/CDynamicPtrArray.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/CWindowOids.h"
 #include "gpopt/engine/CCTEConfig.h"
 #include "gpopt/engine/CEnumeratorConfig.h"
 #include "gpopt/engine/CHint.h"
 #include "gpopt/engine/CStatisticsConfig.h"
 #include "gpopt/hints/CPlanHint.h"
+#include "gpos/base.h"
+#include "gpos/common/CDynamicPtrArray.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -100,8 +99,6 @@ class COptimizerConfig : public CRefCount {
 
   // generate default optimizer configurations with the given cost model
   static COptimizerConfig *PoconfDefault(CMemoryPool *mp, ICostModel *pcm);
-
-  void Serialize(CMemoryPool *mp, CXMLSerializer *xml_serializer, CBitSet *pbsTrace) const;
 
 };  // class COptimizerConfig
 

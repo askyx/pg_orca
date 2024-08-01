@@ -11,13 +11,12 @@
 
 #include "gpopt/operators/CLogicalLimit.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/metadata/CName.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 #include "naucrates/base/IDatumInt8.h"
 #include "naucrates/md/IMDTypeInt8.h"
 #include "naucrates/statistics/CLimitStatsProcessor.h"
@@ -233,8 +232,10 @@ CKeyCollection *CLogicalLimit::DeriveKeyCollection(CMemoryPool *,  // mp
 //
 //---------------------------------------------------------------------------
 IOstream &CLogicalLimit::OsPrint(IOstream &os) const {
-  os << SzId() << " " << (*m_pos) << " " << (m_fGlobal ? "global" : "local")
-     << (m_top_limit_under_dml ? " NonRemovableLimit" : "");
+  os << SzId() << " ";
+  if (m_pos)
+    m_pos->OsPrint(os);
+  os << " " << (m_fGlobal ? "global" : "local") << (m_top_limit_under_dml ? " NonRemovableLimit" : "");
 
   return os;
 }

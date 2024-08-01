@@ -17,7 +17,6 @@
 #define GPDXL_CMappingElementColIdParamId_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDId.h"
 
 namespace gpdxl {

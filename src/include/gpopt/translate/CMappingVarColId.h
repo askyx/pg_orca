@@ -19,11 +19,10 @@
 #ifndef GPDXL_CMappingVarColId_H
 #define GPDXL_CMappingVarColId_H
 
-#include "gpos/common/CHashMap.h"
-#include "gpos/common/CHashMapIter.h"
-
 #include "gpopt/translate/CGPDBAttInfo.h"
 #include "gpopt/translate/CGPDBAttOptCol.h"
+#include "gpos/common/CHashMap.h"
+#include "gpos/common/CHashMapIter.h"
 #include "naucrates/dxl/CIdGenerator.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"

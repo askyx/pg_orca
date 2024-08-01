@@ -13,7 +13,6 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
-
 #include "naucrates/md/IMDFunction.h"
 
 namespace gpopt {
@@ -28,7 +27,7 @@ using namespace gpmd;
 //		Representation of function properties
 //
 //---------------------------------------------------------------------------
-class CFunctionProp : public CRefCount, public DbgPrintMixin<CFunctionProp> {
+class CFunctionProp : public CRefCount {
  private:
   // function stability
   IMDFunction::EFuncStbl m_efs;

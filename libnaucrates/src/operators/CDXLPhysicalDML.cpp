@@ -15,7 +15,6 @@
 #include "naucrates/dxl/operators/CDXLDirectDispatchInfo.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -90,54 +89,6 @@ const CWStringConst *CDXLPhysicalDML::GetOpNameStr() const {
     default:
       return nullptr;
   }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalDML::SerializeToDXL
-//
-//	@doc:
-//		Serialize function descriptor in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalDML::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  CWStringDynamic *pstrCols = CDXLUtils::Serialize(m_mp, m_src_colids_array);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColumns), pstrCols);
-  GPOS_DELETE(pstrCols);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenActionColId), m_action_colid);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCtidColId), m_ctid_colid);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGpSegmentIdColId), m_segid_colid);
-
-  if (Edxldmlupdate == m_dxl_dml_type) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSplitUpdate), m_fSplit);
-  }
-
-  node->SerializePropertiesToDXL(xml_serializer);
-
-  if (nullptr != m_direct_dispatch_info) {
-    m_direct_dispatch_info->Serialize(xml_serializer);
-  } else {
-    // TODO:  - Oct 22, 2014; clean this code once the direct dispatch code for DML and SELECT is unified
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                CDXLTokens::GetDXLTokenStr(EdxltokenDirectDispatchInfo));
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                 CDXLTokens::GetDXLTokenStr(EdxltokenDirectDispatchInfo));
-  }
-
-  // serialize project list
-  (*node)[0]->SerializeToDXL(xml_serializer);
-
-  // serialize table descriptor
-  m_dxl_table_descr->SerializeToDXL(xml_serializer);
-
-  // serialize physical child
-  (*node)[1]->SerializeToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

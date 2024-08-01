@@ -11,8 +11,6 @@
 
 #include "naucrates/md/CMDIdScCmp.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpmd;
 
@@ -134,19 +132,6 @@ BOOL CMDIdScCmp::Equals(const IMDId *mdid) const {
 
   return m_mdid_left->Equals(pmdidScCmp->GetLeftMdid()) && m_mdid_right->Equals(pmdidScCmp->GetRightMdid()) &&
          m_comparision_type == pmdidScCmp->ParseCmpType();
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDIdScCmp::Serialize
-//
-//	@doc:
-//		Serializes the mdid as the value of the given attribute
-//
-//---------------------------------------------------------------------------
-void CMDIdScCmp::Serialize(CXMLSerializer *xml_serializer, const CWStringConst *attribute_str) const {
-  Serialize();
-  xml_serializer->AddAttribute(attribute_str, &m_str);
 }
 
 //---------------------------------------------------------------------------

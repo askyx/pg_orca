@@ -19,7 +19,6 @@
 #include "naucrates/statistics/CExtendedStatsProcessor.h"
 
 #include "gpos/common/CBitSet.h"
-
 #include "naucrates/md/CMDExtStatsInfo.h"
 #include "naucrates/statistics/CFilterStatsProcessor.h"
 

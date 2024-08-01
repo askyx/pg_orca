@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalLimit_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
 namespace gpdxl {
@@ -46,7 +45,6 @@ class CDXLPhysicalLimit : public CDXLPhysical {
   const CWStringConst *GetOpNameStr() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLPhysicalLimit *Cast(CDXLOperator *dxl_op) {

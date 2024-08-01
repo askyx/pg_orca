@@ -16,12 +16,11 @@
 #ifndef GPDXL_CMappingColIdVarPlStmt_H
 #define GPDXL_CMappingColIdVarPlStmt_H
 
+#include "gpopt/translate/CDXLTranslateContext.h"
+#include "gpopt/translate/CMappingColIdVar.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CHashMap.h"
-
-#include "gpopt/translate/CDXLTranslateContext.h"
-#include "gpopt/translate/CMappingColIdVar.h"
 
 // fwd decl
 struct Var;

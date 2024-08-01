@@ -17,7 +17,6 @@
 
 #include "gpopt/operators/CPhysicalBitmapTableScan.h"
 
-#include "gpopt/base/CDistributionSpec.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 

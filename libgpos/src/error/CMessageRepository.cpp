@@ -12,6 +12,7 @@
 #include "gpos/error/CMessageRepository.h"
 
 #include "gpos/common/CSyncHashtableAccessByKey.h"
+#include "gpos/memory/CMemoryPoolManager.h"
 #include "gpos/utils.h"
 
 using namespace gpos;

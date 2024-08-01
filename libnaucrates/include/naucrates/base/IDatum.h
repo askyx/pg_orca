@@ -14,9 +14,7 @@
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
 #include "gpos/common/CHashMap.h"
-#include "gpos/common/DbgPrintMixin.h"
 #include "gpos/string/CWStringConst.h"
-
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDType.h"
 
@@ -38,7 +36,7 @@ using UlongToIDatumMap =
 //		Base abstract class for datum representation inside optimizer
 //
 //---------------------------------------------------------------------------
-class IDatum : public CRefCount, public DbgPrintMixin<IDatum> {
+class IDatum : public CRefCount {
  private:
  public:
   IDatum(const IDatum &) = delete;

@@ -15,15 +15,14 @@
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
-
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 
 namespace gpdxl {
 using namespace gpmd;
 using namespace gpos;
 
 // fwd decl
-class CXMLSerializer;
+
 class CDXLScalarSortGroupClause;
 
 // arrays of column references
@@ -87,20 +86,6 @@ class CDXLScalarSortGroupClause : public CDXLScalar {
 
   const CWStringConst *GetOpNameStr() const override {
     return CDXLTokens::GetDXLTokenStr(EdxltokenScalarSortGroupClause);
-  }
-
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *) const override {
-    const CWStringConst *element_name = GetOpNameStr();
-
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndex), Index());
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenMDTypeEqOp), EqOp());
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSortOpId), SortOp());
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSortNullsFirst), NullsFirst());
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenMDTypeHashable), IsHashable());
-
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
   }
 };
 }  // namespace gpdxl

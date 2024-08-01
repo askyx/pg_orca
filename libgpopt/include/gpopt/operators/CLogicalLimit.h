@@ -11,11 +11,10 @@
 #ifndef GPOPT_CLogicalLimit_H
 #define GPOPT_CLogicalLimit_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogical.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDId.h"
 
 namespace gpopt {

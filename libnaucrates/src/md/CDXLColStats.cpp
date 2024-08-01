@@ -13,9 +13,7 @@
 
 #include "gpos/common/CAutoRef.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/statistics/CStatistics.h"
 
 using namespace gpdxl;
@@ -60,13 +58,6 @@ CDXLColStats::~CDXLColStats() {
   }
   m_mdid_col_stats->Release();
   m_dxl_stats_bucket_array->Release();
-}
-
-const CWStringDynamic *CDXLColStats::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
 }
 
 //---------------------------------------------------------------------------
@@ -116,40 +107,6 @@ CDXLColStats::Buckets() const {
 //---------------------------------------------------------------------------
 const CDXLBucket *CDXLColStats::GetDXLBucketAt(ULONG pos) const {
   return (*m_dxl_stats_bucket_array)[pos];
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLColStats::Serialize
-//
-//	@doc:
-//		Serialize column stats in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLColStats::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenColumnStats));
-
-  m_mdid_col_stats->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenWidth), m_width);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColNullFreq), m_null_freq);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColNdvRemain), m_distinct_remaining);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColFreqRemain), m_freq_remaining);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColStatsMissing), m_is_col_stats_missing);
-
-  GPOS_CHECK_ABORT;
-
-  ULONG num_of_buckets = Buckets();
-  for (ULONG ul = 0; ul < num_of_buckets; ul++) {
-    const CDXLBucket *dxl_bucket = GetDXLBucketAt(ul);
-    dxl_bucket->Serialize(xml_serializer);
-
-    GPOS_CHECK_ABORT;
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenColumnStats));
 }
 
 #ifdef GPOS_DEBUG

@@ -11,16 +11,14 @@
 
 #include "naucrates/md/CMDTypeGenericGPDB.h"
 
-#include "gpos/string/CWStringDynamic.h"
-
 #include "gpopt/base/COptCtxt.h"
+#include "gpos/string/CWStringDynamic.h"
 #include "naucrates/base/CDatumGenericGPDB.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLDatumGeneric.h"
 #include "naucrates/dxl/operators/CDXLDatumStatsDoubleMappable.h"
 #include "naucrates/dxl/operators/CDXLDatumStatsLintMappable.h"
 #include "naucrates/dxl/operators/CDXLScalarConstValue.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/statistics/CStatsPredUtils.h"
 
 using namespace gpnaucrates;
@@ -126,13 +124,6 @@ CMDTypeGenericGPDB::~CMDTypeGenericGPDB() {
   m_datum_null->Release();
 }
 
-const CWStringDynamic *CMDTypeGenericGPDB::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
-}
-
 //---------------------------------------------------------------------------
 //	@function:
 //		CMDTypeGenericGPDB::GetMdidForAggType
@@ -209,18 +200,6 @@ IMDId *CMDTypeGenericGPDB::GetMdidForCmpType(ECmpType cmp_type) const {
       GPOS_ASSERT(!"Invalid operator type");
       return nullptr;
   }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDTypeGenericGPDB::Serialize
-//
-//	@doc:
-//		Serialize metadata in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDTypeGenericGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  CGPDBTypeHelper<CMDTypeGenericGPDB>::Serialize(xml_serializer, this);
 }
 
 //---------------------------------------------------------------------------

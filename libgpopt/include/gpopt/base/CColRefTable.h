@@ -11,13 +11,12 @@
 #ifndef GPOS_CColRefTable_H
 #define GPOS_CColRefTable_H
 
-#include "gpos/base.h"
-#include "gpos/common/CDynamicPtrArray.h"
-#include "gpos/common/CList.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/metadata/CColumnDescriptor.h"
 #include "gpopt/metadata/CName.h"
+#include "gpos/base.h"
+#include "gpos/common/CDynamicPtrArray.h"
+#include "gpos/common/CList.h"
 
 namespace gpopt {
 using namespace gpos;

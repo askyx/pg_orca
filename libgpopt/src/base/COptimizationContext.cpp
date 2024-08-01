@@ -11,23 +11,19 @@
 
 #include "gpopt/base/COptimizationContext.h"
 
-#include "gpos/base.h"
-#include "gpos/error/CAutoTrace.h"
-
 #include "gpopt/base/CEnfdOrder.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/operators/CPhysicalAgg.h"
 #include "gpopt/operators/CPhysicalCTEProducer.h"
-#include "gpopt/operators/CPhysicalMotion.h"
 #include "gpopt/operators/CPhysicalNLJoin.h"
 #include "gpopt/operators/CPhysicalSort.h"
 #include "gpopt/search/CGroupExpression.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
+#include "gpos/error/CAutoTrace.h"
 
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(COptimizationContext);
 
 // invalid optimization context
 const COptimizationContext COptimizationContext::m_ocInvalid;
@@ -139,10 +135,6 @@ BOOL COptimizationContext::FOptimize(CMemoryPool *mp, CGroupExpression *pgexprPa
                                      COptimizationContext *pocChild, ULONG ulSearchStages) {
   COperator *pop = pgexprChild->Pop();
 
-  if (CUtils::FPhysicalMotion(pop)) {
-    return FOptimizeMotion(mp, pgexprParent, pgexprChild, pocChild, ulSearchStages);
-  }
-
   if (COperator::EopPhysicalSort == pop->Eopid()) {
     return FOptimizeSort(mp, pgexprParent, pgexprChild, pocChild, ulSearchStages);
   }
@@ -183,28 +175,6 @@ BOOL COptimizationContext::FEqualContextIds(COptimizationContextArray *pdrgpocFs
   }
 
   return fEqual;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		COptimizationContext::FOptimizeMotion
-//
-//	@doc:
-//		Check if a Motion node should be optimized for the given context
-//
-//---------------------------------------------------------------------------
-BOOL COptimizationContext::FOptimizeMotion(CMemoryPool *,       // mp
-                                           CGroupExpression *,  // pgexprParent
-                                           CGroupExpression *pgexprMotion, COptimizationContext *poc,
-                                           ULONG  // ulSearchStages
-) {
-  GPOS_ASSERT(nullptr != pgexprMotion);
-  GPOS_ASSERT(nullptr != poc);
-  GPOS_ASSERT(CUtils::FPhysicalMotion(pgexprMotion->Pop()));
-
-  CPhysicalMotion *pop = CPhysicalMotion::PopConvert(pgexprMotion->Pop());
-
-  return poc->Prpp()->Ped()->FCompatible(pop->Pds());
 }
 
 //---------------------------------------------------------------------------

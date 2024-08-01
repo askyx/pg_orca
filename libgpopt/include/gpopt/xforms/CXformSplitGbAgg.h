@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformSplitGbAgg_H
 #define GPOPT_CXformSplitGbAgg_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

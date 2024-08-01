@@ -11,18 +11,13 @@
 
 #include "gpopt/operators/CPhysicalDML.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSetIter.h"
-#include "gpopt/base/CDistributionSpecAny.h"
-#include "gpopt/base/CDistributionSpecHashed.h"
-#include "gpopt/base/CDistributionSpecRouted.h"
-#include "gpopt/base/CDistributionSpecStrictRandom.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -45,7 +40,6 @@ CPhysicalDML::CPhysicalDML(CMemoryPool *mp, CLogicalDML::EDMLOperator edmlop, CT
       m_pcrAction(pcrAction),
       m_pcrCtid(pcrCtid),
       m_pcrSegmentId(pcrSegmentId),
-      m_pds(nullptr),
       m_pos(nullptr),
       m_pcrsRequiredLocal(nullptr),
       m_fSplit(fSplit) {
@@ -56,29 +50,6 @@ CPhysicalDML::CPhysicalDML(CMemoryPool *mp, CLogicalDML::EDMLOperator edmlop, CT
   GPOS_ASSERT(nullptr != pcrAction);
   GPOS_ASSERT_IMP(CLogicalDML::EdmlDelete == edmlop || CLogicalDML::EdmlUpdate == edmlop,
                   nullptr != pcrCtid && nullptr != pcrSegmentId);
-
-  m_pds = CPhysical::PdsCompute(m_mp, m_ptabdesc, pdrgpcrSource, pcrSegmentId);
-
-  if (CDistributionSpec::EdtHashed == m_pds->Edt() && ptabdesc->ConvertHashToRandom()) {
-    // The "convert hash to random" flag indicates that we have a table that was hash-partitioned
-    // originally but then we either entered phase 1 of a gpexpand or we altered some of the partitions
-    // to be randomly distributed (works on GPDB 5X only).
-    // If this is the case, we want to handle DMLs in the following way:
-    //
-    // Insert: Use a hash redistribution for the insert, that means that we insert the data into
-    //         the random partitions using a hash function, which can still be considered "random"
-    // Delete: Use a "strict random" distribution, which will use a routed repartition operator,
-    //         based on the gp_segment_id of the row, which will work for both hash and random partitions
-    // Update without updating the distribution key: Same method as for delete
-    // Update of the distribution key: This will be handled with a Split node below the DML node,
-    //         with the split deleting the existing rows and this DML node inserting the new rows,
-    //         so this is handled here like an insert, using hash distribution for all partitions.
-
-    if (CLogicalDML::EdmlDelete == edmlop || !fSplit) {
-      m_pds->Release();
-      m_pds = GPOS_NEW(mp) CDistributionSpecRandom();
-    }
-  }
 
   // Delete operations only need the ctid to delete the row. However, in Orca we need the
   // distribution column to handle direct dispatch, and the partitioning key (if it's a partitioned table)
@@ -116,7 +87,6 @@ CPhysicalDML::~CPhysicalDML() {
   m_ptabdesc->Release();
   m_pdrgpcrSource->Release();
   m_pbsModified->Release();
-  m_pds->Release();
   m_pos->Release();
   m_pcrsRequiredLocal->Release();
 }
@@ -212,43 +182,6 @@ CColRefSet *CPhysicalDML::PcrsRequired(CMemoryPool *mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalDML::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalDML::PdsRequired(CMemoryPool *mp,
-                                             CExpressionHandle &,  // exprhdl,
-                                             CDistributionSpec *,  // pdsInput,
-                                             ULONG
-#ifdef GPOS_DEBUG
-                                                 child_index
-#endif  // GPOS_DEBUG
-                                             ,
-                                             CDrvdPropArray *,  // pdrgpdpCtxt
-                                             ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  if (CDistributionSpec::EdtRandom == m_pds->Edt()) {
-    // if insert is performed on a randomly distributed table,
-    // request strict random spec to ensure that CPhysicalMotionRandom
-    // exists prior to CPhysicalDML (Insert),
-    // CPhysicalMotionRandom ensures that there is no skew in the
-    // data inserted
-    if (CLogicalDML::EdmlInsert == m_edmlop) {
-      return GPOS_NEW(mp) CDistributionSpecStrictRandom();
-    }
-    return GPOS_NEW(mp) CDistributionSpecRouted(m_pcrSegmentId);
-  }
-
-  m_pds->AddRef();
-  return m_pds;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalDML::PrsRequired
 //
 //	@doc:
@@ -300,19 +233,6 @@ BOOL CPhysicalDML::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcr
                                      ULONG  // ulOptReq
 ) const {
   return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalDML::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalDML::PdsDerive(CMemoryPool *,  // mp,
-                                           CExpressionHandle &exprhdl) const {
-  return PdsDerivePassThruOuter(exprhdl);
 }
 
 //---------------------------------------------------------------------------

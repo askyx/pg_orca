@@ -15,18 +15,16 @@
 
 #include <vector>
 
+#include "gpopt/hints/IHint.h"
+#include "gpopt/operators/COperator.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CEnumSet.h"
 #include "gpos/common/CEnumSetIter.h"
 #include "gpos/common/CRefCount.h"
 
-#include "gpopt/hints/IHint.h"
-#include "gpopt/operators/COperator.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 namespace gpopt {
-class CScanHint : public IHint, public DbgPrintMixin<CScanHint> {
+class CScanHint : public IHint {
  public:
   enum EType {
     SeqScan,
@@ -76,8 +74,6 @@ class CScanHint : public IHint, public DbgPrintMixin<CScanHint> {
   virtual BOOL SatisfiesOperator(COperator *op);
 
   virtual IOstream &OsPrint(IOstream &os) const;
-
-  virtual void Serialize(CXMLSerializer *xml_serializer) const;
 };
 
 using ScanHintList = CDynamicPtrArray<CScanHint, CleanupRelease>;

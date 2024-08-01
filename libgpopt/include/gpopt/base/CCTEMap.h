@@ -16,13 +16,12 @@
 #ifndef GPOPT_CCTEMap_H
 #define GPOPT_CCTEMap_H
 
+#include "gpopt/base/CCTEInfo.h"
+#include "gpopt/base/CDrvdPropPlan.h"
 #include "gpos/base.h"
 #include "gpos/common/CHashMap.h"
 #include "gpos/common/CHashMapIter.h"
 #include "gpos/common/CRefCount.h"
-
-#include "gpopt/base/CCTEInfo.h"
-#include "gpopt/base/CDrvdPropPlan.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -45,7 +44,7 @@ class CCTEReq;
 //		CTE map that is derived as part of plan properties
 //
 //---------------------------------------------------------------------------
-class CCTEMap : public CRefCount, public DbgPrintMixin<CCTEMap> {
+class CCTEMap : public CRefCount {
  public:
   // CTE types
   enum ECteType { EctProducer, EctConsumer, EctSentinel };
@@ -62,7 +61,7 @@ class CCTEMap : public CRefCount, public DbgPrintMixin<CCTEMap> {
   //		the plan rooted by producer node.
   //
   //---------------------------------------------------------------------------
-  class CCTEMapEntry : public CRefCount, public DbgPrintMixin<CCTEMapEntry> {
+  class CCTEMapEntry : public CRefCount {
    private:
     // cte id
     ULONG m_id;

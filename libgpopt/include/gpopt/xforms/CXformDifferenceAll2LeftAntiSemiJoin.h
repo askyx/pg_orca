@@ -17,9 +17,8 @@
 #ifndef GPOPT_CXformDifferenceAll2LeftAntiSemiJoin_H
 #define GPOPT_CXformDifferenceAll2LeftAntiSemiJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalAgg_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
@@ -44,9 +43,6 @@ class CDXLPhysicalAgg : public CDXLPhysical {
   // is it safe to stream the local hash aggregate
   BOOL m_stream_safe;
 
-  // serialize output grouping columns indices in DXL
-  void SerializeGroupingColsToDXL(CXMLSerializer *xml_serializer) const;
-
  public:
   // ctor
   CDXLPhysicalAgg(CMemoryPool *mp, EdxlAggStrategy dxl_agg_strategy, BOOL stream_safe);
@@ -70,7 +66,6 @@ class CDXLPhysicalAgg : public CDXLPhysical {
   BOOL IsStreamSafe() const { return (EdxlaggstrategyHashed == m_dxl_agg_strategy) && m_stream_safe; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLPhysicalAgg *Cast(CDXLOperator *dxl_op) {

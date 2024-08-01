@@ -13,7 +13,6 @@
 
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -32,34 +31,6 @@ Edxlopid CDXLScalarValuesList::GetDXLOperator() const {
 // operator name
 const CWStringConst *CDXLScalarValuesList::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarValuesList);
-}
-
-// serialize operator in DXL format
-void CDXLScalarValuesList::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  GPOS_CHECK_ABORT;
-
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  GPOS_CHECK_ABORT;
-}
-
-// serialize operator in DXL format
-void CDXLScalarValuesList::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode,
-                                          const CHAR *attrname) const {
-  GPOS_CHECK_ABORT;
-
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenParamKind), attrname);
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  GPOS_CHECK_ABORT;
 }
 
 // conversion function

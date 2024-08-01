@@ -11,8 +11,6 @@
 
 #include "gpopt/operators/CLogicalForeignGet.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CColRefTable.h"
@@ -20,6 +18,7 @@
 #include "gpopt/base/CUtils.h"
 #include "gpopt/metadata/CName.h"
 #include "gpopt/metadata/CTableDescriptor.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

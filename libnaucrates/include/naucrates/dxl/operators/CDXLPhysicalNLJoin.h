@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalNLJoin_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLColRef.h"
 #include "naucrates/dxl/operators/CDXLPhysicalJoin.h"
 
@@ -49,8 +48,6 @@ class CDXLPhysicalNLJoin : public CDXLPhysicalJoin {
   // if nest params are required to be parsed
   BOOL m_nest_params_exists;
 
-  void SerializeNestLoopParamsToDXL(CXMLSerializer *pxmlser) const;
-
  public:
   CDXLPhysicalNLJoin(const CDXLPhysicalNLJoin &) = delete;
 
@@ -70,7 +67,6 @@ class CDXLPhysicalNLJoin : public CDXLPhysicalJoin {
   BOOL NestParamsExists() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   void SetNestLoopParamsColRefs(CDXLColRefArray *nest_params_col_refs);
 

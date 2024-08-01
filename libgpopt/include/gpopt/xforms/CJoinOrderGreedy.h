@@ -11,10 +11,9 @@
 #ifndef GPOPT_CJoinOrderGreedy_H
 #define GPOPT_CJoinOrderGreedy_H
 
+#include "gpopt/xforms/CJoinOrder.h"
 #include "gpos/base.h"
 #include "gpos/io/IOstream.h"
-
-#include "gpopt/xforms/CJoinOrder.h"
 
 namespace gpopt {
 using namespace gpos;

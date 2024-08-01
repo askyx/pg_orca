@@ -11,13 +11,12 @@
 
 #include "gpopt/base/COptCtxt.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CAutoP.h"
-
 #include "gpopt/base/CDefaultComparator.h"
 #include "gpopt/cost/ICostModel.h"
 #include "gpopt/eval/IConstExprEvaluator.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoP.h"
 #include "naucrates/traceflags/traceflags.h"
 
 using namespace gpopt;
@@ -127,12 +126,8 @@ COptCtxt *COptCtxt::PoctxtCreate(CMemoryPool *mp, CMDAccessor *md_accessor, ICon
 //
 //---------------------------------------------------------------------------
 BOOL COptCtxt::FAllEnforcersEnabled() {
-  BOOL fEnforcerDisabled = GPOS_FTRACE(EopttraceDisableMotions) || GPOS_FTRACE(EopttraceDisableMotionBroadcast) ||
-                           GPOS_FTRACE(EopttraceDisableMotionGather) ||
-                           GPOS_FTRACE(EopttraceDisableMotionHashDistribute) ||
-                           GPOS_FTRACE(EopttraceDisableMotionRandom) ||
-                           GPOS_FTRACE(EopttraceDisableMotionRountedDistribute) || GPOS_FTRACE(EopttraceDisableSort) ||
-                           GPOS_FTRACE(EopttraceDisableSpool) || GPOS_FTRACE(EopttraceDisablePartPropagation);
+  BOOL fEnforcerDisabled = GPOS_FTRACE(EopttraceDisableSort) || GPOS_FTRACE(EopttraceDisableSpool) ||
+                           GPOS_FTRACE(EopttraceDisablePartPropagation);
 
   return !fEnforcerDisabled;
 }

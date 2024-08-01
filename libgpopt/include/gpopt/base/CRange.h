@@ -11,12 +11,11 @@
 #ifndef GPOPT_CRange_H
 #define GPOPT_CRange_H
 
+#include "gpopt/base/CColRef.h"
+#include "gpopt/operators/CExpression.h"
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
 #include "gpos/types.h"
-
-#include "gpopt/base/CColRef.h"
-#include "gpopt/operators/CExpression.h"
 #include "naucrates/md/IMDType.h"
 
 namespace gpnaucrates {
@@ -42,7 +41,7 @@ class IComparator;
 //		Representation of a range of values
 //
 //---------------------------------------------------------------------------
-class CRange : public CRefCount, public DbgPrintMixin<CRange> {
+class CRange : public CRefCount {
  public:
   enum ERangeInclusion { EriIncluded, EriExcluded, EriSentinel };
 

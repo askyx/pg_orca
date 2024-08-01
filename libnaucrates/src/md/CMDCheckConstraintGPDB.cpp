@@ -14,7 +14,6 @@
 
 #include "gpopt/translate/CTranslatorDXLToExpr.h"
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -55,12 +54,6 @@ CMDCheckConstraintGPDB::~CMDCheckConstraintGPDB() {
   m_dxl_node->Release();
 }
 
-const CWStringDynamic *CMDCheckConstraintGPDB::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
-}
 //---------------------------------------------------------------------------
 //	@function:
 //		CMDCheckConstraintGPDB::GetCheckConstraintExpr
@@ -85,29 +78,6 @@ CExpression *CMDCheckConstraintGPDB::GetCheckConstraintExpr(CMemoryPool *mp, CMD
   // translate the DXL representation of the check constraint expression
   CTranslatorDXLToExpr dxltr(mp, md_accessor);
   return dxltr.PexprTranslateScalar(m_dxl_node, colref_array, mdrel->NonDroppedColsArray());
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDCheckConstraintGPDB::Serialize
-//
-//	@doc:
-//		Serialize check constraint in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDCheckConstraintGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenCheckConstraint));
-
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-  m_rel_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenRelationMdid));
-
-  // serialize the scalar expression
-  m_dxl_node->SerializeToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenCheckConstraint));
 }
 
 #ifdef GPOS_DEBUG

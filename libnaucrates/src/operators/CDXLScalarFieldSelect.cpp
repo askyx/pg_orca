@@ -13,7 +13,6 @@
 
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -119,30 +118,6 @@ SINT CDXLScalarFieldSelect::GetDXLFieldNumber() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLScalarFieldSelect::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarFieldSelect);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarFieldSelect::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarFieldSelect::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  m_dxl_field_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenScalarFieldSelectFieldType));
-  m_dxl_field_collation->Serialize(xml_serializer,
-                                   CDXLTokens::GetDXLTokenStr(EdxltokenScalarFieldSelectFieldCollation));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenScalarFieldSelectTypeModifier), m_dxl_type_modifier);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenScalarFieldSelectFieldNumber), m_dxl_field_number);
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

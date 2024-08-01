@@ -13,7 +13,7 @@
 #define GPMD_IMDRelation_H
 
 #include "gpos/base.h"
-
+#include "naucrates/dxl/xml/dxltokens.h"
 #include "naucrates/md/CMDIndexInfo.h"
 #include "naucrates/md/IMDCacheObject.h"
 #include "naucrates/md/IMDColumn.h"
@@ -22,7 +22,7 @@
 
 namespace gpdxl {
 // fwd declaration
-class CXMLSerializer;
+
 }  // namespace gpdxl
 
 namespace gpmd {

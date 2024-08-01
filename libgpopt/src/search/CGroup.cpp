@@ -11,12 +11,6 @@
 
 #include "gpopt/search/CGroup.h"
 
-#include "gpos/base.h"
-#include "gpos/error/CAutoTrace.h"
-#include "gpos/task/CAutoSuspendAbort.h"
-#include "gpos/task/CAutoTraceFlag.h"
-#include "gpos/task/CWorker.h"
-
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/base/CDrvdPropCtxtPlan.h"
 #include "gpopt/base/CDrvdPropCtxtRelational.h"
@@ -27,17 +21,19 @@
 #include "gpopt/operators/CLogicalCTEProducer.h"
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/COperator.h"
-#include "gpopt/operators/CPhysicalMotionGather.h"
 #include "gpopt/operators/CScalarSubquery.h"
 #include "gpopt/search/CGroupProxy.h"
 #include "gpopt/search/CJobGroup.h"
+#include "gpos/base.h"
+#include "gpos/error/CAutoTrace.h"
+#include "gpos/task/CAutoSuspendAbort.h"
+#include "gpos/task/CAutoTraceFlag.h"
+#include "gpos/task/CWorker.h"
 #include "naucrates/statistics/CStatistics.h"
 #include "naucrates/traceflags/traceflags.h"
 
 using namespace gpnaucrates;
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CGroup);
 
 #define GPOPT_OPTCTXT_HT_BUCKETS 100
 

@@ -11,11 +11,10 @@
 #ifndef GPOPT_CKeyCollection_H
 #define GPOPT_CKeyCollection_H
 
+#include "gpopt/base/CColRefSet.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
-
-#include "gpopt/base/CColRefSet.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -28,7 +27,7 @@ using namespace gpos;
 //		Captures sets of keys for a relation
 //
 //---------------------------------------------------------------------------
-class CKeyCollection : public CRefCount, public DbgPrintMixin<CKeyCollection> {
+class CKeyCollection : public CRefCount {
  private:
   // array of key sets
   CColRefSetArray *m_pdrgpcrs;

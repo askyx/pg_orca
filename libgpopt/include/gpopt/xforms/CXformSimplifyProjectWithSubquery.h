@@ -11,12 +11,11 @@
 #ifndef GPOPT_CXformSimplifyProjectWithSubquery_H
 #define GPOPT_CXformSimplifyProjectWithSubquery_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CLogicalProject.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/xforms/CXformSimplifySubquery.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

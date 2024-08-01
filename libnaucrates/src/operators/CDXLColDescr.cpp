@@ -12,8 +12,6 @@
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/md/CMDIdGPDB.h"
 
 using namespace gpos;
@@ -130,40 +128,3 @@ ULONG
 CDXLColDescr::Width() const {
   return m_column_width;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLColDescr::SerializeToDXL
-//
-//	@doc:
-//		Serializes the column descriptor into DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLColDescr::SerializeToDXL(CXMLSerializer *xml_serializer) const {
-  const CWStringConst *pstrTokenColDescr = CDXLTokens::GetDXLTokenStr(EdxltokenColDescr);
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrTokenColDescr);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), m_column_id);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAttno), m_attr_no);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColName), m_md_name->GetMDName());
-  m_column_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-
-  if (default_type_modifier != TypeModifier()) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
-  }
-
-  if (m_is_dropped) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColDropped), m_is_dropped);
-  }
-
-  if (gpos::ulong_max != m_column_width) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColWidth), m_column_width);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), pstrTokenColDescr);
-
-  GPOS_CHECK_ABORT;
-}
-
-// EOF

@@ -12,9 +12,7 @@
 #include "naucrates/dxl/operators/CDXLScalarSubqueryAll.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;

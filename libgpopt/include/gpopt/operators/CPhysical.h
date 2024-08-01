@@ -11,12 +11,7 @@
 #ifndef GPOPT_CPhysical_H
 #define GPOPT_CPhysical_H
 
-#include "gpos/base.h"
-
-#include "gpopt/base/CDistributionSpec.h"
-#include "gpopt/base/CDistributionSpecSingleton.h"
 #include "gpopt/base/CDrvdPropPlan.h"
-#include "gpopt/base/CEnfdDistribution.h"
 #include "gpopt/base/CEnfdOrder.h"
 #include "gpopt/base/CEnfdPartitionPropagation.h"
 #include "gpopt/base/CEnfdRewindability.h"
@@ -24,6 +19,7 @@
 #include "gpopt/base/CPartitionPropagationSpec.h"
 #include "gpopt/base/CRewindabilitySpec.h"
 #include "gpopt/operators/COperator.h"
+#include "gpos/base.h"
 
 // number of plan properties requested during optimization, currently, there are 4 properties:
 // order, distribution, rewindability and partition propagation
@@ -168,21 +164,6 @@ class CPhysical : public COperator {
   // helper for a simple case of computing child's required sort order
   static COrderSpec *PosPassThru(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, ULONG child_index);
 
-  // helper for a simple case of computing child's required distribution
-  static CDistributionSpec *PdsPassThru(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsInput,
-                                        ULONG child_index);
-
-  // helper for computing child's required distribution when Singleton/Replicated
-  // distributions must be requested
-  static CDistributionSpec *PdsRequireSingletonOrReplicated(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                            CDistributionSpec *pdsInput, ULONG child_index,
-                                                            ULONG ulOptReq);
-
-  // helper for computing child's required distribution in unary operators
-  // with a single scalar child
-  static CDistributionSpec *PdsUnary(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsInput,
-                                     ULONG child_index, ULONG ulOptReq);
-
   // helper for a simple case of computing child's required rewindability
   static CRewindabilitySpec *PrsPassThru(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
                                          ULONG child_index);
@@ -197,9 +178,6 @@ class CPhysical : public COperator {
   // helper for common case of sort order derivation
   static COrderSpec *PosDerivePassThruOuter(CExpressionHandle &exprhdl);
 
-  // helper for common case of distribution derivation
-  static CDistributionSpec *PdsDerivePassThruOuter(CExpressionHandle &exprhdl);
-
   // helper for common case of rewindability derivation
   static CRewindabilitySpec *PrsDerivePassThruOuter(CMemoryPool *mp, CExpressionHandle &exprhdl);
 
@@ -207,21 +185,9 @@ class CPhysical : public COperator {
   // that defines no new columns include the required columns
   static BOOL FUnaryProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired);
 
-  // Generate a singleton distribution spec request
-  static CDistributionSpec *PdsRequireSingleton(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pds,
-                                                ULONG child_index);
-
   // return true if the given column set includes any of the columns defined by
   // the unary node, as given by the handle
   static BOOL FUnaryUsesDefinedColumns(CColRefSet *pcrs, CExpressionHandle &exprhdl);
-
-  // compute required distribution of the n-th child
-  virtual CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                         ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const = 0;
-
-  // distribution matching type
-  virtual CEnfdDistribution::EDistributionMatching Edm(CReqdPropPlan *prppInput, ULONG child_index,
-                                                       CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq);
 
  public:
   CPhysical(const CPhysical &) = delete;
@@ -236,7 +202,7 @@ class CPhysical : public COperator {
   }
 
   // helper to compute skew estimate based on given stats and distribution spec
-  static CDouble GetSkew(IStatistics *stats, CDistributionSpec *pds);
+  static CDouble GetSkew(IStatistics *stats);
 
   // type of operator
   BOOL FPhysical() const override {
@@ -261,10 +227,6 @@ class CPhysical : public COperator {
   // compute required ctes of the n-th child
   virtual CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
                                 CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const = 0;
-
-  // compute distribution spec from the table descriptor
-  static CDistributionSpec *PdsCompute(CMemoryPool *mp, const CTableDescriptor *ptabdesc, CColRefArray *pdrgpcrOutput,
-                                       CColRef *gp_segment_id);
 
   // compute required sort order of the n-th child
   virtual COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired,
@@ -292,9 +254,6 @@ class CPhysical : public COperator {
   // derive sort order
   virtual COrderSpec *PosDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const = 0;
 
-  // dderive distribution
-  virtual CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const = 0;
-
   // derived properties: derive rewindability
   virtual CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const = 0;
 
@@ -311,10 +270,6 @@ class CPhysical : public COperator {
 
   // return order property enforcing type for this operator
   virtual CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const = 0;
-
-  // return distribution property enforcing type for this operator
-  virtual CEnfdProp::EPropEnforcingType EpetDistribution(CExpressionHandle &exprhdl,
-                                                         const CEnfdDistribution *ped) const;
 
   // return rewindability property enforcing type for this operator
   virtual CEnfdProp::EPropEnforcingType EpetRewindability(CExpressionHandle &exprhdl,
@@ -382,9 +337,6 @@ class CPhysical : public COperator {
   // this is used when computing stats during costing
   virtual BOOL FPassThruStats() const = 0;
 
-  // true iff the delivered distributions of the children are compatible among themselves
-  virtual BOOL FCompatibleChildrenDistributions(const CExpressionHandle &exprhdl) const;
-
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
 
@@ -395,12 +347,6 @@ class CPhysical : public COperator {
 
     return dynamic_cast<CPhysical *>(pop);
   }
-
-  // helper for computing a singleton distribution matching the given distribution
-  static CDistributionSpecSingleton *PdssMatching(CMemoryPool *mp, CDistributionSpecSingleton *pdss);
-
-  virtual CEnfdDistribution *Ped(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prppInput,
-                                 ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulDistrReq);
 
 };  // class CPhysical
 

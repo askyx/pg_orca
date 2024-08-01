@@ -11,10 +11,9 @@
 #ifndef GPOPT_CJobTest_H
 #define GPOPT_CJobTest_H
 
-#include "gpos/base.h"
-
 #include "gpopt/search/CJob.h"
 #include "gpopt/search/CJobQueue.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

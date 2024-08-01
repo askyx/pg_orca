@@ -11,8 +11,6 @@
 
 #include "naucrates/dxl/operators/CDXLSpoolInfo.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpdxl;
 
@@ -99,24 +97,3 @@ const CWStringConst *CDXLSpoolInfo::GetSpoolTypeName() const {
       return CDXLTokens::GetDXLTokenStr(EdxltokenUnknown);
   }
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLSpoolInfo::SerializeToDXL
-//
-//	@doc:
-//		Serialize spooling info in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLSpoolInfo::SerializeToDXL(CXMLSerializer *xml_serializer) const {
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSpoolId), m_spool_id);
-
-  const CWStringConst *pstrSpoolType = GetSpoolTypeName();
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSpoolType), pstrSpoolType);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSpoolMultiSlice), m_is_multi_slice_shared);
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenExecutorSliceId), m_executor_slice_id);
-}
-
-// EOF

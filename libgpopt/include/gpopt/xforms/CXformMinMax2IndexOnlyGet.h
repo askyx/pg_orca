@@ -12,10 +12,9 @@
 #ifndef GPOPT_CXformMinMax2IndexOnlyGet_H
 #define GPOPT_CXformMinMax2IndexOnlyGet_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogical.h"
 #include "gpopt/xforms/CXformMinMax2IndexGet.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

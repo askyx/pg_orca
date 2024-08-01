@@ -11,11 +11,10 @@
 
 #include "gpopt/search/CJobFactory.h"
 
+#include "gpopt/search/CGroupExpression.h"
 #include "gpos/base.h"
 #include "gpos/task/CAutoSuspendAbort.h"
 #include "gpos/task/CWorker.h"
-
-#include "gpopt/search/CGroupExpression.h"
 
 using namespace gpopt;
 using namespace gpos;

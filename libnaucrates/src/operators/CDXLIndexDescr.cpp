@@ -13,8 +13,6 @@
 
 #include "gpos/string/CWStringDynamic.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpdxl;
 
@@ -68,22 +66,3 @@ IMDId *CDXLIndexDescr::MDId() const {
 const CMDName *CDXLIndexDescr::MdName() const {
   return m_mdname;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLIndexDescr::SerializeToDXL
-//
-//	@doc:
-//		Serialize index descriptor in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLIndexDescr::SerializeToDXL(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenIndexDescr));
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenIndexName), m_mdname->GetMDName());
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenIndexDescr));
-}
-
-// EOF

@@ -11,10 +11,9 @@
 #ifndef GPOPT_CXformProject2ComputeScalar_H
 #define GPOPT_CXformProject2ComputeScalar_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/xforms/CXformImplementation.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

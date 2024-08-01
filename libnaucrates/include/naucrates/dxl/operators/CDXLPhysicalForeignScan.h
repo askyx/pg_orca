@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalForeignScan_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLPhysicalTableScan.h"
 #include "naucrates/dxl/operators/CDXLTableDescr.h"
 

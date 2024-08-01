@@ -11,8 +11,6 @@
 
 #include "gpopt/xforms/CXformSubqJoin2Apply.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/CLogicalNAryJoin.h"
 #include "gpopt/operators/CNormalizer.h"
@@ -21,6 +19,7 @@
 #include "gpopt/operators/CScalarProjectElement.h"
 #include "gpopt/xforms/CSubqueryHandler.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

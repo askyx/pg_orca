@@ -11,11 +11,10 @@
 #ifndef GPOPT_CLogicalIndexGet_H
 #define GPOPT_CLogicalIndexGet_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/metadata/CIndexDescriptor.h"
 #include "gpopt/operators/CLogical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations

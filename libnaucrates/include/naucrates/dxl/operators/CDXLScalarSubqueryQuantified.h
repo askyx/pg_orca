@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarSubqueryQuantified_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/CMDName.h"
@@ -65,7 +64,6 @@ class CDXLScalarSubqueryQuantified : public CDXLScalar {
   GetColId() const { return m_colid; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const override;
 
   // conversion function
   static CDXLScalarSubqueryQuantified *Cast(CDXLOperator *dxl_op) {

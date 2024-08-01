@@ -11,12 +11,11 @@
 #ifndef GPOS_CColRefComputed_H
 #define GPOS_CColRefComputed_H
 
+#include "gpopt/base/CColRef.h"
+#include "gpopt/metadata/CName.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CList.h"
-
-#include "gpopt/base/CColRef.h"
-#include "gpopt/metadata/CName.h"
 #include "naucrates/md/IMDType.h"
 
 namespace gpopt {

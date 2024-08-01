@@ -15,7 +15,6 @@
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLScalarValuesList.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/md/IMDAggregate.h"
 
 using namespace gpopt;
@@ -167,53 +166,6 @@ IMDId *CDXLScalarAggref::GetDXLResolvedRetTypeMDid() const {
 //---------------------------------------------------------------------------
 BOOL CDXLScalarAggref::IsDistinct() const {
   return m_is_distinct;
-}
-
-//---------------------------------------------------------------------------
-//     @function:
-//             CDXLScalarAggref::SerializeValuesListChildToDXL
-//
-//     @doc:
-//             Serialize child CDXLScalarValuesList node in DXL format. Param index is
-//             one based.
-//
-//---------------------------------------------------------------------------
-void CDXLScalarAggref::SerializeValuesListChildToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode,
-                                                     ULONG index, const CHAR *attr_name) const {
-  CDXLScalarValuesList *child = CDXLScalarValuesList::Cast(((*dxlnode)[index])->GetOperator());
-  child->SerializeToDXL(xml_serializer, (*dxlnode)[index], attr_name);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarAggref::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarAggref::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  m_agg_func_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenAggrefOid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAggrefDistinct), m_is_distinct);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAggrefStage), GetDXLStrAggStage());
-  if (nullptr != m_resolved_rettype_mdid) {
-    m_resolved_rettype_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-  }
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAggrefKind), GetDXLStrAggKind());
-
-  CWStringDynamic *argtypes = CDXLUtils::Serialize(m_mp, m_argtypes);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAggrefArgTypes), argtypes);
-  GPOS_DELETE(argtypes);
-
-  SerializeValuesListChildToDXL(xml_serializer, dxlnode, 0, "aggargs");
-  SerializeValuesListChildToDXL(xml_serializer, dxlnode, 1, "aggdirectargs");
-  SerializeValuesListChildToDXL(xml_serializer, dxlnode, 2, "aggorder");
-  SerializeValuesListChildToDXL(xml_serializer, dxlnode, 3, "aggdistinct");
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------

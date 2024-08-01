@@ -12,9 +12,7 @@
 #include "naucrates/dxl/operators/CDXLScalarSubqueryQuantified.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -46,29 +44,6 @@ CDXLScalarSubqueryQuantified::CDXLScalarSubqueryQuantified(CMemoryPool *mp, IMDI
 CDXLScalarSubqueryQuantified::~CDXLScalarSubqueryQuantified() {
   m_scalar_op_mdid->Release();
   GPOS_DELETE(m_scalar_op_mdname);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarSubqueryQuantified::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarSubqueryQuantified::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serialize operator id and name
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenOpName), m_scalar_op_mdname->GetMDName());
-  m_scalar_op_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenOpNo));
-
-  // serialize computed column id
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), m_colid);
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

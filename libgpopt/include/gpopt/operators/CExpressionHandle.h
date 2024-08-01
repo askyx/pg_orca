@@ -13,12 +13,11 @@
 #ifndef GPOPT_CExpressionHandle_H
 #define GPOPT_CExpressionHandle_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/base/CDrvdPropRelational.h"
 #include "gpopt/base/CReqdProp.h"
 #include "gpopt/search/CGroupExpression.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/IStatistics.h"
 
 namespace gpopt {

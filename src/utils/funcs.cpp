@@ -16,20 +16,17 @@
 #include <sys/stat.h>
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
+#include <fmgr.h>
 
-#include "fmgr.h"
-#include "lib/stringinfo.h"
-#include "utils/builtins.h"
+#include <lib/stringinfo.h>
+#include <utils/builtins.h>
 }
-
-#include "gpos/_api.h"
 
 #include "gpopt/gpdbwrappers.h"
 #include "gpopt/utils/COptTasks.h"
 #include "gpopt/utils/funcs.h"
-
-#include "xercesc/util/XercesVersion.hpp"
+#include "gpos/_api.h"
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -81,26 +78,6 @@ Datum EnableXform(PG_FUNCTION_ARGS) {
   } else {
     appendStringInfo(&str, "%s is not recognized", szXform);
   }
-  text *result = cstring_to_text(str.data);
-
-  PG_RETURN_TEXT_P(result);
-}
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		LibraryVersion
-//
-//	@doc:
-//		Returns the optimizer and xerces library versions as a message
-//
-//---------------------------------------------------------------------------
-extern "C" {
-Datum LibraryVersion() {
-  StringInfoData str;
-  initStringInfo(&str);
-  appendStringInfo(&str, "GPOPT version: 4.0.0");
-  appendStringInfo(&str, ", Xerces version: %s", XERCES_FULLVERSIONDOT);
   text *result = cstring_to_text(str.data);
 
   PG_RETURN_TEXT_P(result);

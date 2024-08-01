@@ -12,7 +12,7 @@
 #include "naucrates/dxl/operators/CDXLScalarArrayComp.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -83,26 +83,6 @@ const CWStringConst *CDXLScalarArrayComp::GetDXLStrArrayCmpType() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLScalarArrayComp::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayComp);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarArrayComp::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarArrayComp::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenOpName), m_comparison_operator_name);
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenOpNo));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenOpType), GetDXLStrArrayCmpType());
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

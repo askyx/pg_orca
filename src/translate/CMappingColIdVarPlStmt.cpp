@@ -15,17 +15,16 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "nodes/primnodes.h"
+#include <nodes/primnodes.h>
 }
-
-#include "gpos/base.h"
-#include "gpos/common/CAutoP.h"
 
 #include "gpopt/gpdbwrappers.h"
 #include "gpopt/translate/CDXLTranslateContextBaseTable.h"
 #include "gpopt/translate/CMappingColIdVarPlStmt.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoP.h"
 #include "naucrates/dxl/operators/CDXLScalarIdent.h"
 #include "naucrates/exception.h"
 #include "naucrates/md/CMDIdGPDB.h"
@@ -93,7 +92,7 @@ Param *CMappingColIdVarPlStmt::ParamFromDXLNodeScId(const CDXLScalarIdent *dxlop
   const CMappingElementColIdParamId *elem = m_output_context->GetParamIdMappingElement(colid);
 
   if (nullptr != elem) {
-    param = MakeNode(Param);
+    param = makeNode(Param);
     param->paramkind = PARAM_EXEC;
     param->paramid = elem->ParamId();
     param->paramtype = CMDIdGPDB::CastMdid(elem->MdidType())->Oid();

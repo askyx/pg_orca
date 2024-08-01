@@ -13,7 +13,6 @@
 #define GPMD_IMDCacheObject_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CMDName.h"
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDInterface.h"
@@ -22,9 +21,7 @@
 namespace gpos {
 class CWStringDynamic;
 }
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -39,16 +36,6 @@ using namespace gpos;
 //---------------------------------------------------------------------------
 class IMDCacheObject : public IMDInterface {
  public:
-  // Serialize a list of metadata id elements using pstrTokenList
-  // as the root XML element for the list, and each metadata id is
-  // serialized in the form of a pstrTokenListItem element.
-  // The serialized information looks like this:
-  // <strTokenList>
-  //		<strTokenListItem .../>...
-  // </strTokenList>
-  static void SerializeMDIdList(CXMLSerializer *xml_serializer, const IMdIdArray *mdid_array,
-                                const CWStringConst *strTokenList, const CWStringConst *strTokenListItem);
-
   // type of md object
   enum Emdtype {
     EmdtRel,
@@ -75,17 +62,6 @@ class IMDCacheObject : public IMDInterface {
 
   // object type
   virtual Emdtype MDType() const = 0;
-
-  // serialize object in DXL format
-  virtual void Serialize(gpdxl::CXMLSerializer *) const = 0;
-
-  // DXL string representation of cache object
-  virtual const CWStringDynamic *GetStrRepr() = 0;
-
-  // serialize the metadata id information as the attributes of an
-  // element with the given name
-  virtual void SerializeMDIdAsElem(gpdxl::CXMLSerializer *xml_serializer, const CWStringConst *element_name,
-                                   const IMDId *mdid) const;
 
 #ifdef GPOS_DEBUG
   virtual void DebugPrint(IOstream &os) const = 0;

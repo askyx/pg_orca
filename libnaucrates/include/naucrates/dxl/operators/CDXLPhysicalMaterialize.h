@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalMaterialize_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 #include "naucrates/dxl/operators/CDXLSpoolInfo.h"
 
@@ -70,7 +69,6 @@ class CDXLPhysicalMaterialize : public CDXLPhysical {
   BOOL IsEager() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLPhysicalMaterialize *Cast(CDXLOperator *dxl_op) {

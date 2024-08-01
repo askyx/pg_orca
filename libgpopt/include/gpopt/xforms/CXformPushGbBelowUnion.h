@@ -11,10 +11,9 @@
 #ifndef GPOPT_CXformPushGbBelowUnion_H
 #define GPOPT_CXformPushGbBelowUnion_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalUnion.h"
 #include "gpopt/xforms/CXformPushGbBelowSetOp.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

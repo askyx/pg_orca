@@ -66,8 +66,6 @@ BOOL COrderSpec::COrderExpression::Matches(const COrderExpression *poe) const {
   return poe->m_mdid->Equals(m_mdid) && poe->m_pcr == m_pcr && poe->m_ent == m_ent;
 }
 
-FORCE_GENERATE_DBGSTR(gpopt::COrderSpec::COrderExpression);
-
 //---------------------------------------------------------------------------
 //	@function:
 //		COrderSpec::COrderExpression::OsPrint

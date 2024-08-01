@@ -25,17 +25,15 @@
 #ifndef GPOS_CRowHint_H
 #define GPOS_CRowHint_H
 
+#include "gpopt/exception.h"
+#include "gpopt/hints/IHint.h"
+#include "gpopt/operators/COperator.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
 
-#include "gpopt/exception.h"
-#include "gpopt/hints/IHint.h"
-#include "gpopt/operators/COperator.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 namespace gpopt {
-class CRowHint : public IHint, public DbgPrintMixin<CRowHint> {
+class CRowHint : public IHint {
  public:
   enum RowsValueType {
     RVT_ABSOLUTE,
@@ -109,8 +107,6 @@ class CRowHint : public IHint, public DbgPrintMixin<CRowHint> {
   }
 
   IOstream &OsPrint(IOstream &os) const;
-
-  void Serialize(CXMLSerializer *xml_serializer) const;
 };
 
 using RowHintList = CDynamicPtrArray<CRowHint, CleanupRelease>;

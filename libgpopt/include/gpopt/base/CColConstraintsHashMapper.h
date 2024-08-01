@@ -4,10 +4,9 @@
 #ifndef GPOPT_CColConstraintsHashMapper_H
 #define GPOPT_CColConstraintsHashMapper_H
 
-#include "gpos/memory/CMemoryPool.h"
-
 #include "gpopt/base/CConstraint.h"
 #include "gpopt/base/IColConstraintsMapper.h"
+#include "gpos/memory/CMemoryPool.h"
 
 namespace gpopt {
 class CColConstraintsHashMapper : public IColConstraintsMapper {

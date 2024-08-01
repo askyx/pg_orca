@@ -14,7 +14,6 @@
 
 #include "gpos/base.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/md/IMDCacheObject.h"
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDProvider.h"
@@ -40,9 +39,6 @@ class CMDProviderMemory : public IMDProvider {
   // metadata objects indexed by their metadata id
   MDIdToSerializedMDIdMap *m_mdmap;
 
-  // load MD objects in the hash map
-  void LoadMetadataObjectsFromArray(CMemoryPool *mp, IMDCacheObjectArray *mdcache_obj_array);
-
   // private copy ctor
   CMDProviderMemory(const CMDProviderMemory &);
 
@@ -50,18 +46,14 @@ class CMDProviderMemory : public IMDProvider {
   // ctor
   CMDProviderMemory(CMemoryPool *mp, IMDCacheObjectArray *mdcache_obj_array);
 
-  // ctor
-  CMDProviderMemory(CMemoryPool *mp, const CHAR *file_name);
-
   // dtor
   ~CMDProviderMemory() override;
 
-  // returns the DXL string of the requested metadata object
-  CWStringBase *GetMDObjDXLStr(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid) const override;
-
   // returns the requested metadata object
   IMDCacheObject *GetMDObj(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid,
-                           IMDCacheObject::Emdtype mdtype) const override;
+                           IMDCacheObject::Emdtype mdtype) const override {
+    return nullptr;
+  }
 
   // return the mdid for the specified system id and type
   IMDId *MDId(CMemoryPool *mp, CSystemId sysid, IMDType::ETypeInfo type_info) const override;

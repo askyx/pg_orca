@@ -12,13 +12,10 @@
 #include "gpopt/metadata/CColumnDescriptor.h"
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CMDIdGPDB.h"
 
 using namespace gpopt;
 using namespace gpmd;
-
-FORCE_GENERATE_DBGSTR(CColumnDescriptor);
 
 //---------------------------------------------------------------------------
 //	@function:

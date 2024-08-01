@@ -12,9 +12,8 @@
 #ifndef GPNAUCRATES_CUpperBoundNDVs_H
 #define GPNAUCRATES_CUpperBoundNDVs_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
+#include "gpos/base.h"
 
 namespace gpnaucrates {
 using namespace gpos;

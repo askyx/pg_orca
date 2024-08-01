@@ -13,7 +13,7 @@
 #include "naucrates/dxl/operators/CDXLLogicalLimit.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -61,27 +61,6 @@ Edxlopid CDXLLogicalLimit::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLLogicalLimit::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenLogicalLimit);
-}
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalLimit::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalLimit::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  if (m_top_limit_under_dml) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTopLimitUnderDML), m_top_limit_under_dml);
-  }
-
-  // serialize children
-  node->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

@@ -11,8 +11,6 @@
 
 #include "gpopt/xforms/CXformExpandNAryJoinDPv2.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/engine/CHint.h"
 #include "gpopt/operators/CLogicalNAryJoin.h"
@@ -24,6 +22,7 @@
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/xforms/CJoinOrderDPv2.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

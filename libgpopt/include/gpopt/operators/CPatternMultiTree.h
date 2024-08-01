@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPatternMultiTree_H
 #define GPOPT_CPatternMultiTree_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPattern.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

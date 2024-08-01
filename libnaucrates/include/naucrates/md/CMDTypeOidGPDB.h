@@ -13,7 +13,6 @@
 #define GPMD_CMDTypeOidGPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CGPDBTypeHelper.h"
 #include "naucrates/md/IMDTypeOid.h"
 
@@ -40,9 +39,7 @@
 #define GPDB_OID_AGG_COUNT OID(2147)
 
 // fwd decl
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpnaucrates {
 class IDatumOid;
@@ -119,7 +116,6 @@ class CMDTypeOidGPDB : public IMDTypeOid {
   IDatumOid *CreateOidDatum(CMemoryPool *mp, OID oValue, BOOL is_null) const override;
 
   // accessors
-  const CWStringDynamic *GetStrRepr() override;
 
   IMDId *MDId() const override;
 
@@ -164,7 +160,6 @@ class CMDTypeOidGPDB : public IMDTypeOid {
   IMDId *GetBaseRelMdid() const override { return nullptr; }
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
   // return the null constant for this type
   IDatum *DatumNull() const override { return m_datum_null; }

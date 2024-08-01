@@ -14,9 +14,8 @@
 #include "gpos/base.h"
 
 #ifdef GPOS_DEBUG
-#include "gpos/error/CAutoTrace.h"
-
 #include "gpopt/base/COptCtxt.h"
+#include "gpos/error/CAutoTrace.h"
 #endif  // GPOS_DEBUG
 
 using namespace gpopt;
@@ -84,8 +83,6 @@ CColRef::HashValue(const CColRef *colref) {
   ULONG id = colref->Id();
   return gpos::HashValue<ULONG>(&id);
 }
-
-FORCE_GENERATE_DBGSTR(gpopt::CColRef);
 
 //---------------------------------------------------------------------------
 //	@function:

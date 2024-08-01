@@ -11,14 +11,10 @@
 
 #include "gpopt/base/CCTEReq.h"
 
+#include "gpopt/base/COptCtxt.h"
 #include "gpos/base.h"
 
-#include "gpopt/base/COptCtxt.h"
-
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CCTEReq);
-FORCE_GENERATE_DBGSTR(CCTEReq::CCTEReqEntry);
 
 //---------------------------------------------------------------------------
 //	@function:

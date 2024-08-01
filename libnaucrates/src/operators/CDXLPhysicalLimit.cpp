@@ -12,7 +12,6 @@
 #include "naucrates/dxl/operators/CDXLPhysicalLimit.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -49,36 +48,6 @@ Edxlopid CDXLPhysicalLimit::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLPhysicalLimit::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalLimit);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalLimit::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalLimit::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  // serialize properties
-  node->SerializePropertiesToDXL(xml_serializer);
-
-  // serialize children nodes
-
-  const CDXLNodeArray *dxl_array = node->GetChildDXLNodeArray();
-
-  GPOS_ASSERT(4 == node->Arity());
-  // serialize the first two children: target-list and plan
-  for (ULONG i = 0; i < 4; i++) {
-    CDXLNode *child_dxlnode = (*dxl_array)[i];
-    child_dxlnode->SerializeToDXL(xml_serializer);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

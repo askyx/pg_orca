@@ -11,11 +11,10 @@
 
 #include "gpopt/operators/CPhysicalSort.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCTEMap.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -117,24 +116,6 @@ COrderSpec *CPhysicalSort::PosRequired(CMemoryPool *mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalSort::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalSort::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                              CDistributionSpec *pdsRequired, ULONG child_index,
-                                              CDrvdPropArray *,  // pdrgpdpCtxt
-                                              ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  return PdsPassThru(mp, exprhdl, pdsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalSort::PrsRequired
 //
 //	@doc:
@@ -221,19 +202,6 @@ COrderSpec *CPhysicalSort::PosDerive(CMemoryPool *,       // mp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalSort::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalSort::PdsDerive(CMemoryPool *,  // mp
-                                            CExpressionHandle &exprhdl) const {
-  return PdsDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalSort::PrsDerive
 //
 //	@doc:
@@ -268,25 +236,6 @@ CEnfdProp::EPropEnforcingType CPhysicalSort::EpetOrder(CExpressionHandle &,  // 
   // required order is incompatible with the order established by the
   // sort operator, prohibit adding another sort operator on top
   return CEnfdProp::EpetProhibited;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalSort::EpetDistribution
-//
-//	@doc:
-//		Return the enforcing type for distribution property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalSort::EpetDistribution(CExpressionHandle & /*exprhdl*/, const CEnfdDistribution *
-#ifdef GPOS_DEBUG
-                                                                                                   ped
-#endif  // GPOS_DEBUG
-) const {
-  GPOS_ASSERT(nullptr != ped);
-
-  // distribution enforcers have already been added
-  return CEnfdProp::EpetUnnecessary;
 }
 
 //---------------------------------------------------------------------------

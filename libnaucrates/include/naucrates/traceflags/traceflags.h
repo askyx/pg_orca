@@ -72,9 +72,6 @@ enum EOptTraceFlag {
   // print required columns
   EopttracePrintRequiredColumns = 101016,
 
-  // print equivalent distribution specs
-  EopttracePrintEquivDistrSpecs = 101017,
-
   // log results of hint parsing
   EopttracePrintPgHintPlanLog = 101018,
 
@@ -100,24 +97,6 @@ enum EOptTraceFlag {
 
   // CTE inlining flags
   EopttraceEnableCTEInlining = 103002,
-
-  // Disable all Motion nodes
-  EopttraceDisableMotions = 103003,
-
-  // Disable MotionBroadcast nodes
-  EopttraceDisableMotionBroadcast = 103004,
-
-  // Disable MotionGather nodes
-  EopttraceDisableMotionGather = 103005,
-
-  // Disable MotionHashDistribute nodes
-  EopttraceDisableMotionHashDistribute = 103006,
-
-  // Disable MotionHashRandom nodes
-  EopttraceDisableMotionRandom = 103007,
-
-  // Disable MotionHashRoutedDistribute nodes
-  EopttraceDisableMotionRountedDistribute = 103008,
 
   // Disable Sort nodes
   EopttraceDisableSort = 103009,

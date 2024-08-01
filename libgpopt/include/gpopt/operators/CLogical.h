@@ -11,8 +11,6 @@
 #ifndef GPOPT_CLogical_H
 #define GPOPT_CLogical_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/base/CMaxCard.h"
 #include "gpopt/base/CPartInfo.h"
@@ -21,6 +19,7 @@
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/COperator.h"
 #include "gpopt/xforms/CXform.h"
+#include "gpos/base.h"
 
 // fwd declarataion
 namespace gpnaucrates {

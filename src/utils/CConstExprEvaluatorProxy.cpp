@@ -15,9 +15,9 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "executor/executor.h"
+#include <executor/executor.h>
 }
 
 #include "gpopt/gpdbwrappers.h"

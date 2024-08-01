@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarSortCol_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/gpdb_types.h"
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
@@ -67,7 +66,6 @@ class CDXLScalarSortCol : public CDXLScalar {
   BOOL IsSortedNullsFirst() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const override;
 
   // conversion function
   static CDXLScalarSortCol *Cast(CDXLOperator *dxl_op) {

@@ -11,9 +11,6 @@
 
 #include "gpopt/base/CConstraintInterval.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CAutoRef.h"
-
 #include "gpopt/base/CCastUtils.h"
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CConstraintDisjunction.h"
@@ -26,6 +23,8 @@
 #include "gpopt/operators/CScalarBooleanTest.h"
 #include "gpopt/operators/CScalarIdent.h"
 #include "gpopt/operators/CScalarIsDistinctFrom.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoRef.h"
 #include "naucrates/base/IDatumBool.h"
 #include "naucrates/md/IMDScalarOp.h"
 #include "naucrates/md/IMDTypeBool.h"

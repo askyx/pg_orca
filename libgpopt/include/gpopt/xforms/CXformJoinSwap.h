@@ -11,11 +11,10 @@
 #ifndef GPOPT_CXformJoinSwap_H
 #define GPOPT_CXformJoinSwap_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/xforms/CXformExploration.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

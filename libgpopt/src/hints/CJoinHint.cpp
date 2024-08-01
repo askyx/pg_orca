@@ -17,9 +17,6 @@
 
 using namespace gpopt;
 
-FORCE_GENERATE_DBGSTR(CJoinHint);
-FORCE_GENERATE_DBGSTR(CJoinHint::JoinNode);
-
 //---------------------------------------------------------------------------
 //	@function:
 //		SerializeJoinOrderHint
@@ -73,23 +70,4 @@ IOstream &CJoinHint::OsPrint(IOstream &os) const {
   m_join_node->OsPrint(os);
 
   return os;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CJoinHint::Serialize
-//
-//	@doc:
-//		Serialize the object
-//---------------------------------------------------------------------------
-void CJoinHint::Serialize(CXMLSerializer *xml_serializer) {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenJoinHint));
-
-  CWStringDynamic *dxl_string = SerializeJoinOrderHint(m_mp, GetJoinNode());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenLeading), dxl_string);
-  GPOS_DELETE(dxl_string);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenJoinHint));
 }

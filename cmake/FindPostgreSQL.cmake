@@ -46,7 +46,7 @@
 # distributed with PostgreSQL itself works.
 
 # Define additional search paths for root directories.
-set(PostgreSQL_ROOT_DIRECTORIES ENV PGROOT ENV PGPATH ${PostgreSQL_ROOT})
+set(PostgreSQL_ROOT_DIRECTORIES ENV PGROOT ENV PGPATH ENV PATH ${PostgreSQL_ROOT})
 
 find_program(
   PG_CONFIG pg_config
@@ -178,7 +178,7 @@ endif()
 function(add_postgresql_extension NAME)
   set(_optional)
   set(_single VERSION ENCODING)
-  set(_multi SOURCES SCRIPTS SCRIPT_TEMPLATES DEPENDS_LIB REQUIRES REGRESS)
+  set(_multi SOURCES SCRIPTS SCRIPT_TEMPLATES DEPENDS_LIB REQUIRES)
   cmake_parse_arguments(_ext "${_optional}" "${_single}" "${_multi}" ${ARGN})
 
   if(NOT _ext_VERSION)
@@ -243,6 +243,8 @@ function(add_postgresql_extension NAME)
       "-Wshadow=compatible-local"
       "-Wformat-security"
       "-fno-strict-aliasing"
+      "-Wno-unused-parameter"
+      "-Wno-sign-compare"
   )
 
   # Generate control file at build time (which is when GENERATE evaluate the
@@ -277,35 +279,24 @@ $<$<NOT:$<BOOL:${_ext_REQUIRES}>>:#>requires = '$<JOIN:${_ext_REQUIRES},$<COMMA>
   install(FILES ${_control_file} ${_script_files}
           DESTINATION ${PostgreSQL_EXTENSION_DIR})
 
-  if(_ext_REGRESS)
-    foreach(_test ${_ext_REGRESS})
-      set(_sql_file "${CMAKE_CURRENT_SOURCE_DIR}/sql/${_test}.sql")
-      set(_out_file "${CMAKE_CURRENT_SOURCE_DIR}/expected/${_test}.out")
-      if(NOT EXISTS "${_sql_file}")
-        message(FATAL_ERROR "Test file '${_sql_file}' does not exist!")
-      endif()
-      if(NOT EXISTS "${_out_file}")
-        file(WRITE "${_out_file}" )
-        message(STATUS "Created empty file ${_out_file}")
-      endif()
-    endforeach()
+  if(PG_REGRESS)
+    set(TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+    set(TEST_SCHEDULE ${TEST_DIR}/schedule)
+    set(TEST_CONFIG ${TEST_DIR}/regression.conf)
 
-    if(PG_REGRESS)
+    if(NOT EXISTS ${TEST_SCHEDULE})
+      message(STATUS "Schedule file ${TEST_SCHEDULE} does not exist, using default schedule")
+    else()
+      message(STATUS "Test using schedule file ${TEST_SCHEDULE}")
       add_test(
         NAME ${NAME}
         COMMAND
           ${PG_REGRESS} --temp-instance=${CMAKE_BINARY_DIR}/tmp_check
-          --inputdir=${CMAKE_CURRENT_SOURCE_DIR}
-          --outputdir=${CMAKE_CURRENT_BINARY_DIR} --load-extension=${NAME}
-          ${_ext_REGRESS})
+          --temp-config=${TEST_CONFIG}
+          --inputdir=${TEST_DIR}
+          --outputdir=${CMAKE_CURRENT_BINARY_DIR}/test --load-extension=${NAME}
+          --schedule ${TEST_SCHEDULE})
     endif()
-
-    add_custom_target(
-      ${NAME}_update_results
-      COMMAND
-        ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_BINARY_DIR}/results/*.out
-        ${CMAKE_CURRENT_SOURCE_DIR}/expected)
   endif()
 endfunction()
 
@@ -314,4 +305,8 @@ if(PG_REGRESS)
   add_custom_target(
     test_verbose COMMAND ${CMAKE_CTEST_COMMAND} --force-new-ctest-process
                          --verbose --output-on-failure)
+
+  add_custom_target(
+    update_results COMMAND
+      ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/test/results/*.out ${CMAKE_CURRENT_SOURCE_DIR}/test/expected)
 endif()

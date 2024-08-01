@@ -11,10 +11,9 @@
 #ifndef GPOPT_CLogicalCTEProducer_H
 #define GPOPT_CLogicalCTEProducer_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

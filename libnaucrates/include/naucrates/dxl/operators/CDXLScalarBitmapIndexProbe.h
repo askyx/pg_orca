@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarBitmapIndexProbe_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
 namespace gpdxl {
@@ -21,7 +20,6 @@ using namespace gpos;
 
 // fwd declarations
 class CDXLIndexDescr;
-class CXMLSerializer;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -55,7 +53,6 @@ class CDXLScalarBitmapIndexProbe : public CDXLScalar {
   virtual const CDXLIndexDescr *GetDXLIndexDescr() const { return m_dxl_index_descr; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // does the operator return a boolean result
   BOOL HasBoolResult(CMDAccessor *  // md_accessor

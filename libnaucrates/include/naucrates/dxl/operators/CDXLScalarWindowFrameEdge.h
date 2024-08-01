@@ -19,7 +19,6 @@
 #define GPDXL_CDXLScalarWindowFrameEdge_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
 namespace gpdxl {
@@ -74,7 +73,6 @@ class CDXLScalarWindowFrameEdge : public CDXLScalar {
   static const CWStringConst *GetFrameBoundaryStr(EdxlFrameBoundary frame_boundary);
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // does the operator return a boolean result
   BOOL HasBoolResult(CMDAccessor *  // md_accessor

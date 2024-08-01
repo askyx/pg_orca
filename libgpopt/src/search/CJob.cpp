@@ -11,15 +11,12 @@
 
 #include "gpopt/search/CJob.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/search/CJobQueue.h"
 #include "gpopt/search/CScheduler.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 using namespace gpos;
-
-FORCE_GENERATE_DBGSTR(CJob);
 
 //---------------------------------------------------------------------------
 //	@function:

@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPhysicalInnerHashJoin_H
 #define GPOPT_CPhysicalInnerHashJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalHashJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------
@@ -25,23 +24,6 @@ namespace gpopt {
 //
 //---------------------------------------------------------------------------
 class CPhysicalInnerHashJoin : public CPhysicalHashJoin {
- private:
-  // helper for computing a hashed distribution matching the given distribution
-  CDistributionSpecHashed *PdshashedCreateMatching(CMemoryPool *mp, CDistributionSpecHashed *pdshashed,
-                                                   ULONG ulSourceChild) const;
-
-  // helper for deriving hash join distribution from hashed children
-  CDistributionSpec *PdsDeriveFromHashedChildren(CMemoryPool *mp, CDistributionSpec *pdsOuter,
-                                                 CDistributionSpec *pdsInner) const;
-
-  // helper for deriving hash join distribution from replicated outer child
-  CDistributionSpec *PdsDeriveFromReplicatedOuter(CMemoryPool *mp, CDistributionSpec *pdsOuter,
-                                                  CDistributionSpec *pdsInner) const;
-
-  // helper for deriving hash join distribution from hashed outer child
-  CDistributionSpec *PdsDeriveFromHashedOuter(CMemoryPool *mp, CDistributionSpec *pdsOuter,
-                                              CDistributionSpec *pdsInner) const;
-
  public:
   CPhysicalInnerHashJoin(const CPhysicalInnerHashJoin &) = delete;
 
@@ -66,9 +48,6 @@ class CPhysicalInnerHashJoin : public CPhysicalHashJoin {
 
     return dynamic_cast<CPhysicalInnerHashJoin *>(pop);
   }
-
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   CPartitionPropagationSpec *PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
                                           CPartitionPropagationSpec *pppsRequired, ULONG child_index,

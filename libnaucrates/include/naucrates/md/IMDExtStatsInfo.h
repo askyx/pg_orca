@@ -13,7 +13,6 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
-
 #include "naucrates/md/CMDExtStatsInfo.h"
 #include "naucrates/md/IMDCacheObject.h"
 

@@ -8,16 +8,13 @@
 #ifndef GPOS_CHintUtils_H
 #define GPOS_CHintUtils_H
 
-#include "gpos/base.h"
-
 #include "gpopt/hints/CPlanHint.h"
 #include "gpopt/metadata/CTableDescriptor.h"
-#include "gpopt/operators/CLogicalDynamicGet.h"
-#include "gpopt/operators/CLogicalDynamicIndexGet.h"
 #include "gpopt/operators/CLogicalGet.h"
 #include "gpopt/operators/CLogicalIndexGet.h"
 #include "gpopt/operators/COperator.h"
 #include "gpopt/operators/CScalarBitmapIndexProbe.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 class CHintUtils {
@@ -27,12 +24,6 @@ class CHintUtils {
 
   // Check if CLogicalIndexGet operator satisfies plan hints
   static BOOL SatisfiesPlanHints(CLogicalIndexGet *pop, CPlanHint *plan_hint);
-
-  // Check if CLogicalDynamicGet operator satisfies plan hints
-  static BOOL SatisfiesPlanHints(CLogicalDynamicGet *pop, CPlanHint *plan_hint);
-
-  // Check if CLogicalDynamicIndexGet operator satisfies plan hints
-  static BOOL SatisfiesPlanHints(CLogicalDynamicIndexGet *pop, CPlanHint *plan_hint);
 
   // Check if CScalarBitmapIndexProbe operator satisfies plan hints
   static BOOL SatisfiesPlanHints(CScalarBitmapIndexProbe *pop, CPlanHint *plan_hint);

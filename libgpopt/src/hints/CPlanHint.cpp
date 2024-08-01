@@ -11,13 +11,10 @@
 
 #include "gpopt/hints/CPlanHint.h"
 
+#include "gpopt/hints/CHintUtils.h"
 #include "gpos/base.h"
 
-#include "gpopt/hints/CHintUtils.h"
-
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CPlanHint);
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -461,23 +458,3 @@ IOstream &CPlanHint::OsPrint(IOstream &os) const {
   os << "]";
   return os;
 }
-
-void CPlanHint::Serialize(CXMLSerializer *xml_serializer) const {
-  for (ULONG ul = 0; ul < m_scan_hints->Size(); ul++) {
-    (*m_scan_hints)[ul]->Serialize(xml_serializer);
-  }
-
-  for (ULONG ul = 0; ul < m_row_hints->Size(); ul++) {
-    (*m_row_hints)[ul]->Serialize(xml_serializer);
-  }
-
-  for (ULONG ul = 0; ul < m_join_hints->Size(); ul++) {
-    (*m_join_hints)[ul]->Serialize(xml_serializer);
-  }
-
-  for (ULONG ul = 0; ul < m_join_type_hints->Size(); ul++) {
-    (*m_join_type_hints)[ul]->Serialize(xml_serializer);
-  }
-}
-
-// EOF

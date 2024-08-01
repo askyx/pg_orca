@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarSubqueryAll_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLScalarSubqueryQuantified.h"
 #include "naucrates/md/CMDName.h"

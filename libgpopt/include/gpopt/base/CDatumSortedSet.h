@@ -4,10 +4,9 @@
 #ifndef GPOPT_CDatumSortedSet_H
 #define GPOPT_CDatumSortedSet_H
 
-#include "gpos/memory/CMemoryPool.h"
-
 #include "gpopt/base/IComparator.h"
 #include "gpopt/operators/CExpression.h"
+#include "gpos/memory/CMemoryPool.h"
 #include "naucrates/base/IDatum.h"
 
 namespace gpopt {

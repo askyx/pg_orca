@@ -11,9 +11,8 @@
 #ifndef GPOPT_CLogicalApply_H
 #define GPOPT_CLogicalApply_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogical.h"
+#include "gpos/base.h"
 #include "naucrates/statistics/CStatistics.h"
 
 namespace gpopt {

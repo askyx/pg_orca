@@ -12,13 +12,12 @@
 #ifndef GPOPT_CJobStateMachine_H
 #define GPOPT_CJobStateMachine_H
 
-#include "gpos/base.h"
-#include "gpos/common/CEnumSet.h"
-#include "gpos/types.h"
-
 #include "gpopt/base/CStateMachine.h"
 #include "gpopt/engine/CEngine.h"
 #include "gpopt/search/CSchedulerContext.h"
+#include "gpos/base.h"
+#include "gpos/common/CEnumSet.h"
+#include "gpos/types.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -13,9 +13,7 @@
 #include "naucrates/md/CMDAggregateGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpmd;
 using namespace gpdxl;
@@ -59,13 +57,6 @@ CMDAggregateGPDB::~CMDAggregateGPDB() {
   if (nullptr != m_dxl_str) {
     GPOS_DELETE(m_dxl_str);
   }
-}
-
-const CWStringDynamic *CMDAggregateGPDB::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
 }
 
 //---------------------------------------------------------------------------
@@ -114,39 +105,6 @@ IMDId *CMDAggregateGPDB::GetResultTypeMdid() const {
 //---------------------------------------------------------------------------
 IMDId *CMDAggregateGPDB::GetIntermediateResultTypeMdid() const {
   return m_mdid_type_intermediate;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDAggregateGPDB::Serialize
-//
-//	@doc:
-//		Serialize function metadata in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDAggregateGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenGPDBAgg));
-
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-  if (m_is_ordered) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBIsAggOrdered), m_is_ordered);
-  }
-  if (m_is_repsafe) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBIsAggRepSafe), m_is_repsafe);
-  }
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBAggSplittable), m_is_splittable);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBAggHashAggCapable), m_hash_agg_capable);
-
-  SerializeMDIdAsElem(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBAggResultTypeId), m_mdid_type_result);
-  SerializeMDIdAsElem(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBAggIntermediateResultTypeId),
-                      m_mdid_type_intermediate);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenGPDBAgg));
 }
 
 #ifdef GPOS_DEBUG

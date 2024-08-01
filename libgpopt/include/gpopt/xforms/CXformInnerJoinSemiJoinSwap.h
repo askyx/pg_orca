@@ -11,11 +11,10 @@
 #ifndef GPOPT_CXformInnerJoinSemiJoinSwap_H
 #define GPOPT_CXformInnerJoinSemiJoinSwap_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/CLogicalLeftSemiJoin.h"
 #include "gpopt/xforms/CXformJoinSwap.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

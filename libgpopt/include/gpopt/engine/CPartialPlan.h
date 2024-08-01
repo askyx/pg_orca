@@ -17,11 +17,10 @@
 #ifndef GPOPT_CPartialPlan_H
 #define GPOPT_CPartialPlan_H
 
-#include "gpos/base.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/CReqdProp.h"
 #include "gpopt/cost/ICostModel.h"
+#include "gpos/base.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 using namespace gpos;

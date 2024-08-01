@@ -11,11 +11,10 @@
 #ifndef GPOPT_CPartitionPropagationSpec_H
 #define GPOPT_CPartitionPropagationSpec_H
 
-#include "gpos/base.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CPropSpec.h"
+#include "gpos/base.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -11,11 +11,10 @@
 
 #include "gpopt/xforms/CXformForeignGet2ForeignScan.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CLogicalForeignGet.h"
 #include "gpopt/operators/CPhysicalForeignScan.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

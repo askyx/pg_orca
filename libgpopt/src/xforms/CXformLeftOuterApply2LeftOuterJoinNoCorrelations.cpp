@@ -11,9 +11,8 @@
 
 #include "gpopt/xforms/CXformLeftOuterApply2LeftOuterJoinNoCorrelations.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

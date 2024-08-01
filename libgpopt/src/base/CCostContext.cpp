@@ -11,12 +11,6 @@
 
 #include "gpopt/base/CCostContext.h"
 
-#include "gpos/base.h"
-#include "gpos/error/CAutoTrace.h"
-#include "gpos/io/COstreamString.h"
-#include "gpos/string/CWStringDynamic.h"
-
-#include "gpopt/base/CDistributionSpecHashed.h"
 #include "gpopt/base/CDrvdPropCtxtPlan.h"
 #include "gpopt/base/CDrvdPropCtxtRelational.h"
 #include "gpopt/base/CDrvdPropPlan.h"
@@ -25,17 +19,18 @@
 #include "gpopt/exception.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPhysicalAgg.h"
-#include "gpopt/operators/CPhysicalDynamicIndexScan.h"
-#include "gpopt/operators/CPhysicalDynamicTableScan.h"
+#include "gpopt/operators/CPhysicalScan.h"
 #include "gpopt/operators/CPhysicalSpool.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/search/CGroupExpression.h"
+#include "gpos/base.h"
+#include "gpos/error/CAutoTrace.h"
+#include "gpos/io/COstreamString.h"
+#include "gpos/string/CWStringDynamic.h"
 #include "naucrates/statistics/CStatisticsUtils.h"
 
 using namespace gpopt;
 using namespace gpnaucrates;
-
-FORCE_GENERATE_DBGSTR(CCostContext);
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -365,40 +360,6 @@ BOOL CCostContext::FBetterThan(const CCostContext *pcc) const {
     }
   }
 
-  // if multistageAgg flag is true and the distribution type is not
-  // replicated/universal mark multistage agg plan is better and should
-  // override cost based check between multistage agg and singlestage
-  // agg.  When data distribution is universal or replicated, it means
-  // that the same data is available across all the nodes, there is no
-  // need for motions between nodes during aggregation. What if we force
-  // a multi-stage plan where no motion exists, we would get 2
-  // consecutive aggs that are redundant. So multi-stage aggregation may
-  // not be necessary in this scenario, instead single-stage aggregation
-  // approach can be used, where each node independently aggregates its
-  // local data and the final result is obtained by combining the local
-  // aggregates.
-  if (GPOS_FTRACE(EopttraceForceMultiStageAgg)) {
-    if ((IsMultiStageAggCostCtxt(pcc) && IsSingleStageAggCostCtxt(this))) {
-      switch (Pdpplan()->Pds()->Edt()) {
-        case CDistributionSpec::EdtStrictReplicated:
-        case CDistributionSpec::EdtTaintedReplicated:
-        case CDistributionSpec::EdtUniversal:
-          return true;
-        default:
-          return false;
-      }
-    } else if (IsSingleStageAggCostCtxt(pcc) && IsMultiStageAggCostCtxt(this)) {
-      switch (pcc->Pdpplan()->Pds()->Edt()) {
-        case CDistributionSpec::EdtStrictReplicated:
-        case CDistributionSpec::EdtTaintedReplicated:
-        case CDistributionSpec::EdtUniversal:
-          return false;
-        default:
-          return true;
-      }
-    }
-  }
-
   DOUBLE dCostDiff = (Cost().Get() - pcc->Cost().Get());
   if (dCostDiff < 0.0) {
     // if current context has a strictly smaller cost, then it is preferred
@@ -408,22 +369,6 @@ BOOL CCostContext::FBetterThan(const CCostContext *pcc) const {
   if (dCostDiff > 0.0) {
     // if current context has a strictly larger cost, then it is not preferred
     return false;
-  }
-
-  // otherwise, we need to break tie in cost values
-
-  // RULE 1: a partitioned plan is better than a non-partitioned
-  // one to optimize CPU consumption
-  if (CDistributionSpec::EdptPartitioned == Pdpplan()->Pds()->Edpt() &&
-      CDistributionSpec::EdptPartitioned != pcc->Pdpplan()->Pds()->Edpt()) {
-    return true;
-  }
-
-  // RULE 2: hashed distribution is preferred to random distribution since
-  // it preserves knowledge of hash key
-  if (CDistributionSpec::EdtHashed == Pdpplan()->Pds()->Edt() &&
-      CDistributionSpec::EdtRandom == pcc->Pdpplan()->Pds()->Edt()) {
-    return true;
   }
 
   // RULE 3: break ties in cost of join plans,
@@ -443,12 +388,8 @@ BOOL CCostContext::FBetterThan(const CCostContext *pcc) const {
     CPhysicalSpool *current_best_ctxt = CPhysicalSpool::PopConvert(Pgexpr()->Pop());
     CPhysicalSpool *new_ctxt = CPhysicalSpool::PopConvert(pcc->Pgexpr()->Pop());
 
-    // if the request does not need to be conscious of motion, then always prefer a
-    // streaming spool since a blocking one will be unnecessary
-    if (!pcc->Poc()->Prpp()->Per()->PrsRequired()->HasMotionHazard()) {
-      if (new_ctxt->FEager() && !current_best_ctxt->FEager()) {
-        return true;
-      }
+    if (new_ctxt->FEager() && !current_best_ctxt->FEager()) {
+      return true;
     }
   }
 
@@ -543,10 +484,7 @@ CCost CCostContext::CostCompute(CMemoryPool *mp, CCostArray *pdrgpcostChildren) 
 
   // extract local costing info
   DOUBLE rows = m_pstats->Rows().Get();
-  if (CDistributionSpec::EdptPartitioned == Pdpplan()->Pds()->Edpt()) {
-    // scale statistics row estimate by number of segments
-    rows = DRowsPerHost().Get();
-  }
+
   ci.SetRows(rows);
 
   DOUBLE width = m_pstats->Width(mp, m_poc->Prpp()->PcrsRequired()).Get();
@@ -569,10 +507,7 @@ CCost CCostContext::CostCompute(CMemoryPool *mp, CCostArray *pdrgpcostChildren) 
     ci.SetChildStats(ul, GPOS_NEW(mp) ICostModel::CCostingStats(child_stats));
 
     DOUBLE dRowsChild = child_stats->Rows().Get();
-    if (CDistributionSpec::EdptPartitioned == pccChild->Pdpplan()->Pds()->Edpt()) {
-      // scale statistics row estimate by number of segments
-      dRowsChild = pccChild->DRowsPerHost().Get();
-    }
+
     ci.SetChildRows(ul, dRowsChild);
 
     DOUBLE dWidthChild = child_stats->Width(mp, pocChild->Prpp()->PcrsRequired()).Get();
@@ -601,43 +536,8 @@ CCost CCostContext::CostCompute(CMemoryPool *mp, CCostArray *pdrgpcostChildren) 
 //---------------------------------------------------------------------------
 CDouble CCostContext::DRowsPerHost() const {
   DOUBLE rows = Pstats()->Rows().Get();
-  COptCtxt *poptctxt = COptCtxt::PoctxtFromTLS();
-  const ULONG ulHosts = poptctxt->GetCostModel()->UlHosts();
 
-  CDistributionSpec *pds = Pdpplan()->Pds();
-  if (CDistributionSpec::EdtHashed == pds->Edt()) {
-    CDistributionSpecHashed *pdshashed = CDistributionSpecHashed::PdsConvert(pds);
-    CExpressionArray *pdrgpexpr = pdshashed->Pdrgpexpr();
-    CColRefSet *pcrsUsed = CUtils::PcrsExtractColumns(m_mp, pdrgpexpr);
-
-    const CColRefSet *pcrsReqdStats = this->Poc()->GetReqdRelationalProps()->PcrsStat();
-    if (!pcrsReqdStats->ContainsAll(pcrsUsed)) {
-      // statistics not available for distribution columns, therefore
-      // assume uniform distribution across hosts
-      // clean up
-      pcrsUsed->Release();
-
-      return CDouble(rows / ulHosts);
-    }
-
-    ULongPtrArray *pdrgpul = GPOS_NEW(m_mp) ULongPtrArray(m_mp);
-    pcrsUsed->ExtractColIds(m_mp, pdrgpul);
-    pcrsUsed->Release();
-
-    CStatisticsConfig *stats_config = poptctxt->GetOptimizerConfig()->GetStatsConf();
-    CDouble dNDVs = CStatisticsUtils::Groups(m_mp, Pstats(), stats_config, pdrgpul, nullptr /*keys*/);
-    pdrgpul->Release();
-
-    if (dNDVs < ulHosts) {
-      // estimated number of distinct values of distribution columns is smaller than number of hosts.
-      // We assume data is distributed across a subset of hosts in this case. This results in a larger
-      // number of rows per host compared to the uniform case, allowing us to capture data skew in
-      // cost computation
-      return CDouble(rows / dNDVs.Get());
-    }
-  }
-
-  return CDouble(rows / ulHosts);
+  return CDouble(rows);
 }
 
 //---------------------------------------------------------------------------

@@ -11,11 +11,6 @@
 #ifndef GPOPT_CExpression_H
 #define GPOPT_CExpression_H
 
-#include "gpos/base.h"
-#include "gpos/common/CDynamicPtrArray.h"
-#include "gpos/common/CRefCount.h"
-#include "gpos/common/DbgPrintMixin.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CCostContext.h"
 #include "gpopt/base/CDrvdPropRelational.h"
@@ -26,6 +21,9 @@
 #include "gpopt/base/CReqdPropRelational.h"
 #include "gpopt/cost/CCost.h"
 #include "gpopt/operators/COperator.h"
+#include "gpos/base.h"
+#include "gpos/common/CDynamicPtrArray.h"
+#include "gpos/common/CRefCount.h"
 #include "naucrates/statistics/IStatistics.h"
 
 namespace gpopt {
@@ -53,7 +51,7 @@ using namespace gpnaucrates;
 //		Simply dynamic array for pointer types
 //
 //---------------------------------------------------------------------------
-class CExpression : public CRefCount, public gpos::DbgPrintMixin<CExpression> {
+class CExpression : public CRefCount {
   friend class CExpressionHandle;
 
  private:
@@ -105,9 +103,6 @@ class CExpression : public CRefCount, public gpos::DbgPrintMixin<CExpression> {
   void PrintProperties(IOstream &os, CPrintPrefix &pfx) const;
 
 #endif  // GPOS_DEBUG
-
-  // check if the distributions of all children are compatible
-  BOOL FValidChildrenDistribution(CDrvdPropCtxtPlan *pdpctxtplan);
 
   // copy group properties and stats to expression
   void CopyGroupPropsAndStats(IStatistics *input_stats);

@@ -11,9 +11,8 @@
 #ifndef GPOPT_CScalarSubqueryExists_H
 #define GPOPT_CScalarSubqueryExists_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CScalarSubqueryExistential.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

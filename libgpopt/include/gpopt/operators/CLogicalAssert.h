@@ -11,10 +11,9 @@
 #ifndef GPOS_CLogicalAssert_H
 #define GPOS_CLogicalAssert_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalUnary.h"
+#include "gpos/base.h"
 #include "naucrates/dxl/errorcodes.h"
 
 namespace gpopt {

@@ -11,13 +11,11 @@
 #ifndef GPOPT_CQueryContext_H
 #define GPOPT_CQueryContext_H
 
-#include "gpos/base.h"
-#include "gpos/common/DbgPrintMixin.h"
-
 #include "gpopt/base/CReqdPropPlan.h"
 #include "gpopt/base/CReqdPropRelational.h"
 #include "gpopt/operators/CExpressionPreprocessor.h"
 #include "gpopt/search/CGroupExpression.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -46,7 +44,7 @@ using namespace gpos;
 //
 //
 //---------------------------------------------------------------------------
-class CQueryContext : public DbgPrintMixin<CQueryContext> {
+class CQueryContext {
  private:
   // required plan properties in optimizer's produced plan
   CReqdPropPlan *m_prpp;

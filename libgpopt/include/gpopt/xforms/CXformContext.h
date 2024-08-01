@@ -11,10 +11,9 @@
 #ifndef GPOPT_CXformContext_H
 #define GPOPT_CXformContext_H
 
+#include "gpopt/operators/CPatternTree.h"
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
-
-#include "gpopt/operators/CPatternTree.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -11,14 +11,13 @@
 #ifndef GPOPT_CConstraint_H
 #define GPOPT_CConstraint_H
 
+#include "gpopt/base/CColRef.h"
+#include "gpopt/base/CColRefSet.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CHashMap.h"
 #include "gpos/common/CRefCount.h"
 #include "gpos/types.h"
-
-#include "gpopt/base/CColRef.h"
-#include "gpopt/base/CColRefSet.h"
 #include "naucrates/md/IMDIndex.h"
 
 namespace gpopt {
@@ -53,7 +52,7 @@ using UlongToConstraintMap = CHashMap<ULONG, CConstraint, gpos::HashValue<ULONG>
 //		Base class for representing constraints
 //
 //---------------------------------------------------------------------------
-class CConstraint : public CRefCount, public DbgPrintMixin<CConstraint> {
+class CConstraint : public CRefCount {
  public:
   enum EConstraintType {
     EctInterval,     // a single interval on a single columns

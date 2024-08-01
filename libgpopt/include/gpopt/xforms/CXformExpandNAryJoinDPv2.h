@@ -12,9 +12,8 @@
 #ifndef GPOPT_CXformExpandNAryJoinDPv2_H
 #define GPOPT_CXformExpandNAryJoinDPv2_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformExploration.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

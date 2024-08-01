@@ -11,15 +11,13 @@
 #ifndef GPOS_CPhysicalAgg_H
 #define GPOS_CPhysicalAgg_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CPhysical.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declaration
-class CDistributionSpec;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -40,18 +38,6 @@ class CPhysicalAgg : public CPhysical {
   BOOL m_isAggFromSplitDQA;
 
   CLogicalGbAgg::EAggStage m_aggStage;
-
-  // compute required distribution of the n-th child of an intermediate aggregate
-  CDistributionSpec *PdsRequiredIntermediateAgg(CMemoryPool *mp, ULONG ulOptReq) const;
-
-  // compute required distribution of the n-th child of a global aggregate
-  CDistributionSpec *PdsRequiredGlobalAgg(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsInput,
-                                          ULONG child_index, CColRefArray *pdrgpcrGrp, CColRefArray *pdrgpcrGrpMinimal,
-                                          ULONG ulOptReq) const;
-
-  // compute a maximal hashed distribution using the given columns,
-  // if no such distribution can be created, return a Singleton distribution
-  static CDistributionSpec *PdsMaximalHashed(CMemoryPool *mp, CColRefArray *colref_array);
 
  protected:
   // array of minimal grouping columns based on FDs
@@ -83,11 +69,6 @@ class CPhysicalAgg : public CPhysical {
   // compute required columns of the n-th child
   CColRefSet *PcrsRequiredAgg(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG child_index,
                               CColRefArray *pdrgpcrGrp);
-
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequiredAgg(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsInput,
-                                    ULONG child_index, ULONG ulOptReq, CColRefArray *pdrgpcgGrp,
-                                    CColRefArray *pdrgpcrGrpMinimal) const;
 
  public:
   CPhysicalAgg(const CPhysicalAgg &) = delete;
@@ -149,14 +130,6 @@ class CPhysicalAgg : public CPhysical {
   CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-  // compute required distribution of the n-th child
-  CDistributionSpec *PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CDistributionSpec *pdsRequired,
-                                 ULONG child_index,
-                                 CDrvdPropArray *,  // pdrgpdpCtxt,
-                                 ULONG ulOptReq) const override {
-    return PdsRequiredAgg(mp, exprhdl, pdsRequired, child_index, ulOptReq, m_pdrgpcr, m_pdrgpcrMinimal);
-  }
-
   // compute required rewindability of the n-th child
   CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
                                   ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
@@ -168,19 +141,12 @@ class CPhysicalAgg : public CPhysical {
   // Derived Plan Properties
   //-------------------------------------------------------------------------------------
 
-  // derive distribution
-  CDistributionSpec *PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
-
   // derive rewindability
   CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   //-------------------------------------------------------------------------------------
   // Enforced Properties
   //-------------------------------------------------------------------------------------
-
-  // return distribution property enforcing type for this operator
-  CEnfdProp::EPropEnforcingType EpetDistribution(CExpressionHandle &exprhdl,
-                                                 const CEnfdDistribution *ped) const override;
 
   // return rewindability property enforcing type for this operator
   CEnfdProp::EPropEnforcingType EpetRewindability(CExpressionHandle &,        // exprhdl

@@ -15,13 +15,11 @@
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
 #include "gpos/string/CWStringConst.h"
-
 #include "naucrates/md/IMDId.h"
 namespace gpdxl {
 using namespace gpos;
 using namespace gpmd;
 // fwd decl
-class CXMLSerializer;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -79,12 +77,6 @@ class CDXLDatum : public CRefCount {
 
   // byte array length
   virtual ULONG Length() const;
-
-  // serialize the datum as the given element
-  virtual void Serialize(CXMLSerializer *xml_serializer, const CWStringConst *datum_string);
-
-  // serialize the datum as the given element
-  virtual void Serialize(CXMLSerializer *xml_serializer) = 0;
 
   // ident accessors
   virtual EdxldatumType GetDatumType() const = 0;

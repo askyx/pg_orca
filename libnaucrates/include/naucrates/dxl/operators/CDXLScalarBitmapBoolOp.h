@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarBitmapBoolOp_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
 namespace gpdxl {
@@ -64,7 +63,6 @@ class CDXLScalarBitmapBoolOp : public CDXLScalar {
   BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and

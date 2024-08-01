@@ -11,13 +11,12 @@
 
 #include "gpopt/operators/CPhysicalCTEProducer.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCTEMap.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPhysicalSpool.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -94,24 +93,6 @@ COrderSpec *CPhysicalCTEProducer::PosRequired(CMemoryPool *mp, CExpressionHandle
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalCTEProducer::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalCTEProducer::PdsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                     CDistributionSpec *pdsRequired, ULONG child_index,
-                                                     CDrvdPropArray *,  // pdrgpdpCtxt
-                                                     ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  return PdsPassThru(mp, exprhdl, pdsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalCTEProducer::PrsRequired
 //
 //	@doc:
@@ -162,19 +143,6 @@ CCTEReq *CPhysicalCTEProducer::PcteRequired(CMemoryPool *,        // mp,
 COrderSpec *CPhysicalCTEProducer::PosDerive(CMemoryPool *,  // mp
                                             CExpressionHandle &exprhdl) const {
   return PosDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalCTEProducer::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalCTEProducer::PdsDerive(CMemoryPool *,  // mp
-                                                   CExpressionHandle &exprhdl) const {
-  return PdsDerivePassThruOuter(exprhdl);
 }
 
 //---------------------------------------------------------------------------

@@ -11,10 +11,9 @@
 #ifndef GPOPT_CLogicalUnionAll_H
 #define GPOPT_CLogicalUnionAll_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalUnion.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

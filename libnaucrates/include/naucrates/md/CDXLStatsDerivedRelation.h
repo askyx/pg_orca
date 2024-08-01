@@ -14,12 +14,9 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
-
 #include "naucrates/md/CDXLStatsDerivedColumn.h"
 
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -64,7 +61,6 @@ class CDXLStatsDerivedRelation : public CRefCount {
   const CDXLStatsDerivedColumnArray *GetDXLStatsDerivedColArray() const;
 
   // serialize bucket in DXL format
-  void Serialize(gpdxl::CXMLSerializer *) const;
 
 #ifdef GPOS_DEBUG
   // debug print of the bucket

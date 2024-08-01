@@ -11,14 +11,13 @@
 
 #include "gpopt/xforms/CXformInnerApplyWithOuterKey2InnerJoin.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CKeyCollection.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CLogicalInnerApply.h"
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

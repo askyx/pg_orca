@@ -130,9 +130,6 @@ CTask *CAutoTaskProxy::Create(void *(*pfunc)(void *), void *arg, BOOL *cancel) {
   CAutoP<CErrorContext> err_ctxt;
   err_ctxt = GPOS_NEW(mp) CErrorContext();
   CTask *task = CTask::Self();
-  if (nullptr != task) {
-    err_ctxt.Value()->Register(task->ConvertErrCtxt()->GetMiniDumper());
-  }
 
   // auto pointer to hold new task
   // task is created inside ATP's memory pool

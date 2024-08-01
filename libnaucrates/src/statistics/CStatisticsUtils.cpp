@@ -11,9 +11,6 @@
 
 #include "naucrates/statistics/CStatisticsUtils.h"
 
-#include "gpos/base.h"
-#include "gpos/error/CAutoTrace.h"
-
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CColRefTable.h"
 #include "gpopt/base/COptCtxt.h"
@@ -23,13 +20,12 @@
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CExpressionUtils.h"
-#include "gpopt/operators/CLogicalDynamicIndexGet.h"
-#include "gpopt/operators/CLogicalDynamicIndexOnlyGet.h"
 #include "gpopt/operators/CLogicalIndexGet.h"
 #include "gpopt/operators/CLogicalIndexOnlyGet.h"
-#include "gpopt/operators/CPhysicalDynamicScan.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
+#include "gpos/base.h"
+#include "gpos/error/CAutoTrace.h"
 #include "naucrates/base/IDatumInt2.h"
 #include "naucrates/base/IDatumInt4.h"
 #include "naucrates/base/IDatumInt8.h"
@@ -842,102 +838,6 @@ IDatum *CStatisticsUtils::DatumNull(const CColRef *colref) {
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CStatisticsUtils::DeriveStatsForDynamicScan
-//
-//	@doc:
-//		Derive statistics of dynamic scan based on the stats of corresponding
-//		part-selector in the given map,
-//
-//		for a given part table (R) with part selection predicate (R.pk=T.x),
-//		the function assumes a LeftSemiJoin(R,T)_(R.pk=T.x) expression to
-//		compute the stats of R after partitions are eliminated based on the
-//		condition (R.pk=T.x)
-//
-//---------------------------------------------------------------------------
-IStatistics *CStatisticsUtils::DeriveStatsForDynamicScan(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG scan_id,
-                                                         CPartitionPropagationSpec *pps_reqd) {
-  // extract part table base stats from passed handle
-  IStatistics *base_table_stats = exprhdl.Pstats();
-  GPOS_ASSERT(nullptr != base_table_stats);
-  if (nullptr == base_table_stats) {
-    GPOS_RAISE(gpopt::ExmaGPOPT, gpopt::ExmiNoStats, GPOS_WSZ_LIT("CPhysicalDynamicScan"));
-  }
-
-  if (!GPOS_FTRACE(EopttraceDeriveStatsForDPE)) {
-    // return base stats if stats derivation with dynamic partition
-    // elimination is disabled
-    base_table_stats->AddRef();
-    return base_table_stats;
-  }
-
-  const CBitSet *selector_ids = pps_reqd->SelectorIds(scan_id);
-  if (!pps_reqd->Contains(scan_id) || selector_ids->Size() == 0) {
-    // no corresponding partition selector is present, return base stats
-    base_table_stats->AddRef();
-    return base_table_stats;
-  }
-
-  GPOS_ASSERT(pps_reqd->SelectorIds(scan_id)->Size() > 0);
-
-  // GPDB_12_MERGE_FEATURE_NOT_SUPPORTED:
-  // each Dynamic Scan may have multiple associated PartitionSelectors;
-  // for now just use the first one in the list (similar to 6X, which used
-  // the PartitionSelector on the top-most Join node). Ideally, we would
-  // combine partition selectors here to get a more accurate stats estimate
-  const SPartSelectorInfoEntry *part_selector_info = nullptr;
-  {
-    CBitSetIter it(*selector_ids);
-    it.Advance();
-    ULONG selector_id = it.Bit();
-
-    part_selector_info = COptCtxt::PoctxtFromTLS()->GetPartSelectorInfo(selector_id);
-    GPOS_ASSERT(part_selector_info != nullptr);
-  }
-
-  IStatistics *part_selector_stats = part_selector_info->m_stats;
-  CExpression *scalar_expr = part_selector_info->m_filter_expr;
-
-  CColRefSetArray *output_colrefs = GPOS_NEW(mp) CColRefSetArray(mp);
-  output_colrefs->Append(base_table_stats->GetColRefSet(mp));
-  output_colrefs->Append(part_selector_stats->GetColRefSet(mp));
-
-  /*
-   * It should be OK to pass outer refs as empty ColrefSet since this is being used inside the
-   * ExtractJoinStatsFromJoinPredArray to determine if the Join Predicate has only outer references.
-   * This can never happen for a Dynamic table scan since we need the predicate to contain the
-   * partition key in order to generate the DTS in the first place
-   */
-  CColRefSet *outer_refs = GPOS_NEW(mp) CColRefSet(mp);
-
-  // extract all the conjuncts
-  CStatsPred *unsupported_pred_stats = nullptr;
-  CStatsPredJoinArray *join_preds_stats =
-      CStatsPredUtils::ExtractJoinStatsFromJoinPredArray(mp, scalar_expr, output_colrefs, outer_refs,
-                                                         true,  // semi-join
-                                                         &unsupported_pred_stats);
-
-  IStatistics *left_semi_join_stats = base_table_stats->CalcLSJoinStats(mp, part_selector_stats, join_preds_stats);
-
-  if (nullptr != unsupported_pred_stats) {
-    // apply the unsupported join filters as a filter on top of the join results.
-    // TODO,  June 13 2014 we currently only cap NDVs for filters
-    // (also look at CJoinStatsProcessor::CalcAllJoinStats since most of this code was taken from there)
-    IStatistics *stats_after_join_filter = CFilterStatsProcessor::MakeStatsFilter(
-        mp, dynamic_cast<CStatistics *>(left_semi_join_stats), unsupported_pred_stats, false /* do_cap_NDVs */);
-    left_semi_join_stats->Release();
-    left_semi_join_stats = stats_after_join_filter;
-  }
-
-  CRefCount::SafeRelease(unsupported_pred_stats);
-  output_colrefs->Release();
-  outer_refs->Release();
-  join_preds_stats->Release();
-
-  return left_semi_join_stats;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CStatisticsUtils::DeriveStatsForIndexGet
 //
 //	@doc:
@@ -947,9 +847,7 @@ IStatistics *CStatisticsUtils::DeriveStatsForDynamicScan(CMemoryPool *mp, CExpre
 IStatistics *CStatisticsUtils::DeriveStatsForIndexGet(CMemoryPool *mp, CExpressionHandle &expr_handle,
                                                       IStatisticsArray *stats_contexts) {
   COperator::EOperatorId operator_id = expr_handle.Pop()->Eopid();
-  GPOS_ASSERT(CLogical::EopLogicalIndexGet == operator_id || CLogical::EopLogicalIndexOnlyGet == operator_id ||
-              CLogical::EopLogicalDynamicIndexOnlyGet == operator_id ||
-              CLogical::EopLogicalDynamicIndexGet == operator_id);
+  GPOS_ASSERT(CLogical::EopLogicalIndexGet == operator_id || CLogical::EopLogicalIndexOnlyGet == operator_id);
 
   // collect columns used by index conditions and distribution of the table
   // for statistics
@@ -967,18 +865,6 @@ IStatistics *CStatisticsUtils::DeriveStatsForIndexGet(CMemoryPool *mp, CExpressi
     table_descriptor = index_only_get_op->Ptabdesc();
     if (nullptr != index_only_get_op->PcrsDist()) {
       used_col_refset->Include(index_only_get_op->PcrsDist());
-    }
-  } else if (CLogical::EopLogicalDynamicIndexOnlyGet == operator_id) {
-    CLogicalDynamicIndexOnlyGet *dynamic_index_only_get_op = CLogicalDynamicIndexOnlyGet::PopConvert(expr_handle.Pop());
-    table_descriptor = dynamic_index_only_get_op->Ptabdesc();
-    if (nullptr != dynamic_index_only_get_op->PcrsDist()) {
-      used_col_refset->Include(dynamic_index_only_get_op->PcrsDist());
-    }
-  } else {
-    CLogicalDynamicIndexGet *dynamic_index_get_op = CLogicalDynamicIndexGet::PopConvert(expr_handle.Pop());
-    table_descriptor = dynamic_index_get_op->Ptabdesc();
-    if (nullptr != dynamic_index_get_op->PcrsDist()) {
-      used_col_refset->Include(dynamic_index_get_op->PcrsDist());
     }
   }
 
@@ -1019,8 +905,7 @@ IStatistics *CStatisticsUtils::DeriveStatsForIndexGet(CMemoryPool *mp, CExpressi
 //---------------------------------------------------------------------------
 IStatistics *CStatisticsUtils::DeriveStatsForBitmapTableGet(CMemoryPool *mp, CExpressionHandle &expr_handle,
                                                             IStatisticsArray *stats_contexts) {
-  GPOS_ASSERT(CLogical::EopLogicalBitmapTableGet == expr_handle.Pop()->Eopid() ||
-              CLogical::EopLogicalDynamicBitmapTableGet == expr_handle.Pop()->Eopid());
+  GPOS_ASSERT(CLogical::EopLogicalBitmapTableGet == expr_handle.Pop()->Eopid());
 
   CTableDescriptorHashSet *table_descriptor_set = expr_handle.DeriveTableDescriptor();
   CTableDescriptor *table_descriptor = table_descriptor_set->First();

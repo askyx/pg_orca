@@ -10,16 +10,6 @@
 //---------------------------------------------------------------------------
 #include "gpopt/engine/CEngine.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CAutoTimer.h"
-#include "gpos/common/syslibwrapper.h"
-#include "gpos/error/CAutoTrace.h"
-#include "gpos/io/COstreamString.h"
-#include "gpos/memory/CAutoMemoryPool.h"
-#include "gpos/string/CWStringDynamic.h"
-#include "gpos/task/CAutoTaskProxy.h"
-#include "gpos/task/CAutoTraceFlag.h"
-
 #include "gpopt/base/CCostContext.h"
 #include "gpopt/base/CDrvdPropCtxtPlan.h"
 #include "gpopt/base/CEnfdPartitionPropagation.h"
@@ -31,14 +21,12 @@
 #include "gpopt/engine/CEnumeratorConfig.h"
 #include "gpopt/engine/CStatisticsConfig.h"
 #include "gpopt/exception.h"
-#include "gpopt/minidump/CSerializableStackTrace.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogical.h"
 #include "gpopt/operators/CPattern.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalAgg.h"
-#include "gpopt/operators/CPhysicalMotionGather.h"
 #include "gpopt/operators/CPhysicalPartitionSelector.h"
 #include "gpopt/operators/CPhysicalSort.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
@@ -52,6 +40,15 @@
 #include "gpopt/search/CScheduler.h"
 #include "gpopt/search/CSchedulerContext.h"
 #include "gpopt/xforms/CXformFactory.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoTimer.h"
+#include "gpos/common/syslibwrapper.h"
+#include "gpos/error/CAutoTrace.h"
+#include "gpos/io/COstreamString.h"
+#include "gpos/memory/CAutoMemoryPool.h"
+#include "gpos/string/CWStringDynamic.h"
+#include "gpos/task/CAutoTaskProxy.h"
+#include "gpos/task/CAutoTraceFlag.h"
 #include "naucrates/traceflags/traceflags.h"
 
 #define GPOPT_SAMPLING_MAX_ITERS 30
@@ -63,8 +60,6 @@
 #define GPOPT_MEM_UNIT_NAME "MB"
 
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CEngine);
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -455,14 +450,6 @@ BOOL CEngine::FOptimizeChild(CGroupExpression *pgexprParent, CGroupExpression *p
   if (pgexprChild->Eol() != eolCurrent) {
     // child group expression does not match current optimization level
     return false;
-  }
-
-  COperator *popChild = pgexprChild->Pop();
-
-  if (nullptr != pgexprParent && COperator::EopPhysicalSort == pgexprParent->Pop()->Eopid() &&
-      COperator::EopPhysicalMotionGather == popChild->Eopid()) {
-    // prevent (Sort --> GatherMerge), since Sort destroys order maintained by GatherMerge
-    return !CPhysicalMotionGather::PopConvert(popChild)->FOrderPreserving();
   }
 
   return COptimizationContext::FOptimize(m_mp, pgexprParent, pgexprChild, pocChild, UlSearchStages());
@@ -1720,20 +1707,6 @@ BOOL CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimi
   // Determine if any property enforcement is disable or unnecessary
   BOOL fOrderReqd = !GPOS_FTRACE(EopttraceDisableSort) && !prpp->Peo()->PosRequired()->IsEmpty();
 
-  // CPhysicalLeftOuterIndexNLJoin requires the inner child to be any
-  // distribution but random. The OR makes an exception in this case.
-  // This should be generalized when more physical operators require
-  // this pattern. We need an explicit check for CPhysicalLeftOuterIndexNLJoin
-  // when there are no motions, therefore we need to handle this exceptional
-  // case here.
-  //
-  // Similar exceptions should be OR'd into fDistributionReqdException to
-  // force checking EpetDistribution on the physical operation
-  BOOL fDistributionReqdException = popPhysical->Eopid() == COperator::EopPhysicalLeftOuterIndexNLJoin;
-  BOOL fDistributionReqd =
-      !GPOS_FTRACE(EopttraceDisableMotions) &&
-      ((CDistributionSpec::EdtAny != prpp->Ped()->PdsRequired()->Edt()) || fDistributionReqdException);
-
   BOOL fRewindabilityReqd = !GPOS_FTRACE(EopttraceDisableSpool) && (prpp->Per()->PrsRequired()->IsCheckRequired());
 
   BOOL fPartPropagationReqd =
@@ -1745,9 +1718,6 @@ BOOL CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimi
 
   // get order enforcing type
   CEnfdProp::EPropEnforcingType epetOrder = prpp->Peo()->Epet(exprhdl, popPhysical, fOrderReqd);
-
-  // get distribution enforcing type
-  CEnfdProp::EPropEnforcingType epetDistribution = prpp->Ped()->Epet(exprhdl, popPhysical, fDistributionReqd);
 
   // get rewindability enforcing type
   CEnfdProp::EPropEnforcingType epetRewindability = prpp->Per()->Epet(exprhdl, popPhysical, fRewindabilityReqd);
@@ -1764,7 +1734,7 @@ BOOL CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimi
   // expression G because it was prohibited, some other group expression H may
   // decide to add it. And if E is added, it is possible for E to consider both
   // G and H as its child.
-  if (FProhibited(epetOrder, epetDistribution, epetRewindability, epetPartitionPropagation)) {
+  if (FProhibited(epetOrder, epetRewindability, epetPartitionPropagation)) {
     pcc->Release();
     return false;
   }
@@ -1778,7 +1748,6 @@ BOOL CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimi
   GPOS_ASSERT(pexpr->Pgexpr()->Pgroup() == pgexpr->Pgroup());
 
   prpp->Peo()->AppendEnforcers(mp, prpp, pdrgpexprEnforcers, pexpr, epetOrder, exprhdl);
-  prpp->Ped()->AppendEnforcers(mp, prpp, pdrgpexprEnforcers, pexpr, epetDistribution, exprhdl);
   prpp->Per()->AppendEnforcers(mp, prpp, pdrgpexprEnforcers, pexpr, epetRewindability, exprhdl);
   prpp->Pepp()->AppendEnforcers(mp, prpp, pdrgpexprEnforcers, pexpr, epetPartitionPropagation, exprhdl);
 
@@ -1789,7 +1758,7 @@ BOOL CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimi
   pexpr->Release();
   pcc->Release();
 
-  return FOptimize(epetOrder, epetDistribution, epetRewindability, epetPartitionPropagation);
+  return FOptimize(epetOrder, epetRewindability, epetPartitionPropagation);
 }
 
 //---------------------------------------------------------------------------
@@ -1822,11 +1791,10 @@ BOOL CEngine::FChildrenOptimized(COptimizationContextArray *pdrgpoc) {
 //		types
 //
 //---------------------------------------------------------------------------
-BOOL CEngine::FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetDistribution,
-                        CEnfdProp::EPropEnforcingType epetRewindability,
+BOOL CEngine::FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetRewindability,
                         CEnfdProp::EPropEnforcingType epetPropagation) {
-  return CEnfdProp::FOptimize(epetOrder) && CEnfdProp::FOptimize(epetDistribution) &&
-         CEnfdProp::FOptimize(epetRewindability) && CEnfdProp::FOptimize(epetPropagation);
+  return CEnfdProp::FOptimize(epetOrder) && CEnfdProp::FOptimize(epetRewindability) &&
+         CEnfdProp::FOptimize(epetPropagation);
 }
 
 //---------------------------------------------------------------------------
@@ -1837,11 +1805,10 @@ BOOL CEngine::FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPro
 //		Check if any of the given property enforcing types prohibits enforcement
 //
 //---------------------------------------------------------------------------
-BOOL CEngine::FProhibited(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetDistribution,
-                          CEnfdProp::EPropEnforcingType epetRewindability,
+BOOL CEngine::FProhibited(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetRewindability,
                           CEnfdProp::EPropEnforcingType epetPropagation) {
-  return (CEnfdProp::EpetProhibited == epetOrder || CEnfdProp::EpetProhibited == epetDistribution ||
-          CEnfdProp::EpetProhibited == epetRewindability || CEnfdProp::EpetProhibited == epetPropagation);
+  return (CEnfdProp::EpetProhibited == epetOrder || CEnfdProp::EpetProhibited == epetRewindability ||
+          CEnfdProp::EpetProhibited == epetPropagation);
 }
 
 //---------------------------------------------------------------------------
@@ -1884,14 +1851,6 @@ BOOL CEngine::FCheckReqdProps(CExpressionHandle &exprhdl, CReqdPropPlan *prpp, U
   // sort optimizing same group with the same optimization context;
   BOOL fOrderReqd = !prpp->Peo()->PosRequired()->IsEmpty();
   if (!fOrderReqd && COperator::EopPhysicalSort == op_id) {
-    return false;
-  }
-
-  // check if motion operator is passed an ANY distribution spec;
-  // this check is required to avoid self-deadlocks, i.e.
-  // motion optimizing same group with the same optimization context;
-  BOOL fDistributionReqd = (CDistributionSpec::EdtAny != prpp->Ped()->PdsRequired()->Edt());
-  if (!fDistributionReqd && CUtils::FPhysicalMotion(popPhysical)) {
     return false;
   }
 

@@ -13,7 +13,6 @@
 #define GPDXL_CDXLLogicalJoin_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
 namespace gpdxl {
@@ -47,7 +46,6 @@ class CDXLLogicalJoin : public CDXLLogical {
   const CWStringConst *GetJoinTypeNameStr() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLLogicalJoin *Cast(CDXLOperator *dxl_op) {

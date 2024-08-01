@@ -13,7 +13,6 @@
 
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpopt;
 using namespace gpmd;
@@ -52,23 +51,6 @@ Edxlopid CDXLScalarDMLAction::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLScalarDMLAction::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarDMLAction);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarDMLAction::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarDMLAction::SerializeToDXL(CXMLSerializer *xml_serializer,
-                                         const CDXLNode *  // node
-) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------

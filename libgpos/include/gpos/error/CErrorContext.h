@@ -14,7 +14,6 @@
 
 #include "gpos/common/CStackDescriptor.h"
 #include "gpos/error/CException.h"
-#include "gpos/error/CMiniDumper.h"
 #include "gpos/error/CSerializable.h"
 #include "gpos/error/IErrorContext.h"
 #include "gpos/io/ioutils.h"
@@ -63,14 +62,11 @@ class CErrorContext : public IErrorContext {
   // list of objects to serialize on exception
   CList<CSerializable> m_serializable_objects_list;
 
-  // minidump handler
-  CMiniDumper *m_mini_dumper_handle;
-
  public:
   CErrorContext(const CErrorContext &) = delete;
 
   // ctor
-  explicit CErrorContext(CMiniDumper *mini_dumper_handle = nullptr);
+  explicit CErrorContext();
 
   // dtor
   ~CErrorContext() override;
@@ -88,33 +84,11 @@ class CErrorContext : public IErrorContext {
 
   CStackDescriptor *GetStackDescriptor() { return &m_stack_descriptor; }
 
-  CMiniDumper *GetMiniDumper() { return m_mini_dumper_handle; }
-
-  // register minidump handler
-  void Register(CMiniDumper *mini_dumper_handle) {
-    GPOS_ASSERT(nullptr == m_mini_dumper_handle);
-
-    m_mini_dumper_handle = mini_dumper_handle;
-  }
-
-  // unregister minidump handler
-  void Unregister(
-#ifdef GPOS_DEBUG
-      CMiniDumper *mini_dumper_handle
-#endif  // GPOS_DEBUG
-  ) {
-    GPOS_ASSERT(mini_dumper_handle == m_mini_dumper_handle);
-    m_mini_dumper_handle = nullptr;
-  }
-
   // register object to serialize
   void Register(CSerializable *serializable_obj) { m_serializable_objects_list.Append(serializable_obj); }
 
   // unregister object to serialize
   void Unregister(CSerializable *serializable_obj) { m_serializable_objects_list.Remove(serializable_obj); }
-
-  // serialize registered objects
-  void Serialize();
 
   // copy necessary info for error propagation
   void CopyPropErrCtxt(const IErrorContext *perrctxt) override;

@@ -11,10 +11,9 @@
 #ifndef GPOPT_CLogicalLeftAntiSemiApply_H
 #define GPOPT_CLogicalLeftAntiSemiApply_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalApply.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

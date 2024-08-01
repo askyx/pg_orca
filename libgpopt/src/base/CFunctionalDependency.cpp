@@ -11,13 +11,10 @@
 
 #include "gpopt/base/CFunctionalDependency.h"
 
+#include "gpopt/base/CUtils.h"
 #include "gpos/base.h"
 
-#include "gpopt/base/CUtils.h"
-
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CFunctionalDependency);
 
 //---------------------------------------------------------------------------
 //	@function:

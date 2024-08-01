@@ -14,7 +14,6 @@
 
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpopt;
 using namespace gpos;
@@ -126,32 +125,6 @@ BOOL CDXLScalarFuncExpr::ReturnsSet() const {
 //---------------------------------------------------------------------------
 BOOL CDXLScalarFuncExpr::IsFuncVariadic() const {
   return m_funcvariadic;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarFuncExpr::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarFuncExpr::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  m_func_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenFuncId));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenFuncRetSet), m_returns_set);
-  m_return_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenFuncVariadic), m_funcvariadic);
-
-  if (default_type_modifier != TypeModifier()) {
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeMod), TypeModifier());
-  }
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 //---------------------------------------------------------------------------

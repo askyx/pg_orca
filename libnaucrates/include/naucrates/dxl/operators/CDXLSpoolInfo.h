@@ -15,12 +15,11 @@
 
 #include "gpos/base.h"
 #include "gpos/string/CWStringConst.h"
-
 #include "naucrates/dxl/gpdb_types.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 
 namespace gpdxl {
 // fwd decl
-class CXMLSerializer;
 
 enum Edxlspooltype { EdxlspoolNone, EdxlspoolMaterialize, EdxlspoolSort, EdxlspoolSentinel };
 
@@ -71,7 +70,6 @@ class CDXLSpoolInfo {
   INT GetExecutorSliceId() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *) const;
 };
 }  // namespace gpdxl
 

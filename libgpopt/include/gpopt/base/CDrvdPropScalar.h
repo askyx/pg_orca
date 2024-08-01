@@ -11,14 +11,13 @@
 #ifndef GPOPT_CDrvdPropScalar_H
 #define GPOPT_CDrvdPropScalar_H
 
-#include "gpos/base.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/base/CFunctionProp.h"
 #include "gpopt/base/CPartInfo.h"
+#include "gpos/base.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 using namespace gpos;

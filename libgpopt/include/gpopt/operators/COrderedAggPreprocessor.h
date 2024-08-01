@@ -11,11 +11,10 @@
 #ifndef GPOPT_COrderedAggPreprocessor_H
 #define GPOPT_COrderedAggPreprocessor_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/base/CWindowFrame.h"
 #include "gpopt/operators/CExpression.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

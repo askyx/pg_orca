@@ -11,13 +11,12 @@
 
 #include "gpopt/xforms/CXformRemoveSubqDistinct.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalSelect.h"
 #include "gpopt/operators/COperator.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/search/CGroupProxy.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

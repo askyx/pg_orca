@@ -11,11 +11,10 @@
 #ifndef GPOPT_CFunctionalDependency_H
 #define GPOPT_CFunctionalDependency_H
 
+#include "gpopt/base/CColRefSet.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
-
-#include "gpopt/base/CColRefSet.h"
 
 namespace gpopt {
 // fwd declarations
@@ -34,7 +33,7 @@ using namespace gpos;
 //		Functional dependency representation
 //
 //---------------------------------------------------------------------------
-class CFunctionalDependency : public CRefCount, public DbgPrintMixin<CFunctionalDependency> {
+class CFunctionalDependency : public CRefCount {
  private:
   // the left hand side of the FD
   CColRefSet *m_pcrsKey;

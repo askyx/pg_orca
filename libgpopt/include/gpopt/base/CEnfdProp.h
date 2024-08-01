@@ -11,12 +11,11 @@
 #ifndef GPOPT_CEnfdProp_H
 #define GPOPT_CEnfdProp_H
 
+#include "gpopt/base/CPropSpec.h"
+#include "gpopt/operators/COperator.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
-
-#include "gpopt/base/CPropSpec.h"
-#include "gpopt/operators/COperator.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -33,7 +32,7 @@ class CReqdPropPlan;
 //		Abstract base class for all enforceable properties.
 //
 //---------------------------------------------------------------------------
-class CEnfdProp : public CRefCount, public DbgPrintMixin<CEnfdProp> {
+class CEnfdProp : public CRefCount {
  public:
   // Definition of property enforcing type for a given operator.
   //

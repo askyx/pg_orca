@@ -11,9 +11,8 @@
 #ifndef GPOPT_CScalarSubqueryAny_H
 #define GPOPT_CScalarSubqueryAny_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CScalarSubqueryQuantified.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

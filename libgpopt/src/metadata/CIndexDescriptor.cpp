@@ -11,15 +11,12 @@
 
 #include "gpopt/metadata/CIndexDescriptor.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColumnFactory.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CIndexDescriptor);
 
 //---------------------------------------------------------------------------
 //	@function:

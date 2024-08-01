@@ -1,0 +1,47 @@
+# run-clang-tidy -p build -config-file=./.clang-tidy
+# clang-tidy-18 -p=build --config-file=./.clang-tidy /home/vscode/gporca-archive/src/utils/COptTasks.cpp 
+
+---
+Checks:     '
+            bugprone-*,
+            clang-analyzer-*,
+            google-*,
+            modernize-*,
+            performance-*,
+            portability-*,
+            readability-*,
+            -bugprone-exception-escape,
+            -bugprone-macro-parentheses,
+            -bugprone-too-small-loop-variable,
+            -bugprone-easily-swappable-parameters,
+            -clang-analyzer-cplusplus.NewDelete,
+            -clang-analyzer-cplusplus.NewDeleteLeaks,
+            -google-readability-braces-around-statements,
+            -google-readability-casting,
+            -google-readability-todo,
+            -modernize-use-nodiscard,
+            -modernize-avoid-c-arrays,
+            -modernize-use-trailing-return-type,
+            -modernize-macro-to-enum,
+            -readability-braces-around-statements,
+            -readability-isolate-declaration,
+            -readability-magic-numbers,
+            -readability-uppercase-literal-suffix,
+            -readability-identifier-length,
+            -portability-simd-intrinsics,
+            -performance-enum-size,
+            '
+CheckOptions:
+  - { key: readability-identifier-naming.ClassCase,           value: CamelCase  }
+  - { key: readability-identifier-naming.EnumCase,            value: CamelCase  }
+  - { key: readability-identifier-naming.FunctionCase,        value: CamelCase  }
+  - { key: readability-identifier-naming.GlobalConstantCase,  value: UPPER_CASE }
+  - { key: readability-identifier-naming.MemberCase,          value: lower_case }
+  - { key: readability-identifier-naming.MemberSuffix,        value: _          }
+  - { key: readability-identifier-naming.NamespaceCase,       value: lower_case }
+  - { key: readability-identifier-naming.StructCase,          value: CamelCase  }
+  - { key: readability-identifier-naming.UnionCase,           value: CamelCase  }
+  - { key: readability-identifier-naming.VariableCase,        value: lower_case }
+WarningsAsErrors: '*'
+HeaderFilterRegex: '(libgpdbcost|libgpopt|libgpos|libnaucrates|src)/include'
+

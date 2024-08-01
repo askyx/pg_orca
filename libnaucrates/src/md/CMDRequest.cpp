@@ -12,9 +12,7 @@
 #include "naucrates/md/CMDRequest.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpdxl;
 using namespace gpmd;
@@ -79,47 +77,3 @@ CWStringDynamic *CMDRequest::GetStrRepr(CSystemId sysid) {
   str->AppendFormat(GPOS_WSZ_LIT("%d.%ls"), sysid.MdidType(), sysid.GetBuffer());
   return str;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDRequest::Serialize
-//
-//	@doc:
-//		Serialize relation metadata in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDRequest::Serialize(CXMLSerializer *xml_serializer) {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenMDRequest));
-
-  const ULONG ulMdids = m_mdid_array->Size();
-  for (ULONG ul = 0; ul < ulMdids; ul++) {
-    IMDId *mdid = (*m_mdid_array)[ul];
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-    mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenValue));
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                 CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-  }
-
-  const ULONG requests = m_mdtype_request_array->Size();
-  for (ULONG ul = 0; ul < requests; ul++) {
-    SMDTypeRequest *md_type_request = (*m_mdtype_request_array)[ul];
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                CDXLTokens::GetDXLTokenStr(EdxltokenMDTypeRequest));
-
-    CWStringDynamic *str = GetStrRepr(md_type_request->m_sysid);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenSysid), str);
-    GPOS_DELETE(str);
-
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeInfo), md_type_request->m_type_info);
-
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                 CDXLTokens::GetDXLTokenStr(EdxltokenMDTypeRequest));
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenMDRequest));
-}
-
-// EOF

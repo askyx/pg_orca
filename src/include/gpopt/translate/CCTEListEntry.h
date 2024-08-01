@@ -18,7 +18,6 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CHashMap.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
 
 // fwd declaration

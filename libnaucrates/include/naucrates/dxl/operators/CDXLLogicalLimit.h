@@ -13,7 +13,6 @@
 #define GPDXL_CDXLLogicalLimit_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 
@@ -55,7 +54,6 @@ class CDXLLogicalLimit : public CDXLLogical {
   BOOL IsTopLimitUnderDMLorCTAS() const { return m_top_limit_under_dml; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLLogicalLimit *Cast(CDXLOperator *dxl_op) {

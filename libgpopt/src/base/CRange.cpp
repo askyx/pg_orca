@@ -11,17 +11,14 @@
 
 #include "gpopt/base/CRange.h"
 
-#include "gpos/base.h"
-#include "gpos/error/CAutoTrace.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/base/IComparator.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
+#include "gpos/error/CAutoTrace.h"
 #include "naucrates/md/IMDScalarOp.h"
 
 using namespace gpopt;
-
-FORCE_GENERATE_DBGSTR(CRange);
 
 //---------------------------------------------------------------------------
 //	@function:

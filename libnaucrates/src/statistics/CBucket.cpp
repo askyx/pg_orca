@@ -12,9 +12,8 @@
 
 #include <stdlib.h>
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COptCtxt.h"
+#include "gpos/base.h"
 #include "naucrates/base/IDatum.h"
 #include "naucrates/statistics/CStatistics.h"
 #include "naucrates/statistics/CStatisticsUtils.h"
@@ -174,8 +173,6 @@ CDouble CBucket::GetOverlapPercentage(const CPoint *point, BOOL include_point) c
 
   return CDouble(std::min(res.Get(), DOUBLE(1.0)));
 }
-
-FORCE_GENERATE_DBGSTR(gpnaucrates::CBucket);
 
 //---------------------------------------------------------------------------
 //	@function:

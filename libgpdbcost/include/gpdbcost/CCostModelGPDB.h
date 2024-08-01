@@ -11,14 +11,13 @@
 #ifndef GPDBCOST_CCostModelGPDB_H
 #define GPDBCOST_CCostModelGPDB_H
 
-#include "gpos/base.h"
-#include "gpos/common/CDouble.h"
-
 #include "gpdbcost/CCostModelParamsGPDB.h"
 #include "gpopt/cost/CCost.h"
 #include "gpopt/cost/ICostModel.h"
 #include "gpopt/cost/ICostModelParams.h"
 #include "gpopt/operators/COperator.h"
+#include "gpos/base.h"
+#include "gpos/common/CDouble.h"
 
 namespace gpdbcost {
 using namespace gpos;
@@ -37,9 +36,6 @@ class CCostModelGPDB : public ICostModel {
  private:
   // memory pool
   CMemoryPool *m_mp;
-
-  // number of segments
-  ULONG m_num_of_segments;
 
   // cost model parameters
   CCostModelParamsGPDB *m_cost_model_params;
@@ -152,10 +148,6 @@ class CCostModelGPDB : public ICostModel {
   static CCost CostIndexNLJoin(CMemoryPool *mp, CExpressionHandle &exprhdl, const CCostModelGPDB *pcmgpdb,
                                const SCostingInfo *pci);
 
-  // cost of motion
-  static CCost CostMotion(CMemoryPool *mp, CExpressionHandle &exprhdl, const CCostModelGPDB *pcmgpdb,
-                          const SCostingInfo *pci);
-
   // cost of bitmap scan when the NDV is small
   static CCost CostBitmapSmallNDV(const CCostModelGPDB *pcmgpdb, const SCostingInfo *pci, CDouble dNDV);
 
@@ -181,14 +173,10 @@ class CCostModelGPDB : public ICostModel {
 
  public:
   // ctor
-  CCostModelGPDB(CMemoryPool *mp, ULONG ulSegments, CCostModelParamsGPDB *pcp = nullptr);
+  CCostModelGPDB(CMemoryPool *mp, CCostModelParamsGPDB *pcp = nullptr);
 
   // dtor
   ~CCostModelGPDB() override;
-
-  // number of segments
-  ULONG
-  UlHosts() const override { return m_num_of_segments; }
 
   // return number of rows per host
   CDouble DRowsPerHost(CDouble dRowsTotal) const override;

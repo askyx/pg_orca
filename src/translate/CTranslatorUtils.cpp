@@ -15,23 +15,17 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "access/sysattr.h"
-#include "catalog/pg_proc.h"
-#include "catalog/pg_statistic.h"
-#include "catalog/pg_type.h"
-#include "nodes/parsenodes.h"
-#include "nodes/plannodes.h"
-#include "utils/guc.h"
-#include "utils/rel.h"
+#include <access/sysattr.h>
+#include <catalog/pg_proc.h>
+#include <catalog/pg_statistic.h>
+#include <catalog/pg_type.h>
+#include <nodes/parsenodes.h>
+#include <nodes/plannodes.h>
+#include <utils/guc.h>
+#include <utils/rel.h>
 }
-
-#include "gpos/attributes.h"
-#include "gpos/base.h"
-#include "gpos/common/CAutoTimer.h"
-#include "gpos/common/CBitSetIter.h"
-#include "gpos/string/CWStringDynamic.h"
 
 #include "gpopt/base/CUtils.h"
 #include "gpopt/gpdbwrappers.h"
@@ -40,6 +34,11 @@ extern "C" {
 #include "gpopt/translate/CTranslatorRelcacheToDXL.h"
 #include "gpopt/translate/CTranslatorScalarToDXL.h"
 #include "gpopt/translate/CTranslatorUtils.h"
+#include "gpos/attributes.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoTimer.h"
+#include "gpos/common/CBitSetIter.h"
+#include "gpos/string/CWStringDynamic.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/gpdb_types.h"
 #include "naucrates/dxl/operators/CDXLColDescr.h"
@@ -49,8 +48,6 @@ extern "C" {
 #include "naucrates/dxl/operators/CDXLDatumInt8.h"
 #include "naucrates/dxl/operators/CDXLDatumOid.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/operators/CDXLPhysicalRandomMotion.h"
-#include "naucrates/dxl/operators/CDXLPhysicalRedistributeMotion.h"
 #include "naucrates/dxl/operators/CDXLScalarAssertConstraint.h"
 #include "naucrates/dxl/operators/CDXLScalarIdent.h"
 #include "naucrates/dxl/operators/CDXLScalarProjElem.h"
@@ -330,7 +327,7 @@ IMdIdArray *CTranslatorUtils::ResolvePolymorphicTypes(CMemoryPool *mp, IMdIdArra
 
   // copy the first 'num_args' function argument types
   ListCell *arg_type = nullptr;
-  ForEach(arg_type, input_arg_types) {
+  foreach (arg_type, input_arg_types) {
     if (arg_index >= num_args) {
       break;
     }
@@ -403,7 +400,7 @@ CDXLColDescrArray *CTranslatorUtils::GetColumnDescriptorsFromRecord(CMemoryPool 
   ULONG ul = 0;
   CDXLColDescrArray *column_descrs = GPOS_NEW(mp) CDXLColDescrArray(mp);
 
-  ForThree(col_name, col_names, col_type, col_types, col_type_modifier, col_type_modifiers) {
+  forthree(col_name, col_names, col_type, col_types, col_type_modifier, col_type_modifiers) {
     Value *value = (Value *)lfirst(col_name);
     Oid coltype = lfirst_oid(col_type);
     INT type_modifier = lfirst_int(col_type_modifier);
@@ -441,7 +438,7 @@ CDXLColDescrArray *CTranslatorUtils::GetColumnDescriptorsFromRecord(CMemoryPool 
   ULONG ul = 0;
   CDXLColDescrArray *column_descrs = GPOS_NEW(mp) CDXLColDescrArray(mp);
 
-  ForEach(col_name, col_names) {
+  foreach (col_name, col_names) {
     Value *value = (Value *)lfirst(col_name);
 
     CHAR *col_name_char_array = strVal(value);
@@ -762,7 +759,7 @@ CBitSetArray *CTranslatorUtils::GetColumnAttnosForGroupBy(
   CBitSetArray *col_attnos_arr = GPOS_NEW(mp) CBitSetArray(mp);
 
   ListCell *cell = nullptr;
-  ForEach(cell, grouping_set_list) {
+  foreach (cell, grouping_set_list) {
     Node *node = (Node *)lfirst(cell);
     GPOS_ASSERT(nullptr != node && IsA(node, GroupingSet));
     GroupingSet *grouping_set = (GroupingSet *)node;
@@ -841,7 +838,7 @@ CBitSetArray *CTranslatorUtils::CreateGroupingSetsForSets(CMemoryPool *mp, const
   CBitSetArray *col_attnos_arr = GPOS_NEW(mp) CBitSetArray(mp);
 
   ListCell *cell = nullptr;
-  ForEach(cell, grouping_set->content) {
+  foreach (cell, grouping_set->content) {
     Node *n = (Node *)lfirst(cell);
     GPOS_ASSERT(IsA(n, GroupingSet));
     GroupingSet *gs_current = (GroupingSet *)n;
@@ -905,7 +902,7 @@ CBitSetArray *CTranslatorUtils::CreateGroupingSetsForRollup(CMemoryPool *mp, con
   // UnionAll operator matches each child's distribution with the
   // distribution of the first child
   col_attnos_arr->Append(GPOS_NEW(mp) CBitSet(mp));
-  ForEach(lc, grouping_set->content) {
+  foreach (lc, grouping_set->content) {
     GroupingSet *gs_current = (GroupingSet *)lfirst(lc);
     GPOS_ASSERT(gs_current->kind == GROUPING_SET_SIMPLE);
 
@@ -938,7 +935,7 @@ CBitSetArray *CTranslatorUtils::CreateGroupingSetsForCube(CMemoryPool *mp, const
   col_attnos_arr->Append(GPOS_NEW(mp) CBitSet(mp));
 
   ListCell *lc = nullptr;
-  ForEach(lc, grouping_set->content) {
+  foreach (lc, grouping_set->content) {
     ULONG current_results_size = col_attnos_arr->Size();
 
     for (ULONG ul = 0; ul < current_results_size; ul++) {
@@ -978,7 +975,7 @@ CBitSet *CTranslatorUtils::CreateAttnoSetForGroupingSet(
   CBitSet *bs = GPOS_NEW(mp) CBitSet(mp, num_cols);
 
   ListCell *lc = nullptr;
-  ForEach(lc, group_elems) {
+  foreach (lc, group_elems) {
     ULONG sort_group_ref;
     if (use_group_clause) {
       Node *elem_node = (Node *)lfirst(lc);
@@ -1018,7 +1015,7 @@ ULongPtrArray *CTranslatorUtils::GenerateColIds(
   ListCell *target_entry_cell = nullptr;
   ULongPtrArray *colid_array = GPOS_NEW(mp) ULongPtrArray(mp);
 
-  ForEach(target_entry_cell, target_list) {
+  foreach (target_entry_cell, target_list) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(target_entry_cell);
     GPOS_ASSERT(nullptr != target_entry->expr);
 
@@ -1066,7 +1063,7 @@ Query *CTranslatorUtils::FixUnknownTypeConstant(Query *old_query, List *output_t
   ULONG pos = 0;
   ULONG col_pos = 0;
   ListCell *target_entry_cell = nullptr;
-  ForEach(target_entry_cell, old_query->targetList) {
+  foreach (target_entry_cell, old_query->targetList) {
     TargetEntry *old_target_entry = (TargetEntry *)lfirst(target_entry_cell);
     GPOS_ASSERT(nullptr != old_target_entry->expr);
 
@@ -1115,7 +1112,7 @@ OID CTranslatorUtils::GetTargetListReturnTypeOid(List *target_list, ULONG col_po
   ULONG col_idx = 0;
   ListCell *target_entry_cell = nullptr;
 
-  ForEach(target_entry_cell, target_list) {
+  foreach (target_entry_cell, target_list) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(target_entry_cell);
     GPOS_ASSERT(nullptr != target_entry->expr);
 
@@ -1147,7 +1144,7 @@ CDXLColDescrArray *CTranslatorUtils::GetDXLColumnDescrArray(CMemoryPool *mp, Lis
   ListCell *target_entry_cell = nullptr;
   CDXLColDescrArray *dxl_col_descrs = GPOS_NEW(mp) CDXLColDescrArray(mp);
   ULONG ul = 0;
-  ForEach(target_entry_cell, target_list) {
+  foreach (target_entry_cell, target_list) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(target_entry_cell);
 
     if (target_entry->resjunk && !keep_res_junked) {
@@ -1177,7 +1174,7 @@ ULongPtrArray *CTranslatorUtils::GetPosInTargetList(CMemoryPool *mp, List *targe
   ListCell *target_entry_cell = nullptr;
   ULongPtrArray *positions = GPOS_NEW(mp) ULongPtrArray(mp);
   ULONG ul = 0;
-  ForEach(target_entry_cell, target_list) {
+  foreach (target_entry_cell, target_list) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(target_entry_cell);
 
     if (target_entry->resjunk && !keep_res_junked) {
@@ -1267,7 +1264,7 @@ ULongPtrArray *CTranslatorUtils::GetOutputColIdsArray(CMemoryPool *mp, List *tar
   ULongPtrArray *colids = GPOS_NEW(mp) ULongPtrArray(mp);
 
   ListCell *target_entry_cell = nullptr;
-  ForEach(target_entry_cell, target_list) {
+  foreach (target_entry_cell, target_list) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(target_entry_cell);
     ULONG resno = (ULONG)target_entry->resno;
     INT attno = (INT)target_entry->resno;
@@ -1336,7 +1333,7 @@ TargetEntry *CTranslatorUtils::GetWindowSpecTargetEntry(Node *node, List *window
   List *target_list_subset = gpdb::FindMatchingMembersInTargetList(node, target_list);
 
   ListCell *target_entry_cell = nullptr;
-  ForEach(target_entry_cell, target_list_subset) {
+  foreach (target_entry_cell, target_list_subset) {
     TargetEntry *cur_target_entry = (TargetEntry *)lfirst(target_entry_cell);
     if (IsReferencedInWindowSpec(cur_target_entry, window_clause_list)) {
       gpdb::GPDBFree(target_list_subset);
@@ -1356,7 +1353,7 @@ TargetEntry *CTranslatorUtils::GetWindowSpecTargetEntry(Node *node, List *window
 //---------------------------------------------------------------------------
 BOOL CTranslatorUtils::IsReferencedInWindowSpec(const TargetEntry *target_entry, List *window_clause_list) {
   ListCell *window_clause_cell;
-  ForEach(window_clause_cell, window_clause_list) {
+  foreach (window_clause_cell, window_clause_list) {
     WindowClause *window_clause = (WindowClause *)lfirst(window_clause_cell);
     if (IsSortingColumn(target_entry, window_clause->orderClause) ||
         IsSortingColumn(target_entry, window_clause->partitionClause)) {
@@ -1395,7 +1392,7 @@ CDXLNode *CTranslatorUtils::CreateDXLProjElemFromInt8Const(CMemoryPool *mp, CMDA
 //---------------------------------------------------------------------------
 BOOL CTranslatorUtils::IsSortingColumn(const TargetEntry *target_entry, List *sort_clause_list) {
   ListCell *sort_clause_cell = nullptr;
-  ForEach(sort_clause_cell, sort_clause_list) {
+  foreach (sort_clause_cell, sort_clause_list) {
     Node *sort_clause = (Node *)lfirst(sort_clause_cell);
     if (IsA(sort_clause, SortGroupClause) &&
         target_entry->ressortgroupref == ((SortGroupClause *)sort_clause)->tleSortGroupRef) {
@@ -1440,7 +1437,7 @@ TargetEntry *CTranslatorUtils::GetGroupingColumnTargetEntry(Node *node, List *gr
   List *target_list_subset = gpdb::FindMatchingMembersInTargetList(node, target_list);
 
   ListCell *target_entry_cell = nullptr;
-  ForEach(target_entry_cell, target_list_subset) {
+  foreach (target_entry_cell, target_list_subset) {
     TargetEntry *next_target_entry = (TargetEntry *)lfirst(target_entry_cell);
     if (IsGroupingColumn(next_target_entry, group_clause)) {
       gpdb::GPDBFree(target_list_subset);
@@ -1478,7 +1475,7 @@ BOOL CTranslatorUtils::IsGroupingColumn(Node *node, List *group_clause, List *ta
 //---------------------------------------------------------------------------
 BOOL CTranslatorUtils::IsGroupingColumn(const TargetEntry *target_entry, List *group_clause) {
   ListCell *group_clause_cell = nullptr;
-  ForEach(group_clause_cell, group_clause) {
+  foreach (group_clause_cell, group_clause) {
     Node *group_clause_node = (Node *)lfirst(group_clause_cell);
 
     GPOS_ASSERT(nullptr != group_clause_node);
@@ -1607,29 +1604,6 @@ UlongToUlongMap *CTranslatorUtils::MakeNewToOldColMapping(CMemoryPool *mp, ULong
   }
 
   return old_new_col_mapping;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorUtils::IsDuplicateSensitiveMotion
-//
-//	@doc:
-//		Is this a motion sensitive to duplicates
-//
-//---------------------------------------------------------------------------
-BOOL CTranslatorUtils::IsDuplicateSensitiveMotion(CDXLPhysicalMotion *dxl_motion) {
-  Edxlopid dxl_opid = dxl_motion->GetDXLOperator();
-
-  if (EdxlopPhysicalMotionRedistribute == dxl_opid) {
-    return CDXLPhysicalRedistributeMotion::Cast(dxl_motion)->IsDuplicateSensitive();
-  }
-
-  if (EdxlopPhysicalMotionRandom == dxl_opid) {
-    return CDXLPhysicalRandomMotion::Cast(dxl_motion)->IsDuplicateSensitive();
-  }
-
-  // other motion operators are not sensitive to duplicates
-  return false;
 }
 
 //---------------------------------------------------------------------------

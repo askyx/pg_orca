@@ -11,10 +11,9 @@
 
 #include "gpopt/xforms/CXformProject2Apply.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalProject.h"
 #include "gpopt/operators/CPatternLeaf.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

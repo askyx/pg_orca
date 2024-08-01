@@ -14,7 +14,6 @@
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -105,26 +104,6 @@ const CWStringConst *CDXLScalarNullIf::GetOpNameStr() const {
 //---------------------------------------------------------------------------
 BOOL CDXLScalarNullIf::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarNullIf::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarNullIf::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  m_mdid_op->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenOpNo));
-  m_mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

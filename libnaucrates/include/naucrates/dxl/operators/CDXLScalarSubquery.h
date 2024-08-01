@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarSubquery_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
@@ -50,7 +49,6 @@ class CDXLScalarSubquery : public CDXLScalar {
   const CWStringConst *GetOpNameStr() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const override;
 
   // conversion function
   static CDXLScalarSubquery *Cast(CDXLOperator *dxl_op) {

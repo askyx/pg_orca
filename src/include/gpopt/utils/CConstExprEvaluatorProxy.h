@@ -15,12 +15,11 @@
 #ifndef GPDXL_CConstExprEvaluator_H
 #define GPDXL_CConstExprEvaluator_H
 
-#include "gpos/base.h"
-
 #include "gpopt/eval/IConstDXLNodeEvaluator.h"
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "gpopt/translate/CMappingColIdVar.h"
 #include "gpopt/translate/CTranslatorDXLToScalar.h"
+#include "gpos/base.h"
 
 namespace gpdxl {
 class CDXLNode;
@@ -73,7 +72,7 @@ class CConstExprEvaluatorProxy : public gpopt::IConstDXLNodeEvaluator {
  public:
   // ctor
   CConstExprEvaluatorProxy(CMemoryPool *mp, CMDAccessor *md_accessor)
-      : m_mp(mp), m_emptymapcidvar(m_mp), m_md_accessor(md_accessor), m_dxl2scalar_translator(m_mp, m_md_accessor, 0) {}
+      : m_mp(mp), m_emptymapcidvar(m_mp), m_md_accessor(md_accessor), m_dxl2scalar_translator(m_mp, m_md_accessor) {}
 
   // dtor
   ~CConstExprEvaluatorProxy() override = default;

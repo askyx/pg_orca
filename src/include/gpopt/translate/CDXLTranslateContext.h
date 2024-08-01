@@ -18,16 +18,15 @@
 #define GPDXL_CDXLTranslateContext_H
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "nodes/plannodes.h"
+#include <nodes/plannodes.h>
 }
 
+#include "gpopt/translate/CMappingElementColIdParamId.h"
 #include "gpos/base.h"
 #include "gpos/common/CHashMap.h"
 #include "gpos/common/CHashMapIter.h"
-
-#include "gpopt/translate/CMappingElementColIdParamId.h"
 
 // fwd decl
 struct TargetEntry;

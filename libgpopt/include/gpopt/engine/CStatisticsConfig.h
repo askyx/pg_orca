@@ -15,7 +15,6 @@
 #include "gpos/common/CDouble.h"
 #include "gpos/common/CRefCount.h"
 #include "gpos/memory/CMemoryPool.h"
-
 #include "naucrates/md/CMDIdColStats.h"
 #include "naucrates/md/IMDId.h"
 

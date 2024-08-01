@@ -11,6 +11,7 @@
 
 #include "gpos/_api.h"
 
+#include "gpopt/exception.h"
 #include "gpos/base.h"
 #include "gpos/common/CAutoP.h"
 #include "gpos/common/CDebugCounter.h"
@@ -23,8 +24,6 @@
 #include "gpos/string/CWStringStatic.h"
 #include "gpos/task/CAutoTaskProxy.h"
 #include "gpos/task/CWorkerPoolManager.h"
-
-#include "gpopt/exception.h"
 #include "naucrates/exception.h"
 
 using namespace gpos;

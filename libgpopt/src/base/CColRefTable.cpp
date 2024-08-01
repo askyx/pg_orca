@@ -12,7 +12,6 @@
 #include "gpopt/base/CColRefTable.h"
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CMDIdGPDB.h"
 
 using namespace gpopt;

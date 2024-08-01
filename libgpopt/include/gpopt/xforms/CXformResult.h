@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformResult_H
 #define GPOPT_CXformResult_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpression.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -26,7 +25,7 @@ using namespace gpos;
 //		result container
 //
 //---------------------------------------------------------------------------
-class CXformResult : public CRefCount, public DbgPrintMixin<CXformResult> {
+class CXformResult : public CRefCount {
  private:
   // set of alternatives
   CExpressionArray *m_pdrgpexpr;

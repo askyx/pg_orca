@@ -11,10 +11,9 @@
 #ifndef GPOPT_CScalarSwitchCase_H
 #define GPOPT_CScalarSwitchCase_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CDrvdProp.h"
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

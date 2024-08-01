@@ -16,10 +16,9 @@
 #ifndef GPDXL_CGPDBAttOptCol_H
 #define GPDXL_CGPDBAttOptCol_H
 
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/translate/CGPDBAttInfo.h"
 #include "gpopt/translate/COptColInfo.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpdxl {
 using namespace gpos;

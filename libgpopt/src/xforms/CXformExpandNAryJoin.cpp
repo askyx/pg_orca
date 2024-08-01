@@ -11,9 +11,6 @@
 
 #include "gpopt/xforms/CXformExpandNAryJoin.h"
 
-#include "gpos/base.h"
-#include "gpos/memory/CAutoMemoryPool.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/CLogicalNAryJoin.h"
@@ -22,6 +19,8 @@
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/xforms/CJoinOrder.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
+#include "gpos/memory/CAutoMemoryPool.h"
 
 using namespace gpopt;
 

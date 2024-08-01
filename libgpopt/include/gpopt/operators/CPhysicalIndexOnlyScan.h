@@ -11,15 +11,13 @@
 #ifndef GPOPT_CPhysicalIndexOnlyScan_H
 #define GPOPT_CPhysicalIndexOnlyScan_H
 
-#include "gpos/base.h"
-
 #include "gpopt/metadata/CIndexDescriptor.h"
 #include "gpopt/operators/CPhysicalScan.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations
 class CName;
-class CDistributionSpecHashed;
 
 //---------------------------------------------------------------------------
 //	@class:

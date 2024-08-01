@@ -18,9 +18,8 @@
 #ifndef GPOPT_CConstExprEvaluatorDefault_H
 #define GPOPT_CConstExprEvaluatorDefault_H
 
-#include "gpos/base.h"
-
 #include "gpopt/eval/IConstExprEvaluator.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

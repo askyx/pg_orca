@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarIdent_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLColRef.h"
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
@@ -56,7 +55,6 @@ class CDXLScalarIdent : public CDXLScalar {
   INT TypeModifier() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLScalarIdent *Cast(CDXLOperator *dxl_op) {

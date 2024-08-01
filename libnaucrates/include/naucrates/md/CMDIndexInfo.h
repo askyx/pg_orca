@@ -13,7 +13,6 @@
 #define GPMD_CMDIndexInfo_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDId.h"
 #include "naucrates/md/IMDInterface.h"
 
@@ -42,9 +41,6 @@ class CMDIndexInfo : public IMDInterface {
 
   // is the index partial
   BOOL IsPartial() const;
-
-  // serialize indexinfo in DXL format given a serializer object
-  virtual void Serialize(CXMLSerializer *) const;
 
 #ifdef GPOS_DEBUG
   // debug print of the index info

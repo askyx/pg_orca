@@ -13,7 +13,6 @@
 #define GPMD_IMDRelationCTAS_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDRelation.h"
 
 namespace gpdxl {

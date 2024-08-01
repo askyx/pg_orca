@@ -18,23 +18,21 @@
 #define GPDXL_SYSTEM_COLUMNS 8
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "access/sdir.h"
-#include "access/skey.h"
-#include "nodes/parsenodes.h"
+#include <access/sdir.h>
+#include <access/skey.h>
+#include <nodes/parsenodes.h>
 }
 
+#include "gpopt/translate/CMappingVarColId.h"
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
-
-#include "gpopt/translate/CMappingVarColId.h"
 #include "naucrates/dxl/CIdGenerator.h"
 #include "naucrates/dxl/operators/CDXLIndexDescr.h"
 #include "naucrates/dxl/operators/CDXLLogicalSetOp.h"
 #include "naucrates/dxl/operators/CDXLLogicalTVF.h"
 #include "naucrates/dxl/operators/CDXLPhysicalDML.h"
-#include "naucrates/dxl/operators/CDXLPhysicalMotion.h"
 #include "naucrates/dxl/operators/CDXLScalarAggref.h"
 #include "naucrates/dxl/operators/CDXLScalarSubPlan.h"
 #include "naucrates/md/CMDRelationGPDB.h"
@@ -252,9 +250,6 @@ class CTranslatorUtils {
   // check if the given function is a SIRV (single row volatile) that reads
   // or modifies SQL data
   static BOOL IsSirvFunc(CMemoryPool *mp, CMDAccessor *md_accessor, OID func_oid);
-
-  // is this a motion sensitive to duplicates
-  static BOOL IsDuplicateSensitiveMotion(gpdxl::CDXLPhysicalMotion *dxl_motion);
 
   // construct a project element with a const NULL expression
   static CDXLNode *CreateDXLProjElemConstNULL(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid, ULONG colid,

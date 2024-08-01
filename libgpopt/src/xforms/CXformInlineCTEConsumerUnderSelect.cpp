@@ -11,14 +11,13 @@
 
 #include "gpopt/xforms/CXformInlineCTEConsumerUnderSelect.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CLogicalCTEConsumer.h"
 #include "gpopt/operators/CLogicalSelect.h"
 #include "gpopt/operators/CNormalizer.h"
 #include "gpopt/operators/CPatternTree.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

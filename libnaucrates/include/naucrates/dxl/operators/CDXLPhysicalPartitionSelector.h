@@ -14,7 +14,6 @@
 
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
-
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
 namespace gpdxl {
@@ -81,7 +80,6 @@ class CDXLPhysicalPartitionSelector : public CDXLPhysical {
   ULongPtrArray *Partitions() const { return m_parts; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and

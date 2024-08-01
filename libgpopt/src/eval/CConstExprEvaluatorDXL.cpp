@@ -40,7 +40,7 @@ using namespace gpos;
 CConstExprEvaluatorDXL::CConstExprEvaluatorDXL(CMemoryPool *mp, CMDAccessor *md_accessor,
                                                IConstDXLNodeEvaluator *pconstdxleval)
     : m_pconstdxleval(pconstdxleval),
-      m_trexpr2dxl(mp, md_accessor, nullptr /*pdrgpiSegments*/, false /*fInitColumnFactory*/),
+      m_trexpr2dxl(mp, md_accessor, false /*fInitColumnFactory*/),
       m_trdxl2expr(mp, md_accessor, false /*fInitColumnFactory*/) {}
 
 //---------------------------------------------------------------------------

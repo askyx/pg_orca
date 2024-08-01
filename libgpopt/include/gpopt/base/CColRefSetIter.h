@@ -11,10 +11,9 @@
 #ifndef GPOS_CColRefSetIter_H
 #define GPOS_CColRefSetIter_H
 
+#include "gpopt/base/CColRefSet.h"
 #include "gpos/base.h"
 #include "gpos/common/CBitSetIter.h"
-
-#include "gpopt/base/CColRefSet.h"
 
 namespace gpopt {
 // fwd declarations

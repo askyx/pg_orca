@@ -12,10 +12,8 @@
 #include "naucrates/dxl/operators/CDXLPhysicalPartitionSelector.h"
 
 #include "gpos/common/CBitSetIter.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -67,43 +65,6 @@ Edxlopid CDXLPhysicalPartitionSelector::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLPhysicalPartitionSelector::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalPartitionSelector);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalPartitionSelector::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalPartitionSelector::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  m_rel_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenRelationMdid));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalPartitionSelectorId), m_selector_id);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPhysicalPartitionSelectorScanId), m_scan_id);
-
-  CWStringDynamic *serialized_partitions = CDXLUtils::Serialize(m_mp, m_parts);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenPartitions), serialized_partitions);
-  GPOS_DELETE(serialized_partitions);
-
-  dxlnode->SerializePropertiesToDXL(xml_serializer);
-
-  // serialize project list and filter lists
-  (*dxlnode)[0]->SerializeToDXL(xml_serializer);
-
-  // serialize printable filter
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenScalarPartFilterExpr));
-  (*dxlnode)[1]->SerializeToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenScalarPartFilterExpr));
-  // serialize relational child, if any
-  (*dxlnode)[2]->SerializeToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

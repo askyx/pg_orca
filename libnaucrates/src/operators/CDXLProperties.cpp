@@ -11,8 +11,6 @@
 
 #include "naucrates/dxl/operators/CDXLProperties.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpdxl;
 
 //---------------------------------------------------------------------------
@@ -63,31 +61,3 @@ void CDXLProperties::SetStats(CDXLStatsDerivedRelation *dxl_stats_derived_relati
 const CDXLStatsDerivedRelation *CDXLProperties::GetDxlStatsDrvdRelation() const {
   return m_dxl_stats_derived_relation;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLProperties::SerializePropertiesToDXL
-//
-//	@doc:
-//		Serialize operator statistics in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLProperties::SerializePropertiesToDXL(CXMLSerializer *xml_serializer) const {
-  SerializeStatsToDXL(xml_serializer);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLProperties::SerializeStatsToDXL
-//
-//	@doc:
-//		Serialize operator statistics in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLProperties::SerializeStatsToDXL(CXMLSerializer *xml_serializer) const {
-  if (nullptr != m_dxl_stats_derived_relation) {
-    m_dxl_stats_derived_relation->Serialize(xml_serializer);
-  }
-}
-
-// EOF

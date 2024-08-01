@@ -13,9 +13,7 @@
 #include "naucrates/md/CMDFunctionGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpmd;
 using namespace gpdxl;
@@ -65,12 +63,6 @@ CMDFunctionGPDB::~CMDFunctionGPDB() {
   }
 }
 
-const CWStringDynamic *CMDFunctionGPDB::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
-}
 //---------------------------------------------------------------------------
 //	@function:
 //		CMDFunctionGPDB::InitDXLTokenArrays
@@ -171,45 +163,6 @@ CWStringDynamic *CMDFunctionGPDB::GetOutputArgTypeArrayStr() const {
   }
 
   return str;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDFunctionGPDB::Serialize
-//
-//	@doc:
-//		Serialize function metadata in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDFunctionGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenGPDBFunc));
-
-  m_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenMdid));
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenName), m_mdname->GetMDName());
-
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBFuncReturnsSet), m_returns_set);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBFuncStability), GetFuncStabilityStr());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBFuncStrict), m_is_strict);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBFuncNDVPreserving), m_is_ndv_preserving);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenGPDBFuncIsAllowedForPS), m_is_allowed_for_PS);
-
-  SerializeMDIdAsElem(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenGPDBFuncResultTypeId), m_mdid_type_result);
-
-  if (nullptr != m_mdid_types_array) {
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                CDXLTokens::GetDXLTokenStr(EdxltokenOutputCols));
-
-    CWStringDynamic *output_arg_type_array_str = GetOutputArgTypeArrayStr();
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenTypeIds), output_arg_type_array_str);
-    GPOS_DELETE(output_arg_type_array_str);
-
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                 CDXLTokens::GetDXLTokenStr(EdxltokenOutputCols));
-  }
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenGPDBFunc));
 }
 
 //---------------------------------------------------------------------------

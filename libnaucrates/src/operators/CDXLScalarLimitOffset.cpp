@@ -13,7 +13,6 @@
 #include "naucrates/dxl/operators/CDXLScalarLimitOffset.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -50,22 +49,6 @@ Edxlopid CDXLScalarLimitOffset::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLScalarLimitOffset::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarLimitOffset);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarLimitOffset::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarLimitOffset::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  node->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

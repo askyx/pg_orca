@@ -11,13 +11,12 @@
 #ifndef GPOPT_CTranslatorDXLToExprUtils_H
 #define GPOPT_CTranslatorDXLToExprUtils_H
 
-#include "gpos/base.h"
-
 #include "gpopt/mdcache/CMDAccessor.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CScalarBoolOp.h"
 #include "gpopt/operators/CScalarConst.h"
+#include "gpos/base.h"
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLScalarBoolExpr.h"

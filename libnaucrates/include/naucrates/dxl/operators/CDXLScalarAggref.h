@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarAggref_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -96,12 +95,6 @@ class CDXLScalarAggref : public CDXLScalar {
   EdxlAggrefKind GetAggKind() const { return m_aggkind; }
 
   ULongPtrArray *GetArgTypes() const { return m_argtypes; }
-
-  // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
-
-  void SerializeValuesListChildToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode, ULONG index,
-                                     const CHAR *attr_name) const;
 
   // conversion function
   static CDXLScalarAggref *Cast(CDXLOperator *dxl_op) {

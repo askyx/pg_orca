@@ -18,10 +18,9 @@
 #ifndef GPOPT_CScalarBitmapIndexProbe_H
 #define GPOPT_CScalarBitmapIndexProbe_H
 
-#include "gpos/base.h"
-
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CScalar.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 // fwd declarations

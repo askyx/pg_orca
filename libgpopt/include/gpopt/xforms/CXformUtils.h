@@ -11,16 +11,12 @@
 #ifndef GPOPT_CXformUtils_H
 #define GPOPT_CXformUtils_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCastUtils.h"
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/hints/CHintUtils.h"
 #include "gpopt/operators/CLogicalDML.h"
-#include "gpopt/operators/CLogicalDynamicIndexGet.h"
-#include "gpopt/operators/CLogicalDynamicIndexOnlyGet.h"
 #include "gpopt/operators/CLogicalIndexGet.h"
 #include "gpopt/operators/CLogicalIndexOnlyGet.h"
 #include "gpopt/operators/CLogicalJoin.h"
@@ -28,6 +24,7 @@
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/xforms/CXform.h"
+#include "gpos/base.h"
 #include "naucrates/md/IMDIndex.h"
 #include "naucrates/md/IMDScalarOp.h"
 
@@ -39,7 +36,6 @@ class CGroupExpression;
 class CColRefSet;
 class CExpression;
 class CLogical;
-class CLogicalDynamicGet;
 class CTableDescriptor;
 
 // map of expression to array of expressions
@@ -403,10 +399,6 @@ class CXformUtils {
 
   // check if expression handle is attached to a Join with a predicate that uses columns from only one child
   static BOOL FJoinPredOnSingleChild(CMemoryPool *mp, CExpressionHandle &exprhdl);
-
-  // add a redundant SELECT node on top of Dynamic (Bitmap) IndexGet to be able to use index
-  // predicate in partition elimination
-  static CExpression *PexprRedundantSelectForDynamicIndex(CMemoryPool *mp, CExpression *pexpr);
 
   // convert an Agg window function into regular Agg
   static CExpression *PexprWinFuncAgg2ScalarAgg(CMemoryPool *mp, CExpression *pexprWinFunc);

@@ -11,9 +11,8 @@
 #ifndef GPOPT_CBinding_H
 #define GPOPT_CBinding_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpression.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

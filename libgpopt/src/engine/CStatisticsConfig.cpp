@@ -11,12 +11,11 @@
 
 #include "gpopt/engine/CStatisticsConfig.h"
 
+#include "gpopt/base/CColRefSet.h"
 #include "gpos/base.h"
 #include "gpos/common/CAutoP.h"
 #include "gpos/common/CHashMap.h"
 #include "gpos/common/CHashMapIter.h"
-
-#include "gpopt/base/CColRefSet.h"
 #include "naucrates/traceflags/traceflags.h"
 
 using namespace gpopt;

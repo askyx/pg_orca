@@ -13,7 +13,6 @@
 #define GPMD_CMDIdScCmpFunc_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CMDIdGPDB.h"
 #include "naucrates/md/IMDType.h"
 
@@ -83,9 +82,6 @@ class CMDIdScCmp : public IMDId {
   BOOL IsValid() const override {
     return IMDId::IsValid(m_mdid_left) && IMDId::IsValid(m_mdid_right) && IMDType::EcmptOther != m_comparision_type;
   }
-
-  // serialize mdid in DXL as the value of the specified attribute
-  void Serialize(CXMLSerializer *xml_serializer, const CWStringConst *attribute_str) const override;
 
   // debug print of the metadata id
   IOstream &OsPrint(IOstream &os) const override;

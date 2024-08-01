@@ -11,12 +11,11 @@
 
 #include "gpopt/xforms/CXformLeftOuterJoin2NLJoin.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalLeftOuterJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalLeftOuterNLJoin.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

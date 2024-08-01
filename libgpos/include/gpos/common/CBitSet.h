@@ -15,7 +15,6 @@
 #include "gpos/common/CBitVector.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CList.h"
-#include "gpos/common/DbgPrintMixin.h"
 
 namespace gpos {
 //---------------------------------------------------------------------------
@@ -26,7 +25,7 @@ namespace gpos {
 //		Linked list of CBitSetLink's
 //
 //---------------------------------------------------------------------------
-class CBitSet : public CRefCount, public DbgPrintMixin<CBitSet> {
+class CBitSet : public CRefCount {
   // bitset iter needs to access internals
   friend class CBitSetIter;
 

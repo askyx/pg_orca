@@ -12,10 +12,9 @@
 #ifndef GPOPT_CRewindabilitySpec_H
 #define GPOPT_CRewindabilitySpec_H
 
+#include "gpopt/base/CPropSpec.h"
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
-
-#include "gpopt/base/CPropSpec.h"
 
 namespace gpopt {
 using namespace gpos;

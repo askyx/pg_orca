@@ -11,12 +11,11 @@
 
 #include "gpopt/search/CJobTest.h"
 
-#include "gpos/io/COstreamString.h"
-#include "gpos/string/CWStringDynamic.h"
-
 #include "gpopt/search/CJobFactory.h"
 #include "gpopt/search/CScheduler.h"
 #include "gpopt/search/CSchedulerContext.h"
+#include "gpos/io/COstreamString.h"
+#include "gpos/string/CWStringDynamic.h"
 
 using namespace gpopt;
 using namespace gpos;

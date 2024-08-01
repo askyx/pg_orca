@@ -11,8 +11,6 @@
 
 #include "naucrates/dxl/operators/CDXLPhysicalAgg.h"
 
-#include "naucrates/dxl/xml/CXMLSerializer.h"
-
 using namespace gpos;
 using namespace gpdxl;
 
@@ -125,59 +123,6 @@ const ULongPtrArray *CDXLPhysicalAgg::GetGroupingColidArray() const {
 void CDXLPhysicalAgg::SetGroupingCols(ULongPtrArray *grouping_colids_array) {
   GPOS_ASSERT(nullptr != grouping_colids_array);
   m_grouping_colids_array = grouping_colids_array;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalAgg::SerializeGroupingColsToDXL
-//
-//	@doc:
-//		Serialize grouping column indices in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalAgg::SerializeGroupingColsToDXL(CXMLSerializer *xml_serializer) const {
-  GPOS_ASSERT(nullptr != m_grouping_colids_array);
-
-  const CWStringConst *grouping_cols_str = CDXLTokens::GetDXLTokenStr(EdxltokenGroupingCols);
-  const CWStringConst *grouping_col_str = CDXLTokens::GetDXLTokenStr(EdxltokenGroupingCol);
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), grouping_cols_str);
-
-  for (ULONG idx = 0; idx < m_grouping_colids_array->Size(); idx++) {
-    GPOS_ASSERT(nullptr != (*m_grouping_colids_array)[idx]);
-    ULONG grouping_colid = *((*m_grouping_colids_array)[idx]);
-
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), grouping_col_str);
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), grouping_colid);
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), grouping_col_str);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), grouping_cols_str);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLPhysicalAgg::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLPhysicalAgg::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAggStrategy), GetAggStrategyNameStr());
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenAggStreamSafe), m_stream_safe);
-
-  // serialize properties
-  node->SerializePropertiesToDXL(xml_serializer);
-  SerializeGroupingColsToDXL(xml_serializer);
-
-  // serialize children
-  node->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

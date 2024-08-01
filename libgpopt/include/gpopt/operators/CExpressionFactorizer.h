@@ -18,11 +18,10 @@
 #ifndef GPOPT_CExpressionFactorizer_H
 #define GPOPT_CExpressionFactorizer_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/COperator.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

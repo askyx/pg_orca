@@ -11,6 +11,8 @@
 
 #include "gpopt/engine/CEnumeratorConfig.h"
 
+#include "gpopt/base/CIOUtils.h"
+#include "gpopt/base/CUtils.h"
 #include "gpos/base.h"
 #include "gpos/error/CAutoTrace.h"
 #include "gpos/io/CFileDescriptor.h"
@@ -18,9 +20,6 @@
 #include "gpos/task/CAutoSuspendAbort.h"
 #include "gpos/task/CTask.h"
 #include "gpos/task/CWorker.h"
-
-#include "gpopt/base/CIOUtils.h"
-#include "gpopt/base/CUtils.h"
 
 using namespace gpos;
 using namespace gpopt;
@@ -254,28 +253,6 @@ void CEnumeratorConfig::FitCostDistribution() {
 
   GPOS_DELETE_ARRAY(pdObervationX);
   GPOS_DELETE_ARRAY(pdObervationY);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CEnumeratorConfig::DumpSamples
-//
-//	@doc:
-//		Dump generated samples to an output file
-//
-//---------------------------------------------------------------------------
-void CEnumeratorConfig::DumpSamples(CWStringDynamic *str,  // samples dump
-                                    ULONG ulSessionId, ULONG ulCommandId) {
-  GPOS_ASSERT(nullptr != str);
-
-  CAutoSuspendAbort asa;
-
-  // dump samples to output file
-  CHAR file_name[GPOS_FILE_NAME_BUF_SIZE];
-  CUtils::GenerateFileName(file_name, "SamplePlans", "xml", GPOS_FILE_NAME_BUF_SIZE, ulSessionId, ulCommandId);
-  CHAR *sz = CUtils::CreateMultiByteCharStringFromWCString(m_mp, const_cast<WCHAR *>(str->GetBuffer()));
-  CIOUtils::Dump(file_name, sz);
-  GPOS_DELETE_ARRAY(sz);
 }
 
 //---------------------------------------------------------------------------

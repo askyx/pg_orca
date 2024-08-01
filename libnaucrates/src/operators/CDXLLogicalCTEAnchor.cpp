@@ -13,7 +13,6 @@
 #include "naucrates/dxl/operators/CDXLLogicalCTEAnchor.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
@@ -51,24 +50,6 @@ Edxlopid CDXLLogicalCTEAnchor::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLLogicalCTEAnchor::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenLogicalCTEAnchor);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLLogicalCTEAnchor::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLLogicalCTEAnchor::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenCTEId), Id());
-
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

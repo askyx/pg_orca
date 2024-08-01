@@ -11,12 +11,10 @@
 
 #include "naucrates/dxl/operators/CDXLScalarSubPlan.h"
 
+#include "gpopt/base/COptCtxt.h"
 #include "gpos/base.h"
 #include "gpos/string/CWStringDynamic.h"
-
-#include "gpopt/base/COptCtxt.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 
 using namespace gpos;
 using namespace gpdxl;
@@ -121,61 +119,6 @@ const CWStringConst *CDXLScalarSubPlan::GetSubplanTypeStr() const {
       GPOS_ASSERT(!"Unrecognized subplan type");
       return nullptr;
   }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarSubPlan::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarSubPlan::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-  m_first_col_type_mdid->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-  xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenScalarSubPlanType), GetSubplanTypeStr());
-
-  // serialize test expression
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenScalarSubPlanTestExpr));
-
-  if (nullptr != m_dxlnode_test_expr) {
-    m_dxlnode_test_expr->SerializeToDXL(xml_serializer);
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenScalarSubPlanTestExpr));
-
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                              CDXLTokens::GetDXLTokenStr(EdxltokenScalarSubPlanParamList));
-
-  for (ULONG ul = 0; ul < m_dxl_colref_array->Size(); ul++) {
-    xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                CDXLTokens::GetDXLTokenStr(EdxltokenScalarSubPlanParam));
-
-    ULONG ulid = (*m_dxl_colref_array)[ul]->Id();
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColId), ulid);
-
-    const CMDName *mdname = (*m_dxl_colref_array)[ul]->MdName();
-    const IMDId *mdid_type = (*m_dxl_colref_array)[ul]->MdidType();
-    xml_serializer->AddAttribute(CDXLTokens::GetDXLTokenStr(EdxltokenColName), mdname->GetMDName());
-    mdid_type->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenTypeId));
-
-    xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                                 CDXLTokens::GetDXLTokenStr(EdxltokenScalarSubPlanParam));
-  }
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix),
-                               CDXLTokens::GetDXLTokenStr(EdxltokenScalarSubPlanParamList));
-
-  GPOS_ASSERT(1 == dxlnode->GetChildDXLNodeArray()->Size());
-
-  // serialize children
-  dxlnode->SerializeChildrenToDXL(xml_serializer);
-
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

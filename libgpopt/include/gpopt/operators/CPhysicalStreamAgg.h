@@ -11,13 +11,10 @@
 #ifndef GPOS_CPhysicalStreamAgg_H
 #define GPOS_CPhysicalStreamAgg_H
 
+#include "gpopt/operators/CPhysicalAgg.h"
 #include "gpos/base.h"
 
-#include "gpopt/operators/CPhysicalAgg.h"
-
 namespace gpopt {
-// fwd declaration
-class CDistributionSpec;
 
 //---------------------------------------------------------------------------
 //	@class:

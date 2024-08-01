@@ -11,10 +11,9 @@
 #ifndef GPOPT_CEnfdOrder_H
 #define GPOPT_CEnfdOrder_H
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CEnfdProp.h"
 #include "gpopt/base/COrderSpec.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

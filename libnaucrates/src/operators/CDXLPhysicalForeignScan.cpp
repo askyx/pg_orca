@@ -12,7 +12,7 @@
 #include "naucrates/dxl/operators/CDXLPhysicalForeignScan.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
+#include "naucrates/dxl/xml/dxltokens.h"
 
 using namespace gpos;
 using namespace gpdxl;

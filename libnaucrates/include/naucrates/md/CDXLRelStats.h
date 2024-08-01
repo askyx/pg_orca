@@ -15,13 +15,10 @@
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/md/CMDIdRelStats.h"
 #include "naucrates/md/IMDRelStats.h"
 
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -76,7 +73,6 @@ class CDXLRelStats : public IMDRelStats {
   CMDName Mdname() const override;
 
   // DXL string representation of cache object
-  const CWStringDynamic *GetStrRepr() override;
 
   // number of rows
   CDouble Rows() const override;
@@ -93,7 +89,6 @@ class CDXLRelStats : public IMDRelStats {
   BOOL IsEmpty() const override { return m_empty; }
 
   // serialize relation stats in DXL format given a serializer object
-  void Serialize(gpdxl::CXMLSerializer *) const override;
 
 #ifdef GPOS_DEBUG
   // debug print of the metadata relation

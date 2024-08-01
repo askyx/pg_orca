@@ -11,9 +11,8 @@
 #ifndef GPOPT_CPhysicalForeignScan_H
 #define GPOPT_CPhysicalForeignScan_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CPhysicalTableScan.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

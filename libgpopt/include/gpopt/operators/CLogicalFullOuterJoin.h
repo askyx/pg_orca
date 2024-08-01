@@ -11,9 +11,8 @@
 #ifndef GPOS_CLogicalFullOuterJoin_H
 #define GPOS_CLogicalFullOuterJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalJoin.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

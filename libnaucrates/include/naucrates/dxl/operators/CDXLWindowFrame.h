@@ -13,7 +13,6 @@
 #define GPDXL_CDXLWindowFrame_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -106,9 +105,6 @@ class CDXLWindowFrame : public CRefCount {
 
   // return the string representation of the frame specification (row or range)
   static const CWStringConst *PstrFS(EdxlFrameSpec edxlfs);
-
-  // serialize operator in DXL format
-  virtual void SerializeToDXL(CXMLSerializer *xml_serializer) const;
 };
 }  // namespace gpdxl
 

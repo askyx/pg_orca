@@ -11,17 +11,15 @@
 #ifndef GPOPT_CDrvdPropPlan_H
 #define GPOPT_CDrvdPropPlan_H
 
-#include "gpos/base.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/CDrvdProp.h"
+#include "gpos/base.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 using namespace gpos;
 
 // fwd declaration
-class CDistributionSpec;
 class CExpressionHandle;
 class COrderSpec;
 class CRewindabilitySpec;
@@ -45,9 +43,6 @@ class CDrvdPropPlan : public CDrvdProp {
  private:
   // derived sort order
   COrderSpec *m_pos{nullptr};
-
-  // derived distribution
-  CDistributionSpec *m_pds{nullptr};
 
   // derived rewindability
   CRewindabilitySpec *m_prs{nullptr};
@@ -81,9 +76,6 @@ class CDrvdPropPlan : public CDrvdProp {
 
   // sort order accessor
   COrderSpec *Pos() const { return m_pos; }
-
-  // distribution accessor
-  CDistributionSpec *Pds() const { return m_pds; }
 
   // rewindability accessor
   CRewindabilitySpec *Prs() const { return m_prs; }

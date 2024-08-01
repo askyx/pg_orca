@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarHashCondList_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
 namespace gpdxl {
@@ -40,7 +39,6 @@ class CDXLScalarHashCondList : public CDXLScalar {
   const CWStringConst *GetOpNameStr() const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLScalarHashCondList *Cast(CDXLOperator *dxl_op) {

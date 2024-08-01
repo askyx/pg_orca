@@ -11,11 +11,10 @@
 #ifndef GPOPT_CPropConstraint_H
 #define GPOPT_CPropConstraint_H
 
-#include "gpos/base.h"
-#include "gpos/common/CRefCount.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/CConstraint.h"
+#include "gpos/base.h"
+#include "gpos/common/CRefCount.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -32,7 +31,7 @@ class CExpression;
 //		Representation of constraint property
 //
 //---------------------------------------------------------------------------
-class CPropConstraint : public CRefCount, public DbgPrintMixin<CPropConstraint> {
+class CPropConstraint : public CRefCount {
  private:
   // array of equivalence classes
   CColRefSetArray *m_pdrgpcrs;

@@ -11,15 +11,12 @@
 
 #include "gpopt/operators/CPhysicalTVF.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCTEMap.h"
 #include "gpopt/base/CColRefSet.h"
-#include "gpopt/base/CDistributionSpecSingleton.h"
-#include "gpopt/base/CDistributionSpecUniversal.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/metadata/CName.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -140,25 +137,6 @@ COrderSpec *CPhysicalTVF::PosRequired(CMemoryPool *,        // mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalTVF::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalTVF::PdsRequired(CMemoryPool *,        // mp,
-                                             CExpressionHandle &,  // exprhdl,
-                                             CDistributionSpec *,  // pdsRequired,
-                                             ULONG,                // child_index
-                                             CDrvdPropArray *,     // pdrgpdpCtxt
-                                             ULONG                 // ulOptReq
-) const {
-  GPOS_ASSERT(!"CPhysicalTVF has no relational children");
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalTVF::PrsRequired
 //
 //	@doc:
@@ -224,22 +202,6 @@ COrderSpec *CPhysicalTVF::PosDerive(CMemoryPool *mp,
                                     CExpressionHandle &  // exprhdl
 ) const {
   return GPOS_NEW(mp) COrderSpec(mp);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalTVF::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalTVF::PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  if (exprhdl.NeedsSingletonExecution()) {
-    return GPOS_NEW(mp) CDistributionSpecSingleton();
-  }
-
-  return GPOS_NEW(mp) CDistributionSpecUniversal();
 }
 
 //---------------------------------------------------------------------------

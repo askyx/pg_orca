@@ -11,15 +11,13 @@
 
 #include "gpopt/engine/CPartialPlan.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/exception.h"
 #include "gpopt/operators/CExpressionHandle.h"
-#include "gpopt/operators/CPhysicalMotion.h"
 #include "gpopt/search/CGroup.h"
 #include "gpopt/search/CGroupExpression.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -93,10 +91,6 @@ void CPartialPlan::ExtractChildrenCostingInfo(CMemoryPool *mp, ICostModel *pcm, 
 
       // use provided child cost context to collect accurate costing info
       DOUBLE dRowsChild = child_stats->Rows().Get();
-      if (CDistributionSpec::EdptPartitioned == m_pccChild->Pdpplan()->Pds()->Edpt()) {
-        // scale statistics row estimate by number of segments
-        dRowsChild = pcm->DRowsPerHost(CDouble(dRowsChild)).Get();
-      }
 
       pci->SetChildRows(ulIndex, dRowsChild);
       DOUBLE dWidthChild = child_stats->Width(mp, prppChild->PcrsRequired()).Get();
@@ -165,29 +159,9 @@ CCost CPartialPlan::CostCompute(CMemoryPool *mp) {
   ICostModel *pcm = COptCtxt::PoctxtFromTLS()->GetCostModel();
   ExtractChildrenCostingInfo(mp, pcm, exprhdl, &ci);
 
-  CDistributionSpec::EDistributionPartitioningType edpt = CDistributionSpec::EdptSentinel;
-  if (nullptr != m_prpp->Ped()) {
-    edpt = m_prpp->Ped()->PdsRequired()->Edpt();
-  }
-
-  COperator *pop = m_pgexpr->Pop();
-  BOOL fDataPartitioningMotion = CUtils::FPhysicalMotion(pop) &&
-                                 CDistributionSpec::EdptPartitioned == CPhysicalMotion::PopConvert(pop)->Pds()->Edpt();
-
   // extract rows from stats
   DOUBLE rows = m_pgexpr->Pgroup()->Pstats()->Rows().Get();
-  if (fDataPartitioningMotion ||   // root operator is known to distribute data across segments
-      nullptr == m_prpp->Ped() ||  // required distribution not known yet, we assume data partitioning since we need a
-                                   // lower-bound on number of rows
-      CDistributionSpec::EdptPartitioned == edpt ||  // required distribution is known to be partitioned, we assume data
-                                                     // partitioning since we need a lower-bound on number of rows
-      CDistributionSpec::EdptUnknown ==
-          edpt  // required distribution is not known to be partitioned (e.g., ANY distribution), we assume data
-                // partitioning since we need a lower-bound on number of rows
-  ) {
-    // use rows per host as a cardinality lower bound
-    rows = pcm->DRowsPerHost(CDouble(rows)).Get();
-  }
+
   ci.SetRows(rows);
 
   // extract width from stats

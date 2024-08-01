@@ -13,9 +13,6 @@
 #ifndef GPOPT_CJobFactory_H
 #define GPOPT_CJobFactory_H
 
-#include "gpos/base.h"
-#include "gpos/common/CSyncPool.h"
-
 #include "gpopt/search/CJob.h"
 #include "gpopt/search/CJobGroupExploration.h"
 #include "gpopt/search/CJobGroupExpressionExploration.h"
@@ -25,6 +22,8 @@
 #include "gpopt/search/CJobGroupOptimization.h"
 #include "gpopt/search/CJobTest.h"
 #include "gpopt/search/CJobTransformation.h"
+#include "gpos/base.h"
+#include "gpos/common/CSyncPool.h"
 
 namespace gpopt {
 using namespace gpos;

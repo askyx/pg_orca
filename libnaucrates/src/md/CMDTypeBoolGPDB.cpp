@@ -13,7 +13,6 @@
 #include "naucrates/md/CMDTypeBoolGPDB.h"
 
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/base/CDatumBoolGPDB.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLDatumBool.h"
@@ -98,13 +97,6 @@ CMDTypeBoolGPDB::~CMDTypeBoolGPDB() {
   if (nullptr != m_dxl_str) {
     GPOS_DELETE(m_dxl_str);
   }
-}
-
-const CWStringDynamic *CMDTypeBoolGPDB::GetStrRepr() {
-  if (nullptr == m_dxl_str) {
-    m_dxl_str = CDXLUtils::SerializeMDObj(m_mp, this, false /*fSerializeHeader*/, false /*indentation*/);
-  }
-  return m_dxl_str;
 }
 
 //---------------------------------------------------------------------------
@@ -207,18 +199,6 @@ IMDId *CMDTypeBoolGPDB::GetPartOpfamilyMdid() const {
 CMDName CMDTypeBoolGPDB::Mdname() const {
   return CMDTypeBoolGPDB::m_mdname;
   ;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDTypeBoolGPDB::Serialize
-//
-//	@doc:
-//		Serialize relation metadata in DXL format
-//
-//---------------------------------------------------------------------------
-void CMDTypeBoolGPDB::Serialize(CXMLSerializer *xml_serializer) const {
-  CGPDBTypeHelper<CMDTypeBoolGPDB>::Serialize(xml_serializer, this);
 }
 
 //---------------------------------------------------------------------------

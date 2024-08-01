@@ -11,13 +11,12 @@
 
 #include "gpopt/xforms/CXformLeftSemiJoin2HashJoin.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalLeftSemiJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalLeftSemiHashJoin.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

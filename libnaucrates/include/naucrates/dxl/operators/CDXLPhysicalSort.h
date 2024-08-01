@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalSort_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 
 namespace gpdxl {
@@ -53,7 +52,6 @@ class CDXLPhysicalSort : public CDXLPhysical {
   BOOL FDiscardDuplicates() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLPhysicalSort *Cast(CDXLOperator *dxl_op) {

@@ -12,7 +12,6 @@
 #include "gpopt/mdcache/CMDKey.h"
 
 #include "gpos/io/COstreamString.h"
-
 #include "naucrates/dxl/CDXLUtils.h"
 
 using namespace gpos;

@@ -11,9 +11,8 @@
 #ifndef GPOPT_CDecorrelator_H
 #define GPOPT_CDecorrelator_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpression.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

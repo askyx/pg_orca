@@ -13,7 +13,6 @@
 #define GPMD_CMDTypeGenericGPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/gpdb_types.h"
 #include "naucrates/md/CGPDBTypeHelper.h"
 #include "naucrates/md/CMDIdGPDB.h"
@@ -29,9 +28,7 @@
 #define GPDB_TEXT_GEQ_OP OID(667)
 
 // fwd decl
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -157,7 +154,6 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   ~CMDTypeGenericGPDB() override;
 
   // accessors
-  const CWStringDynamic *GetStrRepr() override;
 
   IMDId *MDId() const override;
 
@@ -201,7 +197,6 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   IMDId *GetPartOpfamilyMdid() const override;
 
   // serialize object in DXL format
-  void Serialize(gpdxl::CXMLSerializer *xml_serializer) const override;
 
   // factory method for generating generic datum from CDXLScalarConstValue
   IDatum *GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_op) const override;

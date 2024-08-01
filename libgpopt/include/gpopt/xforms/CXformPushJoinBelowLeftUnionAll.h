@@ -11,14 +11,13 @@
 #ifndef GPOPT_CXformPushJoinBelowLeftUnionAll_H
 #define GPOPT_CXformPushJoinBelowLeftUnionAll_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalUnionAll.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPatternMultiLeaf.h"
 #include "gpopt/operators/CPatternNode.h"
 #include "gpopt/operators/CPatternTree.h"
 #include "gpopt/xforms/CXformPushJoinBelowUnionAll.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

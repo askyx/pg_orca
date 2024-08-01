@@ -18,7 +18,6 @@
 #define GPDXL_CDXLLogicalSetOp_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
@@ -99,7 +98,6 @@ class CDXLLogicalSetOp : public CDXLLogical {
   BOOL IsCastAcrossInputReq() const { return m_cast_across_input_req; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // check if given column is defined by operator
   BOOL IsColDefined(ULONG colid) const override;

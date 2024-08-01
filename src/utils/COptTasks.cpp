@@ -21,15 +21,6 @@ extern "C" {
 #include "utils/guc.h"
 }
 
-#include "gpos/_api.h"
-#include "gpos/base.h"
-#include "gpos/common/CAutoP.h"
-#include "gpos/error/CException.h"
-#include "gpos/io/COstreamString.h"
-#include "gpos/memory/CAutoMemoryPool.h"
-#include "gpos/memory/set.h"
-#include "gpos/task/CAutoTraceFlag.h"
-
 #include "gpdbcost/CCostModelGPDB.h"
 #include "gpopt/base/CAutoOptCtxt.h"
 #include "gpopt/config/CConfigParamMapping.h"
@@ -43,7 +34,6 @@ extern "C" {
 #include "gpopt/hints/CPlanHint.h"
 #include "gpopt/mdcache/CAutoMDAccessor.h"
 #include "gpopt/mdcache/CMDCache.h"
-#include "gpopt/minidump/CMinidumperUtils.h"
 #include "gpopt/optimizer/COptimizer.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/relcache/CMDProviderRelcache.h"
@@ -57,11 +47,18 @@ extern "C" {
 #include "gpopt/utils/CConstExprEvaluatorProxy.h"
 #include "gpopt/utils/gpdbdefs.h"
 #include "gpopt/xforms/CXformFactory.h"
+#include "gpos/_api.h"
+#include "gpos/base.h"
+#include "gpos/common/CAutoP.h"
+#include "gpos/error/CException.h"
+#include "gpos/io/COstreamString.h"
+#include "gpos/memory/CAutoMemoryPool.h"
+#include "gpos/memory/set.h"
+#include "gpos/task/CAutoTraceFlag.h"
 #include "naucrates/base/CQueryToDXLResult.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/CIdGenerator.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/parser/CParseHandlerDXL.h"
 #include "naucrates/exception.h"
 #include "naucrates/init.h"
 #include "naucrates/md/CMDIdCast.h"
@@ -256,46 +253,8 @@ PlannedStmt *COptTasks::ConvertToPlanStmtFromDXL(CMemoryPool *mp, CMDAccessor *m
                                             distribution_hashops);
 
   // translate DXL -> PlannedStmt
-  CTranslatorDXLToPlStmt dxl_to_plan_stmt_translator(mp, md_accessor, &dxl_to_plan_stmt_ctxt,
-                                                     gpdb::GetGPSegmentCount());
+  CTranslatorDXLToPlStmt dxl_to_plan_stmt_translator(mp, md_accessor, &dxl_to_plan_stmt_ctxt);
   return dxl_to_plan_stmt_translator.GetPlannedStmtFromDXL(dxlnode, orig_query, can_set_tag);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		COptTasks::LoadSearchStrategy
-//
-//	@doc:
-//		Load search strategy from given file
-//
-//---------------------------------------------------------------------------
-CSearchStageArray *COptTasks::LoadSearchStrategy(CMemoryPool *mp, char *path) {
-  CSearchStageArray *search_strategy_arr = nullptr;
-  CParseHandlerDXL *dxl_parse_handler = nullptr;
-
-  GPOS_TRY {
-    if (nullptr != path) {
-      dxl_parse_handler = CDXLUtils::GetParseHandlerForDXLFile(mp, path, nullptr);
-      if (nullptr != dxl_parse_handler) {
-        elog(DEBUG2, "\n[OPT]: Using search strategy in (%s)", path);
-
-        search_strategy_arr = dxl_parse_handler->GetSearchStageArray();
-        search_strategy_arr->AddRef();
-      }
-    }
-  }
-  GPOS_CATCH_EX(ex) {
-    if (GPOS_MATCH_EX(ex, gpdxl::ExmaGPDB, gpdxl::ExmiGPDBError)) {
-      GPOS_RETHROW(ex);
-    }
-    elog(DEBUG2, "\n[OPT]: Using default search strategy");
-    GPOS_RESET_EX;
-  }
-  GPOS_CATCH_END;
-
-  GPOS_DELETE(dxl_parse_handler);
-
-  return search_strategy_arr;
 }
 
 //---------------------------------------------------------------------------
@@ -376,7 +335,7 @@ void COptTasks::SetCostModelParams(ICostModel *cost_model) {
 //
 //---------------------------------------------------------------------------
 ICostModel *COptTasks::GetCostModel(CMemoryPool *mp, ULONG num_segments) {
-  ICostModel *cost_model = GPOS_NEW(mp) CCostModelGPDB(mp, num_segments);
+  ICostModel *cost_model = GPOS_NEW(mp) CCostModelGPDB(mp);
 
   SetCostModelParams(cost_model);
 
@@ -421,9 +380,7 @@ void *COptTasks::OptimizeTask(void *ptr) {
     CMDCache::SetCacheQuota(optimizer_mdcache_size * 1024L);
   }
 
-  // load search strategy
-  char str[] = "default";
-  CSearchStageArray *search_strategy_arr = LoadSearchStrategy(mp, str);
+  CSearchStageArray *search_strategy_arr = nullptr;
 
   CBitSet *trace_flags = nullptr;
   CBitSet *enabled_trace_flags = nullptr;
@@ -465,33 +422,25 @@ void *COptTasks::OptimizeTask(void *ptr) {
       CDXLNodeArray *cte_dxlnode_array = query_to_dxl_translator->GetCTEs();
       GPOS_ASSERT(nullptr != query_output_dxlnode_array);
 
-      BOOL is_coordinator_only = !optimizer_enable_motions || (!optimizer_enable_motions_coordinatoronly_queries &&
-                                                               !query_to_dxl_translator->HasDistributedTables());
       // See NoteDistributionPolicyOpclasses() in src/backend/gpopt/translate/CTranslatorQueryToDXL.cpp
       BOOL use_legacy_opfamilies = (query_to_dxl_translator->GetDistributionHashOpsKind() == DistrUseLegacyHashOps);
-      CAutoTraceFlag atf1(EopttraceDisableMotions, is_coordinator_only);
       CAutoTraceFlag atf2(EopttraceUseLegacyOpfamilies, use_legacy_opfamilies);
       CAutoTraceFlag atf3(EopttracePrintQuery, true);
       CAutoTraceFlag atf4(EopttracePrintPlan, true);
-      CAutoTraceFlag atf5(EopttracePrintMemoAfterExploration, true);
-      CAutoTraceFlag atf6(EopttracePrintMemoAfterImplementation, true);
-      CAutoTraceFlag atf7(EopttracePrintMemoAfterOptimization, true);
-      CAutoTraceFlag atf8(EopttracePrintMemoEnforcement, true);
-      CAutoTraceFlag atf9(EopttracePrintGroupProperties, true);
-      CAutoTraceFlag atfa(EopttracePrintExpressionProperties, true);
+      // CAutoTraceFlag atf5(EopttracePrintMemoAfterExploration, true);
+      // CAutoTraceFlag atf6(EopttracePrintMemoAfterImplementation, true);
+      // CAutoTraceFlag atf7(EopttracePrintMemoAfterOptimization, true);
+      // CAutoTraceFlag atf8(EopttracePrintMemoEnforcement, true);
+      // CAutoTraceFlag atf9(EopttracePrintGroupProperties, true);
+      // CAutoTraceFlag atfa(EopttracePrintExpressionProperties, true);
+      // CAutoTraceFlag atfb(EopttracePrintOptimizationContext, true);
+      // CAutoTraceFlag atfc(EopttracePrintXformPattern, true);
+      // CAutoTraceFlag atfd(EopttracePrintRequiredColumns, true);
+      // CAutoTraceFlag atfe(EopttracePrintXform, true);
+      // CAutoTraceFlag atff(EopttracePrintXformResults, true);
 
       plan_dxl = COptimizer::PdxlnOptimize(mp, &mda, query_dxl, query_output_dxlnode_array, cte_dxlnode_array,
-                                           expr_evaluator, num_segments, 0, 0, search_strategy_arr, optimizer_config);
-
-      if (opt_ctxt->m_should_serialize_plan_dxl) {
-        // serialize DXL to xml
-        CWStringDynamic plan_str(mp);
-        COstreamString oss(&plan_str);
-        CDXLUtils::SerializePlan(mp, oss, plan_dxl, optimizer_config->GetEnumeratorCfg()->GetPlanId(),
-                                 optimizer_config->GetEnumeratorCfg()->GetPlanSpaceSize(),
-                                 true /*serialize_header_footer*/, true /*indentation*/);
-        opt_ctxt->m_plan_dxl = CreateMultiByteCharStringFromWCString(plan_str.GetBuffer());
-      }
+                                           expr_evaluator, search_strategy_arr, optimizer_config);
 
       // translate DXL->PlStmt only when needed
       if (opt_ctxt->m_should_generate_plan_stmt) {
@@ -621,7 +570,6 @@ char *COptTasks::Optimize(Query *query) {
 
   SOptContext gpopt_context;
   gpopt_context.m_query = query;
-  gpopt_context.m_should_serialize_plan_dxl = true;
   Execute(&OptimizeTask, &gpopt_context);
 
   // clean up context

@@ -11,10 +11,9 @@
 
 #include "gpopt/base/CConstraintNegation.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CConstraintInterval.h"
 #include "gpopt/operators/CPredicateUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

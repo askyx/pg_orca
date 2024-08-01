@@ -13,7 +13,6 @@
 #define GPDXL_CDXLLogicalTVF_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 #include "naucrates/dxl/operators/CDXLLogical.h"
 #include "naucrates/md/IMDId.h"
@@ -80,7 +79,6 @@ class CDXLLogicalTVF : public CDXLLogical {
   BOOL IsColDefined(ULONG colid) const override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // conversion function
   static CDXLLogicalTVF *Cast(CDXLOperator *dxl_op) {

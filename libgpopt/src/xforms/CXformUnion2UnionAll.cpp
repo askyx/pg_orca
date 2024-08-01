@@ -12,13 +12,12 @@
 
 #include "gpopt/xforms/CXformUnion2UnionAll.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CLogicalUnion.h"
 #include "gpopt/operators/CLogicalUnionAll.h"
 #include "gpopt/operators/CPatternMultiLeaf.h"
 #include "gpopt/operators/CScalarProjectList.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

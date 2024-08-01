@@ -17,8 +17,6 @@
 using namespace gpnaucrates;
 using namespace gpmd;
 
-FORCE_GENERATE_DBGSTR(gpmd::IDatum);
-
 //---------------------------------------------------------------------------
 //	@function:
 //		IDatum::StatsAreEqual

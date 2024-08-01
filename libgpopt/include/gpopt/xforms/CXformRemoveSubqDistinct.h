@@ -11,9 +11,8 @@
 #ifndef GPOPT_CXformRemoveSubqDistinct_H
 #define GPOPT_CXformRemoveSubqDistinct_H
 
-#include "gpos/base.h"
-
 #include "gpopt/xforms/CXformSimplifySubquery.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

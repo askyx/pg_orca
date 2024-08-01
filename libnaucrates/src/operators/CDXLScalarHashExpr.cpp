@@ -11,7 +11,6 @@
 #include "naucrates/dxl/operators/CDXLScalarHashExpr.h"
 
 #include "naucrates/dxl/operators/CDXLNode.h"
-#include "naucrates/dxl/xml/CXMLSerializer.h"
 #include "naucrates/traceflags/traceflags.h"
 
 using namespace gpos;
@@ -75,26 +74,6 @@ const CWStringConst *CDXLScalarHashExpr::GetOpNameStr() const {
 //---------------------------------------------------------------------------
 IMDId *CDXLScalarHashExpr::MdidOpfamily() const {
   return m_mdid_opfamily;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLScalarHashExpr::SerializeToDXL
-//
-//	@doc:
-//		Serialize operator in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLScalarHashExpr::SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const {
-  const CWStringConst *element_name = GetOpNameStr();
-  xml_serializer->OpenElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
-
-  if (nullptr != m_mdid_opfamily) {
-    m_mdid_opfamily->Serialize(xml_serializer, CDXLTokens::GetDXLTokenStr(EdxltokenOpfamily));
-  }
-
-  node->SerializeChildrenToDXL(xml_serializer);
-  xml_serializer->CloseElement(CDXLTokens::GetDXLTokenStr(EdxltokenNamespacePrefix), element_name);
 }
 
 #ifdef GPOS_DEBUG

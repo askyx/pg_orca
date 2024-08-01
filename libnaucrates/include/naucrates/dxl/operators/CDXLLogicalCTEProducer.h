@@ -12,7 +12,6 @@
 #define GPDXL_CDXLLogicalCTEProducer_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLLogical.h"
 
 namespace gpdxl {
@@ -54,7 +53,6 @@ class CDXLLogicalCTEProducer : public CDXLLogical {
   ULongPtrArray *GetOutputColIdsArray() const { return m_output_colids_array; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and

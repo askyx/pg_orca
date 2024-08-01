@@ -13,7 +13,6 @@
 #define GPMD_CMDIndexGPDB_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/IMDIndex.h"
 
 namespace gpmd {
@@ -143,10 +142,8 @@ class CMDIndexGPDB : public IMDIndex {
   ULONG GetIncludedColPos(ULONG column) const override;
 
   // DXL string for index
-  const CWStringDynamic *GetStrRepr() override;
 
   // serialize MD index in DXL format given a serializer object
-  void Serialize(gpdxl::CXMLSerializer *) const override;
 
   // type id of items returned by the index
   IMDId *GetIndexRetItemTypeMdid() const override;

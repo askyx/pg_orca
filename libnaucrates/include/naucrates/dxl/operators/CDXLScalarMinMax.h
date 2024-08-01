@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarMinMax_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -63,7 +62,6 @@ class CDXLScalarMinMax : public CDXLScalar {
   EdxlMinMaxType GetMinMaxType() const { return m_min_max_type; }
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *node) const override;
 
   // does the operator return a boolean result
   BOOL HasBoolResult(CMDAccessor *md_accessor) const override;

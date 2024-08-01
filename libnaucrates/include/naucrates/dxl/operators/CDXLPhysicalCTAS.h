@@ -12,7 +12,6 @@
 #define GPDXL_CDXLPhysicalCTAS_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLColDescr.h"
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 #include "naucrates/md/IMDRelation.h"
@@ -114,7 +113,6 @@ class CDXLPhysicalCTAS : public CDXLPhysical {
 
   IMdIdArray *GetDistrOpclasses() const { return m_distr_opclasses; }
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and

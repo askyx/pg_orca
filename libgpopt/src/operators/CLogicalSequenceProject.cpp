@@ -11,15 +11,11 @@
 
 #include "gpopt/operators/CLogicalSequenceProject.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
-#include "gpopt/base/CDistributionSpec.h"
-#include "gpopt/base/CDistributionSpecHashed.h"
-#include "gpopt/base/CDistributionSpecSingleton.h"
 #include "gpopt/base/CKeyCollection.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -31,18 +27,10 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalSequenceProject::CLogicalSequenceProject(CMemoryPool *mp, CDistributionSpec *pds, COrderSpecArray *pdrgpos,
-                                                 CWindowFrameArray *pdrgpwf)
-    : CLogicalUnary(mp),
-      m_pds(pds),
-      m_pdrgpos(pdrgpos),
-      m_pdrgpwf(pdrgpwf),
-      m_fHasOrderSpecs(false),
-      m_fHasFrameSpecs(false) {
-  GPOS_ASSERT(nullptr != pds);
+CLogicalSequenceProject::CLogicalSequenceProject(CMemoryPool *mp, COrderSpecArray *pdrgpos, CWindowFrameArray *pdrgpwf)
+    : CLogicalUnary(mp), m_pdrgpos(pdrgpos), m_pdrgpwf(pdrgpwf), m_fHasOrderSpecs(false), m_fHasFrameSpecs(false) {
   GPOS_ASSERT(nullptr != pdrgpos);
   GPOS_ASSERT(nullptr != pdrgpwf);
-  GPOS_ASSERT(CDistributionSpec::EdtHashed == pds->Edt() || CDistributionSpec::EdtSingleton == pds->Edt());
 
   // set flags indicating that current operator has non-empty order specs/frame specs
   SetHasOrderSpecs(mp);
@@ -52,12 +40,6 @@ CLogicalSequenceProject::CLogicalSequenceProject(CMemoryPool *mp, CDistributionS
   CColRefSet *pcrsSort = COrderSpec::GetColRefSet(mp, m_pdrgpos);
   m_pcrsLocalUsed->Include(pcrsSort);
   pcrsSort->Release();
-
-  if (CDistributionSpec::EdtHashed == m_pds->Edt()) {
-    CColRefSet *pcrsHashed = CDistributionSpecHashed::PdsConvert(m_pds)->PcrsUsed(mp);
-    m_pcrsLocalUsed->Include(pcrsHashed);
-    pcrsHashed->Release();
-  }
 
   const ULONG ulFrames = m_pdrgpwf->Size();
   for (ULONG ul = 0; ul < ulFrames; ul++) {
@@ -77,12 +59,7 @@ CLogicalSequenceProject::CLogicalSequenceProject(CMemoryPool *mp, CDistributionS
 //
 //---------------------------------------------------------------------------
 CLogicalSequenceProject::CLogicalSequenceProject(CMemoryPool *mp)
-    : CLogicalUnary(mp),
-      m_pds(nullptr),
-      m_pdrgpos(nullptr),
-      m_pdrgpwf(nullptr),
-      m_fHasOrderSpecs(false),
-      m_fHasFrameSpecs(false) {
+    : CLogicalUnary(mp), m_pdrgpos(nullptr), m_pdrgpwf(nullptr), m_fHasOrderSpecs(false), m_fHasFrameSpecs(false) {
   m_fPattern = true;
 }
 
@@ -95,7 +72,6 @@ CLogicalSequenceProject::CLogicalSequenceProject(CMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 CLogicalSequenceProject::~CLogicalSequenceProject() {
-  CRefCount::SafeRelease(m_pds);
   CRefCount::SafeRelease(m_pdrgpos);
   CRefCount::SafeRelease(m_pdrgpwf);
 }
@@ -110,8 +86,6 @@ CLogicalSequenceProject::~CLogicalSequenceProject() {
 //---------------------------------------------------------------------------
 COperator *CLogicalSequenceProject::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
                                                                BOOL must_exist) {
-  CDistributionSpec *pds = m_pds->PdsCopyWithRemappedColumns(mp, colref_mapping, must_exist);
-
   COrderSpecArray *pdrgpos = GPOS_NEW(mp) COrderSpecArray(mp);
   const ULONG ulOrderSpec = m_pdrgpos->Size();
   for (ULONG ul = 0; ul < ulOrderSpec; ul++) {
@@ -126,7 +100,7 @@ COperator *CLogicalSequenceProject::PopCopyWithRemappedColumns(CMemoryPool *mp, 
     pdrgpwf->Append(pwf);
   }
 
-  return GPOS_NEW(mp) CLogicalSequenceProject(mp, pds, pdrgpos, pdrgpwf);
+  return GPOS_NEW(mp) CLogicalSequenceProject(mp, pdrgpos, pdrgpwf);
 }
 
 //---------------------------------------------------------------------------
@@ -263,8 +237,7 @@ BOOL CLogicalSequenceProject::Matches(COperator *pop) const {
   GPOS_ASSERT(nullptr != pop);
   if (Eopid() == pop->Eopid()) {
     CLogicalSequenceProject *popLogicalSequenceProject = CLogicalSequenceProject::PopConvert(pop);
-    return m_pds->Matches(popLogicalSequenceProject->Pds()) &&
-           CWindowFrame::Equals(m_pdrgpwf, popLogicalSequenceProject->Pdrgpwf()) &&
+    return CWindowFrame::Equals(m_pdrgpwf, popLogicalSequenceProject->Pdrgpwf()) &&
            COrderSpec::Equals(m_pdrgpos, popLogicalSequenceProject->Pdrgpos());
   }
 
@@ -282,7 +255,6 @@ BOOL CLogicalSequenceProject::Matches(COperator *pop) const {
 ULONG
 CLogicalSequenceProject::HashValue() const {
   ULONG ulHash = 0;
-  ulHash = gpos::CombineHashes(ulHash, m_pds->HashValue());
   ulHash = gpos::CombineHashes(ulHash, CWindowFrame::HashValue(m_pdrgpwf, 3 /*ulMaxSize*/));
   ulHash = gpos::CombineHashes(ulHash, COrderSpec::HashValue(m_pdrgpos, 3 /*ulMaxSize*/));
 
@@ -329,9 +301,6 @@ IStatistics *CLogicalSequenceProject::PstatsDerive(CMemoryPool *mp, CExpressionH
 //---------------------------------------------------------------------------
 IOstream &CLogicalSequenceProject::OsPrint(IOstream &os) const {
   os << SzId() << " (";
-  os << "Partition By Keys:";
-  (void)m_pds->OsPrint(os);
-  os << ", ";
   os << "Order Spec:";
   (void)COrderSpec::OsPrint(os, m_pdrgpos);
   os << ", ";
@@ -354,17 +323,6 @@ CLogicalSequenceProject *CLogicalSequenceProject::PopRemoveLocalOuterRefs(CMemor
   GPOS_ASSERT(this == exprhdl.Pop());
 
   CColRefSet *outer_refs = exprhdl.DeriveOuterReferences();
-  CDistributionSpec *pds = m_pds;
-  if (CDistributionSpec::EdtHashed == m_pds->Edt()) {
-    pds = CDistributionSpecHashed::PdsConvert(m_pds)->PdshashedExcludeColumns(mp, outer_refs);
-    if (nullptr == pds) {
-      // if the hashed distribution spec is empty after excluding the outer ref columns,
-      // eliminate Partition clause by creating a singleton spec
-      pds = GPOS_NEW(mp) CDistributionSpecSingleton();
-    }
-  } else {
-    pds->AddRef();
-  }
 
   COrderSpecArray *pdrgpos = COrderSpec::PdrgposExclude(mp, m_pdrgpos, outer_refs);
 
@@ -373,7 +331,7 @@ CLogicalSequenceProject *CLogicalSequenceProject::PopRemoveLocalOuterRefs(CMemor
   // we re-use the frame edges without changing here
   m_pdrgpwf->AddRef();
 
-  return GPOS_NEW(mp) CLogicalSequenceProject(mp, pds, pdrgpos, m_pdrgpwf);
+  return GPOS_NEW(mp) CLogicalSequenceProject(mp, pdrgpos, m_pdrgpwf);
 }
 
 // EOF

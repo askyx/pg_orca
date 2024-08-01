@@ -13,7 +13,6 @@
 #define GPDXL_CDXLScalarFuncExpr_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 #include "naucrates/md/IMDId.h"
 
@@ -77,7 +76,6 @@ class CDXLScalarFuncExpr : public CDXLScalar {
   BOOL IsFuncVariadic() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLScalarFuncExpr *Cast(CDXLOperator *dxl_op) {

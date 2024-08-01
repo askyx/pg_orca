@@ -16,14 +16,11 @@
 #include "gpos/common/CDouble.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/string/CWStringDynamic.h"
-
 #include "naucrates/md/CDXLBucket.h"
 #include "naucrates/md/CMDIdColStats.h"
 #include "naucrates/md/IMDColStats.h"
 
-namespace gpdxl {
-class CXMLSerializer;
-}
+namespace gpdxl {}
 
 namespace gpmd {
 using namespace gpos;
@@ -87,7 +84,6 @@ class CDXLColStats : public IMDColStats {
   CMDName Mdname() const override;
 
   // DXL string representation of cache object
-  const CWStringDynamic *GetStrRepr() override;
 
   // number of buckets
   ULONG Buckets() const override;
@@ -111,7 +107,6 @@ class CDXLColStats : public IMDColStats {
   const CDXLBucket *GetDXLBucketAt(ULONG ul) const override;
 
   // serialize column stats in DXL format
-  void Serialize(gpdxl::CXMLSerializer *) const override;
 
 #ifdef GPOS_DEBUG
   // debug print of the column stats

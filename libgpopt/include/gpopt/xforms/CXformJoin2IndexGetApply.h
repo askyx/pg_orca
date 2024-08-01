@@ -9,12 +9,11 @@
 #ifndef GPOPT_CXformJoin2IndexGetApply_H
 #define GPOPT_CXformJoin2IndexGetApply_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPatternNode.h"
 #include "gpopt/xforms/CXformJoin2IndexApplyGeneric.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

@@ -19,7 +19,6 @@ namespace gpdxl {
 using namespace gpos;
 
 // fwd decl
-class CXMLSerializer;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -53,7 +52,6 @@ class CDXLOperatorCost : public CRefCount {
   ~CDXLOperatorCost() override;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer) const;
 
   // accessors
   const CWStringDynamic *GetStartUpCostStr() const;

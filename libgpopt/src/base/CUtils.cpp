@@ -10,19 +10,10 @@
 //---------------------------------------------------------------------------
 #include "gpopt/base/CUtils.h"
 
-#include "gpos/common/clibwrapper.h"
-#include "gpos/common/syslibwrapper.h"
-#include "gpos/io/CFileDescriptor.h"
-#include "gpos/io/COstreamString.h"
-#include "gpos/memory/CAutoMemoryPool.h"
-#include "gpos/string/CWStringDynamic.h"
-#include "gpos/task/CWorker.h"
-
 #include "gpopt/base/CCastUtils.h"
 #include "gpopt/base/CColRefSetIter.h"
 #include "gpopt/base/CColRefTable.h"
 #include "gpopt/base/CConstraintInterval.h"
-#include "gpopt/base/CDistributionSpecRandom.h"
 #include "gpopt/base/CKeyCollection.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/exception.h"
@@ -46,7 +37,6 @@
 #include "gpopt/operators/CPhysicalAgg.h"
 #include "gpopt/operators/CPhysicalCTEConsumer.h"
 #include "gpopt/operators/CPhysicalCTEProducer.h"
-#include "gpopt/operators/CPhysicalMotionRandom.h"
 #include "gpopt/operators/CPhysicalNLJoin.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpopt/operators/CScalarArray.h"
@@ -65,6 +55,13 @@
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/search/CMemo.h"
 #include "gpopt/translate/CTranslatorExprToDXLUtils.h"
+#include "gpos/common/clibwrapper.h"
+#include "gpos/common/syslibwrapper.h"
+#include "gpos/io/CFileDescriptor.h"
+#include "gpos/io/COstreamString.h"
+#include "gpos/memory/CAutoMemoryPool.h"
+#include "gpos/string/CWStringDynamic.h"
+#include "gpos/task/CWorker.h"
 #include "naucrates/base/IDatumBool.h"
 #include "naucrates/base/IDatumInt2.h"
 #include "naucrates/base/IDatumInt4.h"
@@ -955,27 +952,13 @@ BOOL CUtils::FPhysicalAgg(COperator *pop) {
   return (nullptr != popAgg);
 }
 
-// check if a given operator is a physical motion
-BOOL CUtils::FPhysicalMotion(COperator *pop) {
-  GPOS_ASSERT(nullptr != pop);
-
-  CPhysicalMotion *popMotion = nullptr;
-  if (pop->FPhysical()) {
-    // attempt casting to physical motion,
-    // dynamic cast returns NULL if operator is not a motion
-    popMotion = dynamic_cast<CPhysicalMotion *>(pop);
-  }
-
-  return (nullptr != popMotion);
-}
-
 // check if a given operator is an FEnforcer
 BOOL CUtils::FEnforcer(COperator *pop) {
   GPOS_ASSERT(nullptr != pop);
 
   COperator::EOperatorId op_id = pop->Eopid();
   return COperator::EopPhysicalSort == op_id || COperator::EopPhysicalSpool == op_id ||
-         COperator::EopPhysicalPartitionSelector == op_id || FPhysicalMotion(pop);
+         COperator::EopPhysicalPartitionSelector == op_id;
 }
 
 // check if a given operator is an Apply
@@ -1704,7 +1687,7 @@ CExpression *CUtils::PexprLogicalSelect(CMemoryPool *mp, CExpression *pexpr, CEx
   GPOS_ASSERT(nullptr != pexprPredicate);
 
   CTableDescriptor *ptabdesc = nullptr;
-  if (pexpr->Pop()->Eopid() == CLogical::EopLogicalGet || pexpr->Pop()->Eopid() == CLogical::EopLogicalDynamicGet) {
+  if (pexpr->Pop()->Eopid() == CLogical::EopLogicalGet) {
     ptabdesc = pexpr->DeriveTableDescriptor()->First();
     GPOS_ASSERT(nullptr != ptabdesc);
   } else if (pexpr->Pop()->Eopid() == CLogical::EopLogicalSelect) {
@@ -1769,10 +1752,8 @@ CExpression *CUtils::PexprLogicalProject(CMemoryPool *mp, CExpression *pexpr, CE
 }
 
 // generate a sequence project expression
-CExpression *CUtils::PexprLogicalSequenceProject(CMemoryPool *mp, CDistributionSpec *pds, COrderSpecArray *pdrgpos,
-                                                 CWindowFrameArray *pdrgpwf, CExpression *pexpr,
-                                                 CExpression *pexprPrjList) {
-  GPOS_ASSERT(nullptr != pds);
+CExpression *CUtils::PexprLogicalSequenceProject(CMemoryPool *mp, COrderSpecArray *pdrgpos, CWindowFrameArray *pdrgpwf,
+                                                 CExpression *pexpr, CExpression *pexprPrjList) {
   GPOS_ASSERT(nullptr != pdrgpos);
   GPOS_ASSERT(nullptr != pdrgpwf);
   GPOS_ASSERT(pdrgpwf->Size() == pdrgpos->Size());
@@ -1780,8 +1761,7 @@ CExpression *CUtils::PexprLogicalSequenceProject(CMemoryPool *mp, CDistributionS
   GPOS_ASSERT(nullptr != pexprPrjList);
   GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
 
-  return GPOS_NEW(mp)
-      CExpression(mp, GPOS_NEW(mp) CLogicalSequenceProject(mp, pds, pdrgpos, pdrgpwf), pexpr, pexprPrjList);
+  return GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalSequenceProject(mp, pdrgpos, pdrgpwf), pexpr, pexprPrjList);
 }
 
 // construct a projection of NULL constants using the given column
@@ -3173,27 +3153,6 @@ CColRef *CUtils::PcrMap(CColRef *pcrSource, CColRefArray *pdrgpcrSource, CColRef
   return pcrTarget;
 }
 
-BOOL CUtils::FDuplicateHazardDistributionSpec(CDistributionSpec *pds) {
-  CDistributionSpec::EDistributionType edt = pds->Edt();
-
-  return CDistributionSpec::EdtStrictReplicated == edt || CDistributionSpec::EdtUniversal == edt;
-}
-
-// Check if duplicate values can be generated when executing the given Motion expression,
-// duplicates occur if Motion's input has strict-replicated/universal distribution,
-// which means that we have exactly the same copy of input on each host. Note that
-// tainted-replicated does not satisfy the assertion of identical input copies.
-BOOL CUtils::FDuplicateHazardMotion(CExpression *pexprMotion) {
-  GPOS_ASSERT(nullptr != pexprMotion);
-  GPOS_ASSERT(CUtils::FPhysicalMotion(pexprMotion->Pop()));
-
-  CExpression *pexprChild = (*pexprMotion)[0];
-  CDrvdPropPlan *pdpplanChild = CDrvdPropPlan::Pdpplan(pexprChild->PdpDerive());
-  CDistributionSpec *pdsChild = pdpplanChild->Pds();
-
-  return CUtils::FDuplicateHazardDistributionSpec(pdsChild);
-}
-
 // Collapse the top two project nodes like this, if unable return NULL;
 //
 // clang-format off
@@ -3435,89 +3394,6 @@ BOOL CUtils::FEquivalanceClassesEqual(CMemoryPool *mp, CColRefSetArray *pdrgpcrs
   }
   phmcscrs->Release();
   return true;
-}
-
-// This function provides a check for a plan with CTE, if both
-// CTEProducer and CTEConsumer are executed on the same locality.
-// If it is not the case, the plan is bogus and cannot be executed
-// by the executor, therefore it throws an exception causing fallback
-// to planner.
-//
-// The overall algorithm for detecting CTE producer and consumer
-// inconsistency employs a HashMap while preorder traversing the tree.
-// Preorder traversal will guarantee that we visit the producer before
-// we visit the consumer. In this regard, when we see a CTE producer,
-// we add its CTE id as a key and its execution locality as a value to
-// the HashMap.
-// And when we encounter the matching CTE consumer while we traverse the
-// tree, we check if the locality matches by looking up the CTE id from
-// the HashMap. If we see a non-matching locality, we report the
-// anamoly.
-//
-// We change the locality and push it down the tree whenever we detect
-// a motion and the motion type enforces a locality change. We pass the
-// locality type by value instead of referance to avoid locality changes
-// affect parent and sibling localities.
-void CUtils::ValidateCTEProducerConsumerLocality(
-    CMemoryPool *mp, CExpression *pexpr, EExecLocalityType eelt,
-    UlongToUlongMap *phmulul  // Hash Map containing the CTE Producer id and its execution locality
-) {
-  COperator *pop = pexpr->Pop();
-  if (COperator::EopPhysicalCTEProducer == pop->Eopid()) {
-    // record the location (either coordinator or segment or singleton)
-    // where the CTE producer is being executed
-    ULONG ulCTEID = CPhysicalCTEProducer::PopConvert(pop)->UlCTEId();
-    phmulul->Insert(GPOS_NEW(mp) ULONG(ulCTEID), GPOS_NEW(mp) ULONG(eelt));
-  } else if (COperator::EopPhysicalCTEConsumer == pop->Eopid()) {
-    ULONG ulCTEID = CPhysicalCTEConsumer::PopConvert(pop)->UlCTEId();
-    ULONG *pulLocProducer = phmulul->Find(&ulCTEID);
-
-    // check if the CTEConsumer is being executed in the same location
-    // as the CTE Producer
-    if (nullptr == pulLocProducer || *pulLocProducer != (ULONG)eelt) {
-      phmulul->Release();
-      GPOS_RAISE(gpopt::ExmaGPOPT, gpopt::ExmiCTEProducerConsumerMisAligned, ulCTEID);
-    }
-  }
-  // In case of a Gather motion, the execution locality is set to segments
-  // since the child of Gather motion executes on segments
-  else if (COperator::EopPhysicalMotionGather == pop->Eopid()) {
-    eelt = EeltSegments;
-  } else if (COperator::EopPhysicalMotionHashDistribute == pop->Eopid() ||
-             COperator::EopPhysicalMotionRandom == pop->Eopid() ||
-             COperator::EopPhysicalMotionBroadcast == pop->Eopid()) {
-    // For any of these physical motions, the outer child's execution needs to be
-    // tracked for depending upon the distribution spec
-    CDrvdPropPlan *pdpplanChild = CDrvdPropPlan::Pdpplan((*pexpr)[0]->PdpDerive());
-    CDistributionSpec *pdsChild = pdpplanChild->Pds();
-
-    eelt = CUtils::ExecLocalityType(pdsChild);
-  }
-
-  const ULONG length = pexpr->Arity();
-  for (ULONG ul = 0; ul < length; ul++) {
-    CExpression *pexprChild = (*pexpr)[ul];
-
-    if (!pexprChild->Pop()->FScalar()) {
-      ValidateCTEProducerConsumerLocality(mp, pexprChild, eelt, phmulul);
-    }
-  }
-}
-
-// get execution locality type
-CUtils::EExecLocalityType CUtils::ExecLocalityType(CDistributionSpec *pds) {
-  EExecLocalityType eelt;
-  if (CDistributionSpec::EdtSingleton == pds->Edt() || CDistributionSpec::EdtStrictSingleton == pds->Edt()) {
-    CDistributionSpecSingleton *pdss = CDistributionSpecSingleton::PdssConvert(pds);
-    if (pdss->FOnCoordinator()) {
-      eelt = EeltCoordinator;
-    } else {
-      eelt = EeltSingleton;
-    }
-  } else {
-    eelt = EeltSegments;
-  }
-  return eelt;
 }
 
 // generate a limit expression on top of the given relational child with the given offset and limit count

@@ -12,18 +12,17 @@
 
 #include "gpopt/mdcache/CMDAccessor.h"
 
+#include "gpopt/base/CColRefSetIter.h"
+#include "gpopt/base/CColRefTable.h"
+#include "gpopt/base/COptCtxt.h"
+#include "gpopt/exception.h"
+#include "gpopt/mdcache/CMDAccessorUtils.h"
 #include "gpos/common/CAutoP.h"
 #include "gpos/common/CAutoRef.h"
 #include "gpos/common/CTimerUser.h"
 #include "gpos/error/CAutoTrace.h"
 #include "gpos/io/COstreamString.h"
 #include "gpos/task/CAutoSuspendAbort.h"
-
-#include "gpopt/base/CColRefSetIter.h"
-#include "gpopt/base/CColRefTable.h"
-#include "gpopt/base/COptCtxt.h"
-#include "gpopt/exception.h"
-#include "gpopt/mdcache/CMDAccessorUtils.h"
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/exception.h"
 #include "naucrates/md/CMDIdCast.h"
@@ -1053,45 +1052,6 @@ IDatum *CMDAccessor::GetDatum(CMemoryPool *mp, IMDId *mdid_type, const CDXLDatum
   const IMDType *pmdtype = RetrieveType(mdid_type);
 
   return pmdtype->GetDatumForDXLDatum(mp, dxl_datum);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CMDAccessor::Serialize
-//
-//	@doc:
-//		Serialize MD object into provided stream
-//
-//---------------------------------------------------------------------------
-void CMDAccessor::Serialize(COstream &oos) {
-  ULONG nentries = m_shtCacheAccessors.Size();
-  IMDCacheObject **cacheEntries;
-  CAutoRg<IMDCacheObject *> aCacheEntries;
-  ULONG ul;
-
-  // Iterate the hash table and insert all entries to the array.
-  // The iterator holds a lock on the hash table, so we must not
-  // do anything non-trivial that might e.g. allocate memory,
-  // while iterating.
-  cacheEntries = GPOS_NEW_ARRAY(m_mp, IMDCacheObject *, nentries);
-  aCacheEntries = cacheEntries;
-  {
-    MDHTIter mdhtit(m_shtCacheAccessors);
-    ul = 0;
-    while (mdhtit.Advance()) {
-      MDHTIterAccessor mdhtitacc(mdhtit);
-      SMDAccessorElem *pmdaccelem = mdhtitacc.Value();
-      GPOS_ASSERT(nullptr != pmdaccelem);
-      cacheEntries[ul++] = pmdaccelem->GetImdObj();
-    }
-    GPOS_ASSERT(ul == nentries);
-  }
-
-  // Now that we're done iterating and no longer hold the lock,
-  // serialize the entries.
-  for (ul = 0; ul < nentries; ul++) {
-    oos << cacheEntries[ul]->GetStrRepr()->GetBuffer();
-  }
 }
 
 //---------------------------------------------------------------------------

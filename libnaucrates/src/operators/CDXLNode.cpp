@@ -175,45 +175,6 @@ void CDXLNode::SetOperator(CDXLOperator *dxl_op) {
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CDXLNode::SerializeToDXL
-//
-//	@doc:
-//		Serializes the node in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLNode::SerializeToDXL(CXMLSerializer *xml_serializer) const {
-  if (nullptr != m_dxl_op) {
-    m_dxl_op->SerializeToDXL(xml_serializer, this);
-  }
-
-  if (nullptr != m_direct_dispatch_info && 0 < m_direct_dispatch_info->GetDispatchIdentifierDatumArray()->Size()) {
-    m_direct_dispatch_info->Serialize(xml_serializer);
-  }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLNode::SerializeChildrenToDXL
-//
-//	@doc:
-//		Serializes the node's children in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLNode::SerializeChildrenToDXL(CXMLSerializer *xml_serializer) const {
-  // serialize children nodes
-  const ULONG arity = Arity();
-  for (ULONG idx = 0; idx < arity; idx++) {
-    GPOS_CHECK_ABORT;
-
-    CDXLNode *child_dxlnode = (*m_dxl_array)[idx];
-    child_dxlnode->SerializeToDXL(xml_serializer);
-
-    GPOS_CHECK_ABORT;
-  }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CDXLNode::SetProperties
 //
 //	@doc:
@@ -224,33 +185,6 @@ void CDXLNode::SetProperties(CDXLProperties *dxl_properties) {
   // allow setting properties only once
   GPOS_ASSERT(nullptr == m_dxl_properties);
   m_dxl_properties = dxl_properties;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLNode::SetDirectDispatchInfo
-//
-//	@doc:
-//		Set direct dispatch info
-//
-//---------------------------------------------------------------------------
-void CDXLNode::SetDirectDispatchInfo(CDXLDirectDispatchInfo *dxl_direct_dispatch_info) {
-  // allow setting direct dispatch info only once
-  GPOS_ASSERT(nullptr == m_direct_dispatch_info);
-  GPOS_ASSERT(nullptr != dxl_direct_dispatch_info);
-  m_direct_dispatch_info = dxl_direct_dispatch_info;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDXLNode::SerializePropertiesToDXL
-//
-//	@doc:
-//		Serialize properties in DXL format
-//
-//---------------------------------------------------------------------------
-void CDXLNode::SerializePropertiesToDXL(CXMLSerializer *xml_serializer) const {
-  m_dxl_properties->SerializePropertiesToDXL(xml_serializer);
 }
 
 #ifdef GPOS_DEBUG

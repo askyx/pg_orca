@@ -64,37 +64,6 @@ BOOL CHintUtils::SatisfiesPlanHints(CLogicalIndexGet *pop, CPlanHint *plan_hint)
   return scan_hint->GetIndexNames()->Size() == 0 && scan_hint->SatisfiesOperator(pop);
 }
 
-BOOL CHintUtils::SatisfiesPlanHints(CLogicalDynamicGet *pop, CPlanHint *plan_hint) {
-  GPOS_ASSERT(nullptr != pop);
-
-  CScanHint *scan_hint = GetScanHint(pop, plan_hint);
-  if (scan_hint == nullptr) {
-    // no matched hint, so everything goes...
-    return true;
-  }
-
-  return scan_hint->SatisfiesOperator(pop);
-}
-
-BOOL CHintUtils::SatisfiesPlanHints(CLogicalDynamicIndexGet *pop, CPlanHint *plan_hint) {
-  GPOS_ASSERT(nullptr != pop);
-
-  CScanHint *scan_hint = GetScanHint(pop, plan_hint);
-  if (scan_hint == nullptr) {
-    // no matched hint, so everything goes...
-    return true;
-  }
-
-  for (ULONG ul = 0; ul < scan_hint->GetIndexNames()->Size(); ul++) {
-    if (pop->Pindexdesc()->Name().Pstr()->Equals((*scan_hint->GetIndexNames())[ul])) {
-      // If operator matches hint operator and index matches hint index.
-      return scan_hint->SatisfiesOperator(pop);
-    }
-  }
-
-  return scan_hint->GetIndexNames()->Size() == 0 && scan_hint->SatisfiesOperator(pop);
-}
-
 BOOL CHintUtils::SatisfiesPlanHints(CScalarBitmapIndexProbe *pop, CPlanHint *plan_hint) {
   GPOS_ASSERT(nullptr != pop);
 

@@ -11,13 +11,12 @@
 
 #include "gpopt/operators/CPhysicalCTEConsumer.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CCTEMap.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/operators/CExpression.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalCTEProducer.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -89,25 +88,6 @@ COrderSpec *CPhysicalCTEConsumer::PosRequired(CMemoryPool *,        // mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalCTEConsumer::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalCTEConsumer::PdsRequired(CMemoryPool *,        // mp,
-                                                     CExpressionHandle &,  // exprhdl,
-                                                     CDistributionSpec *,  // pdsRequired,
-                                                     ULONG,                // child_index
-                                                     CDrvdPropArray *,     // pdrgpdpCtxt
-                                                     ULONG                 // ulOptReq
-) const {
-  GPOS_ASSERT(!"CPhysicalCTEConsumer has no relational children");
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalCTEConsumer::PrsRequired
 //
 //	@doc:
@@ -156,22 +136,6 @@ COrderSpec *CPhysicalCTEConsumer::PosDerive(CMemoryPool *,       // mp
                                             CExpressionHandle &  // exprhdl
 ) const {
   GPOS_ASSERT(!"Unexpected call to CTE consumer order property derivation");
-
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalCTEConsumer::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalCTEConsumer::PdsDerive(CMemoryPool *,       // mp
-                                                   CExpressionHandle &  // exprhdl
-) const {
-  GPOS_ASSERT(!"Unexpected call to CTE consumer distribution property derivation");
 
   return nullptr;
 }

@@ -11,9 +11,8 @@
 
 #include "gpopt/operators/CScalarSwitchCase.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/COptCtxt.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 using namespace gpmd;

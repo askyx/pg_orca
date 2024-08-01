@@ -11,12 +11,11 @@
 #ifndef GPDBCOST_CCostModelParamsGPDB_H
 #define GPDBCOST_CCostModelParamsGPDB_H
 
+#include "gpopt/cost/ICostModelParams.h"
 #include "gpos/base.h"
 #include "gpos/common/CDouble.h"
 #include "gpos/common/CRefCount.h"
 #include "gpos/string/CWStringConst.h"
-
-#include "gpopt/cost/ICostModelParams.h"
 
 namespace gpopt {
 using namespace gpos;
@@ -29,7 +28,7 @@ using namespace gpos;
 //		Parameters in GPDB cost model
 //
 //---------------------------------------------------------------------------
-class CCostModelParamsGPDB : public ICostModelParams, public DbgPrintMixin<CCostModelParamsGPDB> {
+class CCostModelParamsGPDB : public ICostModelParams {
  public:
   // enumeration of cost model params
   enum ECostParam {

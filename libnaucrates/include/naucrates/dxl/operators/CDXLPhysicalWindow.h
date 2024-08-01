@@ -13,7 +13,6 @@
 #define GPDXL_CDXLPhysicalWindow_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLPhysical.h"
 #include "naucrates/dxl/operators/CDXLWindowKey.h"
@@ -64,7 +63,6 @@ class CDXLPhysicalWindow : public CDXLPhysical {
   CDXLWindowKey *GetDXLWindowKeyAt(ULONG ulPos) const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *xml_serializer, const CDXLNode *dxlnode) const override;
 
   // conversion function
   static CDXLPhysicalWindow *Cast(CDXLOperator *dxl_op) {

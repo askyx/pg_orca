@@ -11,10 +11,9 @@
 
 #include "gpopt/xforms/CXformImplementCTEConsumer.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalCTEConsumer.h"
 #include "gpopt/operators/CPhysicalCTEConsumer.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

@@ -11,10 +11,9 @@
 
 #include "gpopt/operators/CScalarProjectElement.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/base/CColRefSet.h"
 #include "gpopt/base/COptCtxt.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -102,7 +101,8 @@ COperator *CScalarProjectElement::PopCopyWithRemappedColumns(CMemoryPool *mp, Ul
 //---------------------------------------------------------------------------
 IOstream &CScalarProjectElement::OsPrint(IOstream &os) const {
   os << SzId() << " ";
-  m_pcr->OsPrint(os);
+  if (m_pcr)
+    m_pcr->OsPrint(os);
 
   return os;
 }

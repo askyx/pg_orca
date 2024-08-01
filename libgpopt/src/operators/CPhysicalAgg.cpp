@@ -11,17 +11,10 @@
 
 #include "gpopt/operators/CPhysicalAgg.h"
 
-#include "gpos/base.h"
-
-#include "gpopt/base/CDistributionSpecAny.h"
-#include "gpopt/base/CDistributionSpecHashed.h"
-#include "gpopt/base/CDistributionSpecRandom.h"
-#include "gpopt/base/CDistributionSpecReplicated.h"
-#include "gpopt/base/CDistributionSpecSingleton.h"
-#include "gpopt/base/CDistributionSpecStrictSingleton.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 
@@ -168,162 +161,6 @@ CColRefSet *CPhysicalAgg::PcrsRequiredAgg(CMemoryPool *mp, CExpressionHandle &ex
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalAgg::PdsRequired
-//
-//	@doc:
-//		Compute required distribution of the n-th child
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalAgg::PdsRequiredAgg(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                CDistributionSpec *pdsInput, ULONG child_index, ULONG ulOptReq,
-                                                CColRefArray *pdrgpcgGrp, CColRefArray *pdrgpcrGrpMinimal) const {
-  GPOS_ASSERT(0 == child_index);
-
-  if (FGlobal()) {
-    return PdsRequiredGlobalAgg(mp, exprhdl, pdsInput, child_index, pdrgpcgGrp, pdrgpcrGrpMinimal, ulOptReq);
-  }
-
-  if (COperator::EgbaggtypeIntermediate == m_egbaggtype) {
-    return PdsRequiredIntermediateAgg(mp, ulOptReq);
-  }
-
-  // if expression has to execute on a single host then we need a gather
-  if (exprhdl.NeedsSingletonExecution()) {
-    return PdsRequireSingleton(mp, exprhdl, pdsInput, child_index);
-  }
-
-  if (COperator::EgbaggtypeLocal == m_egbaggtype && m_pdrgpcrArgDQA != nullptr && 0 != m_pdrgpcrArgDQA->Size()) {
-    if (ulOptReq == 0) {
-      return PdsMaximalHashed(mp, m_pdrgpcrArgDQA);
-    } else {
-      GPOS_ASSERT(1 == ulOptReq);
-      GPOS_ASSERT(0 < m_pdrgpcr->Size());
-
-      ULONG length = m_pdrgpcrArgDQA->Size();
-      CColRefArray *grpAndDistinctCols = CUtils::PdrgpcrExactCopy(mp, m_pdrgpcr);
-
-      // add the distinct column to the group by at the first stage of
-      // the multi-level aggregation, and also deduplicate them.
-      CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, m_pdrgpcr);
-      for (ULONG ul = 0; ul < length; ul++) {
-        CColRef *colref = (*m_pdrgpcrArgDQA)[ul];
-        if (!pcrs->FMember(colref)) {
-          grpAndDistinctCols->Append(colref);
-          pcrs->Include(colref);
-        }
-      }
-      pcrs->Release();
-
-      CDistributionSpec *pdsSpec = PdsMaximalHashed(mp, grpAndDistinctCols);
-      grpAndDistinctCols->Release();
-      return pdsSpec;
-    }
-  }
-
-  GPOS_ASSERT(0 == ulOptReq || 1 == ulOptReq);
-
-  if (0 == ulOptReq) {
-    return GPOS_NEW(mp) CDistributionSpecAny(this->Eopid());
-  }
-
-  // we randomly distribute the input for skew-elimination
-  return GPOS_NEW(mp) CDistributionSpecRandom();
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalAgg::PdsMaximalHashed
-//
-//	@doc:
-//		Compute a maximal hashed distribution using the given columns,
-//		if no such distribution can be created, return a Singleton distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalAgg::PdsMaximalHashed(CMemoryPool *mp, CColRefArray *colref_array) {
-  GPOS_ASSERT(nullptr != colref_array);
-
-  CDistributionSpecHashed *pdshashedMaximal =
-      CDistributionSpecHashed::PdshashedMaximal(mp, colref_array, true /*fNullsColocated*/
-      );
-  if (nullptr != pdshashedMaximal) {
-    return pdshashedMaximal;
-  }
-
-  // otherwise, require a singleton explicitly
-  return GPOS_NEW(mp) CDistributionSpecSingleton();
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalAgg::PdsRequiredGlobalAgg
-//
-//	@doc:
-//		Compute required distribution of the n-th child of a global agg
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalAgg::PdsRequiredGlobalAgg(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                      CDistributionSpec *pdsInput, ULONG child_index,
-                                                      CColRefArray *pdrgpcrGrp, CColRefArray *pdrgpcrGrpMinimal,
-                                                      ULONG ulOptReq) const {
-  GPOS_ASSERT(FGlobal());
-  GPOS_ASSERT(2 > ulOptReq);
-
-  // TODO:  - Mar 19, 2012; Cleanup: move this check to the caller
-  if (exprhdl.HasOuterRefs()) {
-    return PdsPassThru(mp, exprhdl, pdsInput, child_index);
-  }
-
-  if (0 == pdrgpcrGrp->Size()) {
-    if (CDistributionSpec::EdtSingleton == pdsInput->Edt()) {
-      // pass through input distribution if it is a singleton
-      pdsInput->AddRef();
-      return pdsInput;
-    }
-
-    // otherwise, require a singleton explicitly
-    return GPOS_NEW(mp) CDistributionSpecSingleton();
-  }
-
-  if (0 == ulOptReq && (IMDFunction::EfsVolatile == exprhdl.DeriveFunctionProperties(0)->Efs())) {
-    // request a singleton distribution if child has volatile functions
-    return GPOS_NEW(mp) CDistributionSpecSingleton();
-  }
-
-  // if there are grouping columns, require a hash distribution explicitly
-  return PdsMaximalHashed(mp, pdrgpcrGrpMinimal);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalAgg::PdsRequiredIntermediateAgg
-//
-//	@doc:
-//		Compute required distribution of the n-th child of an intermediate
-//		aggregate operator
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalAgg::PdsRequiredIntermediateAgg(CMemoryPool *mp, ULONG ulOptReq) const {
-  GPOS_ASSERT(COperator::EgbaggtypeIntermediate == m_egbaggtype);
-
-  if (0 == ulOptReq) {
-    return PdsMaximalHashed(mp, m_pdrgpcr);
-  }
-
-  CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
-  const ULONG length = m_pdrgpcr->Size() - m_pdrgpcrArgDQA->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
-    CColRef *colref = (*m_pdrgpcr)[ul];
-    colref_array->Append(colref);
-  }
-
-  CDistributionSpec *pds = PdsMaximalHashed(mp, colref_array);
-  colref_array->Release();
-
-  return pds;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalAgg::PrsRequired
 //
 //	@doc:
@@ -397,39 +234,6 @@ BOOL CPhysicalAgg::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcr
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalAgg::PdsDerive
-//
-//	@doc:
-//		Derive distribution
-//
-//---------------------------------------------------------------------------
-CDistributionSpec *CPhysicalAgg::PdsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  CDistributionSpec *pds = exprhdl.Pdpplan(0 /*child_index*/)->Pds();
-
-  if (CDistributionSpec::EdtUniversal == pds->Edt() &&
-      IMDFunction::EfsVolatile == exprhdl.DeriveScalarFunctionProperties(1)->Efs()) {
-    return GPOS_NEW(mp) CDistributionSpecStrictSingleton(CDistributionSpecSingleton::EstCoordinator);
-  } else if (CDistributionSpec::EdtStrictReplicated == pds->Edt()) {
-    // Aggregate functions that are not sensitive to the order of data (eg: sum, avg, min, max, count)
-    // can be executed safely on replicated slices and do not need to be broadcasted/gathered, allowing
-    // for more performant plans in some cases
-    if (exprhdl.DeriveContainsOnlyReplicationSafeAggFuncs(1)) {
-      return GPOS_NEW(mp) CDistributionSpecReplicated(CDistributionSpec::EdtStrictReplicated);
-    }
-
-    // Aggregate functions which are not trivial and which are sensitive to
-    // the order of their input cannot guarantee replicated data. If the child
-    // was replicated, we can no longer guarantee that property. Therefore
-    // we must now dervive tainted replicated.
-    return GPOS_NEW(mp) CDistributionSpecReplicated(CDistributionSpec::EdtTaintedReplicated);
-  }
-
-  pds->AddRef();
-  return pds;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalAgg::PrsDerive
 //
 //	@doc:
@@ -492,36 +296,6 @@ BOOL CPhysicalAgg::Matches(COperator *pop) const {
   }
 
   return false;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalAgg::EpetDistribution
-//
-//	@doc:
-//		Return the enforcing type for distribution property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalAgg::EpetDistribution(CExpressionHandle &exprhdl,
-                                                             const CEnfdDistribution *ped) const {
-  GPOS_ASSERT(nullptr != ped);
-
-  // get distribution delivered by the aggregate node
-  CDistributionSpec *pds = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Pds();
-
-  if (ped->FCompatible(pds)) {
-    if (COperator::EgbaggtypeLocal != Egbaggtype() || !m_should_enforce_distribution) {
-      return CEnfdProp::EpetUnnecessary;
-    }
-
-    // prohibit the plan if local aggregate already delivers the enforced
-    // distribution, since otherwise we would create two aggregates with
-    // no intermediate motion operators
-    return CEnfdProp::EpetProhibited;
-  }
-
-  // required distribution will be enforced on Agg's output
-  return CEnfdProp::EpetRequired;
 }
 
 //---------------------------------------------------------------------------

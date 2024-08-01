@@ -11,14 +11,13 @@
 
 #include "gpopt/search/CGroupProxy.h"
 
-#include "gpos/base.h"
-#include "gpos/common/CSyncHashtableAccessByKey.h"
-
 #include "gpopt/base/CDrvdPropRelational.h"
 #include "gpopt/base/COptimizationContext.h"
 #include "gpopt/search/CGroup.h"
 #include "gpopt/search/CGroupExpression.h"
 #include "gpopt/search/CJobGroup.h"
+#include "gpos/base.h"
+#include "gpos/common/CSyncHashtableAccessByKey.h"
 
 using namespace gpopt;
 

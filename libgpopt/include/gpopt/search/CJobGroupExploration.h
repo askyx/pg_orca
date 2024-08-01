@@ -11,10 +11,9 @@
 #ifndef GPOPT_CJobGroupExploration_H
 #define GPOPT_CJobGroupExploration_H
 
-#include "gpos/base.h"
-
 #include "gpopt/search/CJobGroup.h"
 #include "gpopt/search/CJobStateMachine.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

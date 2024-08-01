@@ -11,13 +11,12 @@
 
 #include "gpopt/xforms/CXformPushGbWithHavingBelowJoin.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CLogicalInnerJoin.h"
 #include "gpopt/operators/CLogicalSelect.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/xforms/CXformUtils.h"
+#include "gpos/base.h"
 
 using namespace gpopt;
 

@@ -15,10 +15,10 @@
 //---------------------------------------------------------------------------
 
 extern "C" {
-#include "postgres.h"
+#include <postgres.h>
 
-#include "nodes/makefuncs.h"
-#include "nodes/primnodes.h"
+#include <nodes/makefuncs.h>
+#include <nodes/primnodes.h>
 }
 
 #include "gpopt/translate/CMappingElementColIdParamId.h"

@@ -19,7 +19,6 @@
 #define GPDXL_CDXLScalarNullTest_H
 
 #include "gpos/base.h"
-
 #include "naucrates/dxl/operators/CDXLScalar.h"
 
 namespace gpdxl {
@@ -58,7 +57,6 @@ class CDXLScalarNullTest : public CDXLScalar {
   const CWStringConst *PstrTestName() const;
 
   // serialize operator in DXL format
-  void SerializeToDXL(CXMLSerializer *, const CDXLNode *) const override;
 
   // conversion function
   static CDXLScalarNullTest *Cast(CDXLOperator *dxl_op) {

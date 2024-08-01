@@ -12,12 +12,11 @@
 
 #include "gpopt/init.h"
 
-#include "gpos/_api.h"
-#include "gpos/task/CWorker.h"
-
 #include "gpopt/exception.h"
 #include "gpopt/mdcache/CMDCache.h"
 #include "gpopt/xforms/CXformFactory.h"
+#include "gpos/_api.h"
+#include "gpos/task/CWorker.h"
 #include "naucrates/init.h"
 
 using namespace gpos;

@@ -23,10 +23,9 @@
 #ifndef GPOS_CLogicalGbAggDeduplicate_H
 #define GPOS_CLogicalGbAggDeduplicate_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 //---------------------------------------------------------------------------

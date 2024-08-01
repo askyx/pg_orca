@@ -13,10 +13,9 @@
 #ifndef GPDXL_CPartPruneStepsBuilder_H
 #define GPDXL_CPartPruneStepsBuilder_H
 
-#include "gpos/base.h"
-
 #include "gpopt/translate/CMappingColIdVarPlStmt.h"
 #include "gpopt/translate/CTranslatorDXLToScalar.h"
+#include "gpos/base.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 
 using namespace gpos;

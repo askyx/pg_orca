@@ -11,11 +11,10 @@
 #ifndef GPOPT_CXformLeftOuterApply2LeftOuterJoin_H
 #define GPOPT_CXformLeftOuterApply2LeftOuterJoin_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CLogicalLeftOuterApply.h"
 #include "gpopt/operators/CLogicalLeftOuterJoin.h"
 #include "gpopt/xforms/CXformApply2Join.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

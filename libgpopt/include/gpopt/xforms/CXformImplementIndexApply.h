@@ -7,8 +7,6 @@
 #ifndef GPOPT_CXformImplementIndexApply_H
 #define GPOPT_CXformImplementIndexApply_H
 
-#include "gpos/base.h"
-
 #include "gpopt/hints/CHintUtils.h"
 #include "gpopt/operators/CLogicalIndexApply.h"
 #include "gpopt/operators/CPatternLeaf.h"
@@ -17,6 +15,7 @@
 #include "gpopt/operators/CPhysicalNLJoin.h"
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/xforms/CXformImplementation.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using namespace gpos;

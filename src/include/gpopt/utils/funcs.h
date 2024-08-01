@@ -12,14 +12,13 @@
 
 extern "C" {
 
-#include "postgres.h"
+#include <postgres.h>
+#include <fmgr.h>
 
-#include "fmgr.h"
-#include "utils/builtins.h"
+#include <utils/builtins.h>
 
 extern Datum DisableXform(PG_FUNCTION_ARGS);
 extern Datum EnableXform(PG_FUNCTION_ARGS);
-extern Datum LibraryVersion();
 }
 
 #endif  // GPOPT_funcs_H

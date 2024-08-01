@@ -11,14 +11,13 @@
 
 #include "gpopt/xforms/CXformSubqueryUnnest.h"
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalGbAgg.h"
 #include "gpopt/operators/CLogicalSequenceProject.h"
 #include "gpopt/operators/CNormalizer.h"
 #include "gpopt/operators/COperator.h"
 #include "gpopt/xforms/CSubqueryHandler.h"
+#include "gpos/base.h"
 
 using namespace gpmd;
 using namespace gpopt;
@@ -100,11 +99,10 @@ CExpression *CXformSubqueryUnnest::PexprSubqueryUnnest(CMemoryPool *mp, CExpress
 
       case COperator::EopLogicalSequenceProject:
         popSeqPrj = CLogicalSequenceProject::PopConvert(pexpr->Pop());
-        popSeqPrj->Pds()->AddRef();
         popSeqPrj->Pdrgpos()->AddRef();
         popSeqPrj->Pdrgpwf()->AddRef();
-        pexprResult = CUtils::PexprLogicalSequenceProject(mp, popSeqPrj->Pds(), popSeqPrj->Pdrgpos(),
-                                                          popSeqPrj->Pdrgpwf(), pexprNewOuter, pexprResidualScalar);
+        pexprResult = CUtils::PexprLogicalSequenceProject(mp, popSeqPrj->Pdrgpos(), popSeqPrj->Pdrgpwf(), pexprNewOuter,
+                                                          pexprResidualScalar);
         break;
 
       default:

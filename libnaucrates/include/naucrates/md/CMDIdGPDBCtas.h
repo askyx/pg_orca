@@ -13,7 +13,6 @@
 #define GPMD_CMDIdGPDBCTAS_H
 
 #include "gpos/base.h"
-
 #include "naucrates/md/CMDIdGPDB.h"
 
 namespace gpmd {

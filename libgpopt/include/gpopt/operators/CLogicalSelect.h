@@ -11,10 +11,9 @@
 #ifndef GPOS_CLogicalSelect_H
 #define GPOS_CLogicalSelect_H
 
-#include "gpos/base.h"
-
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalUnary.h"
+#include "gpos/base.h"
 
 namespace gpopt {
 using ExprPredToExprPredPartMap = CHashMap<CExpression, CExpression, CExpression::HashValue, CUtils::Equals,

@@ -13,8 +13,6 @@
 
 #include "gpos/base.h"
 
-#include "gpopt/base/CDistributionSpecHashed.h"
-
 using namespace gpopt;
 
 //---------------------------------------------------------------------------

@@ -12,14 +12,13 @@
 #ifndef GPOPT_COptCtxt_H
 #define GPOPT_COptCtxt_H
 
-#include "gpos/base.h"
-#include "gpos/task/CTaskLocalStorageObject.h"
-
 #include "gpopt/base/CCTEInfo.h"
 #include "gpopt/base/CColumnFactory.h"
 #include "gpopt/base/IComparator.h"
 #include "gpopt/base/SPartSelectorInfo.h"
 #include "gpopt/mdcache/CMDAccessor.h"
+#include "gpos/base.h"
+#include "gpos/task/CTaskLocalStorageObject.h"
 
 namespace gpopt {
 using namespace gpos;
