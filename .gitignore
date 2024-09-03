@@ -28,4 +28,4 @@ concourse/gporca_vars.yml
 xcode_build
 server/*.md_actual
 server/*.md_expected
-
+coverage.info

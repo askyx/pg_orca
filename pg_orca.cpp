@@ -71,7 +71,7 @@ extern "C" {
 PG_MODULE_MAGIC;
 
 void _PG_init(void) {
-  DefineCustomBoolVariable("pg_orca.enable_orca", "use orca planner.", NULL, &pg_orca_enable_pg_orca, true, PGC_SUSET,
+  DefineCustomBoolVariable("pg_orca.enable_orca", "use orca planner.", NULL, &pg_orca_enable_pg_orca, false, PGC_SUSET,
                            0, NULL, NULL, NULL);
 
   prev_planner_hook = planner_hook;
