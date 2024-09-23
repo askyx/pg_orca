@@ -16,7 +16,6 @@
 #include "gpopt/base/CKeyCollection.h"
 #include "gpopt/base/CUtils.h"
 #include "gpopt/exception.h"
-#include "gpopt/hints/CHintUtils.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalAssert.h"
 #include "gpopt/operators/CLogicalBitmapTableGet.h"
@@ -1991,32 +1990,11 @@ CExpression *CXformUtils::PexprBuildBtreeIndexPlan(CMemoryPool *mp, CMDAccessor 
       popLogicalGet = PopStaticBtreeIndexOpConstructor<CLogicalIndexOnlyGet>(
           mp, pmdindex, ptabdesc, ulOriginOpId, GPOS_NEW(mp) CName(mp, CName(alias)), pdrgpcrOutput,
           ulUnindexedPredColCount, indexscanDirection);
-      if (!CHintUtils::SatisfiesPlanHints(CLogicalIndexOnlyGet::PopConvert(popLogicalGet),
-                                          COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
-        // clean up
-        GPOS_DELETE(alias);
-        pdrgppcrIndexCols->Release();
-        pdrgpexprResidual->Release();
-        pdrgpexprIndex->Release();
-        outer_refs_in_index_get->Release();
-        popLogicalGet->Release();
-        return nullptr;
-      }
+
     } else {
       popLogicalGet = PopStaticBtreeIndexOpConstructor<CLogicalIndexGet>(
           mp, pmdindex, ptabdesc, ulOriginOpId, GPOS_NEW(mp) CName(mp, CName(alias)), pdrgpcrOutput,
           ulUnindexedPredColCount, indexscanDirection);
-      if (!CHintUtils::SatisfiesPlanHints(CLogicalIndexGet::PopConvert(popLogicalGet),
-                                          COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
-        // clean up
-        GPOS_DELETE(alias);
-        pdrgppcrIndexCols->Release();
-        pdrgpexprResidual->Release();
-        pdrgpexprIndex->Release();
-        outer_refs_in_index_get->Release();
-        popLogicalGet->Release();
-        return nullptr;
-      }
     }
   }
 
@@ -2386,12 +2364,7 @@ CExpression *CXformUtils::PexprBitmapSelectBestIndex(CMemoryPool *mp, CMDAccesso
     ptabdesc->AddRef();
     CScalarBitmapIndexProbe *pop =
         GPOS_NEW(mp) CScalarBitmapIndexProbe(mp, pindexdesc, ptabdesc, pmdindex->GetIndexRetItemTypeMdid());
-    if (!CHintUtils::SatisfiesPlanHints(pop, COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
-      pop->Release();
-      pexprIndexFinal->Release();
-      (*ppexprRecheck)->Release();
-      return nullptr;
-    }
+
     return GPOS_NEW(mp) CExpression(mp, pop, pexprIndexFinal);
   }
 

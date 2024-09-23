@@ -11,7 +11,6 @@
 
 #include "gpopt/xforms/CXformLeftJoin2RightJoin.h"
 
-#include "gpopt/hints/CPlanHint.h"
 #include "gpopt/operators/CLogicalLeftOuterJoin.h"
 #include "gpopt/operators/CLogicalRightOuterJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
@@ -72,14 +71,6 @@ void CXformLeftJoin2RightJoin::Transform(CXformContext *pxfctxt, CXformResult *p
   GPOS_ASSERT(nullptr != pxfctxt);
   GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
   GPOS_ASSERT(FCheckPattern(pexpr));
-
-  // join order hints may specify that a specific relation be on the inner or
-  // the outer side of the join. if such a hint exists, then skip adding
-  // right join alternative.
-  CPlanHint *planhint = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint();
-  if (nullptr != planhint && planhint->WasCreatedViaDirectedHint(pexpr)) {
-    return;
-  }
 
   CMemoryPool *mp = pxfctxt->Pmp();
 

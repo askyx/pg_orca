@@ -15,7 +15,6 @@
 #include "gpopt/base/CColRef.h"
 #include "gpopt/base/COptCtxt.h"
 #include "gpopt/base/CUtils.h"
-#include "gpopt/hints/CHintUtils.h"
 #include "gpopt/operators/CLogicalDML.h"
 #include "gpopt/operators/CLogicalIndexGet.h"
 #include "gpopt/operators/CLogicalIndexOnlyGet.h"
@@ -473,13 +472,8 @@ void CXformUtils::TransformImplementBinaryOp(CXformContext *pxfctxt, CXformResul
               COperator::EopPhysicalLeftSemiNLJoin == op_id || COperator::EopPhysicalLeftAntiSemiNLJoin == op_id ||
               COperator::EopPhysicalLeftAntiSemiNLJoinNotIn == op_id);
 
-  if (!CHintUtils::SatisfiesJoinTypeHints(mp, pexprBinary,
-                                          COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
-    pexprBinary->Release();
-  } else {
-    // add alternative to results
-    pxfres->Add(pexprBinary);
-  }
+  // add alternative to results
+  pxfres->Add(pexprBinary);
 }
 
 template <class T>
@@ -500,12 +494,8 @@ void CXformUtils::AddHashOrMergeJoinAlternative(CMemoryPool *mp, CExpression *pe
   T *op = GPOS_NEW(mp)
       T(mp, pdrgpexprOuter, pdrgpexprInner, opfamilies, is_hash_join_null_aware, popLogicalJoin->OriginXform());
   CExpression *pexprResult = GPOS_NEW(mp) CExpression(mp, op, (*pexprJoin)[0], (*pexprJoin)[1], (*pexprJoin)[2]);
-  if (!CHintUtils::SatisfiesJoinTypeHints(mp, pexprResult,
-                                          COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
-    pexprResult->Release();
-  } else {
-    pxfres->Add(pexprResult);
-  }
+
+  pxfres->Add(pexprResult);
 }
 
 //---------------------------------------------------------------------------

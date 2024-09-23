@@ -96,8 +96,6 @@ void COptimizer::PrintQueryOrPlan(CMemoryPool *mp, CExpression *pexpr, CQueryCon
       PrintQuery(mp, pexpr, pqc);
     }
   } else {
-
-
     if (GPOS_FTRACE(EopttracePrintPlan)) {
       PrintPlan(mp, pexpr);
     }
@@ -164,16 +162,6 @@ void *COptimizer::PdxlnOptimize(CMemoryPool *mp, CMDAccessor *md_accessor, const
       // optimize logical expression tree into physical expression tree.
       CExpression *pexprPlan = PexprOptimize(mp, pqc, search_stage_array);
       GPOS_CHECK_ABORT;
-
-      CPlanHint *plan_hint = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint();
-      if (plan_hint != nullptr && GPOS_FTRACE(EopttracePrintPgHintPlanLog)) {
-        CWStringDynamic strPlanhint(mp);
-        COstreamString ossPlanhint(&strPlanhint);
-
-        plan_hint->OsPrint(ossPlanhint);
-        // log Used/Un-used plan hints
-        GPOS_TRACE(strPlanhint.GetBuffer());
-      }
 
       if (GPOS_CONDIF(enable_new_planner_generation)) {
         PlanGenerator gen_plan{mp, md_accessor};

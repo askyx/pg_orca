@@ -27,13 +27,12 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 COptimizerConfig::COptimizerConfig(CEnumeratorConfig *pec, CStatisticsConfig *stats_config, CCTEConfig *pcteconf,
-                                   ICostModel *cost_model, CHint *phint, CPlanHint *pplanhint, CWindowOids *pwindowoids)
+                                   ICostModel *cost_model, CHint *phint, CWindowOids *pwindowoids)
     : m_enumerator_cfg(pec),
       m_stats_conf(stats_config),
       m_cte_conf(pcteconf),
       m_cost_model(cost_model),
       m_hint(phint),
-      m_plan_hint(pplanhint),
       m_window_oids(pwindowoids) {
   GPOS_ASSERT(nullptr != pec);
   GPOS_ASSERT(nullptr != stats_config);
@@ -56,7 +55,6 @@ COptimizerConfig::~COptimizerConfig() {
   m_stats_conf->Release();
   m_cte_conf->Release();
   m_cost_model->Release();
-  CRefCount::SafeRelease(m_plan_hint);
   m_hint->Release();
   m_window_oids->Release();
 }
@@ -70,10 +68,10 @@ COptimizerConfig::~COptimizerConfig() {
 //
 //---------------------------------------------------------------------------
 COptimizerConfig *COptimizerConfig::PoconfDefault(CMemoryPool *mp) {
-  return GPOS_NEW(mp) COptimizerConfig(GPOS_NEW(mp) CEnumeratorConfig(mp, 0 /*plan_id*/, 0 /*ullSamples*/),
-                                       CStatisticsConfig::PstatsconfDefault(mp), CCTEConfig::PcteconfDefault(mp),
-                                       ICostModel::PcmDefault(mp), CHint::PhintDefault(mp), nullptr /* pplanhint */,
-                                       CWindowOids::GetWindowOids(mp));
+  return GPOS_NEW(mp)
+      COptimizerConfig(GPOS_NEW(mp) CEnumeratorConfig(mp, 0 /*plan_id*/, 0 /*ullSamples*/),
+                       CStatisticsConfig::PstatsconfDefault(mp), CCTEConfig::PcteconfDefault(mp),
+                       ICostModel::PcmDefault(mp), CHint::PhintDefault(mp), CWindowOids::GetWindowOids(mp));
 }
 
 //---------------------------------------------------------------------------
@@ -87,8 +85,7 @@ COptimizerConfig *COptimizerConfig::PoconfDefault(CMemoryPool *mp) {
 COptimizerConfig *COptimizerConfig::PoconfDefault(CMemoryPool *mp, ICostModel *pcm) {
   GPOS_ASSERT(nullptr != pcm);
 
-  return GPOS_NEW(mp)
-      COptimizerConfig(GPOS_NEW(mp) CEnumeratorConfig(mp, 0 /*plan_id*/, 0 /*ullSamples*/),
-                       CStatisticsConfig::PstatsconfDefault(mp), CCTEConfig::PcteconfDefault(mp), pcm,
-                       CHint::PhintDefault(mp), nullptr /* pplanhint */, CWindowOids::GetWindowOids(mp));
+  return GPOS_NEW(mp) COptimizerConfig(GPOS_NEW(mp) CEnumeratorConfig(mp, 0 /*plan_id*/, 0 /*ullSamples*/),
+                                       CStatisticsConfig::PstatsconfDefault(mp), CCTEConfig::PcteconfDefault(mp), pcm,
+                                       CHint::PhintDefault(mp), CWindowOids::GetWindowOids(mp));
 }

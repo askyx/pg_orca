@@ -31,7 +31,6 @@ extern "C" {
 #include "gpopt/eval/CConstExprEvaluatorDXL.h"
 #include "gpopt/exception.h"
 #include "gpopt/gpdbwrappers.h"
-#include "gpopt/hints/CPlanHint.h"
 #include "gpopt/mdcache/CAutoMDAccessor.h"
 #include "gpopt/mdcache/CMDCache.h"
 #include "gpopt/optimizer/COptimizer.h"
@@ -258,7 +257,7 @@ PlannedStmt *COptTasks::ConvertToPlanStmtFromDXL(CMemoryPool *mp, CMDAccessor *m
 //		Create the optimizer configuration
 //
 //---------------------------------------------------------------------------
-COptimizerConfig *COptTasks::CreateOptimizerConfig(CMemoryPool *mp, ICostModel *cost_model, CPlanHint *plan_hints) {
+COptimizerConfig *COptTasks::CreateOptimizerConfig(CMemoryPool *mp, ICostModel *cost_model) {
   // get chosen plan number, cost threshold
   ULLONG plan_id = (ULLONG)optimizer_plan_id;
   ULLONG num_samples = (ULLONG)optimizer_samples_number;
@@ -286,7 +285,7 @@ COptimizerConfig *COptTasks::CreateOptimizerConfig(CMemoryPool *mp, ICostModel *
                          broadcast_threshold, false, /* don't create Assert nodes for constraints, we'll
                                                       * enforce them ourselves in the executor */
                          push_group_by_below_setop_threshold, xform_bind_threshold, skew_factor),
-      plan_hints, GPOS_NEW(mp) CWindowOids(OID(0), OID(0)));
+      GPOS_NEW(mp) CWindowOids(OID(0), OID(0)));
 }
 
 //---------------------------------------------------------------------------
@@ -403,8 +402,7 @@ void *COptTasks::OptimizeTask(void *ptr) {
       query_to_dxl_translator = CTranslatorQueryToDXL::QueryToDXLInstance(mp, &mda, (Query *)opt_ctxt->m_query);
 
       ICostModel *cost_model = GetCostModel(mp, num_segments_for_costing);
-      CPlanHint *plan_hints = nullptr;
-      COptimizerConfig *optimizer_config = CreateOptimizerConfig(mp, cost_model, plan_hints);
+      COptimizerConfig *optimizer_config = CreateOptimizerConfig(mp, cost_model);
       CConstExprEvaluatorProxy expr_eval_proxy(mp, &mda);
       IConstExprEvaluator *expr_evaluator = GPOS_NEW(mp) CConstExprEvaluatorDXL(mp, &mda, &expr_eval_proxy);
 

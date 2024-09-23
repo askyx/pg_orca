@@ -11,7 +11,6 @@
 
 #include "gpopt/xforms/CXformRightOuterJoin2HashJoin.h"
 
-#include "gpopt/hints/CPlanHint.h"
 #include "gpopt/operators/CLogicalRightOuterJoin.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalRightOuterHashJoin.h"
@@ -63,14 +62,6 @@ void CXformRightOuterJoin2HashJoin::Transform(CXformContext *pxfctxt, CXformResu
   GPOS_ASSERT(nullptr != pxfctxt);
   GPOS_ASSERT(FPromising(pxfctxt->Pmp(), this, pexpr));
   GPOS_ASSERT(FCheckPattern(pexpr));
-
-  // If the ROJ is being considered because of a join order hint, then add
-  // the right outer hash join alternative regardless of the stats.
-  CPlanHint *planhint = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint();
-  if (nullptr != planhint && planhint->WasCreatedViaDirectedHint(pexpr)) {
-    CXformUtils::ImplementHashJoin<CPhysicalRightOuterHashJoin>(pxfctxt, pxfres, pexpr);
-    return;
-  }
 
   const IStatistics *outerStats = (*pexpr)[0]->Pstats();
   const IStatistics *innerStats = (*pexpr)[1]->Pstats();

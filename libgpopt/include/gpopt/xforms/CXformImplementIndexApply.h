@@ -7,7 +7,6 @@
 #ifndef GPOPT_CXformImplementIndexApply_H
 #define GPOPT_CXformImplementIndexApply_H
 
-#include "gpopt/hints/CHintUtils.h"
 #include "gpopt/operators/CLogicalIndexApply.h"
 #include "gpopt/operators/CPatternLeaf.h"
 #include "gpopt/operators/CPhysicalInnerIndexNLJoin.h"
@@ -82,13 +81,8 @@ class CXformImplementIndexApply : public CXformImplementation {
 
     CExpression *pexprResult = GPOS_NEW(mp) CExpression(mp, pop, pexprOuter, pexprInner, pexprScalar);
 
-    if (!CHintUtils::SatisfiesJoinTypeHints(mp, pexprResult,
-                                            COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
-      pexprResult->Release();
-    } else {
-      // add alternative to results
-      pxfres->Add(pexprResult);
-    }
+    // add alternative to results
+    pxfres->Add(pexprResult);
   }
 
 };  // class CXformImplementIndexApply

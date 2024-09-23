@@ -80,13 +80,8 @@ class CXformImplementCorrelatedApply : public CXformImplementation {
         GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) TPhysicalJoin(mp, colref_array, popApply->EopidOriginSubq()),
                                  pexprLeft, pexprRight, pexprScalar);
 
-    if (!CHintUtils::SatisfiesJoinTypeHints(mp, pexprPhysicalApply,
-                                            COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
-      pexprPhysicalApply->Release();
-    } else {
-      // add alternative to results
-      pxfres->Add(pexprPhysicalApply);
-    }
+    // add alternative to results
+    pxfres->Add(pexprPhysicalApply);
   }
 
 };  // class CXformImplementCorrelatedApply

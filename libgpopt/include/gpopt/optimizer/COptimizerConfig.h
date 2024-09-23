@@ -17,7 +17,6 @@
 #include "gpopt/engine/CEnumeratorConfig.h"
 #include "gpopt/engine/CHint.h"
 #include "gpopt/engine/CStatisticsConfig.h"
-#include "gpopt/hints/CPlanHint.h"
 #include "gpos/base.h"
 #include "gpos/common/CDynamicPtrArray.h"
 #include "gpos/common/CRefCount.h"
@@ -60,16 +59,13 @@ class COptimizerConfig : public CRefCount {
   // hint configuration
   CHint *m_hint;
 
-  // optimizer plan hints
-  CPlanHint *m_plan_hint{nullptr};
-
   // default window oids
   CWindowOids *m_window_oids;
 
  public:
   // ctor
   COptimizerConfig(CEnumeratorConfig *pec, CStatisticsConfig *stats_config, CCTEConfig *pcteconf, ICostModel *pcm,
-                   CHint *phint, CPlanHint *pplanhint, CWindowOids *pdefoidsGPDB);
+                   CHint *phint, CWindowOids *pdefoidsGPDB);
 
   // dtor
   ~COptimizerConfig() override;
@@ -91,8 +87,6 @@ class COptimizerConfig : public CRefCount {
 
   // hint configuration
   CHint *GetHint() const { return m_hint; }
-
-  CPlanHint *GetPlanHint() const { return m_plan_hint; }
 
   // generate default optimizer configurations
   static COptimizerConfig *PoconfDefault(CMemoryPool *mp);

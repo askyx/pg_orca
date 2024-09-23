@@ -11,7 +11,6 @@
 
 #include "gpopt/xforms/CXformGet2TableScan.h"
 
-#include "gpopt/hints/CHintUtils.h"
 #include "gpopt/metadata/CTableDescriptor.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CLogicalGet.h"
@@ -67,9 +66,6 @@ void CXformGet2TableScan::Transform(CXformContext *pxfctxt, CXformResult *pxfres
   GPOS_ASSERT(FCheckPattern(pexpr));
 
   CLogicalGet *popGet = CLogicalGet::PopConvert(pexpr->Pop());
-  if (!CHintUtils::SatisfiesPlanHints(popGet, COptCtxt::PoctxtFromTLS()->GetOptimizerConfig()->GetPlanHint())) {
-    return;
-  }
 
   CMemoryPool *mp = pxfctxt->Pmp();
 
