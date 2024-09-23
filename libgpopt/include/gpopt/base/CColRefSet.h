@@ -123,7 +123,7 @@ class CColRefSet : public CBitSet {
   IOstream &OsPrint(IOstream &os, ULONG ulLenMax) const;
 
   // extract all column ids
-  void ExtractColIds(CMemoryPool *mp, ULongPtrArray *colids) const;
+  std::vector<uint32_t> ExtractColIds() const;
 
   // are the columns in the column reference set covered by the array of column ref sets
   static BOOL FCovered(CColRefSetArray *pdrgpcrs, CColRefSet *pcrs);

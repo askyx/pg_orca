@@ -182,24 +182,6 @@ CColRefSet *CPhysicalDML::PcrsRequired(CMemoryPool *mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalDML::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalDML::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                              CRewindabilitySpec *prsRequired, ULONG child_index,
-                                              CDrvdPropArray *,  // pdrgpdpCtxt
-                                              ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalDML::PcteRequired
 //
 //	@doc:
@@ -233,18 +215,6 @@ BOOL CPhysicalDML::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcr
                                      ULONG  // ulOptReq
 ) const {
   return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalDML::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalDML::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  return PrsDerivePassThruOuter(mp, exprhdl);
 }
 
 //---------------------------------------------------------------------------
@@ -287,20 +257,6 @@ BOOL CPhysicalDML::Matches(COperator *pop) const {
   }
 
   return false;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalDML::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalDML::EpetRewindability(CExpressionHandle &,        // exprhdl,
-                                                              const CEnfdRewindability *  // per
-) const {
-  return CEnfdProp::EpetProhibited;
 }
 
 //---------------------------------------------------------------------------

@@ -22,7 +22,6 @@ using namespace gpos;
 // fwd declaration
 class CExpressionHandle;
 class COrderSpec;
-class CRewindabilitySpec;
 class CPartitionPropagationSpec;
 class CReqdPropPlan;
 class CCTEMap;
@@ -43,9 +42,6 @@ class CDrvdPropPlan : public CDrvdProp {
  private:
   // derived sort order
   COrderSpec *m_pos{nullptr};
-
-  // derived rewindability
-  CRewindabilitySpec *m_prs{nullptr};
 
   // derived partition propagation spec
   CPartitionPropagationSpec *m_ppps{nullptr};
@@ -76,9 +72,6 @@ class CDrvdPropPlan : public CDrvdProp {
 
   // sort order accessor
   COrderSpec *Pos() const { return m_pos; }
-
-  // rewindability accessor
-  CRewindabilitySpec *Prs() const { return m_prs; }
 
   CPartitionPropagationSpec *Ppps() const { return m_ppps; }
 

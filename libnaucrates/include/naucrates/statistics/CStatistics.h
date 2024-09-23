@@ -174,7 +174,7 @@ class CStatistics : public IStatistics {
   CDouble GetSkew(ULONG colid) const override;
 
   // what is the width in bytes of set of column id's
-  CDouble Width(ULongPtrArray *colids) const override;
+  CDouble Width(const std::vector<uint32_t> &colids) const override;
 
   // what is the width in bytes of set of column references
   CDouble Width(CMemoryPool *mp, CColRefSet *colrefs) const override;
@@ -282,11 +282,7 @@ class CStatistics : public IStatistics {
 
   // create an empty statistics object
   static CStatistics *MakeEmptyStats(CMemoryPool *mp) {
-    ULongPtrArray *colids = GPOS_NEW(mp) ULongPtrArray(mp);
-    CStatistics *stats = MakeDummyStats(mp, colids, DefaultRelationRows);
-
-    // clean up
-    colids->Release();
+    CStatistics *stats = MakeDummyStats(mp, {}, DefaultRelationRows);
 
     return stats;
   }
@@ -298,10 +294,10 @@ class CStatistics : public IStatistics {
   }
 
   // create a dummy statistics object
-  static CStatistics *MakeDummyStats(CMemoryPool *mp, ULongPtrArray *colids, CDouble rows);
+  static CStatistics *MakeDummyStats(CMemoryPool *mp, const std::vector<uint32_t> &colids, CDouble rows);
 
   // create a dummy statistics object
-  static CStatistics *MakeDummyStats(CMemoryPool *mp, ULongPtrArray *col_histogram_mapping,
+  static CStatistics *MakeDummyStats(CMemoryPool *mp, const std::vector<uint32_t> &col_histogram_mapping,
                                      ULongPtrArray *colid_width_mapping, CDouble rows);
 
   // default column width
@@ -323,7 +319,8 @@ class CStatistics : public IStatistics {
   static BOOL IsEmptyJoin(const CStatistics *outer_stats, const CStatistics *inner_side_stats, BOOL IsLASJ);
 
   // add upper bound ndvs information for a given set of columns
-  static void CreateAndInsertUpperBoundNDVs(CMemoryPool *mp, CStatistics *stats, ULongPtrArray *colids, CDouble rows);
+  static void CreateAndInsertUpperBoundNDVs(CMemoryPool *mp, CStatistics *stats, const std::vector<uint32_t> &colids,
+                                            CDouble rows);
 
   // cap the total number of distinct values (NDV) in buckets to the number of rows
   static void CapNDVs(CDouble rows, UlongToHistogramMap *col_histogram_mapping);

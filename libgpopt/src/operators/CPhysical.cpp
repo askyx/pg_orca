@@ -226,24 +226,6 @@ COrderSpec *CPhysical::PosPassThru(CMemoryPool *,        // mp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysical::PrsPassThru
-//
-//	@doc:
-//		Helper for a simple case of of computing child's required rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysical::PrsPassThru(CMemoryPool *,        // mp
-                                           CExpressionHandle &,  // exprhdl
-                                           CRewindabilitySpec *prsRequired,
-                                           ULONG  // child_index
-) {
-  prsRequired->AddRef();
-
-  return prsRequired;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysical::PosDerivePassThruOuter
 //
 //	@doc:
@@ -255,28 +237,6 @@ COrderSpec *CPhysical::PosDerivePassThruOuter(CExpressionHandle &exprhdl) {
   pos->AddRef();
 
   return pos;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysical::PrsDerivePassThruOuter
-//
-//	@doc:
-//		Helper for common case of rewindability derivation
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysical::PrsDerivePassThruOuter(CMemoryPool *mp, CExpressionHandle &exprhdl) {
-  CRewindabilitySpec *prs = exprhdl.Pdpplan(0 /*child_index*/)->Prs();
-
-  // I cannot derive mark-restorable just because my child is mark-restorable.
-  // However, I am rewindable.
-  if (CRewindabilitySpec::ErtMarkRestore == prs->Ert()) {
-    prs = GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindable, prs->Emht());
-  } else {
-    prs->AddRef();
-  }
-
-  return prs;
 }
 
 //---------------------------------------------------------------------------
@@ -515,11 +475,6 @@ BOOL CPhysical::FUnaryUsesDefinedColumns(CColRefSet *pcrs, CExpressionHandle &ex
 CEnfdOrder::EOrderMatching CPhysical::Eom(CReqdPropPlan *, ULONG, CDrvdPropArray *, ULONG) {
   // request satisfaction by default
   return CEnfdOrder::EomSatisfy;
-}
-
-CEnfdRewindability::ERewindabilityMatching CPhysical::Erm(CReqdPropPlan *, ULONG, CDrvdPropArray *, ULONG) {
-  // request satisfaction by default
-  return CEnfdRewindability::ErmSatisfy;
 }
 
 CPartitionPropagationSpec *CPhysical::PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,

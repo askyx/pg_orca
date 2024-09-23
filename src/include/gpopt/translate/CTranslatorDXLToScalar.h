@@ -76,58 +76,60 @@ class CTranslatorDXLToScalar {
   // indicates whether a sublink was encountered during translation of the scalar subtree
   BOOL m_has_subqueries;
 
+  CMappingColIdVar *colid_var{nullptr};
+
   // translate a CDXLScalarArrayComp into a GPDB ScalarArrayOpExpr
-  Expr *TranslateDXLScalarArrayCompToScalar(const CDXLNode *scalar_array_cmp_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarArrayCompToScalar(const CDXLNode *scalar_array_cmp_node);
 
-  Expr *TranslateDXLScalarParamToScalar(const CDXLNode *scalar_param_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarParamToScalar(const CDXLNode *scalar_param_node);
 
-  Expr *TranslateDXLScalarOpExprToScalar(const CDXLNode *scalar_op_expr_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarOpExprToScalar(const CDXLNode *scalar_op_expr_node);
 
-  Expr *TranslateDXLScalarDistinctToScalar(const CDXLNode *scalar_distinct_cmp_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarDistinctToScalar(const CDXLNode *scalar_distinct_cmp_node);
 
-  Expr *TranslateDXLScalarBoolExprToScalar(const CDXLNode *scalar_bool_expr_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarBoolExprToScalar(const CDXLNode *scalar_bool_expr_node);
 
-  Expr *TranslateDXLScalarBooleanTestToScalar(const CDXLNode *scalar_boolean_test_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarBooleanTestToScalar(const CDXLNode *scalar_boolean_test_node);
 
-  Expr *TranslateDXLScalarCastToScalar(const CDXLNode *scalar_relabel_type_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarCastToScalar(const CDXLNode *scalar_relabel_type_node);
 
-  Expr *TranslateDXLScalarCoerceToDomainToScalar(const CDXLNode *coerce_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarCoerceToDomainToScalar(const CDXLNode *coerce_node);
 
-  Expr *TranslateDXLScalarCoerceViaIOToScalar(const CDXLNode *coerce_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarCoerceViaIOToScalar(const CDXLNode *coerce_node);
 
-  Expr *TranslateDXLScalarArrayCoerceExprToScalar(const CDXLNode *coerce_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarArrayCoerceExprToScalar(const CDXLNode *coerce_node);
 
-  Expr *TranslateDXLFieldSelectToScalar(const CDXLNode *field_select_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLFieldSelectToScalar(const CDXLNode *field_select_node);
 
-  Expr *TranslateDXLScalarNullTestToScalar(const CDXLNode *scalar_null_test_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarNullTestToScalar(const CDXLNode *scalar_null_test_node);
 
-  Expr *TranslateDXLScalarNullIfToScalar(const CDXLNode *scalar_null_if_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarNullIfToScalar(const CDXLNode *scalar_null_if_node);
 
-  Expr *TranslateDXLScalarIfStmtToScalar(const CDXLNode *scalar_if_stmt_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarIfStmtToScalar(const CDXLNode *scalar_if_stmt_node);
 
-  Expr *TranslateDXLScalarSwitchToScalar(const CDXLNode *scalar_switch_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarSwitchToScalar(const CDXLNode *scalar_switch_node);
 
-  static Expr *TranslateDXLScalarCaseTestToScalar(const CDXLNode *scalar_case_test_node, CMappingColIdVar *colid_var);
+  static Expr *TranslateDXLScalarCaseTestToScalar(const CDXLNode *scalar_case_test_node);
 
-  Expr *TranslateDXLScalarAggrefToScalar(const CDXLNode *aggref_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarAggrefToScalar(const CDXLNode *aggref_node);
 
-  Expr *TranslateDXLScalarWindowRefToScalar(const CDXLNode *scalar_winref_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarWindowRefToScalar(const CDXLNode *scalar_winref_node);
 
-  Expr *TranslateDXLScalarFuncExprToScalar(const CDXLNode *scalar_func_expr_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarFuncExprToScalar(const CDXLNode *scalar_func_expr_node);
 
   // return a GPDB subplan from a DXL subplan
-  Expr *TranslateDXLScalarSubplanToScalar(const CDXLNode *scalar_sub_plan_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarSubplanToScalar(const CDXLNode *scalar_sub_plan_node);
 
   // build subplan node
   SubPlan *TranslateSubplanFromChildPlan(Plan *plan_child, SubLinkType slink, CContextDXLToPlStmt *dxl_to_plstmt_ctxt);
 
   // translate subplan test expression
-  Expr *TranslateDXLSubplanTestExprToScalar(CDXLNode *test_expr_node, SubLinkType slink, CMappingColIdVar *colid_var,
-                                            BOOL has_outer_refs, List **param_ids_list);
+  Expr *TranslateDXLSubplanTestExprToScalar(CDXLNode *test_expr_node, SubLinkType slink, BOOL has_outer_refs,
+                                            List **param_ids_list);
 
   // translate subplan parameters
   void TranslateSubplanParams(SubPlan *sub_plan, CDXLTranslateContext *dxl_translator_ctxt,
-                              const CDXLColRefArray *outer_refs, CMappingColIdVar *colid_var);
+                              const CDXLColRefArray *outer_refs);
 
   // translate subplan test expression parameters
   void TranslateDXLTestExprScalarIdentToExpr(CDXLNode *child_node, Param *param, CDXLScalarIdent **ident, Expr **expr);
@@ -137,31 +139,30 @@ class CTranslatorDXLToScalar {
   static Param *TranslateParamFromMapping(const CMappingElementColIdParamId *colid_to_param_id_map);
 
   // translate a scalar coalesce
-  Expr *TranslateDXLScalarCoalesceToScalar(const CDXLNode *scalar_coalesce_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarCoalesceToScalar(const CDXLNode *scalar_coalesce_node);
 
   // translate a scalar minmax
-  Expr *TranslateDXLScalarMinMaxToScalar(const CDXLNode *scalar_min_max_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarMinMaxToScalar(const CDXLNode *scalar_min_max_node);
 
   // translate a scconstval
-  Expr *TranslateDXLScalarConstToScalar(const CDXLNode *scalar_const_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarConstToScalar(const CDXLNode *scalar_const_node);
 
   // translate an array expression
-  Expr *TranslateDXLScalarArrayToScalar(const CDXLNode *scalar_array_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarArrayToScalar(const CDXLNode *scalar_array_node);
 
   // translate an arrayref expression
-  Expr *TranslateDXLScalarArrayRefToScalar(const CDXLNode *scalar_array_ref_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarArrayRefToScalar(const CDXLNode *scalar_array_ref_node);
 
   // translate an arrayref index list
   List *TranslateDXLArrayRefIndexListToScalar(const CDXLNode *index_list_node,
-                                              CDXLScalarArrayRefIndexList::EIndexListBound index_list_bound,
-                                              CMappingColIdVar *colid_var);
+                                              CDXLScalarArrayRefIndexList::EIndexListBound index_list_bound);
 
-  List *TranslateScalarListChildren(const CDXLNode *dxlnode, CMappingColIdVar *colid_var);
+  List *TranslateScalarListChildren(const CDXLNode *dxlnode);
 
-  static Expr *TranslateDXLScalarSortGroupClauseToScalar(const CDXLNode *dml_action_node, CMappingColIdVar *colid_var);
+  static Expr *TranslateDXLScalarSortGroupClauseToScalar(const CDXLNode *dml_action_node);
 
   // translate children of DXL node, and add them to list
-  List *TranslateScalarChildren(List *list, const CDXLNode *dxlnode, CMappingColIdVar *colid_var);
+  List *TranslateScalarChildren(List *list, const CDXLNode *dxlnode);
 
   // return the operator return type oid for the given func id.
   OID GetFunctionReturnTypeOid(IMDId *mdid) const;
@@ -191,7 +192,7 @@ class CTranslatorDXLToScalar {
   // This function is called during the translation of DXL->Query or DXL->Query
   Expr *TranslateDXLToScalar(const CDXLNode *scalar_op_node, CMappingColIdVar *colid_var);
 
-  Expr *TranslateDXLScalarValuesListToScalar(const CDXLNode *scalar_values_list_node, CMappingColIdVar *colid_var);
+  Expr *TranslateDXLScalarValuesListToScalar(const CDXLNode *scalar_values_list_node);
 
   // translate a scalar ident into an Expr
   static Expr *TranslateDXLScalarIdentToScalar(const CDXLNode *scalar_id_node, CMappingColIdVar *colid_var);

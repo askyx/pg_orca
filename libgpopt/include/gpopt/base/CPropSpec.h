@@ -34,7 +34,6 @@ class CPropSpec : public CRefCount {
   // property type
   enum EPropSpecType {
     EpstOrder,
-    EpstRewindability,
     EpstPartPropagation,
 
     EpstSentinel

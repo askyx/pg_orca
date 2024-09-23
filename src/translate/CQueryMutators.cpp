@@ -892,8 +892,6 @@ Query *CQueryMutators::NormalizeHaving(CMemoryPool *mp, CMDAccessor *md_accessor
 //---------------------------------------------------------------------------
 Query *CQueryMutators::NormalizeQuery(CMemoryPool *mp, CMDAccessor *md_accessor, const Query *query,
                                       ULONG query_level) {
-  // TODO: fix those
-  return (Query *)gpdb::CopyObject(const_cast<Query *>(query));
   // flatten join alias vars defined at the current level of the query
   Query *pqueryResolveJoinVarReferences = gpdb::FlattenJoinAliasVar(const_cast<Query *>(query), query_level);
 

@@ -28,7 +28,7 @@ struct Plan;
 
 namespace gpdxl {
 // fwd decl
-class CDXLTranslateContextBaseTable;
+class TranslateContextBaseTable;
 class CContextDXLToPlStmt;
 
 //---------------------------------------------------------------------------
@@ -42,7 +42,7 @@ class CContextDXLToPlStmt;
 //---------------------------------------------------------------------------
 class CMappingColIdVarPlStmt : public CMappingColIdVar {
  private:
-  const CDXLTranslateContextBaseTable *m_base_table_context;
+  const TranslateContextBaseTable *m_base_table_context;
 
   // the array of translator context (one for each child of the DXL operator)
   CDXLTranslationContextArray *m_child_contexts;
@@ -54,7 +54,7 @@ class CMappingColIdVarPlStmt : public CMappingColIdVar {
   CContextDXLToPlStmt *m_dxl_to_plstmt_context;
 
  public:
-  CMappingColIdVarPlStmt(CMemoryPool *mp, const CDXLTranslateContextBaseTable *base_table_context,
+  CMappingColIdVarPlStmt(CMemoryPool *mp, const TranslateContextBaseTable *base_table_context,
                          CDXLTranslationContextArray *child_contexts, CDXLTranslateContext *output_context,
                          CContextDXLToPlStmt *dxl_to_plstmt_context);
 

@@ -104,25 +104,6 @@ COrderSpec *CPhysicalConstTableGet::PosRequired(CMemoryPool *,        // mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalConstTableGet::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalConstTableGet::PrsRequired(CMemoryPool *,         // mp,
-                                                        CExpressionHandle &,   // exprhdl,
-                                                        CRewindabilitySpec *,  // prsRequired,
-                                                        ULONG,                 // child_index,
-                                                        CDrvdPropArray *,      // pdrgpdpCtxt
-                                                        ULONG                  // ulOptReq
-) const {
-  GPOS_ASSERT(!"CPhysicalConstTableGet has no children");
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalConstTableGet::PcteRequired
 //
 //	@doc:
@@ -180,20 +161,6 @@ COrderSpec *CPhysicalConstTableGet::PosDerive(CMemoryPool *mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalConstTableGet::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalConstTableGet::PrsDerive(CMemoryPool *mp,
-                                                      CExpressionHandle &  // exprhdl
-) const {
-  return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtMarkRestore, CRewindabilitySpec::EmhtNoMotion);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalConstTableGet::PcmDerive
 //
 //	@doc:
@@ -224,21 +191,6 @@ CEnfdProp::EPropEnforcingType CPhysicalConstTableGet::EpetOrder(CExpressionHandl
   GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
 
   return CEnfdProp::EpetRequired;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalConstTableGet::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalConstTableGet::EpetRewindability(CExpressionHandle &,        // exprhdl
-                                                                        const CEnfdRewindability *  // per
-) const {
-  // rewindability is already provided
-  return CEnfdProp::EpetUnnecessary;
 }
 
 // print values in const table

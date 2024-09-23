@@ -19,8 +19,9 @@ namespace gpnaucrates {
 class CGroupByStatsProcessor {
  public:
   // group by
-  static CStatistics *CalcGroupByStats(CMemoryPool *mp, const CStatistics *input_stats, ULongPtrArray *GCs,
-                                       ULongPtrArray *aggs, CBitSet *keys);
+  static CStatistics *CalcGroupByStats(CMemoryPool *mp, const CStatistics *input_stats,
+                                       const std::vector<uint32_t> &GCs, const std::vector<uint32_t> &aggs,
+                                       CBitSet *keys);
 };
 }  // namespace gpnaucrates
 

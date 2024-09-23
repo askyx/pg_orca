@@ -16,6 +16,8 @@
 #include "gpos/base.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 
+class Plan;
+
 namespace gpdxl {
 class CDXLNode;
 }
@@ -68,14 +70,14 @@ class COptimizer {
 
  public:
   // main optimizer function
-  static CDXLNode *PdxlnOptimize(CMemoryPool *mp,
-                                 CMDAccessor *md_accessor,  // MD accessor
-                                 const CDXLNode *query,
-                                 const CDXLNodeArray *query_output_dxlnode_array,  // required output columns
-                                 const CDXLNodeArray *cte_producers,
-                                 IConstExprEvaluator *pceeval,           // constant expression evaluator
-                                 CSearchStageArray *search_stage_array,  // search strategy
-                                 COptimizerConfig *optimizer_config      // optimizer configurations
+  static void *PdxlnOptimize(CMemoryPool *mp,
+                             CMDAccessor *md_accessor,  // MD accessor
+                             const CDXLNode *query,
+                             const CDXLNodeArray *query_output_dxlnode_array,  // required output columns
+                             const CDXLNodeArray *cte_producers,
+                             IConstExprEvaluator *pceeval,           // constant expression evaluator
+                             CSearchStageArray *search_stage_array,  // search strategy
+                             COptimizerConfig *optimizer_config      // optimizer configurations
   );
 };  // class COptimizer
 }  // namespace gpopt

@@ -127,35 +127,6 @@ COrderSpec *CPhysicalLimit::PosRequired(CMemoryPool *,        // mp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalLimit::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalLimit::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                CDrvdPropArray *,  // pdrgpdpCtxt
-                                                ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  if (exprhdl.HasOuterRefs()) {
-    // If the Limit op or its subtree contains an outer ref, then it must
-    // request rewindability with a motion hazard (a Blocking Spool) from its
-    // subtree. Otherwise, if a streaming Spool is added to the subtree, it will
-    // only return tuples it materialized in its first execution (i.e with the
-    // first value of the outer ref) for every re-execution. This can produce
-    // wrong results.
-    // E.g select *, (select 1 from generate_series(1, 10) limit t1.a) from t1;
-    return GPOS_NEW(mp) CRewindabilitySpec(prsRequired->Ert(), CRewindabilitySpec::EmhtMotion);
-  }
-
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalLimit::PcteRequired
 //
 //	@doc:
@@ -209,18 +180,6 @@ COrderSpec *CPhysicalLimit::PosDerive(CMemoryPool *,       // mp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalLimit::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalLimit::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  return PrsDerivePassThruOuter(mp, exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalLimit::EpetOrder
 //
 //	@doc:
@@ -239,21 +198,6 @@ CEnfdProp::EPropEnforcingType CPhysicalLimit::EpetOrder(CExpressionHandle &,  //
 
   // required order will be enforced on limit's output
   return CEnfdProp::EpetRequired;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalLimit::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalLimit::EpetRewindability(CExpressionHandle &,        // exprhdl
-                                                                const CEnfdRewindability *  // per
-) const {
-  // rewindability is preserved on operator's output
-  return CEnfdProp::EpetOptional;
 }
 
 //---------------------------------------------------------------------------

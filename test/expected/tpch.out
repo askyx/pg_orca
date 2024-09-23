@@ -764,11 +764,6 @@ explain (costs off ) :query1;
  Optimizer: pg_orca
 (7 rows)
 
-:query1;
- l_returnflag | l_linestatus | sum_qty | sum_base_price | sum_disc_price | sum_charge | avg_qty | avg_price | avg_disc | count_order 
---------------+--------------+---------+----------------+----------------+------------+---------+-----------+----------+-------------
-(0 rows)
-
 explain (costs off ) :query2;
                                                                                  QUERY PLAN                                                                                  
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -799,22 +794,15 @@ explain (costs off ) :query2;
                                                                        ->  Seq Scan on partsupp partsupp_1
                                                                        ->  Seq Scan on supplier supplier_1
                                                                  ->  Seq Scan on nation nation_1
-                                                           ->  Materialize
-                                                                 ->  Seq Scan on region region_1
-                                                                       Filter: (r_name = 'EUROPE'::bpchar)
+                                                           ->  Seq Scan on region region_1
+                                                                 Filter: (r_name = 'EUROPE'::bpchar)
                                  ->  Seq Scan on supplier
                            ->  Seq Scan on partsupp
                      ->  Seq Scan on nation
-         ->  Materialize
-               ->  Seq Scan on region
-                     Filter: (r_name = 'EUROPE'::bpchar)
+         ->  Seq Scan on region
+               Filter: (r_name = 'EUROPE'::bpchar)
  Optimizer: pg_orca
-(37 rows)
-
-:query2;
- s_acctbal | s_name | n_name | p_partkey | p_mfgr | s_address | s_phone | s_comment 
------------+--------+--------+-----------+--------+-----------+---------+-----------
-(0 rows)
+(35 rows)
 
 explain (costs off ) :query3;
                                                      QUERY PLAN                                                      
@@ -832,19 +820,12 @@ explain (costs off ) :query3;
                                  Join Filter: (customer.c_custkey = orders.o_custkey)
                                  ->  Seq Scan on customer
                                        Filter: (c_mktsegment = 'BUILDING'::bpchar)
-                                 ->  Materialize
-                                       ->  Seq Scan on orders
-                                             Filter: (o_orderdate < '03-15-1995'::date)
-                           ->  Materialize
-                                 ->  Seq Scan on lineitem
-                                       Filter: (l_shipdate > '03-15-1995'::date)
+                                 ->  Seq Scan on orders
+                                       Filter: (o_orderdate < '03-15-1995'::date)
+                           ->  Seq Scan on lineitem
+                                 Filter: (l_shipdate > '03-15-1995'::date)
  Optimizer: pg_orca
-(20 rows)
-
-:query3;
- l_orderkey | revenue | o_orderdate | o_shippriority 
-------------+---------+-------------+----------------
-(0 rows)
+(18 rows)
 
 explain (costs off ) :query4;
                                                          QUERY PLAN                                                         
@@ -863,14 +844,9 @@ explain (costs off ) :query4;
  Optimizer: pg_orca
 (12 rows)
 
-:query4;
- o_orderpriority | order_count 
------------------+-------------
-(0 rows)
-
 explain (costs off ) :query5;
-                                                                  QUERY PLAN                                                                  
-----------------------------------------------------------------------------------------------------------------------------------------------
+                                                                 QUERY PLAN                                                                 
+--------------------------------------------------------------------------------------------------------------------------------------------
  Sort
    Sort Key: (sum((lineitem.l_extendedprice * ((1)::numeric - lineitem.l_discount)))) DESC
    ->  GroupAggregate
@@ -888,22 +864,15 @@ explain (costs off ) :query5;
                                        ->  Nested Loop
                                              Join Filter: (customer.c_custkey = orders.o_custkey)
                                              ->  Seq Scan on customer
-                                             ->  Materialize
-                                                   ->  Seq Scan on orders
-                                                         Filter: ((o_orderdate >= '01-01-1994'::date) AND (o_orderdate < '01-01-1995'::date))
+                                             ->  Seq Scan on orders
+                                                   Filter: ((o_orderdate >= '01-01-1994'::date) AND (o_orderdate < '01-01-1995'::date))
                                        ->  Seq Scan on lineitem
                                  ->  Seq Scan on supplier
                            ->  Seq Scan on nation
-               ->  Materialize
-                     ->  Seq Scan on region
-                           Filter: (r_name = 'ASIA'::bpchar)
+               ->  Seq Scan on region
+                     Filter: (r_name = 'ASIA'::bpchar)
  Optimizer: pg_orca
-(27 rows)
-
-:query5;
- n_name | revenue 
---------+---------
-(0 rows)
+(25 rows)
 
 explain (costs off ) :query6;
                                                                                   QUERY PLAN                                                                                   
@@ -913,12 +882,6 @@ explain (costs off ) :query6;
          Filter: ((l_shipdate >= '01-01-1994'::date) AND (l_shipdate < '01-01-1995'::date) AND (l_discount >= 0.05) AND (l_discount <= 0.07) AND (l_quantity < (24)::numeric))
  Optimizer: pg_orca
 (4 rows)
-
-:query6;
- revenue 
----------
-        
-(1 row)
 
 explain (costs off ) :query7;
                                                                                                           QUERY PLAN                                                                                                           
@@ -939,27 +902,54 @@ explain (costs off ) :query7;
                                        ->  Nested Loop
                                              Join Filter: (supplier.s_suppkey = lineitem.l_suppkey)
                                              ->  Seq Scan on supplier
-                                             ->  Materialize
-                                                   ->  Seq Scan on lineitem
-                                                         Filter: ((l_shipdate >= '01-01-1995'::date) AND (l_shipdate <= '12-31-1996'::date))
+                                             ->  Seq Scan on lineitem
+                                                   Filter: ((l_shipdate >= '01-01-1995'::date) AND (l_shipdate <= '12-31-1996'::date))
                                        ->  Seq Scan on orders
                                  ->  Seq Scan on customer
-                           ->  Materialize
-                                 ->  Seq Scan on nation n1
-                                       Filter: ((n_name = 'FRANCE'::bpchar) OR (n_name = 'GERMANY'::bpchar))
-                     ->  Materialize
-                           ->  Seq Scan on nation n2
-                                 Filter: ((n_name = 'GERMANY'::bpchar) OR (n_name = 'FRANCE'::bpchar))
+                           ->  Seq Scan on nation n1
+                                 Filter: ((n_name = 'FRANCE'::bpchar) OR (n_name = 'GERMANY'::bpchar))
+                     ->  Seq Scan on nation n2
+                           Filter: ((n_name = 'GERMANY'::bpchar) OR (n_name = 'FRANCE'::bpchar))
  Optimizer: pg_orca
-(28 rows)
+(25 rows)
 
-:query7;
- supp_nation | cust_nation | l_year | revenue 
--------------+-------------+--------+---------
-(0 rows)
+explain (costs off ) :query8;
+                                                                         QUERY PLAN                                                                         
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Result
+   ->  GroupAggregate
+         Group Key: ("extract"('year'::text, orders.o_orderdate))
+         ->  Sort
+               Sort Key: ("extract"('year'::text, orders.o_orderdate))
+               ->  Result
+                     ->  Nested Loop
+                           Join Filter: (n1.n_regionkey = region.r_regionkey)
+                           ->  Nested Loop
+                                 Join Filter: (supplier.s_nationkey = n2.n_nationkey)
+                                 ->  Nested Loop
+                                       Join Filter: (customer.c_nationkey = n1.n_nationkey)
+                                       ->  Nested Loop
+                                             Join Filter: (orders.o_custkey = customer.c_custkey)
+                                             ->  Nested Loop
+                                                   Join Filter: (lineitem.l_orderkey = orders.o_orderkey)
+                                                   ->  Nested Loop
+                                                         Join Filter: ((part.p_partkey = lineitem.l_partkey) AND (supplier.s_suppkey = lineitem.l_suppkey))
+                                                         ->  Nested Loop
+                                                               Join Filter: true
+                                                               ->  Seq Scan on part
+                                                                     Filter: ((p_type)::text = 'ECONOMY ANODIZED STEEL'::text)
+                                                               ->  Seq Scan on supplier
+                                                         ->  Seq Scan on lineitem
+                                                   ->  Seq Scan on orders
+                                                         Filter: ((o_orderdate >= '01-01-1995'::date) AND (o_orderdate <= '12-31-1996'::date))
+                                             ->  Seq Scan on customer
+                                       ->  Seq Scan on nation n1
+                                 ->  Seq Scan on nation n2
+                           ->  Seq Scan on region
+                                 Filter: (r_name = 'AMERICA'::bpchar)
+ Optimizer: pg_orca
+(32 rows)
 
--- explain (costs off ) :query8;
--- :query8;
 explain (costs off ) :query9;
                                                                 QUERY PLAN                                                                
 ------------------------------------------------------------------------------------------------------------------------------------------
@@ -988,11 +978,6 @@ explain (costs off ) :query9;
  Optimizer: pg_orca
 (23 rows)
 
-:query9;
- nation | o_year | sum_profit 
---------+--------+------------
-(0 rows)
-
 explain (costs off ) :query10;
                                                                            QUERY PLAN                                                                           
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1010,50 +995,51 @@ explain (costs off ) :query10;
                                  ->  Nested Loop
                                        Join Filter: (customer.c_custkey = orders.o_custkey)
                                        ->  Seq Scan on customer
-                                       ->  Materialize
-                                             ->  Seq Scan on orders
-                                                   Filter: ((o_orderdate >= '10-01-1993'::date) AND (o_orderdate < '01-01-1994'::date))
-                                 ->  Materialize
-                                       ->  Seq Scan on lineitem
-                                             Filter: (l_returnflag = 'R'::bpchar)
+                                       ->  Seq Scan on orders
+                                             Filter: ((o_orderdate >= '10-01-1993'::date) AND (o_orderdate < '01-01-1994'::date))
+                                 ->  Seq Scan on lineitem
+                                       Filter: (l_returnflag = 'R'::bpchar)
                            ->  Seq Scan on nation
  Optimizer: pg_orca
-(22 rows)
-
-:query10;
- c_custkey | c_name | revenue | c_acctbal | n_name | c_address | c_phone | c_comment 
------------+--------+---------+-----------+--------+-----------+---------+-----------
-(0 rows)
+(20 rows)
 
 explain (costs off ) :query11;
-                                     QUERY PLAN                                     
-------------------------------------------------------------------------------------
- Sort
-   Sort Key: (sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric))) DESC
-   ->  GroupAggregate
-         Group Key: partsupp.ps_partkey
-         ->  Sort
-               Sort Key: partsupp.ps_partkey
-               ->  Nested Loop
-                     Join Filter: (supplier.s_nationkey = nation.n_nationkey)
-                     ->  Nested Loop
-                           Join Filter: (partsupp.ps_suppkey = supplier.s_suppkey)
-                           ->  Seq Scan on partsupp
-                           ->  Seq Scan on supplier
-                     ->  Materialize
-                           ->  Seq Scan on nation
-                                 Filter: (n_name = 'GERMANY'::bpchar)
+                                               QUERY PLAN                                                
+---------------------------------------------------------------------------------------------------------
+ Result
+   ->  Sort
+         Sort Key: (sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric))) DESC
+         ->  Result
+               Filter: ((sum((partsupp.ps_supplycost * (partsupp.ps_availqty)::numeric))) > (SubPlan 1))
+               ->  GroupAggregate
+                     Group Key: partsupp.ps_partkey
+                     ->  Sort
+                           Sort Key: partsupp.ps_partkey
+                           ->  Nested Loop
+                                 Join Filter: (supplier.s_nationkey = nation.n_nationkey)
+                                 ->  Nested Loop
+                                       Join Filter: (partsupp.ps_suppkey = supplier.s_suppkey)
+                                       ->  Seq Scan on partsupp
+                                       ->  Seq Scan on supplier
+                                 ->  Seq Scan on nation
+                                       Filter: (n_name = 'GERMANY'::bpchar)
+               SubPlan 1
+                 ->  Result
+                       ->  Aggregate
+                             ->  Nested Loop
+                                   Join Filter: (supplier_1.s_nationkey = nation_1.n_nationkey)
+                                   ->  Nested Loop
+                                         Join Filter: (partsupp_1.ps_suppkey = supplier_1.s_suppkey)
+                                         ->  Seq Scan on partsupp partsupp_1
+                                         ->  Seq Scan on supplier supplier_1
+                                   ->  Seq Scan on nation nation_1
+                                         Filter: (n_name = 'GERMANY'::bpchar)
  Optimizer: pg_orca
-(16 rows)
-
-:query11;
- ps_partkey | value 
-------------+-------
-(0 rows)
+(29 rows)
 
 explain (costs off ) :query12;
-                                                                                                               QUERY PLAN                                                                                                               
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+                                                                                                            QUERY PLAN                                                                                                            
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  GroupAggregate
    Group Key: lineitem.l_shipmode
    ->  Sort
@@ -1061,20 +1047,14 @@ explain (costs off ) :query12;
          ->  Nested Loop
                Join Filter: (orders.o_orderkey = lineitem.l_orderkey)
                ->  Seq Scan on orders
-               ->  Materialize
-                     ->  Seq Scan on lineitem
-                           Filter: ((l_shipmode = ANY ('{MAIL,SHIP}'::bpchar[])) AND (l_commitdate < l_receiptdate) AND (l_shipdate < l_commitdate) AND (l_receiptdate >= '01-01-1994'::date) AND (l_receiptdate < '01-01-1995'::date))
+               ->  Seq Scan on lineitem
+                     Filter: ((l_shipmode = ANY ('{MAIL,SHIP}'::bpchar[])) AND (l_commitdate < l_receiptdate) AND (l_shipdate < l_commitdate) AND (l_receiptdate >= '01-01-1994'::date) AND (l_receiptdate < '01-01-1995'::date))
  Optimizer: pg_orca
-(11 rows)
-
-:query12;
- l_shipmode | high_line_count | low_line_count 
-------------+-----------------+----------------
-(0 rows)
+(10 rows)
 
 explain (costs off ) :query13;
-                                               QUERY PLAN                                               
---------------------------------------------------------------------------------------------------------
+                                            QUERY PLAN                                            
+--------------------------------------------------------------------------------------------------
  Sort
    Sort Key: (count()) DESC, (count(orders.o_orderkey)) DESC
    ->  GroupAggregate
@@ -1088,19 +1068,24 @@ explain (costs off ) :query13;
                            ->  Nested Loop Left Join
                                  Join Filter: (customer.c_custkey = orders.o_custkey)
                                  ->  Seq Scan on customer
-                                 ->  Materialize
-                                       ->  Seq Scan on orders
-                                             Filter: ((o_comment)::text !~~ '%special%requests%'::text)
+                                 ->  Seq Scan on orders
+                                       Filter: ((o_comment)::text !~~ '%special%requests%'::text)
  Optimizer: pg_orca
-(17 rows)
+(16 rows)
 
-:query13;
- c_count | custdist 
----------+----------
-(0 rows)
+explain (costs off ) :query14;
+                                               QUERY PLAN                                               
+--------------------------------------------------------------------------------------------------------
+ Result
+   ->  Aggregate
+         ->  Nested Loop
+               Join Filter: (lineitem.l_partkey = part.p_partkey)
+               ->  Seq Scan on lineitem
+                     Filter: ((l_shipdate >= '09-01-1995'::date) AND (l_shipdate < '10-01-1995'::date))
+               ->  Seq Scan on part
+ Optimizer: pg_orca
+(8 rows)
 
--- explain (costs off ) :query14;
--- :query14;
 explain (costs off ) :query15;
                                                          QUERY PLAN                                                         
 ----------------------------------------------------------------------------------------------------------------------------
@@ -1128,11 +1113,6 @@ explain (costs off ) :query15;
  Optimizer: pg_orca
 (22 rows)
 
-:query15;
- s_suppkey | s_name | s_address | s_phone | total_revenue 
------------+--------+-----------+---------+---------------
-(0 rows)
-
 explain (costs off ) :query16;
                                                                                                                                                                                                                                QUERY PLAN                                                                                                                                                                                                                               
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1155,19 +1135,30 @@ explain (costs off ) :query16;
                                                      ->  Result
                                                            ->  Seq Scan on supplier
                                                                  Filter: ((s_comment)::text ~~ '%Customer%Complaints%'::text)
-                     ->  Materialize
-                           ->  Seq Scan on part
-                                 Filter: ((p_brand <> 'Brand#45'::bpchar) AND ((p_type)::text !~~ 'MEDIUM POLISHED%'::text) AND (p_size = ANY ('{49,14,23,45,19,3,36,9}'::integer[])))
+                     ->  Seq Scan on part
+                           Filter: ((p_brand <> 'Brand#45'::bpchar) AND ((p_type)::text !~~ 'MEDIUM POLISHED%'::text) AND (p_size = ANY ('{49,14,23,45,19,3,36,9}'::integer[])))
  Optimizer: pg_orca
-(23 rows)
+(22 rows)
 
-:query16;
- p_brand | p_type | p_size | supplier_cnt 
----------+--------+--------+--------------
-(0 rows)
+explain (costs off ) :query17;
+                                                    QUERY PLAN                                                    
+------------------------------------------------------------------------------------------------------------------
+ Result
+   ->  Aggregate
+         ->  Nested Loop
+               Join Filter: ((part.p_partkey = lineitem_1.l_partkey) AND (lineitem_1.l_quantity < ((SubPlan 1))))
+               ->  Seq Scan on lineitem lineitem_1
+               ->  Result
+                     ->  Seq Scan on part
+                           Filter: ((p_brand = 'Brand#23'::bpchar) AND (p_container = 'MED BOX'::bpchar))
+                     SubPlan 1
+                       ->  Result
+                             ->  Aggregate
+                                   ->  Seq Scan on lineitem
+                                         Filter: (l_partkey = part.p_partkey)
+ Optimizer: pg_orca
+(14 rows)
 
--- explain (costs off ) :query17;
--- :query17;
 explain (costs off ) :query18;
                                                           QUERY PLAN                                                          
 ------------------------------------------------------------------------------------------------------------------------------
@@ -1184,15 +1175,16 @@ explain (costs off ) :query18;
                            ->  Seq Scan on orders
                                  Filter: (ANY (o_orderkey = (SubPlan 1).col1))
                                  SubPlan 1
-                                   ->  Seq Scan on lineitem lineitem_1
+                                   ->  Result
+                                         Filter: ((sum(lineitem_1.l_quantity)) > (300)::numeric)
+                                         ->  GroupAggregate
+                                               Group Key: lineitem_1.l_orderkey
+                                               ->  Sort
+                                                     Sort Key: lineitem_1.l_orderkey
+                                                     ->  Seq Scan on lineitem lineitem_1
                      ->  Seq Scan on lineitem
  Optimizer: pg_orca
-(16 rows)
-
-:query18;
- c_name | c_custkey | o_orderkey | o_orderdate | o_totalprice | sum 
---------+-----------+------------+-------------+--------------+-----
-(0 rows)
+(22 rows)
 
 explain (costs off ) :query19;
                                                                                                                                                                                                                                                                                                                                                                                                      QUERY PLAN                                                                                                                                                                                                                                                                                                                                                                                                     
@@ -1202,23 +1194,43 @@ explain (costs off ) :query19;
          Join Filter: ((part.p_partkey = lineitem.l_partkey) AND (((part.p_brand = 'Brand#12'::bpchar) AND (part.p_container = ANY ('{"SM CASE","SM BOX","SM PACK","SM PKG"}'::bpchar[])) AND (lineitem.l_quantity >= (1)::numeric) AND (lineitem.l_quantity <= ((1 + 10))::numeric) AND (part.p_size <= 5)) OR ((part.p_brand = 'Brand#23'::bpchar) AND (part.p_container = ANY ('{"MED BAG","MED BOX","MED PKG","MED PACK"}'::bpchar[])) AND (lineitem.l_quantity >= (10)::numeric) AND (lineitem.l_quantity <= ((10 + 10))::numeric) AND (part.p_size <= 10)) OR ((part.p_brand = 'Brand#34'::bpchar) AND (part.p_container = ANY ('{"LG CASE","LG BOX","LG PACK","LG PKG"}'::bpchar[])) AND (lineitem.l_quantity >= (20)::numeric) AND (lineitem.l_quantity <= ((20 + 10))::numeric) AND (part.p_size <= 15))))
          ->  Seq Scan on lineitem
                Filter: ((l_shipmode = ANY ('{AIR,"AIR REG"}'::bpchar[])) AND (l_shipinstruct = 'DELIVER IN PERSON'::bpchar) AND (((l_quantity >= (1)::numeric) AND (l_quantity <= ((1 + 10))::numeric)) OR ((l_quantity >= (10)::numeric) AND (l_quantity <= ((10 + 10))::numeric)) OR ((l_quantity >= (20)::numeric) AND (l_quantity <= ((20 + 10))::numeric))))
-         ->  Materialize
-               ->  Seq Scan on part
-                     Filter: ((p_size >= 1) AND (((p_brand = 'Brand#12'::bpchar) AND (p_container = ANY ('{"SM CASE","SM BOX","SM PACK","SM PKG"}'::bpchar[])) AND (p_size <= 5)) OR ((p_brand = 'Brand#23'::bpchar) AND (p_container = ANY ('{"MED BAG","MED BOX","MED PKG","MED PACK"}'::bpchar[])) AND (p_size <= 10)) OR ((p_brand = 'Brand#34'::bpchar) AND (p_container = ANY ('{"LG CASE","LG BOX","LG PACK","LG PKG"}'::bpchar[])) AND (p_size <= 15))))
+         ->  Seq Scan on part
+               Filter: ((p_size >= 1) AND (((p_brand = 'Brand#12'::bpchar) AND (p_container = ANY ('{"SM CASE","SM BOX","SM PACK","SM PKG"}'::bpchar[])) AND (p_size <= 5)) OR ((p_brand = 'Brand#23'::bpchar) AND (p_container = ANY ('{"MED BAG","MED BOX","MED PKG","MED PACK"}'::bpchar[])) AND (p_size <= 10)) OR ((p_brand = 'Brand#34'::bpchar) AND (p_container = ANY ('{"LG CASE","LG BOX","LG PACK","LG PKG"}'::bpchar[])) AND (p_size <= 15))))
  Optimizer: pg_orca
-(9 rows)
+(8 rows)
 
-:query19;
- revenue 
----------
-        
-(1 row)
+explain (costs off ) :query20;
+                                                              QUERY PLAN                                                               
+---------------------------------------------------------------------------------------------------------------------------------------
+ Sort
+   Sort Key: supplier.s_name
+   ->  Nested Loop Semi Join
+         Join Filter: (supplier.s_suppkey = partsupp.ps_suppkey)
+         ->  Nested Loop
+               Join Filter: (supplier.s_nationkey = nation.n_nationkey)
+               ->  Seq Scan on supplier
+               ->  Seq Scan on nation
+                     Filter: (n_name = 'CANADA'::bpchar)
+         ->  Result
+               Filter: ((partsupp.ps_availqty)::numeric > (SubPlan 1))
+               ->  Nested Loop Semi Join
+                     Join Filter: (partsupp.ps_partkey = part.p_partkey)
+                     ->  Seq Scan on partsupp
+                     ->  Seq Scan on part
+                           Filter: ((p_name)::text ~~ 'forest%'::text)
+               SubPlan 1
+                 ->  Result
+                       ->  Aggregate
+                             ->  Result
+                                   Filter: ((lineitem.l_partkey = partsupp.ps_partkey) AND (lineitem.l_suppkey = partsupp.ps_suppkey))
+                                   ->  Seq Scan on lineitem
+                                         Filter: ((l_shipdate >= '01-01-1994'::date) AND (l_shipdate < '01-01-1995'::date))
+ Optimizer: pg_orca
+(24 rows)
 
--- explain (costs off ) :query20;
--- :query20;
 explain (costs off ) :query21;
-                                                                QUERY PLAN                                                                 
--------------------------------------------------------------------------------------------------------------------------------------------
+                                                             QUERY PLAN                                                              
+-------------------------------------------------------------------------------------------------------------------------------------
  Limit
    ->  Sort
          Sort Key: (count()) DESC, supplier.s_name
@@ -1233,30 +1245,21 @@ explain (costs off ) :query21;
                                  ->  Nested Loop
                                        Join Filter: (supplier.s_suppkey = l1.l_suppkey)
                                        ->  Seq Scan on supplier
-                                       ->  Materialize
-                                             ->  Nested Loop Anti Join
-                                                   Join Filter: ((l3.l_orderkey = l1.l_orderkey) AND (l3.l_suppkey <> l1.l_suppkey))
-                                                   ->  Nested Loop Semi Join
-                                                         Join Filter: ((l2.l_orderkey = l1.l_orderkey) AND (l2.l_suppkey <> l1.l_suppkey))
-                                                         ->  Seq Scan on lineitem l1
-                                                               Filter: (l_receiptdate > l_commitdate)
-                                                         ->  Seq Scan on lineitem l2
-                                                   ->  Materialize
-                                                         ->  Seq Scan on lineitem l3
-                                                               Filter: (l_receiptdate > l_commitdate)
-                                 ->  Materialize
-                                       ->  Seq Scan on orders
-                                             Filter: (o_orderstatus = 'F'::bpchar)
-                     ->  Materialize
-                           ->  Seq Scan on nation
-                                 Filter: (n_name = 'SAUDI ARABIA'::bpchar)
+                                       ->  Nested Loop Anti Join
+                                             Join Filter: ((l3.l_orderkey = l1.l_orderkey) AND (l3.l_suppkey <> l1.l_suppkey))
+                                             ->  Nested Loop Semi Join
+                                                   Join Filter: ((l2.l_orderkey = l1.l_orderkey) AND (l2.l_suppkey <> l1.l_suppkey))
+                                                   ->  Seq Scan on lineitem l1
+                                                         Filter: (l_receiptdate > l_commitdate)
+                                                   ->  Seq Scan on lineitem l2
+                                             ->  Seq Scan on lineitem l3
+                                                   Filter: (l_receiptdate > l_commitdate)
+                                 ->  Seq Scan on orders
+                                       Filter: (o_orderstatus = 'F'::bpchar)
+                     ->  Seq Scan on nation
+                           Filter: (n_name = 'SAUDI ARABIA'::bpchar)
  Optimizer: pg_orca
-(32 rows)
-
-:query21;
- s_name | numwait 
---------+---------
-(0 rows)
+(28 rows)
 
 explain (costs off ) :query22;
                                                                    QUERY PLAN                                                                   
@@ -1278,9 +1281,4 @@ explain (costs off ) :query22;
                                  Filter: ((c_acctbal > 0.00) AND ("substring"((c_phone)::text, 1, 2) = ANY ('{13,31,23,29,30,18,17}'::text[])))
  Optimizer: pg_orca
 (16 rows)
-
-:query22;
- cntrycode | numcust | totacctbal 
------------+---------+------------
-(0 rows)
 

@@ -23,7 +23,6 @@ class CColRefSet;
 class CDrvdPropRelational;
 class CDrvdPropPlan;
 class CEnfdOrder;
-class CEnfdRewindability;
 class CEnfdPartitionPropagation;
 class CExpressionHandle;
 class CCTEReq;
@@ -47,9 +46,6 @@ class CReqdPropPlan : public CReqdProp {
   // required sort order
   CEnfdOrder *m_peo{nullptr};
 
-  // required rewindability
-  CEnfdRewindability *m_per{nullptr};
-
   // required partition propagation
   CEnfdPartitionPropagation *m_pepp{nullptr};
 
@@ -63,8 +59,7 @@ class CReqdPropPlan : public CReqdProp {
   CReqdPropPlan() = default;
 
   // ctor
-  CReqdPropPlan(CColRefSet *pcrs, CEnfdOrder *peo, CEnfdRewindability *per, CEnfdPartitionPropagation *pepp,
-                CCTEReq *pcter);
+  CReqdPropPlan(CColRefSet *pcrs, CEnfdOrder *peo, CEnfdPartitionPropagation *pepp, CCTEReq *pcter);
 
   // dtor
   ~CReqdPropPlan() override;
@@ -92,9 +87,6 @@ class CReqdPropPlan : public CReqdProp {
 
   // required order accessor
   CEnfdOrder *Peo() const { return m_peo; }
-
-  // required rewindability accessor
-  CEnfdRewindability *Per() const { return m_per; }
 
   // required partition propagation accessor
   CEnfdPartitionPropagation *Pepp() const { return m_pepp; }

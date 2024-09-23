@@ -1189,12 +1189,11 @@ CDouble CStatisticsUtils::MaxNumGroupsForGivenSrcGprCols(CMemoryPool *mp, const 
 //
 //---------------------------------------------------------------------------
 CDouble CStatisticsUtils::Groups(CMemoryPool *mp, IStatistics *stats, const CStatisticsConfig *stats_config,
-                                 ULongPtrArray *grouping_cols,
+                                 const std::vector<uint32_t> &grouping_cols,
                                  CBitSet *keys  // keys derived during optimization
 ) {
   GPOS_ASSERT(nullptr != stats);
   GPOS_ASSERT(nullptr != stats_config);
-  GPOS_ASSERT(nullptr != grouping_cols);
 
   CColRefSet *computed_groupby_cols = GPOS_NEW(mp) CColRefSet(mp);
   CColRefSet *grp_col_for_stats = MakeGroupByColsForStats(mp, grouping_cols, computed_groupby_cols);
@@ -1288,20 +1287,15 @@ void CStatisticsUtils::AddGrpColStats(CMemoryPool *mp, const CStatistics *input_
 //		If the grouping column (c) is a computed column, for example c = f(a,b),
 //		then we include columns a and b as the grouping column instead of c.
 //---------------------------------------------------------------------------
-CColRefSet *CStatisticsUtils::MakeGroupByColsForStats(CMemoryPool *mp, const ULongPtrArray *grouping_columns,
+CColRefSet *CStatisticsUtils::MakeGroupByColsForStats(CMemoryPool *mp, const std::vector<uint32_t> &grouping_columns,
                                                       CColRefSet *computed_groupby_cols) {
-  GPOS_ASSERT(nullptr != grouping_columns);
   GPOS_ASSERT(nullptr != computed_groupby_cols);
 
   CColumnFactory *col_factory = COptCtxt::PoctxtFromTLS()->Pcf();
 
   CColRefSet *grp_col_for_stats = GPOS_NEW(mp) CColRefSet(mp);
 
-  const ULONG ulGrpCols = grouping_columns->Size();
-
-  // iterate over grouping columns
-  for (ULONG i = 0; i < ulGrpCols; i++) {
-    ULONG colid = *(*grouping_columns)[i];
+  for (auto colid : grouping_columns) {
     CColRef *grp_col_ref = col_factory->LookupColRef(colid);
     GPOS_ASSERT(nullptr != grp_col_ref);
 

@@ -1004,13 +1004,9 @@ IStatistics *CLogical::PstatsDeriveDummy(CMemoryPool *mp, CExpressionHandle &exp
   GPOS_ASSERT(Esp(exprhdl) > EspNone);
   CReqdPropRelational *prprel = CReqdPropRelational::GetReqdRelationalProps(exprhdl.Prp());
   CColRefSet *pcrs = prprel->PcrsStat();
-  ULongPtrArray *colids = GPOS_NEW(mp) ULongPtrArray(mp);
-  pcrs->ExtractColIds(mp, colids);
+  auto colids = pcrs->ExtractColIds();
 
   IStatistics *stats = CStatistics::MakeDummyStats(mp, colids, rows);
-
-  // clean up
-  colids->Release();
 
   return stats;
 }

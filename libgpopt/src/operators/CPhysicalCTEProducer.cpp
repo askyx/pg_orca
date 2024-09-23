@@ -93,24 +93,6 @@ COrderSpec *CPhysicalCTEProducer::PosRequired(CMemoryPool *mp, CExpressionHandle
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalCTEProducer::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalCTEProducer::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                      CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                      CDrvdPropArray *,  // pdrgpdpCtxt
-                                                      ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalCTEProducer::PcteRequired
 //
 //	@doc:
@@ -143,18 +125,6 @@ CCTEReq *CPhysicalCTEProducer::PcteRequired(CMemoryPool *,        // mp,
 COrderSpec *CPhysicalCTEProducer::PosDerive(CMemoryPool *,  // mp
                                             CExpressionHandle &exprhdl) const {
   return PosDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalCTEProducer::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalCTEProducer::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  return PrsDerivePassThruOuter(mp, exprhdl);
 }
 
 //---------------------------------------------------------------------------
@@ -208,26 +178,6 @@ CEnfdProp::EPropEnforcingType CPhysicalCTEProducer::EpetOrder(CExpressionHandle 
 
   COrderSpec *pos = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Pos();
   if (peo->FCompatible(pos)) {
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  return CEnfdProp::EpetRequired;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalCTEProducer::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalCTEProducer::EpetRewindability(CExpressionHandle &exprhdl,
-                                                                      const CEnfdRewindability *per) const {
-  GPOS_ASSERT(nullptr != per);
-
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
     return CEnfdProp::EpetUnnecessary;
   }
 

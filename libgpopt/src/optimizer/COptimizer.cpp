@@ -25,6 +25,7 @@
 #include "gpopt/optimizer/COptimizerConfig.h"
 #include "gpopt/translate/CTranslatorDXLToExpr.h"
 #include "gpopt/translate/CTranslatorExprToDXL.h"
+#include "gpopt/translate/plan_generator.h"
 #include "gpos/common/CBitSet.h"
 #include "gpos/common/CDebugCounter.h"
 #include "gpos/error/CAutoTrace.h"
@@ -152,10 +153,10 @@ void COptimizer::PrintQueryOrPlan(CMemoryPool *mp, CExpression *pexpr, CQueryCon
 //		must happen at the caller side if needed
 //
 //---------------------------------------------------------------------------
-CDXLNode *COptimizer::PdxlnOptimize(CMemoryPool *mp, CMDAccessor *md_accessor, const CDXLNode *query,
-                                    const CDXLNodeArray *query_output_dxlnode_array, const CDXLNodeArray *cte_producers,
-                                    IConstExprEvaluator *pceeval, CSearchStageArray *search_stage_array,
-                                    COptimizerConfig *optimizer_config) {
+void *COptimizer::PdxlnOptimize(CMemoryPool *mp, CMDAccessor *md_accessor, const CDXLNode *query,
+                                const CDXLNodeArray *query_output_dxlnode_array, const CDXLNodeArray *cte_producers,
+                                IConstExprEvaluator *pceeval, CSearchStageArray *search_stage_array,
+                                COptimizerConfig *optimizer_config) {
   GPOS_ASSERT(nullptr != md_accessor);
   GPOS_ASSERT(nullptr != query);
   GPOS_ASSERT(nullptr != query_output_dxlnode_array);
@@ -164,7 +165,7 @@ CDXLNode *COptimizer::PdxlnOptimize(CMemoryPool *mp, CMDAccessor *md_accessor, c
   CAutoP<std::wofstream> wosMinidump;
   CAutoP<COstreamBasic> osMinidump;
 
-  CDXLNode *pdxlnPlan = nullptr;
+  void *pdxlnPlan = nullptr;
   CErrorHandlerStandard errhdl;
   GPOS_TRY_HDL(&errhdl) {
     {
@@ -213,11 +214,12 @@ CDXLNode *COptimizer::PdxlnOptimize(CMemoryPool *mp, CMDAccessor *md_accessor, c
         GPOS_TRACE(strPlanhint.GetBuffer());
       }
 
-      // translate plan into DXL
-      pdxlnPlan = CreateDXLNode(mp, md_accessor, pexprPlan, pqc->PdrgPcr(), pdrgpmdname);
-      GPOS_CHECK_ABORT;
-
-      // cleanup
+      if (GPOS_CONDIF(enable_new_planner_generation)) {
+        PlanGenerator gen_plan{mp, md_accessor};
+        pdxlnPlan = (void *)gen_plan.GeneratePlan(pexprPlan, pqc->PdrgPcr(), pdrgpmdname);
+      } else {
+        pdxlnPlan = (void *)CreateDXLNode(mp, md_accessor, pexprPlan, pqc->PdrgPcr(), pdrgpmdname);
+      }
       pexprTranslated->Release();
       pexprPlan->Release();
       GPOS_DELETE(pqc);
@@ -309,5 +311,3 @@ CDXLNode *COptimizer::CreateDXLNode(CMemoryPool *mp, CMDAccessor *md_accessor, C
 
   return pdxlnPlan;
 }
-
-// EOF

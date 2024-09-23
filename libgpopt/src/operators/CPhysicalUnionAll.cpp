@@ -115,24 +115,6 @@ COrderSpec *CPhysicalUnionAll::PosRequired(CMemoryPool *mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalUnionAll::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalUnionAll::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                   CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                   CDrvdPropArray *,  // pdrgpdpCtxt
-                                                   ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(PdrgpdrgpcrInput()->Size() > child_index);
-
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalUnionAll::PcteRequired
 //
 //	@doc:
@@ -192,19 +174,6 @@ COrderSpec *CPhysicalUnionAll::PosDerive(CMemoryPool *mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalUnionAll::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalUnionAll::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  // TODO: shardikar; This should check all the children, not only the outer child.
-  return PrsDerivePassThruOuter(mp, exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalUnionAll::EpetOrder
 //
 //	@doc:
@@ -219,28 +188,6 @@ CEnfdProp::EPropEnforcingType CPhysicalUnionAll::EpetOrder(CExpressionHandle &, 
 ) const {
   GPOS_ASSERT(nullptr != peo);
   GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
-
-  return CEnfdProp::EpetRequired;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalUnionAll::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalUnionAll::EpetRewindability(CExpressionHandle &exprhdl,
-                                                                   const CEnfdRewindability *per) const {
-  GPOS_ASSERT(nullptr != per);
-
-  // get rewindability delivered by the node
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
-    // required rewindability is already provided
-    return CEnfdProp::EpetUnnecessary;
-  }
 
   return CEnfdProp::EpetRequired;
 }

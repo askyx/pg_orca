@@ -12,7 +12,6 @@
 #include "gpopt/operators/CPhysicalNLJoin.h"
 
 #include "gpopt/base/COptCtxt.h"
-#include "gpopt/base/CRewindabilitySpec.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPhysicalCorrelatedInLeftSemiNLJoin.h"
 #include "gpopt/operators/CPhysicalCorrelatedInnerNLJoin.h"
@@ -72,44 +71,6 @@ COrderSpec *CPhysicalNLJoin::PosRequired(CMemoryPool *mp, CExpressionHandle &exp
   }
 
   return GPOS_NEW(mp) COrderSpec(mp);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalNLJoin::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalNLJoin::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                 CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                 CDrvdPropArray *pdrgpdpCtxt,
-                                                 ULONG  // ulOptReq
-) const {
-  GPOS_ASSERT(child_index < 2 && "Required rewindability can be computed on the relational child only");
-
-  // inner child has to be rewindable
-  if (1 == child_index) {
-    if (FFirstChildToOptimize(child_index)) {
-      // for index nested loop joins, inner child is optimized first.
-      // we should not force materialize inner child, as we use index
-      // on inner relation and reference variables from outer relation.
-      return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindable, prsRequired->Emht(), false);
-    }
-
-    CRewindabilitySpec *prsOuter = CDrvdPropPlan::Pdpplan((*pdrgpdpCtxt)[0 /*outer child*/])->Prs();
-    CRewindabilitySpec::EMotionHazardType motion_hazard =
-        GPOS_FTRACE(EopttraceMotionHazardHandling) && (prsOuter->HasMotionHazard() || prsRequired->HasMotionHazard())
-            ? CRewindabilitySpec::EmhtMotion
-            : CRewindabilitySpec::EmhtNoMotion;
-
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindable, motion_hazard, true);
-  }
-
-  GPOS_ASSERT(0 == child_index);
-
-  return PrsPassThru(mp, exprhdl, prsRequired, 0 /*child_index*/);
 }
 
 //---------------------------------------------------------------------------

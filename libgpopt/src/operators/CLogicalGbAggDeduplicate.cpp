@@ -204,9 +204,7 @@ IStatistics *CLogicalGbAggDeduplicate::PstatsDerive(CMemoryPool *mp, CExpression
   GPOS_ASSERT(Esp(exprhdl) > EspNone);
   IStatistics *child_stats = exprhdl.Pstats(0);
 
-  // extract computed columns
-  ULongPtrArray *pdrgpulComputedCols = GPOS_NEW(mp) ULongPtrArray(mp);
-  exprhdl.DeriveDefinedColumns(1)->ExtractColIds(mp, pdrgpulComputedCols);
+  auto pdrgpulComputedCols = exprhdl.DeriveDefinedColumns(1)->ExtractColIds();
 
   // construct bitset with keys of join child
   CBitSet *keys = GPOS_NEW(mp) CBitSet(mp);
@@ -218,7 +216,6 @@ IStatistics *CLogicalGbAggDeduplicate::PstatsDerive(CMemoryPool *mp, CExpression
 
   IStatistics *stats = CLogicalGbAgg::PstatsDerive(mp, child_stats, Pdrgpcr(), pdrgpulComputedCols, keys);
   keys->Release();
-  pdrgpulComputedCols->Release();
 
   return stats;
 }

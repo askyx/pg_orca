@@ -101,41 +101,6 @@ COrderSpec *CPhysicalHashJoin::PosRequired(CMemoryPool *mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalHashJoin::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalHashJoin::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                   CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                   CDrvdPropArray *,  // pdrgpdpCtxt
-                                                   ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(child_index < 2 && "Required rewindability can be computed on the relational child only");
-
-  if (1 == child_index) {
-    // If the inner child contains outer references, and the required
-    // rewindability is not ErtNone, we must ensure that the inner subtree is
-    // at least rescannable, even though a Hash op on the inner side
-    // materialized the subtree results.
-    if (exprhdl.HasOuterRefs(1) && (prsRequired->Ert() == CRewindabilitySpec::ErtRescannable ||
-                                    prsRequired->Ert() == CRewindabilitySpec::ErtRewindable)) {
-      return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRescannable, prsRequired->Emht());
-    }
-    // Otherwise, the inner Hash op will take care of materializing the
-    // subtree, so no rewindability type is required
-    else {
-      return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, prsRequired->Emht());
-    }
-  }
-
-  // pass through requirements to outer child
-  return PrsPassThru(mp, exprhdl, prsRequired, 0 /*child_index*/);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		FIdenticalExpression
 //
 //	@doc:

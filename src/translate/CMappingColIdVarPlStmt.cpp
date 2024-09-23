@@ -41,7 +41,7 @@ using namespace gpmd;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CMappingColIdVarPlStmt::CMappingColIdVarPlStmt(CMemoryPool *mp, const CDXLTranslateContextBaseTable *base_table_context,
+CMappingColIdVarPlStmt::CMappingColIdVarPlStmt(CMemoryPool *mp, const TranslateContextBaseTable *base_table_context,
                                                CDXLTranslationContextArray *child_contexts,
                                                CDXLTranslateContext *output_context,
                                                CContextDXLToPlStmt *dxl_to_plstmt_context)
@@ -94,9 +94,9 @@ Param *CMappingColIdVarPlStmt::ParamFromDXLNodeScId(const CDXLScalarIdent *dxlop
   if (nullptr != elem) {
     param = makeNode(Param);
     param->paramkind = PARAM_EXEC;
-    param->paramid = elem->ParamId();
-    param->paramtype = CMDIdGPDB::CastMdid(elem->MdidType())->Oid();
-    param->paramtypmod = elem->TypeModifier();
+    param->paramid = elem->m_paramid;
+    param->paramtype = CMDIdGPDB::CastMdid(elem->m_mdid)->Oid();
+    param->paramtypmod = elem->m_type_modifier;
     param->paramcollid = gpdb::TypeCollation(param->paramtype);
   }
 
@@ -121,8 +121,11 @@ Var *CMappingColIdVarPlStmt::VarFromDXLNodeScId(const CDXLScalarIdent *dxlop) {
   const ULONG colid = dxlop->GetDXLColRef()->Id();
   if (nullptr != m_base_table_context) {
     // scalar id is used in a base table operator node
-    varno = m_base_table_context->GetRelIndex();
-    attno = (AttrNumber)m_base_table_context->GetAttnoForColId(colid);
+    varno = m_base_table_context->rte_index;
+
+    attno = m_base_table_context->colid_to_attno_map.contains(colid)
+                ? (AttrNumber)m_base_table_context->colid_to_attno_map.at(colid)
+                : 0;
 
     varno_old = varno;
     attno_old = attno;

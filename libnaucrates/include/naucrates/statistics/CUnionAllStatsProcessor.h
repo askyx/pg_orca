@@ -18,7 +18,8 @@ namespace gpnaucrates {
 class CUnionAllStatsProcessor {
  public:
   static CStatistics *CreateStatsForUnionAll(CMemoryPool *mp, const CStatistics *stats_first_child,
-                                             const CStatistics *stats_second_child, ULongPtrArray *output_colids,
+                                             const CStatistics *stats_second_child,
+                                             const std::vector<uint32_t> &output_colids,
                                              ULongPtrArray *first_child_colids, ULongPtrArray *second_child_colids);
 };
 }  // namespace gpnaucrates

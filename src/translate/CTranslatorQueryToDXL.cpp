@@ -40,7 +40,6 @@ extern "C" {
 #include "naucrates/dxl/CDXLUtils.h"
 #include "naucrates/dxl/operators/CDXLDatumInt4.h"
 #include "naucrates/dxl/operators/CDXLDatumInt8.h"
-#include "naucrates/dxl/operators/CDXLLogicalCTAS.h"
 #include "naucrates/dxl/operators/CDXLLogicalCTEAnchor.h"
 #include "naucrates/dxl/operators/CDXLLogicalCTEConsumer.h"
 #include "naucrates/dxl/operators/CDXLLogicalCTEProducer.h"
@@ -67,7 +66,6 @@ extern "C" {
 #include "naucrates/dxl/operators/CDXLScalarWindowRef.h"
 #include "naucrates/dxl/xml/dxltokens.h"
 #include "naucrates/exception.h"
-#include "naucrates/md/CMDIdGPDBCtas.h"
 #include "naucrates/md/CMDTypeBoolGPDB.h"
 #include "naucrates/md/IMDAggregate.h"
 #include "naucrates/md/IMDScalarOp.h"
@@ -124,7 +122,6 @@ CTranslatorQueryToDXL::CTranslatorQueryToDXL(CContextQueryToDXL *context, CMDAcc
       m_md_accessor(md_accessor),
       m_query_level(query_level),
       m_is_top_query_dml(is_top_query_dml),
-      m_is_ctas_query(false),
       m_query_level_to_cte_map(nullptr),
       m_dxl_query_output_cols(nullptr),
       m_dxl_cte_producers(nullptr),
@@ -324,11 +321,6 @@ void CTranslatorQueryToDXL::CheckSupportedCmdType(Query *query) {
   }
 
   if (CMD_SELECT == query->commandType) {
-    // GPDB_92_MERGE_FIXME: CTAS is a UTILITY statement after upstream
-    // refactoring commit 9dbf2b7d . We are temporarily *always* falling
-    // back. Detect CTAS harder when we get back to it.
-
-    // supported: regular select or CTAS when it is enabled
     return;
   }
 
@@ -622,11 +614,7 @@ CDXLNode *CTranslatorQueryToDXL::TranslateQueryToDXL() {
 
   switch (m_query->commandType) {
     case CMD_SELECT:
-      if (true) {
-        return TranslateSelectQueryToDXL();
-      } else {
-        return TranslateCTASToDXL();
-      }
+      return TranslateSelectQueryToDXL();
 
     case CMD_INSERT:
       return TranslateInsertQueryToDXL();
@@ -742,181 +730,6 @@ CDXLNode *CTranslatorQueryToDXL::TranslateInsertQueryToDXL() {
   }
 
   return GPOS_NEW(m_mp) CDXLNode(m_mp, insert_dxlnode, query_dxlnode);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorQueryToDXL::TranslateCTASToDXL
-//
-//	@doc:
-//		Translate a CTAS
-//
-//---------------------------------------------------------------------------
-CDXLNode *CTranslatorQueryToDXL::TranslateCTASToDXL() {
-  GPOS_ASSERT(CMD_SELECT == m_query->commandType);
-  // GPOS_ASSERT(NULL != m_query->intoClause);
-
-  m_is_ctas_query = true;
-  CDXLNode *query_dxlnode = TranslateSelectQueryToDXL();
-
-  // GPDB_92_MERGE_FIXME: we should plumb through the intoClause
-  //	IntoClause *pintocl = m_pquery->intoClause;
-  IntoClause *into_clause = nullptr;
-
-  //	const char *const relname = pintocl->rel->relname;
-  const char *const relname = "fake ctas rel";
-  CMDName *md_relname = CDXLUtils::CreateMDNameFromCharArray(m_mp, relname);
-
-  CDXLColDescrArray *dxl_col_descr_array = GPOS_NEW(m_mp) CDXLColDescrArray(m_mp);
-
-  const ULONG num_columns = gpdb::ListLength(m_query->targetList);
-
-  ULongPtrArray *source_array = GPOS_NEW(m_mp) ULongPtrArray(m_mp);
-  IntPtrArray *var_typmods = GPOS_NEW(m_mp) IntPtrArray(m_mp);
-
-  //	List *col_names = into_clause->colNames;
-  List *col_names = NIL;
-  for (ULONG ul = 0; ul < num_columns; ul++) {
-    TargetEntry *target_entry = (TargetEntry *)gpdb::ListNth(m_query->targetList, ul);
-    if (target_entry->resjunk) {
-      continue;
-    }
-    AttrNumber resno = target_entry->resno;
-    int var_typmod = gpdb::ExprTypeMod((Node *)target_entry->expr);
-    var_typmods->Append(GPOS_NEW(m_mp) INT(var_typmod));
-
-    CDXLNode *dxl_column = (*m_dxl_query_output_cols)[ul];
-    CDXLScalarIdent *dxl_ident = CDXLScalarIdent::Cast(dxl_column->GetOperator());
-    source_array->Append(GPOS_NEW(m_mp) ULONG(dxl_ident->GetDXLColRef()->Id()));
-
-    CMDName *md_colname = nullptr;
-    if (nullptr != col_names && ul < gpdb::ListLength(col_names)) {
-      ColumnDef *col_def = (ColumnDef *)gpdb::ListNth(col_names, ul);
-      md_colname = CDXLUtils::CreateMDNameFromCharArray(m_mp, col_def->colname);
-    } else {
-      md_colname = GPOS_NEW(m_mp) CMDName(m_mp, dxl_ident->GetDXLColRef()->MdName()->GetMDName());
-    }
-
-    GPOS_ASSERT(nullptr != md_colname);
-    IMDId *mdid = dxl_ident->MdidType();
-    mdid->AddRef();
-    CDXLColDescr *dxl_col_descr =
-        GPOS_NEW(m_mp) CDXLColDescr(md_colname, m_context->m_colid_counter->next_id(), resno /* attno */, mdid,
-                                    dxl_ident->TypeModifier(), false /* is_dropped */
-        );
-    dxl_col_descr_array->Append(dxl_col_descr);
-  }
-
-  IMDRelation::Ereldistrpolicy rel_distr_policy = IMDRelation::EreldistrRandom;
-  ULongPtrArray *distribution_colids = nullptr;
-
-  IMdIdArray *distr_opfamilies = GPOS_NEW(m_mp) IMdIdArray(m_mp);
-  IMdIdArray *distr_opclasses = GPOS_NEW(m_mp) IMdIdArray(m_mp);
-
-  GPOS_ASSERT(IMDRelation::EreldistrCoordinatorOnly != rel_distr_policy);
-  m_context->m_has_distributed_tables = true;
-
-  // TODO: Mar 5, 2014; reserve an OID
-  OID oid = 1;
-  CMDIdGPDB *mdid = GPOS_NEW(m_mp) CMDIdGPDBCtas(oid);
-
-  CMDName *md_tablespace_name = nullptr;
-  //	if (NULL != into_clause->tableSpaceName)
-  if (false) {
-    md_tablespace_name = CDXLUtils::CreateMDNameFromCharArray(m_mp, into_clause->tableSpaceName);
-  }
-
-  CMDName *md_schema_name = nullptr;
-  //	if (NULL != into_clause->rel->schemaname)
-  if (false) {
-    md_schema_name = CDXLUtils::CreateMDNameFromCharArray(m_mp, into_clause->rel->schemaname);
-  }
-
-  //	CDXLCtasStorageOptions::ECtasOnCommitAction ctas_commit_action = (CDXLCtasStorageOptions::ECtasOnCommitAction)
-  // into_clause->onCommit;
-  CDXLCtasStorageOptions::ECtasOnCommitAction ctas_commit_action = CDXLCtasStorageOptions::EctascommitNOOP;
-  IMDRelation::Erelstoragetype rel_storage_type = IMDRelation::ErelstorageHeap;
-  //	CDXLCtasStorageOptions::CDXLCtasOptionArray *ctas_storage_options = GetDXLCtasOptionArray(into_clause->options,
-  //&rel_storage_type);
-  CDXLCtasStorageOptions::CDXLCtasOptionArray *ctas_storage_options = GetDXLCtasOptionArray(NIL, &rel_storage_type);
-
-  BOOL fTempTable = true;
-  CDXLLogicalCTAS *ctas_dxlop = GPOS_NEW(m_mp) CDXLLogicalCTAS(
-      m_mp, mdid, md_schema_name, md_relname, dxl_col_descr_array,
-      GPOS_NEW(m_mp) CDXLCtasStorageOptions(md_tablespace_name, ctas_commit_action, ctas_storage_options),
-      rel_distr_policy, distribution_colids, distr_opfamilies, distr_opclasses, fTempTable, rel_storage_type,
-      source_array, var_typmods);
-
-  return GPOS_NEW(m_mp) CDXLNode(m_mp, ctas_dxlop, query_dxlnode);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorQueryToDXL::GetDXLCtasOptionArray
-//
-//	@doc:
-//		Translate CTAS storage options
-//
-//---------------------------------------------------------------------------
-CDXLCtasStorageOptions::CDXLCtasOptionArray *CTranslatorQueryToDXL::GetDXLCtasOptionArray(
-    List *options,
-    IMDRelation::Erelstoragetype *storage_type  // output parameter: storage type
-) {
-  if (nullptr == options) {
-    return nullptr;
-  }
-
-  GPOS_ASSERT(nullptr != storage_type);
-
-  CDXLCtasStorageOptions::CDXLCtasOptionArray *ctas_storage_options =
-      GPOS_NEW(m_mp) CDXLCtasStorageOptions::CDXLCtasOptionArray(m_mp);
-  ListCell *lc = nullptr;
-  BOOL is_ao_table = false;
-  BOOL is_AOCO = false;
-
-  CWStringConst str_append_only(GPOS_WSZ_LIT("appendonly"));
-  CWStringConst str_orientation(GPOS_WSZ_LIT("orientation"));
-  CWStringConst str_orientation_column(GPOS_WSZ_LIT("column"));
-
-  foreach (lc, options) {
-    DefElem *def_elem = (DefElem *)lfirst(lc);
-    CWStringDynamic *name_str = CDXLUtils::CreateDynamicStringFromCharArray(m_mp, def_elem->defname);
-    CWStringDynamic *value_str = nullptr;
-
-    BOOL is_null_arg = (nullptr == def_elem->arg);
-
-    // def_elem->arg is NULL for queries of the form "create table t with (oids) as ... "
-    if (is_null_arg) {
-      // we represent null options as an empty arg string and set the IsNull flag on
-      value_str = GPOS_NEW(m_mp) CWStringDynamic(m_mp);
-    } else {
-      value_str = ExtractStorageOptionStr(def_elem);
-
-      if (name_str->Equals(&str_append_only) && value_str->Equals(CDXLTokens::GetDXLTokenStr(EdxltokenTrue))) {
-        is_ao_table = true;
-      }
-
-      if (name_str->Equals(&str_orientation) && value_str->Equals(&str_orientation_column)) {
-        is_AOCO = true;
-      }
-    }
-
-    NodeTag arg_type;
-    if (!is_null_arg) {
-      arg_type = def_elem->arg->type;
-    }
-
-    CDXLCtasStorageOptions::CDXLCtasOption *dxl_ctas_storage_option =
-        GPOS_NEW(m_mp) CDXLCtasStorageOptions::CDXLCtasOption(arg_type, name_str, value_str, is_null_arg);
-    ctas_storage_options->Append(dxl_ctas_storage_option);
-  }
-  if (is_AOCO) {
-    *storage_type = IMDRelation::ErelstorageAppendOnlyCols;
-  } else if (is_ao_table) {
-    *storage_type = IMDRelation::ErelstorageAppendOnlyRows;
-  }
-
-  return ctas_storage_options;
 }
 
 //---------------------------------------------------------------------------
@@ -1600,7 +1413,7 @@ CDXLNode *CTranslatorQueryToDXL::TranslateLimitToDXLGroupBy(List *sort_clause, N
 
   // do not remove limit if it is immediately under a DML (JIRA: GPSQL-2669)
   // otherwise we may increase the storage size because there are less opportunities for compression
-  BOOL is_limit_top_level = (m_is_top_query_dml && 1 == m_query_level) || (m_is_ctas_query && 0 == m_query_level);
+  BOOL is_limit_top_level = (m_is_top_query_dml && 1 == m_query_level) || (0 == m_query_level);
   CDXLNode *limit_dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLLogicalLimit(m_mp, is_limit_top_level));
 
   // create a sorting col list

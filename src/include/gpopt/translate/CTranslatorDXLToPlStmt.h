@@ -28,7 +28,6 @@ extern "C" {
 #include "gpopt/translate/CTranslatorDXLToScalar.h"
 #include "gpos/base.h"
 #include "naucrates/dxl/CIdGenerator.h"
-#include "naucrates/dxl/operators/CDXLCtasStorageOptions.h"
 #include "naucrates/dxl/operators/CDXLPhysicalIndexScan.h"
 #include "nodes/nodes.h"
 #include "nodes/plannodes.h"
@@ -67,7 +66,6 @@ using namespace gpopt;
 
 // fwd decl
 class CDXLNode;
-class CDXLPhysicalCTAS;
 class CDXLDirectDispatchInfo;
 
 //---------------------------------------------------------------------------
@@ -121,30 +119,24 @@ class CTranslatorDXLToPlStmt {
   // command type
   CmdType m_cmd_type;
 
-  // is target table distributed, false when in non DML statements
-  BOOL m_is_tgt_tbl_distributed;
-
   // list of result relations range table indexes for DML statements,
   // or NULL for select queries
   List *m_result_rel_list;
-
-  // partition selector counter
-  ULONG m_partition_selector_counter;
 
   // private copy ctor
   CTranslatorDXLToPlStmt(const CTranslatorDXLToPlStmt &);
 
   // walker to set index var attno's
-  static BOOL SetIndexVarAttnoWalker(Node *node, SContextIndexVarAttno *ctxt_index_var_attno_walker);
+  static bool SetIndexVarAttnoWalker(Node *node, SContextIndexVarAttno *ctxt_index_var_attno_walker);
 
   // walker to set inner var to outer
-  static BOOL SetHashKeysVarnoWalker(Node *node, void *context);
+  static bool SetHashKeysVarnoWalker(Node *node, void *context);
 
-  static BOOL FetchSecurityQualsWalker(Node *node, SContextSecurityQuals *ctxt_security_quals);
+  static bool FetchSecurityQualsWalker(Node *node, SContextSecurityQuals *ctxt_security_quals);
 
-  static BOOL FetchSecurityQuals(Query *parsetree, SContextSecurityQuals *ctxt_security_quals);
+  static bool FetchSecurityQuals(Query *parsetree, SContextSecurityQuals *ctxt_security_quals);
 
-  static BOOL SetSecurityQualsVarnoWalker(Node *node, Index *index);
+  static bool SetSecurityQualsVarnoWalker(Node *node, Index *index);
 
  public:
   // ctor
@@ -171,11 +163,8 @@ class CTranslatorDXLToPlStmt {
 
   static List *TranslatePartOids(IMdIdArray *parts, INT lockmode);
 
-  static List *TranslateJoinPruneParamids(const ULongPtrArray *selector_ids, OID oid_type,
-                                          CContextDXLToPlStmt *dxl_to_plstmt_context);
-
   void TranslatePlan(Plan *plan, const CDXLNode *dxlnode, CDXLTranslateContext *output_context,
-                     CContextDXLToPlStmt *dxl_to_plstmt_context, CDXLTranslateContextBaseTable *base_table_context,
+                     CContextDXLToPlStmt *dxl_to_plstmt_context, TranslateContextBaseTable *base_table_context,
                      CDXLTranslationContextArray *ctxt_translation_prev_siblings);
 
   // translate DXL table scan node into a SeqScan node
@@ -260,7 +249,7 @@ class CTranslatorDXLToPlStmt {
   Plan *TranslateDXLProjectSet(const CDXLNode *result_dxlnode);
 
   Plan *CreateProjectSetNodeTree(const CDXLNode *result_dxlnode, Plan *result_node_plan, Plan *child_plan,
-                                 Plan *&project_set_child_plan, BOOL &will_require_result_node);
+                                 Plan *&project_set_child_plan, bool &will_require_result_node);
 
   void MutateFuncExprToVarProjectSet(Plan *final_plan);
 
@@ -301,25 +290,23 @@ class CTranslatorDXLToPlStmt {
                               CDXLTranslationContextArray *ctxt_translation_prev_siblings);
 
   // translate DXL filter list into GPDB filter list
-  List *TranslateDXLFilterList(const CDXLNode *filter_list_dxlnode,
-                               const CDXLTranslateContextBaseTable *base_table_context,
+  List *TranslateDXLFilterList(const CDXLNode *filter_list_dxlnode, const TranslateContextBaseTable *base_table_context,
                                CDXLTranslationContextArray *child_contexts, CDXLTranslateContext *output_context);
 
   // create range table entry from a CDXLPhysicalTVF node
   RangeTblEntry *TranslateDXLTvfToRangeTblEntry(const CDXLNode *tvf_dxlnode, CDXLTranslateContext *output_context,
-                                                CDXLTranslateContextBaseTable *base_table_context);
+                                                TranslateContextBaseTable *base_table_context);
 
   // create range table entry from a CDXLPhysicalValueScan node
   RangeTblEntry *TranslateDXLValueScanToRangeTblEntry(const CDXLNode *value_scan_dxlnode,
                                                       CDXLTranslateContext *output_context,
-                                                      CDXLTranslateContextBaseTable *base_table_context);
+                                                      TranslateContextBaseTable *base_table_context);
 
   // create range table entry from a table descriptor
-  Index ProcessDXLTblDescr(const CDXLTableDescr *table_descr, CDXLTranslateContextBaseTable *base_table_context);
+  Index ProcessDXLTblDescr(const CDXLTableDescr *table_descr, TranslateContextBaseTable *base_table_context);
 
   // translate DXL projection list into a target list
-  List *TranslateDXLProjList(const CDXLNode *project_list_dxlnode,
-                             const CDXLTranslateContextBaseTable *base_table_context,
+  List *TranslateDXLProjList(const CDXLNode *project_list_dxlnode, const TranslateContextBaseTable *base_table_context,
                              CDXLTranslationContextArray *child_contexts, CDXLTranslateContext *output_context);
 
   // insert NULL values for dropped attributes to construct the target list for a DML statement
@@ -331,8 +318,7 @@ class CTranslatorDXLToPlStmt {
                                                        CDXLTranslateContext *child_context,
                                                        CDXLTranslateContext *output_context);
 
-  List *TranslateDXLFilterToQual(const CDXLNode *filter_dxlnode,
-                                 const CDXLTranslateContextBaseTable *base_table_context,
+  List *TranslateDXLFilterToQual(const CDXLNode *filter_dxlnode, const TranslateContextBaseTable *base_table_context,
                                  CDXLTranslationContextArray *child_contexts, CDXLTranslateContext *output_context);
 
   // translate operator costs from the DXL cost structure into a Plan
@@ -341,7 +327,7 @@ class CTranslatorDXLToPlStmt {
 
   // shortcut for translating both the projection list and the filter
   void TranslateProjListAndFilter(const CDXLNode *project_list_dxlnode, const CDXLNode *filter_dxlnode,
-                                  const CDXLTranslateContextBaseTable *base_table_context,
+                                  const TranslateContextBaseTable *base_table_context,
                                   CDXLTranslationContextArray *child_contexts, List **targetlist_out, List **qual_out,
                                   CDXLTranslateContext *output_context);
 
@@ -355,21 +341,21 @@ class CTranslatorDXLToPlStmt {
   // translate the tree of bitmap index operators that are under a (dynamic) bitmap table scan
   Plan *TranslateDXLBitmapAccessPath(const CDXLNode *bitmap_access_path_dxlnode, CDXLTranslateContext *output_context,
                                      const IMDRelation *md_rel, const CDXLTableDescr *table_descr,
-                                     CDXLTranslateContextBaseTable *base_table_context,
+                                     TranslateContextBaseTable *base_table_context,
                                      CDXLTranslationContextArray *ctxt_translation_prev_siblings,
                                      BitmapHeapScan *bitmap_tbl_scan);
 
   // translate a bitmap bool op expression
   Plan *TranslateDXLBitmapBoolOp(const CDXLNode *bitmap_boolop_dxlnode, CDXLTranslateContext *output_context,
                                  const IMDRelation *md_rel, const CDXLTableDescr *table_descr,
-                                 CDXLTranslateContextBaseTable *base_table_context,
+                                 TranslateContextBaseTable *base_table_context,
                                  CDXLTranslationContextArray *ctxt_translation_prev_siblings,
                                  BitmapHeapScan *bitmap_tbl_scan);
 
   // translate CDXLScalarBitmapIndexProbe into BitmapIndexScan or DynamicBitmapIndexScan
   Plan *TranslateDXLBitmapIndexProbe(const CDXLNode *bitmap_index_probe_dxlnode, CDXLTranslateContext *output_context,
                                      const IMDRelation *md_rel, const CDXLTableDescr *table_descr,
-                                     CDXLTranslateContextBaseTable *base_table_context,
+                                     TranslateContextBaseTable *base_table_context,
                                      CDXLTranslationContextArray *ctxt_translation_prev_siblings,
                                      BitmapHeapScan *bitmap_tbl_scan);
 
@@ -377,15 +363,14 @@ class CTranslatorDXLToPlStmt {
                                 AttrNumber *att_no_sort_colids, Oid *sort_op_oids, Oid *sort_collations_oids,
                                 bool *is_nulls_first);
 
-  List *TranslateDXLScCondToQual(const CDXLNode *filter_dxlnode,
-                                 const CDXLTranslateContextBaseTable *base_table_context,
+  List *TranslateDXLScCondToQual(const CDXLNode *filter_dxlnode, const TranslateContextBaseTable *base_table_context,
                                  CDXLTranslationContextArray *child_contexts, CDXLTranslateContext *output_context);
 
   // parse string value into a Const
   static Cost CostFromStr(const CWStringBase *str);
 
   // check if the given operator is a DML operator on a distributed table
-  BOOL IsTgtTblDistributed(CDXLOperator *dxlop);
+  bool IsTgtTblDistributed(CDXLOperator *dxlop);
 
   // add a target entry for a junk column with given colid to the target list
   static void AddJunkTargetEntryForColId(List **target_list, CDXLTranslateContext *dxl_translate_ctxt, ULONG colid,
@@ -393,34 +378,19 @@ class CTranslatorDXLToPlStmt {
 
   // translate the index condition list in an Index scan
   void TranslateIndexConditions(CDXLNode *index_cond_list_dxlnode, const CDXLTableDescr *dxl_tbl_descr,
-                                BOOL is_bitmap_index_probe, const IMDIndex *index, const IMDRelation *md_rel,
-                                CDXLTranslateContext *output_context, CDXLTranslateContextBaseTable *base_table_context,
+                                bool is_bitmap_index_probe, const IMDIndex *index, const IMDRelation *md_rel,
+                                CDXLTranslateContext *output_context, TranslateContextBaseTable *base_table_context,
                                 CDXLTranslationContextArray *ctxt_translation_prev_siblings, List **index_cond,
                                 List **index_orig_cond);
 
   // translate the index filters
   List *TranslateDXLIndexFilter(CDXLNode *filter_dxlnode, CDXLTranslateContext *output_context,
-                                CDXLTranslateContextBaseTable *base_table_context,
+                                TranslateContextBaseTable *base_table_context,
                                 CDXLTranslationContextArray *ctxt_translation_prev_siblings);
 
   // translate the assert constraints
   List *TranslateDXLAssertConstraints(CDXLNode *filter_dxlnode, CDXLTranslateContext *output_context,
                                       CDXLTranslationContextArray *child_contexts);
-
-  // translate a CTAS operator
-  Plan *TranslateDXLCtas(const CDXLNode *dml_dxlnode, CDXLTranslateContext *output_context,
-                         CDXLTranslationContextArray *ctxt_translation_prev_siblings =
-                             nullptr  // translation contexts of previous siblings
-  );
-
-  // sets the vartypmod fields in the target entries of the given target list
-  static void SetVarTypMod(const CDXLPhysicalCTAS *dxlop, List *target_list);
-
-  // translate the into clause for a DXL physical CTAS operator
-  static IntoClause *TranslateDXLPhyCtasToIntoClause(const CDXLPhysicalCTAS *dxlop);
-
-  // translate CTAS storage options
-  static List *TranslateDXLCtasStorageOptions(gpdxl::CDXLCtasStorageOptions::CDXLCtasOptionArray *ctas_storage_options);
 
   // translate nest loop colrefs to GPDB nestparams
   static List *TranslateNestLoopParamList(CDXLColRefArray *pdrgdxlcrOuterRefs, CDXLTranslateContext *dxltrctxLeft,
@@ -429,7 +399,7 @@ class CTranslatorDXLToPlStmt {
   static Node *FixUpperExprMutatorProjectSet(Node *node, List *context);
 
   // checks if index is used for Order by.
-  bool IsIndexForOrderBy(CDXLTranslateContextBaseTable *base_table_context,
+  bool IsIndexForOrderBy(TranslateContextBaseTable *base_table_context,
                          CDXLTranslationContextArray *ctxt_translation_prev_siblings,
                          CDXLTranslateContext *output_context, CDXLNode *index_cond_list_dxlnode);
 };

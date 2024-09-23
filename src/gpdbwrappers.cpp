@@ -60,9 +60,7 @@ bool gpdb::BoolFromDatum(Datum d) {
 }
 
 Datum gpdb::DatumFromBool(bool b) {
-  { return BoolGetDatum(b); }
-
-  return 0;
+  return BoolGetDatum(b);
 }
 
 char gpdb::CharFromDatum(Datum d) {
@@ -132,15 +130,11 @@ int32 gpdb::Int32FromDatum(Datum d) {
 }
 
 Datum gpdb::DatumFromInt32(int32 i32) {
-  { return Int32GetDatum(i32); }
-
-  return 0;
+  return Int32GetDatum(i32);
 }
 
 uint32 gpdb::lUint32FromDatum(Datum d) {
-  { return DatumGetUInt32(d); }
-
-  return 0;
+  return DatumGetUInt32(d);
 }
 
 Datum gpdb::DatumFromUint32(uint32 ui32) {
@@ -150,11 +144,7 @@ Datum gpdb::DatumFromUint32(uint32 ui32) {
 }
 
 int64 gpdb::Int64FromDatum(Datum d) {
-  Datum d2 = d;
-
-  { return DatumGetInt64(d2); }
-
-  return 0;
+  return DatumGetInt64(d);
 }
 
 Datum gpdb::DatumFromInt64(int64 i64) {
@@ -202,9 +192,7 @@ float8 gpdb::Float8FromDatum(Datum d) {
 }
 
 Datum gpdb::DatumFromPointer(const void *p) {
-  { return PointerGetDatum(p); }
-
-  return 0;
+  return PointerGetDatum(p);
 }
 
 bool gpdb::AggregateExists(Oid oid) {
@@ -220,15 +208,11 @@ Bitmapset *gpdb::BmsAddMember(Bitmapset *a, int x) {
 }
 
 void *gpdb::CopyObject(void *from) {
-  { return copyObjectImpl(from); }
-
-  return nullptr;
+  return copyObjectImpl(from);
 }
 
 Size gpdb::DatumSize(Datum value, bool type_by_val, int iTypLen) {
-  { return datumGetSize(value, type_by_val, iTypLen); }
-
-  return 0;
+  return datumGetSize(value, type_by_val, iTypLen);
 }
 
 Node *gpdb::MutateExpressionTree(Node *node, Node *(*mutator)(Node *node, void *context), void *context) {
@@ -238,9 +222,7 @@ Node *gpdb::MutateExpressionTree(Node *node, Node *(*mutator)(Node *node, void *
 }
 
 bool gpdb::WalkExpressionTree(Node *node, bool (*walker)(Node *node, void *context), void *context) {
-  { return expression_tree_walker(node, walker, context); }
-
-  return false;
+  return expression_tree_walker(node, walker, context);
 }
 
 gpos::BOOL gpdb::WalkQueryTree(Query *query, bool (*walker)(Node *node, void *context), void *context, int flags) {
@@ -250,9 +232,7 @@ gpos::BOOL gpdb::WalkQueryTree(Query *query, bool (*walker)(Node *node, void *co
 }
 
 Oid gpdb::ExprType(Node *expr) {
-  { return exprType(expr); }
-
-  return 0;
+  return exprType(expr);
 }
 
 int32 gpdb::ExprTypeMod(Node *expr) {
@@ -285,19 +265,15 @@ Oid gpdb::ExprCollation(Node *expr) {
 }
 
 Oid gpdb::TypeCollation(Oid type) {
-  {
-    Oid collation = InvalidOid;
-    Oid typcollation = get_typcollation(type);
-    if (OidIsValid(typcollation)) {
-      if (type == NAMEOID) {
-        return typcollation;  // As of v12, this is C_COLLATION_OID
-      }
-      return DEFAULT_COLLATION_OID;
+  Oid collation = InvalidOid;
+  Oid typcollation = get_typcollation(type);
+  if (OidIsValid(typcollation)) {
+    if (type == NAMEOID) {
+      return typcollation;  // As of v12, this is C_COLLATION_OID
     }
-    return collation;
+    return DEFAULT_COLLATION_OID;
   }
-
-  return 0;
+  return collation;
 }
 
 List *gpdb::ExtractNodesPlan(Plan *pl, int node_tag, bool descend_into_subqueries) {
@@ -393,21 +369,88 @@ Oid gpdb::GetAggIntermediateResultType(Oid aggid) {
 }
 
 int gpdb::GetAggregateArgTypes(Aggref *aggref, Oid *inputTypes) {
-  { return get_aggregate_argtypes(aggref, inputTypes); }
-
-  return 0;
+  return get_aggregate_argtypes(aggref, inputTypes);
 }
 
 Oid gpdb::ResolveAggregateTransType(Oid aggfnoid, Oid aggtranstype, Oid *inputTypes, int numArguments) {
-  { return resolve_aggregate_transtype(aggfnoid, aggtranstype, inputTypes, numArguments); }
-
-  return 0;
+  return resolve_aggregate_transtype(aggfnoid, aggtranstype, inputTypes, numArguments);
 }
 
-Query *gpdb::FlattenJoinAliasVar(Query *query, gpos::ULONG query_level) {
-  { return nullptr; }
+Query *gpdb::FlattenJoinAliasVar(Query *query, gpos::ULONG queryLevel) {
+  Query *queryNew = (Query *)copyObject(query);
 
-  return nullptr;
+  /*
+   * Flatten join alias for expression in
+   * 1. targetlist
+   * 2. returningList
+   * 3. having qual
+   * 4. scatterClause
+   * 5. limit offset
+   * 6. limit count
+   *
+   * We flatten the above expressions since these entries may be moved during the query
+   * normalization step before algebrization. In contrast, the planner flattens alias
+   * inside quals to allow predicates involving such vars to be pushed down.
+   *
+   * Here we ignore the flattening of quals due to the following reasons:
+   * 1. we assume that the function will be called before Query->DXL translation:
+   * 2. the quals never gets moved from old query to the new top-level query in the
+   * query normalization phase before algebrization. In other words, the quals hang of
+   * the same query structure that is now the new derived table.
+   * 3. the algebrizer can resolve the abiquity of join aliases in quals since we maintain
+   * all combinations of <query level, varno, varattno> to DXL-ColId during Query->DXL translation.
+   *
+   */
+
+  List *targetList = queryNew->targetList;
+  if (NIL != targetList) {
+    queryNew->targetList = (List *)flatten_join_alias_vars(nullptr, queryNew, (Node *)targetList);
+    list_free(targetList);
+  }
+
+  List *returningList = queryNew->returningList;
+  if (NIL != returningList) {
+    queryNew->returningList = (List *)flatten_join_alias_vars(nullptr, queryNew, (Node *)returningList);
+    list_free(returningList);
+  }
+
+  Node *havingQual = queryNew->havingQual;
+  if (NULL != havingQual) {
+    queryNew->havingQual = flatten_join_alias_vars(nullptr, queryNew, havingQual);
+    pfree(havingQual);
+  }
+
+  Node *limitOffset = queryNew->limitOffset;
+  if (NULL != limitOffset) {
+    queryNew->limitOffset = flatten_join_alias_vars(nullptr, queryNew, limitOffset);
+    pfree(limitOffset);
+  }
+
+  List *windowClause = queryNew->windowClause;
+  if (NIL != queryNew->windowClause) {
+    ListCell *l;
+
+    foreach (l, windowClause) {
+      WindowClause *wc = (WindowClause *)lfirst(l);
+
+      if (wc == NULL)
+        continue;
+
+      if (wc->startOffset)
+        wc->startOffset = flatten_join_alias_vars(nullptr, queryNew, wc->startOffset);
+
+      if (wc->endOffset)
+        wc->endOffset = flatten_join_alias_vars(nullptr, queryNew, wc->endOffset);
+    }
+  }
+
+  Node *limitCount = queryNew->limitCount;
+  if (NULL != limitCount) {
+    queryNew->limitCount = flatten_join_alias_vars(nullptr, queryNew, limitCount);
+    pfree(limitCount);
+  }
+
+  return queryNew;
 }
 
 bool gpdb::IsOrderedAgg(Oid aggid) {
@@ -588,16 +631,11 @@ Oid gpdb::GetComparisonOperator(Oid left_oid, Oid right_oid, unsigned int cmpt) 
 }
 
 Oid gpdb::GetEqualityOp(Oid type_oid) {
-  {
-    /* catalog tables: pg_type */
-    Oid eq_opr;
+  Oid eq_opr;
 
-    get_sort_group_operators(type_oid, false, true, false, nullptr, &eq_opr, nullptr, nullptr);
+  get_sort_group_operators(type_oid, false, true, false, nullptr, &eq_opr, nullptr, nullptr);
 
-    return eq_opr;
-  }
-
-  return InvalidOid;
+  return eq_opr;
 }
 
 Oid gpdb::GetEqualityOpForOrderingOp(Oid opno, bool *reverse) {
@@ -876,9 +914,7 @@ ListCell *gpdb::ListTail(List *l) {
 }
 
 uint32 gpdb::ListLength(List *l) {
-  { return list_length(l); }
-
-  return 0;
+  return list_length(l);
 }
 
 void *gpdb::ListNth(List *list, int n) {
@@ -929,9 +965,7 @@ TypeCacheEntry *gpdb::LookupTypeCache(Oid type_id, int flags) {
 }
 
 Node *gpdb::MakeStringValue(char *str) {
-  { return (Node *)makeString(str); }
-
-  return nullptr;
+  return (Node *)makeString(str);
 }
 
 Node *gpdb::MakeIntegerValue(long i) {
@@ -964,19 +998,12 @@ Node *gpdb::MakeSegmentFilterExpr(int segid) {
 }
 
 TargetEntry *gpdb::MakeTargetEntry(Expr *expr, AttrNumber resno, char *resname, bool resjunk) {
-  { return makeTargetEntry(expr, resno, resname, resjunk); }
-
-  return nullptr;
+  return makeTargetEntry(expr, resno, resname, resjunk);
 }
 
 Var *gpdb::MakeVar(Index varno, AttrNumber varattno, Oid vartype, int32 vartypmod, Index varlevelsup) {
-  {
-    // GPDB_91_MERGE_FIXME: collation
-    Oid collation = TypeCollation(vartype);
-    return makeVar(varno, varattno, vartype, vartypmod, collation, varlevelsup);
-  }
-
-  return nullptr;
+  Oid collation = TypeCollation(vartype);
+  return makeVar(varno, varattno, vartype, vartypmod, collation, varlevelsup);
 }
 
 void *gpdb::MemCtxtAllocZeroAligned(MemoryContext context, Size size) {
@@ -1106,9 +1133,7 @@ void gpdb::GetOpInputTypes(Oid opno, Oid *lefttype, Oid *righttype) {
 }
 
 void *gpdb::GPDBAlloc(Size size) {
-  { return palloc(size); }
-
-  return nullptr;
+  return palloc(size);
 }
 
 void gpdb::GPDBFree(void *ptr) {
@@ -1200,9 +1225,7 @@ ForeignScan *gpdb::CreateForeignScan(Oid rel_oid, Index scanrelid, List *qual, L
 }
 
 TargetEntry *gpdb::FindFirstMatchingMemberInTargetList(Node *node, List *targetlist) {
-  { return tlist_member((Expr *)node, targetlist); }
-
-  return nullptr;
+  return tlist_member((Expr *)node, targetlist);
 }
 
 List *gpdb::FindMatchingMembersInTargetList(Node *node, List *targetlist) {
@@ -1426,9 +1449,7 @@ Expr *gpdb::TransformArrayConstToArrayExpr(Const *c) {
 }
 
 Node *gpdb::EvalConstExpressions(Node *node) {
-  { return eval_const_expressions(nullptr, node); }
-
-  return nullptr;
+  return eval_const_expressions(nullptr, node);
 }
 
 #ifdef FAULT_INJECTOR
@@ -1628,7 +1649,7 @@ Oid gpdb::GetForeignServerId(Oid reloid) {
 //      of leafs should be the same as the mode in root's RTE's rellockmode
 //   5. Index does not have lock-upgrade problem.
 void gpdb::GPDBLockRelationOid(Oid reloid, LOCKMODE lockmode) {
-  { LockRelationOid(reloid, lockmode); }
+  LockRelationOid(reloid, lockmode);
 }
 
 char *gpdb::GetRelFdwName(Oid reloid) {

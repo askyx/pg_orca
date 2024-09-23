@@ -22,7 +22,6 @@
 #include "gpopt/translate/CTranslatorScalarToDXL.h"
 #include "gpopt/translate/CTranslatorUtils.h"
 #include "gpos/base.h"
-#include "naucrates/dxl/operators/CDXLCtasStorageOptions.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLWindowSpec.h"
 
@@ -104,9 +103,6 @@ class CTranslatorQueryToDXL {
 
   // top query is a DML
   BOOL m_is_top_query_dml;
-
-  // this is a CTAS query
-  BOOL m_is_ctas_query;
 
   // hash map that maintains the list of CTEs defined at a particular query level
   HMUlCTEListEntry *m_query_level_to_cte_map;
@@ -329,12 +325,6 @@ class CTranslatorQueryToDXL {
   // translate an update query
   CDXLNode *TranslateUpdateQueryToDXL();
 
-  // translate a CTAS query
-  CDXLNode *TranslateCTASToDXL();
-  // translate CTAS storage options
-  CDXLCtasStorageOptions::CDXLCtasOptionArray *GetDXLCtasOptionArray(List *options,
-                                                                     IMDRelation::Erelstoragetype *storage_type);
-
   // extract storage option value from defelem
   CWStringDynamic *ExtractStorageOptionStr(DefElem *def_elem);
 
@@ -381,8 +371,6 @@ class CTranslatorQueryToDXL {
   // does query have distributed tables
   BOOL HasDistributedTables() const { return m_context->m_has_distributed_tables; }
 
-  // does query have distributed tables
-  DistributionHashOpsKind GetDistributionHashOpsKind() const { return m_context->m_distribution_hashops; }
 
   // main translation routine for Query -> DXL tree
   CDXLNode *TranslateSelectQueryToDXL();

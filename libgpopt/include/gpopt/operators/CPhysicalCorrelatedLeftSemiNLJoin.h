@@ -63,12 +63,6 @@ class CPhysicalCorrelatedLeftSemiNLJoin : public CPhysicalLeftSemiNLJoin {
     return false;
   }
 
-  // compute required rewindability of the n-th child
-  CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
-                                  ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override {
-    return PrsRequiredCorrelatedJoin(mp, exprhdl, prsRequired, child_index, pdrgpdpCtxt, ulOptReq);
-  }
-
   // return true if operator is a correlated NL Join
   BOOL FCorrelated() const override { return true; }
 

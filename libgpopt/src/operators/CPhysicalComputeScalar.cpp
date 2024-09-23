@@ -122,27 +122,6 @@ COrderSpec *CPhysicalComputeScalar::PosRequired(CMemoryPool *mp, CExpressionHand
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalComputeScalar::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalComputeScalar::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                        CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                        CDrvdPropArray *,  // pdrgpdpCtxt
-                                                        ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-  if (prsRequired->IsOriginNLJoin()) {
-    CRewindabilitySpec *prs = GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, prsRequired->Emht());
-    return prs;
-  }
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalComputeScalar::PcteRequired
 //
 //	@doc:
@@ -206,28 +185,6 @@ COrderSpec *CPhysicalComputeScalar::PosDerive(CMemoryPool *,  // mp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalComputeScalar::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalComputeScalar::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  CRewindabilitySpec *prsChild = PrsDerivePassThruOuter(mp, exprhdl);
-
-  if (exprhdl.DeriveHasNonScalarFunction(1) ||
-      IMDFunction::EfsVolatile == exprhdl.DeriveScalarFunctionProperties(1)->Efs()) {
-    // ComputeScalar is not rewindable if it has non-scalar/volatile functions in project list
-    CRewindabilitySpec *prs = GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRescannable, prsChild->Emht());
-    prsChild->Release();
-    return prs;
-  }
-
-  return prsChild;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalComputeScalar::EpetOrder
 //
 //	@doc:
@@ -255,38 +212,3 @@ CEnfdProp::EPropEnforcingType CPhysicalComputeScalar::EpetOrder(CExpressionHandl
 
   return CEnfdProp::EpetOptional;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalComputeScalar::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalComputeScalar::EpetRewindability(CExpressionHandle &exprhdl,
-                                                                        const CEnfdRewindability *per) const {
-  if (per->PrsRequired()->IsOriginNLJoin()) {
-    return CEnfdProp::EpetRequired;
-  }
-
-  CColRefSet *pcrsUsed = exprhdl.DeriveUsedColumns(1);
-  CColRefSet *pcrsCorrelatedApply = exprhdl.DeriveCorrelatedApplyColumns();
-  if (!pcrsUsed->IsDisjoint(pcrsCorrelatedApply)) {
-    // columns are used from inner children of correlated-apply expressions,
-    // this means that a subplan occurs below the Project operator,
-    // in this case, rewindability needs to be enforced on operator's output
-
-    return CEnfdProp::EpetRequired;
-  }
-
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
-    // required rewindability is already provided
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  // rewindability is enforced on operator's output
-  return CEnfdProp::EpetRequired;
-}
-// EOF

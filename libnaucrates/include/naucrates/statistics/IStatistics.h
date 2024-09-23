@@ -113,7 +113,7 @@ class IStatistics : public CRefCount {
   virtual CDouble Width() const = 0;
 
   // what is the width in bytes of set of column id's
-  virtual CDouble Width(ULongPtrArray *colids) const = 0;
+  virtual CDouble Width(const std::vector<uint32_t> &colids) const = 0;
 
   // what is the width in bytes of set of column references
   virtual CDouble Width(CMemoryPool *mp, CColRefSet *colrefs) const = 0;

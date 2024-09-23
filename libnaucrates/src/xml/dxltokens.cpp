@@ -357,9 +357,6 @@ void CDXLTokens::Init(CMemoryPool *mp) {
       {EdxltokenDerivedTableName, GPOS_WSZ_LIT("DerivedTableName")},
       {EdxltokenExecuteAsUser, GPOS_WSZ_LIT("ExecuteAsUser")},
 
-      {EdxltokenCTASOptions, GPOS_WSZ_LIT("CTASOptions")},
-      {EdxltokenCTASOption, GPOS_WSZ_LIT("CTASOption")},
-
       {EdxltokenColDescr, GPOS_WSZ_LIT("Column")},
       {EdxltokenColRef, GPOS_WSZ_LIT("ColRef")},
 
@@ -464,7 +461,6 @@ void CDXLTokens::Init(CMemoryPool *mp) {
       {EdxltokenFalse, GPOS_WSZ_LIT("false")},
 
       {EdxltokenRelation, GPOS_WSZ_LIT("Relation")},
-      {EdxltokenRelationCTAS, GPOS_WSZ_LIT("CTASRelation")},
       {EdxltokenName, GPOS_WSZ_LIT("Name")},
       {EdxltokenSchema, GPOS_WSZ_LIT("Schema")},
       {EdxltokenTablespace, GPOS_WSZ_LIT("Tablespace")},
@@ -690,8 +686,6 @@ void CDXLTokens::Init(CMemoryPool *mp) {
       {EdxltokenLogicalInsert, GPOS_WSZ_LIT("LogicalInsert")},
       {EdxltokenLogicalDelete, GPOS_WSZ_LIT("LogicalDelete")},
       {EdxltokenLogicalUpdate, GPOS_WSZ_LIT("LogicalUpdate")},
-      {EdxltokenLogicalCTAS, GPOS_WSZ_LIT("LogicalCTAS")},
-      {EdxltokenPhysicalCTAS, GPOS_WSZ_LIT("PhysicalCTAS")},
 
       {EdxltokenInsertCols, GPOS_WSZ_LIT("InsertColumns")},
       {EdxltokenDeleteCols, GPOS_WSZ_LIT("DeleteColumns")},

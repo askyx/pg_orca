@@ -188,7 +188,7 @@ class CLogicalGbAgg : public CLogicalUnary {
 
   // derive statistics
   static IStatistics *PstatsDerive(CMemoryPool *mp, IStatistics *child_stats, CColRefArray *pdrgpcrGroupingCols,
-                                   ULongPtrArray *pdrgpulComputedCols, CBitSet *keys);
+                                   const std::vector<uint32_t> &pdrgpulComputedCols, CBitSet *keys);
 
   // print group by aggregate type
   static IOstream &OsPrintGbAggType(IOstream &os, COperator::EGbAggType egbaggtype);

@@ -144,16 +144,13 @@ IStatistics *CLogicalDifference::PstatsDerive(CMemoryPool *mp, CExpressionHandle
   join_preds_stats->Release();
 
   // computed columns
-  ULongPtrArray *pdrgpulComputedCols = GPOS_NEW(mp) ULongPtrArray(mp);
   IStatistics *stats =
       CLogicalGbAgg::PstatsDerive(mp, LASJ_stats,
                                   (*m_pdrgpdrgpcrInput)[0],  // we group by the columns of the first child
-                                  pdrgpulComputedCols,       // no computed columns for set ops
+                                  {},                        // no computed columns for set ops
                                   nullptr                    // no keys, use all grouping cols
       );
 
-  // clean up
-  pdrgpulComputedCols->Release();
   LASJ_stats->Release();
   output_colrefsets->Release();
 

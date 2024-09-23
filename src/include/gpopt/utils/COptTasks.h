@@ -138,7 +138,8 @@ class CBitSet;
 
 namespace gpdxl {
 class CDXLNode;
-}
+class OptConfig;
+}  // namespace gpdxl
 
 namespace gpopt {
 class CExpression;
@@ -191,6 +192,8 @@ struct SOptContext {
   // buffer for optimizer error messages
   CHAR *m_error_msg{nullptr};
 
+  gpdxl::OptConfig *config;
+
   // ctor
   SOptContext();
 
@@ -225,8 +228,7 @@ class COptTasks {
 
   // translate a DXL tree into a planned statement
   static PlannedStmt *ConvertToPlanStmtFromDXL(CMemoryPool *mp, CMDAccessor *md_accessor, const Query *orig_query,
-                                               const CDXLNode *dxlnode, bool can_set_tag,
-                                               DistributionHashOpsKind distribution_hashops);
+                                               const CDXLNode *dxlnode, bool can_set_tag);
 
   // helper for converting wide character string to regular string
   static CHAR *CreateMultiByteCharStringFromWCString(const WCHAR *wcstr);

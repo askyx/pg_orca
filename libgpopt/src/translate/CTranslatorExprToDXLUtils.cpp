@@ -276,7 +276,7 @@ CDXLNode *CTranslatorExprToDXLUtils::PdxlnProjElem(
 
   // create a scalar identifier for the proj element expression
   CDXLNode *pdxlnScId =
-      PdxlnIdent(mp, phmcrdxlnSubplans, nullptr /*phmcrdxlnIndexLookup*/, nullptr /*phmcrulPartColId*/, colref);
+      PdxlnIdent(mp, phmcrdxlnSubplans, nullptr /*phmcrdxlnIndexLookup*/,  colref);
 
   if (EdxlopScalarSubPlan == pdxlnScId->GetOperator()->GetDXLOperator()) {
     // modify map by replacing subplan entry with the projected
@@ -300,8 +300,7 @@ CDXLNode *CTranslatorExprToDXLUtils::PdxlnProjElem(
 //
 //---------------------------------------------------------------------------
 CDXLNode *CTranslatorExprToDXLUtils::PdxlnIdent(CMemoryPool *mp, ColRefToDXLNodeMap *phmcrdxlnSubplans,
-                                                ColRefToDXLNodeMap *phmcrdxlnIndexLookup,
-                                                ColRefToUlongMap *phmcrulPartColId, const CColRef *colref) {
+                                                ColRefToDXLNodeMap *phmcrdxlnIndexLookup, const CColRef *colref) {
   GPOS_ASSERT(nullptr != colref);
   GPOS_ASSERT(nullptr != phmcrdxlnSubplans);
 
@@ -315,29 +314,13 @@ CDXLNode *CTranslatorExprToDXLUtils::PdxlnIdent(CMemoryPool *mp, ColRefToDXLNode
   // Check if partition mapping exists (which implies that it is a partitioned
   // table)
   ULONG colid = colref->Id();
-  if (nullptr != phmcrulPartColId) {
-    // if colref doesn't exist in partition mapping, then this scalar ident
-    // is an outer ref, and we must look it up in the index outer-ref mapping
-    ULONG *pul = phmcrulPartColId->Find(colref);
-    if (nullptr == pul) {
-      CDXLNode *pdxlnIdent = phmcrdxlnIndexLookup->Find(colref);
-      GPOS_ASSERT(nullptr != pdxlnIdent);
+  // scalar ident is not part of partition table, can look up in index
+  // directly in index outer-ref mapping
+  if (nullptr != phmcrdxlnIndexLookup) {
+    CDXLNode *pdxlnIdent = phmcrdxlnIndexLookup->Find(colref);
+    if (nullptr != pdxlnIdent) {
       pdxlnIdent->AddRef();
       return pdxlnIdent;
-    }
-    // the colref does exist in the partition mapping, it is therefore NOT
-    // an outer ref, and we should create a dxl node
-    GPOS_ASSERT(nullptr != pul);
-    colid = *pul;
-  } else {
-    // scalar ident is not part of partition table, can look up in index
-    // directly in index outer-ref mapping
-    if (nullptr != phmcrdxlnIndexLookup) {
-      CDXLNode *pdxlnIdent = phmcrdxlnIndexLookup->Find(colref);
-      if (nullptr != pdxlnIdent) {
-        pdxlnIdent->AddRef();
-        return pdxlnIdent;
-      }
     }
   }
 
@@ -573,9 +556,8 @@ ColRefToUlongMap *CTranslatorExprToDXLUtils::PhmcrulColIndex(CMemoryPool *mp, CC
 //
 //---------------------------------------------------------------------------
 void CTranslatorExprToDXLUtils::SetStats(CMemoryPool *mp, CMDAccessor *md_accessor, CDXLNode *dxlnode,
-                                         const IStatistics *stats, BOOL fRoot) {
-  if (nullptr != stats && GPOS_FTRACE(EopttraceExtractDXLStats) &&
-      (GPOS_FTRACE(EopttraceExtractDXLStatsAllNodes) || fRoot)) {
+                                         const IStatistics *stats) {
+  if (nullptr != stats && GPOS_FTRACE(EopttraceExtractDXLStats) && (GPOS_FTRACE(EopttraceExtractDXLStatsAllNodes))) {
     CDXLPhysicalProperties::PdxlpropConvert(dxlnode->GetProperties())
         ->SetStats(stats->GetDxlStatsDrvdRelation(mp, md_accessor));
   }
@@ -1042,23 +1024,6 @@ BOOL CTranslatorExprToDXLUtils::FHasDXLOp(const CDXLNode *dxlnode, const gpdxl::
   return false;
 }
 
-BOOL CTranslatorExprToDXLUtils::FProjListContainsSubplanWithBroadCast(CDXLNode *pdxlnPrjList) {
-  if (pdxlnPrjList->GetOperator()->GetDXLOperator() == EdxlopScalarSubPlan) {
-    gpdxl::Edxlopid rgeopidMotion[] = {EdxlopPhysicalMotionBroadcast};
-    return FHasDXLOp(pdxlnPrjList, rgeopidMotion, GPOS_ARRAY_SIZE(rgeopidMotion));
-  }
-
-  const ULONG arity = pdxlnPrjList->Arity();
-
-  for (ULONG ul = 0; ul < arity; ul++) {
-    if (FProjListContainsSubplanWithBroadCast((*pdxlnPrjList)[ul])) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
 void CTranslatorExprToDXLUtils::ExtractIdentColIds(CDXLNode *dxlnode, CBitSet *pbs) {
   if (dxlnode->GetOperator()->GetDXLOperator() == EdxlopScalarIdent) {
     const CDXLColRef *dxl_colref = CDXLScalarIdent::Cast(dxlnode->GetOperator())->GetDXLColRef();
@@ -1069,73 +1034,6 @@ void CTranslatorExprToDXLUtils::ExtractIdentColIds(CDXLNode *dxlnode, CBitSet *p
   for (ULONG ul = 0; ul < arity; ul++) {
     ExtractIdentColIds((*dxlnode)[ul], pbs);
   }
-}
-
-BOOL CTranslatorExprToDXLUtils::FMotionHazard(CMemoryPool *mp, CDXLNode *dxlnode, const gpdxl::Edxlopid *peopid,
-                                              ULONG ulOps, CBitSet *pbsPrjCols) {
-  GPOS_ASSERT(pbsPrjCols);
-
-  // non-streaming operator/Gather motion neutralizes any motion hazard that its subtree imposes
-  // hence stop recursing further
-  if (FMotionHazardSafeOp(dxlnode)) {
-    return false;
-  }
-
-  if (FDXLOpExists(dxlnode->GetOperator(), peopid, ulOps)) {
-    // check if the current motion node projects any column from the
-    // input project list.
-    // If yes, then we have detected a motion hazard for the parent Result node.
-    CBitSet *pbsPrjList = GPOS_NEW(mp) CBitSet(mp);
-    ExtractIdentColIds((*dxlnode)[0], pbsPrjList);
-    BOOL fDisJoint = pbsPrjCols->IsDisjoint(pbsPrjList);
-    pbsPrjList->Release();
-
-    return !fDisJoint;
-  }
-
-  // recursively check children
-  const ULONG arity = dxlnode->Arity();
-
-  // In ORCA, inner child of Hash Join is always exhausted first,
-  // so only check the outer child for motions
-  if (dxlnode->GetOperator()->GetDXLOperator() == EdxlopPhysicalHashJoin) {
-    if (FMotionHazard(mp, (*dxlnode)[EdxlhjIndexHashLeft], peopid, ulOps, pbsPrjCols)) {
-      return true;
-    }
-  } else {
-    for (ULONG ul = 0; ul < arity; ul++) {
-      if (FMotionHazard(mp, (*dxlnode)[ul], peopid, ulOps, pbsPrjCols)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
-BOOL CTranslatorExprToDXLUtils::FMotionHazardSafeOp(CDXLNode *dxlnode) {
-  BOOL fMotionHazardSafeOp = false;
-  Edxlopid edxlop = dxlnode->GetOperator()->GetDXLOperator();
-
-  switch (edxlop) {
-    case EdxlopPhysicalSort:
-    case EdxlopPhysicalMotionGather:
-    case EdxlopPhysicalMaterialize:
-      fMotionHazardSafeOp = true;
-      break;
-
-    case EdxlopPhysicalAgg: {
-      CDXLPhysicalAgg *pdxlnPhysicalAgg = CDXLPhysicalAgg::Cast(dxlnode->GetOperator());
-      if (pdxlnPhysicalAgg->GetAggStrategy() == EdxlaggstrategyHashed) {
-        fMotionHazardSafeOp = true;
-      }
-    } break;
-
-    default:
-      break;
-  }
-
-  return fMotionHazardSafeOp;
 }
 
 BOOL CTranslatorExprToDXLUtils::FDirectDispatchableFilter(CExpression *pexprFilter) {

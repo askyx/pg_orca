@@ -47,11 +47,6 @@ class CPhysicalJoin : public CPhysical {
   // helper to check if given child index correspond to first child to be optimized
   BOOL FFirstChildToOptimize(ULONG child_index) const;
 
-  // helper to compute required rewindability of correlated join's children
-  static CRewindabilitySpec *PrsRequiredCorrelatedJoin(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                       CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                       CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq);
-
   // helper for propagating required sort order to outer child
   static COrderSpec *PosPropagateToOuter(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired);
 
@@ -99,16 +94,9 @@ class CPhysicalJoin : public CPhysical {
     return PosDerivePassThruOuter(exprhdl);
   }
 
-  // derive rewindability
-  CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
-
   //-------------------------------------------------------------------------------------
   // Enforced Properties
   //-------------------------------------------------------------------------------------
-
-  // return rewindability property enforcing type for this operator
-  CEnfdProp::EPropEnforcingType EpetRewindability(CExpressionHandle &exprhdl,
-                                                  const CEnfdRewindability *per) const override;
 
   // return true if operator passes through stats obtained from children,
   // this is used when computing stats during costing
@@ -130,9 +118,6 @@ class CPhysicalJoin : public CPhysical {
 
   static void AlignJoinKeyOuterInner(CExpression *pexprConjunct, CExpression *pexprOuter, CExpression *pexprInner,
                                      CExpression **ppexprKeyOuter, CExpression **ppexprKeyInner, IMDId **mdid_scop);
-
-  static CRewindabilitySpec *PrsRequiredForNLJoinOuterChild(CMemoryPool *pmp, CExpressionHandle &exprhdl,
-                                                            CRewindabilitySpec *prsRequired);
 
 };  // class CPhysicalJoin
 

@@ -31,68 +31,46 @@ select query as query22 from tpch_queries(22); \gset
 set pg_orca.enable_orca to on;
 
 explain (costs off ) :query1;
-:query1;
 
 explain (costs off ) :query2;
-:query2;
 
 explain (costs off ) :query3;
-:query3;
 
 explain (costs off ) :query4;
-:query4;
 
 explain (costs off ) :query5;
-:query5;
 
 explain (costs off ) :query6;
-:query6;
 
 explain (costs off ) :query7;
-:query7;
 
--- explain (costs off ) :query8;
--- :query8;
+explain (costs off ) :query8;
 
 explain (costs off ) :query9;
-:query9;
 
 explain (costs off ) :query10;
-:query10;
 
 explain (costs off ) :query11;
-:query11;
 
 explain (costs off ) :query12;
-:query12;
 
 explain (costs off ) :query13;
-:query13;
 
--- explain (costs off ) :query14;
--- :query14;
+explain (costs off ) :query14;
 
 explain (costs off ) :query15;
-:query15;
 
 explain (costs off ) :query16;
-:query16;
 
--- explain (costs off ) :query17;
--- :query17;
+explain (costs off ) :query17;
 
 explain (costs off ) :query18;
-:query18;
 
 explain (costs off ) :query19;
-:query19;
 
--- explain (costs off ) :query20;
--- :query20;
+explain (costs off ) :query20;
 
 explain (costs off ) :query21;
-:query21;
 
 explain (costs off ) :query22;
-:query22;
 

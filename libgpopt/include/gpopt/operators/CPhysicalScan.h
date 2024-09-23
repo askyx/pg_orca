@@ -113,18 +113,6 @@ class CPhysicalScan : public CPhysical {
     return nullptr;
   }
 
-  // compute required rewindability of the n-th child
-  CRewindabilitySpec *PrsRequired(CMemoryPool *,         // mp
-                                  CExpressionHandle &,   // exprhdl
-                                  CRewindabilitySpec *,  // prsRequired
-                                  ULONG,                 // child_index
-                                  CDrvdPropArray *,      // pdrgpdpCtxt
-                                  ULONG                  // ulOptReq
-  ) const override {
-    GPOS_ASSERT(!"CPhysicalScan has no children");
-    return nullptr;
-  }
-
   // check if required columns are included in output columns
   BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
 
@@ -147,28 +135,12 @@ class CPhysicalScan : public CPhysical {
     return GPOS_NEW(mp) CCTEMap(mp);
   }
 
-  // derive rewindability
-  CRewindabilitySpec *PrsDerive(CMemoryPool *mp,
-                                CExpressionHandle &  // exprhdl
-  ) const override {
-    // rewindability of output is always true
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindable, CRewindabilitySpec::EmhtNoMotion);
-  }
-
   //-------------------------------------------------------------------------------------
   // Enforced Properties
   //-------------------------------------------------------------------------------------
 
   // return order property enforcing type for this operator
   CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const override;
-
-  // return rewindability property enforcing type for this operator
-  CEnfdProp::EPropEnforcingType EpetRewindability(CExpressionHandle &,        // exprhdl
-                                                  const CEnfdRewindability *  // per
-  ) const override {
-    // no need for enforcing rewindability on output
-    return CEnfdProp::EpetUnnecessary;
-  }
 
   // return true if operator passes through stats obtained from children,
   // this is used when computing stats during costing

@@ -42,7 +42,6 @@ CDrvdPropPlan::CDrvdPropPlan() = default;
 //---------------------------------------------------------------------------
 CDrvdPropPlan::~CDrvdPropPlan() {
   CRefCount::SafeRelease(m_pos);
-  CRefCount::SafeRelease(m_prs);
   CRefCount::SafeRelease(m_ppps);
   CRefCount::SafeRelease(m_pcm);
 }
@@ -77,7 +76,6 @@ void CDrvdPropPlan::Derive(CMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPro
   } else {
     // call property derivation functions on the operator
     m_pos = popPhysical->PosDerive(mp, exprhdl);
-    m_prs = popPhysical->PrsDerive(mp, exprhdl);
     m_ppps = popPhysical->PppsDerive(mp, exprhdl);
   }
 
@@ -101,10 +99,6 @@ void CDrvdPropPlan::CopyCTEProducerPlanProps(CMemoryPool *mp, CDrvdPropCtxt *pdp
   if (nullptr != pdpplan) {
     // copy producer plan properties after remapping columns
     m_pos = pdpplan->Pos()->PosCopyWithRemappedColumns(mp, colref_mapping, true /*must_exist*/);
-    // rewindability and partition filter map do not need column remapping,
-    // we add-ref producer's properties directly
-    pdpplan->Prs()->AddRef();
-    m_prs = pdpplan->Prs();
 
     // no need to copy the part index map. return an empty one. This is to
     // distinguish between a CTE consumer and the inlined expression
@@ -123,11 +117,10 @@ void CDrvdPropPlan::CopyCTEProducerPlanProps(CMemoryPool *mp, CDrvdPropCtxt *pdp
 BOOL CDrvdPropPlan::FSatisfies(const CReqdPropPlan *prpp) const {
   GPOS_ASSERT(nullptr != prpp);
   GPOS_ASSERT(nullptr != prpp->Peo());
-  GPOS_ASSERT(nullptr != prpp->Per());
   GPOS_ASSERT(nullptr != prpp->Pcter());
 
-  return m_pos->FSatisfies(prpp->Peo()->PosRequired()) && m_prs->FSatisfies(prpp->Per()->PrsRequired()) &&
-         m_ppps->FSatisfies(prpp->Pepp()->PppsRequired()) && m_pcm->FSatisfies(prpp->Pcter());
+  return m_pos->FSatisfies(prpp->Peo()->PosRequired()) && m_ppps->FSatisfies(prpp->Pepp()->PppsRequired()) &&
+         m_pcm->FSatisfies(prpp->Pcter());
 }
 
 //---------------------------------------------------------------------------
@@ -140,8 +133,7 @@ BOOL CDrvdPropPlan::FSatisfies(const CReqdPropPlan *prpp) const {
 //---------------------------------------------------------------------------
 ULONG
 CDrvdPropPlan::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(m_pos->HashValue(), m_prs->HashValue());
-  ulHash = gpos::CombineHashes(ulHash, m_pcm->HashValue());
+  ULONG ulHash = gpos::CombineHashes(m_pos->HashValue(), m_pcm->HashValue());
 
   return ulHash;
 }
@@ -156,8 +148,7 @@ CDrvdPropPlan::HashValue() const {
 //---------------------------------------------------------------------------
 ULONG
 CDrvdPropPlan::Equals(const CDrvdPropPlan *pdpplan) const {
-  return m_pos->Matches(pdpplan->Pos()) && m_prs->Matches(pdpplan->Prs()) && m_ppps->Equals(pdpplan->Ppps()) &&
-         m_pcm->Equals(pdpplan->GetCostModel());
+  return m_pos->Matches(pdpplan->Pos()) && m_ppps->Equals(pdpplan->Ppps()) && m_pcm->Equals(pdpplan->GetCostModel());
 }
 
 //---------------------------------------------------------------------------
@@ -169,8 +160,8 @@ CDrvdPropPlan::Equals(const CDrvdPropPlan *pdpplan) const {
 //
 //---------------------------------------------------------------------------
 IOstream &CDrvdPropPlan::OsPrint(IOstream &os) const {
-  os << "Drvd Plan Props (" << "ORD: " << (*m_pos) << ", REWIND: " << (*m_prs) << ", PART PROP:" << (*m_ppps) << ")"
-     << ", CTE Map: [" << *m_pcm << "]";
+  os << "Drvd Plan Props (" << "ORD: " << (*m_pos) << ", PART PROP:" << (*m_ppps) << ")" << ", CTE Map: [" << *m_pcm
+     << "]";
 
   return os;
 }

@@ -24,7 +24,6 @@
 #include "gpos/io/COstreamString.h"
 #include "gpos/io/ioutils.h"
 #include "gpos/task/CAutoTraceFlag.h"
-#include "gpos/task/CTraceFlagIter.h"
 #include "gpos/task/CWorker.h"
 #include "naucrates/base/CQueryToDXLResult.h"
 #include "naucrates/md/CDXLStatsDerivedRelation.h"

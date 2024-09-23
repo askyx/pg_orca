@@ -157,6 +157,8 @@ int gpos_exec(gpos_exec_params *params) {
 
         CTask *ptsk = atp.Create(params->func, params->arg, params->abort_requested);
 
+        ptsk->GetTaskCtxt()->config = ((gpdxl::OptConfig *)params->config);
+
         // init TLS
         ptsk->GetTls().Reset(mp);
 

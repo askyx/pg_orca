@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "gpopt/CGPOptimizer.h"
+#include "gpopt/config/config.h"
 
 extern "C" {
 
@@ -15,7 +16,6 @@ extern "C" {
 #include <utils/guc.h>
 }
 
-static bool pg_orca_enable_pg_orca = false;
 static bool init = false;
 
 static planner_hook_type prev_planner_hook = nullptr;
@@ -23,8 +23,10 @@ static ExplainOneQuery_hook_type prev_explain_hook = nullptr;
 
 namespace optimizer {
 
+gpdxl::OptConfig config;
+
 static PlannedStmt *pg_planner(Query *parse, const char *query_string, int cursorOptions, ParamListInfo boundParams) {
-  if (!pg_orca_enable_pg_orca)
+  if (!config.enable_optimizer)
     return standard_planner(parse, query_string, cursorOptions, boundParams);
 
   if (!init) {
@@ -35,9 +37,12 @@ static PlannedStmt *pg_planner(Query *parse, const char *query_string, int curso
     case CMD_SELECT:
       try {
         bool error;
-        return GPOPTOptimizedPlan(parse, &error);
+        return GPOPTOptimizedPlan(parse, &error, &config);
       } catch (const std::exception &e) {
         elog(WARNING, "pg_orca Failed to plan query, get error: %s", e.what());
+        return standard_planner(parse, query_string, cursorOptions, boundParams);
+      } catch (...) {
+        elog(WARNING, "pg_orca Failed to plan query, get unknown error");
         return standard_planner(parse, query_string, cursorOptions, boundParams);
       }
       break;
@@ -61,7 +66,7 @@ static PlannedStmt *pg_planner(Query *parse, const char *query_string, int curso
 static void ExplainOneQuery(Query *query, int cursorOptions, IntoClause *into, ExplainState *es,
                             const char *queryString, ParamListInfo params, QueryEnvironment *queryEnv) {
   prev_explain_hook(query, cursorOptions, into, es, queryString, params, queryEnv);
-  if (pg_orca_enable_pg_orca)
+  if (config.enable_optimizer)
     ExplainPropertyText("Optimizer", "pg_orca", es);
 }
 }  // namespace optimizer
@@ -71,8 +76,33 @@ extern "C" {
 PG_MODULE_MAGIC;
 
 void _PG_init(void) {
-  DefineCustomBoolVariable("pg_orca.enable_orca", "use orca planner.", NULL, &pg_orca_enable_pg_orca, false, PGC_SUSET,
-                           0, NULL, NULL, NULL);
+  // clang-format off
+  DefineCustomBoolVariable(
+    "pg_orca.enable_orca",
+    "use orca planner.",
+    NULL,
+    &optimizer::config.enable_optimizer,
+    false,
+    PGC_SUSET,
+    0,
+    NULL,
+    NULL,
+    NULL
+  );
+
+  DefineCustomBoolVariable(
+    "pg_orca.enable_new_planner",
+    "use orca planner.",
+    NULL,
+    &optimizer::config.enable_new_planner_generation,
+    false,
+    PGC_SUSET,
+    0,
+    NULL,
+    NULL,
+    NULL
+  );
+  // clang-format on
 
   prev_planner_hook = planner_hook;
   planner_hook = optimizer::pg_planner;

@@ -459,12 +459,10 @@ const IMDCacheObject *CMDAccessor::GetImdObj(IMDId *mdid, IMDCacheObject::Emdtyp
       // An exception is made for CTAS (see below).
       CMemoryPool *mp = m_mp;
       IMDId *mdidCopy = mdid;
-      if (IMDId::EmdidGPDBCtas != mdid->MdidType()) {
-        // create the accessor memory pool
-        mp = a_pmdcacc->Pmp();
-        mdidCopy = mdid->Copy(mp);
-        GPOS_ASSERT(mdidCopy->Equals(mdid));
-      }
+      // create the accessor memory pool
+      mp = a_pmdcacc->Pmp();
+      mdidCopy = mdid->Copy(mp);
+      GPOS_ASSERT(mdidCopy->Equals(mdid));
 
       pmdobjNew = pmdp->GetMDObj(mp, this, mdidCopy, mdtype);
       GPOS_ASSERT(nullptr != pmdobjNew);
@@ -482,22 +480,20 @@ const IMDCacheObject *CMDAccessor::GetImdObj(IMDId *mdid, IMDCacheObject::Emdtyp
       // so for such objects, we bypass the MD cache, getting them from the
       // MD provider, directly to the local hash table
 
-      if (IMDId::EmdidGPDBCtas != mdid->MdidType()) {
-        // add to MD cache
-        CAutoP<CMDKey> a_pmdkeyCache;
-        // ref count of the new object is set to one and optimizer becomes its owner
-        a_pmdkeyCache = GPOS_NEW(mp) CMDKey(pmdobjNew->MDId());
+      // add to MD cache
+      CAutoP<CMDKey> a_pmdkeyCache;
+      // ref count of the new object is set to one and optimizer becomes its owner
+      a_pmdkeyCache = GPOS_NEW(mp) CMDKey(pmdobjNew->MDId());
 
-        // object gets pinned independent of whether insertion succeeded or
-        // failed because object was already in cache
+      // object gets pinned independent of whether insertion succeeded or
+      // failed because object was already in cache
 
-        IMDCacheObject *pmdobjInserted GPOS_ASSERTS_ONLY = a_pmdcacc->Insert(a_pmdkeyCache.Value(), pmdobjNew);
+      IMDCacheObject *pmdobjInserted GPOS_ASSERTS_ONLY = a_pmdcacc->Insert(a_pmdkeyCache.Value(), pmdobjNew);
 
-        GPOS_ASSERT(nullptr != pmdobjInserted);
+      GPOS_ASSERT(nullptr != pmdobjInserted);
 
-        // safely inserted
-        (void)a_pmdkeyCache.Reset();
-      }
+      // safely inserted
+      (void)a_pmdkeyCache.Reset();
     }
 
     {

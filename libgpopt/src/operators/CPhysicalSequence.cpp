@@ -166,28 +166,6 @@ COrderSpec *CPhysicalSequence::PosRequired(CMemoryPool *mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalSequence::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability order of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalSequence::PrsRequired(CMemoryPool *,        // mp,
-                                                   CExpressionHandle &,  // exprhdl,
-                                                   CRewindabilitySpec *prsRequired,
-                                                   ULONG,             // child_index,
-                                                   CDrvdPropArray *,  // pdrgpdpCtxt
-                                                   ULONG              // ulOptReq
-) const {
-  // TODO: shardikar; Handle outer refs in the subtree correctly, by passing
-  // "Rescannable' Also, maybe it should pass through the prsRequired, since it
-  // doesn't materialize any results? It's important to consider performance
-  // consequences of that also.
-  return GPOS_NEW(m_mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, prsRequired->Emht());
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalSequence::PosDerive
 //
 //	@doc:
@@ -205,34 +183,6 @@ COrderSpec *CPhysicalSequence::PosDerive(CMemoryPool *,  // mp,
   pos->AddRef();
 
   return pos;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalSequence::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalSequence::PrsDerive(CMemoryPool *,  // mp
-                                                 CExpressionHandle &exprhdl) const {
-  const ULONG arity = exprhdl.Arity();
-  GPOS_ASSERT(1 <= arity);
-
-  CRewindabilitySpec::EMotionHazardType motion_hazard = CRewindabilitySpec::EmhtNoMotion;
-  for (ULONG ul = 0; ul < arity; ul++) {
-    CRewindabilitySpec *prs = exprhdl.Pdpplan(ul)->Prs();
-    if (prs->HasMotionHazard()) {
-      motion_hazard = CRewindabilitySpec::EmhtMotion;
-      break;
-    }
-  }
-
-  // TODO: shardikar; Fix this implementation. Although CPhysicalSequence is
-  // not rewindable, all its children might be rewindable. This implementation
-  // ignores the rewindability of the op's children
-  return GPOS_NEW(m_mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, motion_hazard);
 }
 
 //---------------------------------------------------------------------------
@@ -257,20 +207,3 @@ CEnfdProp::EPropEnforcingType CPhysicalSequence::EpetOrder(CExpressionHandle &ex
   // required distribution will be enforced on sequence's output
   return CEnfdProp::EpetRequired;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalSequence::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalSequence::EpetRewindability(CExpressionHandle &,        // exprhdl
-                                                                   const CEnfdRewindability *  // per
-) const {
-  // rewindability must be enforced on operator's output
-  return CEnfdProp::EpetRequired;
-}
-
-// EOF

@@ -152,16 +152,14 @@ class CEngine {
   static BOOL FChildrenOptimized(COptimizationContextArray *pdrgpoc);
 
   // check if ayn of the given property enforcing types prohibits enforcement
-  static BOOL FProhibited(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetRewindability,
-                          CEnfdProp::EPropEnforcingType epetPropagation);
+  static BOOL FProhibited(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetPropagation);
 
   // check whether the given memo groups can be marked as duplicates. This is
   // true only if they have the same logical properties
   static BOOL FPossibleDuplicateGroups(CGroup *pgroupFst, CGroup *pgroupSnd);
 
   // check if optimization is possible under the given property enforcing types
-  static BOOL FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetRewindability,
-                        CEnfdProp::EPropEnforcingType epetPropagation);
+  static BOOL FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetPropagation);
 
   // unrank the plan with the given 'plan_id' from the memo
   CExpression *PexprUnrank(ULLONG plan_id);

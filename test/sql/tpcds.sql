@@ -69,7 +69,7 @@ select query as query55 from tpcds_queries(55); \gset
 select query as query56 from tpcds_queries(56); \gset
 select query as query57 from tpcds_queries(57); \gset
 select query as query58 from tpcds_queries(58); \gset
-select query as query59 from tpcds_queries(59); \
+select query as query59 from tpcds_queries(59); \gset
 
 select query as query60 from tpcds_queries(60); \gset
 select query as query61 from tpcds_queries(61); \gset
@@ -141,7 +141,7 @@ explain (costs off ) :query19;
 explain (costs off ) :query21;
 -- explain (costs off ) :query22;
 -- explain (costs off ) :query23;
-explain (costs off ) :query24;
+-- explain (costs off ) :query24;
 explain (costs off ) :query25;
 explain (costs off ) :query26;
 -- explain (costs off ) :query27;

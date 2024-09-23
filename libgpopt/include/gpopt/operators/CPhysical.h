@@ -14,10 +14,8 @@
 #include "gpopt/base/CDrvdPropPlan.h"
 #include "gpopt/base/CEnfdOrder.h"
 #include "gpopt/base/CEnfdPartitionPropagation.h"
-#include "gpopt/base/CEnfdRewindability.h"
 #include "gpopt/base/COrderSpec.h"
 #include "gpopt/base/CPartitionPropagationSpec.h"
-#include "gpopt/base/CRewindabilitySpec.h"
 #include "gpopt/operators/COperator.h"
 #include "gpos/base.h"
 
@@ -164,10 +162,6 @@ class CPhysical : public COperator {
   // helper for a simple case of computing child's required sort order
   static COrderSpec *PosPassThru(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, ULONG child_index);
 
-  // helper for a simple case of computing child's required rewindability
-  static CRewindabilitySpec *PrsPassThru(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
-                                         ULONG child_index);
-
   // pass cte requirement to the child
   static CCTEReq *PcterPushThru(CCTEReq *pcter);
 
@@ -177,9 +171,6 @@ class CPhysical : public COperator {
 
   // helper for common case of sort order derivation
   static COrderSpec *PosDerivePassThruOuter(CExpressionHandle &exprhdl);
-
-  // helper for common case of rewindability derivation
-  static CRewindabilitySpec *PrsDerivePassThruOuter(CMemoryPool *mp, CExpressionHandle &exprhdl);
 
   // helper for checking if output columns of a unary operator
   // that defines no new columns include the required columns
@@ -232,10 +223,6 @@ class CPhysical : public COperator {
   virtual COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired,
                                   ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const = 0;
 
-  // compute required rewindability of the n-th child
-  virtual CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
-                                          ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const = 0;
-
   // compute required partition propagation spec of the n-th child
   virtual CPartitionPropagationSpec *PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
                                                   CPartitionPropagationSpec *pppsRequired, ULONG child_index,
@@ -254,9 +241,6 @@ class CPhysical : public COperator {
   // derive sort order
   virtual COrderSpec *PosDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const = 0;
 
-  // derived properties: derive rewindability
-  virtual CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const = 0;
-
   // derived properties: derive partition propagation spec
   virtual CPartitionPropagationSpec *PppsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
@@ -271,10 +255,6 @@ class CPhysical : public COperator {
   // return order property enforcing type for this operator
   virtual CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const = 0;
 
-  // return rewindability property enforcing type for this operator
-  virtual CEnfdProp::EPropEnforcingType EpetRewindability(CExpressionHandle &exprhdl,
-                                                          const CEnfdRewindability *per) const = 0;
-
   // return partition propagation property enforcing type for this operator
   virtual CEnfdProp::EPropEnforcingType EpetPartitionPropagation(CExpressionHandle &exprhdl,
                                                                  const CEnfdPartitionPropagation *per) const;
@@ -282,10 +262,6 @@ class CPhysical : public COperator {
   // order matching type
   virtual CEnfdOrder::EOrderMatching Eom(CReqdPropPlan *prppInput, ULONG child_index, CDrvdPropArray *pdrgpdpCtxt,
                                          ULONG ulOptReq);
-
-  // rewindability matching type
-  virtual CEnfdRewindability::ERewindabilityMatching Erm(CReqdPropPlan *prppInput, ULONG child_index,
-                                                         CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq);
 
   // check if optimization contexts is valid
   virtual BOOL FValidContext(CMemoryPool *,               // mp

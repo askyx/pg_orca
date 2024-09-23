@@ -83,27 +83,6 @@ COrderSpec *CPhysicalFilter::PosRequired(CMemoryPool *mp, CExpressionHandle &exp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalFilter::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalFilter::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                 CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                 CDrvdPropArray *,  // pdrgpdpCtxt
-                                                 ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-  if (prsRequired->IsOriginNLJoin()) {
-    CRewindabilitySpec *prs = GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, prsRequired->Emht());
-    return prs;
-  }
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalFilter::PcteRequired
 //
 //	@doc:
@@ -136,20 +115,6 @@ CCTEReq *CPhysicalFilter::PcteRequired(CMemoryPool *,        // mp,
 COrderSpec *CPhysicalFilter::PosDerive(CMemoryPool *,  // mp
                                        CExpressionHandle &exprhdl) const {
   return PosDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalFilter::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalFilter::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  // In theory, CPhysicalFilter can support Mark Restore - we disable it
-  // here for now similar to ExecSupportsMarkRestore().
-  return PrsDerivePassThruOuter(mp, exprhdl);
 }
 
 //---------------------------------------------------------------------------
@@ -199,30 +164,3 @@ CEnfdProp::EPropEnforcingType CPhysicalFilter::EpetOrder(CExpressionHandle &,  /
   // always force sort to be on top of filter
   return CEnfdProp::EpetRequired;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalFilter::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalFilter::EpetRewindability(CExpressionHandle &exprhdl,
-                                                                 const CEnfdRewindability *per) const {
-  if (per->PrsRequired()->IsOriginNLJoin()) {
-    return CEnfdProp::EpetRequired;
-  }
-
-  // get rewindability delivered by the Filter node
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
-    // required rewindability is already provided
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  // always force spool to be on top of filter
-  return CEnfdProp::EpetRequired;
-}
-
-// EOF

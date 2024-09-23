@@ -515,21 +515,18 @@ CXformSet *CLogicalGbAgg::PxfsCandidates(CMemoryPool *mp) const {
 //
 //---------------------------------------------------------------------------
 IStatistics *CLogicalGbAgg::PstatsDerive(CMemoryPool *mp, IStatistics *child_stats, CColRefArray *pdrgpcrGroupingCols,
-                                         ULongPtrArray *pdrgpulComputedCols, CBitSet *keys) {
+                                         const std::vector<uint32_t> &pdrgpulComputedCols, CBitSet *keys) {
   const ULONG ulGroupingCols = pdrgpcrGroupingCols->Size();
 
   // extract grouping column ids
-  ULongPtrArray *pdrgpulGroupingCols = GPOS_NEW(mp) ULongPtrArray(mp);
+  std::vector<uint32_t> pdrgpulGroupingCols;
   for (ULONG ul = 0; ul < ulGroupingCols; ul++) {
     CColRef *colref = (*pdrgpcrGroupingCols)[ul];
-    pdrgpulGroupingCols->Append(GPOS_NEW(mp) ULONG(colref->Id()));
+    pdrgpulGroupingCols.push_back(colref->Id());
   }
 
   IStatistics *stats = CGroupByStatsProcessor::CalcGroupByStats(mp, dynamic_cast<CStatistics *>(child_stats),
                                                                 pdrgpulGroupingCols, pdrgpulComputedCols, keys);
-
-  // clean up
-  pdrgpulGroupingCols->Release();
 
   return stats;
 }
@@ -548,13 +545,9 @@ IStatistics *CLogicalGbAgg::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exp
   GPOS_ASSERT(Esp(exprhdl) > EspNone);
   IStatistics *child_stats = exprhdl.Pstats(0);
 
-  // extract computed columns
-  ULongPtrArray *pdrgpulComputedCols = GPOS_NEW(mp) ULongPtrArray(mp);
-  exprhdl.DeriveDefinedColumns(1)->ExtractColIds(mp, pdrgpulComputedCols);
+  auto pdrgpulComputedCols = exprhdl.DeriveDefinedColumns(1)->ExtractColIds();
 
   IStatistics *stats = PstatsDerive(mp, child_stats, Pdrgpcr(), pdrgpulComputedCols, nullptr /*keys*/);
-
-  pdrgpulComputedCols->Release();
 
   return stats;
 }

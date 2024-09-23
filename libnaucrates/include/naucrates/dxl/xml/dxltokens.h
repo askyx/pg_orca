@@ -326,8 +326,6 @@ enum Edxltoken {
   EdxltokenWidth,
   EdxltokenRelPages,
   EdxltokenRelAllVisible,
-  EdxltokenCTASOptions,
-  EdxltokenCTASOption,
 
   EdxltokenExecuteAsUser,
 
@@ -444,7 +442,6 @@ enum Edxltoken {
 
   // metadata-related constants
   EdxltokenRelation,
-  EdxltokenRelationCTAS,
   EdxltokenName,
   EdxltokenSchema,
   EdxltokenTablespace,
@@ -667,8 +664,6 @@ enum Edxltoken {
   EdxltokenLogicalInsert,
   EdxltokenLogicalDelete,
   EdxltokenLogicalUpdate,
-  EdxltokenLogicalCTAS,
-  EdxltokenPhysicalCTAS,
   EdxltokenPhysicalDMLInsert,
   EdxltokenPhysicalDMLDelete,
   EdxltokenPhysicalDMLUpdate,

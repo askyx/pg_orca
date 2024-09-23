@@ -19,15 +19,15 @@ using namespace gpopt;
 // return statistics object after union all operation with input statistics object
 CStatistics *CUnionAllStatsProcessor::CreateStatsForUnionAll(CMemoryPool *mp, const CStatistics *stats_first_child,
                                                              const CStatistics *stats_second_child,
-                                                             ULongPtrArray *output_colids,
+                                                             const std::vector<uint32_t> &output_colids,
                                                              ULongPtrArray *first_child_colids,
                                                              ULongPtrArray *second_child_colids) {
   GPOS_ASSERT(nullptr != mp);
   GPOS_ASSERT(nullptr != stats_second_child);
 
   // lengths must match
-  GPOS_ASSERT(output_colids->Size() == first_child_colids->Size());
-  GPOS_ASSERT(output_colids->Size() == second_child_colids->Size());
+  GPOS_ASSERT(output_colids.size() == first_child_colids->Size());
+  GPOS_ASSERT(output_colids.size() == second_child_colids->Size());
 
   // create hash map from colid -> histogram for resultant structure
   UlongToHistogramMap *histograms_new = GPOS_NEW(mp) UlongToHistogramMap(mp);
@@ -42,9 +42,9 @@ CStatistics *CUnionAllStatsProcessor::CreateStatsForUnionAll(CMemoryPool *mp, co
     CHistogram::AddDummyHistogramAndWidthInfo(mp, col_factory, histograms_new, column_to_width_map, output_colids,
                                               true /*is_empty*/);
   } else {
-    const ULONG len = output_colids->Size();
+    const ULONG len = output_colids.size();
     for (ULONG ul = 0; ul < len; ul++) {
-      ULONG output_colid = *(*output_colids)[ul];
+      ULONG output_colid = output_colids[ul];
       ULONG first_child_colid = *(*first_child_colids)[ul];
       ULONG second_child_colid = *(*second_child_colids)[ul];
 
@@ -76,7 +76,6 @@ CStatistics *CUnionAllStatsProcessor::CreateStatsForUnionAll(CMemoryPool *mp, co
   }
 
   // release inputs
-  output_colids->Release();
   first_child_colids->Release();
   second_child_colids->Release();
 

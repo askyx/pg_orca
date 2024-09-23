@@ -341,7 +341,7 @@ class CHistogram {
   // add dummy histogram buckets and column width for the array of columns
   static void AddDummyHistogramAndWidthInfo(CMemoryPool *mp, CColumnFactory *col_factory,
                                             UlongToHistogramMap *output_histograms, UlongToDoubleMap *output_col_widths,
-                                            const ULongPtrArray *columns, BOOL is_empty);
+                                            const std::vector<uint32_t> &columns, BOOL is_empty);
 
   // add dummy histogram buckets for the columns in the input histogram
   static void AddEmptyHistogram(CMemoryPool *mp, UlongToHistogramMap *output_histograms,

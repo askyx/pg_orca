@@ -91,26 +91,6 @@ COrderSpec *CPhysicalFullMergeJoin::PosRequired(CMemoryPool *mp,
   return os;
 }
 
-// compute required rewindability of the n-th child
-CRewindabilitySpec *CPhysicalFullMergeJoin::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                        CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                        CDrvdPropArray *,  // pdrgpdpCtxt
-                                                        ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(child_index < 2 && "Required rewindability can be computed on the relational child only");
-
-  // Merge join may need to rescan a portion of the tuples on the inner side, so require mark-restore
-  // on the inner child
-  if (child_index == 1) {
-    // Merge joins are disabled if there are outer references
-    GPOS_ASSERT(!exprhdl.HasOuterRefs());
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtMarkRestore, prsRequired->Emht());
-  }
-
-  // pass through requirements to outer child
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
 // return order property enforcing type for this operator
 CEnfdProp::EPropEnforcingType CPhysicalFullMergeJoin::EpetOrder(CExpressionHandle &, const CEnfdOrder *
 #ifdef GPOS_DEBUG

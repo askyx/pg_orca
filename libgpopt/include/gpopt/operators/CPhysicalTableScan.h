@@ -71,13 +71,6 @@ class CPhysicalTableScan : public CPhysicalScan {
     return nullptr;
   }
 
-  CRewindabilitySpec *PrsDerive(CMemoryPool *mp,
-                                CExpressionHandle &  // exprhdl
-  ) const override {
-    // mark-restorability of output is always true
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtMarkRestore, CRewindabilitySpec::EmhtNoMotion);
-  }
-
 };  // class CPhysicalTableScan
 
 }  // namespace gpopt

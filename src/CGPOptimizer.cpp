@@ -39,14 +39,13 @@ extern MemoryContext MessageContext;
 //		Optimize given query using GP optimizer
 //
 //---------------------------------------------------------------------------
-PlannedStmt *CGPOptimizer::GPOPTOptimizedPlan(
-    Query *query,
-    bool *had_unexpected_failure  // output : set to true if optimizer unexpectedly failed to produce plan
-) {
+PlannedStmt *CGPOptimizer::GPOPTOptimizedPlan(Query *query, bool *had_unexpected_failure, gpdxl::OptConfig *config) {
   SOptContext gpopt_context;
   PlannedStmt *plStmt = nullptr;
 
   *had_unexpected_failure = false;
+
+  gpopt_context.config = config;
 
   GPOS_TRY {
     plStmt = COptTasks::GPOPTOptimizedPlan(query, &gpopt_context);
@@ -166,34 +165,14 @@ void CGPOptimizer::TerminateGPOPT() {
 //
 //---------------------------------------------------------------------------
 extern "C" {
-PlannedStmt *GPOPTOptimizedPlan(Query *query, bool *had_unexpected_failure) {
-  return CGPOptimizer::GPOPTOptimizedPlan(query, had_unexpected_failure);
-}
+PlannedStmt *GPOPTOptimizedPlan(Query *query, bool *had_unexpected_failure, gpdxl::OptConfig *config) {
+  return CGPOptimizer::GPOPTOptimizedPlan(query, had_unexpected_failure, config);
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		SerializeDXLPlan
-//
-//	@doc:
-//		Serialize planned statement to DXL
-//
-//---------------------------------------------------------------------------
-extern "C" {
 char *SerializeDXLPlan(Query *query) {
   return CGPOptimizer::SerializeDXLPlan(query);
 }
-}
 
-//---------------------------------------------------------------------------
-//	@function:
-//		InitGPOPT()
-//
-//	@doc:
-//		Initialize GPTOPT and dependent libraries
-//
-//---------------------------------------------------------------------------
-extern "C" {
 void InitGPOPT() {
   GPOS_TRY {
     try {
@@ -218,17 +197,7 @@ void InitGPOPT() {
   }
   GPOS_CATCH_END;
 }
-}
 
-//---------------------------------------------------------------------------
-//	@function:
-//		TerminateGPOPT()
-//
-//	@doc:
-//		Terminate GPOPT and dependent libraries
-//
-//---------------------------------------------------------------------------
-extern "C" {
 void TerminateGPOPT() {
   GPOS_TRY {
     return CGPOptimizer::TerminateGPOPT();

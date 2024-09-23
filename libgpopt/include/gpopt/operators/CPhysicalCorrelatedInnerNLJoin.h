@@ -61,12 +61,6 @@ class CPhysicalCorrelatedInnerNLJoin : public CPhysicalInnerNLJoin {
     return false;
   }
 
-  // compute required rewindability of the n-th child
-  CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
-                                  ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override {
-    return PrsRequiredCorrelatedJoin(mp, exprhdl, prsRequired, child_index, pdrgpdpCtxt, ulOptReq);
-  }
-
   // conversion function
   static CPhysicalCorrelatedInnerNLJoin *PopConvert(COperator *pop) {
     GPOS_ASSERT(nullptr != pop);

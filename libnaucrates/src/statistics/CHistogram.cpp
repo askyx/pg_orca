@@ -1827,18 +1827,13 @@ void CHistogram::AddHistograms(CMemoryPool *mp, UlongToHistogramMap *src_histogr
 // add dummy histogram buckets and column information for the array of columns
 void CHistogram::AddDummyHistogramAndWidthInfo(CMemoryPool *mp, CColumnFactory *col_factory,
                                                UlongToHistogramMap *output_histograms,
-                                               UlongToDoubleMap *output_col_widths, const ULongPtrArray *columns,
-                                               BOOL is_empty) {
+                                               UlongToDoubleMap *output_col_widths,
+                                               const std::vector<uint32_t> &columns, BOOL is_empty) {
   GPOS_ASSERT(nullptr != col_factory);
   GPOS_ASSERT(nullptr != output_histograms);
   GPOS_ASSERT(nullptr != output_col_widths);
-  GPOS_ASSERT(nullptr != columns);
 
-  const ULONG count = columns->Size();
-  // for computed aggregates, we're not going to be very smart right now
-  for (ULONG ul = 0; ul < count; ul++) {
-    ULONG colid = *(*columns)[ul];
-
+  for (auto colid : columns) {
     CColRef *col_ref = col_factory->LookupColRef(colid);
     GPOS_ASSERT(nullptr != col_ref);
 

@@ -1707,8 +1707,6 @@ BOOL CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimi
   // Determine if any property enforcement is disable or unnecessary
   BOOL fOrderReqd = !GPOS_FTRACE(EopttraceDisableSort) && !prpp->Peo()->PosRequired()->IsEmpty();
 
-  BOOL fRewindabilityReqd = !GPOS_FTRACE(EopttraceDisableSpool) && (prpp->Per()->PrsRequired()->IsCheckRequired());
-
   BOOL fPartPropagationReqd =
       !GPOS_FTRACE(EopttraceDisablePartPropagation) && prpp->Pepp()->PppsRequired()->FPartPropagationReqd();
 
@@ -1720,7 +1718,6 @@ BOOL CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimi
   CEnfdProp::EPropEnforcingType epetOrder = prpp->Peo()->Epet(exprhdl, popPhysical, fOrderReqd);
 
   // get rewindability enforcing type
-  CEnfdProp::EPropEnforcingType epetRewindability = prpp->Per()->Epet(exprhdl, popPhysical, fRewindabilityReqd);
 
   // get partition propagation enforcing type
   CEnfdProp::EPropEnforcingType epetPartitionPropagation =
@@ -1734,7 +1731,7 @@ BOOL CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimi
   // expression G because it was prohibited, some other group expression H may
   // decide to add it. And if E is added, it is possible for E to consider both
   // G and H as its child.
-  if (FProhibited(epetOrder, epetRewindability, epetPartitionPropagation)) {
+  if (FProhibited(epetOrder, epetPartitionPropagation)) {
     pcc->Release();
     return false;
   }
@@ -1748,7 +1745,6 @@ BOOL CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimi
   GPOS_ASSERT(pexpr->Pgexpr()->Pgroup() == pgexpr->Pgroup());
 
   prpp->Peo()->AppendEnforcers(mp, prpp, pdrgpexprEnforcers, pexpr, epetOrder, exprhdl);
-  prpp->Per()->AppendEnforcers(mp, prpp, pdrgpexprEnforcers, pexpr, epetRewindability, exprhdl);
   prpp->Pepp()->AppendEnforcers(mp, prpp, pdrgpexprEnforcers, pexpr, epetPartitionPropagation, exprhdl);
 
   if (0 < pdrgpexprEnforcers->Size()) {
@@ -1758,7 +1754,7 @@ BOOL CEngine::FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimi
   pexpr->Release();
   pcc->Release();
 
-  return FOptimize(epetOrder, epetRewindability, epetPartitionPropagation);
+  return FOptimize(epetOrder, epetPartitionPropagation);
 }
 
 //---------------------------------------------------------------------------
@@ -1791,10 +1787,8 @@ BOOL CEngine::FChildrenOptimized(COptimizationContextArray *pdrgpoc) {
 //		types
 //
 //---------------------------------------------------------------------------
-BOOL CEngine::FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetRewindability,
-                        CEnfdProp::EPropEnforcingType epetPropagation) {
-  return CEnfdProp::FOptimize(epetOrder) && CEnfdProp::FOptimize(epetRewindability) &&
-         CEnfdProp::FOptimize(epetPropagation);
+BOOL CEngine::FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetPropagation) {
+  return CEnfdProp::FOptimize(epetOrder) && CEnfdProp::FOptimize(epetPropagation);
 }
 
 //---------------------------------------------------------------------------
@@ -1805,10 +1799,8 @@ BOOL CEngine::FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPro
 //		Check if any of the given property enforcing types prohibits enforcement
 //
 //---------------------------------------------------------------------------
-BOOL CEngine::FProhibited(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetRewindability,
-                          CEnfdProp::EPropEnforcingType epetPropagation) {
-  return (CEnfdProp::EpetProhibited == epetOrder || CEnfdProp::EpetProhibited == epetRewindability ||
-          CEnfdProp::EpetProhibited == epetPropagation);
+BOOL CEngine::FProhibited(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetPropagation) {
+  return (CEnfdProp::EpetProhibited == epetOrder || CEnfdProp::EpetProhibited == epetPropagation);
 }
 
 //---------------------------------------------------------------------------
@@ -1851,13 +1843,6 @@ BOOL CEngine::FCheckReqdProps(CExpressionHandle &exprhdl, CReqdPropPlan *prpp, U
   // sort optimizing same group with the same optimization context;
   BOOL fOrderReqd = !prpp->Peo()->PosRequired()->IsEmpty();
   if (!fOrderReqd && COperator::EopPhysicalSort == op_id) {
-    return false;
-  }
-
-  // check if spool operator is passed a non-rewindable spec;
-  // this check is required to avoid self-deadlocks, i.e.
-  // spool optimizing same group with the same optimization context;
-  if (!prpp->Per()->PrsRequired()->IsCheckRequired() && COperator::EopPhysicalSpool == op_id) {
     return false;
   }
 

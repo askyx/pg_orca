@@ -40,6 +40,7 @@ file(
     ${CMAKE_CURRENT_SOURCE_DIR}/libgpdbcost/src/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libgpopt/src/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libgpos/src/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp 
 )
 
 add_library(
@@ -73,47 +74,12 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/libgpopt/include
     ${CMAKE_CURRENT_SOURCE_DIR}/libgpdbcost/include
     ${CMAKE_CURRENT_SOURCE_DIR}/libgpos/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/include
+    ${PostgreSQL_SERVER_INCLUDE_DIRS}
 )
 
 find_package(PostgreSQL REQUIRED)
 
-####################################
-# build orca translate library
-####################################
-file(
-  GLOB_RECURSE
-  OPTIMIZER_SRCS
-  CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp 
-)
-
-add_library(
-  optimizer
-  OBJECT
-    ${OPTIMIZER_SRCS}
-)
-
-target_include_directories(optimizer
-  PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/libgpopt/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/libgpos/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/libnaucrates/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/libgpdbcost/include
-    ${PostgreSQL_SERVER_INCLUDE_DIRS}
-)
-
-target_compile_options(optimizer
-  PUBLIC
-    ${ORCA_COMPILE_OPTIONS}
-)
-
-target_link_options(optimizer
-  PUBLIC
-    ${ORCA_LINK_OPTIONS}
-)
-
-target_link_libraries(optimizer PUBLIC orca_core)
 
 add_postgresql_extension(
   pg_orca
@@ -122,7 +88,7 @@ add_postgresql_extension(
     SCRIPTS pg_orca--1.0.sql
 )
 
-target_link_libraries(pg_orca optimizer orca_core)
+target_link_libraries(pg_orca orca_core)
 
 
 # clang-format

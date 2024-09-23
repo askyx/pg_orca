@@ -97,44 +97,6 @@ CCTEReq *CPhysicalSpool::PcteRequired(CMemoryPool *,        // mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalSpool::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalSpool::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                CRewindabilitySpec *prsRequired,
-                                                ULONG
-#ifdef GPOS_DEBUG
-                                                    child_index
-#endif  // GPOS_DEBUG
-                                                ,
-                                                CDrvdPropArray *,  // pdrgpdpCtxt
-                                                ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  // A streaming (non-eager) spool requires motion hazard handling from its
-  // child. A blocking (eager) spool does not.
-  CRewindabilitySpec::EMotionHazardType motion_hazard =
-      (prsRequired->HasMotionHazard() && !FEager()) ? CRewindabilitySpec::EmhtMotion : CRewindabilitySpec::EmhtNoMotion;
-
-  // Spool establishes rewindability on its own. However, if it contains outer
-  // refs in its subtree, a Rescannable request should be sent, so that an
-  // appropriate enforcer is added for any non-rescannable ops below (e.g the
-  // subtree contains a Filter with outer refs on top of a Motion op, a Spool
-  // op needs to be added above the Motion).
-  // NB: This logic should be implemented in any materializing ops (e.g Sort & Spool)
-  if (exprhdl.HasOuterRefs(0)) {
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRescannable, motion_hazard);
-  } else {
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, motion_hazard);
-  }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalSpool::PosDerive
 //
 //	@doc:
@@ -144,22 +106,6 @@ CRewindabilitySpec *CPhysicalSpool::PrsRequired(CMemoryPool *mp, CExpressionHand
 COrderSpec *CPhysicalSpool::PosDerive(CMemoryPool *,  // mp
                                       CExpressionHandle &exprhdl) const {
   return PosDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalSpool::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//--------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalSpool::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  CRewindabilitySpec *prsChild = exprhdl.Pdpplan(0 /*child_index*/)->Prs();
-  CRewindabilitySpec::EMotionHazardType motion_hazard =
-      (!FEager() && prsChild->HasMotionHazard()) ? CRewindabilitySpec::EmhtMotion : CRewindabilitySpec::EmhtNoMotion;
-
-  return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtMarkRestore, motion_hazard);
 }
 
 //---------------------------------------------------------------------------
@@ -220,21 +166,6 @@ CEnfdProp::EPropEnforcingType CPhysicalSpool::EpetOrder(CExpressionHandle &,  //
   return CEnfdProp::EpetUnnecessary;
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalSpool::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalSpool::EpetRewindability(CExpressionHandle &,        // exprhdl
-                                                                const CEnfdRewindability *  // per
-) const {
-  // no need for enforcing rewindability on output
-  return CEnfdProp::EpetUnnecessary;
-}
-
 BOOL CPhysicalSpool::FValidContext(CMemoryPool *, COptimizationContext *poc,
                                    COptimizationContextArray *pdrgpocChild) const {
   GPOS_ASSERT(nullptr != pdrgpocChild);
@@ -275,15 +206,6 @@ BOOL CPhysicalSpool::FValidContext(CMemoryPool *, COptimizationContext *poc,
   CPartitionPropagationSpec *pps_req = poc->Prpp()->Pepp()->PppsRequired();
   if (pdpplanChild->Ppps()->IsUnsupportedPartSelector(pps_req)) {
     return false;
-  }
-
-  // Discard any context that is requesting for rewindability with motion hazard handling and
-  // the physical spool is streaming with a motion underneath it.
-  // We do not want to add a blocking spool over a spool as spooling twice will be expensive,
-  // hence invalidate this context.
-  CEnfdRewindability *per = poc->Prpp()->Per();
-  if (per->PrsRequired()->HasMotionHazard() && pdpplanChild->Prs()->HasMotionHazard()) {
-    return FEager();
   }
 
   return true;

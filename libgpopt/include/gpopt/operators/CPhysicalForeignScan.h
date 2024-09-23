@@ -44,21 +44,9 @@ class CPhysicalForeignScan : public CPhysicalTableScan {
   // Derived Plan Properties
   //-------------------------------------------------------------------------------------
 
-  // derive rewindability
-  CRewindabilitySpec *PrsDerive(CMemoryPool *mp,
-                                CExpressionHandle &  // exprhdl
-  ) const override {
-    // foreign tables are neither rewindable nor rescannable
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, CRewindabilitySpec::EmhtNoMotion);
-  }
-
   //-------------------------------------------------------------------------------------
   // Enforced Properties
   //-------------------------------------------------------------------------------------
-
-  // return rewindability property enforcing type for this operator
-  CEnfdProp::EPropEnforcingType EpetRewindability(CExpressionHandle &exprhdl,
-                                                  const CEnfdRewindability *per) const override;
 
   //-------------------------------------------------------------------------------------
   //-------------------------------------------------------------------------------------

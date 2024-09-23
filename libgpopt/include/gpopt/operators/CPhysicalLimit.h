@@ -97,10 +97,6 @@ class CPhysicalLimit : public CPhysical {
   COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
 
-  // compute required rewindability of the n-th child
-  CRewindabilitySpec *PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CRewindabilitySpec *prsRequired,
-                                  ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
-
   // check if required columns are included in output columns
   BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
 
@@ -111,20 +107,12 @@ class CPhysicalLimit : public CPhysical {
   // derive sort order
   COrderSpec *PosDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
-  // derive rewindability
-  CRewindabilitySpec *PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
-
   //-------------------------------------------------------------------------------------
   // Enforced Properties
   //-------------------------------------------------------------------------------------
 
   // return order property enforcing type for this operator
   CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const override;
-
-  // return rewindability property enforcing type for this operator
-  CEnfdProp::EPropEnforcingType EpetRewindability(CExpressionHandle &,        // exprhdl
-                                                  const CEnfdRewindability *  // per
-  ) const override;
 
   // return true if operator passes through stats obtained from children,
   // this is used when computing stats during costing

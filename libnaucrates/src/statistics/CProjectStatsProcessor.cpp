@@ -18,10 +18,9 @@ using namespace gpopt;
 
 //  return a statistics object for a project operation
 CStatistics *CProjectStatsProcessor::CalcProjStats(CMemoryPool *mp, const CStatistics *input_stats,
-                                                   ULongPtrArray *projection_colids, UlongToIDatumMap *datum_map,
+                                                   const std::vector<uint32_t> &projection_colids,
+                                                   UlongToIDatumMap *datum_map,
                                                    UlongToConstColRefMap *colidToColrefMapForNDVExpr) {
-  GPOS_ASSERT(nullptr != projection_colids);
-
   CColumnFactory *col_factory = COptCtxt::PoctxtFromTLS()->Pcf();
 
   // create hash map from colid -> histogram for resultant structure
@@ -30,9 +29,7 @@ CStatistics *CProjectStatsProcessor::CalcProjStats(CMemoryPool *mp, const CStati
   // column ids on which widths are to be computed
   UlongToDoubleMap *colid_width_mapping = GPOS_NEW(mp) UlongToDoubleMap(mp);
 
-  const ULONG length = projection_colids->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
-    ULONG colid = *(*projection_colids)[ul];
+  for (auto colid : projection_colids) {
     const CHistogram *histogram = input_stats->GetHistogram(colid);
 
     // If histogram doesn't exist for given colid, check if colid exists in mapping

@@ -46,9 +46,6 @@ enum Edxlopid {
   EdxlopLogicalDelete,
   EdxlopLogicalUpdate,
 
-  EdxlopLogicalCTAS,
-  EdxlopPhysicalCTAS,
-
   EdxlopScalarCmp,
   EdxlopScalarDistinct,
   EdxlopScalarIdent,
@@ -130,11 +127,6 @@ enum Edxlopid {
   EdxlopPhysicalNLJoin,
   EdxlopPhysicalHashJoin,
   EdxlopPhysicalMergeJoin,
-  EdxlopPhysicalMotionGather,
-  EdxlopPhysicalMotionBroadcast,
-  EdxlopPhysicalMotionRedistribute,
-  EdxlopPhysicalMotionRoutedDistribute,
-  EdxlopPhysicalMotionRandom,
   EdxlopPhysicalLimit,
   EdxlopPhysicalAgg,
   EdxlopPhysicalSort,

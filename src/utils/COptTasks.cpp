@@ -44,6 +44,7 @@ extern "C" {
 #include "gpopt/translate/CTranslatorQueryToDXL.h"
 #include "gpopt/translate/CTranslatorRelcacheToDXL.h"
 #include "gpopt/translate/CTranslatorUtils.h"
+#include "gpopt/translate/plan_generator.h"
 #include "gpopt/utils/CConstExprEvaluatorProxy.h"
 #include "gpopt/utils/gpdbdefs.h"
 #include "gpopt/xforms/CXformFactory.h"
@@ -165,9 +166,9 @@ SOptContext *SOptContext::Cast(void *ptr) {
 CHAR *COptTasks::CreateMultiByteCharStringFromWCString(const WCHAR *wcstr) {
   GPOS_ASSERT(nullptr != wcstr);
 
-  const ULONG input_len = GPOS_WSZ_LENGTH(wcstr);
-  const ULONG wchar_size = GPOS_SIZEOF(WCHAR);
-  const ULONG max_len = (input_len + 1) * wchar_size;
+  const uint32_t input_len = GPOS_WSZ_LENGTH(wcstr);
+  const uint32_t wchar_size = GPOS_SIZEOF(WCHAR);
+  const uint32_t max_len = (input_len + 1) * wchar_size;
 
   CHAR *str = (CHAR *)gpdb::GPDBAlloc(max_len);
 
@@ -199,10 +200,13 @@ void COptTasks::Execute(void *(*func)(void *), void *func_arg) {
 
   CAutoMemoryPool amp(CAutoMemoryPool::ElcNone);
 
+  auto *xx = (SOptContext *)func_arg;
+
   gpos_exec_params params;
   params.func = func;
   params.arg = func_arg;
   params.stack_start = &params;
+  params.config = xx->config;
   params.error_buffer = err_buf;
   params.error_buffer_size = GPOPT_ERROR_BUFFER_SIZE;
   params.abort_requested = &abort_flag;
@@ -236,21 +240,11 @@ void COptTasks::LogExceptionMessageAndDelete(CHAR *err_buf) {
 //
 //---------------------------------------------------------------------------
 PlannedStmt *COptTasks::ConvertToPlanStmtFromDXL(CMemoryPool *mp, CMDAccessor *md_accessor, const Query *orig_query,
-                                                 const CDXLNode *dxlnode, bool can_set_tag,
-                                                 DistributionHashOpsKind distribution_hashops) {
+                                                 const CDXLNode *dxlnode, bool can_set_tag) {
   GPOS_ASSERT(nullptr != md_accessor);
   GPOS_ASSERT(nullptr != dxlnode);
 
-  /*
-   * Since GPDB 7 (commit 0ae9004), plan node IDs start from 0 in GPDB.
-   * GPDB 6 and lower had plan node IDs starting from 0.
-   */
-  CIdGenerator plan_id_generator(0 /* ulStartId */);
-  CIdGenerator motion_id_generator(1 /* ulStartId */);
-  CIdGenerator param_id_generator(0 /* ulStartId */);
-
-  CContextDXLToPlStmt dxl_to_plan_stmt_ctxt(mp, &plan_id_generator, &motion_id_generator, &param_id_generator,
-                                            distribution_hashops);
+  CContextDXLToPlStmt dxl_to_plan_stmt_ctxt;
 
   // translate DXL -> PlannedStmt
   CTranslatorDXLToPlStmt dxl_to_plan_stmt_translator(mp, md_accessor, &dxl_to_plan_stmt_ctxt);
@@ -275,14 +269,14 @@ COptimizerConfig *COptTasks::CreateOptimizerConfig(CMemoryPool *mp, ICostModel *
   DOUBLE damping_factor_join = (DOUBLE)optimizer_damping_factor_join;
   DOUBLE damping_factor_groupby = (DOUBLE)optimizer_damping_factor_groupby;
 
-  ULONG cte_inlining_cutoff = (ULONG)optimizer_cte_inlining_bound;
-  ULONG join_arity_for_associativity_commutativity = (ULONG)optimizer_join_arity_for_associativity_commutativity;
-  ULONG array_expansion_threshold = (ULONG)optimizer_array_expansion_threshold;
-  ULONG join_order_threshold = (ULONG)optimizer_join_order_threshold;
-  ULONG broadcast_threshold = (ULONG)100000;
-  ULONG push_group_by_below_setop_threshold = (ULONG)optimizer_push_group_by_below_setop_threshold;
-  ULONG xform_bind_threshold = (ULONG)optimizer_xform_bind_threshold;
-  ULONG skew_factor = (ULONG)optimizer_skew_factor;
+  uint32_t cte_inlining_cutoff = (uint32_t)optimizer_cte_inlining_bound;
+  uint32_t join_arity_for_associativity_commutativity = (uint32_t)optimizer_join_arity_for_associativity_commutativity;
+  uint32_t array_expansion_threshold = (uint32_t)optimizer_array_expansion_threshold;
+  uint32_t join_order_threshold = (uint32_t)optimizer_join_order_threshold;
+  uint32_t broadcast_threshold = (uint32_t)100000;
+  uint32_t push_group_by_below_setop_threshold = (uint32_t)optimizer_push_group_by_below_setop_threshold;
+  uint32_t xform_bind_threshold = (uint32_t)optimizer_xform_bind_threshold;
+  uint32_t skew_factor = (uint32_t)optimizer_skew_factor;
 
   return GPOS_NEW(mp) COptimizerConfig(
       GPOS_NEW(mp) CEnumeratorConfig(mp, plan_id, num_samples, cost_threshold),
@@ -334,7 +328,7 @@ void COptTasks::SetCostModelParams(ICostModel *cost_model) {
 //			Generate an instance of optimizer cost model
 //
 //---------------------------------------------------------------------------
-ICostModel *COptTasks::GetCostModel(CMemoryPool *mp, ULONG num_segments) {
+ICostModel *COptTasks::GetCostModel(CMemoryPool *mp, uint32_t num_segments) {
   ICostModel *cost_model = GPOS_NEW(mp) CCostModelGPDB(mp);
 
   SetCostModelParams(cost_model);
@@ -385,7 +379,8 @@ void *COptTasks::OptimizeTask(void *ptr) {
   CBitSet *trace_flags = nullptr;
   CBitSet *enabled_trace_flags = nullptr;
   CBitSet *disabled_trace_flags = nullptr;
-  CDXLNode *plan_dxl = nullptr;
+  void *plan_dxl = nullptr;
+  bool flag = GPOS_CONDIF(enable_new_planner_generation);
 
   IMdIdArray *col_stats = nullptr;
   MdidHashSet *rel_stats = nullptr;
@@ -402,8 +397,8 @@ void *COptTasks::OptimizeTask(void *ptr) {
       // scope for MD accessor
       CMDAccessor mda(mp, CMDCache::Pcache(), default_sysid, relcache_provider);
 
-      ULONG num_segments = gpdb::GetGPSegmentCount();
-      ULONG num_segments_for_costing = 0;
+      uint32_t num_segments = gpdb::GetGPSegmentCount();
+      uint32_t num_segments_for_costing = 0;
       if (0 == num_segments_for_costing) {
         num_segments_for_costing = num_segments;
       }
@@ -423,8 +418,7 @@ void *COptTasks::OptimizeTask(void *ptr) {
       GPOS_ASSERT(nullptr != query_output_dxlnode_array);
 
       // See NoteDistributionPolicyOpclasses() in src/backend/gpopt/translate/CTranslatorQueryToDXL.cpp
-      BOOL use_legacy_opfamilies = (query_to_dxl_translator->GetDistributionHashOpsKind() == DistrUseLegacyHashOps);
-      CAutoTraceFlag atf2(EopttraceUseLegacyOpfamilies, use_legacy_opfamilies);
+      CAutoTraceFlag atf2(EopttraceUseLegacyOpfamilies, false);
       CAutoTraceFlag atf3(EopttracePrintQuery, true);
       CAutoTraceFlag atf4(EopttracePrintPlan, true);
       // CAutoTraceFlag atf5(EopttracePrintMemoAfterExploration, true);
@@ -442,13 +436,23 @@ void *COptTasks::OptimizeTask(void *ptr) {
       plan_dxl = COptimizer::PdxlnOptimize(mp, &mda, query_dxl, query_output_dxlnode_array, cte_dxlnode_array,
                                            expr_evaluator, search_strategy_arr, optimizer_config);
 
-      // translate DXL->PlStmt only when needed
-      if (opt_ctxt->m_should_generate_plan_stmt) {
-        // always use opt_ctxt->m_query->can_set_tag as the query_to_dxl_translator->Pquery() is a mutated Query object
-        // that may not have the correct can_set_tag
-        opt_ctxt->m_plan_stmt = (PlannedStmt *)gpdb::CopyObject(
-            ConvertToPlanStmtFromDXL(mp, &mda, opt_ctxt->m_query, plan_dxl, opt_ctxt->m_query->canSetTag,
-                                     query_to_dxl_translator->GetDistributionHashOpsKind()));
+      if (flag) {
+        auto *plan = (PlanResult *)plan_dxl;
+        auto *plan_stmt = makeNode(PlannedStmt);
+        plan_stmt->planTree = plan->plan;
+        plan_stmt->rtable = plan->rtable;
+        plan_stmt->relationOids = plan->relationOids;
+        plan_stmt->commandType = CMD_SELECT;
+
+        opt_ctxt->m_plan_stmt = plan_stmt;
+      } else {
+        // translate DXL->PlStmt only when needed
+        if (opt_ctxt->m_should_generate_plan_stmt) {
+          // always use opt_ctxt->m_query->can_set_tag as the query_to_dxl_translator->Pquery() is a mutated Query
+          // object that may not have the correct can_set_tag
+          opt_ctxt->m_plan_stmt = (PlannedStmt *)gpdb::CopyObject(ConvertToPlanStmtFromDXL(
+              mp, &mda, opt_ctxt->m_query, (CDXLNode *)plan_dxl, opt_ctxt->m_query->canSetTag));
+        }
       }
 
       CStatisticsConfig *stats_conf = optimizer_config->GetStatsConf();
@@ -464,7 +468,8 @@ void *COptTasks::OptimizeTask(void *ptr) {
       expr_evaluator->Release();
       query_dxl->Release();
       optimizer_config->Release();
-      plan_dxl->Release();
+      if (!flag)
+        ((CDXLNode *)plan_dxl)->Release();
     }
   }
   GPOS_CATCH_EX(ex) {
@@ -474,7 +479,8 @@ void *COptTasks::OptimizeTask(void *ptr) {
     CRefCount::SafeRelease(enabled_trace_flags);
     CRefCount::SafeRelease(disabled_trace_flags);
     CRefCount::SafeRelease(trace_flags);
-    CRefCount::SafeRelease(plan_dxl);
+    if (!flag)
+      CRefCount::SafeRelease(((CDXLNode *)plan_dxl));
     CMDCache::Shutdown();
 
     IErrorContext *errctxt = CTask::Self()->GetErrCtxt();
@@ -515,13 +521,13 @@ void COptTasks::PrintMissingStatsWarning(CMemoryPool *mp, CMDAccessor *md_access
   CWStringDynamic wcstr(mp);
   COstreamString oss(&wcstr);
 
-  const ULONG num_missing_col_stats = col_stats->Size();
-  for (ULONG ul = 0; ul < num_missing_col_stats; ul++) {
+  const uint32_t num_missing_col_stats = col_stats->Size();
+  for (uint32_t ul = 0; ul < num_missing_col_stats; ul++) {
     IMDId *mdid = (*col_stats)[ul];
     CMDIdColStats *mdid_col_stats = CMDIdColStats::CastMdid(mdid);
 
     IMDId *rel_mdid = mdid_col_stats->GetRelMdId();
-    const ULONG pos = mdid_col_stats->Position();
+    const uint32_t pos = mdid_col_stats->Position();
     const IMDRelation *rel = md_accessor->RetrieveRel(rel_mdid);
 
     if (IMDRelation::ErelstorageForeign != rel->RetrieveRelStorageType()) {

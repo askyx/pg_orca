@@ -137,25 +137,6 @@ COrderSpec *CPhysicalTVF::PosRequired(CMemoryPool *,        // mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalTVF::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalTVF::PrsRequired(CMemoryPool *,         // mp,
-                                              CExpressionHandle &,   // exprhdl,
-                                              CRewindabilitySpec *,  // prsRequired,
-                                              ULONG,                 // child_index,
-                                              CDrvdPropArray *,      // pdrgpdpCtxt
-                                              ULONG                  // ulOptReq
-) const {
-  GPOS_ASSERT(!"CPhysicalTVF has no relational children");
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalTVF::PcteRequired
 //
 //	@doc:
@@ -204,26 +185,6 @@ COrderSpec *CPhysicalTVF::PosDerive(CMemoryPool *mp,
   return GPOS_NEW(mp) COrderSpec(mp);
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalTVF::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalTVF::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  // TODO: shardikar; If the executor materializes the function results, aren't
-  // volatile functions rewindable? Or should they be rescannable and
-  // re-executed every time?
-  if (IMDFunction::EfsVolatile == exprhdl.DeriveFunctionProperties()->Efs()) {
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRescannable, CRewindabilitySpec::EmhtNoMotion);
-  }
-
-  // TVF scan materializes the results of its execution, and so is rewindable.
-  return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindable, CRewindabilitySpec::EmhtNoMotion);
-}
-
 // derive partition propagation
 CPartitionPropagationSpec *CPhysicalTVF::PppsDerive(CMemoryPool *mp, CExpressionHandle &) const {
   return GPOS_NEW(mp) CPartitionPropagationSpec(mp);
@@ -262,25 +223,3 @@ CEnfdProp::EPropEnforcingType CPhysicalTVF::EpetOrder(CExpressionHandle &,  // e
 
   return CEnfdProp::EpetRequired;
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalTVF::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalTVF::EpetRewindability(CExpressionHandle &exprhdl,
-                                                              const CEnfdRewindability *per) const {
-  // get rewindability delivered by the TVF node
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
-    // required distribution is already provided
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  return CEnfdProp::EpetRequired;
-}
-
-// EOF

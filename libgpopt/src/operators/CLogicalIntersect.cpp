@@ -134,17 +134,12 @@ IStatistics *CLogicalIntersect::PstatsDerive(CMemoryPool *mp, CExpressionHandle 
   IStatistics *pstatsIntersectAll =
       CLogicalIntersectAll::PstatsDerive(mp, exprhdl, m_pdrgpdrgpcrInput, output_colrefsets);
 
-  // computed columns
-  ULongPtrArray *pdrgpulComputedCols = GPOS_NEW(mp) ULongPtrArray(mp);
-
   IStatistics *stats =
       CLogicalGbAgg::PstatsDerive(mp, pstatsIntersectAll,
                                   (*m_pdrgpdrgpcrInput)[0],  // we group by the columns of the first child
-                                  pdrgpulComputedCols,       // no computed columns for set ops
+                                  {},                        // no computed columns for set ops
                                   nullptr                    // no keys, use all grouping cols
       );
-  // clean up
-  pdrgpulComputedCols->Release();
   pstatsIntersectAll->Release();
   output_colrefsets->Release();
 

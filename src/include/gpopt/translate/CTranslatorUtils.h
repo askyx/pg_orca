@@ -54,7 +54,6 @@ class CDXLTranslateContext;
 namespace gpdxl {
 using namespace gpopt;
 
-enum DistributionHashOpsKind { DistrHashOpsNotDeterminedYet, DistrUseDefaultHashOps, DistrUseLegacyHashOps };
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -224,10 +223,6 @@ class CTranslatorUtils {
 
   // extract a matching target entry that is a grouping column
   static TargetEntry *GetGroupingColumnTargetEntry(Node *node, List *group_clause_list, List *target_list);
-
-  // convert a list of column ids to a list of attribute numbers using
-  // the provided context with mappings
-  static List *ConvertColidToAttnos(ULongPtrArray *pdrgpul, CDXLTranslateContext *dxl_translate_ctxt);
 
   // parse string value into a Long Integer
   static LINT GetLongFromStr(const CWStringBase *wcstr);

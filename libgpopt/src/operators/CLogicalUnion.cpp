@@ -122,17 +122,12 @@ IStatistics *CLogicalUnion::PstatsDerive(CMemoryPool *mp, CExpressionHandle &exp
   CColRef2dArray *pdrgpdrgpcrInput = CLogicalSetOp::PopConvert(exprhdl.Pop())->PdrgpdrgpcrInput();
   IStatistics *pstatsUnionAll = CLogicalUnionAll::PstatsDeriveUnionAll(mp, exprhdl, pdrgpcrOutput, pdrgpdrgpcrInput);
 
-  // computed columns
-  ULongPtrArray *pdrgpulComputedCols = GPOS_NEW(mp) ULongPtrArray(mp);
-
   IStatistics *stats = CLogicalGbAgg::PstatsDerive(mp, pstatsUnionAll,
-                                                   m_pdrgpcrOutput,      // we group by the output columns
-                                                   pdrgpulComputedCols,  // no computed columns for set ops
-                                                   nullptr               // no keys, use all grouping cols
+                                                   m_pdrgpcrOutput,  // we group by the output columns
+                                                   {},               // no computed columns for set ops
+                                                   nullptr           // no keys, use all grouping cols
   );
 
-  // clean up
-  pdrgpulComputedCols->Release();
   pstatsUnionAll->Release();
 
   return stats;

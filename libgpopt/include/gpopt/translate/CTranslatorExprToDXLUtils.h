@@ -107,7 +107,7 @@ class CTranslatorExprToDXLUtils {
 
   // create a scalar identifier node for the given column reference
   static CDXLNode *PdxlnIdent(CMemoryPool *mp, ColRefToDXLNodeMap *phmcrdxlnSubplans,
-                              ColRefToDXLNodeMap *phmcrdxlnIndexLookup, ColRefToUlongMap *phmcrulPartColId,
+                              ColRefToDXLNodeMap *phmcrdxlnIndexLookup, 
                               const CColRef *colref);
 
   // replace subplan entry in the given map with a dxl column reference
@@ -141,8 +141,7 @@ class CTranslatorExprToDXLUtils {
   static ColRefToUlongMap *PhmcrulColIndex(CMemoryPool *mp, CColRefArray *colref_array);
 
   // set statistics of the operator
-  static void SetStats(CMemoryPool *mp, CMDAccessor *md_accessor, CDXLNode *dxlnode, const IStatistics *stats,
-                       BOOL fRoot);
+  static void SetStats(CMemoryPool *mp, CMDAccessor *md_accessor, CDXLNode *dxlnode, const IStatistics *stats);
 
   // is the aggregate a local hash aggregate that is safe to stream
   static BOOL FLocalHashAggStreamSafe(CExpression *pexprAgg);
@@ -164,16 +163,6 @@ class CTranslatorExprToDXLUtils {
 
   // check if given dxl node has any operator in the given list
   static BOOL FHasDXLOp(const CDXLNode *dxlnode, const gpdxl::Edxlopid *peopid, ULONG ulOps);
-
-  // check if the project lists contains subplans with broadcast motion
-  static BOOL FProjListContainsSubplanWithBroadCast(CDXLNode *pdxlnPrLNew);
-
-  // check if the dxl node imposes a motion hazard
-  static BOOL FMotionHazard(CMemoryPool *mp, CDXLNode *dxlnode, const gpdxl::Edxlopid *peopid, ULONG ulOps,
-                            CBitSet *pbsPrjCols);
-
-  // check if the dxl operator does not impose a motion hazard
-  static BOOL FMotionHazardSafeOp(CDXLNode *dxlnode);
 
   // extract the column ids of the ident from project list
   static void ExtractIdentColIds(CDXLNode *dxlnode, CBitSet *pbs);

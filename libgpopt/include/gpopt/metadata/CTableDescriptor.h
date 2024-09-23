@@ -81,19 +81,19 @@ class CTableDescriptor : public CRefCount {
   CBitSetArray *m_pdrgpbsKeys;
 
   // id of user the table needs to be accessed with
-  ULONG m_execute_as_user_id;
+  uint32_t m_execute_as_user_id;
 
   // lockmode from the parser
   INT m_lockmode;
 
   // acl mode from the parser
-  ULONG m_acl_mode;
+  uint32_t m_acl_mode;
 
   // identifier of query to which current table belongs.
   // This field is used for assigning current table entry with
   // target one within DML operation. If descriptor doesn't point
   // to the target (result) relation it has value UNASSIGNED_QUERYID
-  ULONG m_assigned_query_id_for_target_rel;
+  uint32_t m_assigned_query_id_for_target_rel;
 
  public:
   CTableDescriptor(const CTableDescriptor &) = delete;
@@ -101,8 +101,8 @@ class CTableDescriptor : public CRefCount {
   // ctor
   CTableDescriptor(CMemoryPool *, IMDId *mdid, const CName &, BOOL convert_hash_to_random,
                    IMDRelation::Ereldistrpolicy rel_distr_policy, IMDRelation::Erelstoragetype erelstoragetype,
-                   IMDRelation::Erelaoversion erelaoversion, ULONG ulExecuteAsUser, INT lockmode, ULONG acl_mode,
-                   ULONG assigned_query_id_for_target_rel);
+                   IMDRelation::Erelaoversion erelaoversion, uint32_t ulExecuteAsUser, INT lockmode, uint32_t acl_mode,
+                   uint32_t assigned_query_id_for_target_rel);
 
   // dtor
   ~CTableDescriptor() override;
@@ -111,17 +111,17 @@ class CTableDescriptor : public CRefCount {
   void AddColumn(CColumnDescriptor *);
 
   // add the column at the specified position to the list of distribution columns
-  void AddDistributionColumn(ULONG ulPos, IMDId *opfamily);
+  void AddDistributionColumn(uint32_t ulPos, IMDId *opfamily);
 
   // add the column at the specified position to the list of partition columns
-  void AddPartitionColumn(ULONG ulPos);
+  void AddPartitionColumn(uint32_t ulPos);
 
   // add a keyset
   BOOL FAddKeySet(CBitSet *pbs);
 
   // accessors
-  ULONG ColumnCount() const;
-  const CColumnDescriptor *Pcoldesc(ULONG) const;
+  uint32_t ColumnCount() const;
+  const CColumnDescriptor *Pcoldesc(uint32_t) const;
 
   // mdid accessor
   IMDId *MDId() const { return m_mdid; }
@@ -130,16 +130,14 @@ class CTableDescriptor : public CRefCount {
   const CName &Name() const { return m_name; }
 
   // execute as user accessor
-  ULONG
-  GetExecuteAsUserId() const { return m_execute_as_user_id; }
+  uint32_t GetExecuteAsUserId() const { return m_execute_as_user_id; }
 
   INT LockMode() const { return m_lockmode; }
 
-  ULONG
-  GetAclMode() const { return m_acl_mode; }
+  uint32_t GetAclMode() const { return m_acl_mode; }
 
   // return the position of a particular attribute (identified by attno)
-  ULONG GetAttributePosition(INT attno) const;
+  uint32_t GetAttributePosition(INT attno) const;
 
   // column descriptor accessor
   CColumnDescriptorArray *Pdrgpcoldesc() const { return m_pdrgpcoldesc; }
@@ -174,22 +172,21 @@ class CTableDescriptor : public CRefCount {
 
   // helper function for finding the index of a column descriptor in
   // an array of column descriptors
-  static ULONG UlPos(const CColumnDescriptor *, const CColumnDescriptorArray *);
+  static uint32_t UlPos(const CColumnDescriptor *, const CColumnDescriptorArray *);
 
   IOstream &OsPrint(IOstream &os) const;
 
   // returns number of indices
-  ULONG IndexCount();
+  uint32_t IndexCount();
 
   BOOL IsAORowOrColTable() const {
     return m_erelstoragetype == IMDRelation::ErelstorageAppendOnlyCols ||
            m_erelstoragetype == IMDRelation::ErelstorageAppendOnlyRows;
   }
 
-  ULONG
-  GetAssignedQueryIdForTargetRel() const { return m_assigned_query_id_for_target_rel; }
+  uint32_t GetAssignedQueryIdForTargetRel() const { return m_assigned_query_id_for_target_rel; }
 
-  static ULONG HashValue(const CTableDescriptor *ptabdesc);
+  static uint32_t HashValue(const CTableDescriptor *ptabdesc);
 
   static BOOL Equals(const CTableDescriptor *ptabdescLeft, const CTableDescriptor *ptabdescRight);
 

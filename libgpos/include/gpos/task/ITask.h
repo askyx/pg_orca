@@ -17,6 +17,7 @@
 
 // trace flag macro definitions
 #define GPOS_FTRACE(x) ITask::Self()->IsTraceSet(x)
+#define GPOS_CONDIF(x) ITask::Self()->GetTaskCtxt()->config->x
 #define GPOS_SET_TRACE(x) (void)ITask::Self()->SetTrace(x, true /*value*/)
 #define GPOS_UNSET_TRACE(x) (void)ITask::Self()->SetTrace(x, false /*value*/)
 

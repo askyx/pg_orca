@@ -88,25 +88,6 @@ COrderSpec *CPhysicalCTEConsumer::PosRequired(CMemoryPool *,        // mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalCTEConsumer::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalCTEConsumer::PrsRequired(CMemoryPool *,         // mp,
-                                                      CExpressionHandle &,   // exprhdl,
-                                                      CRewindabilitySpec *,  // prsRequired,
-                                                      ULONG,                 // child_index,
-                                                      CDrvdPropArray *,      // pdrgpdpCtxt
-                                                      ULONG                  // ulOptReq
-) const {
-  GPOS_ASSERT(!"CPhysicalCTEConsumer has no relational children");
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalCTEConsumer::PcteRequired
 //
 //	@doc:
@@ -136,22 +117,6 @@ COrderSpec *CPhysicalCTEConsumer::PosDerive(CMemoryPool *,       // mp
                                             CExpressionHandle &  // exprhdl
 ) const {
   GPOS_ASSERT(!"Unexpected call to CTE consumer order property derivation");
-
-  return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalCTEConsumer::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalCTEConsumer::PrsDerive(CMemoryPool *,       // mp
-                                                    CExpressionHandle &  // exprhdl
-) const {
-  GPOS_ASSERT(!"Unexpected call to CTE consumer rewindability property derivation");
 
   return nullptr;
 }
@@ -208,26 +173,6 @@ CEnfdProp::EPropEnforcingType CPhysicalCTEConsumer::EpetOrder(CExpressionHandle 
 
   COrderSpec *pos = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Pos();
   if (peo->FCompatible(pos)) {
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  return CEnfdProp::EpetRequired;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalCTEConsumer::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalCTEConsumer::EpetRewindability(CExpressionHandle &exprhdl,
-                                                                      const CEnfdRewindability *per) const {
-  GPOS_ASSERT(nullptr != per);
-
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
     return CEnfdProp::EpetUnnecessary;
   }
 

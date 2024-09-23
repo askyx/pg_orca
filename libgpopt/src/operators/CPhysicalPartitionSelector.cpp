@@ -124,24 +124,6 @@ COrderSpec *CPhysicalPartitionSelector::PosRequired(CMemoryPool *mp, CExpression
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalPartitionSelector::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalPartitionSelector::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                            CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                            CDrvdPropArray *,  // pdrgpdpCtxt
-                                                            ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalPartitionSelector::PcteRequired
 //
 //	@doc:
@@ -201,18 +183,6 @@ COrderSpec *CPhysicalPartitionSelector::PosDerive(CMemoryPool *,  // mp
   return PosDerivePassThruOuter(exprhdl);
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalPartitionSelector::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalPartitionSelector::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  return PrsDerivePassThruOuter(mp, exprhdl);
-}
-
 CPartitionPropagationSpec *CPhysicalPartitionSelector::PppsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
   CPartitionPropagationSpec *pps_result = GPOS_NEW(mp) CPartitionPropagationSpec(mp);
   CPartitionPropagationSpec *pps_child = exprhdl.Pdpplan(0 /* child_index */)->Ppps();
@@ -225,27 +195,6 @@ CPartitionPropagationSpec *CPhysicalPartitionSelector::PppsDerive(CMemoryPool *m
   selector_ids->Release();
 
   return pps_result;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalPartitionSelector::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalPartitionSelector::EpetRewindability(CExpressionHandle &exprhdl,
-                                                                            const CEnfdRewindability *per) const {
-  // get rewindability delivered by the node
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
-    // required rewindability is already provided
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  // always force spool to be on top of filter
-  return CEnfdProp::EpetRequired;
 }
 
 //---------------------------------------------------------------------------

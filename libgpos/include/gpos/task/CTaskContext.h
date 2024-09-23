@@ -13,15 +13,18 @@
 #ifndef GPOS_CTaskContext_H
 #define GPOS_CTaskContext_H
 
+#include "gpopt/config/config.h"
 #include "gpos/base.h"
 #include "gpos/common/CBitSet.h"
 
+namespace gpdxl {
+class OptConfig;
+}
+
 namespace gpos {
 class CTaskContext {
-  // trace flag iterator needs access to trace vector
-  friend class CTraceFlagIter;
 
- private:
+ public:
   // trace vector
   CBitSet *m_bitset;
 
@@ -34,7 +37,8 @@ class CTaskContext {
   // locale of messages
   ELocale m_locale;
 
- public:
+  gpdxl::OptConfig *config;
+
   // basic ctor; used only for the main worker
   CTaskContext(CMemoryPool *mp);
 

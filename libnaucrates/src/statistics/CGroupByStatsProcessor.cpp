@@ -20,7 +20,8 @@ using namespace gpopt;
 
 // return statistics object after Group by computation
 CStatistics *CGroupByStatsProcessor::CalcGroupByStats(CMemoryPool *mp, const CStatistics *input_stats,
-                                                      ULongPtrArray *GCs, ULongPtrArray *aggs, CBitSet *keys) {
+                                                      const std::vector<uint32_t> &GCs,
+                                                      const std::vector<uint32_t> &aggs, CBitSet *keys) {
   // create hash map from colid -> histogram for resultant structure
   UlongToHistogramMap *col_histogram_mapping = GPOS_NEW(mp) UlongToHistogramMap(mp);
 

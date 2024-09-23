@@ -44,6 +44,7 @@ struct gpos_exec_params {
   void *arg;             /* task argument */
   void *result;          /* task result */
   void *stack_start;     /* start of current thread's stack */
+  void *config;
   char *error_buffer;    /* buffer used to store error messages */
   int error_buffer_size; /* size of error message buffer */
   bool *abort_requested; /* flag indicating if abort is requested */

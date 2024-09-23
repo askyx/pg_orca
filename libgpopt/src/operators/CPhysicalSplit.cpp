@@ -152,24 +152,6 @@ CColRefSet *CPhysicalSplit::PcrsRequired(CMemoryPool *mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalSplit::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalSplit::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                CDrvdPropArray *,  // pdrgpdpCtxt
-                                                ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalSplit::PcteRequired
 //
 //	@doc:
@@ -220,18 +202,6 @@ BOOL CPhysicalSplit::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *p
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalSplit::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalSplit::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  return PrsDerivePassThruOuter(mp, exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalSplit::HashValue
 //
 //	@doc:
@@ -266,27 +236,6 @@ BOOL CPhysicalSplit::Matches(COperator *pop) const {
   }
 
   return false;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalSplit::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalSplit::EpetRewindability(CExpressionHandle &exprhdl,
-                                                                const CEnfdRewindability *per) const {
-  // get rewindability delivered by the split node
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
-    // required rewindability is already provided
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  // always force spool to be on top of split
-  return CEnfdProp::EpetRequired;
 }
 
 //---------------------------------------------------------------------------

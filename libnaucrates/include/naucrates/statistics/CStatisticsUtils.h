@@ -196,7 +196,7 @@ class CStatisticsUtils {
 
   // compute the cumulative number of groups for the given set of grouping columns
   static CDouble Groups(CMemoryPool *mp, IStatistics *stats, const CStatisticsConfig *stats_config,
-                        ULongPtrArray *grouping_cols, CBitSet *keys);
+                        const std::vector<uint32_t> &grouping_cols, CBitSet *keys);
 
   // return the default number of distinct values
   static CDouble DefaultDistinctVals(CDouble rows) {
@@ -209,7 +209,7 @@ class CStatisticsUtils {
 
   // return the set of grouping columns for statistics computation;
   static CColRefSet *MakeGroupByColsForStats(
-      CMemoryPool *mp, const ULongPtrArray *grouping_columns,
+      CMemoryPool *mp, const std::vector<uint32_t> &grouping_columns,
       CColRefSet *computed_groupby_cols  // output set of grouping columns that are computed attributes
   );
 

@@ -44,7 +44,8 @@ CTaskContext::CTaskContext(CMemoryPool *mp, const CTaskContext &task_ctxt)
     : m_bitset(nullptr),
       m_log_out(task_ctxt.GetOutputLogger()),
       m_log_err(task_ctxt.GetErrorLogger()),
-      m_locale(task_ctxt.Locale()) {
+      m_locale(task_ctxt.Locale()),
+      config(task_ctxt.config) {
   // allocate bitset and union separately to guard against leaks under OOM
   CAutoRef<CBitSet> bitset;
 

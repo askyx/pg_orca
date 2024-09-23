@@ -116,40 +116,6 @@ COrderSpec *CPhysicalSort::PosRequired(CMemoryPool *mp,
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalSort::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalSort::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                               CRewindabilitySpec *,  // prsRequired,
-                                               ULONG
-#ifdef GPOS_DEBUG
-                                                   child_index
-#endif  // GPOPS_DEBUG
-                                               ,
-                                               CDrvdPropArray *,  // pdrgpdpCtxt
-                                               ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  // Sort establishes rewindability on its own. It does not require motion
-  // hazard handling since it is inherently blocking. However, if it contains
-  // outer refs in its subtree, a Rescannable request should be sent, so that
-  // an appropriate enforcer is added for any non-rescannable ops below (e.g
-  // the subtree contains a Filter with outer refs on top of a Motion op, a
-  // Spool op needs to be added above the Motion).
-  // NB: This logic should be implemented in any materializing ops (e.g Sort & Spool)
-  if (exprhdl.HasOuterRefs(0)) {
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRescannable, CRewindabilitySpec::EmhtNoMotion);
-  } else {
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, CRewindabilitySpec::EmhtNoMotion);
-  }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalSort::PcteRequired
 //
 //	@doc:
@@ -202,21 +168,6 @@ COrderSpec *CPhysicalSort::PosDerive(CMemoryPool *,       // mp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalSort::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalSort::PrsDerive(CMemoryPool *mp,
-                                             CExpressionHandle &  // exprhdl
-) const {
-  // rewindability of output is always true
-  return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtMarkRestore, CRewindabilitySpec::EmhtNoMotion);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalSort::EpetOrder
 //
 //	@doc:
@@ -236,21 +187,6 @@ CEnfdProp::EPropEnforcingType CPhysicalSort::EpetOrder(CExpressionHandle &,  // 
   // required order is incompatible with the order established by the
   // sort operator, prohibit adding another sort operator on top
   return CEnfdProp::EpetProhibited;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalSort::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalSort::EpetRewindability(CExpressionHandle &,        // exprhdl
-                                                               const CEnfdRewindability *  // per
-) const {
-  // no need for enforcing rewindability on output
-  return CEnfdProp::EpetUnnecessary;
 }
 
 //---------------------------------------------------------------------------

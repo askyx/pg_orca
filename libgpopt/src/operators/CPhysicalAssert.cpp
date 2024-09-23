@@ -11,7 +11,6 @@
 
 #include "gpopt/operators/CPhysicalAssert.h"
 
-#include "gpopt/base/CRewindabilitySpec.h"
 #include "gpopt/operators/CExpressionHandle.h"
 #include "gpopt/operators/CPredicateUtils.h"
 #include "gpos/base.h"
@@ -87,24 +86,6 @@ COrderSpec *CPhysicalAssert::PosRequired(CMemoryPool *mp, CExpressionHandle &exp
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalAssert::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalAssert::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                 CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                 CDrvdPropArray *,  // pdrgpdpCtxt
-                                                 ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalAssert::PcteRequired
 //
 //	@doc:
@@ -137,18 +118,6 @@ CCTEReq *CPhysicalAssert::PcteRequired(CMemoryPool *,        // mp,
 COrderSpec *CPhysicalAssert::PosDerive(CMemoryPool *,  // mp
                                        CExpressionHandle &exprhdl) const {
   return PosDerivePassThruOuter(exprhdl);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalAssert::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalAssert::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  return PrsDerivePassThruOuter(mp, exprhdl);
 }
 
 //---------------------------------------------------------------------------
@@ -200,27 +169,6 @@ CEnfdProp::EPropEnforcingType CPhysicalAssert::EpetOrder(CExpressionHandle &,  /
   GPOS_ASSERT(!peo->PosRequired()->IsEmpty());
 
   // always force sort to be on top of assert
-  return CEnfdProp::EpetRequired;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalAssert::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalAssert::EpetRewindability(CExpressionHandle &exprhdl,
-                                                                 const CEnfdRewindability *per) const {
-  // get rewindability delivered by the assert node
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
-    // required rewindability is already provided
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  // always force spool to be on top of assert
   return CEnfdProp::EpetRequired;
 }
 

@@ -36,7 +36,6 @@
 
 namespace gpdxl {
 class CDXLTableDescr;
-class CDXLLogicalCTAS;
 }  // namespace gpdxl
 
 class CColumnFactory;
@@ -186,9 +185,6 @@ class CTranslatorDXLToExpr {
   // translate a DXL logical update into expression
   CExpression *PexprLogicalUpdate(const CDXLNode *dxlnode);
 
-  // translate a DXL logical CTAS into an INSERT expression
-  CExpression *PexprLogicalCTAS(const CDXLNode *dxlnode);
-
   // translate existential subquery
   CExpression *PexprScalarSubqueryExistential(Edxlopid edxlopid, CDXLNode *pdxlnLogicalChild);
 
@@ -334,12 +330,6 @@ class CTranslatorDXLToExpr {
 
   // construct a table descriptor from DXL
   CTableDescriptor *Ptabdesc(CDXLTableDescr *table_descr);
-
-  // construct a table descriptor for a CTAS operator
-  CTableDescriptor *PtabdescFromCTAS(CDXLLogicalCTAS *pdxlopCTAS);
-
-  // register MD provider for serving MD relation entry for CTAS
-  void RegisterMDRelationCtas(CDXLLogicalCTAS *pdxlopCTAS);
 
   // create an array of column references from an array of dxl column references
   CColRefArray *Pdrgpcr(const CDXLColDescrArray *dxl_col_descr_array);

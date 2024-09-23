@@ -314,21 +314,14 @@ IOstream &CColRefSet::OsPrint(IOstream &os, ULONG ulLenMax) const {
   return os;
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CColRefSet::ExtractColIds
-//
-//	@doc:
-//		Extract array of column ids from colrefset
-//
-//---------------------------------------------------------------------------
-void CColRefSet::ExtractColIds(CMemoryPool *mp, ULongPtrArray *colids) const {
+std::vector<uint32_t> CColRefSet::ExtractColIds() const {
+  std::vector<uint32_t> colids;
   CColRefSetIter crsi(*this);
   while (crsi.Advance()) {
     CColRef *colref = crsi.Pcr();
-    ULONG colid = colref->Id();
-    colids->Append(GPOS_NEW(mp) ULONG(colid));
+    colids.push_back(colref->Id());
   }
+  return colids;
 }
 
 //---------------------------------------------------------------------------

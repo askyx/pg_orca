@@ -186,16 +186,11 @@ CQueryContext *CQueryContext::PqcGenerate(CMemoryPool *mp, CExpression *pexpr,
   BOOL fDML = CUtils::FLogicalDML(pexpr->Pop());
   poptctxt->MarkDMLQuery(fDML);
 
-  // By default, no rewindability requirement needs to be satisfied at the top level
-  CRewindabilitySpec *prs =
-      GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, CRewindabilitySpec::EmhtNoMotion);
-
   // No partition propagation required at the top
   CPartitionPropagationSpec *ppps = GPOS_NEW(mp) CPartitionPropagationSpec(mp);
 
   // Ensure order, distribution and rewindability meet 'satisfy' matching at the top level
   CEnfdOrder *peo = GPOS_NEW(mp) CEnfdOrder(pos, CEnfdOrder::EomSatisfy);
-  CEnfdRewindability *per = GPOS_NEW(mp) CEnfdRewindability(prs, CEnfdRewindability::ErmSatisfy);
   CEnfdPartitionPropagation *pepp =
       GPOS_NEW(mp) CEnfdPartitionPropagation(ppps, CEnfdPartitionPropagation::EppmSatisfy);
 
@@ -206,7 +201,7 @@ CQueryContext *CQueryContext::PqcGenerate(CMemoryPool *mp, CExpression *pexpr,
   // constructed later based on derived relation properties (CPartInfo) by
   // CReqdPropPlan::InitReqdPartitionPropagation().
 
-  CReqdPropPlan *prpp = GPOS_NEW(mp) CReqdPropPlan(pcrs, peo, per, pepp, pcter);
+  CReqdPropPlan *prpp = GPOS_NEW(mp) CReqdPropPlan(pcrs, peo, pepp, pcter);
 
   // Finally, create the CQueryContext
   pdrgpmdname->AddRef();

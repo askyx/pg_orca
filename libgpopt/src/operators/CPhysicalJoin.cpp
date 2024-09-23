@@ -168,68 +168,6 @@ BOOL CPhysicalJoin::FOuterProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSe
   return pcrsOutput->ContainsAll(pcrsRequired);
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalJoin::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalJoin::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  CRewindabilitySpec *prsOuter = exprhdl.Pdpplan(0 /*child_index*/)->Prs();
-  GPOS_ASSERT(nullptr != prsOuter);
-
-  CRewindabilitySpec *prsInner = exprhdl.Pdpplan(1 /*child_index*/)->Prs();
-  GPOS_ASSERT(nullptr != prsInner);
-
-  CRewindabilitySpec::EMotionHazardType motion_hazard = (prsOuter->HasMotionHazard() || prsInner->HasMotionHazard())
-                                                            ? CRewindabilitySpec::EmhtMotion
-                                                            : CRewindabilitySpec::EmhtNoMotion;
-
-  // TODO: shardikar; Implement a separate PrsDerive() for HashJoins since it
-  // is different from NLJ; the inner of a HJ child is rewindable (due to a
-  // Hash op on the inner side)
-
-  // If both children are rewindable, the join is also rewinable
-  if (prsOuter->IsRewindable() && prsInner->IsRewindable()) {
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRewindable, motion_hazard);
-  }
-
-  // If either child is ErtNone (neither rewindable, rescannable nor mark-restore), then the join is also ErtNone
-  else if (prsOuter->Ert() == CRewindabilitySpec::ErtNone || prsInner->Ert() == CRewindabilitySpec::ErtNone) {
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, motion_hazard);
-  }
-
-  // If the children are in any other combination, e.g (rescannable, rewindable, markrestore) etc,
-  // derive rescannable for the join
-  else {
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRescannable, motion_hazard);
-  }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalJoin::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalJoin::EpetRewindability(CExpressionHandle &exprhdl,
-                                                               const CEnfdRewindability *per) const {
-  // get rewindability delivered by the join node
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-
-  if (per->FCompatible(prs)) {
-    // required rewindability will be established by the join operator
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  // required rewindability will be enforced on join's output
-  return CEnfdProp::EpetRequired;
-}
-
 // Do each of the given predicate children use columns from a different
 // join child? For this method to return true, either:
 //   - pexprPredInner uses columns from pexprInner and pexprPredOuter uses
@@ -489,37 +427,4 @@ CPhysicalJoin::UlDistrRequestsForCorrelatedJoin() {
   // Req(1): Request outer child for ANY distribution, and then match it on the inner child
 
   return 2;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalJoin::PrsRequiredCorrelatedJoin
-//
-//	@doc:
-//		Helper to compute required rewindability of correlated join's children
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalJoin::PrsRequiredCorrelatedJoin(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                             CRewindabilitySpec *prsRequired, ULONG child_index,
-                                                             CDrvdPropArray *pdrgpdpCtxt,
-                                                             ULONG  // ulOptReq
-) {
-  GPOS_ASSERT(3 == exprhdl.Arity());
-  GPOS_ASSERT(2 > child_index);
-  GPOS_ASSERT(CUtils::FCorrelatedNLJoin(exprhdl.Pop()));
-
-  if (1 == child_index) {
-    CRewindabilitySpec *prsOuter = CDrvdPropPlan::Pdpplan((*pdrgpdpCtxt)[0 /*outer child*/])->Prs();
-
-    CRewindabilitySpec::EMotionHazardType motion_hazard =
-        GPOS_FTRACE(EopttraceMotionHazardHandling) && (prsOuter->HasMotionHazard() || prsRequired->HasMotionHazard())
-            ? CRewindabilitySpec::EmhtMotion
-            : CRewindabilitySpec::EmhtNoMotion;
-
-    return GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtRescannable, motion_hazard);
-  }
-
-  GPOS_ASSERT(0 == child_index);
-
-  return PrsPassThru(mp, exprhdl, prsRequired, 0 /*child_index*/);
 }

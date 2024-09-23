@@ -161,29 +161,6 @@ CColRefSet *CPhysicalAgg::PcrsRequiredAgg(CMemoryPool *mp, CExpressionHandle &ex
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CPhysicalAgg::PrsRequired
-//
-//	@doc:
-//		Compute required rewindability of the n-th child
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalAgg::PrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                              CRewindabilitySpec *prsRequired, ULONG child_index,
-                                              CDrvdPropArray *,  // pdrgpdpCtxt
-                                              ULONG              // ulOptReq
-) const {
-  GPOS_ASSERT(0 == child_index);
-
-  if (prsRequired->IsOriginNLJoin()) {
-    CRewindabilitySpec *prs = GPOS_NEW(mp) CRewindabilitySpec(CRewindabilitySpec::ErtNone, prsRequired->Emht());
-    return prs;
-  }
-
-  return PrsPassThru(mp, exprhdl, prsRequired, child_index);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CPhysicalAgg::PcteRequired
 //
 //	@doc:
@@ -230,18 +207,6 @@ BOOL CPhysicalAgg::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcr
   pcrs->Release();
 
   return fProvidesCols;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalAgg::PrsDerive
-//
-//	@doc:
-//		Derive rewindability
-//
-//---------------------------------------------------------------------------
-CRewindabilitySpec *CPhysicalAgg::PrsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  return PrsDerivePassThruOuter(mp, exprhdl);
 }
 
 //---------------------------------------------------------------------------
@@ -296,26 +261,6 @@ BOOL CPhysicalAgg::Matches(COperator *pop) const {
   }
 
   return false;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalAgg::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalAgg::EpetRewindability(CExpressionHandle &exprhdl,
-                                                              const CEnfdRewindability *per) const {
-  // get rewindability delivered by the Agg node
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
-    // required rewindability is already provided
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  return CEnfdProp::EpetRequired;
 }
 
 BOOL CPhysicalAgg::IsTwoStageScalarDQA() const {

@@ -47,23 +47,3 @@ BOOL CPhysicalForeignScan::Matches(COperator *pop) const {
   return m_ptabdesc->MDId()->Equals(popForeignScan->Ptabdesc()->MDId()) &&
          m_pdrgpcrOutput->Equals(popForeignScan->PdrgpcrOutput());
 }
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CPhysicalForeignScan::EpetRewindability
-//
-//	@doc:
-//		Return the enforcing type for rewindability property based on this operator
-//
-//---------------------------------------------------------------------------
-CEnfdProp::EPropEnforcingType CPhysicalForeignScan::EpetRewindability(CExpressionHandle &exprhdl,
-                                                                      const CEnfdRewindability *per) const {
-  CRewindabilitySpec *prs = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->Prs();
-  if (per->FCompatible(prs)) {
-    return CEnfdProp::EpetUnnecessary;
-  }
-
-  return CEnfdProp::EpetRequired;
-}
-
-// EOF

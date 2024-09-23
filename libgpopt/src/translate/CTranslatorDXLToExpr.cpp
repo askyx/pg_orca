@@ -75,8 +75,6 @@
 #include "gpopt/operators/CScalarValuesList.h"
 #include "gpopt/translate/CTranslatorExprToDXLUtils.h"
 #include "gpos/common/CAutoTimer.h"
-#include "naucrates/dxl/operators/CDXLCtasStorageOptions.h"
-#include "naucrates/dxl/operators/CDXLLogicalCTAS.h"
 #include "naucrates/dxl/operators/CDXLLogicalCTEAnchor.h"
 #include "naucrates/dxl/operators/CDXLLogicalCTEConsumer.h"
 #include "naucrates/dxl/operators/CDXLLogicalCTEProducer.h"
@@ -121,7 +119,6 @@
 #include "naucrates/exception.h"
 #include "naucrates/md/CMDArrayCoerceCastGPDB.h"
 #include "naucrates/md/CMDProviderMemory.h"
-#include "naucrates/md/CMDRelationCtasGPDB.h"
 #include "naucrates/md/IMDAggregate.h"
 #include "naucrates/md/IMDCast.h"
 #include "naucrates/md/IMDFunction.h"
@@ -421,8 +418,6 @@ CExpression *CTranslatorDXLToExpr::PexprLogical(const CDXLNode *dxlnode) {
       return CTranslatorDXLToExpr::PexprLogicalDelete(dxlnode);
     case EdxlopLogicalUpdate:
       return CTranslatorDXLToExpr::PexprLogicalUpdate(dxlnode);
-    case EdxlopLogicalCTAS:
-      return CTranslatorDXLToExpr::PexprLogicalCTAS(dxlnode);
     default:
       GPOS_RAISE(gpopt::ExmaGPOPT, gpopt::ExmiUnsupportedOp, dxl_op->GetOpNameStr()->GetBuffer());
       return nullptr;
@@ -1288,31 +1283,6 @@ CExpression *CTranslatorDXLToExpr::PexprLogicalUpdate(const CDXLNode *dxlnode) {
 
 //---------------------------------------------------------------------------
 //	@function:
-//		CTranslatorDXLToExpr::PexprLogicalCTAS
-//
-//	@doc:
-// 		Create a logical Insert from a logical DXL CTAS operator
-//
-//---------------------------------------------------------------------------
-CExpression *CTranslatorDXLToExpr::PexprLogicalCTAS(const CDXLNode *dxlnode) {
-  GPOS_ASSERT(nullptr != dxlnode);
-  CDXLLogicalCTAS *pdxlopCTAS = CDXLLogicalCTAS::Cast(dxlnode->GetOperator());
-
-  // translate the child dxl node
-  CDXLNode *child_dxlnode = (*dxlnode)[0];
-  CExpression *pexprChild = PexprLogical(child_dxlnode);
-
-  RegisterMDRelationCtas(pdxlopCTAS);
-  CTableDescriptor *ptabdesc = PtabdescFromCTAS(pdxlopCTAS);
-
-  ULongPtrArray *pdrgpulSourceCols = pdxlopCTAS->GetSrcColidsArray();
-  CColRefArray *colref_array = CTranslatorDXLToExprUtils::Pdrgpcr(m_mp, m_phmulcr, pdrgpulSourceCols);
-
-  return GPOS_NEW(m_mp) CExpression(m_mp, GPOS_NEW(m_mp) CLogicalInsert(m_mp, ptabdesc, colref_array), pexprChild);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CTranslatorDXLToExpr::PexprLogicalGroupBy
 //
 //	@doc:
@@ -1814,153 +1784,6 @@ CTableDescriptor *CTranslatorDXLToExpr::Ptabdesc(CDXLTableDescr *table_descr) {
   if (IMDRelation::EreldistrReplicated == rel_distr_policy) {
     COptCtxt::PoctxtFromTLS()->SetHasReplicatedTables();
   }
-
-  return ptabdesc;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorDXLToExpr::RegisterMDRelationCtas
-//
-//	@doc:
-//		Register the MD relation entry for the given CTAS operator
-//
-//---------------------------------------------------------------------------
-void CTranslatorDXLToExpr::RegisterMDRelationCtas(CDXLLogicalCTAS *pdxlopCTAS) {
-  GPOS_ASSERT(nullptr != pdxlopCTAS);
-
-  pdxlopCTAS->MDId()->AddRef();
-
-  if (nullptr != pdxlopCTAS->GetDistrColPosArray()) {
-    pdxlopCTAS->GetDistrColPosArray()->AddRef();
-  }
-  pdxlopCTAS->GetDxlCtasStorageOption()->AddRef();
-
-  CMDColumnArray *mdcol_array = GPOS_NEW(m_mp) CMDColumnArray(m_mp);
-  CDXLColDescrArray *dxl_col_descr_array = pdxlopCTAS->GetDXLColumnDescrArray();
-  const ULONG length = dxl_col_descr_array->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
-    CDXLColDescr *pdxlcd = (*dxl_col_descr_array)[ul];
-    pdxlcd->MdidType()->AddRef();
-
-    CMDColumn *pmdcol = GPOS_NEW(m_mp) CMDColumn(GPOS_NEW(m_mp) CMDName(m_mp, pdxlcd->MdName()->GetMDName()),
-                                                 pdxlcd->AttrNum(), pdxlcd->MdidType(), pdxlcd->TypeModifier(),
-                                                 true,  // is_nullable,
-                                                 pdxlcd->IsDropped(), pdxlcd->Width());
-    mdcol_array->Append(pmdcol);
-  }
-
-  CMDName *mdname_schema = nullptr;
-  if (nullptr != pdxlopCTAS->GetMdNameSchema()) {
-    mdname_schema = GPOS_NEW(m_mp) CMDName(m_mp, pdxlopCTAS->GetMdNameSchema()->GetMDName());
-  }
-
-  IntPtrArray *vartypemod_array = pdxlopCTAS->GetVarTypeModArray();
-  vartypemod_array->AddRef();
-
-  IMdIdArray *distr_opfamilies = pdxlopCTAS->GetDistrOpfamilies();
-  distr_opfamilies->AddRef();
-  IMdIdArray *distr_opclasses = pdxlopCTAS->GetDistrOpclasses();
-  distr_opclasses->AddRef();
-
-  CMDRelationCtasGPDB *pmdrel = GPOS_NEW(m_mp) CMDRelationCtasGPDB(
-      m_mp, pdxlopCTAS->MDId(), mdname_schema, GPOS_NEW(m_mp) CMDName(m_mp, pdxlopCTAS->MdName()->GetMDName()),
-      pdxlopCTAS->IsTemporary(), pdxlopCTAS->RetrieveRelStorageType(), pdxlopCTAS->Ereldistrpolicy(), mdcol_array,
-      pdxlopCTAS->GetDistrColPosArray(), distr_opfamilies, distr_opclasses,
-      GPOS_NEW(m_mp) ULongPtr2dArray(m_mp),  // keyset_array,
-      pdxlopCTAS->GetDxlCtasStorageOption(), vartypemod_array);
-
-  IMDCacheObjectArray *mdcache_obj_array = GPOS_NEW(m_mp) IMDCacheObjectArray(m_mp);
-  mdcache_obj_array->Append(pmdrel);
-  CMDProviderMemory *pmdp = GPOS_NEW(m_mp) CMDProviderMemory(m_mp, mdcache_obj_array);
-  m_pmda->RegisterProvider(pdxlopCTAS->MDId()->Sysid(), pmdp);
-
-  // cleanup
-  mdcache_obj_array->Release();
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorDXLToExpr::PtabdescFromCTAS
-//
-//	@doc:
-//		Construct a table descriptor for a CTAS operator
-//
-//---------------------------------------------------------------------------
-CTableDescriptor *CTranslatorDXLToExpr::PtabdescFromCTAS(CDXLLogicalCTAS *pdxlopCTAS) {
-  CWStringConst strName(m_mp, pdxlopCTAS->MdName()->GetMDName()->GetBuffer());
-
-  IMDId *mdid = pdxlopCTAS->MDId();
-
-  // get the relation information from the cache
-  const IMDRelation *pmdrel = m_pmda->RetrieveRel(mdid);
-
-  // construct mappings for columns that are not dropped
-  IntToUlongMap *phmiulAttnoColMapping = GPOS_NEW(m_mp) IntToUlongMap(m_mp);
-  UlongToUlongMap *phmululColMapping = GPOS_NEW(m_mp) UlongToUlongMap(m_mp);
-
-  const ULONG ulAllColumns = pmdrel->ColumnCount();
-  ULONG ulPosNonDropped = 0;
-  for (ULONG ulPos = 0; ulPos < ulAllColumns; ulPos++) {
-    const IMDColumn *pmdcol = pmdrel->GetMdCol(ulPos);
-    if (pmdcol->IsDropped()) {
-      continue;
-    }
-    (void)phmiulAttnoColMapping->Insert(GPOS_NEW(m_mp) INT(pmdcol->AttrNum()), GPOS_NEW(m_mp) ULONG(ulPosNonDropped));
-    (void)phmululColMapping->Insert(GPOS_NEW(m_mp) ULONG(ulPos), GPOS_NEW(m_mp) ULONG(ulPosNonDropped));
-
-    ulPosNonDropped++;
-  }
-
-  // get distribution policy
-  IMDRelation::Ereldistrpolicy rel_distr_policy = pmdrel->GetRelDistribution();
-
-  // get storage type
-  IMDRelation::Erelstoragetype rel_storage_type = pmdrel->RetrieveRelStorageType();
-
-  mdid->AddRef();
-  CTableDescriptor *ptabdesc =
-      GPOS_NEW(m_mp) CTableDescriptor(m_mp, mdid, CName(m_mp, &strName), pmdrel->ConvertHashToRandom(),
-                                      rel_distr_policy, rel_storage_type, IMDRelation::GetCurrentAOVersion(),
-                                      0,  // ulExecuteAsUser, use permissions of current user
-                                      3,  // CTAS always uses a RowExclusiveLock on the table. See createas.c
-                                      2,  // CTAS always requires SELECT and SELECT only privilege
-                                      UNASSIGNED_QUERYID);
-
-  // populate column information from the dxl table descriptor
-  CDXLColDescrArray *dxl_col_descr_array = pdxlopCTAS->GetDXLColumnDescrArray();
-  const ULONG ulColumns = dxl_col_descr_array->Size();
-  for (ULONG ul = 0; ul < ulColumns; ul++) {
-    BOOL is_nullable = false;
-    if (ul < pmdrel->ColumnCount()) {
-      is_nullable = pmdrel->GetMdCol(ul)->IsNullable();
-    }
-
-    const CDXLColDescr *pdxlcoldesc = (*dxl_col_descr_array)[ul];
-
-    GPOS_ASSERT(pdxlcoldesc->MdidType()->IsValid());
-    const IMDType *pmdtype = m_pmda->RetrieveType(pdxlcoldesc->MdidType());
-
-    GPOS_ASSERT(nullptr != pdxlcoldesc->MdName()->GetMDName()->GetBuffer());
-    CWStringConst strColName(m_mp, pdxlcoldesc->MdName()->GetMDName()->GetBuffer());
-
-    INT attrnum = pdxlcoldesc->AttrNum();
-
-    const ULONG ulWidth = pdxlcoldesc->Width();
-    CColumnDescriptor *pcoldesc = GPOS_NEW(m_mp) CColumnDescriptor(
-        m_mp, pmdtype, pdxlcoldesc->TypeModifier(), CName(m_mp, &strColName), attrnum, is_nullable, ulWidth);
-
-    ptabdesc->AddColumn(pcoldesc);
-  }
-
-  if (IMDRelation::EreldistrHash == rel_distr_policy) {
-    AddDistributionColumns(ptabdesc, pmdrel, phmiulAttnoColMapping);
-  }
-
-  GPOS_ASSERT(!pmdrel->IsPartitioned());
-
-  phmiulAttnoColMapping->Release();
-  phmululColMapping->Release();
 
   return ptabdesc;
 }
