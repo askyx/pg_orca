@@ -64,7 +64,7 @@ class CLogicalDML : public CLogical {
 
   // ctor
   CLogicalDML(CMemoryPool *mp, EDMLOperator edmlop, CTableDescriptor *ptabdesc, CColRefArray *colref_array,
-              CBitSet *pbsModified, CColRef *pcrAction, CColRef *pcrCtid, CColRef *pcrSegmentId, BOOL fSplit);
+              CBitSet *pbsModified, CColRef *pcrAction, CColRef *pcrCtid, CColRef *pcrSegmentId);
 
   // dtor
   ~CLogicalDML() override;
@@ -95,9 +95,6 @@ class CLogicalDML : public CLogical {
 
   // return table's descriptor
   CTableDescriptor *Ptabdesc() const { return m_ptabdesc; }
-
-  // Is update using split
-  BOOL FSplit() const { return m_fSplit; }
 
   // operator specific hash function
   ULONG HashValue() const override;

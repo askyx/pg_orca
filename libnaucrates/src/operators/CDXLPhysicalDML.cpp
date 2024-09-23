@@ -28,15 +28,14 @@ using namespace gpdxl;
 //---------------------------------------------------------------------------
 CDXLPhysicalDML::CDXLPhysicalDML(CMemoryPool *mp, const EdxlDmlType dxl_dml_type, CDXLTableDescr *table_descr,
                                  ULongPtrArray *src_colids_array, ULONG action_colid, ULONG ctid_colid,
-                                 ULONG segid_colid, BOOL fSplit)
+                                 ULONG segid_colid)
     : CDXLPhysical(mp),
       m_dxl_dml_type(dxl_dml_type),
       m_dxl_table_descr(table_descr),
       m_src_colids_array(src_colids_array),
       m_action_colid(action_colid),
       m_ctid_colid(ctid_colid),
-      m_segid_colid(segid_colid),
-      m_fSplit(fSplit) {
+      m_segid_colid(segid_colid) {
   GPOS_ASSERT(EdxldmlSentinel > dxl_dml_type);
   GPOS_ASSERT(nullptr != table_descr);
   GPOS_ASSERT(nullptr != src_colids_array);

@@ -71,7 +71,7 @@ class CPhysicalDML : public CPhysical {
   // ctor
   CPhysicalDML(CMemoryPool *mp, CLogicalDML::EDMLOperator edmlop, CTableDescriptor *ptabdesc,
                CColRefArray *pdrgpcrSource, CBitSet *pbsModified, CColRef *pcrAction, CColRef *pcrCtid,
-               CColRef *pcrSegmentId, BOOL fSplit);
+               CColRef *pcrSegmentId);
 
   // dtor
   ~CPhysicalDML() override;
@@ -99,9 +99,6 @@ class CPhysicalDML : public CPhysical {
 
   // source columns
   virtual CColRefArray *PdrgpcrSource() const { return m_pdrgpcrSource; }
-
-  // Is update using split
-  BOOL FSplit() const { return m_fSplit; }
 
   // match function
   BOOL Matches(COperator *pop) const override;

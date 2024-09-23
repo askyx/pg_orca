@@ -31,7 +31,7 @@ using namespace gpopt;
 //---------------------------------------------------------------------------
 CPhysicalDML::CPhysicalDML(CMemoryPool *mp, CLogicalDML::EDMLOperator edmlop, CTableDescriptor *ptabdesc,
                            CColRefArray *pdrgpcrSource, CBitSet *pbsModified, CColRef *pcrAction, CColRef *pcrCtid,
-                           CColRef *pcrSegmentId, BOOL fSplit)
+                           CColRef *pcrSegmentId)
     : CPhysical(mp),
       m_edmlop(edmlop),
       m_ptabdesc(ptabdesc),
@@ -41,8 +41,7 @@ CPhysicalDML::CPhysicalDML(CMemoryPool *mp, CLogicalDML::EDMLOperator edmlop, CT
       m_pcrCtid(pcrCtid),
       m_pcrSegmentId(pcrSegmentId),
       m_pos(nullptr),
-      m_pcrsRequiredLocal(nullptr),
-      m_fSplit(fSplit) {
+      m_pcrsRequiredLocal(nullptr) {
   GPOS_ASSERT(CLogicalDML::EdmlSentinel != edmlop);
   GPOS_ASSERT(nullptr != ptabdesc);
   GPOS_ASSERT(nullptr != pdrgpcrSource);
@@ -253,7 +252,7 @@ BOOL CPhysicalDML::Matches(COperator *pop) const {
 
     return m_pcrAction == popDML->PcrAction() && m_pcrCtid == popDML->PcrCtid() &&
            m_pcrSegmentId == popDML->PcrSegmentId() && m_ptabdesc->MDId()->Equals(popDML->Ptabdesc()->MDId()) &&
-           m_pdrgpcrSource->Equals(popDML->PdrgpcrSource()) && m_fSplit == popDML->FSplit();
+           m_pdrgpcrSource->Equals(popDML->PdrgpcrSource());
   }
 
   return false;

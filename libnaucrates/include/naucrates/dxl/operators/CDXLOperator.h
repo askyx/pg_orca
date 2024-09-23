@@ -141,7 +141,6 @@ enum Edxlopid {
   EdxlopPhysicalCTEConsumer,
 
   EdxlopPhysicalDML,
-  EdxlopPhysicalSplit,
 
   EdxlopPhysicalAssert,
 

@@ -124,7 +124,6 @@ class COperator : public CRefCount {
     EopLogicalDelete,
     EopLogicalUpdate,
     EopLogicalDML,
-    EopLogicalSplit,
     EopLogicalPartitionSelector,
     EopLogicalAssert,
     EopLogicalMaxOneRow,
@@ -230,7 +229,6 @@ class COperator : public CRefCount {
     EopPhysicalConstTableGet,
 
     EopPhysicalDML,
-    EopPhysicalSplit,
 
     EopPhysicalAssert,
 

@@ -58,8 +58,7 @@ class CDXLPhysicalDML : public CDXLPhysical {
 
   // ctor
   CDXLPhysicalDML(CMemoryPool *mp, const EdxlDmlType dxl_dml_type, CDXLTableDescr *table_descr,
-                  ULongPtrArray *src_colids_array, ULONG action_colid, ULONG ctid_colid, ULONG segid_colid,
-                  BOOL fSplit);
+                  ULongPtrArray *src_colids_array, ULONG action_colid, ULONG ctid_colid, ULONG segid_colid);
 
   // dtor
   ~CDXLPhysicalDML() override;

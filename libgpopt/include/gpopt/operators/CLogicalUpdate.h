@@ -80,9 +80,6 @@ class CLogicalUpdate : public CLogical {
   // return table's descriptor
   CTableDescriptor *Ptabdesc() const { return m_ptabdesc; }
 
-  // Is update using split
-  BOOL FSplit() const { return m_fSplit; }
-
   // operator specific hash function
   ULONG HashValue() const override;
 

@@ -125,7 +125,6 @@ class CXform : public CRefCount {
     ExfUpdate2DML,
     ExfImplementDML,
     ExfImplementRowTrigger____removed,
-    ExfImplementSplit,
     ExfInnerJoinCommutativity,
     ExfJoinAssociativity,
     ExfSemiJoinSemiJoinSwap,

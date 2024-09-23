@@ -29,7 +29,6 @@
 #include "gpopt/operators/CPhysicalScalarAgg.h"
 #include "gpopt/operators/CPhysicalSequenceProject.h"
 #include "gpopt/operators/CPhysicalSort.h"
-#include "gpopt/operators/CPhysicalSplit.h"
 #include "gpopt/operators/CPhysicalSpool.h"
 #include "gpopt/operators/CPhysicalStreamAgg.h"
 #include "gpopt/operators/CPhysicalStreamAggDeduplicate.h"
@@ -85,7 +84,6 @@
 #include "naucrates/dxl/operators/CDXLPhysicalResult.h"
 #include "naucrates/dxl/operators/CDXLPhysicalSequence.h"
 #include "naucrates/dxl/operators/CDXLPhysicalSort.h"
-#include "naucrates/dxl/operators/CDXLPhysicalSplit.h"
 #include "naucrates/dxl/operators/CDXLPhysicalTVF.h"
 #include "naucrates/dxl/operators/CDXLPhysicalTableScan.h"
 #include "naucrates/dxl/operators/CDXLPhysicalWindow.h"
@@ -307,9 +305,6 @@ CDXLNode *CTranslatorExprToDXL::CreateDXLNode(CExpression *pexpr, CColRefArray *
       break;
     case COperator::EopPhysicalDML:
       dxlnode = CTranslatorExprToDXL::PdxlnDML(pexpr, colref_array);
-      break;
-    case COperator::EopPhysicalSplit:
-      dxlnode = CTranslatorExprToDXL::PdxlnSplit(pexpr, colref_array);
       break;
     case COperator::EopPhysicalAssert:
       dxlnode = CTranslatorExprToDXL::PdxlnAssert(pexpr, colref_array);
@@ -3490,8 +3485,8 @@ CDXLNode *CTranslatorExprToDXL::PdxlnDML(CExpression *pexpr,
   CDXLTableDescr *table_descr = MakeDXLTableDescr(ptabdesc, nullptr /*pdrgpcrOutput*/, nullptr /*requiredProperties*/);
   ULongPtrArray *pdrgpul = CUtils::Pdrgpul(m_mp, pdrgpcrSource);
 
-  CDXLPhysicalDML *pdxlopDML = GPOS_NEW(m_mp) CDXLPhysicalDML(m_mp, dxl_dml_type, table_descr, pdrgpul, action_colid,
-                                                              ctid_colid, segid_colid, popDML->FSplit());
+  CDXLPhysicalDML *pdxlopDML =
+      GPOS_NEW(m_mp) CDXLPhysicalDML(m_mp, dxl_dml_type, table_descr, pdrgpul, action_colid, ctid_colid, segid_colid);
 
   // project list
   CColRefSet *pcrsOutput = pexpr->Prpp()->PcrsRequired();
@@ -3509,77 +3504,6 @@ CDXLNode *CTranslatorExprToDXL::PdxlnDML(CExpression *pexpr,
 #endif
 
   return pdxlnDML;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorExprToDXL::PdxlnSplit
-//
-//	@doc:
-//		Translate a split operator
-//
-//---------------------------------------------------------------------------
-CDXLNode *CTranslatorExprToDXL::PdxlnSplit(CExpression *pexpr,
-                                           CColRefArray *  // colref_array,
-) {
-  GPOS_ASSERT(nullptr != pexpr);
-  GPOS_ASSERT(2 == pexpr->Arity());
-
-  uint32_t action_colid = 0;
-  uint32_t ctid_colid = 0;
-  uint32_t segid_colid = 0;
-
-  // extract components
-  CPhysicalSplit *popSplit = CPhysicalSplit::PopConvert(pexpr->Pop());
-
-  CExpression *pexprChild = (*pexpr)[0];
-  CExpression *pexprProjList = (*pexpr)[1];
-
-  CColRef *pcrAction = popSplit->PcrAction();
-  GPOS_ASSERT(nullptr != pcrAction);
-  action_colid = pcrAction->Id();
-
-  CColRef *pcrCtid = popSplit->PcrCtid();
-  GPOS_ASSERT(nullptr != pcrCtid);
-  ctid_colid = pcrCtid->Id();
-
-  CColRef *pcrSegmentId = popSplit->PcrSegmentId();
-  GPOS_ASSERT(nullptr != pcrSegmentId);
-  segid_colid = pcrSegmentId->Id();
-
-  CColRefArray *pdrgpcrDelete = popSplit->PdrgpcrDelete();
-  ULongPtrArray *delete_colid_array = CUtils::Pdrgpul(m_mp, pdrgpcrDelete);
-
-  CColRefArray *pdrgpcrInsert = popSplit->PdrgpcrInsert();
-  ULongPtrArray *insert_colid_array = CUtils::Pdrgpul(m_mp, pdrgpcrInsert);
-
-  CColRefSet *pcrsRequired = GPOS_NEW(m_mp) CColRefSet(m_mp);
-  pcrsRequired->Include(pdrgpcrInsert);
-  pcrsRequired->Include(pdrgpcrDelete);
-  CColRefArray *pdrgpcrRequired = pcrsRequired->Pdrgpcr(m_mp);
-
-  CDXLNode *child_dxlnode = CreateDXLNode(pexprChild, pdrgpcrRequired, true /*fRemap*/);
-  pdrgpcrRequired->Release();
-  pcrsRequired->Release();
-
-  CDXLPhysicalSplit *pdxlopSplit = GPOS_NEW(m_mp)
-      CDXLPhysicalSplit(m_mp, delete_colid_array, insert_colid_array, action_colid, ctid_colid, segid_colid);
-
-  // project list
-  CColRefSet *pcrsOutput = pexpr->Prpp()->PcrsRequired();
-  CDXLNode *pdxlnPrL = PdxlnProjList(pexprProjList, pcrsOutput, pdrgpcrDelete);
-
-  CDXLNode *pdxlnSplit = GPOS_NEW(m_mp) CDXLNode(m_mp, pdxlopSplit);
-  CDXLPhysicalProperties *dxl_properties = GetProperties(pexpr);
-  pdxlnSplit->SetProperties(dxl_properties);
-
-  pdxlnSplit->AddChild(pdxlnPrL);
-  pdxlnSplit->AddChild(child_dxlnode);
-
-#ifdef GPOS_DEBUG
-  pdxlnSplit->GetOperator()->AssertValid(pdxlnSplit, false /* validate_children */);
-#endif
-  return pdxlnSplit;
 }
 
 //---------------------------------------------------------------------------

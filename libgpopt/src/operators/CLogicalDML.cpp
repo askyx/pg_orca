@@ -48,7 +48,7 @@ CLogicalDML::CLogicalDML(CMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 CLogicalDML::CLogicalDML(CMemoryPool *mp, EDMLOperator edmlop, CTableDescriptor *ptabdesc, CColRefArray *pdrgpcrSource,
-                         CBitSet *pbsModified, CColRef *pcrAction, CColRef *pcrCtid, CColRef *pcrSegmentId, BOOL fSplit)
+                         CBitSet *pbsModified, CColRef *pcrAction, CColRef *pcrCtid, CColRef *pcrSegmentId)
     : CLogical(mp),
       m_edmlop(edmlop),
       m_ptabdesc(ptabdesc),
@@ -56,8 +56,7 @@ CLogicalDML::CLogicalDML(CMemoryPool *mp, EDMLOperator edmlop, CTableDescriptor 
       m_pbsModified(pbsModified),
       m_pcrAction(pcrAction),
       m_pcrCtid(pcrCtid),
-      m_pcrSegmentId(pcrSegmentId),
-      m_fSplit(fSplit) {
+      m_pcrSegmentId(pcrSegmentId) {
   GPOS_ASSERT(EdmlSentinel != edmlop);
   GPOS_ASSERT(nullptr != ptabdesc);
   GPOS_ASSERT(nullptr != pdrgpcrSource);
@@ -107,7 +106,7 @@ BOOL CLogicalDML::Matches(COperator *pop) const {
 
   return m_pcrAction == popDML->PcrAction() && m_pcrCtid == popDML->PcrCtid() &&
          m_pcrSegmentId == popDML->PcrSegmentId() && m_ptabdesc->MDId()->Equals(popDML->Ptabdesc()->MDId()) &&
-         m_pdrgpcrSource->Equals(popDML->PdrgpcrSource()) && m_fSplit == popDML->FSplit();
+         m_pdrgpcrSource->Equals(popDML->PdrgpcrSource());
 }
 
 //---------------------------------------------------------------------------
@@ -161,7 +160,7 @@ COperator *CLogicalDML::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRe
   m_ptabdesc->AddRef();
 
   return GPOS_NEW(mp)
-      CLogicalDML(mp, m_edmlop, m_ptabdesc, colref_array, m_pbsModified, pcrAction, pcrCtid, pcrSegmentId, m_fSplit);
+      CLogicalDML(mp, m_edmlop, m_ptabdesc, colref_array, m_pbsModified, pcrAction, pcrCtid, pcrSegmentId);
 }
 
 //---------------------------------------------------------------------------

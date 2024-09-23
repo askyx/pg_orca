@@ -101,8 +101,7 @@ BOOL CLogicalUpdate::Matches(COperator *pop) const {
 
   return m_pcrCtid == popUpdate->PcrCtid() && m_pcrSegmentId == popUpdate->PcrSegmentId() &&
          m_ptabdesc->MDId()->Equals(popUpdate->Ptabdesc()->MDId()) &&
-         m_pdrgpcrDelete->Equals(popUpdate->PdrgpcrDelete()) && m_pdrgpcrInsert->Equals(popUpdate->PdrgpcrInsert()) &&
-         m_fSplit == popUpdate->FSplit();
+         m_pdrgpcrDelete->Equals(popUpdate->PdrgpcrDelete()) && m_pdrgpcrInsert->Equals(popUpdate->PdrgpcrInsert());
 }
 
 //---------------------------------------------------------------------------

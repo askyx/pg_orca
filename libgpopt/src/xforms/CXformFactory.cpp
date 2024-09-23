@@ -188,7 +188,6 @@ void CXformFactory::Instantiate() {
   Add(GPOS_NEW(m_mp) CXformUpdate2DML(m_mp));
   Add(GPOS_NEW(m_mp) CXformImplementDML(m_mp));
   SkipUnused(1);
-  Add(GPOS_NEW(m_mp) CXformImplementSplit(m_mp));
   Add(GPOS_NEW(m_mp) CXformInnerJoinCommutativity(m_mp));
   Add(GPOS_NEW(m_mp) CXformJoinAssociativity(m_mp));
   Add(GPOS_NEW(m_mp) CXformSemiJoinSemiJoinSwap(m_mp));
