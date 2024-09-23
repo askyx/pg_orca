@@ -26,7 +26,7 @@
 
 #include "gpos/assert.h"
 
-#define GPOS_SIZEOF(x) ((uint32_t)sizeof(x))
+#define GPOS_SIZEOF(x) sizeof(x)
 #define GPOS_ARRAY_SIZE(x) (GPOS_SIZEOF(x) / GPOS_SIZEOF(x[0]))
 #define GPOS_OFFSET(T, M) ((uint32_t)(size_t) & (((T *)0x1)->M) - 1)
 
