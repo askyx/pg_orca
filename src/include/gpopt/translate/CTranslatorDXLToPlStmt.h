@@ -384,10 +384,6 @@ class CTranslatorDXLToPlStmt {
                                 TranslateContextBaseTable *base_table_context,
                                 CDXLTranslationContextArray *ctxt_translation_prev_siblings);
 
-  // translate the assert constraints
-  List *TranslateDXLAssertConstraints(CDXLNode *filter_dxlnode, CDXLTranslateContext *output_context,
-                                      CDXLTranslationContextArray *child_contexts);
-
   // translate nest loop colrefs to GPDB nestparams
   static List *TranslateNestLoopParamList(CDXLColRefArray *pdrgdxlcrOuterRefs, CDXLTranslateContext *dxltrctxLeft,
                                           CDXLTranslateContext *dxltrctxRight);

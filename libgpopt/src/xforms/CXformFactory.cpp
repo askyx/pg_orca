@@ -221,7 +221,6 @@ void CXformFactory::Instantiate() {
   Add(GPOS_NEW(m_mp) CXformSplitDQA(m_mp));
   Add(GPOS_NEW(m_mp) CXformSequenceProject2Apply(m_mp));
   Add(GPOS_NEW(m_mp) CXformImplementSequenceProject(m_mp));
-  Add(GPOS_NEW(m_mp) CXformImplementAssert(m_mp));
   Add(GPOS_NEW(m_mp) CXformCTEAnchor2Sequence(m_mp));
   Add(GPOS_NEW(m_mp) CXformCTEAnchor2TrivialSelect(m_mp));
   Add(GPOS_NEW(m_mp) CXformInlineCTEConsumer(m_mp));
@@ -241,7 +240,6 @@ void CXformFactory::Instantiate() {
   Add(GPOS_NEW(m_mp) CXformLeftSemiApplyInWithExternalCorrs2InnerJoin(m_mp));
   Add(GPOS_NEW(m_mp) CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations(m_mp));
   SkipUnused(2);
-  Add(GPOS_NEW(m_mp) CXformMaxOneRow2Assert(m_mp));
   SkipUnused(2);
   Add(GPOS_NEW(m_mp) CXformGbAggWithMDQA2Join(m_mp));
   Add(GPOS_NEW(m_mp) CXformCollapseProject(m_mp));

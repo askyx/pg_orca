@@ -208,9 +208,6 @@ class CTranslatorExprToDXL {
   // translate a DML operator
   CDXLNode *PdxlnDML(CExpression *pexpr, CColRefArray *colref_array);
 
-  // translate an assert operator
-  CDXLNode *PdxlnAssert(CExpression *pexprAssert, CColRefArray *colref_array);
-
   // translate a scalar If statement
   CDXLNode *PdxlnScIfStmt(CExpression *pexprScIf);
 

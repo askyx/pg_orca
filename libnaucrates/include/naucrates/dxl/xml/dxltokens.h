@@ -670,8 +670,6 @@ enum Edxltoken {
   EdxltokenDirectDispatchInfo,
   EdxltokenDirectDispatchIsRaw,
   EdxltokenDirectDispatchKeyValue,
-  EdxltokenPhysicalSplit,
-  EdxltokenPhysicalAssert,
 
   EdxltokenErrorCode,
   EdxltokenErrorMessage,

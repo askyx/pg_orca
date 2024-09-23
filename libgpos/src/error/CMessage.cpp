@@ -190,10 +190,6 @@ CMessage *CMessage::GetMessage(uint32_t index) {
                2,  // constraint name, table name
                GPOS_WSZ_WSZLEN("Check constraint for table was violated")),
 
-      CMessage(CException(CException::ExmaSQL, CException::ExmiSQLMaxOneRow), CException::ExsevError,
-               GPOS_WSZ_WSZLEN("Expected no more than one row to be returned by expression"), 0,
-               GPOS_WSZ_WSZLEN("Expected no more than one row to be returned by expression")),
-
       CMessage(CException(CException::ExmaSQL, CException::ExmiSQLTest), CException::ExsevError,
                GPOS_WSZ_WSZLEN("Test sql error message: %ls"),
                1,  // error message

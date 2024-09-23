@@ -27,7 +27,6 @@ const CException::ErrCodeElem CException::m_errcode[] = {
     {ExmiSQLDefault, "XX000"},                   // internal error
     {ExmiSQLNotNullViolation, "23502"},          // not null violation
     {ExmiSQLCheckConstraintViolation, "23514"},  // check constraint violation
-    {ExmiSQLMaxOneRow, "P0003"},                 // max one row
     {ExmiSQLTest, "XXXXX"}                       // test sql state
 };
 

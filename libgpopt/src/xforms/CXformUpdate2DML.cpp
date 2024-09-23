@@ -90,13 +90,9 @@ void CXformUpdate2DML::Transform(CXformContext *pxfctxt, CXformResult *pxfres, C
   pexprSplit = pexprChild;
 
   // add assert checking that no NULL values are inserted for nullable columns or no check constraints are violated
-  COptimizerConfig *optimizer_config = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig();
   CExpression *pexprProject;
-  if (optimizer_config->GetHint()->FEnforceConstraintsOnDML()) {
-    pexprProject = CXformUtils::PexprAssertConstraints(mp, pexprSplit, ptabdesc, pdrgpcrInsert);
-  } else {
-    pexprProject = pexprSplit;
-  }
+
+  pexprProject = pexprSplit;
 
   CExpression *pexprDML = nullptr;
   // create logical DML

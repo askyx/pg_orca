@@ -35,7 +35,6 @@ extern "C" {
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLPhysicalAgg.h"
 #include "naucrates/dxl/operators/CDXLPhysicalAppend.h"
-#include "naucrates/dxl/operators/CDXLPhysicalAssert.h"
 #include "naucrates/dxl/operators/CDXLPhysicalBitmapTableScan.h"
 #include "naucrates/dxl/operators/CDXLPhysicalCTEConsumer.h"
 #include "naucrates/dxl/operators/CDXLPhysicalCTEProducer.h"
@@ -891,34 +890,6 @@ void CTranslatorDXLToPlStmt::TranslateIndexConditions(CDXLNode *index_cond_list_
 
   // clean up
   index_qual_info_array->Release();
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorDXLToPlStmt::TranslateDXLAssertConstraints
-//
-//	@doc:
-//		Translate the constraints from an Assert node into a list of quals
-//
-//---------------------------------------------------------------------------
-List *CTranslatorDXLToPlStmt::TranslateDXLAssertConstraints(CDXLNode *assert_contraint_list_dxlnode,
-                                                            CDXLTranslateContext *output_context,
-                                                            CDXLTranslationContextArray *child_contexts) {
-  List *quals_list = NIL;
-
-  // build colid->var mapping
-  CMappingColIdVarPlStmt colid_var_mapping(m_mp, nullptr /*base_table_context*/, child_contexts, output_context,
-                                           m_dxl_to_plstmt_context);
-
-  const uint32_t arity = assert_contraint_list_dxlnode->Arity();
-  for (uint32_t ul = 0; ul < arity; ul++) {
-    CDXLNode *assert_contraint_dxlnode = (*assert_contraint_list_dxlnode)[ul];
-    Expr *assert_contraint_expr =
-        m_translator_dxl_to_scalar->TranslateDXLToScalar((*assert_contraint_dxlnode)[0], &colid_var_mapping);
-    quals_list = gpdb::LAppend(quals_list, assert_contraint_expr);
-  }
-
-  return quals_list;
 }
 
 //---------------------------------------------------------------------------

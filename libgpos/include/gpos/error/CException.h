@@ -108,7 +108,6 @@ class CException {
     ExmiSQLDefault,
     ExmiSQLNotNullViolation,
     ExmiSQLCheckConstraintViolation,
-    ExmiSQLMaxOneRow,
     ExmiSQLTest,
 
     // warnings

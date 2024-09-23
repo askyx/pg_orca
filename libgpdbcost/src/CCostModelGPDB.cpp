@@ -212,9 +212,8 @@ CCost CCostModelGPDB::CostSpooling(CMemoryPool *mp, CExpressionHandle &exprhdl, 
 //
 //---------------------------------------------------------------------------
 bool CCostModelGPDB::FUnary(COperator::EOperatorId op_id) {
-  return COperator::EopPhysicalAssert == op_id || COperator::EopPhysicalComputeScalar == op_id ||
-         COperator::EopPhysicalLimit == op_id || COperator::EopPhysicalPartitionSelector == op_id ||
-         COperator::EopPhysicalSpool == op_id;
+  return COperator::EopPhysicalComputeScalar == op_id || COperator::EopPhysicalLimit == op_id ||
+         COperator::EopPhysicalPartitionSelector == op_id || COperator::EopPhysicalSpool == op_id;
 }
 
 //---------------------------------------------------------------------------

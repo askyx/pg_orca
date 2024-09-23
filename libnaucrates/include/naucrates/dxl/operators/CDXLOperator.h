@@ -142,8 +142,6 @@ enum Edxlopid {
 
   EdxlopPhysicalDML,
 
-  EdxlopPhysicalAssert,
-
   EdxlopSentinel
 };
 

@@ -66,7 +66,6 @@ bool optimizer_enable_broadcast_nestloop_outer_child = true;
 bool optimizer_discard_redistribute_hashjoin = true;
 bool optimizer_enable_streaming_material = true;
 bool optimizer_enable_gather_on_segment_for_dml = true;
-bool optimizer_enable_assert_maxonerow = true;
 bool optimizer_enable_constant_expression_evaluation = true;
 bool optimizer_enable_bitmapscan = true;
 bool optimizer_enable_outerjoin_to_unionall_rewrite = true;
@@ -426,11 +425,6 @@ CBitSet *CConfigParamMapping::PackConfigParamInBitset(CMemoryPool *mp,
   // disable outerjoin to unionall transformation if GUC is turned off
   if (!optimizer_enable_outerjoin_to_unionall_rewrite) {
     traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfLeftOuter2InnerUnionAllLeftAntiSemiJoin));
-  }
-
-  // disable Assert MaxOneRow plans if GUC is turned off
-  if (!optimizer_enable_assert_maxonerow) {
-    traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfMaxOneRow2Assert));
   }
 
   if (!optimizer_enable_hashjoin) {

@@ -42,8 +42,6 @@ class CHint : public CRefCount {
 
   uint32_t m_ulBroadcastThreshold;
 
-  bool m_fEnforceConstraintsOnDML;
-
   uint32_t m_ulPushGroupByBelowSetopThreshold;
 
   uint32_t m_ulXform_bind_threshold;
@@ -55,13 +53,12 @@ class CHint : public CRefCount {
 
   // ctor
   CHint(uint32_t join_arity_for_associativity_commutativity, uint32_t array_expansion_threshold,
-        uint32_t ulJoinOrderDPLimit, uint32_t broadcast_threshold, bool enforce_constraint_on_dml,
-        uint32_t push_group_by_below_setop_threshold, uint32_t xform_bind_threshold, uint32_t skew_factor)
+        uint32_t ulJoinOrderDPLimit, uint32_t broadcast_threshold, uint32_t push_group_by_below_setop_threshold,
+        uint32_t xform_bind_threshold, uint32_t skew_factor)
       : m_ulJoinArityForAssociativityCommutativity(join_arity_for_associativity_commutativity),
         m_ulArrayExpansionThreshold(array_expansion_threshold),
         m_ulJoinOrderDPLimit(ulJoinOrderDPLimit),
         m_ulBroadcastThreshold(broadcast_threshold),
-        m_fEnforceConstraintsOnDML(enforce_constraint_on_dml),
         m_ulPushGroupByBelowSetopThreshold(push_group_by_below_setop_threshold),
         m_ulXform_bind_threshold(xform_bind_threshold),
         m_ulSkewFactor(skew_factor) {}
@@ -88,11 +85,6 @@ class CHint : public CRefCount {
   // Maximum number of rows ORCA will broadcast
   uint32_t UlBroadcastThreshold() const { return m_ulBroadcastThreshold; }
 
-  // If true, ORCA will add Assertion nodes to the plan to enforce CHECK
-  // and NOT NULL constraints on inserted/updated values. (Otherwise it
-  // is up to the executor to enforce them.)
-  bool FEnforceConstraintsOnDML() const { return m_fEnforceConstraintsOnDML; }
-
   // Skip CXformPushGbBelowSetOp if set op arity is greater than this
   uint32_t UlPushGroupByBelowSetopThreshold() const { return m_ulPushGroupByBelowSetopThreshold; }
 
@@ -109,7 +101,6 @@ class CHint : public CRefCount {
                               INT32_MAX,                           /* array_expansion_threshold */
                               JOIN_ORDER_DP_THRESHOLD,             /*ulJoinOrderDPLimit*/
                               BROADCAST_THRESHOLD,                 /*broadcast_threshold*/
-                              true,                                /* enforce_constraint_on_dml */
                               PUSH_GROUP_BY_BELOW_SETOP_THRESHOLD, /* push_group_by_below_setop_threshold */
                               XFORM_BIND_THRESHOLD,                /* xform_bind_threshold */
                               SKEW_FACTOR                          /* skew_factor */

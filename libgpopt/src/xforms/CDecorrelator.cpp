@@ -207,15 +207,6 @@ bool CDecorrelator::FProcessOperator(CMemoryPool *mp, CExpression *pexpr, bool f
       result = FProcessProject(mp, pexpr, fEqualityOnly, ppexprDecorrelated, pdrgpexprCorrelations, outerRefsToRemove);
       break;
 
-    case COperator::EopLogicalAssert:
-      result = FProcessAssert(mp, pexpr, fEqualityOnly, ppexprDecorrelated, pdrgpexprCorrelations, outerRefsToRemove);
-      break;
-
-    case COperator::EopLogicalMaxOneRow:
-      result =
-          FProcessMaxOneRow(mp, pexpr, fEqualityOnly, ppexprDecorrelated, pdrgpexprCorrelations, outerRefsToRemove);
-      break;
-
     case COperator::EopLogicalLimit:
       result = FProcessLimit(mp, pexpr, fEqualityOnly, ppexprDecorrelated, pdrgpexprCorrelations, outerRefsToRemove);
       break;
@@ -500,80 +491,6 @@ bool CDecorrelator::FProcessJoin(CMemoryPool *mp, CExpression *pexpr, bool fEqua
   }
 
   return fSuccess;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDecorrelator::FProcessAssert
-//
-//	@doc:
-//		Decorrelate assert operator
-//
-//---------------------------------------------------------------------------
-bool CDecorrelator::FProcessAssert(CMemoryPool *mp, CExpression *pexpr, bool fEqualityOnly,
-                                   CExpression **ppexprDecorrelated, CExpressionArray *pdrgpexprCorrelations,
-                                   CColRefSet *outerRefsToRemove) {
-  GPOS_ASSERT(nullptr != pexpr);
-
-  COperator *pop = pexpr->Pop();
-  GPOS_ASSERT(COperator::EopLogicalAssert == pop->Eopid());
-
-  CExpression *pexprScalar = (*pexpr)[1];
-
-  // fail if assert expression has outer references
-  CColRefSet *pcrsUsed = pexprScalar->DeriveUsedColumns();
-  if (!outerRefsToRemove->IsDisjoint(pcrsUsed)) {
-    return false;
-  }
-
-  // decorrelate relational child
-  CExpression *pexprRelational = nullptr;
-  if (!FProcess(mp, (*pexpr)[0], fEqualityOnly, &pexprRelational, pdrgpexprCorrelations, outerRefsToRemove)) {
-    GPOS_ASSERT(nullptr == pexprRelational);
-    return false;
-  }
-
-  // assemble new project
-  pop->AddRef();
-  pexprScalar->AddRef();
-  *ppexprDecorrelated = GPOS_NEW(mp) CExpression(mp, pop, pexprRelational, pexprScalar);
-
-  return true;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CDecorrelator::FProcessMaxOneRow
-//
-//	@doc:
-//		Decorrelate max one row operator
-//
-//---------------------------------------------------------------------------
-bool CDecorrelator::FProcessMaxOneRow(CMemoryPool *mp, CExpression *pexpr, bool fEqualityOnly,
-                                      CExpression **ppexprDecorrelated, CExpressionArray *pdrgpexprCorrelations,
-                                      CColRefSet *outerRefsToRemove) {
-  GPOS_ASSERT(nullptr != pexpr);
-
-  COperator *pop = pexpr->Pop();
-  GPOS_ASSERT(COperator::EopLogicalMaxOneRow == pop->Eopid());
-
-  // fail if MaxOneRow expression has outer references
-  if (!outerRefsToRemove->IsDisjoint(pexpr->DeriveOuterReferences())) {
-    return false;
-  }
-
-  // decorrelate relational child
-  CExpression *pexprRelational = nullptr;
-  if (!FProcess(mp, (*pexpr)[0], fEqualityOnly, &pexprRelational, pdrgpexprCorrelations, outerRefsToRemove)) {
-    GPOS_ASSERT(nullptr == pexprRelational);
-    return false;
-  }
-
-  // assemble new project
-  pop->AddRef();
-  *ppexprDecorrelated = GPOS_NEW(mp) CExpression(mp, pop, pexprRelational);
-
-  return true;
 }
 
 // decorrelate project/sequence project

@@ -38,7 +38,6 @@
 #include "gpopt/operators/CLogicalLeftOuterCorrelatedApply.h"
 #include "gpopt/operators/CLogicalLeftSemiCorrelatedApply.h"
 #include "gpopt/operators/CLogicalLeftSemiCorrelatedApplyIn.h"
-#include "gpopt/operators/CLogicalMaxOneRow.h"
 #include "gpopt/operators/CScalarBooleanTest.h"
 #include "gpopt/operators/CScalarCmp.h"
 #include "gpopt/operators/CScalarCoalesce.h"
@@ -115,55 +114,6 @@ CExpression *CSubqueryHandler::PexprReplace(CMemoryPool *mp, CExpression *pexprI
   return GPOS_NEW(mp) CExpression(mp, pop, pdrgpexpr);
 }
 
-//---------------------------------------------------------------------------
-//	@function:
-//		CSubqueryHandler::PexprSubqueryPred
-//
-//	@doc:
-//		Build a predicate expression for the quantified comparison of the
-//		subquery.
-//
-//		This method first attempts to un-nest any subquery that may be present in
-//		the Scalar part of the quantified subquery. Then, it proceeds to create a
-//		scalar predicate comparison between the new Scalar and Logical children of
-//		the Subquery. It returns the new Logical child via ppexprResult.
-//
-//		For example, for the query :
-//		select * from foo where
-//		    (select a from foo limit 1) in (select b from bar);
-//
-//		+--CLogicalSelect
-//		   |--CLogicalGet "foo"
-//		   +--CScalarSubqueryAny(=)["b" (10)]
-//		      |--CLogicalGet "bar"
-//		      +--CScalarSubquery["a" (18)]
-//		         +--CLogicalLimit <empty> global
-//		            |--CLogicalGet "foo"
-//		            |--CScalarConst (0)
-//		            +--CScalarCast
-//		               +--CScalarConst (1)
-//
-//		will return ..
-//		+--CScalarCmp (=)
-//		   |--CScalarIdent "a" (18)
-//		   +--CScalarIdent "b" (10)
-//
-//		with pexprResult as ..
-//		+--CLogicalInnerApply
-//		   |--CLogicalGet "bar"
-//		   |--CLogicalMaxOneRow
-//		   |  +--CLogicalLimit
-//		   |     |--CLogicalGet "foo"
-//		   |     |--CScalarConst (0)   origin: [Grp:3, GrpExpr:0]
-//		   |     +--CScalarCast   origin: [Grp:5, GrpExpr:0]
-//		   |        +--CScalarConst (1)   origin: [Grp:4, GrpExpr:0]
-//		   +--CScalarConst (1)
-//
-//		If there is no such subquery, it returns a comparison expression using
-//		the original Scalar expression and sets ppexprResult to the passed in
-//		pexprOuter.
-//
-//---------------------------------------------------------------------------
 CExpression *CSubqueryHandler::PexprSubqueryPred(CExpression *pexprOuter, CExpression *pexprSubquery,
                                                  CExpression **ppexprResult, CSubqueryHandler::ESubqueryCtxt esqctxt) {
   GPOS_ASSERT(CUtils::FQuantifiedSubquery(pexprSubquery->Pop()));
@@ -452,26 +402,10 @@ bool CSubqueryHandler::FGenerateCorrelatedApplyForScalarSubquery(CMemoryPool *mp
   // inner expression
   pexprInner->AddRef();
 
-  // in order to check cardinality of subquery output at run time, we can
-  // use MaxOneRow expression, only if
-  // (1) correlated execution is not enforced,
-  // (2) there are no outer references below, and
-  // (3) transformation converting MaxOneRow to Assert is enabled
-  bool fUseMaxOneRow =
-      !fEnforceCorrelatedApply && !psd->m_fHasOuterRefs && GPOPT_FENABLED_XFORM(CXform::ExfMaxOneRow2Assert);
-
   if (psd->m_fValueSubquery) {
-    if (fUseMaxOneRow) {
-      // we need correlated execution here to check if more than one row are generated
-      // by inner expression during execution, we generate a MaxOneRow expression to handle this case
-      CExpression *pexprMaxOneRow = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalMaxOneRow(mp), pexprInner);
-      *ppexprNewOuter =
-          CUtils::PexprLogicalApply<CLogicalLeftOuterApply>(mp, pexprOuter, pexprMaxOneRow, colref, eopidSubq);
-    } else {
-      // correlated inner expression requires correlated execution
-      *ppexprNewOuter =
-          CUtils::PexprLogicalApply<CLogicalLeftOuterCorrelatedApply>(mp, pexprOuter, pexprInner, colref, eopidSubq);
-    }
+    // correlated inner expression requires correlated execution
+    *ppexprNewOuter =
+        CUtils::PexprLogicalApply<CLogicalLeftOuterCorrelatedApply>(mp, pexprOuter, pexprInner, colref, eopidSubq);
     *ppexprResidualScalar = CUtils::PexprScalarIdent(mp, colref);
 
     return true;
@@ -479,16 +413,9 @@ bool CSubqueryHandler::FGenerateCorrelatedApplyForScalarSubquery(CMemoryPool *mp
 
   GPOS_ASSERT(EsqctxtFilter == esqctxt);
 
-  if (fUseMaxOneRow) {
-    // we need correlated execution here to check if more than one row are generated
-    // by inner expression during execution, we generate a MaxOneRow expression to handle this case
-    CExpression *pexprMaxOneRow = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalMaxOneRow(mp), pexprInner);
-    *ppexprNewOuter = CUtils::PexprLogicalApply<CLogicalInnerApply>(mp, pexprOuter, pexprMaxOneRow, colref, eopidSubq);
-  } else {
-    // correlated inner expression requires correlated execution
-    *ppexprNewOuter =
-        CUtils::PexprLogicalApply<CLogicalInnerCorrelatedApply>(mp, pexprOuter, pexprInner, colref, eopidSubq);
-  }
+  // correlated inner expression requires correlated execution
+  *ppexprNewOuter =
+      CUtils::PexprLogicalApply<CLogicalInnerCorrelatedApply>(mp, pexprOuter, pexprInner, colref, eopidSubq);
   *ppexprResidualScalar = CUtils::PexprScalarIdent(mp, colref);
 
   return true;

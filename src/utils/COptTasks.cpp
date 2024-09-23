@@ -282,9 +282,7 @@ COptimizerConfig *COptTasks::CreateOptimizerConfig(CMemoryPool *mp, ICostModel *
           CStatisticsConfig(mp, damping_factor_filter, damping_factor_join, damping_factor_groupby, MAX_STATS_BUCKETS),
       GPOS_NEW(mp) CCTEConfig(cte_inlining_cutoff), cost_model,
       GPOS_NEW(mp) CHint(join_arity_for_associativity_commutativity, array_expansion_threshold, join_order_threshold,
-                         broadcast_threshold, false, /* don't create Assert nodes for constraints, we'll
-                                                      * enforce them ourselves in the executor */
-                         push_group_by_below_setop_threshold, xform_bind_threshold, skew_factor),
+                         broadcast_threshold, push_group_by_below_setop_threshold, xform_bind_threshold, skew_factor),
       GPOS_NEW(mp) CWindowOids(OID(0), OID(0)));
 }
 

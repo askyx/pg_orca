@@ -83,15 +83,6 @@ class CDecorrelator {
   static bool FProcessProject(CMemoryPool *mp, CExpression *pexpr, bool fEqualityOnly, CExpression **ppexprDecorrelated,
                               CExpressionArray *pdrgpexprCorrelations, CColRefSet *outerRefsToRemove);
 
-  // processor for assert
-  static bool FProcessAssert(CMemoryPool *mp, CExpression *pexpr, bool fEqualityOnly, CExpression **ppexprDecorrelated,
-                             CExpressionArray *pdrgpexprCorrelations, CColRefSet *outerRefsToRemove);
-
-  // processor for MaxOneRow
-  static bool FProcessMaxOneRow(CMemoryPool *mp, CExpression *pexpr, bool fEqualityOnly,
-                                CExpression **ppexprDecorrelated, CExpressionArray *pdrgpexprCorrelations,
-                                CColRefSet *outerRefsToRemove);
-
   // processor for limits
   static bool FProcessLimit(CMemoryPool *mp, CExpression *pexpr, bool fEqualityOnly, CExpression **ppexprDecorrelated,
                             CExpressionArray *pdrgpexprCorrelations, CColRefSet *outerRefsToRemove);

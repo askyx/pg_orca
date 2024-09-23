@@ -128,8 +128,6 @@ void CDXLTokens::Init(CMemoryPool *mp) {
       {EdxltokenPhysicalPartitionSelector, GPOS_WSZ_LIT("PartitionSelector")},
       {EdxltokenPhysicalPartitionSelectorId, GPOS_WSZ_LIT("SelectorId")},
       {EdxltokenPhysicalPartitionSelectorScanId, GPOS_WSZ_LIT("ScanId")},
-      {EdxltokenPhysicalSplit, GPOS_WSZ_LIT("Split")},
-      {EdxltokenPhysicalAssert, GPOS_WSZ_LIT("Assert")},
       {EdxltokenPhysicalCTEProducer, GPOS_WSZ_LIT("CTEProducer")},
       {EdxltokenPhysicalCTEConsumer, GPOS_WSZ_LIT("CTEConsumer")},
 

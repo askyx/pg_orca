@@ -9,7 +9,6 @@
 #include "gpopt/exception.h"
 #include "gpopt/mdcache/CMDAccessorUtils.h"
 #include "gpopt/operators/CPhysicalAgg.h"
-#include "gpopt/operators/CPhysicalAssert.h"
 #include "gpopt/operators/CPhysicalBitmapTableScan.h"
 #include "gpopt/operators/CPhysicalCTEConsumer.h"
 #include "gpopt/operators/CPhysicalCTEProducer.h"
@@ -68,7 +67,6 @@
 #include "naucrates/base/IDatumInt8.h"
 #include "naucrates/dxl/operators/CDXLDatumBool.h"
 #include "naucrates/dxl/operators/CDXLPhysicalAppend.h"
-#include "naucrates/dxl/operators/CDXLPhysicalAssert.h"
 #include "naucrates/dxl/operators/CDXLPhysicalBitmapTableScan.h"
 #include "naucrates/dxl/operators/CDXLPhysicalCTEConsumer.h"
 #include "naucrates/dxl/operators/CDXLPhysicalCTEProducer.h"
@@ -306,9 +304,7 @@ CDXLNode *CTranslatorExprToDXL::CreateDXLNode(CExpression *pexpr, CColRefArray *
     case COperator::EopPhysicalDML:
       dxlnode = CTranslatorExprToDXL::PdxlnDML(pexpr, colref_array);
       break;
-    case COperator::EopPhysicalAssert:
-      dxlnode = CTranslatorExprToDXL::PdxlnAssert(pexpr, colref_array);
-      break;
+
     case COperator::EopPhysicalCTEProducer:
       dxlnode = CTranslatorExprToDXL::PdxlnCTEProducer(pexpr, colref_array);
       break;
@@ -1234,46 +1230,6 @@ CDXLNode *CTranslatorExprToDXL::PdxlnResultFromFilter(CExpression *pexprFilter, 
 
   return CTranslatorExprToDXLUtils::PdxlnResult(m_mp, dxl_properties, pdxlnPrL, filter_dxlnode, one_time_filter_dxlnode,
                                                 child_dxlnode);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorExprToDXL::PdxlnAssert
-//
-//	@doc:
-//		Translate a physical assert expression
-//
-//---------------------------------------------------------------------------
-CDXLNode *CTranslatorExprToDXL::PdxlnAssert(CExpression *pexprAssert, CColRefArray *colref_array) {
-  GPOS_ASSERT(nullptr != pexprAssert);
-
-  // extract components
-  CExpression *pexprRelational = (*pexprAssert)[0];
-  CExpression *pexprScalar = (*pexprAssert)[1];
-  CPhysicalAssert *popAssert = CPhysicalAssert::PopConvert(pexprAssert->Pop());
-
-  // extract physical properties from assert
-  CDXLPhysicalProperties *dxl_properties = GetProperties(pexprAssert);
-
-  CColRefSet *pcrsOutput = pexprAssert->Prpp()->PcrsRequired();
-
-  // translate relational child expression
-  CDXLNode *child_dxlnode = CreateDXLNode(pexprRelational, nullptr /* colref_array */, false /*fRemap*/);
-
-  // translate scalar expression
-  CDXLNode *pdxlnAssertPredicate = PdxlnScalar(pexprScalar);
-
-  GPOS_ASSERT(nullptr != pexprAssert->Prpp());
-
-  CDXLNode *pdxlnPrL = PdxlnProjList(pcrsOutput, colref_array);
-
-  const char *sql_state = popAssert->Pexc()->GetSQLState();
-  CDXLPhysicalAssert *pdxlopAssert = GPOS_NEW(m_mp) CDXLPhysicalAssert(m_mp, sql_state);
-  CDXLNode *pdxlnAssert = GPOS_NEW(m_mp) CDXLNode(m_mp, pdxlopAssert, pdxlnPrL, pdxlnAssertPredicate, child_dxlnode);
-
-  pdxlnAssert->SetProperties(dxl_properties);
-
-  return pdxlnAssert;
 }
 
 //---------------------------------------------------------------------------
