@@ -159,8 +159,8 @@ void CXformSplitGbAgg::PopulateLocalGlobalProjectList(CMemoryPool *mp, CExpressi
   // list of project elements for the new local and global aggregates
   CExpressionArray *pdrgpexprProjElemLocal = GPOS_NEW(mp) CExpressionArray(mp);
   CExpressionArray *pdrgpexprProjElemGlobal = GPOS_NEW(mp) CExpressionArray(mp);
-  const ULONG arity = pexprProjList->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = pexprProjList->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprProgElem = (*pexprProjList)[ul];
     CScalarProjectElement *popScPrEl = CScalarProjectElement::PopConvert(pexprProgElem->Pop());
 
@@ -245,11 +245,11 @@ void CXformSplitGbAgg::PopulateLocalGlobalProjectList(CMemoryPool *mp, CExpressi
 //		aggregate (DQA)) present
 //
 //---------------------------------------------------------------------------
-BOOL CXformSplitGbAgg::FApplicable(CExpression *pexpr) {
-  const ULONG arity = pexpr->Arity();
+bool CXformSplitGbAgg::FApplicable(CExpression *pexpr) {
+  const uint32_t arity = pexpr->Arity();
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
 
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrEl = (*pexpr)[ul];
 
     // get the scalar child of the project element

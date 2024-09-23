@@ -43,7 +43,7 @@ CPhysicalJoin::CPhysicalJoin(CMemoryPool *mp, CXform::EXformId origin_xform)
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalJoin::Matches(COperator *pop) const {
+bool CPhysicalJoin::Matches(COperator *pop) const {
   return Eopid() == pop->Eopid();
 }
 
@@ -59,7 +59,7 @@ COrderSpec *CPhysicalJoin::PosPropagateToOuter(CMemoryPool *mp, CExpressionHandl
   // propagate the order requirement to the outer child only if all the columns
   // specified by the order requirement come from the outer child
   CColRefSet *pcrs = posRequired->PcrsUsed(mp);
-  BOOL fOuterSortCols = exprhdl.DeriveOutputColumns(0)->ContainsAll(pcrs);
+  bool fOuterSortCols = exprhdl.DeriveOutputColumns(0)->ContainsAll(pcrs);
   pcrs->Release();
   if (fOuterSortCols) {
     return PosPassThru(mp, exprhdl, posRequired, 0 /*child_index*/);
@@ -77,9 +77,9 @@ COrderSpec *CPhysicalJoin::PosPropagateToOuter(CMemoryPool *mp, CExpressionHandl
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalJoin::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                        ULONG child_index,
+                                        uint32_t child_index,
                                         CDrvdPropArray *,  // pdrgpdpCtxt
-                                        ULONG              // ulOptReq
+                                        uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(child_index < 2 && "Required properties can only be computed on the relational child");
 
@@ -94,9 +94,9 @@ CColRefSet *CPhysicalJoin::PcrsRequired(CMemoryPool *mp, CExpressionHandle &expr
 //		Compute required CTE map of the n-th child
 //
 //---------------------------------------------------------------------------
-CCTEReq *CPhysicalJoin::PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
+CCTEReq *CPhysicalJoin::PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, uint32_t child_index,
                                      CDrvdPropArray *pdrgpdpCtxt,
-                                     ULONG  // ulOptReq
+                                     uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(2 > child_index);
 
@@ -111,21 +111,21 @@ CCTEReq *CPhysicalJoin::PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl
 //		Helper for checking if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalJoin::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                      ULONG  // ulOptReq
+bool CPhysicalJoin::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                      uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcrsRequired);
   GPOS_ASSERT(3 == exprhdl.Arity());
 
   // union columns from relational children
   CColRefSet *pcrs = GPOS_NEW(m_mp) CColRefSet(m_mp);
-  ULONG arity = exprhdl.Arity();
-  for (ULONG i = 0; i < arity - 1; i++) {
+  uint32_t arity = exprhdl.Arity();
+  for (uint32_t i = 0; i < arity - 1; i++) {
     CColRefSet *pcrsChild = exprhdl.DeriveOutputColumns(i);
     pcrs->Union(pcrsChild);
   }
 
-  BOOL fProvidesCols = pcrs->ContainsAll(pcrsRequired);
+  bool fProvidesCols = pcrs->ContainsAll(pcrsRequired);
   pcrs->Release();
 
   return fProvidesCols;
@@ -139,12 +139,12 @@ BOOL CPhysicalJoin::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pc
 //		Helper for checking if required sort columns come from outer child
 //
 //----------------------------------------------------------------------------
-BOOL CPhysicalJoin::FSortColsInOuterChild(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *pos) {
+bool CPhysicalJoin::FSortColsInOuterChild(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *pos) {
   GPOS_ASSERT(nullptr != pos);
 
   CColRefSet *pcrsSort = pos->PcrsUsed(mp);
   CColRefSet *pcrsOuterChild = exprhdl.DeriveOutputColumns(0 /*child_index*/);
-  BOOL fSortColsInOuter = pcrsOuterChild->ContainsAll(pcrsSort);
+  bool fSortColsInOuter = pcrsOuterChild->ContainsAll(pcrsSort);
   pcrsSort->Release();
 
   return fSortColsInOuter;
@@ -159,7 +159,7 @@ BOOL CPhysicalJoin::FSortColsInOuterChild(CMemoryPool *mp, CExpressionHandle &ex
 //		includes the required columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalJoin::FOuterProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired) {
+bool CPhysicalJoin::FOuterProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired) {
   GPOS_ASSERT(nullptr != pcrsRequired);
   GPOS_ASSERT(3 == exprhdl.Arity() && "expected binary join");
 
@@ -174,7 +174,7 @@ BOOL CPhysicalJoin::FOuterProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSe
 //     columns from pexprOuter; or
 //   - pexprPredInner uses columns from pexprOuter and pexprPredOuter uses
 //     columns from pexprInner
-BOOL CPhysicalJoin::FPredKeysSeparated(CExpression *pexprInner, CExpression *pexprOuter, CExpression *pexprPredInner,
+bool CPhysicalJoin::FPredKeysSeparated(CExpression *pexprInner, CExpression *pexprOuter, CExpression *pexprPredInner,
                                        CExpression *pexprPredOuter) {
   GPOS_ASSERT(nullptr != pexprOuter);
   GPOS_ASSERT(nullptr != pexprInner);
@@ -189,10 +189,10 @@ BOOL CPhysicalJoin::FPredKeysSeparated(CExpression *pexprInner, CExpression *pex
 
   // make sure that each predicate child uses columns from a different join child
   // in order to reject predicates of the form 'X Join Y on f(X.a, Y.b) = 5'
-  BOOL fPredOuterUsesJoinOuterChild = (0 < pcrsUsedPredOuter->Size()) && outer_refs->ContainsAll(pcrsUsedPredOuter);
-  BOOL fPredOuterUsesJoinInnerChild = (0 < pcrsUsedPredOuter->Size()) && pcrsInner->ContainsAll(pcrsUsedPredOuter);
-  BOOL fPredInnerUsesJoinOuterChild = (0 < pcrsUsedPredInner->Size()) && outer_refs->ContainsAll(pcrsUsedPredInner);
-  BOOL fPredInnerUsesJoinInnerChild = (0 < pcrsUsedPredInner->Size()) && pcrsInner->ContainsAll(pcrsUsedPredInner);
+  bool fPredOuterUsesJoinOuterChild = (0 < pcrsUsedPredOuter->Size()) && outer_refs->ContainsAll(pcrsUsedPredOuter);
+  bool fPredOuterUsesJoinInnerChild = (0 < pcrsUsedPredOuter->Size()) && pcrsInner->ContainsAll(pcrsUsedPredOuter);
+  bool fPredInnerUsesJoinOuterChild = (0 < pcrsUsedPredInner->Size()) && outer_refs->ContainsAll(pcrsUsedPredInner);
+  bool fPredInnerUsesJoinInnerChild = (0 < pcrsUsedPredInner->Size()) && pcrsInner->ContainsAll(pcrsUsedPredInner);
 
   return (fPredOuterUsesJoinOuterChild && fPredInnerUsesJoinInnerChild) ||
          (fPredOuterUsesJoinInnerChild && fPredInnerUsesJoinOuterChild);
@@ -209,7 +209,7 @@ BOOL CPhysicalJoin::FPredKeysSeparated(CExpression *pexprInner, CExpression *pex
 //		uses columns from both join children
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalJoin::FHashJoinCompatible(CExpression *pexprPred,   // predicate in question
+bool CPhysicalJoin::FHashJoinCompatible(CExpression *pexprPred,   // predicate in question
                                         CExpression *pexprOuter,  // outer child of the join
                                         CExpression *pexprInner   // inner child of the join
 ) {
@@ -254,7 +254,7 @@ BOOL CPhysicalJoin::FHashJoinCompatible(CExpression *pexprPred,   // predicate i
   return false;
 }
 
-BOOL CPhysicalJoin::FMergeJoinCompatible(CExpression *pexprPred,   // predicate in question
+bool CPhysicalJoin::FMergeJoinCompatible(CExpression *pexprPred,   // predicate in question
                                          CExpression *pexprOuter,  // outer child of the join
                                          CExpression *pexprInner   // inner child of the join
 ) {
@@ -361,8 +361,8 @@ void CPhysicalJoin::AlignJoinKeyOuterInner(CExpression *pexprPred, CExpression *
 //		Check whether the child being processed is the child that has the part consumer
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalJoin::FProcessingChildWithPartConsumer(BOOL fOuterPartConsumerTest, ULONG ulChildIndexToTestFirst,
-                                                     ULONG ulChildIndexToTestSecond, ULONG child_index) {
+bool CPhysicalJoin::FProcessingChildWithPartConsumer(bool fOuterPartConsumerTest, uint32_t ulChildIndexToTestFirst,
+                                                     uint32_t ulChildIndexToTestSecond, uint32_t child_index) {
   return (fOuterPartConsumerTest && ulChildIndexToTestFirst == child_index) ||
          (!fOuterPartConsumerTest && ulChildIndexToTestSecond == child_index);
 }
@@ -376,7 +376,7 @@ BOOL CPhysicalJoin::FProcessingChildWithPartConsumer(BOOL fOuterPartConsumerTest
 //		child to be optimized
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalJoin::FFirstChildToOptimize(ULONG child_index) const {
+bool CPhysicalJoin::FFirstChildToOptimize(uint32_t child_index) const {
   GPOS_ASSERT(2 > child_index);
 
   EChildExecOrder eceo = Eceo();
@@ -392,8 +392,7 @@ BOOL CPhysicalJoin::FFirstChildToOptimize(ULONG child_index) const {
 //		Return number of distribution requests for correlated join
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysicalJoin::UlDistrRequestsForCorrelatedJoin() {
+uint32_t CPhysicalJoin::UlDistrRequestsForCorrelatedJoin() {
   // Correlated Join creates two distribution requests to enforce distribution of its children:
   // Req(0): If incoming distribution is (Strict) Singleton, pass it through to all children
   //			to comply with correlated execution requirements

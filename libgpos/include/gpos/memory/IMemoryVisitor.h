@@ -42,8 +42,8 @@ class IMemoryVisitor {
   // file name may be NULL (when debugging is not enabled);
   // line number will be zero in that case;
   // sequence number is a constant in case allocation sequencing is not supported;
-  virtual void Visit(void *user_addr, SIZE_T user_size, void *total_addr, SIZE_T total_size, const CHAR *alloc_filename,
-                     const ULONG alloc_line, ULLONG alloc_seq_number, CStackDescriptor *desc) = 0;
+  virtual void Visit(void *user_addr, size_t user_size, void *total_addr, size_t total_size, const char *alloc_filename,
+                     const uint32_t alloc_line, uint64_t alloc_seq_number, CStackDescriptor *desc) = 0;
 };
 }  // namespace gpos
 

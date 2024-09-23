@@ -110,11 +110,11 @@ const ULongPtrArray *CDXLLogicalGroupBy::GetGroupingColidArray() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalGroupBy::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLLogicalGroupBy::AssertValid(const CDXLNode *node, bool validate_children) const {
   // 1 Child node
   // 1 Group By project list
 
-  const ULONG num_of_child = node->Arity();
+  const uint32_t num_of_child = node->Arity();
   GPOS_ASSERT(2 == num_of_child);
 
   CDXLNode *proj_list = (*node)[0];
@@ -124,14 +124,14 @@ void CDXLLogicalGroupBy::AssertValid(const CDXLNode *node, BOOL validate_childre
   GPOS_ASSERT(EdxloptypeLogical == dxl_op_type->GetOperator()->GetDXLOperatorType());
 
   if (validate_children) {
-    for (ULONG idx = 0; idx < num_of_child; idx++) {
+    for (uint32_t idx = 0; idx < num_of_child; idx++) {
       CDXLNode *child_dxlnode = (*node)[idx];
       child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
     }
   }
 
-  const ULONG num_of_proj_elem = proj_list->Arity();
-  for (ULONG idx = 0; idx < num_of_proj_elem; ++idx) {
+  const uint32_t num_of_proj_elem = proj_list->Arity();
+  for (uint32_t idx = 0; idx < num_of_proj_elem; ++idx) {
     CDXLNode *proj_elem = (*proj_list)[idx];
     GPOS_ASSERT(EdxlopScalarIdent != proj_elem->GetOperator()->GetDXLOperator());
   }

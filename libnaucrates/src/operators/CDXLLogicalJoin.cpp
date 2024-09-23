@@ -85,11 +85,11 @@ const CWStringConst *CDXLLogicalJoin::GetJoinTypeNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalJoin::AssertValid(const CDXLNode *node, BOOL validate_children) const {
-  const ULONG num_of_child = node->Arity();
+void CDXLLogicalJoin::AssertValid(const CDXLNode *node, bool validate_children) const {
+  const uint32_t num_of_child = node->Arity();
   GPOS_ASSERT(2 < num_of_child);
 
-  for (ULONG idx = 0; idx < num_of_child - 1; ++idx) {
+  for (uint32_t idx = 0; idx < num_of_child - 1; ++idx) {
     CDXLNode *child_dxlnode = (*node)[idx];
     GPOS_ASSERT(EdxloptypeLogical == child_dxlnode->GetOperator()->GetDXLOperatorType());
 

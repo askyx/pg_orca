@@ -40,7 +40,7 @@ class CXformLeftJoin2RightJoin : public CXformExploration {
   EXformId Exfid() const override { return ExfLeftJoin2RightJoin; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformLeftJoin2RightJoin"; }
+  const char *SzId() const override { return "CXformLeftJoin2RightJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

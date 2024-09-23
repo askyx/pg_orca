@@ -61,7 +61,7 @@ CLogicalApply::~CLogicalApply() {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CLogicalApply::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                                    ULONG child_index) const {
+                                    uint32_t child_index) const {
   GPOS_ASSERT(3 == exprhdl.Arity());
 
   CColRefSet *pcrsUsed = GPOS_NEW(mp) CColRefSet(mp);
@@ -87,7 +87,7 @@ CColRefSet *CLogicalApply::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalApply::Matches(COperator *pop) const {
+bool CLogicalApply::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CColRefArray *pdrgpcrInner = CLogicalApply::PopConvert(pop)->PdrgPcrInner();
     if (nullptr == m_pdrgpcrInner || nullptr == pdrgpcrInner) {

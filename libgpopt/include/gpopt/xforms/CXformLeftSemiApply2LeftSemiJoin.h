@@ -46,7 +46,7 @@ class CXformLeftSemiApply2LeftSemiJoin : public CXformApply2Join<CLogicalLeftSem
   // ident accessors
   EXformId Exfid() const override { return ExfLeftSemiApply2LeftSemiJoin; }
 
-  const CHAR *SzId() const override { return "CXformLeftSemiApply2LeftSemiJoin"; }
+  const char *SzId() const override { return "CXformLeftSemiApply2LeftSemiJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

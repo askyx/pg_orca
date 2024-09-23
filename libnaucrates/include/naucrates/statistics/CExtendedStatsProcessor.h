@@ -24,7 +24,7 @@ class CExtendedStatsProcessor {
 
   static bool ApplyCorrelatedStatsToNDistinctCalculation(CMemoryPool *mp, const IMDExtStatsInfo *md_statsinfo,
                                                          const UlongToIntMap *colid_to_attno_mapping,
-                                                         ULongPtrArray *&src_grouping_cols, DOUBLE *ndistinct);
+                                                         ULongPtrArray *&src_grouping_cols, double *ndistinct);
 };
 }  // namespace gpnaucrates
 

@@ -40,7 +40,7 @@ class CXformUpdate2DML : public CXformExploration {
   EXformId Exfid() const override { return ExfUpdate2DML; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformUpdate2DML"; }
+  const char *SzId() const override { return "CXformUpdate2DML"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

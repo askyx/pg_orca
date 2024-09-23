@@ -35,14 +35,14 @@ class CTableDescriptor;
 //---------------------------------------------------------------------------
 class CPhysicalBitmapTableScan : public CPhysicalScan {
  private:
-  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-  ULONG m_ulOriginOpId;
+  // origin operator id -- UINT32_MAX if operator was not generated via a transformation
+  uint32_t m_ulOriginOpId;
 
  public:
   CPhysicalBitmapTableScan(const CPhysicalBitmapTableScan &) = delete;
 
   // ctor
-  CPhysicalBitmapTableScan(CMemoryPool *mp, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
+  CPhysicalBitmapTableScan(CMemoryPool *mp, CTableDescriptor *ptabdesc, uint32_t ulOriginOpId,
                            const CName *pnameTableAlias, CColRefArray *pdrgpcrOutput);
 
   // dtor
@@ -52,20 +52,19 @@ class CPhysicalBitmapTableScan : public CPhysicalScan {
   EOperatorId Eopid() const override { return EopPhysicalBitmapTableScan; }
 
   // operator name
-  const CHAR *SzId() const override { return "CPhysicalBitmapTableScan"; }
+  const char *SzId() const override { return "CPhysicalBitmapTableScan"; }
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
-  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-  ULONG
-  UlOriginOpId() const { return m_ulOriginOpId; }
+  // origin operator id -- UINT32_MAX if operator was not generated via a transformation
+  uint32_t UlOriginOpId() const { return m_ulOriginOpId; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // statistics derivation during costing
   IStatistics *PstatsDerive(CMemoryPool *,        // mp

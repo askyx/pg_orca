@@ -25,13 +25,13 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CStatsPredLike::CStatsPredLike(ULONG colid, CExpression *expr_left, CExpression *expr_right,
+CStatsPredLike::CStatsPredLike(uint32_t colid, CExpression *expr_left, CExpression *expr_right,
                                CDouble default_scale_factor)
     : CStatsPred(colid),
       m_expr_left(expr_left),
       m_expr_right(expr_right),
       m_default_scale_factor(default_scale_factor) {
-  GPOS_ASSERT(gpos::ulong_max != colid);
+  GPOS_ASSERT(UINT32_MAX != colid);
   GPOS_ASSERT(nullptr != expr_left);
   GPOS_ASSERT(nullptr != expr_right);
   GPOS_ASSERT(0 < default_scale_factor);
@@ -58,8 +58,7 @@ CStatsPredLike::~CStatsPredLike() {
 //		Return the column identifier on which the predicates are on
 //
 //---------------------------------------------------------------------------
-ULONG
-CStatsPredLike::GetColId() const {
+uint32_t CStatsPredLike::GetColId() const {
   return m_colid;
 }
 

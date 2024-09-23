@@ -23,8 +23,8 @@ using namespace gpos;
 //	@doc:
 //
 //---------------------------------------------------------------------------
-CMessage::CMessage(CException exc, ULONG severity, const WCHAR *wszFmt, ULONG ulLenFmt, ULONG ulParams,
-                   const WCHAR *wszComment, ULONG ulLenComment)
+CMessage::CMessage(CException exc, uint32_t severity, const wchar_t *wszFmt, uint32_t ulLenFmt, uint32_t ulParams,
+                   const wchar_t *wszComment, uint32_t ulLenComment)
     : m_severity(severity),
       m_fmt(wszFmt),
       m_fmt_len(ulLenFmt),
@@ -72,7 +72,7 @@ void CMessage::Format(CWStringStatic *pwss, VA_LIST vl) const {
 //		Format the message corresponding to the given exception
 //
 //---------------------------------------------------------------------------
-void CMessage::FormatMessage(CWStringStatic *str, ULONG major, ULONG minor, ...) {
+void CMessage::FormatMessage(CWStringStatic *str, uint32_t major, uint32_t minor, ...) {
   // manufacture actual exception object
   CException exc(major, minor);
 
@@ -117,7 +117,7 @@ IOstream &CMessage::OsPrint(IOstream &os) const {
 //		Access a message by its index
 //
 //---------------------------------------------------------------------------
-CMessage *CMessage::GetMessage(ULONG index) {
+CMessage *CMessage::GetMessage(uint32_t index) {
   GPOS_ASSERT(index < CException::ExmiSentinel);
 
   // Basic system-side messages in English
@@ -136,7 +136,7 @@ CMessage *CMessage::GetMessage(ULONG index) {
 
       CMessage(CException(CException::ExmaSystem, CException::ExmiAssert), CException::ExsevError,
                GPOS_WSZ_WSZLEN("%s:%d: Failed assertion: %ls"),
-               3,  // params: filename (CHAR*), line, assertion condition
+               3,  // params: filename (char*), line, assertion condition
                GPOS_WSZ_WSZLEN("Internal assertion has been violated")),
 
       CMessage(CException(CException::ExmaSystem, CException::ExmiOOM), CException::ExsevError,
@@ -154,7 +154,7 @@ CMessage *CMessage::GetMessage(ULONG index) {
 
       CMessage(CException(CException::ExmaSystem, CException::ExmiAbortTimeout), CException::ExsevError,
                GPOS_WSZ_WSZLEN("Last check for aborts before %d ms, at:\n%ls"),
-               2,  // # params: interval (ULONG), stack trace (WCHAR *)
+               2,  // # params: interval (uint32_t), stack trace (wchar_t *)
                GPOS_WSZ_WSZLEN("Interval between successive abort checkpoints exceeds maximum")),
 
       CMessage(CException(CException::ExmaSystem, CException::ExmiIOError), CException::ExsevError,

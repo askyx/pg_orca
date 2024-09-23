@@ -42,7 +42,7 @@ CName::CName(CMemoryPool *mp, const CWStringBase *str) : m_str_name(nullptr), m_
 //		specified by the fOwnsMemory argument
 //
 //---------------------------------------------------------------------------
-CName::CName(const CWStringConst *str, BOOL fOwnsMemory) : m_str_name(str), m_fDeepCopy(fOwnsMemory) {
+CName::CName(const CWStringConst *str, bool fOwnsMemory) : m_str_name(str), m_fDeepCopy(fOwnsMemory) {
   GPOS_ASSERT(nullptr != m_str_name);
   GPOS_ASSERT(m_str_name->IsValid());
 }
@@ -133,7 +133,7 @@ void CName::DeepCopy(CMemoryPool *mp, const CWStringConst *str) {
 //		comparison of names
 //
 //---------------------------------------------------------------------------
-BOOL CName::Equals(const CName &name) const {
+bool CName::Equals(const CName &name) const {
   return m_str_name->Equals((name.Pstr()));
 }
 

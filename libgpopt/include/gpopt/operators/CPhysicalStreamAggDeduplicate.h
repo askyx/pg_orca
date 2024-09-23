@@ -33,9 +33,9 @@ class CPhysicalStreamAggDeduplicate : public CPhysicalStreamAgg {
 
   // ctor
   CPhysicalStreamAggDeduplicate(CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal,
-                                COperator::EGbAggType egbaggtype, CColRefArray *pdrgpcrKeys, BOOL fGeneratesDuplicates,
-                                BOOL fMultiStage, BOOL isAggFromSplitDQA, CLogicalGbAgg::EAggStage aggStage,
-                                BOOL should_enforce_distribution);
+                                COperator::EGbAggType egbaggtype, CColRefArray *pdrgpcrKeys, bool fGeneratesDuplicates,
+                                bool fMultiStage, bool isAggFromSplitDQA, CLogicalGbAgg::EAggStage aggStage,
+                                bool should_enforce_distribution);
 
   // dtor
   ~CPhysicalStreamAggDeduplicate() override;
@@ -44,7 +44,7 @@ class CPhysicalStreamAggDeduplicate : public CPhysicalStreamAgg {
   EOperatorId Eopid() const override { return EopPhysicalStreamAggDeduplicate; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalStreamAggDeduplicate"; }
+  const char *SzId() const override { return "CPhysicalStreamAggDeduplicate"; }
 
   // array of keys from the join's child
   CColRefArray *PdrgpcrKeys() const { return m_pdrgpcrKeys; }
@@ -54,17 +54,17 @@ class CPhysicalStreamAggDeduplicate : public CPhysicalStreamAgg {
   //-------------------------------------------------------------------------------------
 
   // compute required output columns of the n-th child
-  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG child_index,
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t child_index,
                            CDrvdPropArray *,  // pdrgpdpCtxt,
-                           ULONG              // ulOptReq
+                           uint32_t           // ulOptReq
                            ) override {
     return PcrsRequiredAgg(mp, exprhdl, pcrsRequired, child_index, m_pdrgpcrKeys);
   }
 
   // compute required sort columns of the n-th child
-  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, uint32_t child_index,
                           CDrvdPropArray *,  // pdrgpdpCtxt,
-                          ULONG              // ulOptReq
+                          uint32_t           // ulOptReq
   ) const override {
     return PosRequiredStreamAgg(mp, exprhdl, posRequired, child_index, m_pdrgpcrKeys);
   }

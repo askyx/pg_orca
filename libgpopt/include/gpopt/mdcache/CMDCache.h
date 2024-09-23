@@ -37,7 +37,7 @@ class CMDCache {
   static CMDAccessor::MDCache *m_pcache;
 
   // the maximum size of the cache
-  static ULLONG m_ullCacheQuota;
+  static uint64_t m_ullCacheQuota;
 
   // private ctor
   CMDCache() = default;
@@ -52,19 +52,19 @@ class CMDCache {
   static void Init();
 
   // has cache been initialized?
-  static BOOL FInitialized() { return (nullptr != m_pcache); }
+  static bool FInitialized() { return (nullptr != m_pcache); }
 
   // destroy global instance
   static void Shutdown();
 
   // set the maximum size of the cache
-  static void SetCacheQuota(ULLONG ullCacheQuota);
+  static void SetCacheQuota(uint64_t ullCacheQuota);
 
   // get the maximum size of the cache
-  static ULLONG ULLGetCacheQuota();
+  static uint64_t ULLGetCacheQuota();
 
   // get the number of times we evicted entries from this cache
-  static ULLONG ULLGetCacheEvictionCounter();
+  static uint64_t ULLGetCacheEvictionCounter();
 
   // reset global instance
   static void Reset();

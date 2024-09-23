@@ -66,8 +66,7 @@ CScalarNullIf::~CScalarNullIf() {
 //		return type id
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarNullIf::HashValue() const {
+uint32_t CScalarNullIf::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(),
                              gpos::CombineHashes(m_mdid_op->HashValue(), m_mdid_type->HashValue()));
 }
@@ -80,7 +79,7 @@ CScalarNullIf::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarNullIf::Matches(COperator *pop) const {
+bool CScalarNullIf::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }

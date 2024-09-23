@@ -33,7 +33,7 @@ CScalarNAryJoinPredList::CScalarNAryJoinPredList(CMemoryPool *mp) : CScalar(mp) 
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarNAryJoinPredList::Matches(COperator *pop) const {
+bool CScalarNAryJoinPredList::Matches(COperator *pop) const {
   return (pop->Eopid() == Eopid());
 }
 
@@ -45,7 +45,7 @@ BOOL CScalarNAryJoinPredList::Matches(COperator *pop) const {
 //		Join predicate lists are sensitive to order
 //
 //---------------------------------------------------------------------------
-BOOL CScalarNAryJoinPredList::FInputOrderSensitive() const {
+bool CScalarNAryJoinPredList::FInputOrderSensitive() const {
   return true;
 }
 

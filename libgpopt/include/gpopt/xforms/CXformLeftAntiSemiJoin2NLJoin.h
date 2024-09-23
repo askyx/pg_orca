@@ -40,7 +40,7 @@ class CXformLeftAntiSemiJoin2NLJoin : public CXformImplementation {
   EXformId Exfid() const override { return ExfLeftAntiSemiJoin2NLJoin; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformLeftAntiSemiJoin2NLJoin"; }
+  const char *SzId() const override { return "CXformLeftAntiSemiJoin2NLJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

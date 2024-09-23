@@ -374,32 +374,32 @@ CConfigParamMapping::SConfigMappingElem CConfigParamMapping::m_elements[] = {
 //
 //---------------------------------------------------------------------------
 CBitSet *CConfigParamMapping::PackConfigParamInBitset(CMemoryPool *mp,
-                                                      ULONG xform_id  // number of available xforms
+                                                      uint32_t xform_id  // number of available xforms
 ) {
   CBitSet *traceflag_bitset = GPOS_NEW(mp) CBitSet(mp, EopttraceSentinel);
 
-  for (ULONG ul = 0; ul < GPOS_ARRAY_SIZE(m_elements); ul++) {
+  for (uint32_t ul = 0; ul < GPOS_ARRAY_SIZE(m_elements); ul++) {
     SConfigMappingElem elem = m_elements[ul];
-    GPOS_ASSERT(!traceflag_bitset->Get((ULONG)elem.m_trace_flag) && "trace flag already set");
+    GPOS_ASSERT(!traceflag_bitset->Get((uint32_t)elem.m_trace_flag) && "trace flag already set");
 
-    BOOL value = *elem.m_is_param;
+    bool value = *elem.m_is_param;
     if (elem.m_negate_param) {
       // negate the value of config param
       value = !value;
     }
 
     if (value) {
-      BOOL is_traceflag_set GPOS_ASSERTS_ONLY = traceflag_bitset->ExchangeSet((ULONG)elem.m_trace_flag);
+      bool is_traceflag_set GPOS_ASSERTS_ONLY = traceflag_bitset->ExchangeSet((uint32_t)elem.m_trace_flag);
       GPOS_ASSERT(!is_traceflag_set);
     }
   }
 
   // pack disable flags of xforms
-  for (ULONG ul = 0; ul < xform_id; ul++) {
+  for (uint32_t ul = 0; ul < xform_id; ul++) {
     GPOS_ASSERT(!traceflag_bitset->Get(EopttraceDisableXformBase + ul) && "xform trace flag already set");
 
     if (optimizer_xforms[ul]) {
-      BOOL is_traceflag_set GPOS_ASSERTS_ONLY = traceflag_bitset->ExchangeSet(EopttraceDisableXformBase + ul);
+      bool is_traceflag_set GPOS_ASSERTS_ONLY = traceflag_bitset->ExchangeSet(EopttraceDisableXformBase + ul);
       GPOS_ASSERT(!is_traceflag_set);
     }
   }

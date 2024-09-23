@@ -22,7 +22,7 @@ using namespace gpmd;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CSystemId::CSystemId(IMDId::EMDIdType mdid_type, const WCHAR *sysid_char, ULONG length) : m_mdid_type(mdid_type) {
+CSystemId::CSystemId(IMDId::EMDIdType mdid_type, const wchar_t *sysid_char, uint32_t length) : m_mdid_type(mdid_type) {
   GPOS_ASSERT(GPDXL_SYSID_LENGTH >= length);
 
   if (length > 0) {
@@ -53,8 +53,8 @@ CSystemId::CSystemId(const CSystemId &sysid) : m_mdid_type(sysid.MdidType()) {
 //		Equality function
 //
 //---------------------------------------------------------------------------
-BOOL CSystemId::Equals(const CSystemId &sysid) const {
-  ULONG length = GPOS_WSZ_LENGTH(m_sysid_char);
+bool CSystemId::Equals(const CSystemId &sysid) const {
+  uint32_t length = GPOS_WSZ_LENGTH(m_sysid_char);
   return length == GPOS_WSZ_LENGTH(sysid.m_sysid_char) && 0 == clib::Wcsncmp(m_sysid_char, sysid.m_sysid_char, length);
 }
 
@@ -66,9 +66,8 @@ BOOL CSystemId::Equals(const CSystemId &sysid) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CSystemId::HashValue() const {
-  return gpos::HashByteArray((BYTE *)m_sysid_char, GPOS_WSZ_LENGTH(m_sysid_char) * GPOS_SIZEOF(WCHAR));
+uint32_t CSystemId::HashValue() const {
+  return gpos::HashByteArray((uint8_t *)m_sysid_char, GPOS_WSZ_LENGTH(m_sysid_char) * GPOS_SIZEOF(wchar_t));
 }
 
 // EOF

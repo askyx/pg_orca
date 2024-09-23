@@ -60,7 +60,7 @@ CXformSet *CLogicalInnerCorrelatedApply::PxfsCandidates(CMemoryPool *mp) const {
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalInnerCorrelatedApply::Matches(COperator *pop) const {
+bool CLogicalInnerCorrelatedApply::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     return m_pdrgpcrInner->Equals(CLogicalInnerCorrelatedApply::PopConvert(pop)->PdrgPcrInner());
   }
@@ -77,7 +77,7 @@ BOOL CLogicalInnerCorrelatedApply::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalInnerCorrelatedApply::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                                    BOOL must_exist) {
+                                                                    bool must_exist) {
   CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
   return GPOS_NEW(mp) CLogicalInnerCorrelatedApply(mp, pdrgpcrInner, m_eopidOriginSubq);

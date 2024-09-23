@@ -44,13 +44,13 @@ void CJob::Reset() {
 //		Resume parent jobs after job completion
 //
 //---------------------------------------------------------------------------
-BOOL CJob::FResumeParent() const {
+bool CJob::FResumeParent() const {
   GPOS_ASSERT(0 == UlpRefs());
   GPOS_ASSERT(nullptr != m_pjParent);
   GPOS_ASSERT(0 < m_pjParent->UlpRefs());
 
   // decrement parent's ref counter
-  ULONG_PTR ulpRefs = m_pjParent->UlpDecrRefs();
+  uintptr_t ulpRefs = m_pjParent->UlpDecrRefs();
 
   // check if job should be resumed
   return (1 == ulpRefs);

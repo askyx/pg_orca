@@ -38,7 +38,7 @@ class CPhysicalLeftOuterNLJoin : public CPhysicalNLJoin {
   EOperatorId Eopid() const override { return EopPhysicalLeftOuterNLJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalLeftOuterNLJoin"; }
+  const char *SzId() const override { return "CPhysicalLeftOuterNLJoin"; }
 
   // conversion function
   static CPhysicalLeftOuterNLJoin *PopConvert(COperator *pop) {

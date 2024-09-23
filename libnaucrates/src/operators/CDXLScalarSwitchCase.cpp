@@ -61,11 +61,11 @@ const CWStringConst *CDXLScalarSwitchCase::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarSwitchCase::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
-  const ULONG arity = dxlnode->Arity();
+void CDXLScalarSwitchCase::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
+  const uint32_t arity = dxlnode->Arity();
   GPOS_ASSERT(2 == arity);
 
-  for (ULONG idx = 0; idx < arity; ++idx) {
+  for (uint32_t idx = 0; idx < arity; ++idx) {
     CDXLNode *dxlnode_arg = (*dxlnode)[idx];
     GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 

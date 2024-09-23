@@ -47,10 +47,10 @@ class CKeyCollection : public CRefCount {
   void Add(CColRefSet *pcrs);
 
   // check if set forms a key
-  BOOL FKey(const CColRefSet *pcrs, BOOL fExactMatch = true) const;
+  bool FKey(const CColRefSet *pcrs, bool fExactMatch = true) const;
 
   // check if an array of columns constitutes a key
-  BOOL FKey(CMemoryPool *mp, const CColRefArray *colref_array) const;
+  bool FKey(CMemoryPool *mp, const CColRefArray *colref_array) const;
 
   // trim off non-key columns
   CColRefArray *PdrgpcrTrim(CMemoryPool *mp, const CColRefArray *colref_array) const;
@@ -62,14 +62,13 @@ class CKeyCollection : public CRefCount {
   CColRefArray *PdrgpcrHashableKey(CMemoryPool *mp) const;
 
   // extract key at given position
-  CColRefArray *PdrgpcrKey(CMemoryPool *mp, ULONG ul) const;
+  CColRefArray *PdrgpcrKey(CMemoryPool *mp, uint32_t ul) const;
 
   // extract key at given position
-  CColRefSet *PcrsKey(CMemoryPool *mp, ULONG ul) const;
+  CColRefSet *PcrsKey(CMemoryPool *mp, uint32_t ul) const;
 
   // number of keys
-  ULONG
-  Keys() const { return m_pdrgpcrs->Size(); }
+  uint32_t Keys() const { return m_pdrgpcrs->Size(); }
 
   // print
   IOstream &OsPrint(IOstream &os) const;

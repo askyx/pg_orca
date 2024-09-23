@@ -41,18 +41,18 @@ class CScalarProjectList : public CScalar {
   EOperatorId Eopid() const override { return EopScalarProjectList; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarProjectList"; }
+  const char *SzId() const override { return "CScalarProjectList"; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
@@ -71,19 +71,19 @@ class CScalarProjectList : public CScalar {
   }
 
   // return number of distinct aggs in project list attached to given handle
-  static ULONG UlDistinctAggs(CExpressionHandle &exprhdl);
+  static uint32_t UlDistinctAggs(CExpressionHandle &exprhdl);
 
   // return number of ordered aggs in project list attached to given handle
-  static ULONG UlOrderedAggs(CExpressionHandle &exprhdl);
+  static uint32_t UlOrderedAggs(CExpressionHandle &exprhdl);
 
   // check if a project list has multiple distinct aggregates
-  static BOOL FHasMultipleDistinctAggs(CExpressionHandle &exprhdl);
+  static bool FHasMultipleDistinctAggs(CExpressionHandle &exprhdl);
 
   // check if a project list has a scalar func
-  static BOOL FHasScalarFunc(CExpressionHandle &exprhdl);
+  static bool FHasScalarFunc(CExpressionHandle &exprhdl);
 
   // check if a project list has only replication safe agg funcs
-  static BOOL FContainsOnlyReplicationSafeAggFuncs(CExpressionHandle &exprhdl);
+  static bool FContainsOnlyReplicationSafeAggFuncs(CExpressionHandle &exprhdl);
 };  // class CScalarProjectList
 
 }  // namespace gpopt

@@ -42,11 +42,10 @@ class CStatsPredConj : public CStatsPred {
   ~CStatsPredConj() override { m_conj_pred_stats_array->Release(); }
 
   // the column identifier on which the predicates are on
-  ULONG GetColId() const override;
+  uint32_t GetColId() const override;
 
   // total number of predicates in the conjunction
-  ULONG
-  GetNumPreds() const { return m_conj_pred_stats_array->Size(); }
+  uint32_t GetNumPreds() const { return m_conj_pred_stats_array->Size(); }
 
   CStatsPredPtrArry *GetConjPredStatsArray() const { return m_conj_pred_stats_array; }
 
@@ -54,7 +53,7 @@ class CStatsPredConj : public CStatsPred {
   void Sort() const;
 
   // return the filter at a particular position
-  CStatsPred *GetPredStats(ULONG pos) const;
+  CStatsPred *GetPredStats(uint32_t pos) const;
 
   // filter type id
   EStatsPredType GetPredStatsType() const override { return CStatsPred::EsptConj; }

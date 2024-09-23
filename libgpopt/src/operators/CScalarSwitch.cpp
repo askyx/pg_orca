@@ -55,8 +55,7 @@ CScalarSwitch::~CScalarSwitch() {
 //		return type id
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarSwitch::HashValue() const {
+uint32_t CScalarSwitch::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), m_mdid_type->HashValue());
 }
 
@@ -68,7 +67,7 @@ CScalarSwitch::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarSwitch::Matches(COperator *pop) const {
+bool CScalarSwitch::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarSwitch *popScSwitch = CScalarSwitch::PopConvert(pop);
 

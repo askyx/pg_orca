@@ -38,14 +38,14 @@ using namespace gpos;
 //		Check state of file or directory
 //
 //---------------------------------------------------------------------------
-void gpos::ioutils::CheckState(const CHAR *file_path, SFileStat *file_state) {
+void gpos::ioutils::CheckState(const char *file_path, SFileStat *file_state) {
   GPOS_ASSERT(nullptr != file_path);
   GPOS_ASSERT(nullptr != file_state);
 
   // reset file state
   (void)clib::Memset(file_state, 0, sizeof(*file_state));
 
-  INT res;
+  int32_t res;
 
   res = stat(file_path, file_state);
 
@@ -62,13 +62,13 @@ void gpos::ioutils::CheckState(const CHAR *file_path, SFileStat *file_state) {
 //		Check state of file or directory by file descriptor
 //
 //---------------------------------------------------------------------------
-void gpos::ioutils::CheckStateUsingFileDescriptor(const INT file_descriptor, SFileStat *file_state) {
+void gpos::ioutils::CheckStateUsingFileDescriptor(const int32_t file_descriptor, SFileStat *file_state) {
   GPOS_ASSERT(nullptr != file_state);
 
   // reset file state
   (void)clib::Memset(file_state, 0, sizeof(*file_state));
 
-  INT res;
+  int32_t res;
 
   res = fstat(file_descriptor, file_state);
 
@@ -85,12 +85,12 @@ void gpos::ioutils::CheckStateUsingFileDescriptor(const INT file_descriptor, SFi
 //		Check if path is mapped to an accessible file or directory
 //
 //---------------------------------------------------------------------------
-BOOL gpos::ioutils::PathExists(const CHAR *file_path) {
+bool gpos::ioutils::PathExists(const char *file_path) {
   GPOS_ASSERT(nullptr != file_path);
 
   SFileStat fs;
 
-  INT res = stat(file_path, &fs);
+  int32_t res = stat(file_path, &fs);
 
   return (0 == res);
 }
@@ -103,7 +103,7 @@ BOOL gpos::ioutils::PathExists(const CHAR *file_path) {
 //		Check if path is directory
 //
 //---------------------------------------------------------------------------
-BOOL gpos::ioutils::IsDir(const CHAR *file_path) {
+bool gpos::ioutils::IsDir(const char *file_path) {
   GPOS_ASSERT(nullptr != file_path);
 
   SFileStat fs;
@@ -120,7 +120,7 @@ BOOL gpos::ioutils::IsDir(const CHAR *file_path) {
 //		Check if path is file
 //
 //---------------------------------------------------------------------------
-BOOL gpos::ioutils::IsFile(const CHAR *file_path) {
+bool gpos::ioutils::IsFile(const char *file_path) {
   GPOS_ASSERT(nullptr != file_path);
 
   SFileStat fs;
@@ -137,8 +137,7 @@ BOOL gpos::ioutils::IsFile(const CHAR *file_path) {
 //		Get file size by file path
 //
 //---------------------------------------------------------------------------
-ULLONG
-gpos::ioutils::FileSize(const CHAR *file_path) {
+uint64_t gpos::ioutils::FileSize(const char *file_path) {
   GPOS_ASSERT(nullptr != file_path);
   GPOS_ASSERT(IsFile(file_path));
 
@@ -156,8 +155,7 @@ gpos::ioutils::FileSize(const CHAR *file_path) {
 //		Get file size by file descriptor
 //
 //---------------------------------------------------------------------------
-ULLONG
-gpos::ioutils::FileSize(const INT file_descriptor) {
+uint64_t gpos::ioutils::FileSize(const int32_t file_descriptor) {
   SFileStat fs;
   CheckStateUsingFileDescriptor(file_descriptor, &fs);
 
@@ -172,7 +170,7 @@ gpos::ioutils::FileSize(const INT file_descriptor) {
 //		Check permissions
 //
 //---------------------------------------------------------------------------
-BOOL gpos::ioutils::CheckFilePermissions(const CHAR *file_path, ULONG permission_bits) {
+bool gpos::ioutils::CheckFilePermissions(const char *file_path, uint32_t permission_bits) {
   GPOS_ASSERT(nullptr != file_path);
 
   SFileStat fs;
@@ -189,12 +187,12 @@ BOOL gpos::ioutils::CheckFilePermissions(const CHAR *file_path, ULONG permission
 //		Create directory with specific permissions
 //
 //---------------------------------------------------------------------------
-void gpos::ioutils::CreateDir(const CHAR *file_path, ULONG permission_bits) {
+void gpos::ioutils::CreateDir(const char *file_path, uint32_t permission_bits) {
   GPOS_ASSERT(nullptr != file_path);
 
-  INT res;
+  int32_t res;
 
-  res = mkdir(file_path, (MODE_T)permission_bits);
+  res = mkdir(file_path, (mode_t)permission_bits);
 
   if (0 != res) {
     GPOS_RAISE(CException::ExmaSystem, CException::ExmiIOError, errno);
@@ -209,11 +207,11 @@ void gpos::ioutils::CreateDir(const CHAR *file_path, ULONG permission_bits) {
 //		Delete directory
 //
 //---------------------------------------------------------------------------
-void gpos::ioutils::RemoveDir(const CHAR *file_path) {
+void gpos::ioutils::RemoveDir(const char *file_path) {
   GPOS_ASSERT(nullptr != file_path);
   GPOS_ASSERT(IsDir(file_path));
 
-  INT res;
+  int32_t res;
 
   // delete existing directory
   res = rmdir(file_path);
@@ -231,7 +229,7 @@ void gpos::ioutils::RemoveDir(const CHAR *file_path) {
 //		Delete file
 //
 //---------------------------------------------------------------------------
-void gpos::ioutils::Unlink(const CHAR *file_path) {
+void gpos::ioutils::Unlink(const char *file_path) {
   GPOS_ASSERT(nullptr != file_path);
 
   // delete existing file
@@ -248,10 +246,10 @@ void gpos::ioutils::Unlink(const CHAR *file_path) {
 //		and a file descriptor
 //
 //---------------------------------------------------------------------------
-INT gpos::ioutils::OpenFile(const CHAR *file_path, INT mode, INT permission_bits) {
+int32_t gpos::ioutils::OpenFile(const char *file_path, int32_t mode, int32_t permission_bits) {
   GPOS_ASSERT(nullptr != file_path);
 
-  INT res = open(file_path, mode, permission_bits);
+  int32_t res = open(file_path, mode, permission_bits);
 
   GPOS_ASSERT((0 <= res) || (EINVAL != errno));
 
@@ -266,8 +264,8 @@ INT gpos::ioutils::OpenFile(const CHAR *file_path, INT mode, INT permission_bits
 //		Close a file descriptor
 //
 //---------------------------------------------------------------------------
-INT gpos::ioutils::CloseFile(INT file_descriptor) {
-  INT res = close(file_descriptor);
+int32_t gpos::ioutils::CloseFile(int32_t file_descriptor) {
+  int32_t res = close(file_descriptor);
 
   GPOS_ASSERT(0 == res || EBADF != errno);
 
@@ -282,10 +280,10 @@ INT gpos::ioutils::CloseFile(INT file_descriptor) {
 //		Get file status
 //
 //---------------------------------------------------------------------------
-INT gpos::ioutils::GetFileState(INT file_descriptor, SFileStat *file_state) {
+int32_t gpos::ioutils::GetFileState(int32_t file_descriptor, SFileStat *file_state) {
   GPOS_ASSERT(nullptr != file_state);
 
-  INT res = fstat(file_descriptor, file_state);
+  int32_t res = fstat(file_descriptor, file_state);
 
   GPOS_ASSERT(0 == res || EBADF != errno);
 
@@ -300,13 +298,12 @@ INT gpos::ioutils::GetFileState(INT file_descriptor, SFileStat *file_state) {
 //		Write to a file descriptor
 //
 //---------------------------------------------------------------------------
-INT_PTR
-gpos::ioutils::Write(INT file_descriptor, const void *buffer, const ULONG_PTR ulpCount) {
+intptr_t gpos::ioutils::Write(int32_t file_descriptor, const void *buffer, const uintptr_t ulpCount) {
   GPOS_ASSERT(nullptr != buffer);
   GPOS_ASSERT(0 < ulpCount);
-  GPOS_ASSERT(ULONG_PTR_MAX / 2 > ulpCount);
+  GPOS_ASSERT(UINT64_MAX / 2 > ulpCount);
 
-  SSIZE_T res = write(file_descriptor, buffer, ulpCount);
+  ssize_t res = write(file_descriptor, buffer, ulpCount);
 
   GPOS_ASSERT((0 <= res) || EBADF != errno);
 
@@ -321,13 +318,12 @@ gpos::ioutils::Write(INT file_descriptor, const void *buffer, const ULONG_PTR ul
 //		Read from a file descriptor
 //
 //---------------------------------------------------------------------------
-INT_PTR
-gpos::ioutils::Read(INT file_descriptor, void *buffer, const ULONG_PTR ulpCount) {
+intptr_t gpos::ioutils::Read(int32_t file_descriptor, void *buffer, const uintptr_t ulpCount) {
   GPOS_ASSERT(nullptr != buffer);
   GPOS_ASSERT(0 < ulpCount);
-  GPOS_ASSERT(ULONG_PTR_MAX / 2 > ulpCount);
+  GPOS_ASSERT(UINT64_MAX / 2 > ulpCount);
 
-  SSIZE_T res = read(file_descriptor, buffer, ulpCount);
+  ssize_t res = read(file_descriptor, buffer, ulpCount);
 
   GPOS_ASSERT((0 <= res) || EBADF != errno);
 
@@ -342,20 +338,20 @@ gpos::ioutils::Read(INT file_descriptor, void *buffer, const ULONG_PTR ulpCount)
 //		Create a unique temporary directory
 //
 //---------------------------------------------------------------------------
-void gpos::ioutils::CreateTempDir(CHAR *dir_path) {
+void gpos::ioutils::CreateTempDir(char *dir_path) {
   GPOS_ASSERT(nullptr != dir_path);
 
 #ifdef GPOS_DEBUG
-  const SIZE_T ulNumOfCmp = 6;
+  const size_t ulNumOfCmp = 6;
 
-  SIZE_T size = clib::Strlen(dir_path);
+  size_t size = clib::Strlen(dir_path);
 
   GPOS_ASSERT(size > ulNumOfCmp);
 
   GPOS_ASSERT(0 == clib::Memcmp("XXXXXX", dir_path + (size - ulNumOfCmp), ulNumOfCmp));
 #endif  // GPOS_DEBUG
 
-  CHAR *szRes;
+  char *szRes;
 
   // check to simulate I/O error
   szRes = mkdtemp(dir_path);

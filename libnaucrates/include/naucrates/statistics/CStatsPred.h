@@ -58,11 +58,11 @@ class CStatsPred : public CRefCount {
  private:
  protected:
   // column id
-  ULONG m_colid;
+  uint32_t m_colid;
 
   // CStatsPred is recursively traversed to compute cardinality estimates for
   // extended stat. This prevents infinite loop or double count in recursion.
-  BOOL m_is_estimated{false};
+  bool m_is_estimated{false};
 
  public:
   CStatsPred &operator=(CStatsPred &) = delete;
@@ -70,15 +70,15 @@ class CStatsPred : public CRefCount {
   CStatsPred(const CStatsPred &) = delete;
 
   // ctor
-  explicit CStatsPred(ULONG colid) : m_colid(colid) {}
+  explicit CStatsPred(uint32_t colid) : m_colid(colid) {}
 
   // dtor
   ~CStatsPred() override = default;
 
   // accessors
-  virtual ULONG GetColId() const { return m_colid; }
+  virtual uint32_t GetColId() const { return m_colid; }
 
-  BOOL IsAlreadyUsedInScaleFactorEstimation() const { return m_is_estimated; }
+  bool IsAlreadyUsedInScaleFactorEstimation() const { return m_is_estimated; }
 
   void SetEstimated() { m_is_estimated = true; }
 
@@ -86,18 +86,18 @@ class CStatsPred : public CRefCount {
   virtual EStatsPredType GetPredStatsType() const = 0;
 
   // comparison function
-  static inline INT StatsPredSortCmpFunc(const void *val1, const void *val2);
+  static inline int32_t StatsPredSortCmpFunc(const void *val1, const void *val2);
 };  // class CStatsPred
 
 // array of filters
 using CStatsPredPtrArry = CDynamicPtrArray<CStatsPred, CleanupRelease>;
 
 // comparison function for sorting predicates
-INT CStatsPred::StatsPredSortCmpFunc(const void *val1, const void *val2) {
+int32_t CStatsPred::StatsPredSortCmpFunc(const void *val1, const void *val2) {
   const CStatsPred *stats_pred1 = *(const CStatsPred **)val1;
   const CStatsPred *stats_pred2 = *(const CStatsPred **)val2;
 
-  return (INT)stats_pred1->GetColId() - (INT)stats_pred2->GetColId();
+  return (int32_t)stats_pred1->GetColId() - (int32_t)stats_pred2->GetColId();
 }
 
 }  // namespace gpnaucrates

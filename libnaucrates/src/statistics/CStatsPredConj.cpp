@@ -25,7 +25,7 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CStatsPredConj::CStatsPredConj(CStatsPredPtrArry *conj_pred_stats_array)
-    : CStatsPred(gpos::ulong_max), m_conj_pred_stats_array(conj_pred_stats_array) {
+    : CStatsPred(UINT32_MAX), m_conj_pred_stats_array(conj_pred_stats_array) {
   GPOS_ASSERT(nullptr != conj_pred_stats_array);
   m_colid = CStatisticsUtils::GetColId(conj_pred_stats_array);
 }
@@ -38,7 +38,7 @@ CStatsPredConj::CStatsPredConj(CStatsPredPtrArry *conj_pred_stats_array)
 //		Return the filter at a particular position
 //
 //---------------------------------------------------------------------------
-CStatsPred *CStatsPredConj::GetPredStats(ULONG pos) const {
+CStatsPred *CStatsPredConj::GetPredStats(uint32_t pos) const {
   return (*m_conj_pred_stats_array)[pos];
 }
 
@@ -65,8 +65,7 @@ void CStatsPredConj::Sort() const {
 //		Return the column identifier on which the predicates are on
 //
 //---------------------------------------------------------------------------
-ULONG
-CStatsPredConj::GetColId() const {
+uint32_t CStatsPredConj::GetColId() const {
   return m_colid;
 }
 

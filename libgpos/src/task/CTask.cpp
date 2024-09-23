@@ -19,7 +19,7 @@
 using namespace gpos;
 
 // init CTaskId's atomic counter
-ULONG_PTR CTaskId::m_counter(0);
+uintptr_t CTaskId::m_counter(0);
 
 const CTaskId CTaskId::m_invalid_tid;
 
@@ -31,7 +31,7 @@ const CTaskId CTaskId::m_invalid_tid;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CTask::CTask(CMemoryPool *mp, CTaskContext *task_ctxt, IErrorContext *err_ctxt, BOOL *cancel)
+CTask::CTask(CMemoryPool *mp, CTaskContext *task_ctxt, IErrorContext *err_ctxt, bool *cancel)
     : m_mp(mp),
       m_task_ctxt(task_ctxt),
       m_err_ctxt(err_ctxt),
@@ -157,7 +157,7 @@ void CTask::SetStatus(ETaskStatus ets) {
 //		Check if task has been scheduled
 //
 //---------------------------------------------------------------------------
-BOOL CTask::IsScheduled() const {
+bool CTask::IsScheduled() const {
   switch (m_status) {
     case EtsInit:
       return false;
@@ -183,7 +183,7 @@ BOOL CTask::IsScheduled() const {
 //		Check if task finished executing
 //
 //---------------------------------------------------------------------------
-BOOL CTask::IsFinished() const {
+bool CTask::IsFinished() const {
   switch (m_status) {
     case EtsInit:
     case EtsQueued:
@@ -231,7 +231,7 @@ void CTask::ResumeAbort() {
 //		Check if task has expected status
 //
 //---------------------------------------------------------------------------
-BOOL CTask::CheckStatus(BOOL completed) {
+bool CTask::CheckStatus(bool completed) {
   GPOS_ASSERT(!IsCanceled());
   if (completed) {
     // task must have completed without an error

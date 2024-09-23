@@ -43,7 +43,7 @@ class CDXLDatumOid : public CDXLDatum {
   CDXLDatumOid(const CDXLDatumOid &) = delete;
 
   // ctor
-  CDXLDatumOid(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, OID oid_val);
+  CDXLDatumOid(CMemoryPool *mp, IMDId *mdid_type, bool is_null, OID oid_val);
 
   // dtor
   ~CDXLDatumOid() override = default;

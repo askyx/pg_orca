@@ -26,7 +26,7 @@ namespace gpdxl {
 class CDXLLogicalCTEProducer : public CDXLLogical {
  private:
   // cte id
-  ULONG m_id;
+  uint32_t m_id;
 
   // output column ids
   ULongPtrArray *m_output_colids_array;
@@ -35,7 +35,7 @@ class CDXLLogicalCTEProducer : public CDXLLogical {
   CDXLLogicalCTEProducer(CDXLLogicalCTEProducer &) = delete;
 
   // ctor
-  CDXLLogicalCTEProducer(CMemoryPool *mp, ULONG id, ULongPtrArray *output_colids_array);
+  CDXLLogicalCTEProducer(CMemoryPool *mp, uint32_t id, ULongPtrArray *output_colids_array);
 
   // dtor
   ~CDXLLogicalCTEProducer() override;
@@ -47,8 +47,7 @@ class CDXLLogicalCTEProducer : public CDXLLogical {
   const CWStringConst *GetOpNameStr() const override;
 
   // cte identifier
-  ULONG
-  Id() const { return m_id; }
+  uint32_t Id() const { return m_id; }
 
   ULongPtrArray *GetOutputColIdsArray() const { return m_output_colids_array; }
 
@@ -57,7 +56,7 @@ class CDXLLogicalCTEProducer : public CDXLLogical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 
   // conversion function

@@ -37,10 +37,10 @@ class CScaleFactorUtils {
     IMdIdArray *m_oid_pair;
 
     // true if both sides of the predicate are distribution keys
-    BOOL m_dist_keys;
+    bool m_dist_keys;
 
     // ctor
-    SJoinCondition(CDouble scale_factor, IMdIdArray *mdid_pair, BOOL both_dist_keys)
+    SJoinCondition(CDouble scale_factor, IMdIdArray *mdid_pair, bool both_dist_keys)
         : m_scale_factor(scale_factor), m_oid_pair(mdid_pair), m_dist_keys(both_dist_keys) {}
 
     ~SJoinCondition() { CRefCount::SafeRelease(m_oid_pair); }
@@ -49,11 +49,11 @@ class CScaleFactorUtils {
     // instances of IMdIds. For example, when performing a self join, the underlying tables will have different IMdId
     // pointers, but the same contents. We treat them as different instances and assume independence to calculate the
     // correct join cardinality.
-    static ULONG HashValue(const IMdIdArray *oid_pair) {
+    static uint32_t HashValue(const IMdIdArray *oid_pair) {
       return CombineHashes(gpos::HashPtr<IMDId>((*oid_pair)[0]), gpos::HashPtr<IMDId>((*oid_pair)[1]));
     }
 
-    static BOOL Equals(const IMdIdArray *first, const IMdIdArray *second) {
+    static bool Equals(const IMdIdArray *first, const IMdIdArray *second) {
       return ((*first)[0] == (*second)[0]) && ((*first)[1] == (*second)[1]);
     }
   };
@@ -83,16 +83,16 @@ class CScaleFactorUtils {
                                            CDouble limit_for_result_scale_factor);
 
   // return scaling factor of the join predicate after apply damping
-  static CDouble DampedJoinScaleFactor(const CStatisticsConfig *stats_config, ULONG num_columns);
+  static CDouble DampedJoinScaleFactor(const CStatisticsConfig *stats_config, uint32_t num_columns);
 
   // return scaling factor of the filter after apply damping
-  static CDouble DampedFilterScaleFactor(const CStatisticsConfig *stats_config, ULONG num_columns);
+  static CDouble DampedFilterScaleFactor(const CStatisticsConfig *stats_config, uint32_t num_columns);
 
   // return scaling factor of the group by predicate after apply damping
-  static CDouble DampedGroupByScaleFactor(const CStatisticsConfig *stats_config, ULONG num_columns);
+  static CDouble DampedGroupByScaleFactor(const CStatisticsConfig *stats_config, uint32_t num_columns);
 
   // sort the array of scaling factor
-  static void SortScalingFactor(CDoubleArray *scale_factors, BOOL is_descending);
+  static void SortScalingFactor(CDoubleArray *scale_factors, bool is_descending);
 
   // calculate the cumulative scaling factor for conjunction after applying damping multiplier
   static CDouble CalcScaleFactorCumulativeConj(const CStatisticsConfig *stats_config, CDoubleArray *scale_factors);
@@ -102,16 +102,16 @@ class CScaleFactorUtils {
                                                CDouble tota_rows);
 
   // comparison function in descending order
-  static INT DescendingOrderCmpFunc(const void *val1, const void *val2);
+  static int32_t DescendingOrderCmpFunc(const void *val1, const void *val2);
 
   // comparison function for joins in descending order
-  static INT DescendingOrderCmpJoinFunc(const void *val1, const void *val2);
+  static int32_t DescendingOrderCmpJoinFunc(const void *val1, const void *val2);
 
   // comparison function in ascending order
-  static INT AscendingOrderCmpFunc(const void *val1, const void *val2);
+  static int32_t AscendingOrderCmpFunc(const void *val1, const void *val2);
 
   // helper function for double comparison
-  static INT DoubleCmpFunc(const CDouble *double_data1, const CDouble *double_data2, BOOL is_descending);
+  static int32_t DoubleCmpFunc(const CDouble *double_data1, const CDouble *double_data2, bool is_descending);
 
   // default scaling factor of LIKE predicate
   static const CDouble DDefaultScaleFactorLike;

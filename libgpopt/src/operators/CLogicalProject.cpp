@@ -99,7 +99,7 @@ CColRefSetArray *CLogicalProject::PdrgpcrsEquivClassFromScIdent(CMemoryPool *mp,
     return nullptr;
   }
 
-  BOOL non_nullable = not_null_columns->FMember(pcrScIdent);
+  bool non_nullable = not_null_columns->FMember(pcrScIdent);
 
   // only add renamed columns to equivalent class if the column is not null-able
   // this is because equality predicates will be inferred from the equivalent class
@@ -149,7 +149,7 @@ void CLogicalProject::ExtractConstraintFromScConst(CMemoryPool *mp, CExpression 
   IDatum *datum = popConst->GetDatum();
 
   CRangeArray *pdrgprng = GPOS_NEW(mp) CRangeArray(mp);
-  BOOL is_null = datum->IsNull();
+  bool is_null = datum->IsNull();
   if (!is_null) {
     datum->AddRef();
     pdrgprng->Append(GPOS_NEW(mp) CRange(COptCtxt::PoctxtFromTLS()->Pcomp(), IMDType::EcmptEq, datum));
@@ -180,8 +180,8 @@ CPropConstraint *CLogicalProject::DerivePropertyConstraint(CMemoryPool *mp, CExp
   CConstraintArray *pdrgpcnstr = GPOS_NEW(mp) CConstraintArray(mp);
   CColRefSetArray *pdrgpcrs = GPOS_NEW(mp) CColRefSetArray(mp);
 
-  const ULONG ulProjElems = pexprPrL->Arity();
-  for (ULONG ul = 0; ul < ulProjElems; ul++) {
+  const uint32_t ulProjElems = pexprPrL->Arity();
+  for (uint32_t ul = 0; ul < ulProjElems; ul++) {
     CExpression *pexprPrEl = (*pexprPrL)[ul];
     CExpression *pexprProjected = (*pexprPrEl)[0];
 
@@ -291,8 +291,8 @@ IStatistics *CLogicalProject::PstatsDerive(CMemoryPool *mp, CExpressionHandle &e
   // extract scalar constant expression that can be used for
   // statistics calculation
   CExpression *pexprPrList = exprhdl.PexprScalarRepChild(1 /*child_index*/);
-  const ULONG arity = pexprPrList->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = pexprPrList->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrElem = (*pexprPrList)[ul];
     GPOS_ASSERT(1 == pexprPrElem->Arity());
     CColRef *colref = CScalarProjectElement::PopConvert(pexprPrElem->Pop())->Pcr();
@@ -303,7 +303,7 @@ IStatistics *CLogicalProject::PstatsDerive(CMemoryPool *mp, CExpressionHandle &e
       IDatum *datum = CScalarConst::PopConvert(pop)->GetDatum();
       if (datum->StatsMappable()) {
         datum->AddRef();
-        BOOL fInserted GPOS_ASSERTS_ONLY = phmuldatum->Insert(GPOS_NEW(mp) ULONG(colref->Id()), datum);
+        bool fInserted GPOS_ASSERTS_ONLY = phmuldatum->Insert(GPOS_NEW(mp) uint32_t(colref->Id()), datum);
         GPOS_ASSERT(fInserted);
       }
     } else if (COperator::EopScalarOp == pop->Eopid()) {
@@ -317,7 +317,8 @@ IStatistics *CLogicalProject::PstatsDerive(CMemoryPool *mp, CExpressionHandle &e
 
       const CColRef *underlying_colref = CCastUtils::PcrExtractFromScIdOrCastScId(pexprScalar);
       if (underlying_colref == nullptr && CUtils::IsExprNDVPreserving(pexprScalar, &underlying_colref)) {
-        colidToColrefMapForNDVExpr->Insert(GPOS_NEW(mp) ULONG(colref->Id()), const_cast<CColRef *>(underlying_colref));
+        colidToColrefMapForNDVExpr->Insert(GPOS_NEW(mp) uint32_t(colref->Id()),
+                                           const_cast<CColRef *>(underlying_colref));
       }
     }
   }

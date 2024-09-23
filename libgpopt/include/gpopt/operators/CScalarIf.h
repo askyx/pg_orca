@@ -41,8 +41,8 @@ class CScalarIf : public CScalar {
   // metadata id in the catalog
   IMDId *m_mdid_type;
 
-  // is operator return type BOOL?
-  BOOL m_fBoolReturnType;
+  // is operator return type bool?
+  bool m_fBoolReturnType;
 
  public:
   CScalarIf(const CScalarIf &) = delete;
@@ -57,24 +57,24 @@ class CScalarIf : public CScalar {
   EOperatorId Eopid() const override { return EopScalarIf; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarIf"; }
+  const char *SzId() const override { return "CScalarIf"; }
 
   // the type of the scalar expression
   IMDId *MdidType() const override { return m_mdid_type; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

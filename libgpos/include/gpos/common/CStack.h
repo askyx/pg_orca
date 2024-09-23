@@ -30,13 +30,13 @@ class CStack {
   CDynamicPtrArray<T, CleanupNULL> *m_dynamic_ptr_array;
 
   // top of stack index
-  ULONG m_size;
+  uint32_t m_size;
 
  public:
   CStack(CStack &) = delete;
 
   // c'tor
-  CStack(CMemoryPool *mp, ULONG min_size = 4) : m_size(0) {
+  CStack(CMemoryPool *mp, uint32_t min_size = 4) : m_size(0) {
     m_dynamic_ptr_array = GPOS_NEW(mp) CDynamicPtrArray<T, CleanupNULL>(mp, min_size, 10);
   }
 
@@ -77,7 +77,7 @@ class CStack {
   }
 
   // is stack empty?
-  BOOL IsEmpty() const { return (m_size == 0); }
+  bool IsEmpty() const { return (m_size == 0); }
 };
 
 }  // namespace gpos

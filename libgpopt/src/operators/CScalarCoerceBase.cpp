@@ -30,8 +30,8 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarCoerceBase::CScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, ECoercionForm ecf,
-                                     INT location)
+CScalarCoerceBase::CScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, ECoercionForm ecf,
+                                     int32_t location)
     : CScalar(mp), m_result_type_mdid(mdid_type), m_type_modifier(type_modifier), m_ecf(ecf), m_location(location) {
   GPOS_ASSERT(nullptr != mdid_type);
   GPOS_ASSERT(mdid_type->IsValid());
@@ -69,7 +69,7 @@ IMDId *CScalarCoerceBase::MdidType() const {
 //		Return type modifier
 //
 //---------------------------------------------------------------------------
-INT CScalarCoerceBase::TypeModifier() const {
+int32_t CScalarCoerceBase::TypeModifier() const {
   return m_type_modifier;
 }
 
@@ -93,7 +93,7 @@ CScalar::ECoercionForm CScalarCoerceBase::Ecf() const {
 //		Return token location
 //
 //---------------------------------------------------------------------------
-INT CScalarCoerceBase::Location() const {
+int32_t CScalarCoerceBase::Location() const {
   return m_location;
 }
 
@@ -107,7 +107,7 @@ INT CScalarCoerceBase::Location() const {
 //---------------------------------------------------------------------------
 COperator *CScalarCoerceBase::PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                                          UlongToColRefMap *,  // colref_mapping,
-                                                         BOOL                 // must_exist
+                                                         bool                 // must_exist
 ) {
   return PopCopyDefault();
 }

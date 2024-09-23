@@ -59,11 +59,11 @@ class ILogger {
  private:
   // log message to current task's logger;
   // use stdout/stderr wrapping loggers outside worker framework;
-  static void LogTask(const WCHAR *msg, ULONG severity, BOOL is_err, const CHAR *filename, ULONG line);
+  static void LogTask(const wchar_t *msg, uint32_t severity, bool is_err, const char *filename, uint32_t line);
 
  protected:
   // write log message
-  virtual void Write(const WCHAR *log_entry, ULONG severity) = 0;
+  virtual void Write(const wchar_t *log_entry, uint32_t severity) = 0;
 
  public:
   ILogger(const ILogger &) = delete;
@@ -81,13 +81,13 @@ class ILogger {
   virtual void SetErrorInfoLevel(ErrorInfoLevel info_level) = 0;
 
   // retrieve warning message from repository and log it to error log
-  static void Warning(const CHAR *filename, ULONG line, ULONG major, ULONG minor, ...);
+  static void Warning(const char *filename, uint32_t line, uint32_t major, uint32_t minor, ...);
 
   // log trace message to current task's output or error log
-  static void Trace(const CHAR *filename, ULONG line, BOOL is_err, const WCHAR *msg);
+  static void Trace(const char *filename, uint32_t line, bool is_err, const wchar_t *msg);
 
   // format and log trace message to current task's output or error log
-  static void TraceFormat(const CHAR *filename, ULONG line, BOOL is_err, const WCHAR *format, ...);
+  static void TraceFormat(const char *filename, uint32_t line, bool is_err, const wchar_t *format, ...);
 
 };  // class ILogger
 }  // namespace gpos

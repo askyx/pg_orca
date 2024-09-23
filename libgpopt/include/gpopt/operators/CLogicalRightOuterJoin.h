@@ -38,10 +38,10 @@ class CLogicalRightOuterJoin : public CLogicalJoin {
   EOperatorId Eopid() const override { return EopLogicalRightOuterJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalRightOuterJoin"; }
+  const char *SzId() const override { return "CLogicalRightOuterJoin"; }
 
   // return true if we can pull projections up past this operator from its given child
-  BOOL FCanPullProjectionsUp(ULONG child_index) const override { return (1 == child_index); }
+  bool FCanPullProjectionsUp(uint32_t child_index) const override { return (1 == child_index); }
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties

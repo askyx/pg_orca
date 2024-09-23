@@ -30,7 +30,7 @@ class CPhysicalLeftOuterHashJoin : public CPhysicalHashJoin {
   // ctor
   CPhysicalLeftOuterHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys,
                              CExpressionArray *pdrgpexprInnerKeys, IMdIdArray *hash_opfamilies,
-                             BOOL is_null_aware = true, CXform::EXformId origin_xform = CXform::ExfSentinel);
+                             bool is_null_aware = true, CXform::EXformId origin_xform = CXform::ExfSentinel);
 
   // dtor
   ~CPhysicalLeftOuterHashJoin() override;
@@ -39,7 +39,7 @@ class CPhysicalLeftOuterHashJoin : public CPhysicalHashJoin {
   EOperatorId Eopid() const override { return EopPhysicalLeftOuterHashJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalLeftOuterHashJoin"; }
+  const char *SzId() const override { return "CPhysicalLeftOuterHashJoin"; }
 
   // conversion function
   static CPhysicalLeftOuterHashJoin *PopConvert(COperator *pop) {

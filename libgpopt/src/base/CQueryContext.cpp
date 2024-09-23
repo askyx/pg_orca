@@ -29,7 +29,7 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CQueryContext::CQueryContext(CMemoryPool *mp, CExpression *pexpr, CReqdPropPlan *prpp, CColRefArray *colref_array,
-                             CMDNameArray *pdrgpmdname, BOOL fDeriveStats)
+                             CMDNameArray *pdrgpmdname, bool fDeriveStats)
     : m_prpp(prpp),
       m_pdrgpcr(colref_array),
       m_pdrgpcrSystemCols(nullptr),
@@ -42,7 +42,7 @@ CQueryContext::CQueryContext(CMemoryPool *mp, CExpression *pexpr, CReqdPropPlan 
   GPOS_ASSERT(colref_array->Size() == pdrgpmdname->Size());
 
 #ifdef GPOS_DEBUG
-  const ULONG ulReqdColumns = m_pdrgpcr->Size();
+  const uint32_t ulReqdColumns = m_pdrgpcr->Size();
 #endif  // GPOS_DEBUG
 
   CColRefSet *pcrsOutputAndOrderingCols = GPOS_NEW(mp) CColRefSet(mp);
@@ -123,8 +123,8 @@ void CQueryContext::SetSystemCols(CMemoryPool *mp) {
   GPOS_ASSERT(nullptr != m_pdrgpcr);
 
   m_pdrgpcrSystemCols = GPOS_NEW(mp) CColRefArray(mp);
-  const ULONG ulReqdCols = m_pdrgpcr->Size();
-  for (ULONG ul = 0; ul < ulReqdCols; ul++) {
+  const uint32_t ulReqdCols = m_pdrgpcr->Size();
+  for (uint32_t ul = 0; ul < ulReqdCols; ul++) {
     CColRef *colref = (*m_pdrgpcr)[ul];
     if (colref->IsSystemCol()) {
       m_pdrgpcrSystemCols->Append(colref);
@@ -143,7 +143,7 @@ void CQueryContext::SetSystemCols(CMemoryPool *mp) {
 //---------------------------------------------------------------------------
 CQueryContext *CQueryContext::PqcGenerate(CMemoryPool *mp, CExpression *pexpr,
                                           ULongPtrArray *pdrgpulQueryOutputColRefId, CMDNameArray *pdrgpmdname,
-                                          BOOL fDeriveStats) {
+                                          bool fDeriveStats) {
   GPOS_ASSERT(nullptr != pexpr && nullptr != pdrgpulQueryOutputColRefId);
 
   CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
@@ -154,9 +154,9 @@ CQueryContext *CQueryContext::PqcGenerate(CMemoryPool *mp, CExpression *pexpr,
   GPOS_ASSERT(nullptr != col_factory);
 
   // Collect required column references (colref_array)
-  const ULONG length = pdrgpulQueryOutputColRefId->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
-    ULONG *pul = (*pdrgpulQueryOutputColRefId)[ul];
+  const uint32_t length = pdrgpulQueryOutputColRefId->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
+    uint32_t *pul = (*pdrgpulQueryOutputColRefId)[ul];
     GPOS_ASSERT(nullptr != pul);
 
     CColRef *colref = col_factory->LookupColRef(*pul);
@@ -183,7 +183,7 @@ CQueryContext *CQueryContext::PqcGenerate(CMemoryPool *mp, CExpression *pexpr,
     pos = GPOS_NEW(mp) COrderSpec(mp);
   }
 
-  BOOL fDML = CUtils::FLogicalDML(pexpr->Pop());
+  bool fDML = CUtils::FLogicalDML(pexpr->Pop());
   poptctxt->MarkDMLQuery(fDML);
 
   // No partition propagation required at the top
@@ -238,16 +238,16 @@ void CQueryContext::MapComputedToUsedCols(CColumnFactory *col_factory, CExpressi
   if (COperator::EopLogicalProject == pexpr->Pop()->Eopid()) {
     CExpression *pexprPrL = (*pexpr)[1];
 
-    const ULONG arity = pexprPrL->Arity();
-    for (ULONG ul = 0; ul < arity; ul++) {
+    const uint32_t arity = pexprPrL->Arity();
+    for (uint32_t ul = 0; ul < arity; ul++) {
       CExpression *pexprPrEl = (*pexprPrL)[ul];
       col_factory->AddComputedToUsedColsMap(pexprPrEl);
     }
   }
 
   // process children
-  const ULONG ulChildren = pexpr->Arity();
-  for (ULONG ul = 0; ul < ulChildren; ul++) {
+  const uint32_t ulChildren = pexpr->Arity();
+  for (uint32_t ul = 0; ul < ulChildren; ul++) {
     MapComputedToUsedCols(col_factory, (*pexpr)[ul]);
   }
 }

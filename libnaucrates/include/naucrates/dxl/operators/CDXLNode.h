@@ -29,8 +29,8 @@ using CDXLNodeArray = CDynamicPtrArray<CDXLNode, CleanupRelease>;
 // arrays of OID
 using OidArray = CDynamicPtrArray<OID, CleanupDelete>;
 
-using IdToCDXLNodeMap = CHashMap<ULONG, CDXLNode, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>,
-                                 CleanupRelease<CDXLNode>>;
+using IdToCDXLNodeMap = CHashMap<uint32_t, CDXLNode, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                 CleanupDelete<uint32_t>, CleanupRelease<CDXLNode>>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -69,7 +69,7 @@ class CDXLNode : public CRefCount {
   ~CDXLNode() override;
 
   // shorthand to access children
-  inline CDXLNode *operator[](ULONG idx) const {
+  inline CDXLNode *operator[](uint32_t idx) const {
     GPOS_ASSERT(nullptr != m_dxl_array);
     CDXLNode *dxl_node = (*m_dxl_array)[idx];
     GPOS_ASSERT(nullptr != dxl_node);
@@ -77,7 +77,7 @@ class CDXLNode : public CRefCount {
   };
 
   // arity function, returns the number of children this node has
-  inline ULONG Arity() const { return (m_dxl_array == nullptr) ? 0 : m_dxl_array->Size(); }
+  inline uint32_t Arity() const { return (m_dxl_array == nullptr) ? 0 : m_dxl_array->Size(); }
 
   // accessor for operator
   inline CDXLOperator *GetOperator() const { return m_dxl_op; }
@@ -94,7 +94,7 @@ class CDXLNode : public CRefCount {
   void SetOperator(CDXLOperator *dxl_op);
 
   // replace a given child of this DXL node with the given node
-  void ReplaceChild(ULONG idx, CDXLNode *child_dxlnode);
+  void ReplaceChild(uint32_t idx, CDXLNode *child_dxlnode);
 
   // setter
   void SetProperties(CDXLProperties *dxl_properties);
@@ -102,7 +102,7 @@ class CDXLNode : public CRefCount {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(BOOL validate_children) const;
+  void AssertValid(bool validate_children) const;
 #endif  // GPOS_DEBUG
 
 };  // class CDXLNode

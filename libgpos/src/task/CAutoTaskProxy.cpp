@@ -27,7 +27,7 @@ using namespace gpos;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CAutoTaskProxy::CAutoTaskProxy(CMemoryPool *mp, CWorkerPoolManager *pwpm, BOOL propagate_error)
+CAutoTaskProxy::CAutoTaskProxy(CMemoryPool *mp, CWorkerPoolManager *pwpm, bool propagate_error)
     : m_mp(mp), m_pwpm(pwpm), m_propagate_error(propagate_error) {
   m_list.Init(GPOS_OFFSET(CTask, m_proxy_link));
 
@@ -108,7 +108,7 @@ void CAutoTaskProxy::Destroy(CTask *task) {
 //		If caller is a task, its task context is cloned and used by the new task;
 //
 //---------------------------------------------------------------------------
-CTask *CAutoTaskProxy::Create(void *(*pfunc)(void *), void *arg, BOOL *cancel) {
+CTask *CAutoTaskProxy::Create(void *(*pfunc)(void *), void *arg, bool *cancel) {
   // create memory pool for task
   CAutoMemoryPool amp(CAutoMemoryPool::ElcStrict);
   CMemoryPool *mp = amp.Pmp();
@@ -187,10 +187,10 @@ CAutoTaskProxy::FindFinished(CTask **task) {
 
 #ifdef GPOS_DEBUG
   // check if there is any task scheduled
-  BOOL scheduled = false;
+  bool scheduled = false;
 
   // check if all tasks have been reported as finished
-  BOOL reported_all = true;
+  bool reported_all = true;
 #endif  // GPOS_DEBUG
 
   // iterate task list

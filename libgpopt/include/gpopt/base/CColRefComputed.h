@@ -35,7 +35,7 @@ class CColRefComputed : public CColRef {
   CColRefComputed(const CColRefComputed &) = delete;
 
   // ctor
-  CColRefComputed(const IMDType *pmdtype, INT type_modifier, ULONG id, const CName *pname);
+  CColRefComputed(const IMDType *pmdtype, int32_t type_modifier, uint32_t id, const CName *pname);
 
   // dtor
   ~CColRefComputed() override;
@@ -43,19 +43,19 @@ class CColRefComputed : public CColRef {
   CColRef::Ecolreftype Ecrt() const override { return CColRef::EcrtComputed; }
 
   // is column a system column?
-  BOOL IsSystemCol() const override {
+  bool IsSystemCol() const override {
     // we cannot introduce system columns as computed column
     return false;
   }
 
   // is column a distribution column?
-  BOOL IsDistCol() const override {
+  bool IsDistCol() const override {
     // we cannot introduce distribution columns as computed column
     return false;
   };
 
   // is column a partition column?
-  BOOL IsPartCol() const override {
+  bool IsPartCol() const override {
     // we cannot introduce partition columns as computed column
     return false;
   };

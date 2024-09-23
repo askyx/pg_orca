@@ -209,7 +209,7 @@ class CDXLOperator : public CRefCount {
   virtual Edxloptype GetDXLOperatorType() const = 0;
 
   // check if given column is defined by operator
-  virtual BOOL IsColDefined(ULONG  // colid
+  virtual bool IsColDefined(uint32_t  // colid
   ) const {
     // by default, operator does not define columns
     return false;
@@ -223,7 +223,7 @@ class CDXLOperator : public CRefCount {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  virtual void AssertValid(const CDXLNode *, BOOL validate_children) const = 0;
+  virtual void AssertValid(const CDXLNode *, bool validate_children) const = 0;
 #endif  // GPOS_DEBUG
 };
 

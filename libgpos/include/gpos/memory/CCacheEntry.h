@@ -49,15 +49,15 @@ class CCacheEntry {
   T m_val;
 
   // true if this entry is marked for deletion
-  BOOL m_deleted;
+  bool m_deleted;
 
   // gclock counter; an entry is eligible for eviction if this
   // counter drops to 0 and the entry is not pinned
-  ULONG m_g_clock_counter;
+  uint32_t m_g_clock_counter;
 
  public:
   // ctor
-  CCacheEntry(CMemoryPool *mp, K key, T val, ULONG g_clock_counter)
+  CCacheEntry(CMemoryPool *mp, K key, T val, uint32_t g_clock_counter)
       : m_mp(mp), m_val(val), m_deleted(false), m_g_clock_counter(g_clock_counter), m_key(key) {
     // CCache entry has the ownership now. So ideally any time ref count can't go lesser than 1.
     // In destructor, we decrease it from 1 to 0.
@@ -83,11 +83,10 @@ class CCacheEntry {
   void MarkForDeletion() { m_deleted = true; }
 
   // returns true if entry is marked as deleted
-  BOOL IsMarkedForDeletion() const { return m_deleted; }
+  bool IsMarkedForDeletion() const { return m_deleted; }
 
   // get value's ref-count
-  ULONG
-  RefCount() const { return (ULONG)m_val->RefCount(); }
+  uint32_t RefCount() const { return (uint32_t)m_val->RefCount(); }
 
   // increments value's ref-count
   void IncRefCount() { m_val->AddRef(); }
@@ -96,14 +95,13 @@ class CCacheEntry {
   void DecRefCount() { m_val->Release(); }
 
   // sets the gclock counter for an entry; useful for updating counter upon access
-  void SetGClockCounter(ULONG g_clock_counter) { m_g_clock_counter = g_clock_counter; }
+  void SetGClockCounter(uint32_t g_clock_counter) { m_g_clock_counter = g_clock_counter; }
 
   // decrements the gclock counter for an entry during eviction process
   void DecrementGClockCounter() { m_g_clock_counter--; }
 
   // returns the current value of the gclock counter
-  ULONG
-  GetGClockCounter() { return m_g_clock_counter; }
+  uint32_t GetGClockCounter() { return m_g_clock_counter; }
 
   // the following data members are public because they
   // need to be used by GPOS_OFFSET macro for list construction

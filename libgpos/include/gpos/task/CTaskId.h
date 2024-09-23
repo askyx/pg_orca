@@ -27,26 +27,26 @@ namespace gpos {
 class CTaskId {
  private:
   // task id
-  ULONG_PTR m_task_id;
+  uintptr_t m_task_id;
 
   // atomic counter
-  static ULONG_PTR m_counter;
+  static uintptr_t m_counter;
 
  public:
   // ctor
   CTaskId() : m_task_id(m_counter++) {}
 
   // simple comparison
-  BOOL Equals(const CTaskId &tid) const { return m_task_id == tid.m_task_id; }
+  bool Equals(const CTaskId &tid) const { return m_task_id == tid.m_task_id; }
 
   // comparison operator
-  inline BOOL operator==(const CTaskId &tid) const { return this->Equals(tid); }
+  inline bool operator==(const CTaskId &tid) const { return this->Equals(tid); }
 
   // comparison function; used in hashtables
-  static BOOL Equals(const CTaskId &tid, const CTaskId &other) { return tid == other; }
+  static bool Equals(const CTaskId &tid, const CTaskId &other) { return tid == other; }
 
   // primitive hash function
-  static ULONG HashValue(const CTaskId &tid) { return gpos::HashValue<ULONG_PTR>(&tid.m_task_id); }
+  static uint32_t HashValue(const CTaskId &tid) { return gpos::HashValue<uintptr_t>(&tid.m_task_id); }
 
   // invalid id
   static const CTaskId m_invalid_tid;

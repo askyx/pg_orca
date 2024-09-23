@@ -24,7 +24,7 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CSearchStage::CSearchStage(CXformSet *xform_set, ULONG ulTimeThreshold, CCost costThreshold)
+CSearchStage::CSearchStage(CXformSet *xform_set, uint32_t ulTimeThreshold, CCost costThreshold)
     : m_xforms(xform_set),
       m_time_threshold(ulTimeThreshold),
       m_cost_threshold(costThreshold),

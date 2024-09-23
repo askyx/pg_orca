@@ -42,7 +42,7 @@ class CXformGbAgg2Apply : public CXformSubqueryUnnest {
   EXformId Exfid() const override { return ExfGbAgg2Apply; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformGbAgg2Apply"; }
+  const char *SzId() const override { return "CXformGbAgg2Apply"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

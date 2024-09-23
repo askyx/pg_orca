@@ -41,7 +41,7 @@ class CXformProject2Apply : public CXformSubqueryUnnest {
   EXformId Exfid() const override { return ExfProject2Apply; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformProject2Apply"; }
+  const char *SzId() const override { return "CXformProject2Apply"; }
 
 };  // class CXformProject2Apply
 

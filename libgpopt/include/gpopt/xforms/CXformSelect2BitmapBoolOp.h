@@ -38,7 +38,7 @@ class CXformSelect2BitmapBoolOp : public CXformExploration {
   EXformId Exfid() const override { return ExfSelect2BitmapBoolOp; }
 
   // xform name
-  const CHAR *SzId() const override { return "CXformSelect2BitmapBoolOp"; }
+  const char *SzId() const override { return "CXformSelect2BitmapBoolOp"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

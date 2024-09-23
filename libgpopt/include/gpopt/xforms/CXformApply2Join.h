@@ -39,7 +39,7 @@ template <class TApply, class TJoin>
 class CXformApply2Join : public CXformExploration {
  private:
   // check if we can create a correlated apply expression from the given expression
-  static BOOL FCanCreateCorrelatedApply(CMemoryPool *, CExpression *pexprApply) {
+  static bool FCanCreateCorrelatedApply(CMemoryPool *, CExpression *pexprApply) {
     GPOS_ASSERT(nullptr != pexprApply);
 
     COperator::EOperatorId op_id = pexprApply->Pop()->Eopid();
@@ -110,7 +110,7 @@ class CXformApply2Join : public CXformExploration {
 
  protected:
   // helper function to attempt decorrelating Apply's inner child
-  static BOOL FDecorrelate(CMemoryPool *mp, CExpression *pexprApply, CExpression **ppexprInner,
+  static bool FDecorrelate(CMemoryPool *mp, CExpression *pexprApply, CExpression **ppexprInner,
                            CExpressionArray **ppdrgpexpr) {
     GPOS_ASSERT(nullptr != pexprApply);
     GPOS_ASSERT(nullptr != ppexprInner);
@@ -213,7 +213,7 @@ class CXformApply2Join : public CXformExploration {
   CXformApply2Join(const CXformApply2Join &) = delete;
 
   // ctor for deep pattern
-  explicit CXformApply2Join(CMemoryPool *mp, BOOL)
+  explicit CXformApply2Join(CMemoryPool *mp, bool)
       :  // pattern
         CXformExploration(GPOS_NEW(mp) CExpression(
             mp, GPOS_NEW(mp) TApply(mp), GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CPatternLeaf(mp)),  // left child
@@ -239,7 +239,7 @@ class CXformApply2Join : public CXformExploration {
   ~CXformApply2Join() override = default;
 
   // is transformation an Apply decorrelation (Apply To Join) xform?
-  BOOL FApplyDecorrelating() const override { return true; }
+  bool FApplyDecorrelating() const override { return true; }
 
 };  // class CXformApply2Join
 

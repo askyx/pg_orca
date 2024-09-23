@@ -17,7 +17,7 @@
 
 using namespace gpos;
 
-const CHAR *CException::m_severity[] = {"INVALID", "ERROR", "WARNING", "NOTICE", "TRACE"};
+const char *CException::m_severity[] = {"INVALID", "ERROR", "WARNING", "NOTICE", "TRACE"};
 
 // invalid exception
 const CException CException::m_invalid_exception(CException::ExmaInvalid, CException::ExmiInvalid);
@@ -41,8 +41,8 @@ const CException::ErrCodeElem CException::m_errcode[] = {
 //		dynamically
 //
 //---------------------------------------------------------------------------
-CException::CException(ULONG major, ULONG minor, const CHAR *filename, ULONG line)
-    : m_major(major), m_minor(minor), m_filename(const_cast<CHAR *>(filename)), m_line(line) {
+CException::CException(uint32_t major, uint32_t minor, const char *filename, uint32_t line)
+    : m_major(major), m_minor(minor), m_filename(const_cast<char *>(filename)), m_line(line) {
   m_sql_state = GetSQLState(major, minor);
 }
 
@@ -55,7 +55,8 @@ CException::CException(ULONG major, ULONG minor, const CHAR *filename, ULONG lin
 //		in lookup structures etc.
 //
 //---------------------------------------------------------------------------
-CException::CException(ULONG major, ULONG minor) : m_major(major), m_minor(minor), m_filename(nullptr), m_line(0) {
+CException::CException(uint32_t major, uint32_t minor)
+    : m_major(major), m_minor(minor), m_filename(nullptr), m_line(0) {
   m_sql_state = GetSQLState(major, minor);
 }
 
@@ -70,7 +71,7 @@ CException::CException(ULONG major, ULONG minor) : m_major(major), m_minor(minor
 //			at a later point in time
 //
 //---------------------------------------------------------------------------
-void CException::Raise(const CHAR *filename, ULONG line, ULONG major, ULONG minor, ...) {
+void CException::Raise(const char *filename, uint32_t line, uint32_t major, uint32_t minor, ...) {
   // manufacture actual exception object
   CException exc(major, minor, filename, line);
 
@@ -99,7 +100,7 @@ void CException::Raise(const CHAR *filename, ULONG line, ULONG major, ULONG mino
 //		Wrapper that asserts there is a pending error;
 //
 //---------------------------------------------------------------------------
-void CException::Reraise(CException exc, BOOL propagate) {
+void CException::Reraise(CException exc, bool propagate) {
   if (nullptr != ITask::Self()) {
     CErrorContext *err_ctxt = CTask::Self()->ConvertErrCtxt();
     GPOS_ASSERT(err_ctxt->IsPending());
@@ -144,11 +145,11 @@ void CException::Raise(CException exc) {
 //		Get sql state code for exception
 //
 //---------------------------------------------------------------------------
-const CHAR *CException::GetSQLState(ULONG major, ULONG minor) {
-  const CHAR *sql_state = m_errcode[0].m_sql_state;
+const char *CException::GetSQLState(uint32_t major, uint32_t minor) {
+  const char *sql_state = m_errcode[0].m_sql_state;
   if (ExmaSQL == major) {
-    ULONG sql_states = GPOS_ARRAY_SIZE(m_errcode);
-    for (ULONG ul = 0; ul < sql_states; ul++) {
+    uint32_t sql_states = GPOS_ARRAY_SIZE(m_errcode);
+    for (uint32_t ul = 0; ul < sql_states; ul++) {
       ErrCodeElem errcode = m_errcode[ul];
       if (minor == errcode.m_exception_num) {
         sql_state = errcode.m_sql_state;

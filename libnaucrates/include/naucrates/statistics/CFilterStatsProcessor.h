@@ -24,25 +24,25 @@ class CFilterStatsProcessor {
   // create a new histogram after applying the filter that is not an AND/OR predicate
   static CHistogram *MakeHistSimpleFilter(CMemoryPool *mp, CStatsPred *pred_stats, CBitSet *filter_colids,
                                           CHistogram *hist_before, CDouble *last_scale_factor,
-                                          ULONG *target_last_colid);
+                                          uint32_t *target_last_colid);
 
   // create a new histogram after applying a point filter
   static CHistogram *MakeHistPointFilter(CStatsPredPoint *pred_stats, CBitSet *filter_colids, CHistogram *hist_before,
-                                         CDouble *last_scale_factor, ULONG *target_last_colid);
+                                         CDouble *last_scale_factor, uint32_t *target_last_colid);
 
   // create a new histogram after applying a LIKE filter
   static CHistogram *MakeHistLikeFilter(CStatsPredLike *pred_stats, CBitSet *filter_colids, CHistogram *hist_before,
-                                        CDouble *last_scale_factor, ULONG *target_last_colid);
+                                        CDouble *last_scale_factor, uint32_t *target_last_colid);
 
   // create a new histogram for an unsupported predicate
   static CHistogram *MakeHistUnsupportedPred(CStatsPredUnsupported *pred_stats, CBitSet *filter_colids,
                                              CHistogram *hist_before, CDouble *last_scale_factor,
-                                             ULONG *target_last_colid);
+                                             uint32_t *target_last_colid);
 
   // create a new histogram after applying a pred op ANY(ARRAY[...]) filter
   static CHistogram *MakeHistArrayCmpAnyFilter(CMemoryPool *mp, CStatsPredArrayCmp *pred_stats, CBitSet *filter_colids,
                                                CHistogram *hist_before, CDouble *last_scale_factor,
-                                               ULONG *target_last_colid);
+                                               uint32_t *target_last_colid);
 
   // create a new hash map of histograms after applying a conjunctive or disjunctive filter
   static UlongToHistogramMap *MakeHistHashMapConjOrDisjFilter(CMemoryPool *mp, const CStatisticsConfig *stats_config,
@@ -63,12 +63,12 @@ class CFilterStatsProcessor {
                                                         const CStatistics *input_stats);
 
   // check if the column is a new column for statistic calculation
-  static BOOL IsNewStatsColumn(ULONG colid, ULONG last_colid);
+  static bool IsNewStatsColumn(uint32_t colid, uint32_t last_colid);
 
  public:
   // filter
   static CStatistics *MakeStatsFilter(CMemoryPool *mp, const CStatistics *input_stats, CStatsPred *base_pred_stats,
-                                      BOOL do_cap_NDVs, CDouble rows_filter = 0);
+                                      bool do_cap_NDVs, CDouble rows_filter = 0);
 
   // derive statistics for filter operation based on given scalar expression
   static IStatistics *MakeStatsFilterForScalarExpr(

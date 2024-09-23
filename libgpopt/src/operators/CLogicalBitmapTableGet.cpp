@@ -34,7 +34,7 @@ using namespace gpos;
 //		Takes ownership of ptabdesc, pnameTableAlias and pdrgpcrOutput.
 //
 //---------------------------------------------------------------------------
-CLogicalBitmapTableGet::CLogicalBitmapTableGet(CMemoryPool *mp, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
+CLogicalBitmapTableGet::CLogicalBitmapTableGet(CMemoryPool *mp, CTableDescriptor *ptabdesc, uint32_t ulOriginOpId,
                                                const CName *pnameTableAlias, CColRefArray *pdrgpcrOutput)
     : CLogical(mp),
       m_ptabdesc(GPOS_NEW(mp) CTableDescriptorHashSet(mp)),
@@ -59,7 +59,7 @@ CLogicalBitmapTableGet::CLogicalBitmapTableGet(CMemoryPool *mp, CTableDescriptor
 CLogicalBitmapTableGet::CLogicalBitmapTableGet(CMemoryPool *mp)
     : CLogical(mp),
       m_ptabdesc(GPOS_NEW(mp) CTableDescriptorHashSet(mp)),
-      m_ulOriginOpId(gpos::ulong_max),
+      m_ulOriginOpId(UINT32_MAX),
       m_pnameTableAlias(nullptr),
       m_pdrgpcrOutput(nullptr) {}
 
@@ -86,9 +86,8 @@ CLogicalBitmapTableGet::~CLogicalBitmapTableGet() {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalBitmapTableGet::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), Ptabdesc()->MDId()->HashValue());
+uint32_t CLogicalBitmapTableGet::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), Ptabdesc()->MDId()->HashValue());
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
 
   return ulHash;
@@ -102,7 +101,7 @@ CLogicalBitmapTableGet::HashValue() const {
 //		Match this operator with the given one.
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalBitmapTableGet::Matches(COperator *pop) const {
+bool CLogicalBitmapTableGet::Matches(COperator *pop) const {
   return CUtils::FMatchBitmapScan(this, pop);
 }
 
@@ -190,7 +189,7 @@ IOstream &CLogicalBitmapTableGet::OsPrint(IOstream &os) const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalBitmapTableGet::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                              BOOL must_exist) {
+                                                              bool must_exist) {
   CColRefArray *pdrgpcrOutput = nullptr;
   if (must_exist) {
     pdrgpcrOutput = CUtils::PdrgpcrRemapAndCreate(mp, m_pdrgpcrOutput, colref_mapping);

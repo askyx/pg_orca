@@ -35,18 +35,18 @@ CStatistics *CUnionAllStatsProcessor::CreateStatsForUnionAll(CMemoryPool *mp, co
   // column ids on which widths are to be computed
   UlongToDoubleMap *column_to_width_map = GPOS_NEW(mp) UlongToDoubleMap(mp);
 
-  BOOL is_empty_unionall = stats_first_child->IsEmpty() && stats_second_child->IsEmpty();
+  bool is_empty_unionall = stats_first_child->IsEmpty() && stats_second_child->IsEmpty();
   CColumnFactory *col_factory = COptCtxt::PoctxtFromTLS()->Pcf();
   CDouble unionall_rows = CStatistics::MinRows;
   if (is_empty_unionall) {
     CHistogram::AddDummyHistogramAndWidthInfo(mp, col_factory, histograms_new, column_to_width_map, output_colids,
                                               true /*is_empty*/);
   } else {
-    const ULONG len = output_colids.size();
-    for (ULONG ul = 0; ul < len; ul++) {
-      ULONG output_colid = output_colids[ul];
-      ULONG first_child_colid = *(*first_child_colids)[ul];
-      ULONG second_child_colid = *(*second_child_colids)[ul];
+    const uint32_t len = output_colids.size();
+    for (uint32_t ul = 0; ul < len; ul++) {
+      uint32_t output_colid = output_colids[ul];
+      uint32_t first_child_colid = *(*first_child_colids)[ul];
+      uint32_t second_child_colid = *(*second_child_colids)[ul];
 
       const CHistogram *first_child_histogram = stats_first_child->GetHistogram(first_child_colid);
       GPOS_ASSERT(nullptr != first_child_histogram);
@@ -63,13 +63,13 @@ CStatistics *CUnionAllStatsProcessor::CreateStatsForUnionAll(CMemoryPool *mp, co
         GPOS_ASSERT(nullptr != column_ref);
 
         CHistogram *dummy_histogram = CHistogram::MakeDefaultHistogram(mp, column_ref, false /* is_empty*/);
-        histograms_new->Insert(GPOS_NEW(mp) ULONG(output_colid), dummy_histogram);
+        histograms_new->Insert(GPOS_NEW(mp) uint32_t(output_colid), dummy_histogram);
       }
 
       // look up width
       const CDouble *col_width = stats_first_child->GetWidth(first_child_colid);
       GPOS_ASSERT(nullptr != col_width);
-      column_to_width_map->Insert(GPOS_NEW(mp) ULONG(output_colid), GPOS_NEW(mp) CDouble(*col_width));
+      column_to_width_map->Insert(GPOS_NEW(mp) uint32_t(output_colid), GPOS_NEW(mp) CDouble(*col_width));
     }
 
     unionall_rows = stats_first_child->Rows() + stats_second_child->Rows();

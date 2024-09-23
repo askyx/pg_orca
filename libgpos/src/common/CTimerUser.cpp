@@ -24,13 +24,12 @@ using namespace gpos;
 //		User time in micro-seconds since object construction
 //
 //---------------------------------------------------------------------------
-ULONG
-CTimerUser::ElapsedUS() const {
+uint32_t CTimerUser::ElapsedUS() const {
   RUSAGE rusage;
   syslib::GetRusage(&rusage);
 
-  ULONG diff = (ULONG)(((rusage.ru_utime.tv_sec - m_rusage.ru_utime.tv_sec) * GPOS_USEC_IN_SEC) +
-                       (rusage.ru_utime.tv_usec - m_rusage.ru_utime.tv_usec));
+  uint32_t diff = (uint32_t)(((rusage.ru_utime.tv_sec - m_rusage.ru_utime.tv_sec) * GPOS_USEC_IN_SEC) +
+                             (rusage.ru_utime.tv_usec - m_rusage.ru_utime.tv_usec));
 
   return diff;
 }

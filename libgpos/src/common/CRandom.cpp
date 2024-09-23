@@ -27,7 +27,7 @@ using namespace gpos;
 
 CRandom::CRandom() : m_seed(DEFAULT_SEED) {}
 
-CRandom::CRandom(ULONG seed) : m_seed(seed) {}
+CRandom::CRandom(uint32_t seed) : m_seed(seed) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -38,8 +38,7 @@ CRandom::CRandom(ULONG seed) : m_seed(seed) {}
 //
 //---------------------------------------------------------------------------
 
-ULONG
-CRandom::Next() {
+uint32_t CRandom::Next() {
   return clib::Rand(&m_seed);
 }
 

@@ -34,7 +34,7 @@ using namespace gpmd;
 class CDXLStatsDerivedColumn : public CRefCount {
  private:
   // column identifier
-  ULONG m_colid;
+  uint32_t m_colid;
 
   // column width
   CDouble m_width;
@@ -54,15 +54,14 @@ class CDXLStatsDerivedColumn : public CRefCount {
   CDXLStatsDerivedColumn(const CDXLStatsDerivedColumn &) = delete;
 
   // ctor
-  CDXLStatsDerivedColumn(ULONG colid, CDouble width, CDouble null_freq, CDouble distinct_remaining,
+  CDXLStatsDerivedColumn(uint32_t colid, CDouble width, CDouble null_freq, CDouble distinct_remaining,
                          CDouble freq_remaining, CDXLBucketArray *dxl_stats_bucket_array);
 
   // dtor
   ~CDXLStatsDerivedColumn() override;
 
   // column identifier
-  ULONG
-  GetColId() const { return m_colid; }
+  uint32_t GetColId() const { return m_colid; }
 
   // column width
   CDouble Width() const { return m_width; }

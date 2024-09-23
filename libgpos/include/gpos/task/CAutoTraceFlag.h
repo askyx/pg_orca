@@ -28,16 +28,16 @@ namespace gpos {
 class CAutoTraceFlag : public CStackObject {
  private:
   // traceflag id
-  ULONG m_trace;
+  uint32_t m_trace;
 
   // original value
-  BOOL m_orig;
+  bool m_orig;
 
  public:
   CAutoTraceFlag(const CAutoTraceFlag &) = delete;
 
   // ctor
-  CAutoTraceFlag(ULONG trace, BOOL orig);
+  CAutoTraceFlag(uint32_t trace, bool orig);
 
   // dtor
   virtual ~CAutoTraceFlag();

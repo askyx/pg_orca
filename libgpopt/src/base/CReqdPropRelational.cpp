@@ -66,9 +66,10 @@ CReqdPropRelational::~CReqdPropRelational() {
 //		Compute required props
 //
 //---------------------------------------------------------------------------
-void CReqdPropRelational::Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, ULONG child_index,
+void CReqdPropRelational::Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput,
+                                  uint32_t child_index,
                                   CDrvdPropArray *,  // pdrgpdpCtxt
-                                  ULONG              // ulOptReq
+                                  uint32_t           // ulOptReq
 ) {
   GPOS_CHECK_ABORT;
 
@@ -117,7 +118,7 @@ CReqdPropRelational *CReqdPropRelational::PrprelDifference(CMemoryPool *mp, CReq
 //		Return true if property container is empty
 //
 //---------------------------------------------------------------------------
-BOOL CReqdPropRelational::IsEmpty() const {
+bool CReqdPropRelational::IsEmpty() const {
   return m_pcrsStat->Size() == 0;
 }
 

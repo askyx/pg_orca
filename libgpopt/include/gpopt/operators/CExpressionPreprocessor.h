@@ -39,12 +39,12 @@ using ExprToConstantMap = CHashMap<CExpression, CExpression, CExpression::HashVa
 class CExpressionPreprocessor {
  private:
   // map CTE id to collected predicates
-  using CTEPredsMap = CHashMap<ULONG, CExpressionArray, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                               CleanupDelete<ULONG>, CleanupRelease<CExpressionArray>>;
+  using CTEPredsMap = CHashMap<uint32_t, CExpressionArray, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                               CleanupDelete<uint32_t>, CleanupRelease<CExpressionArray>>;
 
   // iterator for map of CTE id to collected predicates
-  using CTEPredsMapIter = CHashMapIter<ULONG, CExpressionArray, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                       CleanupDelete<ULONG>, CleanupRelease<CExpressionArray>>;
+  using CTEPredsMapIter = CHashMapIter<uint32_t, CExpressionArray, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                       CleanupDelete<uint32_t>, CleanupRelease<CExpressionArray>>;
 
   // generate a conjunction of equality predicates between the columns in the given set
   static CExpression *PexprConjEqualityPredicates(CMemoryPool *mp, CColRefSet *pcrs);
@@ -55,7 +55,7 @@ class CExpressionPreprocessor {
 
   // check if all columns in the given equivalence class come from one of the
   // children of the given expression
-  static BOOL FEquivClassFromChild(CColRefSet *pcrs, CExpression *pexpr);
+  static bool FEquivClassFromChild(CColRefSet *pcrs, CExpression *pexpr);
 
   // generate predicates for the given set of columns based on the given
   // constraint property
@@ -111,7 +111,7 @@ class CExpressionPreprocessor {
   static CExpression *PexprCollapseProjects(CMemoryPool *mp, CExpression *pexpr);
 
   // add dummy project element below scalar subquery when the output column is an outer reference
-  static CExpression *PexprProjBelowSubquery(CMemoryPool *mp, CExpression *pexpr, BOOL fUnderPrList);
+  static CExpression *PexprProjBelowSubquery(CMemoryPool *mp, CExpression *pexpr, bool fUnderPrList);
 
   // helper function to rewrite IN query to simple EXISTS with a predicate
   static CExpression *ConvertInToSimpleExists(CMemoryPool *mp, CExpression *pexpr);
@@ -129,18 +129,18 @@ class CExpressionPreprocessor {
   static CExpression *PexprRemoveUnusedCTEs(CMemoryPool *mp, CExpression *pexpr);
 
   static CExpression *PexprReplaceColWithConst(CMemoryPool *mp, CExpression *pexpr, ExprToConstantMap *phmExprToConst,
-                                               BOOL checkFilterForConstants);
+                                               bool checkFilterForConstants);
 
   // collect CTE predicates from consumers
   static void CollectCTEPredicates(CMemoryPool *mp, CExpression *pexpr, CTEPredsMap *phm);
 
   // imply new predicates on LOJ's inner child based on constraints derived from LOJ's outer child and join predicate
   static CExpression *PexprWithImpliedPredsOnLOJInnerChild(CMemoryPool *mp, CExpression *pexprLOJ,
-                                                           BOOL *pfAddedPredicates);
+                                                           bool *pfAddedPredicates);
 
   // infer predicate from outer child to inner child of the outer join
   static CExpression *PexprOuterJoinInferPredsFromOuterChildToInnerChild(CMemoryPool *mp, CExpression *pexpr,
-                                                                         BOOL *pfAddedPredicates);
+                                                                         bool *pfAddedPredicates);
 
   // driver for inferring predicates from constraints
   static CExpression *PexprInferPredicates(CMemoryPool *mp, CExpression *pexpr);
@@ -160,7 +160,7 @@ class CExpressionPreprocessor {
                                                   CExpressionArray *pdrgpexpr);
 
   // determines if the expression is likely convertible to an array expression
-  static BOOL FConvert2InIsConvertable(CExpression *pexpr, CScalarBoolOp::EBoolOperator eboolop);
+  static bool FConvert2InIsConvertable(CExpression *pexpr, CScalarBoolOp::EBoolOperator eboolop);
 
   // reorder the scalar cmp children to ensure that left child is Scalar Ident and right Child is Scalar Const
   static CExpression *PexprReorderScalarCmpChildren(CMemoryPool *mp, CExpression *pexpr);

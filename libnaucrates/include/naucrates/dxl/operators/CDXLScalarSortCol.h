@@ -31,7 +31,7 @@ using namespace gpmd;
 class CDXLScalarSortCol : public CDXLScalar {
  private:
   // id of the sorting column
-  ULONG m_colid;
+  uint32_t m_colid;
 
   // catalog Oid of the sorting operator
   IMDId *m_mdid_sort_op;
@@ -40,13 +40,14 @@ class CDXLScalarSortCol : public CDXLScalar {
   CWStringConst *m_sort_op_name_str;
 
   // sort nulls before other values
-  BOOL m_must_sort_nulls_first;
+  bool m_must_sort_nulls_first;
 
  public:
   CDXLScalarSortCol(CDXLScalarSortCol &) = delete;
 
   // ctor/dtor
-  CDXLScalarSortCol(CMemoryPool *mp, ULONG colid, IMDId *sort_op_id, CWStringConst *pstrTypeName, BOOL fSortNullsFirst);
+  CDXLScalarSortCol(CMemoryPool *mp, uint32_t colid, IMDId *sort_op_id, CWStringConst *pstrTypeName,
+                    bool fSortNullsFirst);
 
   ~CDXLScalarSortCol() override;
 
@@ -57,13 +58,13 @@ class CDXLScalarSortCol : public CDXLScalar {
   const CWStringConst *GetOpNameStr() const override;
 
   // Id of the sorting column
-  ULONG GetColId() const;
+  uint32_t GetColId() const;
 
   // mdid of the sorting operator
   IMDId *GetMdIdSortOp() const;
 
   // whether nulls are sorted before other values
-  BOOL IsSortedNullsFirst() const;
+  bool IsSortedNullsFirst() const;
 
   // serialize operator in DXL format
 
@@ -76,7 +77,7 @@ class CDXLScalarSortCol : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     GPOS_ASSERT(!"Invalid function call for this operator");
     return false;
@@ -85,7 +86,7 @@ class CDXLScalarSortCol : public CDXLScalar {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

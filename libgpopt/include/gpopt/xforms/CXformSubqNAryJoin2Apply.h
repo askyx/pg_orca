@@ -48,7 +48,7 @@ class CXformSubqNAryJoin2Apply : public CXformSubqJoin2Apply {
   // ident accessors
   EXformId Exfid() const override { return ExfSubqNAryJoin2Apply; }
 
-  const CHAR *SzId() const override { return "CXformSubqNAryJoin2Apply"; }
+  const char *SzId() const override { return "CXformSubqNAryJoin2Apply"; }
 
 };  // class CXformSubqNAryJoin2Apply
 

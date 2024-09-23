@@ -62,7 +62,7 @@ CLogicalUnion::~CLogicalUnion() = default;
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalUnion::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                     BOOL must_exist) {
+                                                     bool must_exist) {
   CColRefArray *pdrgpcrOutput = CUtils::PdrgpcrRemap(mp, m_pdrgpcrOutput, colref_mapping, must_exist);
   CColRef2dArray *pdrgpdrgpcrInput = CUtils::PdrgpdrgpcrRemap(mp, m_pdrgpdrgpcrInput, colref_mapping, must_exist);
 
@@ -79,10 +79,10 @@ COperator *CLogicalUnion::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToCol
 //---------------------------------------------------------------------------
 CMaxCard CLogicalUnion::DeriveMaxCard(CMemoryPool *,  // mp
                                       CExpressionHandle &exprhdl) const {
-  const ULONG arity = exprhdl.Arity();
+  const uint32_t arity = exprhdl.Arity();
 
   CMaxCard maxcard = exprhdl.DeriveMaxCard(0);
-  for (ULONG ul = 1; ul < arity; ul++) {
+  for (uint32_t ul = 1; ul < arity; ul++) {
     maxcard += exprhdl.DeriveMaxCard(ul);
   }
 

@@ -43,19 +43,19 @@ class CLogicalInnerCorrelatedApply : public CLogicalInnerApply {
   EOperatorId Eopid() const override { return EopLogicalInnerCorrelatedApply; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalInnerCorrelatedApply"; }
+  const char *SzId() const override { return "CLogicalInnerCorrelatedApply"; }
 
   // applicable transformations
   CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // return true if operator is a correlated apply
-  BOOL FCorrelated() const override { return true; }
+  bool FCorrelated() const override { return true; }
 
   // conversion function
   static CLogicalInnerCorrelatedApply *PopConvert(COperator *pop) {

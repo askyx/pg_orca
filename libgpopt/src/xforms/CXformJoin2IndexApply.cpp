@@ -89,7 +89,7 @@ void CXformJoin2IndexApply::CreateHomogeneousIndexApplyAlternatives(
   GPOS_ASSERT(nullptr != pxfres);
   GPOS_ASSERT(IMDIndex::EmdindBtree == emdtype || IMDIndex::EmdindBitmap == emdtype);
 
-  const ULONG ulIndices = ptabdescInner->IndexCount();
+  const uint32_t ulIndices = ptabdescInner->IndexCount();
   if (0 == ulIndices) {
     return;
   }
@@ -127,7 +127,7 @@ void CXformJoin2IndexApply::CreateHomogeneousIndexApplyAlternatives(
 void CXformJoin2IndexApply::CreateHomogeneousBtreeIndexApplyAlternatives(
     CMemoryPool *mp, COperator *joinOp, CExpression *pexprOuter, CExpression *pexprInner, CExpression *pexprScalar,
     CExpression *origJoinPred, CExpression *nodesToInsertAboveIndexGet, CExpression *endOfNodesToInsertAboveIndexGet,
-    CTableDescriptor *ptabdescInner, CColRefSet *pcrsScalarExpr, CColRefSet *outer_refs, ULONG ulIndices,
+    CTableDescriptor *ptabdescInner, CColRefSet *pcrsScalarExpr, CColRefSet *outer_refs, uint32_t ulIndices,
     CXformResult *pxfres) {
   // array of expressions in the scalar expression
   CExpressionArray *pdrgpexpr = CPredicateUtils::PdrgpexprConjuncts(mp, pexprScalar);
@@ -137,7 +137,7 @@ void CXformJoin2IndexApply::CreateHomogeneousBtreeIndexApplyAlternatives(
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
   const IMDRelation *pmdrel = md_accessor->RetrieveRel(ptabdescInner->MDId());
 
-  for (ULONG ul = 0; ul < ulIndices; ul++) {
+  for (uint32_t ul = 0; ul < ulIndices; ul++) {
     IMDId *pmdidIndex = pmdrel->IndexMDidAt(ul);
     const IMDIndex *pmdindex = md_accessor->RetrieveIndex(pmdidIndex);
 
@@ -189,7 +189,7 @@ void CXformJoin2IndexApply::CreateAlternativesForBtreeIndex(CMemoryPool *mp, CEx
 
     CExpression *rightChildOfApply = CXformUtils::AddALinearStackOfUnaryExpressions(
         mp, indexGetWithOptionalSelect, nodesToInsertAboveIndexGet, endOfNodesToInsertAboveIndexGet);
-    BOOL isOuterJoin = false;
+    bool isOuterJoin = false;
 
     switch (joinOp->Eopid()) {
       case COperator::EopLogicalInnerJoin:
@@ -237,7 +237,7 @@ void CXformJoin2IndexApply::CreateHomogeneousBitmapIndexApplyAlternatives(
 
     CExpression *rightChildOfApply = CXformUtils::AddALinearStackOfUnaryExpressions(
         mp, indexGetWithOptionalSelect, nodesToInsertAboveIndexGet, endOfNodesToInsertAboveIndexGet);
-    BOOL isOuterJoin = false;
+    bool isOuterJoin = false;
 
     switch (joinOp->Eopid()) {
       case COperator::EopLogicalInnerJoin:

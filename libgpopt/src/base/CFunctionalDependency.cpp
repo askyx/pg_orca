@@ -51,7 +51,7 @@ CFunctionalDependency::~CFunctionalDependency() {
 //		Determine if all FD columns are included in the given column set
 //
 //---------------------------------------------------------------------------
-BOOL CFunctionalDependency::FIncluded(CColRefSet *pcrs) const {
+bool CFunctionalDependency::FIncluded(CColRefSet *pcrs) const {
   return pcrs->ContainsAll(m_pcrsKey) && pcrs->ContainsAll(m_pcrsDetermined);
 }
 
@@ -63,8 +63,7 @@ BOOL CFunctionalDependency::FIncluded(CColRefSet *pcrs) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CFunctionalDependency::HashValue() const {
+uint32_t CFunctionalDependency::HashValue() const {
   return gpos::CombineHashes(m_pcrsKey->HashValue(), m_pcrsDetermined->HashValue());
 }
 
@@ -76,7 +75,7 @@ CFunctionalDependency::HashValue() const {
 //		Equality function
 //
 //---------------------------------------------------------------------------
-BOOL CFunctionalDependency::Equals(const CFunctionalDependency *pfd) const {
+bool CFunctionalDependency::Equals(const CFunctionalDependency *pfd) const {
   if (nullptr == pfd) {
     return false;
   }
@@ -106,12 +105,11 @@ IOstream &CFunctionalDependency::OsPrint(IOstream &os) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CFunctionalDependency::HashValue(const CFunctionalDependencyArray *pdrgpfd) {
-  ULONG ulHash = 0;
+uint32_t CFunctionalDependency::HashValue(const CFunctionalDependencyArray *pdrgpfd) {
+  uint32_t ulHash = 0;
   if (nullptr != pdrgpfd) {
-    const ULONG size = pdrgpfd->Size();
-    for (ULONG ul = 0; ul < size; ul++) {
+    const uint32_t size = pdrgpfd->Size();
+    for (uint32_t ul = 0; ul < size; ul++) {
       ulHash = gpos::CombineHashes(ulHash, (*pdrgpfd)[ul]->HashValue());
     }
   }
@@ -127,7 +125,7 @@ CFunctionalDependency::HashValue(const CFunctionalDependencyArray *pdrgpfd) {
 //		Equality function
 //
 //---------------------------------------------------------------------------
-BOOL CFunctionalDependency::Equals(const CFunctionalDependencyArray *pdrgpfdFst,
+bool CFunctionalDependency::Equals(const CFunctionalDependencyArray *pdrgpfdFst,
                                    const CFunctionalDependencyArray *pdrgpfdSnd) {
   if (nullptr == pdrgpfdFst && nullptr == pdrgpfdSnd) {
     return true; /* both empty */
@@ -137,18 +135,18 @@ BOOL CFunctionalDependency::Equals(const CFunctionalDependencyArray *pdrgpfdFst,
     return false; /* one is empty, the other is not */
   }
 
-  const ULONG ulLenFst = pdrgpfdFst->Size();
-  const ULONG ulLenSnd = pdrgpfdSnd->Size();
+  const uint32_t ulLenFst = pdrgpfdFst->Size();
+  const uint32_t ulLenSnd = pdrgpfdSnd->Size();
 
   if (ulLenFst != ulLenSnd) {
     return false;
   }
 
-  BOOL fEqual = true;
-  for (ULONG ulFst = 0; fEqual && ulFst < ulLenFst; ulFst++) {
+  bool fEqual = true;
+  for (uint32_t ulFst = 0; fEqual && ulFst < ulLenFst; ulFst++) {
     const CFunctionalDependency *pfdFst = (*pdrgpfdFst)[ulFst];
-    BOOL fMatch = false;
-    for (ULONG ulSnd = 0; !fMatch && ulSnd < ulLenSnd; ulSnd++) {
+    bool fMatch = false;
+    for (uint32_t ulSnd = 0; !fMatch && ulSnd < ulLenSnd; ulSnd++) {
       const CFunctionalDependency *pfdSnd = (*pdrgpfdSnd)[ulSnd];
       fMatch = pfdFst->Equals(pfdSnd);
     }
@@ -170,8 +168,8 @@ CColRefSet *CFunctionalDependency::PcrsKeys(CMemoryPool *mp, const CFunctionalDe
   CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
 
   if (pdrgpfd != nullptr) {
-    const ULONG size = pdrgpfd->Size();
-    for (ULONG ul = 0; ul < size; ul++) {
+    const uint32_t size = pdrgpfd->Size();
+    for (uint32_t ul = 0; ul < size; ul++) {
       pcrs->Include((*pdrgpfd)[ul]->PcrsKey());
     }
   }

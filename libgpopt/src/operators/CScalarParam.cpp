@@ -27,12 +27,11 @@ CScalarParam::~CScalarParam() {
   m_type->Release();
 }
 
-ULONG
-CScalarParam::HashValue() const {
+uint32_t CScalarParam::HashValue() const {
   return Id();
 }
 
-BOOL CScalarParam::Matches(COperator *pop) const {
+bool CScalarParam::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarParam *popParam = CScalarParam::PopConvert(pop);
 

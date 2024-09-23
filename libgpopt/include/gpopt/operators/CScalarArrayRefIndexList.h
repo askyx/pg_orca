@@ -49,21 +49,21 @@ class CScalarArrayRefIndexList : public CScalar {
   EOperatorId Eopid() const override { return EopScalarArrayRefIndexList; }
 
   // operator name
-  const CHAR *SzId() const override { return "CScalarArrayRefIndexList"; }
+  const char *SzId() const override { return "CScalarArrayRefIndexList"; }
 
   // index list type
   EIndexListType Eilt() const { return m_eilt; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

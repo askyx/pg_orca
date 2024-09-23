@@ -40,16 +40,16 @@ class IMDFunction : public IMDCacheObject {
   Emdtype MDType() const override { return EmdtFunc; }
 
   // does function return NULL on NULL input
-  virtual BOOL IsStrict() const = 0;
+  virtual bool IsStrict() const = 0;
 
   // does function preserve NDVs of input (for cardinality estimation)
-  virtual BOOL IsNDVPreserving() const = 0;
+  virtual bool IsNDVPreserving() const = 0;
 
   // does function return a set of values
-  virtual BOOL ReturnsSet() const = 0;
+  virtual bool ReturnsSet() const = 0;
 
   // is this function allowed for Partition selection
-  virtual BOOL IsAllowedForPS() const = 0;
+  virtual bool IsAllowedForPS() const = 0;
 
   // function stability
   virtual EFuncStbl GetFuncStability() const = 0;

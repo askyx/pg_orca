@@ -52,17 +52,17 @@ class CConstraintConjunction : public CConstraint {
   CConstraintArray *Pdrgpcnstr() const { return m_pdrgpcnstr; }
 
   // is this constraint a contradiction
-  BOOL FContradiction() const override;
+  bool FContradiction() const override;
 
   // scalar expression
   CExpression *PexprScalar(CMemoryPool *mp) override;
 
   // check if there is a constraint on the given column
-  BOOL FConstraint(const CColRef *colref) const override;
+  bool FConstraint(const CColRef *colref) const override;
 
   // return a copy of the constraint with remapped columns
   CConstraint *PcnstrCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                             BOOL must_exist) override;
+                                             bool must_exist) override;
 
   // return constraint on a given column
   CConstraint *Pcnstr(CMemoryPool *mp, const CColRef *colref) override;

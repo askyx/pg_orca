@@ -28,8 +28,8 @@ using namespace gpmd;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CMDIndexGPDB::CMDIndexGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, BOOL is_clustered, BOOL is_partitioned,
-                           BOOL amcanorder, EmdindexType index_type, IMDId *mdid_item_type,
+CMDIndexGPDB::CMDIndexGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, bool is_clustered, bool is_partitioned,
+                           bool amcanorder, EmdindexType index_type, IMDId *mdid_item_type,
                            ULongPtrArray *index_key_cols_array, ULongPtrArray *included_cols_array,
                            ULongPtrArray *returnable_cols_array, IMdIdArray *mdid_opfamilies_array,
                            IMdIdArray *child_index_oids, ULongPtrArray *sort_direction, ULongPtrArray *nulls_direction)
@@ -121,7 +121,7 @@ CMDName CMDIndexGPDB::Mdname() const {
 //		Is the index clustered
 //
 //---------------------------------------------------------------------------
-BOOL CMDIndexGPDB::IsClustered() const {
+bool CMDIndexGPDB::IsClustered() const {
   return m_clustered;
 }
 
@@ -133,7 +133,7 @@ BOOL CMDIndexGPDB::IsClustered() const {
 //		Is the index partitioned
 //
 //---------------------------------------------------------------------------
-BOOL CMDIndexGPDB::IsPartitioned() const {
+bool CMDIndexGPDB::IsPartitioned() const {
   return m_partitioned;
 }
 
@@ -145,7 +145,7 @@ BOOL CMDIndexGPDB::IsPartitioned() const {
 //		Does Index Access Method support Ordering
 //
 //---------------------------------------------------------------------------
-BOOL CMDIndexGPDB::CanOrder() const {
+bool CMDIndexGPDB::CanOrder() const {
   return m_amcanorder;
 }
 
@@ -169,8 +169,7 @@ IMDIndex::EmdindexType CMDIndexGPDB::IndexType() const {
 //		Returns the number of index keys
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIndexGPDB::Keys() const {
+uint32_t CMDIndexGPDB::Keys() const {
   return m_index_key_cols_array->Size();
 }
 
@@ -182,8 +181,7 @@ CMDIndexGPDB::Keys() const {
 //		Returns the n-th key column
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIndexGPDB::KeyAt(ULONG pos) const {
+uint32_t CMDIndexGPDB::KeyAt(uint32_t pos) const {
   return *((*m_index_key_cols_array)[pos]);
 }
 
@@ -195,17 +193,16 @@ CMDIndexGPDB::KeyAt(ULONG pos) const {
 //		Return the position of the key column in the index
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIndexGPDB::GetKeyPos(ULONG column) const {
-  const ULONG size = Keys();
+uint32_t CMDIndexGPDB::GetKeyPos(uint32_t column) const {
+  const uint32_t size = Keys();
 
-  for (ULONG ul = 0; ul < size; ul++) {
+  for (uint32_t ul = 0; ul < size; ul++) {
     if (KeyAt(ul) == column) {
       return ul;
     }
   }
 
-  return gpos::ulong_max;
+  return UINT32_MAX;
 }
 
 //---------------------------------------------------------------------------
@@ -216,8 +213,7 @@ CMDIndexGPDB::GetKeyPos(ULONG column) const {
 //		Returns the number of included columns
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIndexGPDB::IncludedCols() const {
+uint32_t CMDIndexGPDB::IncludedCols() const {
   return m_included_cols_array->Size();
 }
 
@@ -229,8 +225,7 @@ CMDIndexGPDB::IncludedCols() const {
 //		Returns the n-th included column
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIndexGPDB::IncludedColAt(ULONG pos) const {
+uint32_t CMDIndexGPDB::IncludedColAt(uint32_t pos) const {
   return *((*m_included_cols_array)[pos]);
 }
 
@@ -243,8 +238,7 @@ CMDIndexGPDB::IncludedColAt(ULONG pos) const {
 //		0 corresponds to ASC
 //		1 corresponds to DESC
 //---------------------------------------------------------------------------
-ULONG
-CMDIndexGPDB::KeySortDirectionAt(ULONG pos) const {
+uint32_t CMDIndexGPDB::KeySortDirectionAt(uint32_t pos) const {
   return *((*m_sort_direction)[pos]);
 }
 
@@ -257,8 +251,7 @@ CMDIndexGPDB::KeySortDirectionAt(ULONG pos) const {
 //		0 corresponds to NULLS LAST
 //		1 corresponds to NULLS FIRST
 //---------------------------------------------------------------------------
-ULONG
-CMDIndexGPDB::KeyNullsDirectionAt(ULONG pos) const {
+uint32_t CMDIndexGPDB::KeyNullsDirectionAt(uint32_t pos) const {
   return *((*m_nulls_direction)[pos]);
 }
 
@@ -270,8 +263,7 @@ CMDIndexGPDB::KeyNullsDirectionAt(ULONG pos) const {
 //		Returns the number of returnable columns
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIndexGPDB::ReturnableCols() const {
+uint32_t CMDIndexGPDB::ReturnableCols() const {
   return m_returnable_cols_array->Size();
 }
 
@@ -283,8 +275,7 @@ CMDIndexGPDB::ReturnableCols() const {
 //		Returns the n-th returnable column
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIndexGPDB::ReturnableColAt(ULONG pos) const {
+uint32_t CMDIndexGPDB::ReturnableColAt(uint32_t pos) const {
   return *((*m_returnable_cols_array)[pos]);
 }
 
@@ -296,11 +287,10 @@ CMDIndexGPDB::ReturnableColAt(ULONG pos) const {
 //		Return the position of the included column in the index
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIndexGPDB::GetIncludedColPos(ULONG column) const {
-  const ULONG size = IncludedCols();
+uint32_t CMDIndexGPDB::GetIncludedColPos(uint32_t column) const {
+  const uint32_t size = IncludedCols();
 
-  for (ULONG ul = 0; ul < size; ul++) {
+  for (uint32_t ul = 0; ul < size; ul++) {
     if (IncludedColAt(ul) == column) {
       return ul;
     }
@@ -308,7 +298,7 @@ CMDIndexGPDB::GetIncludedColPos(ULONG column) const {
 
   GPOS_ASSERT("Column not found in Index's included columns");
 
-  return gpos::ulong_max;
+  return UINT32_MAX;
 }
 
 #ifdef GPOS_DEBUG
@@ -329,8 +319,8 @@ void CMDIndexGPDB::DebugPrint(IOstream &os) const {
   os << "Index type: " << GetDXLStr(m_index_type)->GetBuffer() << std::endl;
 
   os << "Index keys: ";
-  for (ULONG ul = 0; ul < Keys(); ul++) {
-    ULONG ulKey = KeyAt(ul);
+  for (uint32_t ul = 0; ul < Keys(); ul++) {
+    uint32_t ulKey = KeyAt(ul);
     if (ul > 0) {
       os << ", ";
     }
@@ -339,8 +329,8 @@ void CMDIndexGPDB::DebugPrint(IOstream &os) const {
   os << std::endl;
 
   os << "Included Columns: ";
-  for (ULONG ul = 0; ul < IncludedCols(); ul++) {
-    ULONG ulKey = IncludedColAt(ul);
+  for (uint32_t ul = 0; ul < IncludedCols(); ul++) {
+    uint32_t ulKey = IncludedColAt(ul);
     if (ul > 0) {
       os << ", ";
     }
@@ -372,7 +362,7 @@ IMDId *CMDIndexGPDB::GetIndexRetItemTypeMdid() const {
 // 		at the specified position
 //
 //---------------------------------------------------------------------------
-BOOL CMDIndexGPDB::IsCompatible(const IMDScalarOp *md_scalar_op, ULONG key_pos) const {
+bool CMDIndexGPDB::IsCompatible(const IMDScalarOp *md_scalar_op, uint32_t key_pos) const {
   GPOS_ASSERT(nullptr != md_scalar_op);
 
   // In cover indexes the non-key "payload" should not be considered
@@ -385,9 +375,9 @@ BOOL CMDIndexGPDB::IsCompatible(const IMDScalarOp *md_scalar_op, ULONG key_pos) 
   // the families the scalar comparison belongs to
   const IMDId *mdid_opfamily = (*m_mdid_opfamilies_array)[key_pos];
 
-  const ULONG opfamilies_count = md_scalar_op->OpfamiliesCount();
+  const uint32_t opfamilies_count = md_scalar_op->OpfamiliesCount();
 
-  for (ULONG ul = 0; ul < opfamilies_count; ul++) {
+  for (uint32_t ul = 0; ul < opfamilies_count; ul++) {
     if (mdid_opfamily->Equals(md_scalar_op->OpfamilyMdidAt(ul))) {
       return true;
     }

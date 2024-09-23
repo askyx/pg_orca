@@ -33,7 +33,7 @@ class CMDNDistinct : public CRefCount {
   CBitSet *m_attrs;
 
  public:
-  CMDNDistinct(CMemoryPool *mp, DOUBLE ndistinct_value, CBitSet *attrs)
+  CMDNDistinct(CMemoryPool *mp, double ndistinct_value, CBitSet *attrs)
       : m_mp(mp), m_ndistnct_value(ndistinct_value), m_attrs(attrs) {}
 
   ~CMDNDistinct() override { m_attrs->Release(); }
@@ -42,7 +42,7 @@ class CMDNDistinct : public CRefCount {
     CWStringDynamic *str = GPOS_NEW(m_mp) CWStringDynamic(m_mp);
     CBitSetIter bsiter(*m_attrs);
 
-    ULONG count = m_attrs->Size();
+    uint32_t count = m_attrs->Size();
     while (bsiter.Advance()) {
       if (--count > 0) {
         str->AppendFormat(GPOS_WSZ_LIT("%d,"), bsiter.Bit());

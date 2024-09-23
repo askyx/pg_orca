@@ -69,7 +69,7 @@ IOstream &CXform::OsPrint(IOstream &os) const {
 //		check a given expression against the pattern
 //
 //---------------------------------------------------------------------------
-BOOL CXform::FCheckPattern(CExpression *pexpr) const {
+bool CXform::FCheckPattern(CExpression *pexpr) const {
   return pexpr->FMatchPattern(PexprPattern());
 }
 
@@ -81,7 +81,7 @@ BOOL CXform::FCheckPattern(CExpression *pexpr) const {
 //		Verify xform promise for the given expression
 //
 //---------------------------------------------------------------------------
-BOOL CXform::FPromising(CMemoryPool *mp, const CXform *pxform, CExpression *pexpr) {
+bool CXform::FPromising(CMemoryPool *mp, const CXform *pxform, CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pxform);
   GPOS_ASSERT(nullptr != pexpr);
 
@@ -102,7 +102,7 @@ BOOL CXform::FPromising(CMemoryPool *mp, const CXform *pxform, CExpression *pexp
 //		Equality function on xform ids
 //
 //---------------------------------------------------------------------------
-BOOL CXform::FEqualIds(const CHAR *szIdOne, const CHAR *szIdTwo) {
+bool CXform::FEqualIds(const char *szIdOne, const char *szIdTwo) {
   return 0 == clib::Strcmp(szIdOne, szIdTwo);
 }
 
@@ -220,7 +220,7 @@ CBitSet *CXform::PbsJoinOrderOnExhaustive2Xforms(CMemoryPool *mp) {
   return pbs;
 }
 
-BOOL CXform::IsApplyOnce() {
+bool CXform::IsApplyOnce() {
   return false;
 }
 // EOF

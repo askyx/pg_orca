@@ -40,7 +40,7 @@ class CXformGbAggDedup2StreamAggDedup : public CXformGbAgg2StreamAgg {
   EXformId Exfid() const override { return ExfGbAggDedup2StreamAggDedup; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformGbAggDedup2StreamAggDedup"; }
+  const char *SzId() const override { return "CXformGbAggDedup2StreamAggDedup"; }
 
   // actual transform
   void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;

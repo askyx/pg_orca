@@ -18,7 +18,7 @@ class CPhysicalUnionAllFactory {
  public:
   CPhysicalUnionAllFactory(CLogicalUnionAll *popLogicalUnionAll);
 
-  CPhysicalUnionAll *PopPhysicalUnionAll(CMemoryPool *mp, BOOL fParallel);
+  CPhysicalUnionAll *PopPhysicalUnionAll(CMemoryPool *mp, bool fParallel);
 };
 
 }  // namespace gpopt

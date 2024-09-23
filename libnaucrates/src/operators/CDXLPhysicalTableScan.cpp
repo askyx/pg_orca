@@ -110,7 +110,7 @@ const CDXLTableDescr *CDXLPhysicalTableScan::GetDXLTableDescr() {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalTableScan::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLPhysicalTableScan::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   // assert proj list and filter are valid
   CDXLPhysical::AssertValid(dxlnode, validate_children);
 

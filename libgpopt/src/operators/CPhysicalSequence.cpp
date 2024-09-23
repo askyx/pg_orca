@@ -67,7 +67,7 @@ CPhysicalSequence::~CPhysicalSequence() {
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalSequence::Matches(COperator *pop) const {
+bool CPhysicalSequence::Matches(COperator *pop) const {
   return Eopid() == pop->Eopid();
 }
 
@@ -80,14 +80,14 @@ BOOL CPhysicalSequence::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalSequence::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                            ULONG child_index,
+                                            uint32_t child_index,
                                             CDrvdPropArray *,  // pdrgpdpCtxt
-                                            ULONG              // ulOptReq
+                                            uint32_t           // ulOptReq
 ) {
-  const ULONG arity = exprhdl.Arity();
+  const uint32_t arity = exprhdl.Arity();
   if (child_index == arity - 1) {
     // request required columns from the last child of the sequence
-    return PcrsChildReqd(mp, exprhdl, pcrsRequired, child_index, gpos::ulong_max);
+    return PcrsChildReqd(mp, exprhdl, pcrsRequired, child_index, UINT32_MAX);
   }
 
   m_pcrsEmpty->AddRef();
@@ -104,9 +104,9 @@ CColRefSet *CPhysicalSequence::PcrsRequired(CMemoryPool *mp, CExpressionHandle &
 //		Compute required CTE map of the n-th child
 //
 //---------------------------------------------------------------------------
-CCTEReq *CPhysicalSequence::PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
-                                         CDrvdPropArray *pdrgpdpCtxt,
-                                         ULONG  // ulOptReq
+CCTEReq *CPhysicalSequence::PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter,
+                                         uint32_t child_index, CDrvdPropArray *pdrgpdpCtxt,
+                                         uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcter);
   if (child_index < exprhdl.Arity() - 1) {
@@ -131,13 +131,13 @@ CCTEReq *CPhysicalSequence::PcteRequired(CMemoryPool *mp, CExpressionHandle &exp
 //		Helper for checking if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalSequence::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                          ULONG  // ulOptReq
+bool CPhysicalSequence::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                          uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcrsRequired);
 
   // last child must provide required columns
-  ULONG arity = exprhdl.Arity();
+  uint32_t arity = exprhdl.Arity();
   GPOS_ASSERT(0 < arity);
 
   CColRefSet *pcrsChild = exprhdl.DeriveOutputColumns(arity - 1);
@@ -156,9 +156,9 @@ BOOL CPhysicalSequence::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet
 COrderSpec *CPhysicalSequence::PosRequired(CMemoryPool *mp,
                                            CExpressionHandle &,  // exprhdl,
                                            COrderSpec *,         // posRequired,
-                                           ULONG,                // child_index,
+                                           uint32_t,             // child_index,
                                            CDrvdPropArray *,     // pdrgpdpCtxt
-                                           ULONG                 // ulOptReq
+                                           uint32_t              // ulOptReq
 ) const {
   // no order requirement on the children
   return GPOS_NEW(mp) COrderSpec(mp);
@@ -175,7 +175,7 @@ COrderSpec *CPhysicalSequence::PosRequired(CMemoryPool *mp,
 COrderSpec *CPhysicalSequence::PosDerive(CMemoryPool *,  // mp,
                                          CExpressionHandle &exprhdl) const {
   // pass through sort order from last child
-  const ULONG arity = exprhdl.Arity();
+  const uint32_t arity = exprhdl.Arity();
 
   GPOS_ASSERT(1 <= arity);
 

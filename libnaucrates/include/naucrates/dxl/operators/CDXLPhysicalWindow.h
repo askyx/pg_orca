@@ -51,16 +51,16 @@ class CDXLPhysicalWindow : public CDXLPhysical {
   const CWStringConst *GetOpNameStr() const override;
 
   // number of partition columns
-  ULONG PartByColsCount() const;
+  uint32_t PartByColsCount() const;
 
   // return partition columns
   const ULongPtrArray *GetPartByColsArray() const { return m_part_by_colid_array; }
 
   // number of window keys
-  ULONG WindowKeysCount() const;
+  uint32_t WindowKeysCount() const;
 
   // return the window key at a given position
-  CDXLWindowKey *GetDXLWindowKeyAt(ULONG ulPos) const;
+  CDXLWindowKey *GetDXLWindowKeyAt(uint32_t ulPos) const;
 
   // serialize operator in DXL format
 
@@ -75,7 +75,7 @@ class CDXLPhysicalWindow : public CDXLPhysical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

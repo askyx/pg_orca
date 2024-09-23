@@ -46,35 +46,35 @@ class CSubqueryHandler {
   //---------------------------------------------------------------------------
   struct SSubqueryDesc {
     // subquery can return more than one row
-    BOOL m_returns_set{false};
+    bool m_returns_set{false};
 
     // subquery has volatile functions
-    BOOL m_fHasVolatileFunctions{false};
+    bool m_fHasVolatileFunctions{false};
 
     // subquery has outer references
-    BOOL m_fHasOuterRefs{false};
+    bool m_fHasOuterRefs{false};
 
     // the returned column is an outer reference
-    BOOL m_fReturnedPcrIsOuterRef{false};
+    bool m_fReturnedPcrIsOuterRef{false};
 
     // subquery has skip level correlations -- when inner expression refers to columns defined above the immediate outer
     // expression
-    BOOL m_fHasSkipLevelCorrelations{false};
+    bool m_fHasSkipLevelCorrelations{false};
 
     // subquery has a single count(*)/count(Any) agg
-    BOOL m_fHasCountAgg{false};
+    bool m_fHasCountAgg{false};
 
     // column defining count(*)/count(Any) agg, if any
     CColRef *m_pcrCountAgg{nullptr};
 
     //  does subquery project a count expression
-    BOOL m_fProjectCount{false};
+    bool m_fProjectCount{false};
 
     // subquery is used in a value context
-    BOOL m_fValueSubquery{false};
+    bool m_fValueSubquery{false};
 
     // subquery requires correlated execution
-    BOOL m_fCorrelatedExecution{false};
+    bool m_fCorrelatedExecution{false};
 
     // ctor
     SSubqueryDesc() = default;
@@ -88,7 +88,7 @@ class CSubqueryHandler {
   CMemoryPool *m_mp;
 
   // enforce using correlated apply for unnesting subqueries
-  BOOL m_fEnforceCorrelatedApply;
+  bool m_fEnforceCorrelatedApply;
 
   // helper for adding nullness check, only if needed, to the given scalar expression
   static CExpression *PexprIsNotNull(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprLogical,
@@ -99,55 +99,55 @@ class CSubqueryHandler {
 
   // helper for creating a groupby node above or below the apply
   static CExpression *CreateGroupByNode(CMemoryPool *mp, CExpression *pexprChild, CColRefArray *colref_array,
-                                        BOOL fExistential, CColRef *colref, CExpression *pexprPredicate,
+                                        bool fExistential, CColRef *colref, CExpression *pexprPredicate,
                                         CColRef **pcrCount, CColRef **pcrSum);
 
   // helper for creating an inner select expression when creating outer apply
   static CExpression *PexprInnerSelect(CMemoryPool *mp, const CColRef *pcrInner, CExpression *pexprInner,
-                                       CExpression *pexprPredicate, BOOL *useNotNullableInnerOpt);
+                                       CExpression *pexprPredicate, bool *useNotNullableInnerOpt);
 
   // helper for creating outer apply expression for scalar subqueries
-  static BOOL FCreateOuterApplyForScalarSubquery(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner,
-                                                 CExpression *pexprSubquery, BOOL fOuterRefsUnderInner,
+  static bool FCreateOuterApplyForScalarSubquery(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner,
+                                                 CExpression *pexprSubquery, bool fOuterRefsUnderInner,
                                                  CExpression **ppexprNewOuter, CExpression **ppexprResidualScalar);
 
   // helper for creating grouping columns for outer apply expression
-  static BOOL FCreateGrpCols(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner, BOOL fExistential,
-                             BOOL fOuterRefsUnderInner,
+  static bool FCreateGrpCols(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner, bool fExistential,
+                             bool fOuterRefsUnderInner,
                              CColRefArray **ppdrgpcr,  // output: constructed grouping columns
-                             BOOL *pfGbOnInner         // output: is Gb created on inner expression
+                             bool *pfGbOnInner         // output: is Gb created on inner expression
   );
 
   // helper for creating outer apply expression for existential/quantified subqueries
-  static BOOL FCreateOuterApplyForExistOrQuant(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner,
+  static bool FCreateOuterApplyForExistOrQuant(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner,
                                                CExpression *pexprSubquery, CExpression *pexprPredicate,
-                                               BOOL fOuterRefsUnderInner, CExpression **ppexprNewOuter,
-                                               CExpression **ppexprResidualScalar, BOOL useNotNullableInnerOpt);
+                                               bool fOuterRefsUnderInner, CExpression **ppexprNewOuter,
+                                               CExpression **ppexprResidualScalar, bool useNotNullableInnerOpt);
 
   // helper for creating outer apply expression
-  static BOOL FCreateOuterApply(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner,
-                                CExpression *pexprSubquery, CExpression *pexprPredicate, BOOL fOuterRefsUnderInner,
+  static bool FCreateOuterApply(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner,
+                                CExpression *pexprSubquery, CExpression *pexprPredicate, bool fOuterRefsUnderInner,
                                 CExpression **ppexprNewOuter, CExpression **ppexprResidualScalar,
-                                BOOL useNotNullableInnerOpt);
+                                bool useNotNullableInnerOpt);
 
   // helper for creating a scalar if expression used when generating an outer apply
   static CExpression *PexprScalarIf(CMemoryPool *mp, CColRef *pcrBool, CColRef *pcrSum, CColRef *pcrCount,
-                                    CExpression *pexprSubquery, BOOL useNotNullableInnerOpt);
+                                    CExpression *pexprSubquery, bool useNotNullableInnerOpt);
 
   // helper for creating a correlated apply expression for existential subquery
-  static BOOL FCreateCorrelatedApplyForExistentialSubquery(CMemoryPool *mp, CExpression *pexprOuter,
+  static bool FCreateCorrelatedApplyForExistentialSubquery(CMemoryPool *mp, CExpression *pexprOuter,
                                                            CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
                                                            CExpression **ppexprNewOuter,
                                                            CExpression **ppexprResidualScalar);
 
   // helper for creating a correlated apply expression for quantified subquery
-  static BOOL FCreateCorrelatedApplyForQuantifiedSubquery(CMemoryPool *mp, CExpression *pexprOuter,
+  static bool FCreateCorrelatedApplyForQuantifiedSubquery(CMemoryPool *mp, CExpression *pexprOuter,
                                                           CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
                                                           CExpression **ppexprNewOuter,
                                                           CExpression **ppexprResidualScalar);
 
   // helper for creating correlated apply expression
-  static BOOL FCreateCorrelatedApplyForExistOrQuant(CMemoryPool *mp, CExpression *pexprOuter,
+  static bool FCreateCorrelatedApplyForExistOrQuant(CMemoryPool *mp, CExpression *pexprOuter,
                                                     CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
                                                     CExpression **ppexprNewOuter, CExpression **ppexprResidualScalar);
 
@@ -157,33 +157,33 @@ class CSubqueryHandler {
 
   // detect subqueries with expressions over count aggregate similar to
   // (SELECT 'abc' || (SELECT count(*) from X))
-  static BOOL FProjectCountSubquery(CExpression *pexprSubquery, CColRef *ppcrCount);
+  static bool FProjectCountSubquery(CExpression *pexprSubquery, CColRef *ppcrCount);
 
   // given an input expression, replace all occurrences of given column with the given scalar expression
   static CExpression *PexprReplace(CMemoryPool *mp, CExpression *pexpr, CColRef *colref, CExpression *pexprSubquery);
 
   // remove a scalar subquery node from scalar tree
-  BOOL FRemoveScalarSubquery(CExpression *pexprOuter, CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
+  bool FRemoveScalarSubquery(CExpression *pexprOuter, CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
                              CExpression **ppexprNewOuter, CExpression **ppexprResidualScalar);
 
   // helper to generate a correlated apply expression when needed
-  static BOOL FGenerateCorrelatedApplyForScalarSubquery(CMemoryPool *mp, CExpression *pexprOuter,
+  static bool FGenerateCorrelatedApplyForScalarSubquery(CMemoryPool *mp, CExpression *pexprOuter,
                                                         CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
                                                         CSubqueryHandler::SSubqueryDesc *psd,
-                                                        BOOL fEnforceCorrelatedApply, CExpression **ppexprNewOuter,
+                                                        bool fEnforceCorrelatedApply, CExpression **ppexprNewOuter,
                                                         CExpression **ppexprResidualScalar);
 
   // internal function for removing a scalar subquery node from scalar tree
-  static BOOL FRemoveScalarSubqueryInternal(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprSubquery,
-                                            ESubqueryCtxt esqctxt, SSubqueryDesc *psd, BOOL fEnforceCorrelatedApply,
+  static bool FRemoveScalarSubqueryInternal(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprSubquery,
+                                            ESubqueryCtxt esqctxt, SSubqueryDesc *psd, bool fEnforceCorrelatedApply,
                                             CExpression **ppexprNewOuter, CExpression **ppexprResidualScalar);
 
   // remove a subquery ANY node from scalar tree
-  BOOL FRemoveAnySubquery(CExpression *pexprOuter, CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
+  bool FRemoveAnySubquery(CExpression *pexprOuter, CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
                           CExpression **ppexprNewOuter, CExpression **ppexprResidualScalar);
 
   // remove a subquery ALL node from scalar tree
-  BOOL FRemoveAllSubquery(CExpression *pexprOuter, CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
+  bool FRemoveAllSubquery(CExpression *pexprOuter, CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
                           CExpression **ppexprNewOuter, CExpression **ppexprResidualScalar);
 
   // add a limit 1 expression over given expression,
@@ -191,24 +191,24 @@ class CSubqueryHandler {
   static CExpression *AddOrReplaceLimitOne(CMemoryPool *mp, CExpression *pexpr);
 
   // remove a subquery EXISTS/NOT EXISTS node from scalar tree
-  static BOOL FRemoveExistentialSubquery(CMemoryPool *mp, COperator::EOperatorId op_id, CExpression *pexprOuter,
+  static bool FRemoveExistentialSubquery(CMemoryPool *mp, COperator::EOperatorId op_id, CExpression *pexprOuter,
                                          CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
                                          CExpression **ppexprNewOuter, CExpression **ppexprResidualScalar);
 
   // remove a subquery EXISTS from scalar tree
-  BOOL FRemoveExistsSubquery(CExpression *pexprOuter, CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
+  bool FRemoveExistsSubquery(CExpression *pexprOuter, CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
                              CExpression **ppexprNewOuter, CExpression **ppexprResidualScalar);
 
   // remove a subquery NOT EXISTS from scalar tree
-  BOOL FRemoveNotExistsSubquery(CExpression *pexprOuter, CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
+  bool FRemoveNotExistsSubquery(CExpression *pexprOuter, CExpression *pexprSubquery, ESubqueryCtxt esqctxt,
                                 CExpression **ppexprNewOuter, CExpression **ppexprResidualScalar);
 
   // handle subqueries in scalar tree recursively
-  BOOL FRecursiveHandler(CExpression *pexprOuter, CExpression *pexprScalar, ESubqueryCtxt esqctxt,
+  bool FRecursiveHandler(CExpression *pexprOuter, CExpression *pexprScalar, ESubqueryCtxt esqctxt,
                          CExpression **ppexprNewOuter, CExpression **ppexprNewScalar);
 
   // handle subqueries on a case-by-case basis
-  BOOL FProcessScalarOperator(CExpression *pexprOuter, CExpression *pexprScalar, ESubqueryCtxt esqctxt,
+  bool FProcessScalarOperator(CExpression *pexprOuter, CExpression *pexprScalar, ESubqueryCtxt esqctxt,
                               CExpression **ppexprNewOuter, CExpression **ppexprNewScalar);
 
 #ifdef GPOS_DEBUG
@@ -221,7 +221,7 @@ class CSubqueryHandler {
   CSubqueryHandler(const CSubqueryHandler &) = delete;
 
   // ctor
-  CSubqueryHandler(CMemoryPool *mp, BOOL fEnforceCorrelatedApply)
+  CSubqueryHandler(CMemoryPool *mp, bool fEnforceCorrelatedApply)
       : m_mp(mp), m_fEnforceCorrelatedApply(fEnforceCorrelatedApply) {}
 
   // build an expression for the quantified comparison of the subquery
@@ -229,7 +229,7 @@ class CSubqueryHandler {
                                  CSubqueryHandler::ESubqueryCtxt esqctxt);
 
   // main driver
-  BOOL FProcess(CExpression *pexprOuter,            // logical child of a SELECT node
+  bool FProcess(CExpression *pexprOuter,            // logical child of a SELECT node
                 CExpression *pexprScalar,           // scalar child of a SELECT node
                 ESubqueryCtxt esqctxt,              // context in which subquery occurs
                 CExpression **ppexprNewOuter,       // an Apply logical expression produced as output

@@ -39,20 +39,20 @@ class CDXLPhysicalNLJoin : public CDXLPhysicalJoin {
  private:
   // flag to indicate whether operator is an index nested loops,
   // i.e., inner side is an index scan that uses values from outer side
-  BOOL m_is_index_nlj;
+  bool m_is_index_nlj;
 
   // array holding nest params col references used for creating nestparam
   // node during translation
   CDXLColRefArray *m_nest_params_col_refs;
 
   // if nest params are required to be parsed
-  BOOL m_nest_params_exists;
+  bool m_nest_params_exists;
 
  public:
   CDXLPhysicalNLJoin(const CDXLPhysicalNLJoin &) = delete;
 
   // ctor/dtor
-  CDXLPhysicalNLJoin(CMemoryPool *mp, EdxlJoinType join_type, BOOL is_index_nlj, BOOL nest_params_exists);
+  CDXLPhysicalNLJoin(CMemoryPool *mp, EdxlJoinType join_type, bool is_index_nlj, bool nest_params_exists);
 
   ~CDXLPhysicalNLJoin() override;
 
@@ -61,10 +61,10 @@ class CDXLPhysicalNLJoin : public CDXLPhysicalJoin {
   const CWStringConst *GetOpNameStr() const override;
 
   // is operator an index nested loops?
-  BOOL IsIndexNLJ() const { return m_is_index_nlj; }
+  bool IsIndexNLJ() const { return m_is_index_nlj; }
 
   // nest params exists for parsing
-  BOOL NestParamsExists() const;
+  bool NestParamsExists() const;
 
   // serialize operator in DXL format
 
@@ -83,7 +83,7 @@ class CDXLPhysicalNLJoin : public CDXLPhysicalJoin {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

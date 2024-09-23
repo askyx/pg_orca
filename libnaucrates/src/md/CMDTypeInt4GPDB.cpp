@@ -97,7 +97,7 @@ CMDTypeInt4GPDB::~CMDTypeInt4GPDB() {
 //		Factory function for creating INT4 datums
 //
 //---------------------------------------------------------------------------
-IDatumInt4 *CMDTypeInt4GPDB::CreateInt4Datum(CMemoryPool *mp, INT value, BOOL is_null) const {
+IDatumInt4 *CMDTypeInt4GPDB::CreateInt4Datum(CMemoryPool *mp, int32_t value, bool is_null) const {
   return GPOS_NEW(mp) CDatumInt4GPDB(m_mdid->Sysid(), value, is_null);
 }
 
@@ -207,8 +207,8 @@ IDatum *CMDTypeInt4GPDB::GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_
 //---------------------------------------------------------------------------
 IDatum *CMDTypeInt4GPDB::GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const {
   CDXLDatumInt4 *int4_dxl_datum = CDXLDatumInt4::Cast(const_cast<CDXLDatum *>(dxl_datum));
-  INT val = int4_dxl_datum->Value();
-  BOOL is_null = int4_dxl_datum->IsNull();
+  int32_t val = int4_dxl_datum->Value();
+  bool is_null = int4_dxl_datum->IsNull();
 
   return GPOS_NEW(mp) CDatumInt4GPDB(m_mdid->Sysid(), val, is_null);
 }

@@ -22,11 +22,10 @@
 using namespace gpos;
 
 // invalid exception
-const ULONG_PTR CMemoryPool::m_invalid = ULONG_PTR_MAX;
+const uintptr_t CMemoryPool::m_invalid = UINT64_MAX;
 
 // get user requested size of allocation
-ULONG
-CMemoryPool::UserSizeOfAlloc(const void *ptr) {
+uint32_t CMemoryPool::UserSizeOfAlloc(const void *ptr) {
   GPOS_ASSERT(nullptr != ptr);
 
   return CMemoryPoolManager::GetMemoryPoolMgr()->UserSizeOfAlloc(ptr);

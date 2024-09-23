@@ -44,11 +44,10 @@ class CStatsPredDisj : public CStatsPred {
   ~CStatsPredDisj() override { m_disj_pred_stats_array->Release(); }
 
   // the column identifier on which the predicates are on
-  ULONG GetColId() const override;
+  uint32_t GetColId() const override;
 
   // total number of predicates in the disjunction
-  ULONG
-  GetNumPreds() const { return m_disj_pred_stats_array->Size(); }
+  uint32_t GetNumPreds() const { return m_disj_pred_stats_array->Size(); }
 
   // return the array of predicate filters
   CStatsPredPtrArry *GetDisjPredStatsArray() const { return m_disj_pred_stats_array; }
@@ -57,13 +56,13 @@ class CStatsPredDisj : public CStatsPred {
   void Sort() const;
 
   // return the point filter at a particular position
-  CStatsPred *GetPredStats(ULONG pos) const;
+  CStatsPred *GetPredStats(uint32_t pos) const;
 
   // filter type id
   EStatsPredType GetPredStatsType() const override { return CStatsPred::EsptDisj; }
 
   // return the column id of the filter based on the column ids of its child filters
-  static ULONG GetColId(const CStatsPredPtrArry *pdrgpstatspred);
+  static uint32_t GetColId(const CStatsPredPtrArry *pdrgpstatspred);
 
   // conversion function
   static CStatsPredDisj *ConvertPredStats(CStatsPred *pred_stats) {

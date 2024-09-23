@@ -46,9 +46,9 @@ class CScalarIsDistinctFrom : public CScalarCmp {
   EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const override;
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarIsDistinctFrom"; }
+  const char *SzId() const override { return "CScalarIsDistinctFrom"; }
 
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // conversion function
   static CScalarIsDistinctFrom *PopConvert(COperator *pop);

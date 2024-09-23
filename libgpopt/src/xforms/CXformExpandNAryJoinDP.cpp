@@ -53,11 +53,11 @@ CXform::EXformPromise CXformExpandNAryJoinDP::Exfp(CExpressionHandle &exprhdl) c
   COptimizerConfig *optimizer_config = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig();
   const CHint *phint = optimizer_config->GetHint();
 
-  const ULONG arity = exprhdl.Arity();
+  const uint32_t arity = exprhdl.Arity();
 
   // since the last child of the join operator is a scalar child
   // defining the join predicate, ignore it.
-  const ULONG ulRelChild = arity - 1;
+  const uint32_t ulRelChild = arity - 1;
 
   if (ulRelChild > phint->UlJoinOrderDPLimit()) {
     return CXform::ExfpNone;
@@ -83,11 +83,11 @@ void CXformExpandNAryJoinDP::Transform(CXformContext *pxfctxt, CXformResult *pxf
 
   CMemoryPool *mp = pxfctxt->Pmp();
 
-  const ULONG arity = pexpr->Arity();
+  const uint32_t arity = pexpr->Arity();
   GPOS_ASSERT(arity >= 3);
 
   CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
-  for (ULONG ul = 0; ul < arity - 1; ul++) {
+  for (uint32_t ul = 0; ul < arity - 1; ul++) {
     CExpression *pexprChild = (*pexpr)[ul];
     pexprChild->AddRef();
     pdrgpexpr->Append(pexprChild);
@@ -106,8 +106,8 @@ void CXformExpandNAryJoinDP::Transform(CXformContext *pxfctxt, CXformResult *pxf
     pexprResult->Release();
     pxfres->Add(pexprNormalized);
 
-    const ULONG UlTopKJoinOrders = jodp.PdrgpexprTopK()->Size();
-    for (ULONG ul = 0; ul < UlTopKJoinOrders; ul++) {
+    const uint32_t UlTopKJoinOrders = jodp.PdrgpexprTopK()->Size();
+    for (uint32_t ul = 0; ul < UlTopKJoinOrders; ul++) {
       CExpression *pexprJoinOrder = (*jodp.PdrgpexprTopK())[ul];
       if (pexprJoinOrder != pexprResult) {
         // We should consider normalizing this expression before inserting it, as we do for pexprResult

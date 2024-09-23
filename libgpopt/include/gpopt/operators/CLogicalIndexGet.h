@@ -37,8 +37,8 @@ class CLogicalIndexGet : public CLogical {
   // table descriptor
   CTableDescriptor *m_ptabdesc;
 
-  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-  ULONG m_ulOriginOpId;
+  // origin operator id -- UINT32_MAX if operator was not generated via a transformation
+  uint32_t m_ulOriginOpId;
 
   // alias for table
   const CName *m_pnameAlias;
@@ -56,7 +56,7 @@ class CLogicalIndexGet : public CLogical {
   CColRefSet *m_pcrsDist;
 
   // Number of predicate not applicable on the index
-  ULONG m_ulUnindexedPredColCount;
+  uint32_t m_ulUnindexedPredColCount;
 
   // index scan direction
   EIndexScanDirection m_scan_direction;
@@ -67,8 +67,8 @@ class CLogicalIndexGet : public CLogical {
   // ctors
   explicit CLogicalIndexGet(CMemoryPool *mp);
 
-  CLogicalIndexGet(CMemoryPool *mp, const IMDIndex *pmdindex, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
-                   const CName *pnameAlias, CColRefArray *pdrgpcrOutput, ULONG ulUnindexedPredColCount,
+  CLogicalIndexGet(CMemoryPool *mp, const IMDIndex *pmdindex, CTableDescriptor *ptabdesc, uint32_t ulOriginOpId,
+                   const CName *pnameAlias, CColRefArray *pdrgpcrOutput, uint32_t ulUnindexedPredColCount,
                    EIndexScanDirection scan_direction);
 
   // dtor
@@ -78,7 +78,7 @@ class CLogicalIndexGet : public CLogical {
   EOperatorId Eopid() const override { return EopLogicalIndexGet; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalIndexGet"; }
+  const char *SzId() const override { return "CLogicalIndexGet"; }
 
   // distribution columns
   virtual const CColRefSet *PcrsDist() const { return m_pcrsDist; }
@@ -86,9 +86,8 @@ class CLogicalIndexGet : public CLogical {
   // array of output columns
   CColRefArray *PdrgpcrOutput() const { return m_pdrgpcrOutput; }
 
-  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-  ULONG
-  UlOriginOpId() const { return m_ulOriginOpId; }
+  // origin operator id -- UINT32_MAX if operator was not generated via a transformation
+  uint32_t UlOriginOpId() const { return m_ulOriginOpId; }
 
   // index name
   const CName &Name() const { return m_pindexdesc->Name(); }
@@ -106,23 +105,22 @@ class CLogicalIndexGet : public CLogical {
   COrderSpec *Pos() const { return m_pos; }
 
   // number of predicate not applicable on the index
-  ULONG
-  ResidualPredicateSize() const { return m_ulUnindexedPredColCount; }
+  uint32_t ResidualPredicateSize() const { return m_ulUnindexedPredColCount; }
 
   // index scan direction is only used for B-tree indices.
   EIndexScanDirection ScanDirection() const { return m_scan_direction; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -152,9 +150,8 @@ class CLogicalIndexGet : public CLogical {
   CKeyCollection *DeriveKeyCollection(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // derive join depth
-  ULONG
-  DeriveJoinDepth(CMemoryPool *,       // mp
-                  CExpressionHandle &  // exprhdl
+  uint32_t DeriveJoinDepth(CMemoryPool *,       // mp
+                           CExpressionHandle &  // exprhdl
   ) const override {
     return 1;
   }
@@ -167,7 +164,7 @@ class CLogicalIndexGet : public CLogical {
   CColRefSet *PcrsStat(CMemoryPool *mp,
                        CExpressionHandle &,  // exprhdl
                        CColRefSet *,         // pcrsInput
-                       ULONG                 // child_index
+                       uint32_t              // child_index
   ) const override {
     // TODO:  March 26 2012; statistics derivation for indexes
     return GPOS_NEW(mp) CColRefSet(mp);

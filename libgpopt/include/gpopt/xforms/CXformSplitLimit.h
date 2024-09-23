@@ -33,9 +33,9 @@ class CXformSplitLimit : public CXformExploration {
                                  CExpression *pexprScalarStart,  // limit offset
                                  CExpression *pexprScalarRows,   // limit count
                                  COrderSpec *pos,                // ordering specification
-                                 BOOL fGlobal,                   // is it a local or global limit
-                                 BOOL fHasCount,                 // does limit specify a number of rows
-                                 BOOL fTopLimitUnderDML);
+                                 bool fGlobal,                   // is it a local or global limit
+                                 bool fHasCount,                 // does limit specify a number of rows
+                                 bool fTopLimitUnderDML);
 
  public:
   CXformSplitLimit(const CXformSplitLimit &) = delete;
@@ -50,10 +50,10 @@ class CXformSplitLimit : public CXformExploration {
   EXformId Exfid() const override { return ExfSplitLimit; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformSplitLimit"; }
+  const char *SzId() const override { return "CXformSplitLimit"; }
 
   // Compatibility function for splitting limit
-  BOOL FCompatible(CXform::EXformId exfid) override { return (CXform::ExfSplitLimit != exfid); }
+  bool FCompatible(CXform::EXformId exfid) override { return (CXform::ExfSplitLimit != exfid); }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

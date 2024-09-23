@@ -39,18 +39,18 @@ class IMDAggregate : public IMDCacheObject {
   virtual IMDId *GetResultTypeMdid() const = 0;
 
   // is aggregate ordered
-  virtual BOOL IsOrdered() const = 0;
+  virtual bool IsOrdered() const = 0;
 
   // is aggregate splittable
-  virtual BOOL IsSplittable() const = 0;
+  virtual bool IsSplittable() const = 0;
 
   virtual
       // is aggregate hash capable
-      BOOL
+      bool
       IsHashAggCapable() const = 0;
 
   // is aggregate replicate slice execution safe
-  virtual BOOL IsAggRepSafe() const = 0;
+  virtual bool IsAggRepSafe() const = 0;
 };
 }  // namespace gpmd
 

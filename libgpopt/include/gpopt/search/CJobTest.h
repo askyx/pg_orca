@@ -39,28 +39,28 @@ class CJobTest : public CJob {
   ETestType m_ett{EttSpawn};
 
   // number of job spawning rounds
-  ULONG m_ulRounds{gpos::ulong_max};
+  uint32_t m_ulRounds{UINT32_MAX};
 
   // spawning fanout
-  ULONG m_ulFanout{gpos::ulong_max};
+  uint32_t m_ulFanout{UINT32_MAX};
 
   // CPU-burning iterations per job
-  ULONG m_ulIters{gpos::ulong_max};
+  uint32_t m_ulIters{UINT32_MAX};
 
   // iteration counter
-  static ULONG_PTR m_ulpCnt;
+  static uintptr_t m_ulpCnt;
 
   // job queue
   CJobQueue *m_pjq;
 
   // test job spawning
-  BOOL FSpawn(CSchedulerContext *psc);
+  bool FSpawn(CSchedulerContext *psc);
 
   // start jobs to be queued
-  BOOL FStartQueue(CSchedulerContext *psc);
+  bool FStartQueue(CSchedulerContext *psc);
 
   // test job queueing
-  BOOL FQueue(CSchedulerContext *psc);
+  bool FQueue(CSchedulerContext *psc);
 
   // burn some CPU to simulate actual work
   void Loop() const;
@@ -73,7 +73,7 @@ class CJobTest : public CJob {
   ~CJobTest() override;
 
   // execution
-  BOOL FExecute(CSchedulerContext *psc) override;
+  bool FExecute(CSchedulerContext *psc) override;
 
 #ifdef GPOS_DEBUG
   // printer
@@ -81,7 +81,7 @@ class CJobTest : public CJob {
 #endif  // GPOS_DEBUG
 
   // set execution parameters
-  void Init(ETestType ett, ULONG ulRounds, ULONG ulFanout, ULONG ulIters, CJobQueue *pjq) {
+  void Init(ETestType ett, uint32_t ulRounds, uint32_t ulFanout, uint32_t ulIters, CJobQueue *pjq) {
     m_ett = ett;
     m_ulRounds = ulRounds;
     m_ulFanout = ulFanout;

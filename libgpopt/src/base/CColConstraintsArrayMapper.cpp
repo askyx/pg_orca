@@ -8,7 +8,7 @@
 using namespace gpopt;
 
 CConstraintArray *CColConstraintsArrayMapper::PdrgPcnstrLookup(CColRef *colref) {
-  const BOOL fExclusive = true;
+  const bool fExclusive = true;
   return CConstraint::PdrgpcnstrOnColumn(m_mp, m_pdrgpcnstr, colref, fExclusive);
 }
 

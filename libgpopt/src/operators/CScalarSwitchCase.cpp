@@ -35,7 +35,7 @@ CScalarSwitchCase::CScalarSwitchCase(CMemoryPool *mp) : CScalar(mp) {}
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarSwitchCase::Matches(COperator *pop) const {
+bool CScalarSwitchCase::Matches(COperator *pop) const {
   return (pop->Eopid() == Eopid());
 }
 

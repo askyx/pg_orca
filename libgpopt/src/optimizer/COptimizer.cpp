@@ -53,10 +53,10 @@ void COptimizer::PrintQuery(CMemoryPool *mp, CExpression *pexprTranslated, CQuer
   at.Os() << std::endl << "Algebrized query: " << std::endl << *pexprTranslated;
 
   CExpressionArray *pdrgpexpr = COptCtxt::PoctxtFromTLS()->Pcteinfo()->PdrgPexpr(mp);
-  const ULONG ulCTEs = pdrgpexpr->Size();
+  const uint32_t ulCTEs = pdrgpexpr->Size();
   if (0 < ulCTEs) {
     at.Os() << std::endl << "Common Table Expressions: ";
-    for (ULONG ul = 0; ul < ulCTEs; ul++) {
+    for (uint32_t ul = 0; ul < ulCTEs; ul++) {
       at.Os() << std::endl << *(*pdrgpexpr)[ul];
     }
   }

@@ -101,8 +101,7 @@ IMDId *CScalarSubqueryQuantified::MdidType() const {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarSubqueryQuantified::HashValue() const {
+uint32_t CScalarSubqueryQuantified::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(),
                              gpos::CombineHashes(m_scalar_op_mdid->HashValue(), gpos::HashPtr<CColRef>(m_pcr)));
 }
@@ -115,7 +114,7 @@ CScalarSubqueryQuantified::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarSubqueryQuantified::Matches(COperator *pop) const {
+bool CScalarSubqueryQuantified::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }

@@ -34,25 +34,25 @@ class CGroup;
 class CBinding {
  private:
   // initialize cursors of child expressions
-  BOOL FInitChildCursors(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern,
+  bool FInitChildCursors(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern,
                          CExpressionArray *pdrgpexpr);
 
   // advance cursors of child expressions
-  BOOL FAdvanceChildCursors(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern,
+  bool FAdvanceChildCursors(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern,
                             CExpression *pexprLast, CExpressionArray *pdrgpexpr);
 
   // extraction of child expressions
-  BOOL FExtractChildren(CMemoryPool *mp, CExpression *pexprPattern, CGroupExpression *pgexprCursor,
+  bool FExtractChildren(CMemoryPool *mp, CExpression *pexprPattern, CGroupExpression *pgexprCursor,
                         CExpressionArray *pdrgpexpr);
 
   // move cursor
   static CGroupExpression *PgexprNext(CGroup *pgroup, CGroupExpression *pgexpr);
 
   // expand n-th child of pattern
-  static CExpression *PexprExpandPattern(CExpression *pexpr, ULONG ulPos, ULONG arity);
+  static CExpression *PexprExpandPattern(CExpression *pexpr, uint32_t ulPos, uint32_t arity);
 
   // get binding for children
-  BOOL FExtractChildren(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern, CExpression *pexprLast,
+  bool FExtractChildren(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern, CExpression *pexprLast,
                         CExpressionArray *pdrgpexprChildren);
 
   // extract binding from a group

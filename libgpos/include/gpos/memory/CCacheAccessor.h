@@ -50,7 +50,7 @@ class CCacheAccessor {
   typename CCache<T, K>::CCacheHashTableEntry *m_entry;
 
   // true if insertion of a new object into the cache was successful
-  BOOL m_inserted;
+  bool m_inserted;
 
  public:
   // ctor; protected to disable instantiation unless from child class

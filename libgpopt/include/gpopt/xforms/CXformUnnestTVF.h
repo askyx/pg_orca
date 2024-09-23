@@ -46,7 +46,7 @@ class CXformUnnestTVF : public CXformExploration {
   EXformId Exfid() const override { return ExfUnnestTVF; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformUnnestTVF"; }
+  const char *SzId() const override { return "CXformUnnestTVF"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

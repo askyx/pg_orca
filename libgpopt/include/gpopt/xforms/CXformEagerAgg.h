@@ -42,10 +42,10 @@ class CXformEagerAgg : public CXformExploration {
   // ident accessors
   EXformId Exfid() const override { return ExfEagerAgg; }
 
-  const CHAR *SzId() const override { return "CXformEagerAgg"; }
+  const char *SzId() const override { return "CXformEagerAgg"; }
 
   // compatibility function for eager aggregation
-  BOOL FCompatible(CXform::EXformId exfid) override {
+  bool FCompatible(CXform::EXformId exfid) override {
     return (CXform::ExfEagerAgg != exfid) && (CXform::ExfSplitGbAgg != exfid) && (CXform::ExfSplitDQA != exfid);
   }
 
@@ -56,14 +56,14 @@ class CXformEagerAgg : public CXformExploration {
   void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *expr) const override;
 
   // return true if xform should be applied only once
-  BOOL IsApplyOnce() override { return true; };
+  bool IsApplyOnce() override { return true; };
 
  private:
   // check if transform can be applied
-  static BOOL CanApplyTransform(CExpression *agg_expr);
+  static bool CanApplyTransform(CExpression *agg_expr);
 
   // is this aggregate supported for push down?
-  static BOOL CanPushAggBelowJoin(CExpression *scalar_agg_func_expr);
+  static bool CanPushAggBelowJoin(CExpression *scalar_agg_func_expr);
 
   // generate project lists for the lower and upper aggregates
   // from all the original aggregates
@@ -77,7 +77,7 @@ class CXformEagerAgg : public CXformExploration {
   // generate project element for lower aggregate for a single original aggregate
   static void PopulateLowerProjectElement(CMemoryPool *mp,  // memory pool
                                           IMDId *agg_mdid,  // original global aggregate function
-                                          CWStringConst *agg_name, CExpressionArray *agg_arg_array, BOOL is_distinct,
+                                          CWStringConst *agg_name, CExpressionArray *agg_arg_array, bool is_distinct,
                                           ULongPtrArray *arg_types,
                                           CExpression **lower_proj_elem_expr  // output project element of the new
                                                                               // lower aggregate
@@ -87,7 +87,7 @@ class CXformEagerAgg : public CXformExploration {
   static void PopulateUpperProjectElement(CMemoryPool *mp,  // memory pool
                                           IMDId *agg_mdid,  // aggregate mdid to create
                                           CWStringConst *agg_name, CColRef *lower_colref, CColRef *output_colref,
-                                          BOOL is_distinct, ULongPtrArray *arg_types,
+                                          bool is_distinct, ULongPtrArray *arg_types,
                                           CExpression **upper_proj_elem_expr  // output project element of the new
                                                                               // upper aggregate
   );

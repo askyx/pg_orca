@@ -28,9 +28,9 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarWindowRef::CDXLScalarWindowRef(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, BOOL is_distinct,
-                                         BOOL is_star_arg, BOOL is_simple_agg, EdxlWinStage dxl_win_stage,
-                                         ULONG ulWinspecPosition)
+CDXLScalarWindowRef::CDXLScalarWindowRef(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, bool is_distinct,
+                                         bool is_star_arg, bool is_simple_agg, EdxlWinStage dxl_win_stage,
+                                         uint32_t ulWinspecPosition)
     : CDXLScalar(mp),
       m_func_mdid(mdid_func),
       m_return_type_mdid(mdid_return_type),
@@ -79,14 +79,14 @@ Edxlopid CDXLScalarWindowRef::GetDXLOperator() const {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLScalarWindowRef::GetWindStageStr() const {
   GPOS_ASSERT(EdxlwinstageSentinel > m_dxl_win_stage);
-  ULONG win_stage_token_mapping[][2] = {{EdxlwinstageImmediate, EdxltokenWindowrefStageImmediate},
-                                        {EdxlwinstagePreliminary, EdxltokenWindowrefStagePreliminary},
-                                        {EdxlwinstageRowKey, EdxltokenWindowrefStageRowKey}};
+  uint32_t win_stage_token_mapping[][2] = {{EdxlwinstageImmediate, EdxltokenWindowrefStageImmediate},
+                                           {EdxlwinstagePreliminary, EdxltokenWindowrefStagePreliminary},
+                                           {EdxlwinstageRowKey, EdxltokenWindowrefStageRowKey}};
 
-  const ULONG arity = GPOS_ARRAY_SIZE(win_stage_token_mapping);
-  for (ULONG ul = 0; ul < arity; ul++) {
-    ULONG *element = win_stage_token_mapping[ul];
-    if ((ULONG)m_dxl_win_stage == element[0]) {
+  const uint32_t arity = GPOS_ARRAY_SIZE(win_stage_token_mapping);
+  for (uint32_t ul = 0; ul < arity; ul++) {
+    uint32_t *element = win_stage_token_mapping[ul];
+    if ((uint32_t)m_dxl_win_stage == element[0]) {
       Edxltoken dxl_token = (Edxltoken)element[1];
       return CDXLTokens::GetDXLTokenStr(dxl_token);
       break;
@@ -117,7 +117,7 @@ const CWStringConst *CDXLScalarWindowRef::GetOpNameStr() const {
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarWindowRef::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarWindowRef::HasBoolResult(CMDAccessor *md_accessor) const {
   IMDId *mdid = md_accessor->RetrieveFunc(m_func_mdid)->GetResultTypeMdid();
   return (IMDType::EtiBool == md_accessor->RetrieveType(mdid)->GetDatumType());
 }
@@ -131,13 +131,13 @@ BOOL CDXLScalarWindowRef::HasBoolResult(CMDAccessor *md_accessor) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarWindowRef::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarWindowRef::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   EdxlWinStage edxlwinrefstage = ((CDXLScalarWindowRef *)dxlnode->GetOperator())->GetDxlWinStage();
 
   GPOS_ASSERT((EdxlwinstageSentinel >= edxlwinrefstage));
 
-  const ULONG arity = dxlnode->Arity();
-  for (ULONG ul = 0; ul < arity; ++ul) {
+  const uint32_t arity = dxlnode->Arity();
+  for (uint32_t ul = 0; ul < arity; ++ul) {
     CDXLNode *dxlnode_winref_arg = (*dxlnode)[ul];
     GPOS_ASSERT(EdxloptypeScalar == dxlnode_winref_arg->GetOperator()->GetDXLOperatorType());
 

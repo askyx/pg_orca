@@ -37,7 +37,7 @@ CScalarAssertConstraintList::CScalarAssertConstraintList(CMemoryPool *mp) : CSca
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarAssertConstraintList::Matches(COperator *pop) const {
+bool CScalarAssertConstraintList::Matches(COperator *pop) const {
   return pop->Eopid() == Eopid();
 }
 

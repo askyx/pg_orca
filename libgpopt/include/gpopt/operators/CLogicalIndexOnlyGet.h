@@ -38,8 +38,8 @@ class CLogicalIndexOnlyGet : public CLogicalIndexGet {
   // ctors
   explicit CLogicalIndexOnlyGet(CMemoryPool *mp) : CLogicalIndexGet(mp) {}
 
-  CLogicalIndexOnlyGet(CMemoryPool *mp, const IMDIndex *pmdindex, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
-                       const CName *pnameAlias, CColRefArray *pdrgpcrOutput, ULONG ulUnindexedPredColCount,
+  CLogicalIndexOnlyGet(CMemoryPool *mp, const IMDIndex *pmdindex, CTableDescriptor *ptabdesc, uint32_t ulOriginOpId,
+                       const CName *pnameAlias, CColRefArray *pdrgpcrOutput, uint32_t ulUnindexedPredColCount,
                        EIndexScanDirection scan_direction)
       : CLogicalIndexGet(mp, pmdindex, ptabdesc, ulOriginOpId, pnameAlias, pdrgpcrOutput, ulUnindexedPredColCount,
                          scan_direction) {}
@@ -48,7 +48,7 @@ class CLogicalIndexOnlyGet : public CLogicalIndexGet {
   EOperatorId Eopid() const override { return EopLogicalIndexOnlyGet; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalIndexOnlyGet"; }
+  const char *SzId() const override { return "CLogicalIndexOnlyGet"; }
 
   //---------------------------------------------------------------------------
   //	@function:
@@ -58,7 +58,7 @@ class CLogicalIndexOnlyGet : public CLogicalIndexGet {
   //		Match function on operator level
   //
   //---------------------------------------------------------------------------
-  BOOL Matches(COperator *pop) const override { return CUtils::FMatchIndex(this, pop); }
+  bool Matches(COperator *pop) const override { return CUtils::FMatchIndex(this, pop); }
 
   //---------------------------------------------------------------------------
   //	@function:

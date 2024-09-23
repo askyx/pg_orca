@@ -35,7 +35,7 @@ CXformFactory::CXformFactory(CMemoryPool *mp)
   GPOS_ASSERT(nullptr != mp);
 
   // null out array so dtor can be called prematurely
-  for (ULONG i = 0; i < CXform::ExfSentinel; i++) {
+  for (uint32_t i = 0; i < CXform::ExfSentinel; i++) {
     m_rgpxf[i] = nullptr;
   }
   m_phmszxform = GPOS_NEW(mp) XformNameToXformMap(mp);
@@ -55,7 +55,7 @@ CXformFactory::~CXformFactory() {
   GPOS_ASSERT(nullptr == m_pxff && "Xform factory has not been shut down");
 
   // delete all xforms in the array
-  for (ULONG i = 0; i < CXform::ExfSentinel; i++) {
+  for (uint32_t i = 0; i < CXform::ExfSentinel; i++) {
     if (nullptr == m_rgpxf[i]) {
       // dtor called after failing to populate array
       break;
@@ -90,11 +90,11 @@ void CXformFactory::Add(CXform *pxform) {
   m_rgpxf[exfid] = pxform;
 
   // create name -> xform mapping
-  ULONG length = clib::Strlen(pxform->SzId());
-  CHAR *szXformName = GPOS_NEW_ARRAY(m_mp, CHAR, length + 1);
+  uint32_t length = clib::Strlen(pxform->SzId());
+  char *szXformName = GPOS_NEW_ARRAY(m_mp, char, length + 1);
   clib::Strncpy(szXformName, pxform->SzId(), length + 1);
 
-  BOOL fInserted GPOS_ASSERTS_ONLY = m_phmszxform->Insert(szXformName, pxform);
+  bool fInserted GPOS_ASSERTS_ONLY = m_phmszxform->Insert(szXformName, pxform);
   GPOS_ASSERT(fInserted);
 
   CXformSet *xform_set = m_pxfsExploration;
@@ -104,7 +104,7 @@ void CXformFactory::Add(CXform *pxform) {
 #ifdef GPOS_DEBUG
   GPOS_ASSERT_IMP(pxform->FExploration(), xform_set == m_pxfsExploration);
   GPOS_ASSERT_IMP(pxform->FImplementation(), xform_set == m_pxfsImplementation);
-  BOOL fSet =
+  bool fSet =
 #endif  // GPOS_DEBUG
       xform_set->ExchangeSet(exfid);
 
@@ -294,12 +294,12 @@ CXform *CXformFactory::Pxf(CXform::EXformId exfid) const {
 //		Accessor by xform name
 //
 //---------------------------------------------------------------------------
-CXform *CXformFactory::Pxf(const CHAR *szXformName) const {
+CXform *CXformFactory::Pxf(const char *szXformName) const {
   return m_phmszxform->Find(szXformName);
 }
 
 // is this xform id still used?
-BOOL CXformFactory::IsXformIdUsed(CXform::EXformId exfid) {
+bool CXformFactory::IsXformIdUsed(CXform::EXformId exfid) {
   GPOS_ASSERT(exfid <= m_lastAddedOrSkippedXformId);
 
   return (nullptr != m_rgpxf[exfid]);

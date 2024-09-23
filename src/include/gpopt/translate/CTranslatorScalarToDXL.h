@@ -74,7 +74,7 @@ class CTranslatorScalarToDXL {
   CMDAccessor *m_md_accessor;
 
   // absolute level of query whose vars will be translated
-  ULONG m_query_level;
+  uint32_t m_query_level;
 
   // physical operator that created this translator
   EPlStmtPhysicalOpType m_op_type;
@@ -209,7 +209,7 @@ class CTranslatorScalarToDXL {
 
  public:
   // ctor
-  CTranslatorScalarToDXL(CContextQueryToDXL *context, CMDAccessor *md_accessor, ULONG query_level,
+  CTranslatorScalarToDXL(CContextQueryToDXL *context, CMDAccessor *md_accessor, uint32_t query_level,
                          HMUlCTEListEntry *cte_entries, CDXLNodeArray *cte_dxlnode_array);
 
   // set the caller type
@@ -241,43 +241,45 @@ class CTranslatorScalarToDXL {
   static CDXLDatum *TranslateConstToDXL(CMemoryPool *mp, CMDAccessor *mda, const Const *constant);
 
   // translate GPDB datum to CDXLDatum
-  static CDXLDatum *TranslateDatumToDXL(CMemoryPool *mp, const IMDType *md_type, INT type_modifier, BOOL is_null,
-                                        ULONG len, Datum datum);
+  static CDXLDatum *TranslateDatumToDXL(CMemoryPool *mp, const IMDType *md_type, int32_t type_modifier, bool is_null,
+                                        uint32_t len, Datum datum);
 
   // translate GPDB datum to IDatum
-  static IDatum *CreateIDatumFromGpdbDatum(CMemoryPool *mp, const IMDType *md_type, BOOL is_null, Datum datum);
+  static IDatum *CreateIDatumFromGpdbDatum(CMemoryPool *mp, const IMDType *md_type, bool is_null, Datum datum);
 
   // extract the byte array value of the datum
-  static BYTE *ExtractByteArrayFromDatum(CMemoryPool *mp, const IMDType *md_type, BOOL is_null, ULONG len, Datum datum);
+  static uint8_t *ExtractByteArrayFromDatum(CMemoryPool *mp, const IMDType *md_type, bool is_null, uint32_t len,
+                                            Datum datum);
 
-  static CDouble ExtractDoubleValueFromDatum(IMDId *mdid, BOOL is_null, BYTE *bytes, Datum datum);
+  static CDouble ExtractDoubleValueFromDatum(IMDId *mdid, bool is_null, uint8_t *bytes, Datum datum);
 
   // extract the long int value of a datum
-  static LINT ExtractLintValueFromDatum(const IMDType *md_type, BOOL is_null, BYTE *bytes, ULONG len, IMDId *base_mdid);
+  static int64_t ExtractLintValueFromDatum(const IMDType *md_type, bool is_null, uint8_t *bytes, uint32_t len,
+                                           IMDId *base_mdid);
 
   // datum to oid CDXLDatum
-  static CDXLDatum *TranslateOidDatumToDXL(CMemoryPool *mp, const IMDType *md_type, BOOL is_null, ULONG len,
+  static CDXLDatum *TranslateOidDatumToDXL(CMemoryPool *mp, const IMDType *md_type, bool is_null, uint32_t len,
                                            Datum datum);
 
   // datum to int2 CDXLDatum
-  static CDXLDatum *TranslateInt2DatumToDXL(CMemoryPool *mp, const IMDType *md_type, BOOL is_null, ULONG len,
+  static CDXLDatum *TranslateInt2DatumToDXL(CMemoryPool *mp, const IMDType *md_type, bool is_null, uint32_t len,
                                             Datum datum);
 
   // datum to int4 CDXLDatum
-  static CDXLDatum *TranslateInt4DatumToDXL(CMemoryPool *mp, const IMDType *md_type, BOOL is_null, ULONG len,
+  static CDXLDatum *TranslateInt4DatumToDXL(CMemoryPool *mp, const IMDType *md_type, bool is_null, uint32_t len,
                                             Datum datum);
 
   // datum to int8 CDXLDatum
-  static CDXLDatum *TranslateInt8DatumToDXL(CMemoryPool *mp, const IMDType *md_type, BOOL is_null, ULONG len,
+  static CDXLDatum *TranslateInt8DatumToDXL(CMemoryPool *mp, const IMDType *md_type, bool is_null, uint32_t len,
                                             Datum datum);
 
   // datum to bool CDXLDatum
-  static CDXLDatum *TranslateBoolDatumToDXL(CMemoryPool *mp, const IMDType *md_type, BOOL is_null, ULONG len,
+  static CDXLDatum *TranslateBoolDatumToDXL(CMemoryPool *mp, const IMDType *md_type, bool is_null, uint32_t len,
                                             Datum datum);
 
   // datum to generic CDXLDatum
-  static CDXLDatum *TranslateGenericDatumToDXL(CMemoryPool *mp, const IMDType *md_type, INT type_modifier, BOOL is_null,
-                                               ULONG len, Datum datum);
+  static CDXLDatum *TranslateGenericDatumToDXL(CMemoryPool *mp, const IMDType *md_type, int32_t type_modifier,
+                                               bool is_null, uint32_t len, Datum datum);
 };
 }  // namespace gpdxl
 #endif  // GPDXL_CTranslatorScalarToDXL_H

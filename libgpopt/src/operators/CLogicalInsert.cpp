@@ -72,7 +72,7 @@ CLogicalInsert::~CLogicalInsert() {
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalInsert::Matches(COperator *pop) const {
+bool CLogicalInsert::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -91,9 +91,8 @@ BOOL CLogicalInsert::Matches(COperator *pop) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalInsert::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
+uint32_t CLogicalInsert::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrSource));
 
   return ulHash;
@@ -108,7 +107,7 @@ CLogicalInsert::HashValue() const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalInsert::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                      BOOL must_exist) {
+                                                      bool must_exist) {
   CColRefArray *colref_array = CUtils::PdrgpcrRemap(mp, m_pdrgpcrSource, colref_mapping, must_exist);
   m_ptabdesc->AddRef();
 

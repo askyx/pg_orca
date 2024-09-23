@@ -115,7 +115,7 @@ void CXformSplitDQA::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CEx
   }
 
   CColRefArray *grouping_colref_array = CLogicalGbAgg::PopConvert(pexpr->Pop())->Pdrgpcr();
-  BOOL fScalarDQA = (grouping_colref_array == nullptr || grouping_colref_array->Size() == 0);
+  bool fScalarDQA = (grouping_colref_array == nullptr || grouping_colref_array->Size() == 0);
 
   // multi-stage for both scalar and non-scalar aggregates.
   CExpression *pexprThreeStageDQA =
@@ -200,8 +200,8 @@ CExpression *CXformSplitDQA::PexprSplitIntoLocalDQAGlobalAgg(CMemoryPool *mp, CC
   CExpressionArray *pdrgpexprPrElFirstStage = GPOS_NEW(mp) CExpressionArray(mp);
   CExpressionArray *pdrgpexprPrElLastStage = GPOS_NEW(mp) CExpressionArray(mp);
 
-  const ULONG arity = pexprPrL->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = pexprPrL->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrEl = (*pexprPrL)[ul];
     CScalarProjectElement *popScPrEl = CScalarProjectElement::PopConvert(pexprPrEl->Pop());
 
@@ -230,7 +230,7 @@ CExpression *CXformSplitDQA::PexprSplitIntoLocalDQAGlobalAgg(CMemoryPool *mp, CC
       // agg args
       pdrgpexprArgsLocal->Append(GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarValuesList(mp), pdrgpexprArgs));
 
-      for (ULONG i = 1; i < pexprAggFunc->Arity(); i++) {
+      for (uint32_t i = 1; i < pexprAggFunc->Arity(); i++) {
         CExpression *expr = (*pexprAggFunc)[i];
         expr->AddRef();
         pdrgpexprArgsLocal->Append(expr);
@@ -262,7 +262,7 @@ CExpression *CXformSplitDQA::PexprSplitIntoLocalDQAGlobalAgg(CMemoryPool *mp, CC
       pdrgpexprArgsGlobal->Append(GPOS_NEW(mp)
                                       CExpression(mp, GPOS_NEW(mp) CScalarValuesList(mp), pdrgpexprArgsGlobalArgs));
 
-      for (ULONG i = 1; i < pexprAggFunc->Arity(); i++) {
+      for (uint32_t i = 1; i < pexprAggFunc->Arity(); i++) {
         CExpression *expr = (*pexprAggFunc)[i];
         expr->AddRef();
         pdrgpexprArgsGlobal->Append(expr);
@@ -320,10 +320,10 @@ CExpression *CXformSplitDQA::PexprSplitHelper(CMemoryPool *mp, CColumnFactory *c
   CExpressionArray *pdrgpexprPrElFirstStage = GPOS_NEW(mp) CExpressionArray(mp);
   CExpressionArray *pdrgpexprPrElSecondStage = GPOS_NEW(mp) CExpressionArray(mp);
   CExpressionArray *pdrgpexprPrElLastStage = GPOS_NEW(mp) CExpressionArray(mp);
-  BOOL fSpillTo2Level = (aggStage == CLogicalGbAgg::EasTwoStageScalarDQA);
+  bool fSpillTo2Level = (aggStage == CLogicalGbAgg::EasTwoStageScalarDQA);
 
-  const ULONG arity = pexprPrL->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = pexprPrL->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrEl = (*pexprPrL)[ul];
     CScalarProjectElement *popScPrEl = CScalarProjectElement::PopConvert(pexprPrEl->Pop());
 
@@ -344,7 +344,7 @@ CExpression *CXformSplitDQA::PexprSplitHelper(CMemoryPool *mp, CColumnFactory *c
       CExpressionArray *pdrgpexprChildren = GPOS_NEW(mp) CExpressionArray(mp);
 
       CExpressionArray *pdrgpexprArgs = GPOS_NEW(mp) CExpressionArray(mp);
-      for (ULONG ul = 0; ul < (*pexprAggFunc)[0]->Arity(); ul++) {
+      for (uint32_t ul = 0; ul < (*pexprAggFunc)[0]->Arity(); ul++) {
         CExpression *pexprArg = (*(*pexprAggFunc)[0])[ul];
         CColRef *pcrDistinctCol = phmexprcr->Find(pexprArg);
         GPOS_ASSERT(nullptr != pcrDistinctCol);
@@ -365,7 +365,7 @@ CExpression *CXformSplitDQA::PexprSplitHelper(CMemoryPool *mp, CColumnFactory *c
 
       // agg distinct
       CExpressionArray *pdrgpexprDirectArgs = GPOS_NEW(mp) CExpressionArray(mp);
-      for (ULONG ul = 0; ul < (*pexprAggFunc)[EaggfuncIndexDistinct]->Arity(); ul++) {
+      for (uint32_t ul = 0; ul < (*pexprAggFunc)[EaggfuncIndexDistinct]->Arity(); ul++) {
         CExpression *pexprDirectArg = (*(*pexprAggFunc)[EaggfuncIndexDistinct])[ul];
         pexprDirectArg->AddRef();
         pdrgpexprDirectArgs->Append(pexprDirectArg);
@@ -465,7 +465,7 @@ CExpression *CXformSplitDQA::PexprPrElAgg(CMemoryPool *mp, CExpression *pexprAgg
 void CXformSplitDQA::PopulatePrLMultiPhaseAgg(CMemoryPool *mp, CColumnFactory *col_factory, CMDAccessor *md_accessor,
                                               CExpression *pexprPrEl, CExpressionArray *pdrgpexprPrElFirstStage,
                                               CExpressionArray *pdrgpexprPrElSecondStage,
-                                              CExpressionArray *pdrgpexprPrElLastStage, BOOL fSplit2LevelsOnly) {
+                                              CExpressionArray *pdrgpexprPrElLastStage, bool fSplit2LevelsOnly) {
   GPOS_ASSERT(nullptr != pexprPrEl);
   GPOS_ASSERT(nullptr != pdrgpexprPrElFirstStage);
   GPOS_ASSERT_IMP(nullptr == pdrgpexprPrElSecondStage, fSplit2LevelsOnly);
@@ -557,7 +557,7 @@ CExpression *CXformSplitDQA::PexprMultiLevelAggregation(CMemoryPool *mp, CExpres
                                                         CExpressionArray *pdrgpexprPrElSecondStage,
                                                         CExpressionArray *pdrgpexprPrElThirdStage,
                                                         CColRefArray *pdrgpcrArgDQA, CColRefArray *pdrgpcrLastStage,
-                                                        BOOL fSplit2LevelsOnly, BOOL fAddDistinctColToLocalGb,
+                                                        bool fSplit2LevelsOnly, bool fAddDistinctColToLocalGb,
                                                         CLogicalGbAgg::EAggStage aggStage) {
   GPOS_ASSERT(nullptr != pexprRelational);
   GPOS_ASSERT(nullptr != pdrgpexprPrElFirstStage);
@@ -567,14 +567,14 @@ CExpression *CXformSplitDQA::PexprMultiLevelAggregation(CMemoryPool *mp, CExpres
   GPOS_ASSERT_IMP(!fAddDistinctColToLocalGb, fSplit2LevelsOnly);
 
   CColRefArray *pdrgpcrLocal = CUtils::PdrgpcrExactCopy(mp, pdrgpcrLastStage);
-  const ULONG length = pdrgpcrArgDQA->Size();
+  const uint32_t length = pdrgpcrArgDQA->Size();
   GPOS_ASSERT(0 < length);
 
   if (fAddDistinctColToLocalGb) {
     // add the distinct column to the group by at the first stage of
     // the multi-level aggregation
     CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, pdrgpcrLocal);
-    for (ULONG ul = 0; ul < length; ul++) {
+    for (uint32_t ul = 0; ul < length; ul++) {
       CColRef *colref = (*pdrgpcrArgDQA)[ul];
       if (!pcrs->FMember(colref)) {
         pdrgpcrLocal->Append(colref);
@@ -645,13 +645,13 @@ void CXformSplitDQA::ExtractDistinctCols(CMemoryPool *mp, CColumnFactory *col_fa
   GPOS_ASSERT(nullptr != ppdrgpcrArgDQA);
   GPOS_ASSERT(nullptr != phmexprcr);
 
-  const ULONG arity = pexpr->Arity();
-  BOOL hasNonSplittableAgg = false;
+  const uint32_t arity = pexpr->Arity();
+  bool hasNonSplittableAgg = false;
 
   // use a set to deduplicate distinct aggs arguments
   CColRefSet *pcrsArgDQA = GPOS_NEW(mp) CColRefSet(mp);
-  ULONG ulDistinct = 0;
-  for (ULONG ul = 0; ul < arity; ul++) {
+  uint32_t ulDistinct = 0;
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrEl = (*pexpr)[ul];
 
     // get the scalar child of the project element
@@ -669,7 +669,7 @@ void CXformSplitDQA::ExtractDistinctCols(CMemoryPool *mp, CColumnFactory *col_fa
 
     if (popScAggFunc->IsDistinct()) {
       // CScalarValuesList
-      for (ULONG ul = 0; ul < (*pexprAggFunc)[EaggfuncIndexArgs]->Arity(); ul++) {
+      for (uint32_t ul = 0; ul < (*pexprAggFunc)[EaggfuncIndexArgs]->Arity(); ul++) {
         CExpression *pexprArg = (*(*pexprAggFunc)[EaggfuncIndexArgs])[ul];
         GPOS_ASSERT(nullptr != pexprArg);
         CColRef *pcrDistinctCol = phmexprcr->Find(pexprArg);
@@ -682,7 +682,7 @@ void CXformSplitDQA::ExtractDistinctCols(CMemoryPool *mp, CColumnFactory *col_fa
           // insert into the map between the expression representing the DQA argument
           // and its column reference
           pexprArg->AddRef();
-          BOOL fInserted GPOS_ASSERTS_ONLY = phmexprcr->Insert(pexprArg, pcrDistinctCol);
+          bool fInserted GPOS_ASSERTS_ONLY = phmexprcr->Insert(pexprArg, pcrDistinctCol);
           GPOS_ASSERT(fInserted);
 
           // add the distinct column to the set of distinct columns

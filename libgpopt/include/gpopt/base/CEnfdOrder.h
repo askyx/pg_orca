@@ -46,7 +46,7 @@ class CEnfdOrder : public CEnfdProp {
   EOrderMatching m_eom;
 
   // names of order matching types
-  static const CHAR *m_szOrderMatching[EomSentinel];
+  static const char *m_szOrderMatching[EomSentinel];
 
  public:
   CEnfdOrder(const CEnfdOrder &) = delete;
@@ -58,17 +58,17 @@ class CEnfdOrder : public CEnfdProp {
   ~CEnfdOrder() override;
 
   // hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // check if the given order specification is compatible with the
   // order specification of this object for the specified matching type
-  BOOL FCompatible(COrderSpec *pos) const;
+  bool FCompatible(COrderSpec *pos) const;
 
   // required order accessor
   COrderSpec *PosRequired() const { return m_pos; }
 
   // get order enforcing type for the given operator
-  EPropEnforcingType Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical, BOOL fOrderReqd) const;
+  EPropEnforcingType Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical, bool fOrderReqd) const;
 
   // property spec accessor
   CPropSpec *Pps() const override { return m_pos; }
@@ -77,7 +77,7 @@ class CEnfdOrder : public CEnfdProp {
   EOrderMatching Eom() const { return m_eom; }
 
   // matching function
-  BOOL Matches(CEnfdOrder *peo) {
+  bool Matches(CEnfdOrder *peo) {
     GPOS_ASSERT(nullptr != peo);
 
     return m_eom == peo->Eom() && m_pos->Matches(peo->PosRequired());

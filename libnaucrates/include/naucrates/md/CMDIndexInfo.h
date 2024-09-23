@@ -27,11 +27,11 @@ class CMDIndexInfo : public IMDInterface {
   IMDId *m_mdid;
 
   // is the index partial
-  BOOL m_is_partial;
+  bool m_is_partial;
 
  public:
   // ctor
-  CMDIndexInfo(IMDId *mdid, BOOL is_partial);
+  CMDIndexInfo(IMDId *mdid, bool is_partial);
 
   // dtor
   ~CMDIndexInfo() override;
@@ -40,7 +40,7 @@ class CMDIndexInfo : public IMDInterface {
   IMDId *MDId() const;
 
   // is the index partial
-  BOOL IsPartial() const;
+  bool IsPartial() const;
 
 #ifdef GPOS_DEBUG
   // debug print of the index info

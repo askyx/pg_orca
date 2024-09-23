@@ -41,13 +41,13 @@ class CLogicalIntersect : public CLogicalSetOp {
   EOperatorId Eopid() const override { return EopLogicalIntersect; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalIntersect"; }
+  const char *SzId() const override { return "CLogicalIntersect"; }
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties

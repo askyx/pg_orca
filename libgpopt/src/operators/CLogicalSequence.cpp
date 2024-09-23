@@ -38,7 +38,7 @@ CLogicalSequence::CLogicalSequence(CMemoryPool *mp) : CLogical(mp) {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalSequence::Matches(COperator *pop) const {
+bool CLogicalSequence::Matches(COperator *pop) const {
   return pop->Eopid() == Eopid();
 }
 
@@ -86,7 +86,7 @@ CColRefSet *CLogicalSequence::DeriveOutputColumns(CMemoryPool *,  // mp
 CKeyCollection *CLogicalSequence::DeriveKeyCollection(CMemoryPool *,  // mp
                                                       CExpressionHandle &exprhdl) const {
   // return key of last child
-  const ULONG arity = exprhdl.Arity();
+  const uint32_t arity = exprhdl.Arity();
   return PkcDeriveKeysPassThru(exprhdl, arity - 1 /* ulChild */);
 }
 

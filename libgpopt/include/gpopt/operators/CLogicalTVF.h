@@ -45,7 +45,7 @@ class CLogicalTVF : public CLogical {
   IMDFunction::EFuncStbl m_efs;
 
   // does this function return a set of rows
-  BOOL m_returns_set;
+  bool m_returns_set;
 
  public:
   CLogicalTVF(const CLogicalTVF &) = delete;
@@ -66,7 +66,7 @@ class CLogicalTVF : public CLogical {
   EOperatorId Eopid() const override { return EopLogicalTVF; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalTVF"; }
+  const char *SzId() const override { return "CLogicalTVF"; }
 
   // function mdid
   IMDId *FuncMdId() const { return m_func_mdid; }
@@ -84,16 +84,16 @@ class CLogicalTVF : public CLogical {
   CColRefArray *PdrgpcrOutput() const { return m_pdrgpcrOutput; }
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -130,7 +130,7 @@ class CLogicalTVF : public CLogical {
   CColRefSet *PcrsStat(CMemoryPool *,        // mp
                        CExpressionHandle &,  // exprhdl
                        CColRefSet *,         // pcrsInput
-                       ULONG                 // child_index
+                       uint32_t              // child_index
   ) const override {
     return nullptr;
   }

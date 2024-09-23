@@ -46,10 +46,10 @@ class CDXLLogicalWindow : public CDXLLogical {
   const CWStringConst *GetOpNameStr() const override;
 
   // number of window specs
-  ULONG NumOfWindowSpecs() const;
+  uint32_t NumOfWindowSpecs() const;
 
   // return the window key at a given position
-  CDXLWindowSpec *GetWindowKeyAt(ULONG idx) const;
+  CDXLWindowSpec *GetWindowKeyAt(uint32_t idx) const;
 
   // serialize operator in DXL format
 
@@ -64,7 +64,7 @@ class CDXLLogicalWindow : public CDXLLogical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

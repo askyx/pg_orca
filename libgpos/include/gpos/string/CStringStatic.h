@@ -28,7 +28,7 @@ namespace gpos {
 //
 //	@doc:
 //		ASCII-character string interface with buffer pre-allocation.
-//		Internally, the class uses a null-terminated CHAR buffer to store the string
+//		Internally, the class uses a null-terminated char buffer to store the string
 //		characters.	The buffer is assigned at construction time; its capacity cannot be
 //		modified, thus restricting the maximum size of the stored string. Attempting to
 //		store a larger string than the available buffer capacity results in truncation.
@@ -39,14 +39,14 @@ namespace gpos {
 class CStringStatic {
  private:
   // null-terminated wide character buffer
-  CHAR *m_buffer;
+  char *m_buffer;
 
-  // size of the string in number of CHAR units,
+  // size of the string in number of char units,
   // not counting the terminating '\0'
-  ULONG m_length;
+  uint32_t m_length;
 
   // buffer capacity
-  ULONG m_capacity;
+  uint32_t m_capacity;
 
 #ifdef GPOS_DEBUG
   // checks whether a string is properly null-terminated
@@ -57,41 +57,40 @@ class CStringStatic {
   CStringStatic(const CStringStatic &) = delete;
 
   // ctor
-  CStringStatic(CHAR buffer[], ULONG capacity);
+  CStringStatic(char buffer[], uint32_t capacity);
 
   // ctor with string initialization
-  CStringStatic(CHAR buffer[], ULONG capacity, const CHAR init_str[]);
+  CStringStatic(char buffer[], uint32_t capacity, const char init_str[]);
 
   // dtor - owner is responsible for releasing the buffer
   ~CStringStatic() = default;
 
   // returns the wide character buffer storing the string
-  const CHAR *Buffer() const { return m_buffer; }
+  const char *Buffer() const { return m_buffer; }
 
   // returns the string length
-  ULONG
-  Length() const { return m_length; }
+  uint32_t Length() const { return m_length; }
 
   // checks whether the string contains any characters
-  BOOL IsEmpty() const { return (0 == m_length); }
+  bool IsEmpty() const { return (0 == m_length); }
 
   // checks whether the string is byte-wise equal to a given string literal
-  BOOL Equals(const CHAR *buf) const;
+  bool Equals(const char *buf) const;
 
   // appends a string
   void Append(const CStringStatic *str);
 
   // appends the contents of a buffer to the current string
-  void AppendBuffer(const CHAR *buf);
+  void AppendBuffer(const char *buf);
 
   // appends a formatted string
-  void AppendFormat(const CHAR *format, ...) GPOS_ATTRIBUTE_PRINTF(2, 3);
+  void AppendFormat(const char *format, ...) GPOS_ATTRIBUTE_PRINTF(2, 3);
 
   // appends a formatted string based on passed va list
-  void AppendFormatVA(const CHAR *format, VA_LIST va_args) GPOS_ATTRIBUTE_PRINTF(2, 0);
+  void AppendFormatVA(const char *format, VA_LIST va_args) GPOS_ATTRIBUTE_PRINTF(2, 0);
 
   // appends wide character string
-  void AppendConvert(const WCHAR *wc_str);
+  void AppendConvert(const wchar_t *wc_str);
 
   // resets string
   void Reset();

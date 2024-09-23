@@ -40,7 +40,7 @@ class CXformImplementTVFNoArgs : public CXformImplementTVF {
   EXformId Exfid() const override { return ExfImplementTVFNoArgs; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformImplementTVFNoArgs"; }
+  const char *SzId() const override { return "CXformImplementTVFNoArgs"; }
 
 };  // class CXformImplementTVFNoArgs
 

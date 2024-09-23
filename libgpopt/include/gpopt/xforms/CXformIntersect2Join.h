@@ -40,7 +40,7 @@ class CXformIntersect2Join : public CXformExploration {
   EXformId Exfid() const override { return ExfIntersect2Join; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformIntersect2Join"; }
+  const char *SzId() const override { return "CXformIntersect2Join"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &  // exprhdl

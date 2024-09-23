@@ -40,7 +40,7 @@ class CXformGet2TableScan : public CXformImplementation {
   EXformId Exfid() const override { return ExfGet2TableScan; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformGet2TableScan"; }
+  const char *SzId() const override { return "CXformGet2TableScan"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

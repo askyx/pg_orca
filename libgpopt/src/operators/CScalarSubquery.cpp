@@ -27,8 +27,8 @@ using namespace gpopt;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CScalarSubquery::CScalarSubquery(CMemoryPool *mp, const CColRef *colref, BOOL fGeneratedByExist,
-                                 BOOL fGeneratedByQuantified)
+CScalarSubquery::CScalarSubquery(CMemoryPool *mp, const CColRef *colref, bool fGeneratedByExist,
+                                 bool fGeneratedByQuantified)
     : CScalar(mp),
       m_pcr(colref),
       m_fGeneratedByExist(fGeneratedByExist),
@@ -67,8 +67,7 @@ IMDId *CScalarSubquery::MdidType() const {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarSubquery::HashValue() const {
+uint32_t CScalarSubquery::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), gpos::HashPtr<CColRef>(m_pcr));
 }
 
@@ -80,7 +79,7 @@ CScalarSubquery::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarSubquery::Matches(COperator *pop) const {
+bool CScalarSubquery::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarSubquery *popScalarSubquery = CScalarSubquery::PopConvert(pop);
 
@@ -102,7 +101,7 @@ BOOL CScalarSubquery::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 COperator *CScalarSubquery::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                       BOOL must_exist) {
+                                                       bool must_exist) {
   CColRef *colref = CUtils::PcrRemap(m_pcr, colref_mapping, must_exist);
 
   return GPOS_NEW(mp) CScalarSubquery(mp, colref, m_fGeneratedByExist, m_fGeneratedByQuantified);

@@ -21,12 +21,12 @@ class CPhysicalUnionAll : public CPhysical {
   CColRefSetArray *m_pdrgpcrsInput;
 
   // map given array of scalar ident expressions to positions of UnionAll input columns in the given child;
-  ULongPtrArray *PdrgpulMap(CMemoryPool *mp, CExpressionArray *pdrgpexpr, ULONG child_index) const;
+  ULongPtrArray *PdrgpulMap(CMemoryPool *mp, CExpressionArray *pdrgpexpr, uint32_t child_index) const;
 
   // map given ColRefSet, expressed in terms of outputs,
   // into an equivalent ColRefSet, expressed in terms
   // of input number n
-  CColRefSet *MapOutputColRefsToInput(CMemoryPool *mp, CColRefSet *out_col_refs, ULONG child_index);
+  CColRefSet *MapOutputColRefsToInput(CMemoryPool *mp, CColRefSet *out_col_refs, uint32_t child_index);
 
  public:
   CPhysicalUnionAll(CMemoryPool *mp, CColRefArray *pdrgpcrOutput, CColRef2dArray *pdrgpdrgpcrInput);
@@ -34,15 +34,15 @@ class CPhysicalUnionAll : public CPhysical {
   ~CPhysicalUnionAll() override;
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   // ident accessors
   EOperatorId Eopid() const override = 0;
 
-  const CHAR *SzId() const override = 0;
+  const char *SzId() const override = 0;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // accessor of output column array
   CColRefArray *PdrgpcrOutput() const;
@@ -52,29 +52,29 @@ class CPhysicalUnionAll : public CPhysical {
 
   // return true if operator passes through stats obtained from children,
   // this is used when computing stats during costing
-  BOOL FPassThruStats() const override;
+  bool FPassThruStats() const override;
 
   //-------------------------------------------------------------------------------------
   // Required Plan Properties
   //-------------------------------------------------------------------------------------
 
   // compute required output columns of the n-th child
-  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG child_index,
-                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t child_index,
+                           CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) override;
 
   // compute required ctes of the n-th child
-  CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
-                        CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, uint32_t child_index,
+                        CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // compute required sort order of the n-th child
-  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
-                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, uint32_t child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // conversion function
   static CPhysicalUnionAll *PopConvert(COperator *pop);
 
   // check if required columns are included in output columns
-  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
+  bool FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t ulOptReq) const override;
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties

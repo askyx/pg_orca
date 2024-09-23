@@ -28,9 +28,9 @@ using CColRefSetArray = CDynamicPtrArray<CColRefSet, CleanupRelease>;
 using ColRefToColRefSetMap = CHashMap<CColRef, CColRefSet, CColRef::HashValue, CColRef::Equals, CleanupNULL<CColRef>,
                                       CleanupRelease<CColRefSet>>;
 
-// hash map mapping INT -> CColRef
-using IntToColRefMap =
-    CHashMap<INT, CColRef, gpos::HashValue<INT>, gpos::Equals<INT>, CleanupDelete<INT>, CleanupNULL<CColRef>>;
+// hash map mapping int32_t -> CColRef
+using IntToColRefMap = CHashMap<int32_t, CColRef, gpos::HashValue<int32_t>, gpos::Equals<int32_t>,
+                                CleanupDelete<int32_t>, CleanupNULL<CColRef>>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -49,28 +49,28 @@ class CColRefSet : public CBitSet {
 
  private:
   // determine if bit is set
-  BOOL Get(ULONG ulBit) const;
+  bool Get(uint32_t ulBit) const;
 
   // set given bit; return previous value
-  BOOL ExchangeSet(ULONG ulBit);
+  bool ExchangeSet(uint32_t ulBit);
 
   // clear given bit; return previous value
-  BOOL ExchangeClear(ULONG ulBit);
+  bool ExchangeClear(uint32_t ulBit);
 
  public:
   // ctor
-  explicit CColRefSet(CMemoryPool *mp, ULONG ulSizeBits = GPOPT_COLREFSET_SIZE);
+  explicit CColRefSet(CMemoryPool *mp, uint32_t ulSizeBits = GPOPT_COLREFSET_SIZE);
 
   explicit CColRefSet(CMemoryPool *mp, const CColRefSet &);
 
   // ctor, copy from col refs array
-  CColRefSet(CMemoryPool *mp, const CColRefArray *colref_array, ULONG ulSizeBits = GPOPT_COLREFSET_SIZE);
+  CColRefSet(CMemoryPool *mp, const CColRefArray *colref_array, uint32_t ulSizeBits = GPOPT_COLREFSET_SIZE);
 
   // dtor
   ~CColRefSet() override;
 
   // determine if bit is set
-  BOOL FMember(const CColRef *colref) const;
+  bool FMember(const CColRef *colref) const;
 
   // return random member
   CColRef *PcrAny() const;
@@ -104,10 +104,10 @@ class CColRefSet : public CBitSet {
 
   // check if the current colrefset is a subset of any of the colrefsets
   // in the given array
-  BOOL FContained(const CColRefSetArray *pdrgpcrs);
+  bool FContained(const CColRefSetArray *pdrgpcrs);
 
   // check if current colrefset intersects with the given colrefset
-  BOOL FIntersects(const CColRefSet *pcrs);
+  bool FIntersects(const CColRefSet *pcrs);
 
   // convert to array
   CColRefArray *Pdrgpcr(CMemoryPool *mp) const;
@@ -116,17 +116,17 @@ class CColRefSet : public CBitSet {
   IntToColRefMap *Phmicr(CMemoryPool *mp) const;
 
   // hash function
-  ULONG HashValue();
+  uint32_t HashValue();
 
   // debug print
   IOstream &OsPrint(IOstream &os) const override;
-  IOstream &OsPrint(IOstream &os, ULONG ulLenMax) const;
+  IOstream &OsPrint(IOstream &os, uint32_t ulLenMax) const;
 
   // extract all column ids
   std::vector<uint32_t> ExtractColIds() const;
 
   // are the columns in the column reference set covered by the array of column ref sets
-  static BOOL FCovered(CColRefSetArray *pdrgpcrs, CColRefSet *pcrs);
+  static bool FCovered(CColRefSetArray *pdrgpcrs, CColRefSet *pcrs);
 
 };  // class CColRefSet
 

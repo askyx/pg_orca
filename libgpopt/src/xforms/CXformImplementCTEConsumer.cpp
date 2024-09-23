@@ -60,7 +60,7 @@ void CXformImplementCTEConsumer::Transform(CXformContext *pxfctxt, CXformResult 
   CMemoryPool *mp = pxfctxt->Pmp();
 
   // extract components for alternative
-  ULONG id = popCTEConsumer->UlCTEId();
+  uint32_t id = popCTEConsumer->UlCTEId();
 
   CColRefArray *colref_array = popCTEConsumer->Pdrgpcr();
   colref_array->AddRef();

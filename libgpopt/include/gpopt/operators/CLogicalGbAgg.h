@@ -32,14 +32,14 @@ class CLogicalGbAgg;
 class CLogicalGbAgg : public CLogicalUnary {
  protected:
   // does local / intermediate / global aggregate generate duplicate values for the same group
-  BOOL m_fGeneratesDuplicates;
+  bool m_fGeneratesDuplicates;
 
   // array of columns used in distinct qualified aggregates (DQA)
   // used only in the case of intermediate aggregates
   CColRefArray *m_pdrgpcrArgDQA;
 
   // compute required stats columns for a GbAgg
-  CColRefSet *PcrsStatGbAgg(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput, ULONG child_index,
+  CColRefSet *PcrsStatGbAgg(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput, uint32_t child_index,
                             CColRefArray *pdrgpcrGrp) const;
 
  public:
@@ -65,14 +65,14 @@ class CLogicalGbAgg : public CLogicalUnary {
 
   // ctor
   CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, COperator::EGbAggType egbaggtype,
-                BOOL fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA, EAggStage aggStage);
+                bool fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA, EAggStage aggStage);
 
   // ctor
   CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, COperator::EGbAggType egbaggtype);
 
   // ctor
   CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, COperator::EGbAggType egbaggtype,
-                BOOL fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA);
+                bool fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA);
 
   // ctor
   CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal,
@@ -80,13 +80,13 @@ class CLogicalGbAgg : public CLogicalUnary {
 
   // ctor
   CLogicalGbAgg(CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal,
-                COperator::EGbAggType egbaggtype, BOOL fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA);
+                COperator::EGbAggType egbaggtype, bool fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA);
 
   // is this part of Two Stage Scalar DQA
-  BOOL IsTwoStageScalarDQA() const;
+  bool IsTwoStageScalarDQA() const;
 
   // is this part of Three Stage Scalar DQA
-  BOOL IsThreeStageScalarDQA() const;
+  bool IsThreeStageScalarDQA() const;
 
   // return the m_aggStage
   EAggStage AggStage() const { return m_aggStage; }
@@ -98,16 +98,16 @@ class CLogicalGbAgg : public CLogicalUnary {
   EOperatorId Eopid() const override { return EopLogicalGbAgg; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalGbAgg"; }
+  const char *SzId() const override { return "CLogicalGbAgg"; }
 
   // does this aggregate generate duplicate values for the same group
-  virtual BOOL FGeneratesDuplicates() const { return m_fGeneratesDuplicates; }
+  virtual bool FGeneratesDuplicates() const { return m_fGeneratesDuplicates; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // grouping columns accessor
   CColRefArray *Pdrgpcr() const { return m_pdrgpcr; }
@@ -119,13 +119,13 @@ class CLogicalGbAgg : public CLogicalUnary {
   COperator::EGbAggType Egbaggtype() const { return m_egbaggtype; }
 
   // is a global aggregate?
-  BOOL FGlobal() const { return (COperator::EgbaggtypeGlobal == m_egbaggtype); }
+  bool FGlobal() const { return (COperator::EgbaggtypeGlobal == m_egbaggtype); }
 
   // minimal grouping columns accessor
   CColRefArray *PdrgpcrMinimal() const { return m_pdrgpcrMinimal; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -156,7 +156,7 @@ class CLogicalGbAgg : public CLogicalUnary {
 
   // compute required stat columns of the n-th child
   CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                       ULONG child_index) const override;
+                       uint32_t child_index) const override;
 
   //-------------------------------------------------------------------------------------
   // Transformations

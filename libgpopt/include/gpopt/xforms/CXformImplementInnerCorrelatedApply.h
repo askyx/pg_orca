@@ -43,7 +43,7 @@ class CXformImplementInnerCorrelatedApply
   // ident accessors
   EXformId Exfid() const override { return ExfImplementInnerCorrelatedApply; }
 
-  const CHAR *SzId() const override { return "CXformImplementInnerCorrelatedApply"; }
+  const char *SzId() const override { return "CXformImplementInnerCorrelatedApply"; }
 
 };  // class CXformImplementInnerCorrelatedApply
 

@@ -43,8 +43,8 @@ CXformFullJoinCommutativity::CXformFullJoinCommutativity(CMemoryPool *mp)
 //		Compatibility function for join commutativity
 //
 //---------------------------------------------------------------------------
-BOOL CXformFullJoinCommutativity::FCompatible(CXform::EXformId exfid) {
-  BOOL fCompatible = true;
+bool CXformFullJoinCommutativity::FCompatible(CXform::EXformId exfid) {
+  bool fCompatible = true;
 
   switch (exfid) {
     case CXform::ExfFullJoinCommutativity:

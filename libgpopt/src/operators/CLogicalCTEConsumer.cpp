@@ -42,7 +42,7 @@ CLogicalCTEConsumer::CLogicalCTEConsumer(CMemoryPool *mp)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalCTEConsumer::CLogicalCTEConsumer(CMemoryPool *mp, ULONG id, CColRefArray *colref_array)
+CLogicalCTEConsumer::CLogicalCTEConsumer(CMemoryPool *mp, uint32_t id, CColRefArray *colref_array)
     : CLogical(mp), m_id(id), m_pdrgpcr(colref_array), m_pexprInlined(nullptr), m_phmulcr(nullptr) {
   GPOS_ASSERT(nullptr != colref_array);
   m_pcrsOutput = GPOS_NEW(mp) CColRefSet(mp, m_pdrgpcr);
@@ -189,9 +189,8 @@ CMaxCard CLogicalCTEConsumer::DeriveMaxCard(CMemoryPool *,       // mp,
 //		Derive join depth
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalCTEConsumer::DeriveJoinDepth(CMemoryPool *,       // mp,
-                                     CExpressionHandle &  // exprhdl
+uint32_t CLogicalCTEConsumer::DeriveJoinDepth(CMemoryPool *,       // mp,
+                                              CExpressionHandle &  // exprhdl
 ) const {
   CExpression *pexpr = COptCtxt::PoctxtFromTLS()->Pcteinfo()->PexprCTEProducer(m_id);
   GPOS_ASSERT(nullptr != pexpr);
@@ -218,7 +217,7 @@ CTableDescriptorHashSet *CLogicalCTEConsumer::DeriveTableDescriptor(CMemoryPool 
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalCTEConsumer::Matches(COperator *pop) const {
+bool CLogicalCTEConsumer::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -236,9 +235,8 @@ BOOL CLogicalCTEConsumer::Matches(COperator *pop) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalCTEConsumer::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_id);
+uint32_t CLogicalCTEConsumer::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_id);
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcr));
 
   return ulHash;
@@ -252,7 +250,7 @@ CLogicalCTEConsumer::HashValue() const {
 //		Not called for leaf operators
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalCTEConsumer::FInputOrderSensitive() const {
+bool CLogicalCTEConsumer::FInputOrderSensitive() const {
   GPOS_ASSERT(!"Unexpected function call of FInputOrderSensitive");
   return false;
 }
@@ -266,7 +264,7 @@ BOOL CLogicalCTEConsumer::FInputOrderSensitive() const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalCTEConsumer::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                           BOOL must_exist) {
+                                                           bool must_exist) {
   CColRefArray *colref_array = nullptr;
   if (must_exist) {
     colref_array = CUtils::PdrgpcrRemapAndCreate(mp, m_pdrgpcr, colref_mapping);
@@ -310,8 +308,8 @@ CPropConstraint *CLogicalCTEConsumer::DerivePropertyConstraint(CMemoryPool *mp,
 
   // remap producer columns to consumer columns
   CColRefSetArray *pdrgpcrsMapped = GPOS_NEW(mp) CColRefSetArray(mp);
-  const ULONG length = pdrgpcrs->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
+  const uint32_t length = pdrgpcrs->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
     CColRefSet *pcrs = (*pdrgpcrs)[ul];
     CColRefSet *pcrsMapped = CUtils::PcrsRemap(mp, pcrs, m_phmulcr, true /*must_exist*/);
     pdrgpcrsMapped->Append(pcrsMapped);

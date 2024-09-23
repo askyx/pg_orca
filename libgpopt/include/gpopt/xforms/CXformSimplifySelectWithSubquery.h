@@ -46,16 +46,16 @@ class CXformSimplifySelectWithSubquery : public CXformSimplifySubquery {
   ~CXformSimplifySelectWithSubquery() override = default;
 
   // Compatibility function for simplifying aggregates
-  BOOL FCompatible(CXform::EXformId exfid) override { return (CXform::ExfSimplifySelectWithSubquery != exfid); }
+  bool FCompatible(CXform::EXformId exfid) override { return (CXform::ExfSimplifySelectWithSubquery != exfid); }
 
   // ident accessors
   EXformId Exfid() const override { return ExfSimplifySelectWithSubquery; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformSimplifySelectWithSubquery"; }
+  const char *SzId() const override { return "CXformSimplifySelectWithSubquery"; }
 
   // is transformation a subquery unnesting (Subquery To Apply) xform?
-  BOOL FSubqueryUnnesting() const override { return true; }
+  bool FSubqueryUnnesting() const override { return true; }
 
 };  // class CXformSimplifySelectWithSubquery
 

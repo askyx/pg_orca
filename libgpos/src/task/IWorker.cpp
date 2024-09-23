@@ -42,7 +42,7 @@ IWorker *IWorker::Self() {
 //		Check for aborts
 //
 //---------------------------------------------------------------------------
-void IWorker::CheckAbort(const CHAR *file, ULONG line_num) {
+void IWorker::CheckAbort(const char *file, uint32_t line_num) {
   IWorker *worker = Self();
   if (nullptr != worker) {
     worker->CheckForAbort(file, line_num);

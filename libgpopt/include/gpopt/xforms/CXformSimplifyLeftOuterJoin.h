@@ -40,10 +40,10 @@ class CXformSimplifyLeftOuterJoin : public CXformExploration {
   EXformId Exfid() const override { return ExfSimplifyLeftOuterJoin; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformSimplifyLeftOuterJoin"; }
+  const char *SzId() const override { return "CXformSimplifyLeftOuterJoin"; }
 
   // Compatibility function for simplifying aggregates
-  BOOL FCompatible(CXform::EXformId exfid) override { return (CXform::ExfSimplifyLeftOuterJoin != exfid); }
+  bool FCompatible(CXform::EXformId exfid) override { return (CXform::ExfSimplifyLeftOuterJoin != exfid); }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

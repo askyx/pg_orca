@@ -26,7 +26,7 @@ using namespace gpdxl;
 //
 //---------------------------------------------------------------------------
 CDXLScalarFieldSelect::CDXLScalarFieldSelect(CMemoryPool *mp, IMDId *field_type, IMDId *field_collation,
-                                             INT type_modifier, SINT field_number)
+                                             int32_t type_modifier, int16_t field_number)
     : CDXLScalar(mp),
       m_dxl_field_type(field_type),
       m_dxl_field_collation(field_collation),
@@ -92,7 +92,7 @@ IMDId *CDXLScalarFieldSelect::GetDXLFieldCollation() const {
 //		Returns output type mode
 //
 //---------------------------------------------------------------------------
-INT CDXLScalarFieldSelect::GetDXLTypeModifier() const {
+int32_t CDXLScalarFieldSelect::GetDXLTypeModifier() const {
   return m_dxl_type_modifier;
 }
 
@@ -104,7 +104,7 @@ INT CDXLScalarFieldSelect::GetDXLTypeModifier() const {
 //		Returns attribute number of the field to extract
 //
 //---------------------------------------------------------------------------
-SINT CDXLScalarFieldSelect::GetDXLFieldNumber() const {
+int16_t CDXLScalarFieldSelect::GetDXLFieldNumber() const {
   return m_dxl_field_number;
 }
 
@@ -129,9 +129,9 @@ const CWStringConst *CDXLScalarFieldSelect::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarFieldSelect::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
-  const ULONG arity = dxlnode->Arity();
-  for (ULONG ul = 0; ul < arity; ++ul) {
+void CDXLScalarFieldSelect::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
+  const uint32_t arity = dxlnode->Arity();
+  for (uint32_t ul = 0; ul < arity; ++ul) {
     CDXLNode *child_dxlnode = (*dxlnode)[ul];
     GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
 

@@ -73,12 +73,12 @@ const CJobGroupExpressionImplementation::EEvent
 #ifdef GPOS_DEBUG
 
 // names for states
-const WCHAR rgwszStates[CJobGroupExpressionImplementation::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
+const wchar_t rgwszStates[CJobGroupExpressionImplementation::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
     GPOS_WSZ_LIT("initialized"), GPOS_WSZ_LIT("children implemented"), GPOS_WSZ_LIT("self implemented"),
     GPOS_WSZ_LIT("completed")};
 
 // names for events
-const WCHAR rgwszEvents[CJobGroupExpressionImplementation::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
+const wchar_t rgwszEvents[CJobGroupExpressionImplementation::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
     GPOS_WSZ_LIT("implementing child groups"), GPOS_WSZ_LIT("implemented children groups"),
     GPOS_WSZ_LIT("applying implementation xforms"), GPOS_WSZ_LIT("applied implementation xforms"),
     GPOS_WSZ_LIT("finalized")};
@@ -167,9 +167,9 @@ void CJobGroupExpressionImplementation::ScheduleApplicableTransformations(CSched
 void CJobGroupExpressionImplementation::ScheduleChildGroupsJobs(CSchedulerContext *psc) {
   GPOS_ASSERT(!FChildrenScheduled());
 
-  ULONG arity = m_pgexpr->Arity();
+  uint32_t arity = m_pgexpr->Arity();
 
-  for (ULONG i = 0; i < arity; i++) {
+  for (uint32_t i = 0; i < arity; i++) {
     CJobGroupImplementation::ScheduleJob(psc, (*(m_pgexpr))[i], this);
   }
 
@@ -245,7 +245,7 @@ CJobGroupExpressionImplementation::EEvent CJobGroupExpressionImplementation::Eev
 //		Main job function
 //
 //---------------------------------------------------------------------------
-BOOL CJobGroupExpressionImplementation::FExecute(CSchedulerContext *psc) {
+bool CJobGroupExpressionImplementation::FExecute(CSchedulerContext *psc) {
   GPOS_ASSERT(FInit());
 
   return m_jsm.FRun(psc, this);

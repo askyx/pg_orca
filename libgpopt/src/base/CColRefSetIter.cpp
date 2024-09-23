@@ -41,7 +41,7 @@ CColRefSetIter::CColRefSetIter(const CColRefSet &bs) : CBitSetIter(bs) {
 //
 //---------------------------------------------------------------------------
 CColRef *CColRefSetIter::Pcr() const {
-  ULONG id = CBitSetIter::Bit();
+  uint32_t id = CBitSetIter::Bit();
 
   // resolve id through column factory
   return m_pcf->LookupColRef(id);

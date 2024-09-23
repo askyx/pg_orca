@@ -33,9 +33,9 @@ class CPhysicalScalarAgg : public CPhysicalAgg {
   // ctor
   CPhysicalScalarAgg(CMemoryPool *mp, CColRefArray *colref_array,
                      CColRefArray *pdrgpcrMinimal,  // minimal grouping columns based on FD's
-                     COperator::EGbAggType egbaggtype, BOOL fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA,
-                     BOOL fMultiStage, BOOL isAggFromSplitDQA, CLogicalGbAgg::EAggStage aggStage,
-                     BOOL should_enforce_distribution);
+                     COperator::EGbAggType egbaggtype, bool fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA,
+                     bool fMultiStage, bool isAggFromSplitDQA, CLogicalGbAgg::EAggStage aggStage,
+                     bool should_enforce_distribution);
 
   // dtor
   ~CPhysicalScalarAgg() override;
@@ -44,15 +44,15 @@ class CPhysicalScalarAgg : public CPhysicalAgg {
   EOperatorId Eopid() const override { return EopPhysicalScalarAgg; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalScalarAgg"; }
+  const char *SzId() const override { return "CPhysicalScalarAgg"; }
 
   //-------------------------------------------------------------------------------------
   // Required Plan Properties
   //-------------------------------------------------------------------------------------
 
   // compute required sort columns of the n-th child
-  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
-                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, uint32_t child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties

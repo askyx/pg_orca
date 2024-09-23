@@ -89,9 +89,9 @@ class CDrvdProp : public CRefCount {
   virtual void Derive(CMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdppropctxt) = 0;
 
   // check for satisfying required plan properties
-  virtual BOOL FSatisfies(const CReqdPropPlan *prpp) const = 0;
+  virtual bool FSatisfies(const CReqdPropPlan *prpp) const = 0;
 
-  virtual BOOL IsComplete() const { return true; }
+  virtual bool IsComplete() const { return true; }
 
   virtual gpos::IOstream &OsPrint(gpos::IOstream &os) const = 0;
 };  // class CDrvdProp

@@ -26,30 +26,27 @@ class CKHeap : public CRefCount {
  private:
   A *m_topk;
   CMemoryPool *m_mp;
-  ULONG m_k;
-  BOOL m_is_heapified;
-  ULONG m_num_returned;
+  uint32_t m_k;
+  bool m_is_heapified;
+  uint32_t m_num_returned;
 
   // the parent index is (ix-1)/2, except for 0
-  ULONG
-  parent(ULONG ix) { return (0 < ix ? (ix - 1) / 2 : m_topk->Size()); }
+  uint32_t parent(uint32_t ix) { return (0 < ix ? (ix - 1) / 2 : m_topk->Size()); }
 
   // children are at indexes 2*ix + 1 and 2*ix + 2
-  ULONG
-  left_child(ULONG ix) { return 2 * ix + 1; }
-  ULONG
-  right_child(ULONG ix) { return 2 * ix + 2; }
+  uint32_t left_child(uint32_t ix) { return 2 * ix + 1; }
+  uint32_t right_child(uint32_t ix) { return 2 * ix + 2; }
 
   // does the parent/child exist?
-  BOOL exists(ULONG ix) { return ix < m_topk->Size(); }
+  bool exists(uint32_t ix) { return ix < m_topk->Size(); }
   // cost of an entry (this class implements a Min-Heap)
-  CDouble cost(ULONG ix) { return (*m_topk)[ix]->GetCostForHeap(); }
+  CDouble cost(uint32_t ix) { return (*m_topk)[ix]->GetCostForHeap(); }
 
   // push node ix in the tree down into its child tree as much as needed
-  void HeapifyDown(ULONG ix) {
-    ULONG left_child_ix = left_child(ix);
-    ULONG right_child_ix = right_child(ix);
-    ULONG min_element_ix = ix;
+  void HeapifyDown(uint32_t ix) {
+    uint32_t left_child_ix = left_child(ix);
+    uint32_t right_child_ix = right_child(ix);
+    uint32_t min_element_ix = ix;
 
     if (exists(left_child_ix) && cost(left_child_ix) < cost(ix)) {
       // left child is better than parent, it becomes the new candidate
@@ -69,8 +66,8 @@ class CKHeap : public CRefCount {
   }
 
   // pull node ix in the tree up as much as needed
-  void HeapifyUp(ULONG ix) {
-    ULONG parent_ix = parent(ix);
+  void HeapifyUp(uint32_t ix) {
+    uint32_t parent_ix = parent(ix);
 
     if (!exists(parent_ix)) {
       return;
@@ -87,10 +84,10 @@ class CKHeap : public CRefCount {
   // You can only retrieve the top k with RemoveBestElement(), though.
   void Heapify() {
     // the parent of the last node is the last node in the tree that is a parent
-    ULONG start_ix = parent(m_topk->Size() - 1);
+    uint32_t start_ix = parent(m_topk->Size() - 1);
 
     // now work our way up to the root, calling HeapifyDown
-    for (ULONG ix = start_ix; exists(ix); ix--) {
+    for (uint32_t ix = start_ix; exists(ix); ix--) {
       HeapifyDown(ix);
     }
 
@@ -98,7 +95,7 @@ class CKHeap : public CRefCount {
   }
 
  public:
-  CKHeap(CMemoryPool *mp, ULONG k) : m_mp(mp), m_k(k), m_is_heapified(false), m_num_returned(0) {
+  CKHeap(CMemoryPool *mp, uint32_t k) : m_mp(mp), m_k(k), m_is_heapified(false), m_num_returned(0) {
     m_topk = GPOS_NEW(m_mp) A(m_mp);
   }
 
@@ -153,10 +150,9 @@ class CKHeap : public CRefCount {
     return result;
   }
 
-  ULONG
-  Size() { return m_topk->Size(); }
+  uint32_t Size() { return m_topk->Size(); }
 
-  BOOL IsLimitExceeded() { return m_topk->Size() + m_num_returned > m_k; }
+  bool IsLimitExceeded() { return m_topk->Size() + m_num_returned > m_k; }
 
   void Clear() {
     m_topk->Clear();

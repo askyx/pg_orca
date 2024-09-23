@@ -68,10 +68,10 @@ CExpression *CMDCheckConstraintGPDB::GetCheckConstraintExpr(CMemoryPool *mp, CMD
 
   const IMDRelation *mdrel = md_accessor->RetrieveRel(m_rel_mdid);
 #ifdef GPOS_DEBUG
-  const ULONG len = colref_array->Size();
+  const uint32_t len = colref_array->Size();
   GPOS_ASSERT(len > 0);
 
-  const ULONG arity = mdrel->NonDroppedColsCount() - mdrel->SystemColumnsCount();
+  const uint32_t arity = mdrel->NonDroppedColsCount() - mdrel->SystemColumnsCount();
   GPOS_ASSERT(arity == len);
 #endif  // GPOS_DEBUG
 

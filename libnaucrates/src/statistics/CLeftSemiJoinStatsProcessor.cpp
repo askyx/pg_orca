@@ -23,13 +23,13 @@ CStatistics *CLeftSemiJoinStatsProcessor::CalcLSJoinStatsStatic(CMemoryPool *mp,
   GPOS_ASSERT(nullptr != inner_stats_input);
   GPOS_ASSERT(nullptr != join_preds_stats);
 
-  const ULONG length = join_preds_stats->Size();
+  const uint32_t length = join_preds_stats->Size();
 
   // iterate over all inner columns and perform a group by to remove duplicates
   std::vector<uint32_t> inner_colids;
-  for (ULONG ul = 0; ul < length; ul++) {
+  for (uint32_t ul = 0; ul < length; ul++) {
     if ((*join_preds_stats)[ul]->HasValidColIdInner()) {
-      ULONG colid = ((*join_preds_stats)[ul])->ColIdInner();
+      uint32_t colid = ((*join_preds_stats)[ul])->ColIdInner();
       inner_colids.push_back(colid);
     }
   }

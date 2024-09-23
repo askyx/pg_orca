@@ -31,7 +31,7 @@ class CPhysicalLeftAntiSemiHashJoin : public CPhysicalHashJoin {
   // ctor
   CPhysicalLeftAntiSemiHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys,
                                 CExpressionArray *pdrgpexprInnerKeys, IMdIdArray *hash_opfamilies,
-                                BOOL is_null_aware = true, CXform::EXformId origin_xform = CXform::ExfSentinel);
+                                bool is_null_aware = true, CXform::EXformId origin_xform = CXform::ExfSentinel);
 
   // dtor
   ~CPhysicalLeftAntiSemiHashJoin() override;
@@ -40,10 +40,10 @@ class CPhysicalLeftAntiSemiHashJoin : public CPhysicalHashJoin {
   EOperatorId Eopid() const override { return EopPhysicalLeftAntiSemiHashJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalLeftAntiSemiHashJoin"; }
+  const char *SzId() const override { return "CPhysicalLeftAntiSemiHashJoin"; }
 
   // check if required columns are included in output columns
-  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
+  bool FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t ulOptReq) const override;
 
   // conversion function
   static CPhysicalLeftAntiSemiHashJoin *PopConvert(COperator *pop) {

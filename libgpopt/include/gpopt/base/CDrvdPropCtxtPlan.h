@@ -35,7 +35,7 @@ class CDrvdPropCtxtPlan : public CDrvdPropCtxt {
   UlongToDrvdPropPlanMap *m_phmulpdpCTEs;
 
   // if true, a call to AddProps updates the CTE.
-  BOOL m_fUpdateCTEMap;
+  bool m_fUpdateCTEMap;
 
  protected:
   // copy function
@@ -48,7 +48,7 @@ class CDrvdPropCtxtPlan : public CDrvdPropCtxt {
   CDrvdPropCtxtPlan(const CDrvdPropCtxtPlan &) = delete;
 
   // ctor
-  CDrvdPropCtxtPlan(CMemoryPool *mp, BOOL fUpdateCTEMap = true);
+  CDrvdPropCtxtPlan(CMemoryPool *mp, bool fUpdateCTEMap = true);
 
   // dtor
   ~CDrvdPropCtxtPlan() override;
@@ -57,15 +57,15 @@ class CDrvdPropCtxtPlan : public CDrvdPropCtxt {
   IOstream &OsPrint(IOstream &os) const;
 
   // return the plan properties of CTE producer with given id
-  CDrvdPropPlan *PdpplanCTEProducer(ULONG ulCTEId) const;
+  CDrvdPropPlan *PdpplanCTEProducer(uint32_t ulCTEId) const;
 
   // copy plan properties of given CTE prdoucer
-  void CopyCTEProducerProps(CDrvdPropPlan *pdpplan, ULONG ulCTEId);
+  void CopyCTEProducerProps(CDrvdPropPlan *pdpplan, uint32_t ulCTEId);
 
 #ifdef GPOS_DEBUG
 
   // is it a plan property context?
-  BOOL FPlan() const override { return true; }
+  bool FPlan() const override { return true; }
 
 #endif  // GPOS_DEBUG
 

@@ -63,7 +63,7 @@ const CWStringConst *CDXLScalarDistinctComp::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarDistinctComp::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLScalarDistinctComp::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(EdxlscdistcmpSentinel == node->Arity());
 
   CDXLNode *dxlnode_left = (*node)[EdxlscdistcmpIndexLeft];

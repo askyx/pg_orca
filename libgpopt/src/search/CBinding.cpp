@@ -52,7 +52,7 @@ CGroupExpression *CBinding::PgexprNext(CGroup *pgroup, CGroupExpression *pgexpr)
 //		Given the pattern determine if we need to re-use the pattern operators;
 //
 //---------------------------------------------------------------------------
-CExpression *CBinding::PexprExpandPattern(CExpression *pexprPattern, ULONG ulPos, ULONG arity) {
+CExpression *CBinding::PexprExpandPattern(CExpression *pexprPattern, uint32_t ulPos, uint32_t arity) {
   GPOS_ASSERT_IMP(pexprPattern->Pop()->FPattern(), !CPattern::PopConvert(pexprPattern->Pop())->FLeaf());
 
   // re-use tree pattern
@@ -142,7 +142,7 @@ CExpression *CBinding::PexprExtract(CMemoryPool *mp, CGroupExpression *pgexpr, C
   }
 
   CExpressionArray *pdrgpexpr = nullptr;
-  ULONG arity = pgexpr->Arity();
+  uint32_t arity = pgexpr->Arity();
   if (0 == arity && nullptr != pexprLast) {
     // no more bindings
     return nullptr;
@@ -169,15 +169,15 @@ CExpression *CBinding::PexprExtract(CMemoryPool *mp, CGroupExpression *pgexpr, C
 //		Initialize cursors of child expressions
 //
 //---------------------------------------------------------------------------
-BOOL CBinding::FInitChildCursors(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern,
+bool CBinding::FInitChildCursors(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern,
                                  CExpressionArray *pdrgpexpr) {
   GPOS_ASSERT(nullptr != pexprPattern);
   GPOS_ASSERT(nullptr != pdrgpexpr);
 
-  const ULONG arity = pgexpr->Arity();
+  const uint32_t arity = pgexpr->Arity();
 
   // grab first expression from each cursor
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CGroup *pgroup = (*pgexpr)[ul];
     CExpression *pexprPatternChild = PexprExpandPattern(pexprPattern, ul, arity);
     CExpression *pexprNewChild = PexprExtract(mp, pgroup, pexprPatternChild, nullptr /*pexprLastChild*/);
@@ -202,24 +202,24 @@ BOOL CBinding::FInitChildCursors(CMemoryPool *mp, CGroupExpression *pgexpr, CExp
 //		with the next child expressions
 //
 //---------------------------------------------------------------------------
-BOOL CBinding::FAdvanceChildCursors(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern,
+bool CBinding::FAdvanceChildCursors(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern,
                                     CExpression *pexprLast, CExpressionArray *pdrgpexpr) {
   GPOS_ASSERT(nullptr != pexprPattern);
   GPOS_ASSERT(nullptr != pdrgpexpr);
 
-  const ULONG arity = pgexpr->Arity();
+  const uint32_t arity = pgexpr->Arity();
   if (nullptr == pexprLast) {
     // first call, initialize cursors
     return FInitChildCursors(mp, pgexpr, pexprPattern, pdrgpexpr);
   }
 
   // could we advance a child's cursor?
-  BOOL fCursorAdvanced = false;
+  bool fCursorAdvanced = false;
 
   // number of exhausted cursors
-  ULONG ulExhaustedCursors = 0;
+  uint32_t ulExhaustedCursors = 0;
 
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CGroup *pgroup = (*pgexpr)[ul];
     CExpression *pexprPatternChild = PexprExpandPattern(pexprPattern, ul, arity);
     CExpression *pexprNewChild = nullptr;
@@ -263,7 +263,7 @@ BOOL CBinding::FAdvanceChildCursors(CMemoryPool *mp, CGroupExpression *pgexpr, C
 //		Allocates the array for the children as needed;
 //
 //---------------------------------------------------------------------------
-BOOL CBinding::FExtractChildren(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern,
+bool CBinding::FExtractChildren(CMemoryPool *mp, CGroupExpression *pgexpr, CExpression *pexprPattern,
                                 CExpression *pexprLast, CExpressionArray *pdrgpexpr) {
   GPOS_CHECK_STACK_SIZE;
   GPOS_CHECK_ABORT;
@@ -273,7 +273,7 @@ BOOL CBinding::FExtractChildren(CMemoryPool *mp, CGroupExpression *pgexpr, CExpr
   GPOS_ASSERT_IMP(pexprPattern->Pop()->FPattern(), !CPattern::PopConvert(pexprPattern->Pop())->FLeaf());
   GPOS_ASSERT(pexprPattern->FMatchPattern(pgexpr));
 
-  ULONG arity = pgexpr->Arity();
+  uint32_t arity = pgexpr->Arity();
   if (arity < pexprPattern->Arity()) {
     // does not have enough children
     return false;

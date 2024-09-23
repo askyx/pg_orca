@@ -44,11 +44,11 @@ const CJobTransformation::EEvent rgeev[CJobTransformation::estSentinel][CJobTran
 #ifdef GPOS_DEBUG
 
 // names for states
-const WCHAR rgwszStates[CJobTransformation::estSentinel][GPOPT_FSM_NAME_LENGTH] = {GPOS_WSZ_LIT("initialized"),
-                                                                                   GPOS_WSZ_LIT("completed")};
+const wchar_t rgwszStates[CJobTransformation::estSentinel][GPOPT_FSM_NAME_LENGTH] = {GPOS_WSZ_LIT("initialized"),
+                                                                                     GPOS_WSZ_LIT("completed")};
 
 // names for events
-const WCHAR rgwszEvents[CJobTransformation::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {GPOS_WSZ_LIT("transforming")};
+const wchar_t rgwszEvents[CJobTransformation::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {GPOS_WSZ_LIT("transforming")};
 
 #endif  // GPOS_DEBUG
 
@@ -120,8 +120,8 @@ CJobTransformation::EEvent CJobTransformation::EevtTransform(CSchedulerContext *
 
   // insert transformation results to memo
   CXformResult *pxfres = GPOS_NEW(pmpGlobal) CXformResult(pmpGlobal);
-  ULONG ulElapsedTime = 0;
-  ULONG ulNumberOfBindings = 0;
+  uint32_t ulElapsedTime = 0;
+  uint32_t ulNumberOfBindings = 0;
   pgexpr->Transform(pmpGlobal, pmpLocal, pxform, pxfres, &ulElapsedTime, &ulNumberOfBindings);
   psc->Peng()->InsertXformResult(pgexpr->Pgroup(), pxfres, pxform->Exfid(), pgexpr, ulElapsedTime, ulNumberOfBindings);
   pxfres->Release();
@@ -137,7 +137,7 @@ CJobTransformation::EEvent CJobTransformation::EevtTransform(CSchedulerContext *
 //		Main job function
 //
 //---------------------------------------------------------------------------
-BOOL CJobTransformation::FExecute(CSchedulerContext *psc) {
+bool CJobTransformation::FExecute(CSchedulerContext *psc) {
   GPOS_ASSERT(FInit());
 
   return m_jsm.FRun(psc, this);

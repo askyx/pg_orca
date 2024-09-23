@@ -25,11 +25,11 @@
 #ifdef __cplusplus
 
 // lookup given exception type in the given array
-gpos::BOOL FoundException(gpos::CException &exc, const gpos::ULONG *exceptions, gpos::ULONG size);
+bool FoundException(gpos::CException &exc, const uint32_t *exceptions, uint32_t size);
 
 // Check if given exception is an unexpected reason for failing to
 // produce a plan
-gpos::BOOL IsLoggableFailure(gpos::CException &exc);
+bool IsLoggableFailure(gpos::CException &exc);
 
 extern "C" {
 #include <stddef.h>

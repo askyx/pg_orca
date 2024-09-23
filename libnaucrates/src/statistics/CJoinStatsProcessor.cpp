@@ -24,7 +24,7 @@
 
 using namespace gpopt;
 
-BOOL CJoinStatsProcessor::m_compute_scale_factor_from_histogram_buckets = false;
+bool CJoinStatsProcessor::m_compute_scale_factor_from_histogram_buckets = false;
 
 // helper for joining histograms
 void CJoinStatsProcessor::JoinHistograms(CMemoryPool *mp, const CHistogram *histogram1, const CHistogram *histogram2,
@@ -32,8 +32,8 @@ void CJoinStatsProcessor::JoinHistograms(CMemoryPool *mp, const CHistogram *hist
                                          CHistogram **result_hist1,  // output: histogram 1 after join
                                          CHistogram **result_hist2,  // output: histogram 2 after join
                                          CDouble *scale_factor,      // output: scale factor based on the join
-                                         BOOL is_input_empty, IStatistics::EStatsJoinType join_type,
-                                         BOOL DoIgnoreLASJHistComputation) {
+                                         bool is_input_empty, IStatistics::EStatsJoinType join_type,
+                                         bool DoIgnoreLASJHistComputation) {
   GPOS_ASSERT(nullptr != histogram1);
   GPOS_ASSERT(nullptr != histogram2);
   GPOS_ASSERT(nullptr != join_pred_stats);
@@ -61,7 +61,7 @@ void CJoinStatsProcessor::JoinHistograms(CMemoryPool *mp, const CHistogram *hist
   *scale_factor = CScaleFactorUtils::DefaultJoinPredScaleFactor;
 
   CStatsPred::EStatsCmpType stats_cmp_type = join_pred_stats->GetCmpType();
-  BOOL empty_histograms = histogram1->IsEmpty() || histogram2->IsEmpty();
+  bool empty_histograms = histogram1->IsEmpty() || histogram2->IsEmpty();
 
   if (empty_histograms) {
     // if one more input has no histograms (due to lack of statistics
@@ -111,13 +111,13 @@ IStatistics *CJoinStatsProcessor::CalcAllJoinStats(CMemoryPool *mp, IStatisticsA
   GPOS_ASSERT(0 < statistics_array->Size());
   // Is the operator passed in a 2-way LOJ? We will later refine this to find whether
   // an individual predicate is for an LOJ or not.
-  BOOL left_outer_2_way_join = false;
+  bool left_outer_2_way_join = false;
 
   // create an empty set of outer references for statistics derivation
   CColRefSet *outer_refs = GPOS_NEW(mp) CColRefSet(mp);
 
   // join statistics objects one by one using relevant predicates in given scalar expression
-  const ULONG num_stats = statistics_array->Size();
+  const uint32_t num_stats = statistics_array->Size();
   IStatistics *stats = (*statistics_array)[0]->CopyStats(mp);
   CDouble num_rows_outer = stats->Rows();
   // predicate indexes, if we have a mix of inner and LOJs
@@ -145,7 +145,7 @@ IStatistics *CJoinStatsProcessor::CalcAllJoinStats(CMemoryPool *mp, IStatisticsA
       break;
   }
 
-  for (ULONG i = 1; i < num_stats; i++) {
+  for (uint32_t i = 1; i < num_stats; i++) {
     IStatistics *current_stats = (*statistics_array)[i];
 
     CColRefSetArray *output_colrefsets = GPOS_NEW(mp) CColRefSetArray(mp);
@@ -153,7 +153,7 @@ IStatistics *CJoinStatsProcessor::CalcAllJoinStats(CMemoryPool *mp, IStatisticsA
     output_colrefsets->Append(current_stats->GetColRefSet(mp));
 
     CStatsPred *unsupported_pred_stats = nullptr;
-    BOOL is_a_left_join = left_outer_2_way_join;
+    bool is_a_left_join = left_outer_2_way_join;
     CExpression *join_preds_available = nullptr;
 
     if (nullptr == predIndexes || GPOPT_ZERO_INNER_JOIN_PRED_INDEX == *(*predIndexes)[i]) {
@@ -217,15 +217,15 @@ CStatistics *CJoinStatsProcessor::SetResultingJoinStats(CMemoryPool *mp, CStatis
                                                         const IStatistics *inner_stats_input,
                                                         CStatsPredJoinArray *join_pred_stats_info,
                                                         IStatistics::EStatsJoinType join_type,
-                                                        BOOL DoIgnoreLASJHistComputation) {
+                                                        bool DoIgnoreLASJHistComputation) {
   GPOS_ASSERT(nullptr != mp);
   GPOS_ASSERT(nullptr != inner_stats_input);
   GPOS_ASSERT(nullptr != outer_stats_input);
 
   GPOS_ASSERT(nullptr != join_pred_stats_info);
 
-  BOOL IsLASJ = (IStatistics::EsjtLeftAntiSemiJoin == join_type);
-  BOOL semi_join = IStatistics::IsSemiJoin(join_type);
+  bool IsLASJ = (IStatistics::EsjtLeftAntiSemiJoin == join_type);
+  bool semi_join = IStatistics::IsSemiJoin(join_type);
 
   // Extract stat objects for inner and outer child.
   // Historically, IStatistics was meant to have multiple derived classes
@@ -240,7 +240,7 @@ CStatistics *CJoinStatsProcessor::SetResultingJoinStats(CMemoryPool *mp, CStatis
 
   // build a bitset with all join columns
   CBitSet *join_colids = GPOS_NEW(mp) CBitSet(mp);
-  for (ULONG i = 0; i < join_pred_stats_info->Size(); i++) {
+  for (uint32_t i = 0; i < join_pred_stats_info->Size(); i++) {
     CStatsPredJoin *join_stats = (*join_pred_stats_info)[i];
 
     if (join_stats->HasValidColIdOuter()) {
@@ -260,19 +260,19 @@ CStatistics *CJoinStatsProcessor::SetResultingJoinStats(CMemoryPool *mp, CStatis
 
   CScaleFactorUtils::SJoinConditionArray *join_conds_scale_factors =
       GPOS_NEW(mp) CScaleFactorUtils::SJoinConditionArray(mp);
-  const ULONG num_join_conds = join_pred_stats_info->Size();
+  const uint32_t num_join_conds = join_pred_stats_info->Size();
 
-  BOOL output_is_empty = false;
+  bool output_is_empty = false;
   CDouble num_join_rows = 0;
   // iterate over join's predicate(s)
-  for (ULONG i = 0; i < num_join_conds; i++) {
+  for (uint32_t i = 0; i < num_join_conds; i++) {
     CStatsPredJoin *pred_info = (*join_pred_stats_info)[i];
-    ULONG colid1 = pred_info->ColIdOuter();
-    ULONG colid2 = pred_info->ColIdInner();
+    uint32_t colid1 = pred_info->ColIdOuter();
+    uint32_t colid2 = pred_info->ColIdInner();
     GPOS_ASSERT(colid1 != colid2);
     const CHistogram *outer_histogram = nullptr;
     const CHistogram *inner_histogram = nullptr;
-    BOOL is_input_empty = CStatistics::IsEmptyJoin(outer_stats, inner_side_stats, IsLASJ);
+    bool is_input_empty = CStatistics::IsEmptyJoin(outer_stats, inner_side_stats, IsLASJ);
     CDouble local_scale_factor(1.0);
     CHistogram *outer_histogram_after = nullptr;
     CHistogram *inner_histogram_after = nullptr;
@@ -327,7 +327,7 @@ CStatistics *CJoinStatsProcessor::SetResultingJoinStats(CMemoryPool *mp, CStatis
     IMDId *mdid_outer = colref_outer->GetMdidTable();
     IMDId *mdid_inner = colref_inner->GetMdidTable();
     IMdIdArray *mdid_pair = nullptr;
-    BOOL both_dist_keys = false;
+    bool both_dist_keys = false;
     if ((mdid_outer != nullptr) && (mdid_inner != nullptr)) {
       // there should only be two tables involved in a join condition
       // if the predicate is more complex (i.e. more than 2 tables involved in the predicate such as t1.a=t2.a+t3.a),
@@ -410,7 +410,7 @@ CDouble CJoinStatsProcessor::CalcJoinCardinality(CMemoryPool *mp, CStatisticsCon
       rows = std::min(left_num_rows.Get(), (cartesian_product_num_rows / scale_factor).Get());
     }
 
-    return std::max(DOUBLE(1.0), rows.Get());
+    return std::max(double(1.0), rows.Get());
   }
 
   GPOS_ASSERT(CStatistics::MinRows <= scale_factor);
@@ -420,13 +420,13 @@ CDouble CJoinStatsProcessor::CalcJoinCardinality(CMemoryPool *mp, CStatisticsCon
 
 // check if the join statistics object is empty output based on the input
 // histograms and the join histograms
-BOOL CJoinStatsProcessor::JoinStatsAreEmpty(BOOL outer_is_empty, BOOL output_is_empty,
+bool CJoinStatsProcessor::JoinStatsAreEmpty(bool outer_is_empty, bool output_is_empty,
                                             const CHistogram *outer_histogram, const CHistogram *inner_histogram,
                                             CHistogram *join_histogram, IStatistics::EStatsJoinType join_type) {
   GPOS_ASSERT(nullptr != outer_histogram);
   GPOS_ASSERT(nullptr != inner_histogram);
   GPOS_ASSERT(nullptr != join_histogram);
-  BOOL IsLASJ = IStatistics::EsjtLeftAntiSemiJoin == join_type;
+  bool IsLASJ = IStatistics::EsjtLeftAntiSemiJoin == join_type;
   return output_is_empty || (!IsLASJ && outer_is_empty) ||
          (!outer_histogram->IsEmpty() && !inner_histogram->IsEmpty() && join_histogram->IsEmpty());
 }
@@ -437,8 +437,8 @@ IStatistics *CJoinStatsProcessor::DeriveJoinStats(CMemoryPool *mp, CExpressionHa
   GPOS_ASSERT(CLogical::EspNone < CLogical::PopConvert(exprhdl.Pop())->Esp(exprhdl));
 
   IStatisticsArray *statistics_array = GPOS_NEW(mp) IStatisticsArray(mp);
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG i = 0; i < arity - 1; i++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t i = 0; i < arity - 1; i++) {
     IStatistics *child_stats = exprhdl.Pstats(i);
     child_stats->AddRef();
     statistics_array->Append(child_stats);

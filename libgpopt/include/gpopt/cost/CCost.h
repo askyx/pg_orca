@@ -32,7 +32,7 @@ using CCostArray = CDynamicPtrArray<CCost, CleanupDelete>;
 class CCost : public CDouble {
  public:
   // ctor
-  explicit CCost(DOUBLE d) : CDouble(d) {}
+  explicit CCost(double d) : CDouble(d) {}
 
   // ctor
   explicit CCost(CDouble d) : CDouble(d.Get()) {}
@@ -56,10 +56,10 @@ class CCost : public CDouble {
   CCost operator*(const CCost &cost) const { return CCost((CDouble)(*this) * (CDouble)cost); }
 
   // comparison operator
-  BOOL operator<(const CCost &cost) const { return (CDouble)(*this) < (CDouble)cost; }
+  bool operator<(const CCost &cost) const { return (CDouble)(*this) < (CDouble)cost; }
 
   // comparison operator
-  BOOL operator>(const CCost &cost) const { return (CDouble)cost < (CDouble)(*this); }
+  bool operator>(const CCost &cost) const { return (CDouble)cost < (CDouble)(*this); }
 
   // d'tor
   virtual ~CCost() = default;

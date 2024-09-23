@@ -41,7 +41,7 @@ class CAutoTaskProxy : CStackObject {
   CList<CTask> m_list;
 
   // propagate error of sub-task or not
-  BOOL m_propagate_error;
+  bool m_propagate_error;
 
   // find finished task
   GPOS_RESULT
@@ -57,20 +57,19 @@ class CAutoTaskProxy : CStackObject {
   CAutoTaskProxy(const CAutoTaskProxy &) = delete;
 
   // ctor
-  CAutoTaskProxy(CMemoryPool *mp, CWorkerPoolManager *m_pwpm, BOOL propagate_error = true);
+  CAutoTaskProxy(CMemoryPool *mp, CWorkerPoolManager *m_pwpm, bool propagate_error = true);
 
   // dtor
   ~CAutoTaskProxy();
 
   // task count
-  ULONG
-  TaskCount() { return m_list.Size(); }
+  uint32_t TaskCount() { return m_list.Size(); }
 
   // disable/enable error propagation
-  void SetPropagateError(BOOL propagate_error) { m_propagate_error = propagate_error; }
+  void SetPropagateError(bool propagate_error) { m_propagate_error = propagate_error; }
 
   // create new task
-  CTask *Create(void *(*pfunc)(void *), void *argv, BOOL *cancel = nullptr);
+  CTask *Create(void *(*pfunc)(void *), void *argv, bool *cancel = nullptr);
 
   // schedule task for execution
   void Schedule(CTask *task);

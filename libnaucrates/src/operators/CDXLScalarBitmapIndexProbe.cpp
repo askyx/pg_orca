@@ -64,7 +64,7 @@ const CWStringConst *CDXLScalarBitmapIndexProbe::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarBitmapIndexProbe::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarBitmapIndexProbe::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   // bitmap index probe has 1 child: the index condition list
   GPOS_ASSERT(1 == dxlnode->Arity());
 

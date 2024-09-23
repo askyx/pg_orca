@@ -23,9 +23,9 @@
 namespace gpopt {
 using namespace gpos;
 
-// hash maps ULONG -> array of ULONGs
-using UlongToBitSetMap = CHashMap<ULONG, CBitSet, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>,
-                                  CleanupRelease<CBitSet>>;
+// hash maps uint32_t -> array of ULONGs
+using UlongToBitSetMap = CHashMap<uint32_t, CBitSet, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                  CleanupDelete<uint32_t>, CleanupRelease<CBitSet>>;
 
 // forward declarations
 class CColRefSet;
@@ -70,7 +70,7 @@ class COptCtxt : public CTaskLocalStorageObject {
   IComparator *m_pcomp;
 
   // atomic counter for generating part index ids
-  ULONG m_auPartId;
+  uint32_t m_auPartId;
 
   // global CTE information
   CCTEInfo *m_pcteinfo;
@@ -82,20 +82,20 @@ class COptCtxt : public CTaskLocalStorageObject {
   COptimizerConfig *m_optimizer_config;
 
   // whether or not we are optimizing a DML query
-  BOOL m_fDMLQuery;
+  bool m_fDMLQuery;
 
   // value for the first valid part id
-  static ULONG m_ulFirstValidPartId;
+  static uint32_t m_ulFirstValidPartId;
 
   // if there are coordinator only tables in the query
-  BOOL m_has_coordinator_only_tables;
+  bool m_has_coordinator_only_tables;
 
   // does the query contain any volatile functions or
   // functions that read/modify SQL data
-  BOOL m_has_volatile_func{false};
+  bool m_has_volatile_func{false};
 
   // does the query have replicated tables
-  BOOL m_has_replicated_tables;
+  bool m_has_replicated_tables;
 
   // does this plan have a direct dispatchable filter
   CExpressionArray *m_direct_dispatchable_filters;
@@ -113,7 +113,7 @@ class COptCtxt : public CTaskLocalStorageObject {
   UlongToBitSetMap *m_scanid_to_part_map;
 
   // unique id per partition selector in the memo
-  ULONG m_selector_id_counter;
+  uint32_t m_selector_id_counter;
 
   // detailed info (filter expr, stats etc) per partition selector
   // (required by CDynamicPhysicalScan for recomputing statistics for DPE)
@@ -136,10 +136,10 @@ class COptCtxt : public CTaskLocalStorageObject {
   COptimizerConfig *GetOptimizerConfig() const { return m_optimizer_config; }
 
   // are we optimizing a DML query
-  BOOL FDMLQuery() const { return m_fDMLQuery; }
+  bool FDMLQuery() const { return m_fDMLQuery; }
 
   // set the DML flag
-  void MarkDMLQuery(BOOL fDMLQuery) { m_fDMLQuery = fDMLQuery; }
+  void MarkDMLQuery(bool fDMLQuery) { m_fDMLQuery = fDMLQuery; }
 
   void SetHasCoordinatorOnlyTables() { m_has_coordinator_only_tables = true; }
 
@@ -152,15 +152,15 @@ class COptCtxt : public CTaskLocalStorageObject {
     m_direct_dispatchable_filters->Append(filter_expression);
   }
 
-  BOOL HasCoordinatorOnlyTables() const { return m_has_coordinator_only_tables; }
+  bool HasCoordinatorOnlyTables() const { return m_has_coordinator_only_tables; }
 
-  BOOL HasVolatileFunc() const { return m_has_volatile_func; }
+  bool HasVolatileFunc() const { return m_has_volatile_func; }
 
-  BOOL HasReplicatedTables() const { return m_has_replicated_tables; }
+  bool HasReplicatedTables() const { return m_has_replicated_tables; }
 
   CExpressionArray *GetDirectDispatchableFilters() const { return m_direct_dispatchable_filters; }
 
-  BOOL OptimizeDMLQueryWithSingletonSegment() const {
+  bool OptimizeDMLQueryWithSingletonSegment() const {
     // A DML statement can be optimized by enforcing a gather motion on segment instead of coordinator,
     // whenever a singleton execution is needed.
     // This optmization can not be applied if the query contains any of the following:
@@ -189,22 +189,20 @@ class COptCtxt : public CTaskLocalStorageObject {
   CCTEInfo *Pcteinfo() { return m_pcteinfo; }
 
   // return a new part index id
-  ULONG
-  UlPartIndexNextVal() { return m_auPartId++; }
+  uint32_t UlPartIndexNextVal() { return m_auPartId++; }
 
-  ULONG
-  NextPartSelectorId() { return m_selector_id_counter++; }
+  uint32_t NextPartSelectorId() { return m_selector_id_counter++; }
 
   // required system columns
   CColRefArray *PdrgpcrSystemCols() const { return m_pdrgpcrSystemCols; }
 
-  void AddPartForScanId(ULONG scanid, ULONG index);
+  void AddPartForScanId(uint32_t scanid, uint32_t index);
 
-  CBitSet *GetPartitionsForScanId(ULONG scanid) { return m_scanid_to_part_map->Find(&scanid); }
+  CBitSet *GetPartitionsForScanId(uint32_t scanid) { return m_scanid_to_part_map->Find(&scanid); }
 
-  BOOL AddPartSelectorInfo(ULONG selector_id, SPartSelectorInfoEntry *entry);
+  bool AddPartSelectorInfo(uint32_t selector_id, SPartSelectorInfoEntry *entry);
 
-  const SPartSelectorInfoEntry *GetPartSelectorInfo(ULONG selector_id) const;
+  const SPartSelectorInfoEntry *GetPartSelectorInfo(uint32_t selector_id) const;
 
   // set required system columns
   void SetReqdSystemCols(CColRefArray *pdrgpcrSystemCols) {
@@ -224,7 +222,7 @@ class COptCtxt : public CTaskLocalStorageObject {
   }
 
   // return true if all enforcers are enabled
-  static BOOL FAllEnforcersEnabled();
+  static bool FAllEnforcersEnabled();
 
 };  // class COptCtxt
 }  // namespace gpopt

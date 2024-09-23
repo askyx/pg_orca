@@ -40,7 +40,7 @@ class CXformIntersectAll2LeftSemiJoin : public CXformExploration {
   EXformId Exfid() const override { return ExfIntersectAll2LeftSemiJoin; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformIntersectAll2LeftSemiJoin"; }
+  const char *SzId() const override { return "CXformIntersectAll2LeftSemiJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &  // exprhdl

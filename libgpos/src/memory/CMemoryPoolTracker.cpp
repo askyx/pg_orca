@@ -25,7 +25,7 @@
 
 using namespace gpos;
 
-#define GPOS_MEM_GUARD_SIZE (GPOS_SIZEOF(BYTE))
+#define GPOS_MEM_GUARD_SIZE (GPOS_SIZEOF(uint8_t))
 
 #define GPOS_MEM_ALLOC_HEADER_SIZE GPOS_MEM_ALIGNED_STRUCT_SIZE(SAllocHeader)
 
@@ -52,12 +52,12 @@ void CMemoryPoolTracker::RecordFree(SAllocHeader *header) {
   m_allocations_list.Remove(header);
 }
 
-void *CMemoryPoolTracker::NewImpl(const ULONG bytes, const CHAR *file, const ULONG line,
+void *CMemoryPoolTracker::NewImpl(const uint32_t bytes, const char *file, const uint32_t line,
                                   CMemoryPool::EAllocationType eat) {
   GPOS_ASSERT(bytes <= GPOS_MEM_ALLOC_MAX);
-  GPOS_ASSERT(bytes <= gpos::ulong_max);
+  GPOS_ASSERT(bytes <= UINT32_MAX);
 
-  ULONG alloc_size = GPOS_MEM_BYTES_TOTAL(bytes);
+  uint32_t alloc_size = GPOS_MEM_BYTES_TOTAL(bytes);
 
   void *ptr = clib::Malloc(alloc_size);
 
@@ -85,7 +85,7 @@ void *CMemoryPoolTracker::NewImpl(const ULONG bytes, const CHAR *file, const ULO
 #endif  // GPOS_DEBUG
 
   // add a footer with the allocation type (singleton/array)
-  BYTE *alloc_type = reinterpret_cast<BYTE *>(ptr_result) + bytes;
+  uint8_t *alloc_type = reinterpret_cast<uint8_t *>(ptr_result) + bytes;
   *alloc_type = eat;
 
   return ptr_result;
@@ -95,8 +95,8 @@ void *CMemoryPoolTracker::NewImpl(const ULONG bytes, const CHAR *file, const ULO
 void CMemoryPoolTracker::DeleteImpl(void *ptr, EAllocationType eat) {
   SAllocHeader *header = static_cast<SAllocHeader *>(ptr) - 1;
 
-  ULONG user_size = header->m_user_size;
-  BYTE *alloc_type = static_cast<BYTE *>(ptr) + user_size;
+  uint32_t user_size = header->m_user_size;
+  uint8_t *alloc_type = static_cast<uint8_t *>(ptr) + user_size;
 
   // this assert ensures we aren't writing past allocated memory
   GPOS_RTL_ASSERT(eat == EatUnknown || *alloc_type == eat);
@@ -114,8 +114,7 @@ void CMemoryPoolTracker::DeleteImpl(void *ptr, EAllocationType eat) {
 }
 
 // get user requested size of allocation
-ULONG
-CMemoryPoolTracker::UserSizeOfAlloc(const void *ptr) {
+uint32_t CMemoryPoolTracker::UserSizeOfAlloc(const void *ptr) {
   const SAllocHeader *header = static_cast<const SAllocHeader *>(ptr) - 1;
   return header->m_user_size;
 }

@@ -34,7 +34,7 @@ class CPartitionPropagationSpec : public CPropSpec {
  private:
   struct SPartPropSpecInfo : public CRefCount {
     // scan id of the DynamicScan
-    ULONG m_scan_id;
+    uint32_t m_scan_id;
 
     // info type: consumer or propagator
     EPartPropSpecInfoType m_type;
@@ -48,7 +48,7 @@ class CPartitionPropagationSpec : public CPropSpec {
     // filter expressions to generate partition pruning data in the translator (reqd only)
     CExpression *m_filter_expr = nullptr;
 
-    SPartPropSpecInfo(ULONG scan_id, EPartPropSpecInfoType type, IMDId *rool_rel_mdid)
+    SPartPropSpecInfo(uint32_t scan_id, EPartPropSpecInfoType type, IMDId *rool_rel_mdid)
         : m_scan_id(scan_id), m_type(type), m_root_rel_mdid(rool_rel_mdid) {
       GPOS_ASSERT(m_root_rel_mdid != nullptr);
 
@@ -63,11 +63,10 @@ class CPartitionPropagationSpec : public CPropSpec {
     }
 
     // hash function
-    ULONG
-    HashValue() const {
-      ULONG ulHash = m_root_rel_mdid->HashValue();
+    uint32_t HashValue() const {
+      uint32_t ulHash = m_root_rel_mdid->HashValue();
 
-      ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<ULONG>(&m_scan_id));
+      ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<uint32_t>(&m_scan_id));
       if (m_selector_ids) {
         ulHash = gpos::CombineHashes(ulHash, gpos::HashPtr<CBitSet>(m_selector_ids));
       }
@@ -81,21 +80,22 @@ class CPartitionPropagationSpec : public CPropSpec {
     IOstream &OsPrint(IOstream &os) const;
 
     // used for determining equality in memo (e.g in optimization contexts)
-    BOOL Equals(const SPartPropSpecInfo *) const;
+    bool Equals(const SPartPropSpecInfo *) const;
 
-    BOOL FSatisfies(const SPartPropSpecInfo *) const;
+    bool FSatisfies(const SPartPropSpecInfo *) const;
 
     // used for sorting SPartPropSpecInfo in an array
-    static INT CmpFunc(const void *val1, const void *val2);
+    static int32_t CmpFunc(const void *val1, const void *val2);
   };
 
   // partition required/derived info, sorted by scanid
-  using UlongToSPartPropSpecInfoMap = CHashMap<ULONG, SPartPropSpecInfo, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                               CleanupDelete<ULONG>, CleanupRelease<SPartPropSpecInfo>>;
+  using UlongToSPartPropSpecInfoMap =
+      CHashMap<uint32_t, SPartPropSpecInfo, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>, CleanupDelete<uint32_t>,
+               CleanupRelease<SPartPropSpecInfo>>;
 
   using UlongToSPartPropSpecInfoMapIter =
-      CHashMapIter<ULONG, SPartPropSpecInfo, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>,
-                   CleanupRelease<SPartPropSpecInfo>>;
+      CHashMapIter<uint32_t, SPartPropSpecInfo, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                   CleanupDelete<uint32_t>, CleanupRelease<SPartPropSpecInfo>>;
 
   UlongToSPartPropSpecInfoMap *m_part_prop_spec_infos = nullptr;
 
@@ -116,9 +116,8 @@ class CPartitionPropagationSpec : public CPropSpec {
                        CExpression *pexpr) override;
 
   // hash function
-  ULONG
-  HashValue() const override {
-    ULONG ulHash = 0;
+  uint32_t HashValue() const override {
+    uint32_t ulHash = 0;
 
     UlongToSPartPropSpecInfoMapIter hmulpi(m_part_prop_spec_infos);
     while (hmulpi.Advance()) {
@@ -138,22 +137,22 @@ class CPartitionPropagationSpec : public CPropSpec {
   // property type
   EPropSpecType Epst() const override { return EpstPartPropagation; }
 
-  BOOL Contains(ULONG scan_id) const { return m_scan_ids->Get(scan_id); }
+  bool Contains(uint32_t scan_id) const { return m_scan_ids->Get(scan_id); }
 
-  BOOL ContainsAnyConsumers() const;
+  bool ContainsAnyConsumers() const;
 
   // equality check to determine compatibility of derived & required properties
-  BOOL Equals(const CPartitionPropagationSpec *ppps) const;
+  bool Equals(const CPartitionPropagationSpec *ppps) const;
 
   // satisfies function
-  BOOL FSatisfies(const CPartitionPropagationSpec *pps_reqd) const;
+  bool FSatisfies(const CPartitionPropagationSpec *pps_reqd) const;
 
   // Check if there is an unsupported part prop spec between two properties
-  BOOL IsUnsupportedPartSelector(const CPartitionPropagationSpec *pps_reqd) const;
+  bool IsUnsupportedPartSelector(const CPartitionPropagationSpec *pps_reqd) const;
 
-  SPartPropSpecInfo *FindPartPropSpecInfo(ULONG scan_id) const;
+  SPartPropSpecInfo *FindPartPropSpecInfo(uint32_t scan_id) const;
 
-  void Insert(ULONG scan_id, EPartPropSpecInfoType type, IMDId *rool_rel_mdid, CBitSet *selector_ids,
+  void Insert(uint32_t scan_id, EPartPropSpecInfoType type, IMDId *rool_rel_mdid, CBitSet *selector_ids,
               CExpression *expr);
 
   void Insert(SPartPropSpecInfo *other);
@@ -162,12 +161,12 @@ class CPartitionPropagationSpec : public CPropSpec {
 
   void InsertAllowedConsumers(CPartitionPropagationSpec *pps, CBitSet *allowed_scan_ids);
 
-  void InsertAllExcept(CPartitionPropagationSpec *pps, ULONG scan_id);
+  void InsertAllExcept(CPartitionPropagationSpec *pps, uint32_t scan_id);
 
-  const CBitSet *SelectorIds(ULONG scan_id) const;
+  const CBitSet *SelectorIds(uint32_t scan_id) const;
 
   // is partition propagation required
-  BOOL FPartPropagationReqd() const { return true; }
+  bool FPartPropagationReqd() const { return true; }
 
   // print
   IOstream &OsPrint(IOstream &os) const override;

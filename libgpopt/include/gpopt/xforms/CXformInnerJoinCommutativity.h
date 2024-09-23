@@ -40,10 +40,10 @@ class CXformInnerJoinCommutativity : public CXformExploration {
   EXformId Exfid() const override { return ExfInnerJoinCommutativity; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformInnerJoinCommutativity"; }
+  const char *SzId() const override { return "CXformInnerJoinCommutativity"; }
 
   // compatibility function
-  BOOL FCompatible(CXform::EXformId exfid) override;
+  bool FCompatible(CXform::EXformId exfid) override;
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &  // exprhdl

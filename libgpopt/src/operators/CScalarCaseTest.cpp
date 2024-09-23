@@ -49,8 +49,7 @@ CScalarCaseTest::~CScalarCaseTest() {
 //		return type id
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarCaseTest::HashValue() const {
+uint32_t CScalarCaseTest::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), m_mdid_type->HashValue());
 }
 
@@ -62,7 +61,7 @@ CScalarCaseTest::HashValue() const {
 //		Not called for leaf operators
 //
 //---------------------------------------------------------------------------
-BOOL CScalarCaseTest::FInputOrderSensitive() const {
+bool CScalarCaseTest::FInputOrderSensitive() const {
   GPOS_ASSERT(!"Unexpected call of function FInputOrderSensitive");
   return false;
 }
@@ -75,7 +74,7 @@ BOOL CScalarCaseTest::FInputOrderSensitive() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarCaseTest::Matches(COperator *pop) const {
+bool CScalarCaseTest::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarCaseTest *popScCaseTest = CScalarCaseTest::PopConvert(pop);
 

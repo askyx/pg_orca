@@ -27,7 +27,7 @@ using namespace gpos;
 class CIOUtils {
  public:
   // dump given string to output file
-  static void Dump(CHAR *file_name, CHAR *sz);
+  static void Dump(char *file_name, char *sz);
 
 };  // class CIOUtils
 }  // namespace gpopt

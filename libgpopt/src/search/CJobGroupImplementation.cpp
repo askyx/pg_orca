@@ -64,11 +64,11 @@ const CJobGroupImplementation::EEvent
 #ifdef GPOS_DEBUG
 
 // names for states
-const WCHAR rgwszStates[CJobGroupImplementation::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
+const wchar_t rgwszStates[CJobGroupImplementation::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
     GPOS_WSZ_LIT("initialized"), GPOS_WSZ_LIT("implementing children"), GPOS_WSZ_LIT("completed")};
 
 // names for events
-const WCHAR rgwszEvents[CJobGroupImplementation::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
+const wchar_t rgwszEvents[CJobGroupImplementation::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
     GPOS_WSZ_LIT("ongoing exploration"), GPOS_WSZ_LIT("done exploration"), GPOS_WSZ_LIT("ongoing implementation"),
     GPOS_WSZ_LIT("finalizing")};
 
@@ -130,7 +130,7 @@ void CJobGroupImplementation::Init(CGroup *pgroup) {
 //		the function returns true if it could schedule any new jobs
 //
 //---------------------------------------------------------------------------
-BOOL CJobGroupImplementation::FScheduleGroupExpressions(CSchedulerContext *psc) {
+bool CJobGroupImplementation::FScheduleGroupExpressions(CSchedulerContext *psc) {
   CGroupExpression *pgexprLast = m_pgexprLastScheduled;
 
   // iterate on expression and schedule them as needed
@@ -148,7 +148,7 @@ BOOL CJobGroupImplementation::FScheduleGroupExpressions(CSchedulerContext *psc) 
     }
   }
 
-  BOOL fNewJobs = (m_pgexprLastScheduled != pgexprLast);
+  bool fNewJobs = (m_pgexprLastScheduled != pgexprLast);
 
   // set last scheduled expression
   m_pgexprLastScheduled = pgexprLast;
@@ -229,7 +229,7 @@ CJobGroupImplementation::EEvent CJobGroupImplementation::EevtImplementChildren(C
 //		Main job function
 //
 //---------------------------------------------------------------------------
-BOOL CJobGroupImplementation::FExecute(CSchedulerContext *psc) {
+bool CJobGroupImplementation::FExecute(CSchedulerContext *psc) {
   GPOS_ASSERT(FInit());
 
   return m_jsm.FRun(psc, this);

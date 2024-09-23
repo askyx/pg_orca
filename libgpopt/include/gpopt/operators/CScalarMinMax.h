@@ -42,8 +42,8 @@ class CScalarMinMax : public CScalar {
   // min/max type
   EScalarMinMaxType m_esmmt;
 
-  // is operator return type BOOL?
-  BOOL m_fBoolReturnType;
+  // is operator return type bool?
+  bool m_fBoolReturnType;
 
  public:
   CScalarMinMax(const CScalarMinMax &) = delete;
@@ -58,7 +58,7 @@ class CScalarMinMax : public CScalar {
   EOperatorId Eopid() const override { return EopScalarMinMax; }
 
   // operator name
-  const CHAR *SzId() const override { return "CScalarMinMax"; }
+  const char *SzId() const override { return "CScalarMinMax"; }
 
   // return type
   IMDId *MdidType() const override { return m_mdid_type; }
@@ -67,18 +67,18 @@ class CScalarMinMax : public CScalar {
   EScalarMinMaxType Esmmt() const { return m_esmmt; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

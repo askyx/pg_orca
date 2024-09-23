@@ -37,17 +37,17 @@ class CDXLScalarFieldSelect : public CDXLScalar {
   IMDId *m_dxl_field_collation;
 
   // output typmod (usually -1)
-  INT m_dxl_type_modifier;
+  int32_t m_dxl_type_modifier;
 
   // attribute number of field to extract
-  SINT m_dxl_field_number;
+  int16_t m_dxl_field_number;
 
  public:
   CDXLScalarFieldSelect(const CDXLScalarFieldSelect &) = delete;
 
   // ctor/dtor
-  CDXLScalarFieldSelect(CMemoryPool *mp, IMDId *field_type, IMDId *field_collation, INT type_modifier,
-                        SINT field_number);
+  CDXLScalarFieldSelect(CMemoryPool *mp, IMDId *field_type, IMDId *field_collation, int32_t type_modifier,
+                        int16_t field_number);
 
   ~CDXLScalarFieldSelect() override;
 
@@ -66,10 +66,10 @@ class CDXLScalarFieldSelect : public CDXLScalar {
   IMDId *GetDXLFieldCollation() const;
 
   // output type mode
-  INT GetDXLTypeModifier() const;
+  int32_t GetDXLTypeModifier() const;
 
   // attribute number of the field
-  SINT GetDXLFieldNumber() const;
+  int16_t GetDXLFieldNumber() const;
 
   // conversion function
   static CDXLScalarFieldSelect *Cast(CDXLOperator *dxl_op) {
@@ -80,7 +80,7 @@ class CDXLScalarFieldSelect : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     return true;
   }
@@ -88,7 +88,7 @@ class CDXLScalarFieldSelect : public CDXLScalar {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

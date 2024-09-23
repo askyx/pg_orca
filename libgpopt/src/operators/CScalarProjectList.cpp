@@ -40,7 +40,7 @@ CScalarProjectList::CScalarProjectList(CMemoryPool *mp) : CScalar(mp) {}
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarProjectList::Matches(COperator *pop) const {
+bool CScalarProjectList::Matches(COperator *pop) const {
   return (pop->Eopid() == Eopid());
 }
 
@@ -53,7 +53,7 @@ BOOL CScalarProjectList::Matches(COperator *pop) const {
 //		elements;
 //
 //---------------------------------------------------------------------------
-BOOL CScalarProjectList::FInputOrderSensitive() const {
+bool CScalarProjectList::FInputOrderSensitive() const {
   return false;
 }
 
@@ -65,8 +65,7 @@ BOOL CScalarProjectList::FInputOrderSensitive() const {
 //		Return number of Distinct Aggs in the given project list
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarProjectList::UlDistinctAggs(CExpressionHandle &exprhdl) {
+uint32_t CScalarProjectList::UlDistinctAggs(CExpressionHandle &exprhdl) {
   // We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
   // knowing that at this time, aggregate functions are accurately contained in it. What's not
   // exact are subqueries. This is better than just returning 0 for project lists with subqueries.
@@ -75,9 +74,9 @@ CScalarProjectList::UlDistinctAggs(CExpressionHandle &exprhdl) {
   GPOS_ASSERT(nullptr != pexprPrjList);
   GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
 
-  ULONG ulDistinctAggs = 0;
-  const ULONG arity = pexprPrjList->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  uint32_t ulDistinctAggs = 0;
+  const uint32_t arity = pexprPrjList->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrjEl = (*pexprPrjList)[ul];
     CExpression *pexprChild = (*pexprPrjEl)[0];
     COperator::EOperatorId eopidChild = pexprChild->Pop()->Eopid();
@@ -98,8 +97,7 @@ CScalarProjectList::UlDistinctAggs(CExpressionHandle &exprhdl) {
   return ulDistinctAggs;
 }
 
-ULONG
-CScalarProjectList::UlOrderedAggs(CExpressionHandle &exprhdl) {
+uint32_t CScalarProjectList::UlOrderedAggs(CExpressionHandle &exprhdl) {
   // We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
   // knowing that at this time, aggregate functions are accurately contained in it. What's not
   // exact are subqueries. This is better than just returning 0 for project lists with subqueries.
@@ -108,9 +106,9 @@ CScalarProjectList::UlOrderedAggs(CExpressionHandle &exprhdl) {
   GPOS_ASSERT(nullptr != pexprPrjList);
   GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
 
-  ULONG ulOrderedAggs = 0;
-  const ULONG arity = pexprPrjList->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  uint32_t ulOrderedAggs = 0;
+  const uint32_t arity = pexprPrjList->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrjEl = (*pexprPrjList)[ul];
     CExpression *pexprChild = (*pexprPrjEl)[0];
     COperator::EOperatorId eopidChild = pexprChild->Pop()->Eopid();
@@ -136,7 +134,7 @@ CScalarProjectList::UlOrderedAggs(CExpressionHandle &exprhdl) {
 //			select count(distinct a) over(), sum(distinct b) over() from T;
 //
 //---------------------------------------------------------------------------
-BOOL CScalarProjectList::FHasMultipleDistinctAggs(CExpressionHandle &exprhdl) {
+bool CScalarProjectList::FHasMultipleDistinctAggs(CExpressionHandle &exprhdl) {
   // We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
   // knowing that at this time, aggregate functions are accurately contained in it. What's not
   // exact are subqueries. This is better than just returning false for project lists with subqueries.
@@ -149,7 +147,7 @@ BOOL CScalarProjectList::FHasMultipleDistinctAggs(CExpressionHandle &exprhdl) {
 
   CAutoMemoryPool amp;
   ExprToExprArrayMap *phmexprdrgpexpr = nullptr;
-  ULONG ulDifferentDQAs = 0;
+  uint32_t ulDifferentDQAs = 0;
   CXformUtils::MapPrjElemsWithDistinctAggs(amp.Pmp(), pexprPrjList, &phmexprdrgpexpr, &ulDifferentDQAs);
   phmexprdrgpexpr->Release();
 
@@ -165,7 +163,7 @@ BOOL CScalarProjectList::FHasMultipleDistinctAggs(CExpressionHandle &exprhdl) {
 //			select random() from T;
 //
 //---------------------------------------------------------------------------
-BOOL CScalarProjectList::FHasScalarFunc(CExpressionHandle &exprhdl) {
+bool CScalarProjectList::FHasScalarFunc(CExpressionHandle &exprhdl) {
   // We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
   // knowing that at this time, aggregate functions are accurately contained in it. What's not
   // exact are subqueries. This is better than just returning 0 for project lists with subqueries.
@@ -174,8 +172,8 @@ BOOL CScalarProjectList::FHasScalarFunc(CExpressionHandle &exprhdl) {
   GPOS_ASSERT(nullptr != pexprPrjList);
   GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
 
-  const ULONG arity = pexprPrjList->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = pexprPrjList->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrjEl = (*pexprPrjList)[ul];
     CExpression *pexprChild = (*pexprPrjEl)[0];
     COperator::EOperatorId eopidChild = pexprChild->Pop()->Eopid();
@@ -197,7 +195,7 @@ BOOL CScalarProjectList::FHasScalarFunc(CExpressionHandle &exprhdl) {
 //      which allows it to be executed safely on replicated slices.
 //
 //---------------------------------------------------------------------------
-BOOL CScalarProjectList::FContainsOnlyReplicationSafeAggFuncs(CExpressionHandle &exprhdl) {
+bool CScalarProjectList::FContainsOnlyReplicationSafeAggFuncs(CExpressionHandle &exprhdl) {
   // We make do with an inexact representative expression returned by exprhdl.PexprScalarRep(),
   // knowing that at this time, aggregate functions are accurately contained in it. What's not
   // exact are subqueries. This is better than just returning 0 for project lists with subqueries.
@@ -206,8 +204,8 @@ BOOL CScalarProjectList::FContainsOnlyReplicationSafeAggFuncs(CExpressionHandle 
   GPOS_ASSERT(nullptr != pexprPrjList);
   GPOS_ASSERT(COperator::EopScalarProjectList == pexprPrjList->Pop()->Eopid());
 
-  const ULONG arity = pexprPrjList->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = pexprPrjList->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrjEl = (*pexprPrjList)[ul];
     CExpression *pexprAggFunc = (*pexprPrjEl)[0];
     if (EopScalarAggFunc != pexprAggFunc->Pop()->Eopid()) {

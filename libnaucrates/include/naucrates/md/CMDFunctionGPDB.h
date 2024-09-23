@@ -48,20 +48,20 @@ class CMDFunctionGPDB : public IMDFunction {
   IMdIdArray *m_mdid_types_array;
 
   // whether function returns a set of values
-  BOOL m_returns_set;
+  bool m_returns_set;
 
   // function stability
   EFuncStbl m_func_stability;
 
   // function strictness (i.e. whether func returns NULL on NULL input)
-  BOOL m_is_strict;
+  bool m_is_strict;
 
   // function result has very similar number of distinct values as the
   // single function argument (used for cardinality estimation)
-  BOOL m_is_ndv_preserving;
+  bool m_is_ndv_preserving;
 
   // is an increasing function (non-implicit/lossy cast) which can be used for partition selection
-  BOOL m_is_allowed_for_PS;
+  bool m_is_allowed_for_PS;
 
   // dxl token array for stability
   Edxltoken m_dxl_func_stability_array[EfsSentinel];
@@ -80,8 +80,8 @@ class CMDFunctionGPDB : public IMDFunction {
 
   // ctor/dtor
   CMDFunctionGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *result_type_mdid, IMdIdArray *mdid_array,
-                  BOOL ReturnsSet, EFuncStbl func_stability, BOOL is_strict, BOOL is_ndv_preserving,
-                  BOOL is_allowed_for_PS);
+                  bool ReturnsSet, EFuncStbl func_stability, bool is_strict, bool is_ndv_preserving,
+                  bool is_allowed_for_PS);
 
   ~CMDFunctionGPDB() override;
 
@@ -100,18 +100,18 @@ class CMDFunctionGPDB : public IMDFunction {
   IMdIdArray *OutputArgTypesMdidArray() const override;
 
   // does function return NULL on NULL input
-  BOOL IsStrict() const override { return m_is_strict; }
+  bool IsStrict() const override { return m_is_strict; }
 
-  BOOL IsNDVPreserving() const override { return m_is_ndv_preserving; }
+  bool IsNDVPreserving() const override { return m_is_ndv_preserving; }
 
   // is this function a lossy cast allowed for Partition selection
-  BOOL IsAllowedForPS() const override { return m_is_allowed_for_PS; }
+  bool IsAllowedForPS() const override { return m_is_allowed_for_PS; }
 
   // function stability
   EFuncStbl GetFuncStability() const override { return m_func_stability; }
 
   // does function return a set of values
-  BOOL ReturnsSet() const override;
+  bool ReturnsSet() const override;
 
   // serialize object in DXL format
 

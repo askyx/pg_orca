@@ -49,8 +49,8 @@ class CSyncHashtableAccessByKey : public CSyncHashtableAccessorBase<T, K> {
 
 #ifdef GPOS_DEBUG
   // returns true if current bucket matches key
-  BOOL CurrentBucketMatchesKey(const K &key) const {
-    ULONG bucket_idx = Base::GetHashTable().GetBucketIndex(key);
+  bool CurrentBucketMatchesKey(const K &key) const {
+    uint32_t bucket_idx = Base::GetHashTable().GetBucketIndex(key);
 
     return &(Base::GetHashTable().GetBucket(bucket_idx)) == &(Base::GetBucket());
   }

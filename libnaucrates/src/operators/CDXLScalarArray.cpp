@@ -25,7 +25,7 @@ using namespace gpdxl;
 //
 //---------------------------------------------------------------------------
 CDXLScalarArray::CDXLScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid,
-                                 BOOL multi_dimensional_array)
+                                 bool multi_dimensional_array)
     : CDXLScalar(mp),
       m_elem_type_mdid(elem_type_mdid),
       m_array_type_mdid(array_type_mdid),
@@ -103,7 +103,7 @@ IMDId *CDXLScalarArray::ArrayTypeMDid() const {
 //		Is this a multi-dimensional array
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarArray::IsMultiDimensional() const {
+bool CDXLScalarArray::IsMultiDimensional() const {
   return m_multi_dimensional_array;
 }
 
@@ -116,9 +116,9 @@ BOOL CDXLScalarArray::IsMultiDimensional() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarArray::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
-  const ULONG arity = dxlnode->Arity();
-  for (ULONG ul = 0; ul < arity; ++ul) {
+void CDXLScalarArray::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
+  const uint32_t arity = dxlnode->Arity();
+  for (uint32_t ul = 0; ul < arity; ++ul) {
     CDXLNode *child_dxlnode = (*dxlnode)[ul];
     GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
 

@@ -37,7 +37,7 @@ class CDXLStatsDerivedRelation : public CRefCount {
   CDouble m_rows;
 
   // flag to indicate if input relation is empty
-  BOOL m_empty;
+  bool m_empty;
 
   // array of derived column statistics
   CDXLStatsDerivedColumnArray *m_dxl_stats_derived_col_array;
@@ -46,7 +46,7 @@ class CDXLStatsDerivedRelation : public CRefCount {
   CDXLStatsDerivedRelation(const CDXLStatsDerivedRelation &) = delete;
 
   // ctor
-  CDXLStatsDerivedRelation(CDouble rows, BOOL is_empty, CDXLStatsDerivedColumnArray *dxl_stats_derived_col_array);
+  CDXLStatsDerivedRelation(CDouble rows, bool is_empty, CDXLStatsDerivedColumnArray *dxl_stats_derived_col_array);
 
   // dtor
   ~CDXLStatsDerivedRelation() override;
@@ -55,7 +55,7 @@ class CDXLStatsDerivedRelation : public CRefCount {
   CDouble Rows() const { return m_rows; }
 
   // is statistics on an empty input
-  virtual BOOL IsEmpty() const { return m_empty; }
+  virtual bool IsEmpty() const { return m_empty; }
 
   // derived column statistics
   const CDXLStatsDerivedColumnArray *GetDXLStatsDerivedColArray() const;

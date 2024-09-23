@@ -82,19 +82,19 @@ const CWStringConst *CDXLScalarBoolExpr::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarBoolExpr::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarBoolExpr::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   EdxlBoolExprType dxl_bool_type = ((CDXLScalarBoolExpr *)dxlnode->GetOperator())->GetDxlBoolTypeStr();
 
   GPOS_ASSERT((dxl_bool_type == Edxlnot) || (dxl_bool_type == Edxlor) || (dxl_bool_type == Edxland));
 
-  const ULONG arity = dxlnode->Arity();
+  const uint32_t arity = dxlnode->Arity();
   if (dxl_bool_type == Edxlnot) {
     GPOS_ASSERT(1 == arity);
   } else {
     GPOS_ASSERT(2 <= arity);
   }
 
-  for (ULONG ul = 0; ul < arity; ++ul) {
+  for (uint32_t ul = 0; ul < arity; ++ul) {
     CDXLNode *dxlnode_arg = (*dxlnode)[ul];
     GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 

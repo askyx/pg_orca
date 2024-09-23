@@ -43,7 +43,7 @@ class CXformGbAgg2StreamAgg : public CXformImplementation {
   EXformId Exfid() const override { return ExfGbAgg2StreamAgg; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformGbAgg2StreamAgg"; }
+  const char *SzId() const override { return "CXformGbAgg2StreamAgg"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

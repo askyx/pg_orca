@@ -42,10 +42,10 @@ class CLogicalInnerApply : public CLogicalApply {
   EOperatorId Eopid() const override { return EopLogicalInnerApply; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalInnerApply"; }
+  const char *SzId() const override { return "CLogicalInnerApply"; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties

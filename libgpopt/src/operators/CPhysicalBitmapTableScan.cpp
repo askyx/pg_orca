@@ -31,7 +31,7 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalBitmapTableScan::CPhysicalBitmapTableScan(CMemoryPool *mp, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
+CPhysicalBitmapTableScan::CPhysicalBitmapTableScan(CMemoryPool *mp, CTableDescriptor *ptabdesc, uint32_t ulOriginOpId,
                                                    const CName *pnameTableAlias, CColRefArray *pdrgpcrOutput)
     : CPhysicalScan(mp, pnameTableAlias, ptabdesc, pdrgpcrOutput), m_ulOriginOpId(ulOriginOpId) {
   GPOS_ASSERT(nullptr != mp);
@@ -47,9 +47,8 @@ CPhysicalBitmapTableScan::CPhysicalBitmapTableScan(CMemoryPool *mp, CTableDescri
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysicalBitmapTableScan::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
+uint32_t CPhysicalBitmapTableScan::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
 
   return ulHash;
@@ -63,7 +62,7 @@ CPhysicalBitmapTableScan::HashValue() const {
 //		Match this operator with the given one.
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalBitmapTableScan::Matches(COperator *pop) const {
+bool CPhysicalBitmapTableScan::Matches(COperator *pop) const {
   return CUtils::FMatchBitmapScan(this, pop);
 }
 

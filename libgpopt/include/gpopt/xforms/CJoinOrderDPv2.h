@@ -136,13 +136,13 @@ class CJoinOrderDPv2 : public CJoinOrder {
   struct SExpressionProperties {
     // the join order enumeration algorithm for which this is a solution
     // (exhaustive enumeration, can use any of these: EJoinOrderAny)
-    ULONG m_join_order;
+    uint32_t m_join_order;
 
-    SExpressionProperties(ULONG join_order_properties) : m_join_order(join_order_properties) {}
+    SExpressionProperties(uint32_t join_order_properties) : m_join_order(join_order_properties) {}
 
-    BOOL Satisfies(ULONG pt) const { return pt == (m_join_order & pt); }
+    bool Satisfies(uint32_t pt) const { return pt == (m_join_order & pt); }
     void Add(const SExpressionProperties &p) { m_join_order |= p.m_join_order; }
-    BOOL IsGreedy() const {
+    bool IsGreedy() const {
       return 0 != (m_join_order & (EJoinOrderQuery + EJoinOrderMincard + EJoinOrderGreedyAvoidXProd));
     }
   };
@@ -151,15 +151,15 @@ class CJoinOrderDPv2 : public CJoinOrder {
   // this identifies a group and one expression belonging to that group
   struct SGroupAndExpression {
     SGroupInfo *m_group_info{nullptr};
-    ULONG m_expr_index{gpos::ulong_max};
+    uint32_t m_expr_index{UINT32_MAX};
 
     SGroupAndExpression() = default;
-    SGroupAndExpression(SGroupInfo *g, ULONG ix) : m_group_info(g), m_expr_index(ix) {}
+    SGroupAndExpression(SGroupInfo *g, uint32_t ix) : m_group_info(g), m_expr_index(ix) {}
     SExpressionInfo *GetExprInfo() const {
-      return m_expr_index == gpos::ulong_max ? nullptr : (*m_group_info->m_best_expr_info_array)[m_expr_index];
+      return m_expr_index == UINT32_MAX ? nullptr : (*m_group_info->m_best_expr_info_array)[m_expr_index];
     }
-    BOOL IsValid() const { return nullptr != m_group_info && gpos::ulong_max != m_expr_index; }
-    BOOL operator==(const SGroupAndExpression &other) const {
+    bool IsValid() const { return nullptr != m_group_info && UINT32_MAX != m_expr_index; }
+    bool operator==(const SGroupAndExpression &other) const {
       return m_group_info == other.m_group_info && m_expr_index == other.m_expr_index;
     }
   };
@@ -236,7 +236,7 @@ class CJoinOrderDPv2 : public CJoinOrder {
     CDouble GetCost() const { return m_cost + m_cost_adj_PS; }
 
     void UnionPSProperties(SExpressionInfo *other) const { m_contain_PS->Union(other->m_contain_PS); }
-    BOOL ChildrenAreEqual(const SExpressionInfo &other) const {
+    bool ChildrenAreEqual(const SExpressionInfo &other) const {
       return m_left_child_expr == other.m_left_child_expr && m_right_child_expr == other.m_right_child_expr;
     }
   };
@@ -269,7 +269,7 @@ class CJoinOrderDPv2 : public CJoinOrder {
       m_best_expr_info_array->Release();
     }
 
-    BOOL IsAnAtom() const { return 1 == m_atoms->Size(); }
+    bool IsAnAtom() const { return 1 == m_atoms->Size(); }
     CDouble GetCostForHeap() const { return m_lowest_expr_cost; }
   };
 
@@ -278,11 +278,11 @@ class CJoinOrderDPv2 : public CJoinOrder {
 
   // info for a join level, the set of all groups representing <m_level>-way joins
   struct SLevelInfo : public CRefCount {
-    ULONG m_level;
+    uint32_t m_level;
     SGroupInfoArray *m_groups;
     CKHeap<SGroupInfoArray, SGroupInfo> *m_top_k_groups;
 
-    SLevelInfo(ULONG level, SGroupInfoArray *groups) : m_level(level), m_groups(groups), m_top_k_groups(nullptr) {}
+    SLevelInfo(uint32_t level, SGroupInfoArray *groups) : m_level(level), m_groups(groups), m_top_k_groups(nullptr) {}
 
     ~SLevelInfo() override {
       m_groups->Release();
@@ -291,14 +291,14 @@ class CJoinOrderDPv2 : public CJoinOrder {
   };
 
   // hashing function
-  static ULONG UlHashBitSet(const CBitSet *pbs) {
+  static uint32_t UlHashBitSet(const CBitSet *pbs) {
     GPOS_ASSERT(nullptr != pbs);
 
     return pbs->HashValue();
   }
 
   // equality function
-  static BOOL FEqualBitSet(const CBitSet *pbsFst, const CBitSet *pbsSnd) {
+  static bool FEqualBitSet(const CBitSet *pbsFst, const CBitSet *pbsSnd) {
     GPOS_ASSERT(nullptr != pbsFst);
     GPOS_ASSERT(nullptr != pbsSnd);
 
@@ -356,7 +356,7 @@ class CJoinOrderDPv2 : public CJoinOrder {
 
   CMemoryPool *m_mp;
 
-  SLevelInfo *Level(ULONG l) { return (*m_join_levels)[l]; }
+  SLevelInfo *Level(uint32_t l) { return (*m_join_levels)[l]; }
 
   // build expression linking given groups
   CExpression *PexprBuildInnerJoinPred(CBitSet *pbsFst, CBitSet *pbsSnd);
@@ -377,9 +377,9 @@ class CJoinOrderDPv2 : public CJoinOrder {
 
   // enumerate all possible joins between left_level-way joins on the left side
   // and right_level-way joins on the right side, resulting in left_level + right_level-way joins
-  void SearchJoinOrders(ULONG left_level, ULONG right_level);
+  void SearchJoinOrders(uint32_t left_level, uint32_t right_level);
 
-  void GreedySearchJoinOrders(ULONG left_level, JoinOrderPropType algo);
+  void GreedySearchJoinOrders(uint32_t left_level, JoinOrderPropType algo);
 
   void DeriveStats(CExpression *pexpr) override;
 
@@ -392,10 +392,10 @@ class CJoinOrderDPv2 : public CJoinOrder {
                                SExpressionProperties &result_properties);
 
   // does "prop" provide all the properties of "other_prop" plus maybe more?
-  static BOOL IsASupersetOfProperties(SExpressionProperties &prop, SExpressionProperties &other_prop);
+  static bool IsASupersetOfProperties(SExpressionProperties &prop, SExpressionProperties &other_prop);
 
   // is one of the properties a subset of the other or are they disjoint?
-  static BOOL ArePropertiesDisjoint(SExpressionProperties &prop, SExpressionProperties &other_prop);
+  static bool ArePropertiesDisjoint(SExpressionProperties &prop, SExpressionProperties &other_prop);
 
   // get best expression in a group for a given set of properties
   static SGroupAndExpression GetBestExprForProperties(SGroupInfo *group_info, SExpressionProperties &props);
@@ -404,7 +404,7 @@ class CJoinOrderDPv2 : public CJoinOrder {
   static void AddNewPropertyToExpr(SExpressionInfo *expr_info, SExpressionProperties props);
 
   // enumerate bushy joins (joins where both children are also joins) of level "current_level"
-  void SearchBushyJoinOrders(ULONG current_level);
+  void SearchBushyJoinOrders(uint32_t current_level);
 
   // look up an existing group or create a new one, with an expression to be used for stats
   SGroupInfo *LookupOrCreateGroupInfo(SLevelInfo *levelInfo, CBitSet *atoms, SExpressionInfo *stats_expr_info);
@@ -413,16 +413,16 @@ class CJoinOrderDPv2 : public CJoinOrder {
 
   void PopulateDPEInfo(SExpressionInfo *join_expr_info, SGroupInfo *left_group_info, SGroupInfo *right_group_info);
 
-  void FinalizeDPLevel(ULONG level);
+  void FinalizeDPLevel(uint32_t level);
 
   CDouble CostJoinWithPartitionSelection(SExpressionInfo *join_expr_info, SExpressionInfo *atom_ps, SGroupInfo *pt_atom,
                                          SGroupInfo *part_selector_group_info);
 
-  SGroupInfoArray *GetGroupsForLevel(ULONG level) const { return (*m_join_levels)[level]->m_groups; }
+  SGroupInfoArray *GetGroupsForLevel(uint32_t level) const { return (*m_join_levels)[level]->m_groups; }
 
-  ULONG FindLogicalChildByNijId(ULONG nij_num);
-  static ULONG NChooseK(ULONG n, ULONG k);
-  BOOL LevelIsFull(ULONG level);
+  uint32_t FindLogicalChildByNijId(uint32_t nij_num);
+  static uint32_t NChooseK(uint32_t n, uint32_t k);
+  bool LevelIsFull(uint32_t level);
 
   void EnumerateDP();
   void EnumerateQuery();
@@ -444,7 +444,7 @@ class CJoinOrderDPv2 : public CJoinOrder {
   CExpression *GetNextOfTopK();
 
   // check for NIJs
-  BOOL IsRightChildOfNIJ(SGroupInfo *groupInfo, CExpression **onPredToUse = nullptr,
+  bool IsRightChildOfNIJ(SGroupInfo *groupInfo, CExpression **onPredToUse = nullptr,
                          CBitSet **requiredBitsOnLeft = nullptr);
 
   // print function

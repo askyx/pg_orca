@@ -27,7 +27,7 @@ using namespace gpopt;
 //		Helper for splitting correlations into external and residual
 //
 //---------------------------------------------------------------------------
-BOOL CXformLeftSemiApplyWithExternalCorrs2InnerJoin::FSplitCorrelations(
+bool CXformLeftSemiApplyWithExternalCorrs2InnerJoin::FSplitCorrelations(
     CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner, CExpressionArray *pdrgpexprAllCorr,
     CExpressionArray **ppdrgpexprExternal, CExpressionArray **ppdrgpexprResidual, CColRefSet **ppcrsInnerUsed) {
   GPOS_ASSERT(nullptr != pexprOuter);
@@ -46,10 +46,10 @@ BOOL CXformLeftSemiApplyWithExternalCorrs2InnerJoin::FSplitCorrelations(
   // split correlations into external correlations and residual correlations
   CExpressionArray *pdrgpexprExternal = GPOS_NEW(mp) CExpressionArray(mp);
   CExpressionArray *pdrgpexprResidual = GPOS_NEW(mp) CExpressionArray(mp);
-  const ULONG ulCorrs = pdrgpexprAllCorr->Size();
+  const uint32_t ulCorrs = pdrgpexprAllCorr->Size();
   CColRefSet *pcrsUsed = GPOS_NEW(mp) CColRefSet(mp);  // set of inner columns used in external correlations
-  BOOL fSuccess = true;
-  for (ULONG ul = 0; fSuccess && ul < ulCorrs; ul++) {
+  bool fSuccess = true;
+  for (uint32_t ul = 0; fSuccess && ul < ulCorrs; ul++) {
     CExpression *pexprCurrent = (*pdrgpexprAllCorr)[ul];
     CColRefSet *pcrsCurrent = GPOS_NEW(mp) CColRefSet(mp, *pexprCurrent->DeriveUsedColumns());
     if (pcrsCurrent->IsDisjoint(pcrsOuterOuput) || pcrsCurrent->IsDisjoint(pcrsInnerOuput)) {
@@ -96,7 +96,7 @@ BOOL CXformLeftSemiApplyWithExternalCorrs2InnerJoin::FSplitCorrelations(
 //		Helper for collecting correlations from LSA expression
 //
 //---------------------------------------------------------------------------
-BOOL CXformLeftSemiApplyWithExternalCorrs2InnerJoin::FDecorrelate(CMemoryPool *mp, CExpression *pexpr,
+bool CXformLeftSemiApplyWithExternalCorrs2InnerJoin::FDecorrelate(CMemoryPool *mp, CExpression *pexpr,
                                                                   CExpression **ppexprInnerNew,
                                                                   CExpressionArray **ppdrgpexprCorr) {
   GPOS_ASSERT(nullptr != pexpr);

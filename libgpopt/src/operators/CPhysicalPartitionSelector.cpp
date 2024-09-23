@@ -27,8 +27,8 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalPartitionSelector::CPhysicalPartitionSelector(CMemoryPool *mp, ULONG scan_id, ULONG selector_id, IMDId *mdid,
-                                                       CExpression *pexprScalar)
+CPhysicalPartitionSelector::CPhysicalPartitionSelector(CMemoryPool *mp, uint32_t scan_id, uint32_t selector_id,
+                                                       IMDId *mdid, CExpression *pexprScalar)
     : CPhysical(mp), m_scan_id(scan_id), m_selector_id(selector_id), m_mdid(mdid), m_filter_expr(pexprScalar) {
   GPOS_ASSERT(0 < scan_id);
   GPOS_ASSERT(mdid->IsValid());
@@ -55,15 +55,15 @@ CPhysicalPartitionSelector::~CPhysicalPartitionSelector() {
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalPartitionSelector::Matches(COperator *pop) const {
+bool CPhysicalPartitionSelector::Matches(COperator *pop) const {
   if (Eopid() != pop->Eopid()) {
     return false;
   }
 
   CPhysicalPartitionSelector *popPartSelector = CPhysicalPartitionSelector::PopConvert(pop);
 
-  BOOL fScanIdCmp = popPartSelector->ScanId() == m_scan_id;
-  BOOL fMdidCmp = popPartSelector->MDId()->Equals(MDId());
+  bool fScanIdCmp = popPartSelector->ScanId() == m_scan_id;
+  bool fMdidCmp = popPartSelector->MDId()->Equals(MDId());
 
   return fScanIdCmp && fMdidCmp;
 }
@@ -76,8 +76,7 @@ BOOL CPhysicalPartitionSelector::Matches(COperator *pop) const {
 //		Hash operator
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysicalPartitionSelector::HashValue() const {
+uint32_t CPhysicalPartitionSelector::HashValue() const {
   return gpos::CombineHashes(Eopid(), gpos::CombineHashes(m_scan_id, MDId()->HashValue()));
 }
 
@@ -91,9 +90,9 @@ CPhysicalPartitionSelector::HashValue() const {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalPartitionSelector::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                                                     ULONG child_index,
+                                                     uint32_t child_index,
                                                      CDrvdPropArray *,  // pdrgpdpCtxt
-                                                     ULONG              // ulOptReq
+                                                     uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(0 == child_index && "Required properties can only be computed on the relational child");
 
@@ -113,9 +112,9 @@ CColRefSet *CPhysicalPartitionSelector::PcrsRequired(CMemoryPool *mp, CExpressio
 //
 //---------------------------------------------------------------------------
 COrderSpec *CPhysicalPartitionSelector::PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                    COrderSpec *posRequired, ULONG child_index,
+                                                    COrderSpec *posRequired, uint32_t child_index,
                                                     CDrvdPropArray *,  // pdrgpdpCtxt
-                                                    ULONG              // ulOptReq
+                                                    uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
 
@@ -133,13 +132,13 @@ COrderSpec *CPhysicalPartitionSelector::PosRequired(CMemoryPool *mp, CExpression
 CCTEReq *CPhysicalPartitionSelector::PcteRequired(CMemoryPool *,        // mp,
                                                   CExpressionHandle &,  // exprhdl,
                                                   CCTEReq *pcter,
-                                                  ULONG
+                                                  uint32_t
 #ifdef GPOS_DEBUG
                                                       child_index
 #endif
                                                   ,
                                                   CDrvdPropArray *,  // pdrgpdpCtxt,
-                                                  ULONG              // ulOptReq
+                                                  uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -147,8 +146,8 @@ CCTEReq *CPhysicalPartitionSelector::PcteRequired(CMemoryPool *,        // mp,
 
 CPartitionPropagationSpec *CPhysicalPartitionSelector::PppsRequired(CMemoryPool *mp, CExpressionHandle &,
                                                                     CPartitionPropagationSpec *pppsRequired,
-                                                                    ULONG child_index GPOS_ASSERTS_ONLY,
-                                                                    CDrvdPropArray *, ULONG) const {
+                                                                    uint32_t child_index GPOS_ASSERTS_ONLY,
+                                                                    CDrvdPropArray *, uint32_t) const {
   GPOS_ASSERT(child_index == 0);
 
   CPartitionPropagationSpec *pps_result = GPOS_NEW(mp) CPartitionPropagationSpec(mp);
@@ -164,8 +163,8 @@ CPartitionPropagationSpec *CPhysicalPartitionSelector::PppsRequired(CMemoryPool 
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalPartitionSelector::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                                   ULONG  // ulOptReq
+bool CPhysicalPartitionSelector::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                                   uint32_t  // ulOptReq
 ) const {
   return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }

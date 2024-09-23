@@ -41,7 +41,7 @@ class CXformImplementInnerJoin : public CXformImplementation {
   EXformId Exfid() const override { return ExfImplementInnerJoin; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformImplementInnerJoin"; }
+  const char *SzId() const override { return "CXformImplementInnerJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

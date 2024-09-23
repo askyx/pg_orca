@@ -33,7 +33,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDatumOidGPDB::CDatumOidGPDB(CSystemId sysid, OID oid_val, BOOL is_null)
+CDatumOidGPDB::CDatumOidGPDB(CSystemId sysid, OID oid_val, bool is_null)
     : m_mdid(nullptr), m_val(oid_val), m_is_null(is_null) {
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
   IMDId *mdid = dynamic_cast<const CMDTypeOidGPDB *>(md_accessor->PtMDType<IMDTypeOid>(sysid))->MDId();
@@ -43,7 +43,7 @@ CDatumOidGPDB::CDatumOidGPDB(CSystemId sysid, OID oid_val, BOOL is_null)
 
   if (IsNull()) {
     // needed for hash computation
-    m_val = gpos::int_max;
+    m_val = INT32_MAX;
   }
 }
 
@@ -55,14 +55,14 @@ CDatumOidGPDB::CDatumOidGPDB(CSystemId sysid, OID oid_val, BOOL is_null)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDatumOidGPDB::CDatumOidGPDB(IMDId *mdid, OID oid_val, BOOL is_null)
+CDatumOidGPDB::CDatumOidGPDB(IMDId *mdid, OID oid_val, bool is_null)
     : m_mdid(mdid), m_val(oid_val), m_is_null(is_null) {
   GPOS_ASSERT(nullptr != m_mdid);
   GPOS_ASSERT(GPDB_OID_OID == CMDIdGPDB::CastMdid(m_mdid)->Oid());
 
   if (IsNull()) {
     // needed for hash computation
-    m_val = gpos::int_max;
+    m_val = INT32_MAX;
   }
 }
 
@@ -98,7 +98,7 @@ OID CDatumOidGPDB::OidValue() const {
 //		Accessor of is null
 //
 //---------------------------------------------------------------------------
-BOOL CDatumOidGPDB::IsNull() const {
+bool CDatumOidGPDB::IsNull() const {
   return m_is_null;
 }
 
@@ -110,8 +110,7 @@ BOOL CDatumOidGPDB::IsNull() const {
 //		Accessor of size
 //
 //---------------------------------------------------------------------------
-ULONG
-CDatumOidGPDB::Size() const {
+uint32_t CDatumOidGPDB::Size() const {
   return 4;
 }
 
@@ -135,8 +134,7 @@ IMDId *CDatumOidGPDB::MDId() const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CDatumOidGPDB::HashValue() const {
+uint32_t CDatumOidGPDB::HashValue() const {
   return gpos::CombineHashes(m_mdid->HashValue(), gpos::HashValue<OID>(&m_val));
 }
 
@@ -167,7 +165,7 @@ const CWStringConst *CDatumOidGPDB::GetStrRepr(CMemoryPool *mp) const {
 //		Matches the values of datums
 //
 //---------------------------------------------------------------------------
-BOOL CDatumOidGPDB::Matches(const IDatum *datum) const {
+bool CDatumOidGPDB::Matches(const IDatum *datum) const {
   if (!datum->MDId()->Equals(m_mdid)) {
     return false;
   }

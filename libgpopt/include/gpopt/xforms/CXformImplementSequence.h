@@ -40,7 +40,7 @@ class CXformImplementSequence : public CXformImplementation {
   EXformId Exfid() const override { return ExfImplementSequence; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformImplementSequence"; }
+  const char *SzId() const override { return "CXformImplementSequence"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &  // exprhdl

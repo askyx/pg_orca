@@ -54,7 +54,7 @@ class CLogicalDML : public CLogical {
   CColRef *m_pcrSegmentId;
 
   // Split Update
-  BOOL m_fSplit;
+  bool m_fSplit;
 
  public:
   CLogicalDML(const CLogicalDML &) = delete;
@@ -73,7 +73,7 @@ class CLogicalDML : public CLogical {
   EOperatorId Eopid() const override { return EopLogicalDML; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalDML"; }
+  const char *SzId() const override { return "CLogicalDML"; }
 
   // dml operator
   EDMLOperator Edmlop() const { return m_edmlop; }
@@ -97,16 +97,16 @@ class CLogicalDML : public CLogical {
   CTableDescriptor *Ptabdesc() const { return m_ptabdesc; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -131,7 +131,7 @@ class CLogicalDML : public CLogical {
   CColRefSet *PcrsStat(CMemoryPool *,        // mp
                        CExpressionHandle &,  // exprhdl
                        CColRefSet *pcrsInput,
-                       ULONG  // child_index
+                       uint32_t  // child_index
   ) const override {
     return PcrsStatsPassThru(pcrsInput);
   }
@@ -168,7 +168,7 @@ class CLogicalDML : public CLogical {
   IOstream &OsPrint(IOstream &) const override;
 
   // Helper function to print DML operator type.
-  static void PrintOperatorType(IOstream &os, EDMLOperator, BOOL fSplit);
+  static void PrintOperatorType(IOstream &os, EDMLOperator, bool fSplit);
 
 };  // class CLogicalDML
 }  // namespace gpopt

@@ -83,12 +83,12 @@ class CCostContext : public CRefCount {
   CDrvdPropPlan *m_pdpplan;
 
   // optimization request number
-  ULONG m_ulOptReq;
+  uint32_t m_ulOptReq;
 
   // flag to indicate if cost context is pruned,
   // a cost context is pruned during branch-and-bound search if there exists
   // an equivalent context with better cost
-  BOOL m_fPruned;
+  bool m_fPruned;
 
   // stats of owner group expression
   IStatistics *m_pstats;
@@ -102,7 +102,7 @@ class CCostContext : public CRefCount {
   // for two cost contexts with join plans of the same cost, break the tie based on join depth,
   // if tie-resolution succeeded, store a pointer to preferred cost context in output argument
   static void BreakCostTiesForJoinPlans(const CCostContext *pccFst, const CCostContext *pccSnd,
-                                        CONST_COSTCTXT_PTR *ppccPrefered, BOOL *pfTiesResolved);
+                                        CONST_COSTCTXT_PTR *ppccPrefered, bool *pfTiesResolved);
 
  public:
   CCostContext(const CCostContext &) = delete;
@@ -114,7 +114,7 @@ class CCostContext : public CRefCount {
   SLink m_link;
 
   // ctor
-  CCostContext(CMemoryPool *mp, COptimizationContext *poc, ULONG ulOptReq, CGroupExpression *pgexpr);
+  CCostContext(CMemoryPool *mp, COptimizationContext *poc, uint32_t ulOptReq, CGroupExpression *pgexpr);
 
   // dtor
   ~CCostContext() override;
@@ -123,11 +123,10 @@ class CCostContext : public CRefCount {
   COptimizationContext *Poc() const { return m_poc; }
 
   // accessor of optimization request number
-  ULONG
-  UlOptReq() const { return m_ulOptReq; }
+  uint32_t UlOptReq() const { return m_ulOptReq; }
 
   // is context pruned based on cost comparison?
-  BOOL FPruned() const { return m_fPruned; }
+  bool FPruned() const { return m_fPruned; }
 
   // set pruned flag
   void SetPruned() {
@@ -155,10 +154,10 @@ class CCostContext : public CRefCount {
   IStatistics *Pstats() const { return m_pstats; }
 
   // check if we need to derive stats for this context
-  BOOL FNeedsNewStats() const;
+  bool FNeedsNewStats() const;
 
   // check if new stats were derived for this context
-  BOOL FOwnsStats() const;
+  bool FOwnsStats() const;
 
   // derived plan properties accessor
   CDrvdPropPlan *Pdpplan() const { return m_pdpplan; }
@@ -188,31 +187,31 @@ class CCostContext : public CRefCount {
   }
 
   // check validity by comparing derived and required properties
-  BOOL IsValid(CMemoryPool *mp);
+  bool IsValid(CMemoryPool *mp);
 
   // comparison operator
-  BOOL operator==(const CCostContext &cc) const;
+  bool operator==(const CCostContext &cc) const;
 
   // compute cost
   CCost CostCompute(CMemoryPool *mp, CCostArray *pdrgpcostChildren);
 
   // is current context better than the given equivalent context based on cost?
-  BOOL FBetterThan(const CCostContext *pcc) const;
+  bool FBetterThan(const CCostContext *pcc) const;
 
   // is this cost context of a two stage scalar DQA created by CXformSplitDQA
-  static BOOL IsTwoStageScalarDQACostCtxt(const CCostContext *pcc);
+  static bool IsTwoStageScalarDQACostCtxt(const CCostContext *pcc);
 
   // is this cost context of a three stage scalar DQA created by CXformSplitDQA
-  static BOOL IsThreeStageScalarDQACostCtxt(const CCostContext *pcc);
+  static bool IsThreeStageScalarDQACostCtxt(const CCostContext *pcc);
 
   // is this cost context of a multistage agg
-  static BOOL IsMultiStageAggCostCtxt(const CCostContext *pcc);
+  static bool IsMultiStageAggCostCtxt(const CCostContext *pcc);
 
   // is this cost context of a single stage agg
-  static BOOL IsSingleStageAggCostCtxt(const CCostContext *pcc);
+  static bool IsSingleStageAggCostCtxt(const CCostContext *pcc);
 
   // equality function
-  static BOOL Equals(const CCostContext &ccLeft, const CCostContext &ccRight) {
+  static bool Equals(const CCostContext &ccLeft, const CCostContext &ccRight) {
     // check if we are comparing against invalid context
     if (nullptr == ccLeft.Poc() || nullptr == ccRight.Poc()) {
       return nullptr == ccLeft.Poc() && nullptr == ccRight.Poc();
@@ -223,13 +222,13 @@ class CCostContext : public CRefCount {
   }
 
   // equality function
-  static BOOL Equals(const CCostContext *pccLeft, const CCostContext *pccRight) { return Equals(*pccLeft, *pccRight); }
+  static bool Equals(const CCostContext *pccLeft, const CCostContext *pccRight) { return Equals(*pccLeft, *pccRight); }
 
   // hash function
-  static ULONG HashValue(const CCostContext &cc) { return COptimizationContext::HashValue(*(cc.Poc())); }
+  static uint32_t HashValue(const CCostContext &cc) { return COptimizationContext::HashValue(*(cc.Poc())); }
 
   // hash function
-  static ULONG HashValue(const CCostContext *pcc) { return HashValue(*pcc); }
+  static uint32_t HashValue(const CCostContext *pcc) { return HashValue(*pcc); }
 
   // debug print
   IOstream &OsPrint(IOstream &os) const;

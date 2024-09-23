@@ -60,13 +60,13 @@ class CJoinOrder {
     // greedy, mincard: 0 means not an LOJ, 1 means this is an LOJ edge
     // DP: always 0
     // DPv2: 0 means inner join, >0: the index points to the entry in the array of ON predicates
-    ULONG m_loj_num;
+    uint32_t m_loj_num;
 
     // a flag to mark edge as used
-    BOOL m_fUsed;
+    bool m_fUsed;
 
     // ctor
-    SEdge(CMemoryPool *mp, CExpression *pexpr, ULONG loj_num);
+    SEdge(CMemoryPool *mp, CExpression *pexpr, uint32_t loj_num);
 
     // dtor
     ~SEdge() override;
@@ -94,7 +94,7 @@ class CJoinOrder {
     CExpression *m_pexpr;
 
     // a flag to component edge as used
-    BOOL m_fUsed;
+    bool m_fUsed;
 
     // for greedy and mincard:
     //
@@ -139,7 +139,7 @@ class CJoinOrder {
     // The components for T0 ... T5 will have the following m_parent_loj_id values:
     // T0  T1  T2  T3  T4  T5
     //  0   0   0   1   0   2
-    INT m_parent_loj_id;
+    int32_t m_parent_loj_id;
 
     // enum indicating that this component contains left or
     // right child of the LOJ
@@ -147,18 +147,18 @@ class CJoinOrder {
     EPosition m_position;
 
     // ctor
-    SComponent(CMemoryPool *mp, CExpression *expr, INT parent_loj_id = NON_LOJ_DEFAULT_ID,
+    SComponent(CMemoryPool *mp, CExpression *expr, int32_t parent_loj_id = NON_LOJ_DEFAULT_ID,
                EPosition position = EpSentinel);
 
     // ctor
-    SComponent(CExpression *expr, CBitSet *pbs, CBitSet *edge_set, INT parent_loj_id = NON_LOJ_DEFAULT_ID,
+    SComponent(CExpression *expr, CBitSet *pbs, CBitSet *edge_set, int32_t parent_loj_id = NON_LOJ_DEFAULT_ID,
                EPosition position = EpSentinel);
 
     // dtor
     ~SComponent() override;
 
     // get parent loj id
-    INT ParentLojId() const { return m_parent_loj_id; }
+    int32_t ParentLojId() const { return m_parent_loj_id; }
 
     // what is or must be the position of this component with
     // respect to parent LOJ
@@ -176,17 +176,17 @@ class CJoinOrder {
   SEdge **m_rgpedge;
 
   // number of edges
-  ULONG m_ulEdges;
+  uint32_t m_ulEdges;
 
   // components
   SComponent **m_rgpcomp;
 
   // number of components
-  ULONG m_ulComps;
+  uint32_t m_ulComps;
 
   // should we include loj childs for evaluating
   // join order
-  BOOL m_include_loj_childs;
+  bool m_include_loj_childs;
 
   // compute cover of each edge
   void ComputeEdgeCover();
@@ -201,7 +201,7 @@ class CJoinOrder {
   void MarkUsedEdges(SComponent *comp);
 
   // add component to to component array
-  void AddComponent(CMemoryPool *mp, CExpression *expr, INT loj_id, EPosition position, INT comp_num);
+  void AddComponent(CMemoryPool *mp, CExpression *expr, int32_t loj_id, EPosition position, int32_t comp_num);
 
  private:
  public:
@@ -209,7 +209,7 @@ class CJoinOrder {
 
   // ctor used in MinCard, Greedy and DP xforms
   CJoinOrder(CMemoryPool *mp, CExpressionArray *pdrgpexprComponents, CExpressionArray *pdrgpexprConjuncts,
-             BOOL include_outer_join_childs);
+             bool include_outer_join_childs);
 
   // ctor used in CXformExpandNAryJoinDPv2
   CJoinOrder(CMemoryPool *mp, CExpressionArray *pdrgpexprComponents, CExpressionArray *innerJoinPredConjuncts,
@@ -222,10 +222,10 @@ class CJoinOrder {
   IOstream &OsPrint(IOstream &) const;
 
   // is this a valid join combination
-  static BOOL IsValidJoinCombination(SComponent *comp1, SComponent *comp2);
+  static bool IsValidJoinCombination(SComponent *comp1, SComponent *comp2);
 
   // are these childs of the same LOJ
-  static BOOL IsChildOfSameLOJ(SComponent *comp1, SComponent *comp2);
+  static bool IsChildOfSameLOJ(SComponent *comp1, SComponent *comp2);
 
   virtual CXform::EXformId EOriginXForm() const { return CXform::ExfSentinel; }
 

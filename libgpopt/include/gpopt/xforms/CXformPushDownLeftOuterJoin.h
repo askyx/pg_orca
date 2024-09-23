@@ -44,7 +44,7 @@ class CXformPushDownLeftOuterJoin : public CXformExploration {
   EXformId Exfid() const override { return ExfPushDownLeftOuterJoin; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformPushDownLeftOuterJoin"; }
+  const char *SzId() const override { return "CXformPushDownLeftOuterJoin"; }
 
   // actual transform
   void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;

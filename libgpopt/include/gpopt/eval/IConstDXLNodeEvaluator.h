@@ -45,7 +45,7 @@ class IConstDXLNodeEvaluator {
 
   // returns true iff the evaluator can evaluate constant expressions without
   // subqueries
-  virtual gpos::BOOL FCanEvalExpressions() = 0;
+  virtual bool FCanEvalExpressions() = 0;
 };
 }  // namespace gpopt
 

@@ -17,7 +17,7 @@
 #include "naucrates/md/CMDName.h"
 #include "naucrates/md/IMDId.h"
 
-#define GPDXL_ACL_UNDEFINED (gpos::ulong_max)
+#define GPDXL_ACL_UNDEFINED (UINT32_MAX)
 // default value for m_assigned_query_id_for_target_rel - no assigned query for table descriptor
 #define UNASSIGNED_QUERYID 0
 
@@ -44,26 +44,26 @@ class CDXLTableDescr : public CRefCount {
   CDXLColDescrArray *m_dxl_column_descr_array;
 
   // id of user the table needs to be accessed with
-  ULONG m_execute_as_user_id;
+  uint32_t m_execute_as_user_id;
 
   // lock mode from the parser
-  INT m_lockmode;
+  int32_t m_lockmode;
 
   // acl mode from the parser
-  ULONG m_acl_mode;
+  uint32_t m_acl_mode;
 
   // identifier of query to which current table belongs.
   // This field is used for assigning current table entry with
   // target one within DML operation. If descriptor doesn't point
   // to the target (result) relation it has value UNASSIGNED_QUERYID
-  ULONG m_assigned_query_id_for_target_rel;
+  uint32_t m_assigned_query_id_for_target_rel;
 
  public:
   CDXLTableDescr(const CDXLTableDescr &) = delete;
 
   // ctor/dtor
-  CDXLTableDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, ULONG ulExecuteAsUser, int lockmode, ULONG acl_mode,
-                 ULONG assigned_query_id_for_target_rel = UNASSIGNED_QUERYID);
+  CDXLTableDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, uint32_t ulExecuteAsUser, int lockmode,
+                 uint32_t acl_mode, uint32_t assigned_query_id_for_target_rel = UNASSIGNED_QUERYID);
 
   ~CDXLTableDescr() override;
 
@@ -79,24 +79,24 @@ class CDXLTableDescr : public CRefCount {
   IMDId *MDId() const;
 
   // table arity
-  ULONG Arity() const;
+  uint32_t Arity() const;
 
   // user id
-  ULONG GetExecuteAsUserId() const;
+  uint32_t GetExecuteAsUserId() const;
 
   // lock mode
-  INT LockMode() const;
+  int32_t LockMode() const;
 
   // acl mode
-  ULONG GetAclMode() const;
+  uint32_t GetAclMode() const;
 
   // get the column descriptor at the given position
-  const CDXLColDescr *GetColumnDescrAt(ULONG idx) const;
+  const CDXLColDescr *GetColumnDescrAt(uint32_t idx) const;
 
   // serialize to dxl format
 
   // get assigned query id for target relation
-  ULONG GetAssignedQueryIdForTargetRel() const;
+  uint32_t GetAssignedQueryIdForTargetRel() const;
 };
 }  // namespace gpdxl
 

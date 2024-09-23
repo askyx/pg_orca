@@ -62,7 +62,7 @@ class CMDScalarOpGPDB : public IMDScalarOp {
   IMDType::ECmpType m_comparision_type;
 
   // does operator return NULL when all inputs are NULL?
-  BOOL m_returns_null_on_null_input;
+  bool m_returns_null_on_null_input;
 
   // operator classes this operator belongs to
   IMdIdArray *m_mdid_opfamilies_array;
@@ -75,7 +75,7 @@ class CMDScalarOpGPDB : public IMDScalarOp {
 
   // does operator preserve the NDV of its input(s)
   // (used for cardinality estimation)
-  BOOL m_is_ndv_preserving;
+  bool m_is_ndv_preserving;
 
  public:
   CMDScalarOpGPDB(const CMDScalarOpGPDB &) = delete;
@@ -83,8 +83,8 @@ class CMDScalarOpGPDB : public IMDScalarOp {
   // ctor/dtor
   CMDScalarOpGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *mdid_type_left, IMDId *mdid_type_right,
                   IMDId *result_type_mdid, IMDId *mdid_func, IMDId *mdid_commute_opr, IMDId *m_mdid_inverse_opr,
-                  IMDType::ECmpType cmp_type, BOOL returns_null_on_null_input, IMdIdArray *mdid_opfamilies_array,
-                  IMDId *m_mdid_hash_opfamily, IMDId *mdid_legacy_hash_opfamily, BOOL is_ndv_preserving);
+                  IMDType::ECmpType cmp_type, bool returns_null_on_null_input, IMdIdArray *mdid_opfamilies_array,
+                  IMDId *m_mdid_hash_opfamily, IMDId *mdid_legacy_hash_opfamily, bool is_ndv_preserving);
 
   ~CMDScalarOpGPDB() override;
 
@@ -115,15 +115,15 @@ class CMDScalarOpGPDB : public IMDScalarOp {
   IMDId *GetInverseOpMdid() const override;
 
   // is this an equality operator
-  BOOL IsEqualityOp() const override;
+  bool IsEqualityOp() const override;
 
   // does operator return NULL when all inputs are NULL?
   // STRICT implies NULL-returning, but the opposite is not always true,
   // the implementation in GPDB returns what STRICT property states
-  BOOL ReturnsNullOnNullInput() const override;
+  bool ReturnsNullOnNullInput() const override;
 
   // preserves NDVs of its inputs?
-  BOOL IsNDVPreserving() const override;
+  bool IsNDVPreserving() const override;
 
   // comparison type
   IMDType::ECmpType ParseCmpType() const override;
@@ -131,10 +131,10 @@ class CMDScalarOpGPDB : public IMDScalarOp {
   // serialize object in DXL format
 
   // number of classes this operator belongs to
-  ULONG OpfamiliesCount() const override;
+  uint32_t OpfamiliesCount() const override;
 
   // operator class at given position
-  IMDId *OpfamilyMdidAt(ULONG pos) const override;
+  IMDId *OpfamilyMdidAt(uint32_t pos) const override;
 
   // compatible hash opfamily
   IMDId *HashOpfamilyMdid() const override;

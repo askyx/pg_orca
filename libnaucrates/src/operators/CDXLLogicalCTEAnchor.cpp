@@ -26,7 +26,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLLogicalCTEAnchor::CDXLLogicalCTEAnchor(CMemoryPool *mp, ULONG id) : CDXLLogical(mp), m_id(id) {}
+CDXLLogicalCTEAnchor::CDXLLogicalCTEAnchor(CMemoryPool *mp, uint32_t id) : CDXLLogical(mp), m_id(id) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -61,7 +61,7 @@ const CWStringConst *CDXLLogicalCTEAnchor::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalCTEAnchor::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLLogicalCTEAnchor::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(1 == dxlnode->Arity());
 
   CDXLNode *child_dxlnode = (*dxlnode)[0];

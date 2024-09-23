@@ -88,7 +88,7 @@ const CWStringConst *CDXLScalarBooleanTest::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarBooleanTest::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarBooleanTest::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   EdxlBooleanTestType dxl_bool_type = ((CDXLScalarBooleanTest *)dxlnode->GetOperator())->GetDxlBoolTypeStr();
 
   GPOS_ASSERT((EdxlbooleantestIsTrue == dxl_bool_type) || (EdxlbooleantestIsNotTrue == dxl_bool_type) ||

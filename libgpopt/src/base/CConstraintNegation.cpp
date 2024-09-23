@@ -53,7 +53,7 @@ CConstraintNegation::~CConstraintNegation() {
 //
 //---------------------------------------------------------------------------
 CConstraint *CConstraintNegation::PcnstrCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                                BOOL must_exist) {
+                                                                bool must_exist) {
   CConstraint *pcnstr = m_pcnstr->PcnstrCopyWithRemappedColumns(mp, colref_mapping, must_exist);
   return GPOS_NEW(mp) CConstraintNegation(mp, pcnstr);
 }

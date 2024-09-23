@@ -62,19 +62,19 @@ class CLogicalGbAggDeduplicate : public CLogicalGbAgg {
   EOperatorId Eopid() const override { return EopLogicalGbAggDeduplicate; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalGbAggDeduplicate"; }
+  const char *SzId() const override { return "CLogicalGbAggDeduplicate"; }
 
   // array of keys from the join's child that needs to be deduped
   CColRefArray *PdrgpcrKeys() const { return m_pdrgpcrKeys; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -90,7 +90,7 @@ class CLogicalGbAggDeduplicate : public CLogicalGbAgg {
 
   // compute required stat columns of the n-th child
   CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                       ULONG child_index) const override;
+                       uint32_t child_index) const override;
 
   //-------------------------------------------------------------------------------------
   // Transformations

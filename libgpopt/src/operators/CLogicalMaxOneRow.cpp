@@ -46,7 +46,7 @@ CLogical::EStatPromise CLogicalMaxOneRow::Esp(CExpressionHandle &exprhdl) const 
 //
 //---------------------------------------------------------------------------
 CColRefSet *CLogicalMaxOneRow::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                                        ULONG child_index) const {
+                                        uint32_t child_index) const {
   GPOS_ASSERT(0 == child_index);
 
   CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);

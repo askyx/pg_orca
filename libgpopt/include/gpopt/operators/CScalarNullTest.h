@@ -41,18 +41,18 @@ class CScalarNullTest : public CScalar {
   EOperatorId Eopid() const override { return EopScalarNullTest; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarNullTest"; }
+  const char *SzId() const override { return "CScalarNullTest"; }
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

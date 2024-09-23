@@ -28,7 +28,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalCTEProducer::CPhysicalCTEProducer(CMemoryPool *mp, ULONG id, CColRefArray *colref_array)
+CPhysicalCTEProducer::CPhysicalCTEProducer(CMemoryPool *mp, uint32_t id, CColRefArray *colref_array)
     : CPhysical(mp), m_id(id), m_pdrgpcr(colref_array), m_pcrs(nullptr) {
   GPOS_ASSERT(nullptr != colref_array);
   m_pcrs = GPOS_NEW(mp) CColRefSet(mp, m_pdrgpcr);
@@ -56,16 +56,16 @@ CPhysicalCTEProducer::~CPhysicalCTEProducer() {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalCTEProducer::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                               ULONG child_index,
+                                               uint32_t child_index,
                                                CDrvdPropArray *,  // pdrgpdpCtxt
-                                               ULONG              // ulOptReq
+                                               uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(0 == child_index);
   GPOS_ASSERT(0 == pcrsRequired->Size());
 
   CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, *m_pcrs);
   pcrs->Union(pcrsRequired);
-  CColRefSet *pcrsChildReqd = PcrsChildReqd(mp, exprhdl, pcrs, child_index, gpos::ulong_max);
+  CColRefSet *pcrsChildReqd = PcrsChildReqd(mp, exprhdl, pcrs, child_index, UINT32_MAX);
 
   GPOS_ASSERT(pcrsChildReqd->Size() == m_pdrgpcr->Size());
   pcrs->Release();
@@ -82,9 +82,9 @@ CColRefSet *CPhysicalCTEProducer::PcrsRequired(CMemoryPool *mp, CExpressionHandl
 //
 //---------------------------------------------------------------------------
 COrderSpec *CPhysicalCTEProducer::PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired,
-                                              ULONG child_index,
+                                              uint32_t child_index,
                                               CDrvdPropArray *,  // pdrgpdpCtxt
-                                              ULONG              // ulOptReq
+                                              uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
 
@@ -102,13 +102,13 @@ COrderSpec *CPhysicalCTEProducer::PosRequired(CMemoryPool *mp, CExpressionHandle
 CCTEReq *CPhysicalCTEProducer::PcteRequired(CMemoryPool *,        // mp,
                                             CExpressionHandle &,  // exprhdl,
                                             CCTEReq *pcter,
-                                            ULONG
+                                            uint32_t
 #ifdef GPOS_DEBUG
                                                 child_index
 #endif
                                             ,
                                             CDrvdPropArray *,  // pdrgpdpCtxt,
-                                            ULONG              // ulOptReq
+                                            uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -158,8 +158,8 @@ CCTEMap *CPhysicalCTEProducer::PcmDerive(CMemoryPool *mp, CExpressionHandle &exp
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalCTEProducer::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                             ULONG  // ulOptReq
+bool CPhysicalCTEProducer::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                             uint32_t  // ulOptReq
 ) const {
   return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }
@@ -192,7 +192,7 @@ CEnfdProp::EPropEnforcingType CPhysicalCTEProducer::EpetOrder(CExpressionHandle 
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalCTEProducer::Matches(COperator *pop) const {
+bool CPhysicalCTEProducer::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -210,9 +210,8 @@ BOOL CPhysicalCTEProducer::Matches(COperator *pop) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysicalCTEProducer::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_id);
+uint32_t CPhysicalCTEProducer::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_id);
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcr));
 
   return ulHash;

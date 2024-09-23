@@ -24,7 +24,7 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CPrintPrefix::CPrintPrefix(const CPrintPrefix *ppfx, const CHAR *sz) : m_ppfx(ppfx), m_sz(sz) {
+CPrintPrefix::CPrintPrefix(const CPrintPrefix *ppfx, const char *sz) : m_ppfx(ppfx), m_sz(sz) {
   GPOS_ASSERT(nullptr != sz);
 }
 

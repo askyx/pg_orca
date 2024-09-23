@@ -68,11 +68,11 @@ void CXformExpandNAryJoinGreedy::Transform(CXformContext *pxfctxt, CXformResult 
 
   CMemoryPool *pmp = pxfctxt->Pmp();
 
-  const ULONG ulArity = pexpr->Arity();
+  const uint32_t ulArity = pexpr->Arity();
   GPOS_ASSERT(ulArity >= 3);
 
   CExpressionArray *pdrgpexpr = GPOS_NEW(pmp) CExpressionArray(pmp);
-  for (ULONG ul = 0; ul < ulArity - 1; ul++) {
+  for (uint32_t ul = 0; ul < ulArity - 1; ul++) {
     CExpression *pexprChild = (*pexpr)[ul];
     pexprChild->AddRef();
     pdrgpexpr->Append(pexprChild);

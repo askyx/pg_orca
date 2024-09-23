@@ -50,7 +50,7 @@ class CTranslatorExprToDXLUtils {
  private:
   // create a column reference
   static CColRef *PcrCreate(CMemoryPool *mp, CMDAccessor *md_accessor, CColumnFactory *col_factory, IMDId *mdid,
-                            INT type_modifier, const WCHAR *wszName);
+                            int32_t type_modifier, const wchar_t *wszName);
 
   // compute a DXL datum from a point constraint
   static CDXLDatum *PdxldatumFromPointConstraint(CMemoryPool *mp, CMDAccessor *md_accessor, const CColRef *pcrDistrCol,
@@ -63,21 +63,21 @@ class CTranslatorExprToDXLUtils {
 
   // check if the given constant value for a particular distribution column can be used
   // to identify which segment to direct dispatch to.
-  static BOOL FDirectDispatchable(CMDAccessor *md_accessor, const CColRef *pcrDistrCol, const CDXLDatum *dxl_datum);
+  static bool FDirectDispatchable(CMDAccessor *md_accessor, const CColRef *pcrDistrCol, const CDXLDatum *dxl_datum);
 
  public:
   // construct a default properties container
   static CDXLPhysicalProperties *GetProperties(CMemoryPool *mp);
 
   // check if the DXL Node is a scalar const TRUE
-  static BOOL FScalarConstTrue(CMDAccessor *md_accessor, CDXLNode *dxlnode);
+  static bool FScalarConstTrue(CMDAccessor *md_accessor, CDXLNode *dxlnode);
 
   // check if the DXL Node is a scalar const false
-  static BOOL FScalarConstFalse(CMDAccessor *md_accessor, CDXLNode *dxlnode);
+  static bool FScalarConstFalse(CMDAccessor *md_accessor, CDXLNode *dxlnode);
 
   // check whether a project list has the same columns in the given array
   // and in the same order
-  static BOOL FProjectListMatch(CDXLNode *pdxlnPrL, CColRefArray *colref_array);
+  static bool FProjectListMatch(CDXLNode *pdxlnPrL, CColRefArray *colref_array);
 
   // create a project list by creating references to the columns of the given
   // project list of the child node
@@ -127,7 +127,7 @@ class CTranslatorExprToDXLUtils {
   static void SetStats(CMemoryPool *mp, CMDAccessor *md_accessor, CDXLNode *dxlnode, const IStatistics *stats);
 
   // is the aggregate a local hash aggregate that is safe to stream
-  static BOOL FLocalHashAggStreamSafe(CExpression *pexprAgg);
+  static bool FLocalHashAggStreamSafe(CExpression *pexprAgg);
 
   // if operator is a scalar cast or func allowed for Partition selection, extract type and function
   static void ExtractCastFuncMdids(COperator *pop, IMDId **ppmdidType, IMDId **ppmdidCastFunc);
@@ -142,16 +142,16 @@ class CTranslatorExprToDXLUtils {
   static CDXLPhysicalProperties *PdxlpropCopy(CMemoryPool *mp, CDXLNode *dxlnode);
 
   // check if given dxl operator exists in the given list
-  static BOOL FDXLOpExists(const CDXLOperator *pop, const gpdxl::Edxlopid *peopid, ULONG ulOps);
+  static bool FDXLOpExists(const CDXLOperator *pop, const gpdxl::Edxlopid *peopid, uint32_t ulOps);
 
   // check if given dxl node has any operator in the given list
-  static BOOL FHasDXLOp(const CDXLNode *dxlnode, const gpdxl::Edxlopid *peopid, ULONG ulOps);
+  static bool FHasDXLOp(const CDXLNode *dxlnode, const gpdxl::Edxlopid *peopid, uint32_t ulOps);
 
   // extract the column ids of the ident from project list
   static void ExtractIdentColIds(CDXLNode *dxlnode, CBitSet *pbs);
 
   // is this Filter node direct dispatchable?
-  static BOOL FDirectDispatchableFilter(CExpression *pexprFilter);
+  static bool FDirectDispatchableFilter(CExpression *pexprFilter);
 };
 }  // namespace gpopt
 

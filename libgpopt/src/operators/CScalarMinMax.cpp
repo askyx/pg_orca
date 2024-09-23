@@ -60,12 +60,11 @@ CScalarMinMax::~CScalarMinMax() {
 //		return type id
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarMinMax::HashValue() const {
-  ULONG ulminmax = (ULONG)this->Esmmt();
+uint32_t CScalarMinMax::HashValue() const {
+  uint32_t ulminmax = (uint32_t)this->Esmmt();
 
   return gpos::CombineHashes(m_mdid_type->HashValue(),
-                             gpos::CombineHashes(COperator::HashValue(), gpos::HashValue<ULONG>(&ulminmax)));
+                             gpos::CombineHashes(COperator::HashValue(), gpos::HashValue<uint32_t>(&ulminmax)));
 }
 
 //---------------------------------------------------------------------------
@@ -76,7 +75,7 @@ CScalarMinMax::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarMinMax::Matches(COperator *pop) const {
+bool CScalarMinMax::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }

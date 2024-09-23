@@ -37,20 +37,20 @@ class CScalarCoerceBase : public CScalar {
   IMDId *m_result_type_mdid;
 
   // output type modifier
-  INT m_type_modifier;
+  int32_t m_type_modifier;
 
   // coercion form
   ECoercionForm m_ecf;
 
   // location of token to be coerced
-  INT m_location;
+  int32_t m_location;
 
  public:
   CScalarCoerceBase(const CScalarCoerceBase &) = delete;
 
   // ctor
-  CScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, ECoercionForm dxl_coerce_format,
-                    INT location);
+  CScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, ECoercionForm dxl_coerce_format,
+                    int32_t location);
 
   // dtor
   ~CScalarCoerceBase() override;
@@ -59,16 +59,16 @@ class CScalarCoerceBase : public CScalar {
   IMDId *MdidType() const override;
 
   // return type modifier
-  INT TypeModifier() const override;
+  int32_t TypeModifier() const override;
 
   // return coercion form
   ECoercionForm Ecf() const;
 
   // return token location
-  INT Location() const;
+  int32_t Location() const;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
 };  // class CScalarCoerceBase
 

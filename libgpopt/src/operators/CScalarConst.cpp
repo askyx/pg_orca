@@ -54,8 +54,7 @@ CScalarConst::~CScalarConst() {
 //		hash of constant value
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarConst::HashValue() const {
+uint32_t CScalarConst::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), m_pdatum->HashValue());
 }
 
@@ -67,7 +66,7 @@ CScalarConst::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarConst::Matches(COperator *pop) const {
+bool CScalarConst::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarConst *psconst = CScalarConst::PopConvert(pop);
 
@@ -113,7 +112,7 @@ IOstream &CScalarConst::OsPrint(IOstream &os) const {
 // 		Is the given expression a cast of a constant expression
 //
 //---------------------------------------------------------------------------
-BOOL CScalarConst::FCastedConst(CExpression *pexpr) {
+bool CScalarConst::FCastedConst(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
 
   // cast(constant)
@@ -138,8 +137,8 @@ BOOL CScalarConst::FCastedConst(CExpression *pexpr) {
 CScalarConst *CScalarConst::PopExtractFromConstOrCastConst(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
 
-  BOOL fScConst = COperator::EopScalarConst == pexpr->Pop()->Eopid();
-  BOOL fCastedScConst = CScalarConst::FCastedConst(pexpr);
+  bool fScConst = COperator::EopScalarConst == pexpr->Pop()->Eopid();
+  bool fCastedScConst = CScalarConst::FCastedConst(pexpr);
 
   // constant or cast(constant)
   if (!fScConst && !fCastedScConst) {
@@ -181,7 +180,7 @@ CScalar::EBoolEvalResult CScalarConst::Eber(ULongPtrArray *  // pdrgpulChildren
   return EberAny;
 }
 
-INT CScalarConst::TypeModifier() const {
+int32_t CScalarConst::TypeModifier() const {
   return m_pdatum->TypeModifier();
 }
 

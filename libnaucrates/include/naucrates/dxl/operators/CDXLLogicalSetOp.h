@@ -52,14 +52,14 @@ class CDXLLogicalSetOp : public CDXLLogical {
   ULongPtr2dArray *m_input_colids_arrays;
 
   // do the columns need to be casted accross inputs
-  BOOL m_cast_across_input_req;
+  bool m_cast_across_input_req;
 
  public:
   CDXLLogicalSetOp(CDXLLogicalSetOp &) = delete;
 
   // ctor
   CDXLLogicalSetOp(CMemoryPool *mp, EdxlSetOpType edxlsetoptype, CDXLColDescrArray *pdrgdxlcd,
-                   ULongPtr2dArray *array_2D, BOOL fCastAcrossInput);
+                   ULongPtr2dArray *array_2D, bool fCastAcrossInput);
 
   // dtor
   ~CDXLLogicalSetOp() override;
@@ -77,30 +77,28 @@ class CDXLLogicalSetOp : public CDXLLogical {
   const CDXLColDescrArray *GetDXLColumnDescrArray() const { return m_col_descr_array; }
 
   // number of output columns
-  ULONG
-  Arity() const { return m_col_descr_array->Size(); }
+  uint32_t Arity() const { return m_col_descr_array->Size(); }
 
   // output column descriptor at a given position
-  const CDXLColDescr *GetColumnDescrAt(ULONG idx) const { return (*m_col_descr_array)[idx]; }
+  const CDXLColDescr *GetColumnDescrAt(uint32_t idx) const { return (*m_col_descr_array)[idx]; }
 
   // number of inputs to the n-ary set operation
-  ULONG
-  ChildCount() const { return m_input_colids_arrays->Size(); }
+  uint32_t ChildCount() const { return m_input_colids_arrays->Size(); }
 
   // column array of the input at a given position
-  const ULongPtrArray *GetInputColIdArrayAt(ULONG idx) const {
+  const ULongPtrArray *GetInputColIdArrayAt(uint32_t idx) const {
     GPOS_ASSERT(idx < ChildCount());
 
     return (*m_input_colids_arrays)[idx];
   }
 
   // do the columns across inputs need to be casted
-  BOOL IsCastAcrossInputReq() const { return m_cast_across_input_req; }
+  bool IsCastAcrossInputReq() const { return m_cast_across_input_req; }
 
   // serialize operator in DXL format
 
   // check if given column is defined by operator
-  BOOL IsColDefined(ULONG colid) const override;
+  bool IsColDefined(uint32_t colid) const override;
 
   // conversion function
   static CDXLLogicalSetOp *Cast(CDXLOperator *dxl_op) {
@@ -113,7 +111,7 @@ class CDXLLogicalSetOp : public CDXLLogical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

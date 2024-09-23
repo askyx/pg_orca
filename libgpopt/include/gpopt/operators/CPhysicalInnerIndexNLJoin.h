@@ -44,10 +44,10 @@ class CPhysicalInnerIndexNLJoin : public CPhysicalInnerNLJoin {
   EOperatorId Eopid() const override { return EopPhysicalInnerIndexNLJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalInnerIndexNLJoin"; }
+  const char *SzId() const override { return "CPhysicalInnerIndexNLJoin"; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // outer column references accessor
   CColRefArray *PdrgPcrOuterRefs() const { return m_pdrgpcrOuterRefs; }

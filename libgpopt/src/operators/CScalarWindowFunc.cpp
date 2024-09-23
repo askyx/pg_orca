@@ -33,8 +33,8 @@ using namespace gpmd;
 //
 //---------------------------------------------------------------------------
 CScalarWindowFunc::CScalarWindowFunc(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type,
-                                     const CWStringConst *pstrFunc, EWinStage ewinstage, BOOL is_distinct,
-                                     BOOL is_star_arg, BOOL is_simple_agg)
+                                     const CWStringConst *pstrFunc, EWinStage ewinstage, bool is_distinct,
+                                     bool is_star_arg, bool is_simple_agg)
     : CScalarFunc(mp),
       m_ewinstage(ewinstage),
       m_is_distinct(is_distinct),
@@ -66,17 +66,16 @@ CScalarWindowFunc::CScalarWindowFunc(CMemoryPool *mp, IMDId *mdid_func, IMDId *m
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarWindowFunc::HashValue() const {
+uint32_t CScalarWindowFunc::HashValue() const {
   return gpos::CombineHashes(
       CombineHashes(
           CombineHashes(CombineHashes(gpos::CombineHashes(COperator::HashValue(),
                                                           gpos::CombineHashes(m_func_mdid->HashValue(),
                                                                               m_return_type_mdid->HashValue())),
                                       m_ewinstage),
-                        gpos::HashValue<BOOL>(&m_is_distinct)),
-          gpos::HashValue<BOOL>(&m_is_star_arg)),
-      gpos::HashValue<BOOL>(&m_is_simple_agg));
+                        gpos::HashValue<bool>(&m_is_distinct)),
+          gpos::HashValue<bool>(&m_is_star_arg)),
+      gpos::HashValue<bool>(&m_is_simple_agg));
 }
 
 //---------------------------------------------------------------------------
@@ -87,7 +86,7 @@ CScalarWindowFunc::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarWindowFunc::Matches(COperator *pop) const {
+bool CScalarWindowFunc::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarWindowFunc *popFunc = CScalarWindowFunc::PopConvert(pop);
 

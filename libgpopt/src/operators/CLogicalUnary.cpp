@@ -25,7 +25,7 @@ using namespace gpopt;
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalUnary::Matches(COperator *pop) const {
+bool CLogicalUnary::Matches(COperator *pop) const {
   return (pop->Eopid() == Eopid());
 }
 

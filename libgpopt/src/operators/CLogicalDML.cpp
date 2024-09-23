@@ -97,7 +97,7 @@ CLogicalDML::~CLogicalDML() {
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalDML::Matches(COperator *pop) const {
+bool CLogicalDML::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -117,9 +117,8 @@ BOOL CLogicalDML::Matches(COperator *pop) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalDML::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
+uint32_t CLogicalDML::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
   ulHash = gpos::CombineHashes(ulHash, gpos::HashPtr<CColRef>(m_pcrAction));
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrSource));
 
@@ -139,7 +138,7 @@ CLogicalDML::HashValue() const {
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *CLogicalDML::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) {
+COperator *CLogicalDML::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) {
   CColRefArray *colref_array = CUtils::PdrgpcrRemap(mp, m_pdrgpcrSource, colref_mapping, must_exist);
   CColRef *pcrAction = CUtils::PcrRemap(m_pcrAction, colref_mapping, must_exist);
 
@@ -301,7 +300,7 @@ IOstream &CLogicalDML::OsPrint(IOstream &os) const {
 //	    enum, used in OSPrint to print objects.
 //
 //---------------------------------------------------------------------------
-void CLogicalDML::PrintOperatorType(IOstream &os, EDMLOperator edmlOperator, BOOL fSplit) {
+void CLogicalDML::PrintOperatorType(IOstream &os, EDMLOperator edmlOperator, bool fSplit) {
   switch (edmlOperator) {
     case EdmlInsert:
       os << "), Insert, ";

@@ -48,7 +48,7 @@ CMessage *CMessageRepository::LookupMessage(CException exc, ELocale locale) {
     CMessage *msg = nullptr;
     ELocale search_locale = locale;
 
-    for (ULONG i = 0; i < 2; i++) {
+    for (uint32_t i = 0; i < 2; i++) {
       // try to locate locale-specific message table
       TMTAccessor tmta(m_hash_table, search_locale);
       CMessageTable *mt = tmta.Find();
@@ -141,7 +141,7 @@ void CMessageRepository::InitDirectory(CMemoryPool *mp) {
 void CMessageRepository::AddMessage(ELocale locale, CMessage *msg) {
   // retry logic: (1) attempt to insert first (frequent code path)
   // or (2) create message table after failure and retry (infreq code path)
-  for (ULONG i = 0; i < 2; i++) {
+  for (uint32_t i = 0; i < 2; i++) {
     // scope for accessor lock
     {
       TMTAccessor tmta(m_hash_table, locale);
@@ -193,7 +193,7 @@ void CMessageRepository::AddMessageTable(ELocale locale) {
 //
 //---------------------------------------------------------------------------
 void CMessageRepository::LoadStandardMessages() {
-  for (ULONG ul = 0; ul < CException::ExmiSentinel; ul++) {
+  for (uint32_t ul = 0; ul < CException::ExmiSentinel; ul++) {
     CMessage *msg = CMessage::GetMessage(ul);
     if (CException::m_invalid_exception != msg->m_exception) {
       AddMessage(ElocEnUS_Utf8, msg);

@@ -42,13 +42,13 @@ class CLogicalLeftOuterApply : public CLogicalApply {
   EOperatorId Eopid() const override { return EopLogicalLeftOuterApply; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalLeftOuterApply"; }
+  const char *SzId() const override { return "CLogicalLeftOuterApply"; }
 
   // return true if we can pull projections up past this operator from its given child
-  BOOL FCanPullProjectionsUp(ULONG child_index) const override { return (0 == child_index); }
+  bool FCanPullProjectionsUp(uint32_t child_index) const override { return (0 == child_index); }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties

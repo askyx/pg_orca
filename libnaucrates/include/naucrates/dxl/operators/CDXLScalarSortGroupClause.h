@@ -38,18 +38,18 @@ using CDXLScalarSortGroupClauseArray = CDynamicPtrArray<CDXLScalarSortGroupClaus
 //---------------------------------------------------------------------------
 class CDXLScalarSortGroupClause : public CDXLScalar {
  private:
-  INT m_tle_sort_group_ref;
-  INT m_eqop;
-  INT m_sortop;
-  BOOL m_nulls_first;
-  BOOL m_hashable;
+  int32_t m_tle_sort_group_ref;
+  int32_t m_eqop;
+  int32_t m_sortop;
+  bool m_nulls_first;
+  bool m_hashable;
 
  public:
   CDXLScalarSortGroupClause(const CDXLScalarSortGroupClause &) = delete;
 
   // ctor/dtor
-  CDXLScalarSortGroupClause(CMemoryPool *mp, INT tle_sort_group_ref, INT eqop, INT sortop, BOOL nulls_first,
-                            BOOL hashable)
+  CDXLScalarSortGroupClause(CMemoryPool *mp, int32_t tle_sort_group_ref, int32_t eqop, int32_t sortop, bool nulls_first,
+                            bool hashable)
       : CDXLScalar(mp),
         m_tle_sort_group_ref(tle_sort_group_ref),
         m_eqop(eqop),
@@ -58,15 +58,15 @@ class CDXLScalarSortGroupClause : public CDXLScalar {
         m_hashable(hashable) {}
 
   // accessors
-  INT Index() const { return m_tle_sort_group_ref; }
+  int32_t Index() const { return m_tle_sort_group_ref; }
 
-  INT EqOp() const { return m_eqop; }
+  int32_t EqOp() const { return m_eqop; }
 
-  INT SortOp() const { return m_sortop; }
+  int32_t SortOp() const { return m_sortop; }
 
-  BOOL NullsFirst() const { return m_nulls_first; }
+  bool NullsFirst() const { return m_nulls_first; }
 
-  BOOL IsHashable() const { return m_hashable; }
+  bool IsHashable() const { return m_hashable; }
 
   static CDXLScalarSortGroupClause *Cast(CDXLOperator *dxl_op) {
     GPOS_ASSERT(nullptr != dxl_op);
@@ -76,10 +76,10 @@ class CDXLScalarSortGroupClause : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *) const override { return false; }
+  bool HasBoolResult(CMDAccessor *) const override { return false; }
 
 #ifdef GPOS_DEBUG
-  void AssertValid(const CDXLNode *, BOOL) const override {}
+  void AssertValid(const CDXLNode *, bool) const override {}
 #endif  // GPOS_DEBUG
 
   Edxlopid GetDXLOperator() const override { return EdxlopScalarSortGroupClause; }

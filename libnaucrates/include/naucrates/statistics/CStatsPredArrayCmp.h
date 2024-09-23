@@ -39,7 +39,7 @@ class CStatsPredArrayCmp : public CStatsPred {
   CStatsPredArrayCmp(const CStatsPredArrayCmp &) = delete;
 
   // ctor
-  CStatsPredArrayCmp(ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type, CPointArray *points);
+  CStatsPredArrayCmp(uint32_t colid, CStatsPred::EStatsCmpType stats_cmp_type, CPointArray *points);
 
   // dtor
   ~CStatsPredArrayCmp() override { m_points->Release(); }

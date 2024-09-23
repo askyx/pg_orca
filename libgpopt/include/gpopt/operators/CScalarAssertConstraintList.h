@@ -54,18 +54,18 @@ class CScalarAssertConstraintList : public CScalar {
   EOperatorId Eopid() const override { return EopScalarAssertConstraintList; }
 
   // operator name
-  const CHAR *SzId() const override { return "CScalarAssertConstraintList"; }
+  const char *SzId() const override { return "CScalarAssertConstraintList"; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

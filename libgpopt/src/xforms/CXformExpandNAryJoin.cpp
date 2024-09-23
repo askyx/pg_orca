@@ -92,7 +92,7 @@ void CXformExpandNAryJoin::Transform(CXformContext *pxfctxt, CXformResult *pxfre
 
   CMemoryPool *mp = pxfctxt->Pmp();
 
-  const ULONG arity = pexpr->Arity();
+  const uint32_t arity = pexpr->Arity();
   GPOS_ASSERT(arity >= 3);
 
   // create a cluster of inner joins with same order of given relations
@@ -108,7 +108,7 @@ void CXformExpandNAryJoin::Transform(CXformContext *pxfctxt, CXformResult *pxfre
   (*pexpr)[1]->AddRef();
   CExpression *pexprJoin = CUtils::PexprLogicalJoin<CLogicalInnerJoin>(mp, (*pexpr)[0], (*pexpr)[1],
                                                                        CPredicateUtils::PexprConjunction(mp, nullptr));
-  for (ULONG ul = 2; ul < arity - 1; ul++) {
+  for (uint32_t ul = 2; ul < arity - 1; ul++) {
     (*pexpr)[ul]->AddRef();
     pexprJoin = CUtils::PexprLogicalJoin<CLogicalInnerJoin>(mp, pexprJoin, (*pexpr)[ul],
                                                             CPredicateUtils::PexprConjunction(mp, nullptr));

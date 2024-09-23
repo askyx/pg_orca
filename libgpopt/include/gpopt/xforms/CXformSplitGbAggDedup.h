@@ -40,10 +40,10 @@ class CXformSplitGbAggDedup : public CXformSplitGbAgg {
   EXformId Exfid() const override { return ExfSplitGbAggDedup; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformSplitGbAggDedup"; }
+  const char *SzId() const override { return "CXformSplitGbAggDedup"; }
 
   // Compatibility function for splitting aggregates
-  BOOL FCompatible(CXform::EXformId exfid) override { return (CXform::ExfSplitGbAggDedup != exfid); }
+  bool FCompatible(CXform::EXformId exfid) override { return (CXform::ExfSplitGbAggDedup != exfid); }
 
   // actual transform
   void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;

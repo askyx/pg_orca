@@ -132,7 +132,7 @@ void SOptContext::Free(SOptContext::EPin input, SOptContext::EPin output) const 
 //		error message.
 //
 //---------------------------------------------------------------------------
-CHAR *SOptContext::CloneErrorMsg(MemoryContext context) const {
+char *SOptContext::CloneErrorMsg(MemoryContext context) const {
   if (nullptr == context || nullptr == m_error_msg) {
     return nullptr;
   }
@@ -161,16 +161,16 @@ SOptContext *SOptContext::Cast(void *ptr) {
 //		Return regular string from wide-character string
 //
 //---------------------------------------------------------------------------
-CHAR *COptTasks::CreateMultiByteCharStringFromWCString(const WCHAR *wcstr) {
+char *COptTasks::CreateMultiByteCharStringFromWCString(const wchar_t *wcstr) {
   GPOS_ASSERT(nullptr != wcstr);
 
   const uint32_t input_len = GPOS_WSZ_LENGTH(wcstr);
-  const uint32_t wchar_size = GPOS_SIZEOF(WCHAR);
+  const uint32_t wchar_size = GPOS_SIZEOF(wchar_t);
   const uint32_t max_len = (input_len + 1) * wchar_size;
 
-  CHAR *str = (CHAR *)gpdb::GPDBAlloc(max_len);
+  char *str = (char *)gpdb::GPDBAlloc(max_len);
 
-  gpos::clib::Wcstombs(str, const_cast<WCHAR *>(wcstr), max_len);
+  gpos::clib::Wcstombs(str, const_cast<wchar_t *>(wcstr), max_len);
   str[max_len - 1] = '\0';
 
   return str;
@@ -188,7 +188,7 @@ CHAR *COptTasks::CreateMultiByteCharStringFromWCString(const WCHAR *wcstr) {
 void COptTasks::Execute(void *(*func)(void *), void *func_arg) {
   Assert(func);
 
-  CHAR *err_buf = (CHAR *)palloc(GPOPT_ERROR_BUFFER_SIZE);
+  char *err_buf = (char *)palloc(GPOPT_ERROR_BUFFER_SIZE);
   err_buf[0] = '\0';
 
   // initialize DXL support
@@ -221,9 +221,9 @@ void COptTasks::Execute(void *(*func)(void *), void *func_arg) {
   LogExceptionMessageAndDelete(err_buf);
 }
 
-void COptTasks::LogExceptionMessageAndDelete(CHAR *err_buf) {
+void COptTasks::LogExceptionMessageAndDelete(char *err_buf) {
   if ('\0' != err_buf[0]) {
-    elog(LOG, "%s", CreateMultiByteCharStringFromWCString((WCHAR *)err_buf));
+    elog(LOG, "%s", CreateMultiByteCharStringFromWCString((wchar_t *)err_buf));
   }
 
   pfree(err_buf);
@@ -259,13 +259,13 @@ PlannedStmt *COptTasks::ConvertToPlanStmtFromDXL(CMemoryPool *mp, CMDAccessor *m
 //---------------------------------------------------------------------------
 COptimizerConfig *COptTasks::CreateOptimizerConfig(CMemoryPool *mp, ICostModel *cost_model) {
   // get chosen plan number, cost threshold
-  ULLONG plan_id = (ULLONG)optimizer_plan_id;
-  ULLONG num_samples = (ULLONG)optimizer_samples_number;
-  DOUBLE cost_threshold = (DOUBLE)0;
+  uint64_t plan_id = (uint64_t)optimizer_plan_id;
+  uint64_t num_samples = (uint64_t)optimizer_samples_number;
+  double cost_threshold = (double)0;
 
-  DOUBLE damping_factor_filter = (DOUBLE)optimizer_damping_factor_filter;
-  DOUBLE damping_factor_join = (DOUBLE)optimizer_damping_factor_join;
-  DOUBLE damping_factor_groupby = (DOUBLE)optimizer_damping_factor_groupby;
+  double damping_factor_filter = (double)optimizer_damping_factor_filter;
+  double damping_factor_join = (double)optimizer_damping_factor_join;
+  double damping_factor_groupby = (double)optimizer_damping_factor_groupby;
 
   uint32_t cte_inlining_cutoff = (uint32_t)optimizer_cte_inlining_bound;
   uint32_t join_arity_for_associativity_commutativity = (uint32_t)optimizer_join_arity_for_associativity_commutativity;
@@ -368,7 +368,7 @@ void *COptTasks::OptimizeTask(void *ptr) {
   } else if (reset_mdcache) {
     CMDCache::Reset();
     CMDCache::SetCacheQuota(optimizer_mdcache_size * 1024L);
-  } else if (CMDCache::ULLGetCacheQuota() != (ULLONG)optimizer_mdcache_size * 1024L) {
+  } else if (CMDCache::ULLGetCacheQuota() != (uint64_t)optimizer_mdcache_size * 1024L) {
     CMDCache::SetCacheQuota(optimizer_mdcache_size * 1024L);
   }
 

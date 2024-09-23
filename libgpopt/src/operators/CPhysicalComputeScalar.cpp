@@ -61,7 +61,7 @@ CPhysicalComputeScalar::~CPhysicalComputeScalar() = default;
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalComputeScalar::Matches(COperator *pop) const {
+bool CPhysicalComputeScalar::Matches(COperator *pop) const {
   // ComputeScalar doesn't contain any members as of now
   return Eopid() == pop->Eopid();
 }
@@ -76,9 +76,9 @@ BOOL CPhysicalComputeScalar::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalComputeScalar::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                                 ULONG child_index,
+                                                 uint32_t child_index,
                                                  CDrvdPropArray *,  // pdrgpdpCtxt
-                                                 ULONG              // ulOptReq
+                                                 uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(0 == child_index && "Required properties can only be computed on the relational child");
 
@@ -98,14 +98,14 @@ CColRefSet *CPhysicalComputeScalar::PcrsRequired(CMemoryPool *mp, CExpressionHan
 //
 //---------------------------------------------------------------------------
 COrderSpec *CPhysicalComputeScalar::PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired,
-                                                ULONG child_index,
+                                                uint32_t child_index,
                                                 CDrvdPropArray *,  // pdrgpdpCtxt
-                                                ULONG              // ulOptReq
+                                                uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
 
   CColRefSet *pcrsSort = posRequired->PcrsUsed(m_mp);
-  BOOL fUsesDefinedCols = FUnaryUsesDefinedColumns(pcrsSort, exprhdl);
+  bool fUsesDefinedCols = FUnaryUsesDefinedColumns(pcrsSort, exprhdl);
   pcrsSort->Release();
 
   if (fUsesDefinedCols) {
@@ -131,13 +131,13 @@ COrderSpec *CPhysicalComputeScalar::PosRequired(CMemoryPool *mp, CExpressionHand
 CCTEReq *CPhysicalComputeScalar::PcteRequired(CMemoryPool *,        // mp,
                                               CExpressionHandle &,  // exprhdl,
                                               CCTEReq *pcter,
-                                              ULONG
+                                              uint32_t
 #ifdef GPOS_DEBUG
                                                   child_index
 #endif
                                               ,
                                               CDrvdPropArray *,  // pdrgpdpCtxt,
-                                              ULONG              // ulOptReq
+                                              uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -151,8 +151,8 @@ CCTEReq *CPhysicalComputeScalar::PcteRequired(CMemoryPool *,        // mp,
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalComputeScalar::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                               ULONG  // ulOptReq
+bool CPhysicalComputeScalar::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                               uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcrsRequired);
   GPOS_ASSERT(2 == exprhdl.Arity());
@@ -164,7 +164,7 @@ BOOL CPhysicalComputeScalar::FProvidesReqdCols(CExpressionHandle &exprhdl, CColR
   // include output columns of the relational child
   pcrs->Union(exprhdl.DeriveOutputColumns(0 /*child_index*/));
 
-  BOOL fProvidesCols = pcrs->ContainsAll(pcrsRequired);
+  bool fProvidesCols = pcrs->ContainsAll(pcrsRequired);
   pcrs->Release();
 
   return fProvidesCols;
@@ -204,7 +204,7 @@ CEnfdProp::EPropEnforcingType CPhysicalComputeScalar::EpetOrder(CExpressionHandl
   // Sort has to go above ComputeScalar if sort columns use any column
   // defined by ComputeScalar, otherwise, Sort can either go above or below ComputeScalar
   CColRefSet *pcrsSort = peo->PosRequired()->PcrsUsed(m_mp);
-  BOOL fUsesDefinedCols = FUnaryUsesDefinedColumns(pcrsSort, exprhdl);
+  bool fUsesDefinedCols = FUnaryUsesDefinedColumns(pcrsSort, exprhdl);
   pcrsSort->Release();
   if (fUsesDefinedCols) {
     return CEnfdProp::EpetRequired;

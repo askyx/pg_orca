@@ -52,7 +52,7 @@ CLogicalConstTableGet::CLogicalConstTableGet(CMemoryPool *mp, CColumnDescriptorA
   m_pdrgpcrOutput = PdrgpcrCreateMapping(mp, pdrgpcoldesc, UlOpId());
 
 #ifdef GPOS_DEBUG
-  for (ULONG ul = 0; ul < pdrgpdrgpdatum->Size(); ul++) {
+  for (uint32_t ul = 0; ul < pdrgpdrgpdatum->Size(); ul++) {
     IDatumArray *pdrgpdatum = (*pdrgpdrgpdatum)[ul];
     GPOS_ASSERT(pdrgpdatum->Size() == pdrgpcoldesc->Size());
   }
@@ -77,7 +77,7 @@ CLogicalConstTableGet::CLogicalConstTableGet(CMemoryPool *mp, CColRefArray *pdrg
   m_pdrgpcoldesc = PdrgpcoldescMapping(mp, pdrgpcrOutput);
 
 #ifdef GPOS_DEBUG
-  for (ULONG ul = 0; ul < pdrgpdrgpdatum->Size(); ul++) {
+  for (uint32_t ul = 0; ul < pdrgpdrgpdatum->Size(); ul++) {
     IDatumArray *pdrgpdatum = (*pdrgpdrgpdatum)[ul];
     GPOS_ASSERT(pdrgpdatum->Size() == m_pdrgpcoldesc->Size());
   }
@@ -106,11 +106,10 @@ CLogicalConstTableGet::~CLogicalConstTableGet() {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalConstTableGet::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(),
-                                     gpos::CombineHashes(gpos::HashPtr<CColumnDescriptorArray>(m_pdrgpcoldesc),
-                                                         gpos::HashPtr<IDatum2dArray>(m_pdrgpdrgpdatum)));
+uint32_t CLogicalConstTableGet::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(),
+                                        gpos::CombineHashes(gpos::HashPtr<CColumnDescriptorArray>(m_pdrgpcoldesc),
+                                                            gpos::HashPtr<IDatum2dArray>(m_pdrgpdrgpdatum)));
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
 
   return ulHash;
@@ -124,7 +123,7 @@ CLogicalConstTableGet::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalConstTableGet::Matches(COperator *pop) const {
+bool CLogicalConstTableGet::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -145,7 +144,7 @@ BOOL CLogicalConstTableGet::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalConstTableGet::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                             BOOL must_exist) {
+                                                             bool must_exist) {
   CColRefArray *colref_array = nullptr;
   if (must_exist) {
     colref_array = CUtils::PdrgpcrRemapAndCreate(mp, m_pdrgpcrOutput, colref_mapping);
@@ -196,7 +195,7 @@ CMaxCard CLogicalConstTableGet::DeriveMaxCard(CMemoryPool *,       // mp
 //		Not called for leaf operators
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalConstTableGet::FInputOrderSensitive() const {
+bool CLogicalConstTableGet::FInputOrderSensitive() const {
   GPOS_ASSERT(!"Unexpected function call of FInputOrderSensitive");
   return false;
 }
@@ -227,11 +226,11 @@ CColumnDescriptorArray *CLogicalConstTableGet::PdrgpcoldescMapping(CMemoryPool *
   GPOS_ASSERT(nullptr != colref_array);
   CColumnDescriptorArray *pdrgpcoldesc = GPOS_NEW(mp) CColumnDescriptorArray(mp);
 
-  const ULONG length = colref_array->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
+  const uint32_t length = colref_array->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
     CColRef *colref = (*colref_array)[ul];
 
-    ULONG length = gpos::ulong_max;
+    uint32_t length = UINT32_MAX;
     if (CColRef::EcrtTable == colref->Ecrt()) {
       CColRefTable *pcrTable = CColRefTable::PcrConvert(colref);
       length = pcrTable->Width();
@@ -289,15 +288,15 @@ IOstream &CLogicalConstTableGet::OsPrint(IOstream &os) const {
     CUtils::OsPrintDrgPcr(os, m_pdrgpcrOutput);
     os << "] ";
     os << "Values: [";
-    for (ULONG ulA = 0; ulA < m_pdrgpdrgpdatum->Size(); ulA++) {
+    for (uint32_t ulA = 0; ulA < m_pdrgpdrgpdatum->Size(); ulA++) {
       if (0 < ulA) {
         os << "; ";
       }
       os << "(";
       IDatumArray *pdrgpdatum = (*m_pdrgpdrgpdatum)[ulA];
 
-      const ULONG length = pdrgpdatum->Size();
-      for (ULONG ulB = 0; ulB < length; ulB++) {
+      const uint32_t length = pdrgpdatum->Size();
+      for (uint32_t ulB = 0; ulB < length; ulB++) {
         IDatum *datum = (*pdrgpdatum)[ulB];
         datum->OsPrint(os);
 

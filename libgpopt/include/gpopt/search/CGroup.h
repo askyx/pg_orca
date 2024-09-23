@@ -22,7 +22,7 @@
 #include "gpos/common/CSyncHashtable.h"
 #include "gpos/common/CSyncList.h"
 
-#define GPOPT_INVALID_GROUP_ID gpos::ulong_max
+#define GPOPT_INVALID_GROUP_ID UINT32_MAX
 
 namespace gpopt {
 using namespace gpos;
@@ -111,7 +111,7 @@ class CGroup : public CRefCount {
     CCostContext *m_pccParent;
 
     // index used when treating current group as a child of group expression
-    ULONG m_ulChildIndex;
+    uint32_t m_ulChildIndex;
 
     // optimization context used to locate group expressions in
     // current group to be linked with parent group expression
@@ -119,22 +119,22 @@ class CGroup : public CRefCount {
 
    public:
     // ctor
-    SContextLink(CCostContext *pccParent, ULONG child_index, COptimizationContext *poc);
+    SContextLink(CCostContext *pccParent, uint32_t child_index, COptimizationContext *poc);
 
     // dtor
     virtual ~SContextLink();
 
     // hash function
-    static ULONG HashValue(const SContextLink *pclink);
+    static uint32_t HashValue(const SContextLink *pclink);
 
     // equality function
-    static BOOL Equals(const SContextLink *pclink1, const SContextLink *pclink2);
+    static bool Equals(const SContextLink *pclink1, const SContextLink *pclink2);
 
   };  // struct SContextLink
 
   // map of processed links in TreeMap structure
-  using LinkMap = CHashMap<SContextLink, BOOL, SContextLink::HashValue, SContextLink::Equals,
-                           CleanupDelete<SContextLink>, CleanupDelete<BOOL>>;
+  using LinkMap = CHashMap<SContextLink, bool, SContextLink::HashValue, SContextLink::Equals,
+                           CleanupDelete<SContextLink>, CleanupDelete<bool>>;
 
   // map of computed stats objects during costing
   using OptCtxtToIStatisticsMap =
@@ -145,10 +145,10 @@ class CGroup : public CRefCount {
   CMemoryPool *m_mp;
 
   // id is used when printing memo contents
-  ULONG m_id;
+  uint32_t m_id;
 
   // true if group hold scalar expressions
-  BOOL m_fScalar;
+  bool m_fScalar;
 
   // join keys for outer child (only for scalar groups) (used by hash & merge joins)
   CExpressionArray *m_pdrgpexprJoinKeysOuter;
@@ -175,7 +175,7 @@ class CGroup : public CRefCount {
   CExpression *m_pexprScalarRep;
 
   // scalar expression above is exactly the same as the scalar expr in the group
-  BOOL m_pexprScalarRepIsExact;
+  bool m_pexprScalarRepIsExact;
 
   // dummy cost context used in scalar groups for plan enumeration
   CCostContext *m_pccDummy;
@@ -194,13 +194,13 @@ class CGroup : public CRefCount {
   ShtOC m_sht;
 
   // number of group expressions
-  ULONG m_ulGExprs;
+  uint32_t m_ulGExprs;
 
   // map of cost lower bounds
   ReqdPropPlanToCostMap *m_pcostmap;
 
   // number of optimization contexts
-  ULONG_PTR m_ulpOptCtxts;
+  uintptr_t m_ulpOptCtxts;
 
   // current state
   EState m_estate;
@@ -209,13 +209,13 @@ class CGroup : public CRefCount {
   EOptimizationLevel m_eolMax;
 
   // were new logical operators added to the group?
-  BOOL m_fHasNewLogicalOperators;
+  bool m_fHasNewLogicalOperators;
 
   // the id of the CTE producer (if any)
-  ULONG m_ulCTEProducerId;
+  uint32_t m_ulCTEProducerId;
 
   // does the group have any CTE consumer
-  BOOL m_fCTEConsumer;
+  bool m_fCTEConsumer;
 
   // exploration job queue
   CJobQueue m_jqExploration;
@@ -227,13 +227,12 @@ class CGroup : public CRefCount {
   void CleanupContexts();
 
   // increment number of optimization contexts
-  ULONG_PTR
-  UlpIncOptCtxts() { return m_ulpOptCtxts++; }
+  uintptr_t UlpIncOptCtxts() { return m_ulpOptCtxts++; }
 
   // the following functions are only accessed through group proxy
 
   // setter of group id
-  void SetId(ULONG id);
+  void SetId(uint32_t id);
 
   // setter of group state
   void SetState(EState estNewState);
@@ -260,13 +259,13 @@ class CGroup : public CRefCount {
   CGroupExpression *PgexprNext(CGroupExpression *pgexpr);
 
   // return true if first promise is better than second promise
-  static BOOL FBetterPromise(CMemoryPool *mp, CLogical::EStatPromise espFst, CGroupExpression *pgexprFst,
+  static bool FBetterPromise(CMemoryPool *mp, CLogical::EStatPromise espFst, CGroupExpression *pgexprFst,
                              CLogical::EStatPromise espSnd, CGroupExpression *pgexprSnd);
 
   // derive stats recursively on child groups
   static CLogical::EStatPromise EspDerive(CMemoryPool *pmpLocal, CMemoryPool *pmpGlobal, CGroupExpression *pgexpr,
                                           CReqdPropRelational *prprel, IStatisticsArray *stats_ctxt,
-                                          BOOL fDeriveChildStats);
+                                          bool fDeriveChildStats);
 
   // reset computed stats
   void ResetStats();
@@ -274,17 +273,17 @@ class CGroup : public CRefCount {
   // helper function to add links in child groups
   static void RecursiveBuildTreeMap(
       CMemoryPool *mp, COptimizationContext *poc, CCostContext *pccParent, CGroupExpression *pgexprCurrent,
-      ULONG child_index,
+      uint32_t child_index,
       CTreeMap<CCostContext, CExpression, CDrvdPropCtxtPlan, CCostContext::HashValue, CCostContext::Equals> *ptmap);
 
   // print scalar group properties
-  IOstream &OsPrintGrpScalarProps(IOstream &os, const CHAR *szPrefix) const;
+  IOstream &OsPrintGrpScalarProps(IOstream &os, const char *szPrefix) const;
 
   // print group properties
-  IOstream &OsPrintGrpProps(IOstream &os, const CHAR *szPrefix) const;
+  IOstream &OsPrintGrpProps(IOstream &os, const char *szPrefix) const;
 
   // print group optimization contexts
-  IOstream &OsPrintGrpOptCtxts(IOstream &os, const CHAR *szPrefix) const;
+  IOstream &OsPrintGrpOptCtxts(IOstream &os, const char *szPrefix) const;
 
   // initialize and return empty stats for this group
   IStatistics *PstatsInitEmpty(CMemoryPool *pmpGlobal);
@@ -297,14 +296,13 @@ class CGroup : public CRefCount {
   CGroup(const CGroup &) = delete;
 
   // ctor
-  CGroup(CMemoryPool *mp, BOOL fScalar = false);
+  CGroup(CMemoryPool *mp, bool fScalar = false);
 
   // dtor
   ~CGroup() override;
 
   // id accessor
-  ULONG
-  Id() const { return m_id; }
+  uint32_t Id() const { return m_id; }
 
   // group properties accessor
   CDrvdProp *Pdp() const { return m_pdp; }
@@ -313,7 +311,7 @@ class CGroup : public CRefCount {
   IStatistics *Pstats() const;
 
   // attempt initializing stats with the given stat object
-  BOOL FInitStats(IStatistics *stats);
+  bool FInitStats(IStatistics *stats);
 
   // append given stats object to group stats
   void AppendStats(CMemoryPool *mp, IStatistics *stats);
@@ -322,7 +320,7 @@ class CGroup : public CRefCount {
   EOptimizationLevel EolMax() const { return m_eolMax; }
 
   // does group hold scalar expressions ?
-  BOOL FScalar() const { return m_fScalar; }
+  bool FScalar() const { return m_fScalar; }
 
   // join keys of outer child
   CExpressionArray *PdrgpexprJoinKeysOuter() const { return m_pdrgpexprJoinKeysOuter; }
@@ -337,7 +335,7 @@ class CGroup : public CRefCount {
   CExpression *PexprScalarRep() const { return m_pexprScalarRep; }
 
   // is the value returned by PexprScalarRep() exact?
-  BOOL FScalarRepIsExact() const { return m_pexprScalarRepIsExact; }
+  bool FScalarRepIsExact() const { return m_pexprScalarRepIsExact; }
 
   // return dummy cost context for scalar group
   CCostContext *PccDummy() const {
@@ -347,11 +345,10 @@ class CGroup : public CRefCount {
   }
 
   // hash function
-  ULONG HashValue() const;
+  uint32_t HashValue() const;
 
   // number of group expressions accessor
-  ULONG
-  UlGExprs() const { return m_ulGExprs; }
+  uint32_t UlGExprs() const { return m_ulGExprs; }
 
   // optimization contexts hash table accessor
   ShtOC &Sht() { return m_sht; }
@@ -363,16 +360,16 @@ class CGroup : public CRefCount {
   CJobQueue *PjqImplementation() { return &m_jqImplementation; }
 
   // has group been explored?
-  BOOL FExplored() const { return estExplored <= m_estate; }
+  bool FExplored() const { return estExplored <= m_estate; }
 
   // has group been implemented?
-  BOOL FImplemented() const { return estImplemented <= m_estate; }
+  bool FImplemented() const { return estImplemented <= m_estate; }
 
   // has group been optimized?
-  BOOL FOptimized() const { return estOptimized <= m_estate; }
+  bool FOptimized() const { return estOptimized <= m_estate; }
 
   // were new logical operators added to the group?
-  BOOL FHasNewLogicalOperators() const { return m_fHasNewLogicalOperators; }
+  bool FHasNewLogicalOperators() const { return m_fHasNewLogicalOperators; }
 
   // reset has new logical operators flag
   void ResetHasNewLogicalOperators() { m_fHasNewLogicalOperators = false; }
@@ -381,16 +378,16 @@ class CGroup : public CRefCount {
   void ResetGroupState();
 
   // Check if we need to reset computed stats
-  BOOL FResetStats();
+  bool FResetStats();
 
   // returns true if stats can be derived on this group
-  BOOL FStatsDerivable(CMemoryPool *mp);
+  bool FStatsDerivable(CMemoryPool *mp);
 
   // reset group job queues
   void ResetGroupJobQueues();
 
   // check if group has duplicates
-  BOOL FDuplicateGroup() const { return nullptr != m_pgroupDuplicate; }
+  bool FDuplicateGroup() const { return nullptr != m_pgroupDuplicate; }
 
   // duplicate group accessor
   CGroup *PgroupDuplicate() const { return m_pgroupDuplicate; }
@@ -406,13 +403,13 @@ class CGroup : public CRefCount {
   void MergeGroup();
 
   // lookup a given context in contexts hash table
-  COptimizationContext *PocLookup(CMemoryPool *mp, CReqdPropPlan *prpp, ULONG ulSearchStageIndex);
+  COptimizationContext *PocLookup(CMemoryPool *mp, CReqdPropPlan *prpp, uint32_t ulSearchStageIndex);
 
   // lookup the best context across all stages for the given required properties
-  COptimizationContext *PocLookupBest(CMemoryPool *mp, ULONG ulSearchStages, CReqdPropPlan *prpp);
+  COptimizationContext *PocLookupBest(CMemoryPool *mp, uint32_t ulSearchStages, CReqdPropPlan *prpp);
 
   // find a context by id
-  COptimizationContext *Ppoc(ULONG id) const;
+  COptimizationContext *Ppoc(uint32_t id) const;
 
   // insert given context into contexts hash table
   COptimizationContext *PocInsert(COptimizationContext *poc);
@@ -430,14 +427,13 @@ class CGroup : public CRefCount {
   void CreateDummyCostContext();
 
   // return the CTE producer ID in the group (if any)
-  ULONG
-  UlCTEProducerId() const { return m_ulCTEProducerId; }
+  uint32_t UlCTEProducerId() const { return m_ulCTEProducerId; }
 
   // check if there are any CTE producers in the group
-  BOOL FHasCTEProducer() const { return (gpos::ulong_max != m_ulCTEProducerId); }
+  bool FHasCTEProducer() const { return (UINT32_MAX != m_ulCTEProducerId); }
 
   // check if there are any CTE consumers in the group
-  BOOL FHasAnyCTEConsumer() const { return m_fCTEConsumer; }
+  bool FHasAnyCTEConsumer() const { return m_fCTEConsumer; }
 
   // derive statistics recursively on group
   IStatistics *PstatsRecursiveDerive(CMemoryPool *pmpLocal, CMemoryPool *pmpGlobal, CReqdPropRelational *prprel,
@@ -448,7 +444,7 @@ class CGroup : public CRefCount {
 
   // link parent group expression to group members
   void BuildTreeMap(
-      CMemoryPool *mp, COptimizationContext *poc, CCostContext *pccParent, ULONG child_index,
+      CMemoryPool *mp, COptimizationContext *poc, CCostContext *pccParent, uint32_t child_index,
       CTreeMap<CCostContext, CExpression, CDrvdPropCtxtPlan, CCostContext::HashValue, CCostContext::Equals> *ptmap);
 
   // reset link map used in plan enumeration
@@ -464,13 +460,13 @@ class CGroup : public CRefCount {
   CCost CostLowerBound(CMemoryPool *mp, CReqdPropPlan *prppInput);
 
   // matching of pairs of arrays of groups
-  static BOOL FMatchGroups(CGroupArray *pdrgpgroupFst, CGroupArray *pdrgpgroupSnd);
+  static bool FMatchGroups(CGroupArray *pdrgpgroupFst, CGroupArray *pdrgpgroupSnd);
 
   // matching of pairs of arrays of groups while skipping scalar groups
-  static BOOL FMatchNonScalarGroups(CGroupArray *pdrgpgroupFst, CGroupArray *pdrgpgroupSnd);
+  static bool FMatchNonScalarGroups(CGroupArray *pdrgpgroupFst, CGroupArray *pdrgpgroupSnd);
 
   // determine if a pair of groups are duplicates
-  static BOOL FDuplicateGroups(CGroup *pgroupFst, CGroup *pgroupSnd);
+  static bool FDuplicateGroups(CGroup *pgroupFst, CGroup *pgroupSnd);
 
   // print function
   IOstream &OsPrint(IOstream &os) const;
@@ -484,7 +480,7 @@ class CGroup : public CRefCount {
 #endif
 
   // Compare function used by CDynamicPtrArray::Sort
-  static INT Compare(const void *left, const void *right) {
+  static int32_t Compare(const void *left, const void *right) {
     if ((*((CGroup **)left))->Id() < (*((CGroup **)right))->Id()) {
       return -1;
     } else if ((*((CGroup **)left))->Id() > ((*(CGroup **)right))->Id()) {

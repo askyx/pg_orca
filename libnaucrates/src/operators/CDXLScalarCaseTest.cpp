@@ -86,7 +86,7 @@ IMDId *CDXLScalarCaseTest::MdidType() const {
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarCaseTest::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarCaseTest::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
 }
 
@@ -100,7 +100,7 @@ BOOL CDXLScalarCaseTest::HasBoolResult(CMDAccessor *md_accessor) const {
 //
 //---------------------------------------------------------------------------
 void CDXLScalarCaseTest::AssertValid(const CDXLNode *dxlnode,
-                                     BOOL  // validate_children
+                                     bool  // validate_children
 ) const {
   GPOS_ASSERT(0 == dxlnode->Arity());
   GPOS_ASSERT(m_mdid_type->IsValid());

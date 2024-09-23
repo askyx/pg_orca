@@ -25,12 +25,12 @@ using namespace gpos;
 class CCastUtils {
  public:
   // is the given expression a binary coercible cast of a scalar identifier for the given column
-  static BOOL FBinaryCoercibleCastedScId(CExpression *pexpr, CColRef *colref);
+  static bool FBinaryCoercibleCastedScId(CExpression *pexpr, CColRef *colref);
 
   // is the given expression a binary coercible cast of a scalar identifier
-  static BOOL FBinaryCoercibleCastedScId(CExpression *pexpr);
+  static bool FBinaryCoercibleCastedScId(CExpression *pexpr);
 
-  static BOOL FBinaryCoercibleCastedConst(CExpression *pexpr);
+  static bool FBinaryCoercibleCastedConst(CExpression *pexpr);
 
   // extract the column reference if the given expression a scalar identifier
   // or a cast of a scalar identifier or a function that casts a scalar identifier.
@@ -41,13 +41,13 @@ class CCastUtils {
   static CExpression *PexprCast(CMemoryPool *mp, CMDAccessor *md_accessor, const CColRef *colref, IMDId *mdid_dest);
 
   // check whether the given expression is a binary coercible cast of something
-  static BOOL FBinaryCoercibleCast(CExpression *pexpr);
+  static bool FBinaryCoercibleCast(CExpression *pexpr);
 
   // check whether the given expression is a cast of something
-  static BOOL FScalarCast(CExpression *pexpr);
+  static bool FScalarCast(CExpression *pexpr);
 
   // check whether the given expression is a cast of ident
-  static BOOL FScalarCastIdent(CExpression *pexpr);
+  static bool FScalarCastIdent(CExpression *pexpr);
 
   // return the given expression without any binary coercible casts
   // that exist on the top

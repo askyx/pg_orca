@@ -32,7 +32,7 @@ class CXformJoin2IndexGetApply : public CXformJoin2IndexApplyGeneric {
   // ident accessors
   EXformId Exfid() const override { return ExfJoin2IndexGetApply; }
 
-  const CHAR *SzId() const override { return "CXformJoin2IndexGetApply"; }
+  const char *SzId() const override { return "CXformJoin2IndexGetApply"; }
 
 };  // class CXformJoin2IndexGetApply
 

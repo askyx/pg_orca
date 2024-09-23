@@ -26,8 +26,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalPartitionSelector::CDXLPhysicalPartitionSelector(CMemoryPool *mp, IMDId *mdid_rel, ULONG selector_id,
-                                                             ULONG scan_id, ULongPtrArray *parts)
+CDXLPhysicalPartitionSelector::CDXLPhysicalPartitionSelector(CMemoryPool *mp, IMDId *mdid_rel, uint32_t selector_id,
+                                                             uint32_t scan_id, ULongPtrArray *parts)
     : CDXLPhysical(mp), m_rel_mdid(mdid_rel), m_selector_id(selector_id), m_scan_id(scan_id), m_parts(parts) {}
 
 //---------------------------------------------------------------------------
@@ -76,10 +76,10 @@ const CWStringConst *CDXLPhysicalPartitionSelector::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalPartitionSelector::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
-  const ULONG arity = dxlnode->Arity();
+void CDXLPhysicalPartitionSelector::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
+  const uint32_t arity = dxlnode->Arity();
   GPOS_ASSERT(6 == arity || 7 == arity);
-  for (ULONG idx = 0; idx < arity; ++idx) {
+  for (uint32_t idx = 0; idx < arity; ++idx) {
     CDXLNode *child_dxlnode = (*dxlnode)[idx];
     if (validate_children) {
       child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);

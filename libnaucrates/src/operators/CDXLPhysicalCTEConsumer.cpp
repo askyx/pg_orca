@@ -27,7 +27,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalCTEConsumer::CDXLPhysicalCTEConsumer(CMemoryPool *mp, ULONG id, ULongPtrArray *output_colids_array)
+CDXLPhysicalCTEConsumer::CDXLPhysicalCTEConsumer(CMemoryPool *mp, uint32_t id, ULongPtrArray *output_colids_array)
     : CDXLPhysical(mp), m_id(id), m_output_colids_array(output_colids_array) {
   GPOS_ASSERT(nullptr != output_colids_array);
 }
@@ -77,7 +77,7 @@ const CWStringConst *CDXLPhysicalCTEConsumer::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalCTEConsumer::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLPhysicalCTEConsumer::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(1 == dxlnode->Arity());
 
   CDXLNode *dxlnode_proj_list = (*dxlnode)[0];

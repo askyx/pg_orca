@@ -53,13 +53,13 @@ class CMemo {
   CMemoryPool *m_mp;
 
   // id counter for groups
-  ULONG m_aul;
+  uint32_t m_aul;
 
   // root group
   CGroup *m_pgroupRoot;
 
   // number of groups
-  ULONG_PTR m_ulpGrps;
+  uintptr_t m_ulpGrps;
 
   // tree map of member group expressions
   MemoTreeMap *m_pmemotmap;
@@ -76,13 +76,13 @@ class CMemo {
   void Add(CGroup *pgroup, CExpression *pexprOrigin);
 
   // rehash all group expressions after group merge - not thread-safe
-  BOOL FRehash();
+  bool FRehash();
 
   // helper for inserting group expression in target group
-  CGroup *PgroupInsert(CGroup *pgroupTarget, CGroupExpression *pgexpr, CExpression *pexprOrigin, BOOL fNewGroup);
+  CGroup *PgroupInsert(CGroup *pgroupTarget, CGroupExpression *pgexpr, CExpression *pexprOrigin, bool fNewGroup);
 
   // helper to check if a new group needs to be created
-  BOOL FNewGroup(CGroup **ppgroupTarget, CGroupExpression *pgexpr, BOOL fScalar);
+  bool FNewGroup(CGroup **ppgroupTarget, CGroupExpression *pgexpr, bool fScalar);
 
  public:
   CMemo(const CMemo &) = delete;
@@ -97,14 +97,13 @@ class CMemo {
   CGroup *PgroupRoot() const { return m_pgroupRoot; }
 
   // return number of groups
-  ULONG_PTR
-  UlpGroups() const { return m_ulpGrps; }
+  uintptr_t UlpGroups() const { return m_ulpGrps; }
 
   // return total number of group expressions
-  ULONG UlGrpExprs();
+  uint32_t UlGrpExprs();
 
   // return number of duplicate groups
-  ULONG UlDuplicateGroups();
+  uint32_t UlDuplicateGroups();
 
   // mark groups as duplicates
   static void MarkDuplicates(CGroup *pgroupFst, CGroup *pgroupSnd);
@@ -119,7 +118,7 @@ class CMemo {
   CGroup *PgroupInsert(CGroup *pgroupTarget, CExpression *pexprOrigin, CGroupExpression *pgexpr);
 
   // extract a plan that delivers the given required properties
-  CExpression *PexprExtractPlan(CMemoryPool *mp, CGroup *pgroupRoot, CReqdPropPlan *prppInput, ULONG ulSearchStages);
+  CExpression *PexprExtractPlan(CMemoryPool *mp, CGroup *pgroupRoot, CReqdPropPlan *prppInput, uint32_t ulSearchStages);
 
   // merge duplicate groups
   void GroupMerge();
@@ -146,7 +145,7 @@ class CMemo {
   void Trace();
 
   // get group by id
-  CGroup *Pgroup(ULONG id);
+  CGroup *Pgroup(uint32_t id);
 
 };  // class CMemo
 

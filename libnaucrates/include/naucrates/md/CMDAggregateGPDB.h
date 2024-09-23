@@ -47,24 +47,24 @@ class CMDAggregateGPDB : public IMDAggregate {
   IMDId *m_mdid_type_intermediate;
 
   // is aggregate ordered
-  BOOL m_is_ordered;
+  bool m_is_ordered;
 
   // is aggregate splittable
-  BOOL m_is_splittable;
+  bool m_is_splittable;
 
   // is aggregate hash capable
-  BOOL m_hash_agg_capable;
+  bool m_hash_agg_capable;
 
   // is aggregate replication slice safe for execution
-  BOOL m_is_repsafe;
+  bool m_is_repsafe;
 
  public:
   CMDAggregateGPDB(const CMDAggregateGPDB &) = delete;
 
   // ctor
   CMDAggregateGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *result_type_mdid,
-                   IMDId *intermediate_result_type_mdid, BOOL is_ordered_agg, BOOL is_splittable,
-                   BOOL is_hash_agg_capable, bool is_repsafe);
+                   IMDId *intermediate_result_type_mdid, bool is_ordered_agg, bool is_splittable,
+                   bool is_hash_agg_capable, bool is_repsafe);
 
   // dtor
   ~CMDAggregateGPDB() override;
@@ -86,16 +86,16 @@ class CMDAggregateGPDB : public IMDAggregate {
   // serialize object in DXL format
 
   // is an ordered aggregate
-  BOOL IsOrdered() const override { return m_is_ordered; }
+  bool IsOrdered() const override { return m_is_ordered; }
 
   // is aggregate splittable
-  BOOL IsSplittable() const override { return m_is_splittable; }
+  bool IsSplittable() const override { return m_is_splittable; }
 
   // is aggregate hash capable
-  BOOL IsHashAggCapable() const override { return m_hash_agg_capable; }
+  bool IsHashAggCapable() const override { return m_hash_agg_capable; }
 
   // is aggregate replicate slice execution safe
-  BOOL IsAggRepSafe() const override { return m_is_repsafe; }
+  bool IsAggRepSafe() const override { return m_is_repsafe; }
 
 #ifdef GPOS_DEBUG
   // debug print of the type in the provided stream

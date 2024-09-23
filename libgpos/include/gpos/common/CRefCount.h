@@ -37,7 +37,7 @@ namespace gpos {
 class CRefCount : public CHeapObject {
  private:
   // reference counter -- first in class to be in sync with Check()
-  ULONG_PTR m_refs{1};
+  uintptr_t m_refs{1};
 
 #ifdef GPOS_DEBUG
   // sanity check to detect deleted memory
@@ -62,11 +62,10 @@ class CRefCount : public CHeapObject {
   }
 
   // return ref-count
-  ULONG_PTR
-  RefCount() const { return m_refs; }
+  uintptr_t RefCount() const { return m_refs; }
 
   // return true if calling object's destructor is allowed
-  virtual BOOL Deletable() const { return true; }
+  virtual bool Deletable() const { return true; }
 
   // count up
   void AddRef() {

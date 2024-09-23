@@ -60,7 +60,7 @@ class CLogical : public COperator {
 
   // output column generation given a list of column descriptors
   static CColRefArray *PdrgpcrCreateMapping(CMemoryPool *mp, const CColumnDescriptorArray *pdrgpcoldesc,
-                                            ULONG ulOpSourceId, IMDId *mdid_table = nullptr);
+                                            uint32_t ulOpSourceId, IMDId *mdid_table = nullptr);
 
   // initialize the array of partition columns
   static CColRef2dArray *PdrgpdrgpcrCreatePartCols(CMemoryPool *mp, CColRefArray *colref_array,
@@ -83,7 +83,7 @@ class CLogical : public COperator {
 
   // helper for common case of stat columns computation
   static CColRefSet *PcrsReqdChildStats(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                                        CColRefSet *pcrsUsed, ULONG child_index);
+                                        CColRefSet *pcrsUsed, uint32_t child_index);
 
   // helper for common case of passing through required stat columns
   static CColRefSet *PcrsStatsPassThru(CColRefSet *pcrsInput);
@@ -92,7 +92,7 @@ class CLogical : public COperator {
   static IStatistics *PstatsPassThruOuter(CExpressionHandle &exprhdl);
 
   // shorthand to addref and pass through keys from n-th child
-  static CKeyCollection *PkcDeriveKeysPassThru(CExpressionHandle &exprhdl, ULONG ulInput);
+  static CKeyCollection *PkcDeriveKeysPassThru(CExpressionHandle &exprhdl, uint32_t ulInput);
 
   // shorthand to combine keys from first n - 1 children
   static CKeyCollection *PkcCombineKeys(CMemoryPool *mp, CExpressionHandle &exprhdl);
@@ -117,7 +117,7 @@ class CLogical : public COperator {
                                                                      const CColRefArray *pdrgpcrOutput);
 
   // shorthand to addref and pass through constraint from a given child
-  static CPropConstraint *PpcDeriveConstraintPassThru(CExpressionHandle &exprhdl, ULONG ulChild);
+  static CPropConstraint *PpcDeriveConstraintPassThru(CExpressionHandle &exprhdl, uint32_t ulChild);
 
   // derive constraint property only on the given columns
   static CPropConstraint *PpcDeriveConstraintRestrict(CMemoryPool *mp, CExpressionHandle &exprhdl,
@@ -127,7 +127,7 @@ class CLogical : public COperator {
   static CMaxCard MaxcardDef(CExpressionHandle &exprhdl);
 
   // compute max card given scalar child and constraint property
-  static CMaxCard Maxcard(CExpressionHandle &exprhdl, ULONG ulScalarIndex, CMaxCard maxcard);
+  static CMaxCard Maxcard(CExpressionHandle &exprhdl, uint32_t ulScalarIndex, CMaxCard maxcard);
 
   // compute order spec based on an index
   static COrderSpec *PosFromIndex(CMemoryPool *mp, const IMDIndex *pmdindex, CColRefArray *colref_array,
@@ -149,7 +149,7 @@ class CLogical : public COperator {
   ~CLogical() override;
 
   // type of operator
-  BOOL FLogical() const override {
+  bool FLogical() const override {
     GPOS_ASSERT(!FPhysical() && !FScalar() && !FPattern());
     return true;
   }
@@ -193,7 +193,7 @@ class CLogical : public COperator {
   virtual CMaxCard DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
   // derive join depth
-  virtual ULONG DeriveJoinDepth(CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  virtual uint32_t DeriveJoinDepth(CMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
   // derive partition information
   virtual CPartInfo *DerivePartitionInfo(CMemoryPool *mp, CExpressionHandle &exprhdl) const = 0;
@@ -224,7 +224,7 @@ class CLogical : public COperator {
 
   // compute required stat columns of the n-th child
   virtual CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                               ULONG child_index) const = 0;
+                               uint32_t child_index) const = 0;
 
   //-------------------------------------------------------------------------------------
   // Transformations
@@ -239,10 +239,10 @@ class CLogical : public COperator {
 
   // return true if operator can select a subset of input tuples based on some predicate,
   // for example, a Join is a SelectionOp, but a Project is not
-  virtual BOOL FSelectionOp() const { return false; }
+  virtual bool FSelectionOp() const { return false; }
 
   // return true if we can pull projections up past this operator from its given child
-  virtual BOOL FCanPullProjectionsUp(ULONG  // child_index
+  virtual bool FCanPullProjectionsUp(uint32_t  // child_index
   ) const {
     return true;
   }

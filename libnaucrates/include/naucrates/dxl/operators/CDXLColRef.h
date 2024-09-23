@@ -43,19 +43,19 @@ class CDXLColRef : public CRefCount {
   CMDName *m_mdname;
 
   // id
-  const ULONG m_id;
+  const uint32_t m_id;
 
   // column type
   IMDId *m_mdid_type;
 
   // column type modifier
-  INT m_iTypeModifer;
+  int32_t m_iTypeModifer;
 
  public:
   CDXLColRef(const CDXLColRef &) = delete;
 
   // ctor/dtor
-  CDXLColRef(CMDName *mdname, ULONG id, IMDId *mdid_type, INT type_modifier);
+  CDXLColRef(CMDName *mdname, uint32_t id, IMDId *mdid_type, int32_t type_modifier);
 
   ~CDXLColRef() override;
 
@@ -64,9 +64,9 @@ class CDXLColRef : public CRefCount {
 
   IMDId *MdidType() const;
 
-  INT TypeModifier() const;
+  int32_t TypeModifier() const;
 
-  ULONG Id() const;
+  uint32_t Id() const;
 };
 }  // namespace gpdxl
 

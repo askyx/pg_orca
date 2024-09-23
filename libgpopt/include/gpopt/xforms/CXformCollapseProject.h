@@ -40,7 +40,7 @@ class CXformCollapseProject : public CXformExploration {
   EXformId Exfid() const override { return ExfCollapseProject; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformCollapseProject"; }
+  const char *SzId() const override { return "CXformCollapseProject"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

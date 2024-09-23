@@ -27,8 +27,7 @@ using namespace gpopt;
 //		Hash value built from colref and Eop
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarIdent::HashValue() const {
+uint32_t CScalarIdent::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), gpos::HashPtr<CColRef>(m_pcr));
 }
 
@@ -40,7 +39,7 @@ CScalarIdent::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarIdent::Matches(COperator *pop) const {
+bool CScalarIdent::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarIdent *popIdent = CScalarIdent::PopConvert(pop);
 
@@ -59,7 +58,7 @@ BOOL CScalarIdent::Matches(COperator *pop) const {
 //		Not called for leaf operators
 //
 //---------------------------------------------------------------------------
-BOOL CScalarIdent::FInputOrderSensitive() const {
+bool CScalarIdent::FInputOrderSensitive() const {
   GPOS_ASSERT(!"Unexpected call of function FInputOrderSensitive");
   return false;
 }
@@ -73,8 +72,8 @@ BOOL CScalarIdent::FInputOrderSensitive() const {
 //
 //---------------------------------------------------------------------------
 COperator *CScalarIdent::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                    BOOL must_exist) {
-  ULONG id = m_pcr->Id();
+                                                    bool must_exist) {
+  uint32_t id = m_pcr->Id();
   CColRef *colref = colref_mapping->Find(&id);
   if (nullptr == colref) {
     if (must_exist) {
@@ -83,7 +82,7 @@ COperator *CScalarIdent::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColR
 
       colref = col_factory->PcrCopy(m_pcr);
 
-      BOOL result GPOS_ASSERTS_ONLY = colref_mapping->Insert(GPOS_NEW(mp) ULONG(id), colref);
+      bool result GPOS_ASSERTS_ONLY = colref_mapping->Insert(GPOS_NEW(mp) uint32_t(id), colref);
       GPOS_ASSERT(result);
     } else {
       colref = const_cast<CColRef *>(m_pcr);
@@ -105,7 +104,7 @@ IMDId *CScalarIdent::MdidType() const {
   return m_pcr->RetrieveType()->MDId();
 }
 
-INT CScalarIdent::TypeModifier() const {
+int32_t CScalarIdent::TypeModifier() const {
   return m_pcr->TypeModifier();
 }
 
@@ -117,7 +116,7 @@ INT CScalarIdent::TypeModifier() const {
 // 		Is the given expression a scalar cast of a scalar identifier
 //
 //---------------------------------------------------------------------------
-BOOL CScalarIdent::FCastedScId(CExpression *pexpr) {
+bool CScalarIdent::FCastedScId(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
 
   // cast(col1)
@@ -130,7 +129,7 @@ BOOL CScalarIdent::FCastedScId(CExpression *pexpr) {
   return false;
 }
 
-BOOL CScalarIdent::FCastedScId(CExpression *pexpr, CColRef *colref) {
+bool CScalarIdent::FCastedScId(CExpression *pexpr, CColRef *colref) {
   GPOS_ASSERT(nullptr != pexpr);
   GPOS_ASSERT(nullptr != colref);
 
@@ -152,7 +151,7 @@ BOOL CScalarIdent::FCastedScId(CExpression *pexpr, CColRef *colref) {
 //		allowed for partition selection) of a scalar identifier
 //
 //---------------------------------------------------------------------------
-BOOL CScalarIdent::FAllowedFuncScId(CExpression *pexpr) {
+bool CScalarIdent::FAllowedFuncScId(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
 
   if (COperator::EopScalarFunc == pexpr->Pop()->Eopid() && pexpr->Arity() > 0 &&
@@ -165,7 +164,7 @@ BOOL CScalarIdent::FAllowedFuncScId(CExpression *pexpr) {
   return false;
 }
 
-BOOL CScalarIdent::FAllowedFuncScId(CExpression *pexpr, CColRef *colref) {
+bool CScalarIdent::FAllowedFuncScId(CExpression *pexpr, CColRef *colref) {
   GPOS_ASSERT(nullptr != pexpr);
   GPOS_ASSERT(nullptr != colref);
 

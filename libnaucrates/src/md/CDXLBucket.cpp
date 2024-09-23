@@ -25,8 +25,8 @@ using namespace gpmd;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLBucket::CDXLBucket(CDXLDatum *dxl_datum_lower, CDXLDatum *dxl_datum_upper, BOOL is_lower_closed,
-                       BOOL is_upper_closed, CDouble frequency, CDouble distinct)
+CDXLBucket::CDXLBucket(CDXLDatum *dxl_datum_lower, CDXLDatum *dxl_datum_upper, bool is_lower_closed,
+                       bool is_upper_closed, CDouble frequency, CDouble distinct)
     : m_lower_bound_dxl_datum(dxl_datum_lower),
       m_upper_bound_dxl_datum(dxl_datum_upper),
       m_is_lower_closed(is_lower_closed),

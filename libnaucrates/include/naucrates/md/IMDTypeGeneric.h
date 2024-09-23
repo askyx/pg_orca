@@ -35,7 +35,7 @@ class IMDTypeGeneric : public IMDType {
   // type id
   ETypeInfo GetDatumType() const override { return IMDTypeGeneric::GetTypeInfo(); }
 
-  virtual IDatum *CreateGenericNullDatum(CMemoryPool *mp, INT type_modifier) const = 0;
+  virtual IDatum *CreateGenericNullDatum(CMemoryPool *mp, int32_t type_modifier) const = 0;
 };
 }  // namespace gpmd
 

@@ -32,14 +32,14 @@ using namespace gpdxl;
 //		Ctor: single CTE
 //
 //---------------------------------------------------------------------------
-CCTEListEntry::CCTEListEntry(CMemoryPool *mp, ULONG query_level, CommonTableExpr *cte, CDXLNode *cte_producer)
+CCTEListEntry::CCTEListEntry(CMemoryPool *mp, uint32_t query_level, CommonTableExpr *cte, CDXLNode *cte_producer)
     : m_query_level(query_level), m_cte_info(nullptr) {
   GPOS_ASSERT(nullptr != cte && nullptr != cte_producer);
 
   m_cte_info = GPOS_NEW(mp) HMSzCTEInfo(mp);
   Query *cte_query = (Query *)cte->ctequery;
 
-  BOOL result GPOS_ASSERTS_ONLY =
+  bool result GPOS_ASSERTS_ONLY =
       m_cte_info->Insert(cte->ctename, GPOS_NEW(mp) SCTEProducerInfo(cte_producer, cte_query->targetList));
 
   GPOS_ASSERT(result);
@@ -53,21 +53,21 @@ CCTEListEntry::CCTEListEntry(CMemoryPool *mp, ULONG query_level, CommonTableExpr
 //		Ctor: multiple CTEs
 //
 //---------------------------------------------------------------------------
-CCTEListEntry::CCTEListEntry(CMemoryPool *mp, ULONG query_level, List *cte_list, CDXLNodeArray *cte_dxl_arr)
+CCTEListEntry::CCTEListEntry(CMemoryPool *mp, uint32_t query_level, List *cte_list, CDXLNodeArray *cte_dxl_arr)
     : m_query_level(query_level), m_cte_info(nullptr) {
   GPOS_ASSERT(nullptr != cte_dxl_arr);
   GPOS_ASSERT(cte_dxl_arr->Size() == gpdb::ListLength(cte_list));
 
   m_cte_info = GPOS_NEW(mp) HMSzCTEInfo(mp);
-  const ULONG num_cte = cte_dxl_arr->Size();
+  const uint32_t num_cte = cte_dxl_arr->Size();
 
-  for (ULONG ul = 0; ul < num_cte; ul++) {
+  for (uint32_t ul = 0; ul < num_cte; ul++) {
     CDXLNode *cte_producer = (*cte_dxl_arr)[ul];
     CommonTableExpr *cte = (CommonTableExpr *)gpdb::ListNth(cte_list, ul);
 
     Query *cte_query = (Query *)cte->ctequery;
 
-    BOOL result GPOS_ASSERTS_ONLY =
+    bool result GPOS_ASSERTS_ONLY =
         m_cte_info->Insert(cte->ctename, GPOS_NEW(mp) SCTEProducerInfo(cte_producer, cte_query->targetList));
 
     GPOS_ASSERT(result);
@@ -83,7 +83,7 @@ CCTEListEntry::CCTEListEntry(CMemoryPool *mp, ULONG query_level, List *cte_list,
 //		Return the query of the CTE referenced in the range table entry
 //
 //---------------------------------------------------------------------------
-const CDXLNode *CCTEListEntry::GetCTEProducer(const CHAR *cte_str) const {
+const CDXLNode *CCTEListEntry::GetCTEProducer(const char *cte_str) const {
   SCTEProducerInfo *cte_info = m_cte_info->Find(cte_str);
   if (nullptr == cte_info) {
     return nullptr;
@@ -100,7 +100,7 @@ const CDXLNode *CCTEListEntry::GetCTEProducer(const CHAR *cte_str) const {
 //		Return the target list of the CTE referenced in the range table entry
 //
 //---------------------------------------------------------------------------
-List *CCTEListEntry::GetCTEProducerTargetList(const CHAR *cte_str) const {
+List *CCTEListEntry::GetCTEProducerTargetList(const char *cte_str) const {
   SCTEProducerInfo *cte_info = m_cte_info->Find(cte_str);
   if (nullptr == cte_info) {
     return nullptr;
@@ -121,7 +121,7 @@ void CCTEListEntry::AddCTEProducer(CMemoryPool *mp, CommonTableExpr *cte, const 
   GPOS_ASSERT(nullptr == m_cte_info->Find(cte->ctename) && "CTE entry already exists");
   Query *cte_query = (Query *)cte->ctequery;
 
-  BOOL result GPOS_ASSERTS_ONLY =
+  bool result GPOS_ASSERTS_ONLY =
       m_cte_info->Insert(cte->ctename, GPOS_NEW(mp) SCTEProducerInfo(cte_producer, cte_query->targetList));
 
   GPOS_ASSERT(result);

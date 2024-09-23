@@ -46,7 +46,7 @@ class CIndexDescriptor : public CRefCount {
   CColumnDescriptorArray *m_pdrgpcoldescIncludedCols;
 
   // clustered index
-  BOOL m_clustered;
+  bool m_clustered;
 
   // index type
   IMDIndex::EmdindexType m_index_type;
@@ -56,16 +56,16 @@ class CIndexDescriptor : public CRefCount {
 
   // ctor
   CIndexDescriptor(CMemoryPool *mp, IMDId *pmdidIndex, const CName &name, CColumnDescriptorArray *pdrgcoldescKeyCols,
-                   CColumnDescriptorArray *pdrgcoldescIncludedCols, BOOL is_clustered, IMDIndex::EmdindexType emdindt);
+                   CColumnDescriptorArray *pdrgcoldescIncludedCols, bool is_clustered, IMDIndex::EmdindexType emdindt);
 
   // dtor
   ~CIndexDescriptor() override;
 
   // number of key columns
-  ULONG Keys() const;
+  uint32_t Keys() const;
 
   // number of included columns
-  ULONG UlIncludedColumns() const;
+  uint32_t UlIncludedColumns() const;
 
   // index mdid accessor
   IMDId *MDId() const { return m_pmdidIndex; }
@@ -80,11 +80,11 @@ class CIndexDescriptor : public CRefCount {
   CColumnDescriptorArray *PdrgpcoldescIncluded() const { return m_pdrgpcoldescIncludedCols; }
 
   // is index clustered
-  BOOL IsClustered() const { return m_clustered; }
+  bool IsClustered() const { return m_clustered; }
 
   IMDIndex::EmdindexType IndexType() const { return m_index_type; }
 
-  BOOL SupportsIndexOnlyScan(CTableDescriptor *ptabdesc) const;
+  bool SupportsIndexOnlyScan(CTableDescriptor *ptabdesc) const;
 
   // create an index descriptor
   static CIndexDescriptor *Pindexdesc(CMemoryPool *mp, const CTableDescriptor *ptabdesc, const IMDIndex *pmdindex);

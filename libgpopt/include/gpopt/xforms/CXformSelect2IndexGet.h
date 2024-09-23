@@ -32,7 +32,7 @@ class CXformSelect2IndexGet : public CXformExploration {
   CXformSelect2IndexGet(const CXformSelect2IndexGet &);
 
   // return the column reference set of included / key columns
-  CColRefSet *GetColRefSet(CMemoryPool *mp, CLogicalGet *popGet, const IMDIndex *pmdindex, BOOL fIncludedColumns) const;
+  CColRefSet *GetColRefSet(CMemoryPool *mp, CLogicalGet *popGet, const IMDIndex *pmdindex, bool fIncludedColumns) const;
 
  public:
   // ctor
@@ -45,7 +45,7 @@ class CXformSelect2IndexGet : public CXformExploration {
   EXformId Exfid() const override { return ExfSelect2IndexGet; }
 
   // xform name
-  const CHAR *SzId() const override { return "CXformSelect2IndexGet"; }
+  const char *SzId() const override { return "CXformSelect2IndexGet"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

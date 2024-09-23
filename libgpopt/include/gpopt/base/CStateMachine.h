@@ -61,7 +61,7 @@ class CStateMachine {
   TEnumState m_tenumstate;
 
   // flag indicating if the state machine is initialized
-  BOOL m_fInit{false};
+  bool m_fInit{false};
 
   // array of transitions
   TEnumEvent m_rgrgtenumeventTransitions[tenumstateSentinel][tenumstateSentinel];
@@ -74,13 +74,13 @@ class CStateMachine {
 #define GRAPHVIZ_BOX(x) GRAPHVIZ_SHAPE("box", x)
 
   // state names
-  const WCHAR *m_rgwszStates[tenumstateSentinel];
+  const wchar_t *m_rgwszStates[tenumstateSentinel];
 
   // event names
-  const WCHAR *m_rgwszEvents[tenumeventSentinel];
+  const wchar_t *m_rgwszEvents[tenumeventSentinel];
 
   // current index into history
-  ULONG m_ulHistory{0};
+  uint32_t m_ulHistory{0};
 
   // state history
   TEnumState m_tenumstateHistory[GPOPT_FSM_HISTORY];
@@ -90,7 +90,7 @@ class CStateMachine {
 
   // track event
   void RecordHistory(TEnumEvent tenumevent, TEnumState tenumstate) {
-    ULONG ulHistory = m_ulHistory % GPOPT_FSM_HISTORY;
+    uint32_t ulHistory = m_ulHistory % GPOPT_FSM_HISTORY;
 
     m_tenumeventHistory[ulHistory] = tenumevent;
     m_tenumstateHistory[ulHistory] = tenumstate;
@@ -99,7 +99,7 @@ class CStateMachine {
   }
 
   // resolve names for states
-  const WCHAR *WszState(TEnumState tenumstate) const {
+  const wchar_t *WszState(TEnumState tenumstate) const {
     GPOS_ASSERT(m_fInit);
     GPOS_ASSERT(0 <= tenumstate && tenumstate < tenumstateSentinel);
 
@@ -107,7 +107,7 @@ class CStateMachine {
   }
 
   // resolve names for events
-  const WCHAR *WszEvent(TEnumEvent tenumevent) const {
+  const wchar_t *WszEvent(TEnumEvent tenumevent) const {
     GPOS_ASSERT(m_fInit);
     GPOS_ASSERT(0 <= tenumevent && tenumevent < tenumeventSentinel);
 
@@ -116,7 +116,7 @@ class CStateMachine {
 
   // retrieve all states -- enum might have 'holes'
   void States(EsetStates *peset) const {
-    for (ULONG ul = 0; ul < tenumstateSentinel; ul++) {
+    for (uint32_t ul = 0; ul < tenumstateSentinel; ul++) {
       (void)peset->ExchangeSet((TEnumState)ul);
     }
   }
@@ -189,15 +189,15 @@ class CStateMachine {
 #endif  // GPOS_DEBUG
 
   // actual implementation of transition
-  BOOL FAttemptTransition(TEnumState tenumstateOld, TEnumEvent tenumevent, TEnumState &tenumstateNew) const {
+  bool FAttemptTransition(TEnumState tenumstateOld, TEnumEvent tenumevent, TEnumState &tenumstateNew) const {
     GPOS_ASSERT(tenumevent < tenumeventSentinel);
     GPOS_ASSERT(m_fInit);
 
-    for (ULONG ulOuter = 0; ulOuter < tenumstateSentinel; ulOuter++) {
+    for (uint32_t ulOuter = 0; ulOuter < tenumstateSentinel; ulOuter++) {
       if (m_rgrgtenumeventTransitions[tenumstateOld][ulOuter] == tenumevent) {
 #ifdef GPOS_DEBUG
         // make sure there isn't another transition possible for the same event
-        for (ULONG ulInner = ulOuter + 1; ulInner < tenumstateSentinel; ulInner++) {
+        for (uint32_t ulInner = ulOuter + 1; ulInner < tenumstateSentinel; ulInner++) {
           GPOS_ASSERT(m_rgrgtenumeventTransitions[tenumstateOld][ulInner] != tenumevent);
         }
 #endif  // GPOS_DEBUG
@@ -216,31 +216,31 @@ class CStateMachine {
   // ctor
   CStateMachine() : m_tenumstate(TesInitial()) {
     GPOS_ASSERT(0 < tenumstateSentinel && 0 < tenumeventSentinel &&
-                (ULONG)tenumeventSentinel + 1 >= (ULONG)tenumstateSentinel);
+                (uint32_t)tenumeventSentinel + 1 >= (uint32_t)tenumstateSentinel);
   }
 
   // initialize state machine
   void Init(const TEnumEvent rgrgtenumeventTransitions[tenumstateSentinel][tenumstateSentinel]
 #ifdef GPOS_DEBUG
             ,
-            const WCHAR rgwszStates[tenumstateSentinel][GPOPT_FSM_NAME_LENGTH],
-            const WCHAR rgwszEvents[tenumeventSentinel][GPOPT_FSM_NAME_LENGTH]
+            const wchar_t rgwszStates[tenumstateSentinel][GPOPT_FSM_NAME_LENGTH],
+            const wchar_t rgwszEvents[tenumeventSentinel][GPOPT_FSM_NAME_LENGTH]
 #endif  // GPOS_DEBUG
   ) {
     GPOS_ASSERT(!m_fInit);
 
-    for (ULONG ulOuter = 0; ulOuter < tenumstateSentinel; ulOuter++) {
-      for (ULONG ulInner = 0; ulInner < tenumstateSentinel; ulInner++) {
+    for (uint32_t ulOuter = 0; ulOuter < tenumstateSentinel; ulOuter++) {
+      for (uint32_t ulInner = 0; ulInner < tenumstateSentinel; ulInner++) {
         m_rgrgtenumeventTransitions[ulOuter][ulInner] = rgrgtenumeventTransitions[ulOuter][ulInner];
       }
     }
 
 #ifdef GPOS_DEBUG
-    for (ULONG ul = 0; ul < tenumstateSentinel; ul++) {
+    for (uint32_t ul = 0; ul < tenumstateSentinel; ul++) {
       m_rgwszStates[ul] = rgwszStates[ul];
     }
 
-    for (ULONG ul = 0; ul < tenumeventSentinel; ul++) {
+    for (uint32_t ul = 0; ul < tenumeventSentinel; ul++) {
       m_rgwszEvents[ul] = rgwszEvents[ul];
     }
 #endif  // GPOS_DEBUG
@@ -253,9 +253,9 @@ class CStateMachine {
   ~CStateMachine() = default;
 
   // attempt transition
-  BOOL FTransition(TEnumEvent tenumevent, TEnumState &tenumstate) {
+  bool FTransition(TEnumEvent tenumevent, TEnumState &tenumstate) {
     TEnumState tenumstateNew;
-    BOOL fSucceeded = FAttemptTransition(m_tenumstate, tenumevent, tenumstateNew);
+    bool fSucceeded = FAttemptTransition(m_tenumstate, tenumevent, tenumstateNew);
 
     if (fSucceeded) {
       m_tenumstate = tenumstateNew;
@@ -272,7 +272,7 @@ class CStateMachine {
   void Transition(TEnumEvent tenumevent) {
     TEnumState tenumstateDummy;
 #ifdef GPOS_DEBUG
-    BOOL fCheck =
+    bool fCheck =
 #else
     (void)
 #endif  // GPOS_DEBUG
@@ -299,9 +299,9 @@ class CStateMachine {
 #ifdef GPOS_DEBUG
   // dump history
   IOstream &OsHistory(IOstream &os) const {
-    ULONG ulElems = std::min(m_ulHistory, GPOPT_FSM_HISTORY);
+    uint32_t ulElems = std::min(m_ulHistory, GPOPT_FSM_HISTORY);
 
-    ULONG ulStart = m_ulHistory + 1;
+    uint32_t ulStart = m_ulHistory + 1;
     if (m_ulHistory < GPOPT_FSM_HISTORY) {
       // if we haven't rolled over, just start at 0
       ulStart = 0;
@@ -309,8 +309,8 @@ class CStateMachine {
 
     os << "State Machine History (" << (void *)this << ")" << std::endl;
 
-    for (ULONG ul = 0; ul < ulElems; ul++) {
-      ULONG ulPos = (ulStart + ul) % GPOPT_FSM_HISTORY;
+    for (uint32_t ul = 0; ul < ulElems; ul++) {
+      uint32_t ulPos = (ulStart + ul) % GPOPT_FSM_HISTORY;
       os << ul << ": " << WszEvent(m_tenumeventHistory[ulPos]) << " (event) -> " << WszState(m_tenumstateHistory[ulPos])
          << " (state)" << std::endl;
     }
@@ -319,9 +319,9 @@ class CStateMachine {
   }
 
   // check for unreachable states
-  BOOL FReachable(CMemoryPool *mp) const {
+  bool FReachable(CMemoryPool *mp) const {
     TEnumState *pestate = nullptr;
-    ULONG size = 0;
+    uint32_t size = 0;
     Unreachable(mp, &pestate, &size);
     GPOS_DELETE_ARRAY(pestate);
 
@@ -329,13 +329,13 @@ class CStateMachine {
   }
 
   // compute array of unreachable states
-  void Unreachable(CMemoryPool *mp, TEnumState **ppestate, ULONG *pulSize) const {
+  void Unreachable(CMemoryPool *mp, TEnumState **ppestate, uint32_t *pulSize) const {
     GPOS_ASSERT(nullptr != ppestate);
     GPOS_ASSERT(nullptr != pulSize);
 
     // initialize output array
     *ppestate = GPOS_NEW_ARRAY(mp, TEnumState, tenumstateSentinel);
-    for (ULONG ul = 0; ul < tenumstateSentinel; ul++) {
+    for (uint32_t ul = 0; ul < tenumstateSentinel; ul++) {
       (*ppestate)[ul] = tenumstateSentinel;
     }
 
@@ -347,7 +347,7 @@ class CStateMachine {
 
     // store remaining states in output array
     EsetStatesIter esetIter(*peset);
-    ULONG ul = 0;
+    uint32_t ul = 0;
     while (esetIter.Advance()) {
       (*ppestate)[ul++] = esetIter.TBit();
     }
@@ -356,7 +356,7 @@ class CStateMachine {
   }
 
   // dump Moore diagram in graphviz format
-  IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const WCHAR *wszTitle) const {
+  IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const wchar_t *wszTitle) const {
     os << "digraph " << wszTitle << " { " << std::endl << GRAPHVIZ_DOUBLE_CIRCLE(WszState(TesInitial())) << std::endl;
 
     // get unreachable states

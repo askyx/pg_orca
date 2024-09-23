@@ -30,16 +30,16 @@ class CAutoTimer : public CStackObject {
   CWallClock m_clock;
 
   // label for timer output
-  const CHAR *m_timer_text_label;
+  const char *m_timer_text_label;
 
   // trigger printing at destruction time
-  BOOL m_print_text_label;
+  bool m_print_text_label;
 
  public:
   CAutoTimer(const CAutoTimer &) = delete;
 
   // ctor
-  CAutoTimer(const CHAR *sz, BOOL fPrint);
+  CAutoTimer(const char *sz, bool fPrint);
 
   // dtor
   ~CAutoTimer() throw();

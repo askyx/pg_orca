@@ -21,7 +21,7 @@ using namespace gpopt;
 CMDAccessor::MDCache *CMDCache::m_pcache = nullptr;
 
 // maximum size of the cache
-ULLONG CMDCache::m_ullCacheQuota = UNLIMITED_CACHE_QUOTA;
+uint64_t CMDCache::m_ullCacheQuota = UNLIMITED_CACHE_QUOTA;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -59,7 +59,7 @@ void CMDCache::Shutdown() {
 //		Set the maximum size of the cache
 //
 //---------------------------------------------------------------------------
-void CMDCache::SetCacheQuota(ULLONG ullCacheQuota) {
+void CMDCache::SetCacheQuota(uint64_t ullCacheQuota) {
   GPOS_ASSERT(nullptr != m_pcache && "Metadata cache was not created");
   m_ullCacheQuota = ullCacheQuota;
   m_pcache->SetCacheQuota(ullCacheQuota);
@@ -73,8 +73,7 @@ void CMDCache::SetCacheQuota(ULLONG ullCacheQuota) {
 //		Get the maximum size of the cache
 //
 //---------------------------------------------------------------------------
-ULLONG
-CMDCache::ULLGetCacheQuota() {
+uint64_t CMDCache::ULLGetCacheQuota() {
   // make sure that the CMDCache's saved quota is reflected in the underlying CCache
   GPOS_ASSERT_IMP(nullptr != m_pcache, m_pcache->GetCacheQuota() == m_ullCacheQuota);
   return m_ullCacheQuota;
@@ -88,8 +87,7 @@ CMDCache::ULLGetCacheQuota() {
 // 		Get the number of times we evicted entries from this cache
 //
 //---------------------------------------------------------------------------
-ULLONG
-CMDCache::ULLGetCacheEvictionCounter() {
+uint64_t CMDCache::ULLGetCacheEvictionCounter() {
   // make sure that we already initialized our underlying CCache
   GPOS_ASSERT(nullptr != m_pcache);
 

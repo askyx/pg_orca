@@ -136,11 +136,11 @@ void CDrvdPropRelational::Derive(CMemoryPool *,  // mp,
 //		Check for satisfying required properties
 //
 //---------------------------------------------------------------------------
-BOOL CDrvdPropRelational::FSatisfies(const CReqdPropPlan *prpp) const {
+bool CDrvdPropRelational::FSatisfies(const CReqdPropPlan *prpp) const {
   GPOS_ASSERT(nullptr != prpp);
   GPOS_ASSERT(nullptr != prpp->PcrsRequired());
 
-  BOOL fSatisfies = GetOutputColumns()->ContainsAll(prpp->PcrsRequired());
+  bool fSatisfies = GetOutputColumns()->ContainsAll(prpp->PcrsRequired());
 
   return fSatisfies;
 }
@@ -167,7 +167,8 @@ CDrvdPropRelational *CDrvdPropRelational::GetRelationalProperties(CDrvdProp *pdp
 //		Helper for getting applicable FDs from child
 //
 //---------------------------------------------------------------------------
-CFunctionalDependencyArray *CDrvdPropRelational::DeriveChildFunctionalDependencies(CMemoryPool *mp, ULONG child_index,
+CFunctionalDependencyArray *CDrvdPropRelational::DeriveChildFunctionalDependencies(CMemoryPool *mp,
+                                                                                   uint32_t child_index,
                                                                                    CExpressionHandle &exprhdl) {
   GPOS_ASSERT(child_index < exprhdl.Arity());
   GPOS_ASSERT(!exprhdl.FScalarChild(child_index));
@@ -180,8 +181,8 @@ CFunctionalDependencyArray *CDrvdPropRelational::DeriveChildFunctionalDependenci
 
   // collect child FD's that are applicable to the parent
   CFunctionalDependencyArray *pdrgpfd = GPOS_NEW(mp) CFunctionalDependencyArray(mp);
-  const ULONG size = pdrgpfdChild->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = pdrgpfdChild->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     CFunctionalDependency *pfd = (*pdrgpfdChild)[ul];
 
     // check applicability of FD's LHS
@@ -223,8 +224,8 @@ CFunctionalDependencyArray *CDrvdPropRelational::DeriveLocalFunctionalDependenci
     return pdrgpfd;
   }
 
-  ULONG ulKeys = pkc->Keys();
-  for (ULONG ul = 0; ul < ulKeys; ul++) {
+  uint32_t ulKeys = pkc->Keys();
+  for (uint32_t ul = 0; ul < ulKeys; ul++) {
     CColRefArray *pdrgpcrKey = pkc->PdrgpcrKey(mp, ul);
     CColRefSet *pcrsKey = GPOS_NEW(mp) CColRefSet(mp);
     pcrsKey->Include(pdrgpcrKey);
@@ -276,10 +277,10 @@ IOstream &CDrvdPropRelational::OsPrint(IOstream &os) const {
 
   os << ", Constraint Property: [" << *GetPropertyConstraint() << "]";
 
-  const ULONG ulFDs = GetFunctionalDependencies()->Size();
+  const uint32_t ulFDs = GetFunctionalDependencies()->Size();
 
   os << ", FDs: [";
-  for (ULONG ul = 0; ul < ulFDs; ul++) {
+  for (uint32_t ul = 0; ul < ulFDs; ul++) {
     CFunctionalDependency *pfd = (*GetFunctionalDependencies())[ul];
     os << *pfd;
   }
@@ -387,10 +388,10 @@ CFunctionalDependencyArray *CDrvdPropRelational::GetFunctionalDependencies() con
 CFunctionalDependencyArray *CDrvdPropRelational::DeriveFunctionalDependencies(CExpressionHandle &exprhdl) {
   if (!m_is_prop_derived->ExchangeSet(EdptPdrgpfd)) {
     CFunctionalDependencyArray *pdrgpfd = GPOS_NEW(m_mp) CFunctionalDependencyArray(m_mp);
-    const ULONG arity = exprhdl.Arity();
+    const uint32_t arity = exprhdl.Arity();
 
     // collect applicable FD's from logical children
-    for (ULONG ul = 0; ul < arity; ul++) {
+    for (uint32_t ul = 0; ul < arity; ul++) {
       if (!exprhdl.FScalarChild(ul)) {
         CFunctionalDependencyArray *pdrgpfdChild = DeriveChildFunctionalDependencies(m_mp, ul, exprhdl);
         CUtils::AddRefAppend(pdrgpfd, pdrgpfdChild);
@@ -424,14 +425,12 @@ CMaxCard CDrvdPropRelational::DeriveMaxCard(CExpressionHandle &exprhdl) {
 }
 
 // join depth
-ULONG
-CDrvdPropRelational::GetJoinDepth() const {
+uint32_t CDrvdPropRelational::GetJoinDepth() const {
   GPOS_RTL_ASSERT(IsComplete());
   return m_ulJoinDepth;
 }
 
-ULONG
-CDrvdPropRelational::DeriveJoinDepth(CExpressionHandle &exprhdl) {
+uint32_t CDrvdPropRelational::DeriveJoinDepth(CExpressionHandle &exprhdl) {
   if (!m_is_prop_derived->ExchangeSet(EdptJoinDepth)) {
     CLogical *popLogical = CLogical::PopConvert(exprhdl.Pop());
     m_ulJoinDepth = popLogical->DeriveJoinDepth(m_mp, exprhdl);

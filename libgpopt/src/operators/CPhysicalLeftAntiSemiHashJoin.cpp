@@ -25,7 +25,7 @@ using namespace gpopt;
 //---------------------------------------------------------------------------
 CPhysicalLeftAntiSemiHashJoin::CPhysicalLeftAntiSemiHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys,
                                                              CExpressionArray *pdrgpexprInnerKeys,
-                                                             IMdIdArray *hash_opfamilies, BOOL is_null_aware,
+                                                             IMdIdArray *hash_opfamilies, bool is_null_aware,
                                                              CXform::EXformId origin_xform)
     : CPhysicalHashJoin(mp, pdrgpexprOuterKeys, pdrgpexprInnerKeys, hash_opfamilies, is_null_aware, origin_xform) {}
 
@@ -47,8 +47,8 @@ CPhysicalLeftAntiSemiHashJoin::~CPhysicalLeftAntiSemiHashJoin() = default;
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalLeftAntiSemiHashJoin::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                                      ULONG  // ulOptReq
+bool CPhysicalLeftAntiSemiHashJoin::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                                      uint32_t  // ulOptReq
 ) const {
   // left anti semi join only propagates columns from left child
   return FOuterProvidesReqdCols(exprhdl, pcrsRequired);

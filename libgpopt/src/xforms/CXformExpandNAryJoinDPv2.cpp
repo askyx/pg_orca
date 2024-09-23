@@ -70,12 +70,12 @@ void CXformExpandNAryJoinDPv2::Transform(CXformContext *pxfctxt, CXformResult *p
 
   CMemoryPool *mp = pxfctxt->Pmp();
 
-  const ULONG arity = pexpr->Arity();
+  const uint32_t arity = pexpr->Arity();
   GPOS_ASSERT(arity >= 3);
 
   // Make an expression array with all the atoms (the logical children)
   CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
-  for (ULONG ul = 0; ul < arity - 1; ul++) {
+  for (uint32_t ul = 0; ul < arity - 1; ul++) {
     CExpression *pexprChild = (*pexpr)[ul];
     pexprChild->AddRef();
     pdrgpexpr->Append(pexprChild);
@@ -94,7 +94,7 @@ void CXformExpandNAryJoinDPv2::Transform(CXformContext *pxfctxt, CXformResult *p
   if (nullptr != CScalarNAryJoinPredList::PopConvert(pexprScalar->Pop())) {
     innerJoinPreds = CPredicateUtils::PdrgpexprConjuncts(mp, (*pexprScalar)[0]);
 
-    for (ULONG ul = 1; ul < pexprScalar->Arity(); ul++) {
+    for (uint32_t ul = 1; ul < pexprScalar->Arity(); ul++) {
       (*pexprScalar)[ul]->AddRef();
       onPreds->Append((*pexprScalar)[ul]);
     }

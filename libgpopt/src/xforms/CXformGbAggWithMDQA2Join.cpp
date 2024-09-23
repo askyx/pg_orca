@@ -90,7 +90,7 @@ CExpression *CXformGbAggWithMDQA2Join::PexprMDQAs2Join(CMemoryPool *mp, CExpress
 
   // create a CTE producer based on child expression
   CCTEInfo *pcteinfo = COptCtxt::PoctxtFromTLS()->Pcteinfo();
-  const ULONG ulCTEId = pcteinfo->next_id();
+  const uint32_t ulCTEId = pcteinfo->next_id();
   (void)CXformUtils::PexprAddCTEProducer(mp, ulCTEId, pdrgpcrChildOutput, pexprChild);
 
   // create a CTE consumer with child output columns
@@ -127,7 +127,7 @@ CExpression *CXformGbAggWithMDQA2Join::PexprExpandMDQAs(CMemoryPool *mp, CExpres
 
   COperator *pop = pexpr->Pop();
   if (CLogicalGbAgg::PopConvert(pop)->FGlobal()) {
-    BOOL fHasMultipleDistinctAggs = (*pexpr)[1]->DeriveHasMultipleDistinctAggs();
+    bool fHasMultipleDistinctAggs = (*pexpr)[1]->DeriveHasMultipleDistinctAggs();
     if (fHasMultipleDistinctAggs) {
       CExpression *pexprExpanded = PexprMDQAs2Join(mp, pexpr);
 
@@ -165,9 +165,9 @@ CExpression *CXformGbAggWithMDQA2Join::PexprTransform(CMemoryPool *mp, CExpressi
   }
 
   // recursively process child expressions
-  const ULONG arity = pexpr->Arity();
+  const uint32_t arity = pexpr->Arity();
   CExpressionArray *pdrgpexprChildren = GPOS_NEW(mp) CExpressionArray(mp);
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprChild = PexprTransform(mp, (*pexpr)[ul]);
     pdrgpexprChildren->Append(pexprChild);
   }
@@ -199,7 +199,7 @@ void CXformGbAggWithMDQA2Join::Transform(CXformContext *pxfctxt, CXformResult *p
   }
 }
 
-BOOL CXformGbAggWithMDQA2Join::IsApplyOnce() {
+bool CXformGbAggWithMDQA2Join::IsApplyOnce() {
   return true;
 }
 // EOF

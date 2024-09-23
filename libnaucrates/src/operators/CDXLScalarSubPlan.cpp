@@ -28,7 +28,7 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CDXLScalarSubPlan::CDXLScalarSubPlan(CMemoryPool *mp, IMDId *first_col_type_mdid, CDXLColRefArray *dxl_colref_array,
-                                     EdxlSubPlanType dxl_subplan_type, CDXLNode *dxlnode_test_expr, BOOL outer_param)
+                                     EdxlSubPlanType dxl_subplan_type, CDXLNode *dxlnode_test_expr, bool outer_param)
     : CDXLScalar(mp),
       m_first_col_type_mdid(first_col_type_mdid),
       m_dxl_colref_array(dxl_colref_array),
@@ -86,7 +86,7 @@ IMDId *CDXLScalarSubPlan::GetFirstColTypeMdId() const {
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarSubPlan::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarSubPlan::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_first_col_type_mdid)->GetDatumType());
 }
 
@@ -131,7 +131,7 @@ const CWStringConst *CDXLScalarSubPlan::GetSubplanTypeStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarSubPlan::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarSubPlan::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(EdxlSubPlanIndexSentinel == dxlnode->Arity());
 
   // assert child plan is a physical plan and is valid

@@ -37,7 +37,7 @@ class CXformImplementation : public CXform {
   ~CXformImplementation() override;
 
   // type of operator
-  BOOL FImplementation() const override {
+  bool FImplementation() const override {
     GPOS_ASSERT(!FSubstitution() && !FExploration());
     return true;
   }

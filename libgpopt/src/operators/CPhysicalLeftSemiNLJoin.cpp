@@ -43,8 +43,8 @@ CPhysicalLeftSemiNLJoin::~CPhysicalLeftSemiNLJoin() = default;
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalLeftSemiNLJoin::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                                ULONG  // ulOptReq
+bool CPhysicalLeftSemiNLJoin::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                                uint32_t  // ulOptReq
 ) const {
   // left semi join only propagates columns from left child
   return FOuterProvidesReqdCols(exprhdl, pcrsRequired);

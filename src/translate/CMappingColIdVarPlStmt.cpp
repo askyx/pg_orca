@@ -88,7 +88,7 @@ Param *CMappingColIdVarPlStmt::ParamFromDXLNodeScId(const CDXLScalarIdent *dxlop
 
   Param *param = nullptr;
 
-  const ULONG colid = dxlop->GetDXLColRef()->Id();
+  const uint32_t colid = dxlop->GetDXLColRef()->Id();
   const CMappingElementColIdParamId *elem = m_output_context->GetParamIdMappingElement(colid);
 
   if (nullptr != elem) {
@@ -118,7 +118,7 @@ Var *CMappingColIdVarPlStmt::VarFromDXLNodeScId(const CDXLScalarIdent *dxlop) {
   Index varno_old = 0;
   AttrNumber attno_old = 0;
 
-  const ULONG colid = dxlop->GetDXLColRef()->Id();
+  const uint32_t colid = dxlop->GetDXLColRef()->Id();
   if (nullptr != m_base_table_context) {
     // scalar id is used in a base table operator node
     varno = m_base_table_context->rte_index;
@@ -147,7 +147,7 @@ Var *CMappingColIdVarPlStmt::VarFromDXLNodeScId(const CDXLScalarIdent *dxlop) {
       // identifier comes from left child
       varno = OUTER_VAR;
     } else {
-      const ULONG num_contexts = m_child_contexts->Size();
+      const uint32_t num_contexts = m_child_contexts->Size();
       if (2 > num_contexts) {
         // there are no more children. col id not found in this tree
         // and must be an outer ref
@@ -164,7 +164,7 @@ Var *CMappingColIdVarPlStmt::VarFromDXLNodeScId(const CDXLScalarIdent *dxlop) {
       varno = INNER_VAR;
 
       // check any additional contexts if col is still not found yet
-      for (ULONG ul = 2; nullptr == target_entry && ul < num_contexts; ul++) {
+      for (uint32_t ul = 2; nullptr == target_entry && ul < num_contexts; ul++) {
         const CDXLTranslateContext *context = (*m_child_contexts)[ul];
         GPOS_ASSERT(nullptr != context);
 

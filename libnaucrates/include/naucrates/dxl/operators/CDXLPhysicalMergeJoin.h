@@ -38,13 +38,13 @@ enum Edxlmj {
 class CDXLPhysicalMergeJoin : public CDXLPhysicalJoin {
  private:
   // true if outer relation has unique values for the merge key
-  BOOL m_is_unique_outer;
+  bool m_is_unique_outer;
 
  public:
   CDXLPhysicalMergeJoin(const CDXLPhysicalMergeJoin &) = delete;
 
   // ctor
-  CDXLPhysicalMergeJoin(CMemoryPool *mp, EdxlJoinType join_type, BOOL is_unique_outer);
+  CDXLPhysicalMergeJoin(CMemoryPool *mp, EdxlJoinType join_type, bool is_unique_outer);
 
   // accessors
   Edxlopid GetDXLOperator() const override;
@@ -63,7 +63,7 @@ class CDXLPhysicalMergeJoin : public CDXLPhysicalJoin {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

@@ -29,7 +29,7 @@ namespace gpos {
 class CMemoryVisitorPrint : public IMemoryVisitor {
  private:
   // call counter for the visit function
-  ULLONG m_visits;
+  uint64_t m_visits;
 
   // stream used for writing debug information
   IOstream &m_os;
@@ -44,12 +44,11 @@ class CMemoryVisitorPrint : public IMemoryVisitor {
   ~CMemoryVisitorPrint() override;
 
   // output information about a memory allocation
-  void Visit(void *user_addr, SIZE_T user_size, void *total_addr, SIZE_T total_size, const CHAR *alloc_filename,
-             const ULONG alloc_line, ULLONG alloc_seq_number, CStackDescriptor *stack_desc) override;
+  void Visit(void *user_addr, size_t user_size, void *total_addr, size_t total_size, const char *alloc_filename,
+             const uint32_t alloc_line, uint64_t alloc_seq_number, CStackDescriptor *stack_desc) override;
 
   // visit counter accessor
-  ULLONG
-  GetNumVisits() const { return m_visits; }
+  uint64_t GetNumVisits() const { return m_visits; }
 };
 }  // namespace gpos
 

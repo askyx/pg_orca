@@ -32,7 +32,7 @@ class CXformJoin2BitmapIndexGetApply : public CXformJoin2IndexApplyGeneric {
   // ident accessors
   EXformId Exfid() const override { return ExfJoin2BitmapIndexGetApply; }
 
-  const CHAR *SzId() const override { return "CXformJoin2BitmapIndexGetApply"; }
+  const char *SzId() const override { return "CXformJoin2BitmapIndexGetApply"; }
 
 };  // class CXformJoin2BitmapIndexGetApply
 

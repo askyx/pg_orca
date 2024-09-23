@@ -25,7 +25,7 @@ namespace gpos {
 class CRandom {
  private:
   // seed
-  ULONG m_seed;  // NOLINT(modernize-use-default-member-init)
+  uint32_t m_seed;  // NOLINT(modernize-use-default-member-init)
 
  public:
   CRandom(const CRandom &) = delete;
@@ -34,10 +34,10 @@ class CRandom {
   CRandom();
 
   // c'tor with seed
-  CRandom(ULONG seed);
+  CRandom(uint32_t seed);
 
   // next random number
-  ULONG Next();
+  uint32_t Next();
 
   // d'tor
   ~CRandom();

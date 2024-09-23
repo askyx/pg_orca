@@ -27,7 +27,7 @@
 using namespace gpos;
 
 // refer gpopt/exception.cpp for explanation of errors
-const ULONG expected_opt_fallback[] = {
+const uint32_t expected_opt_fallback[] = {
     gpopt::ExmiInvalidPlanAlternative,             // chosen plan id is outside range of possible plans
     gpopt::ExmiUnsupportedOp,                      // unsupported operator
     gpopt::ExmiUnsupportedPred,                    // unsupported predicate
@@ -43,7 +43,7 @@ const ULONG expected_opt_fallback[] = {
 
 // array of DXL minor exception types that trigger expected fallback to the planner
 // refer naucrates/exception.cpp for explanation of errors
-const ULONG expected_dxl_fallback[] = {
+const uint32_t expected_dxl_fallback[] = {
     gpdxl::ExmiMDObjUnsupported,             // unsupported metadata object
     gpdxl::ExmiQuery2DXLUnsupportedFeature,  // unsupported feature during algebrization
     gpdxl::ExmiDXL2PlStmtConversion,         // unsupported feature during planned statement translation
@@ -55,27 +55,26 @@ const ULONG expected_dxl_fallback[] = {
     gpdxl::ExmiMDCacheEntryNotFound,
     gpdxl::ExmiQuery2DXLError};
 
-gpos::BOOL FoundException(gpos::CException &exc, const gpos::ULONG *exceptions, gpos::ULONG size) {
+bool FoundException(gpos::CException &exc, const uint32_t *exceptions, uint32_t size) {
   GPOS_ASSERT(nullptr != exceptions);
 
-  gpos::ULONG minor = exc.Minor();
-  gpos::BOOL found = false;
-  for (gpos::ULONG ul = 0; !found && ul < size; ul++) {
+  uint32_t minor = exc.Minor();
+  bool found = false;
+  for (uint32_t ul = 0; !found && ul < size; ul++) {
     found = (exceptions[ul] == minor);
   }
 
   return found;
 }
 
-gpos::BOOL IsLoggableFailure(gpos::CException &exc) {
-  gpos::ULONG major = exc.Major();
+bool IsLoggableFailure(gpos::CException &exc) {
+  uint32_t major = exc.Major();
 
-  gpos::BOOL is_opt_failure_expected =
+  bool is_opt_failure_expected =
       gpopt::ExmaGPOPT == major && FoundException(exc, expected_opt_fallback, GPOS_ARRAY_SIZE(expected_opt_fallback));
 
-  gpos::BOOL is_dxl_failure_expected =
-      (gpdxl::ExmaDXL == major || gpdxl::ExmaMD == major) &&
-      FoundException(exc, expected_dxl_fallback, GPOS_ARRAY_SIZE(expected_dxl_fallback));
+  bool is_dxl_failure_expected = (gpdxl::ExmaDXL == major || gpdxl::ExmaMD == major) &&
+                                 FoundException(exc, expected_dxl_fallback, GPOS_ARRAY_SIZE(expected_dxl_fallback));
 
   return (!is_opt_failure_expected && !is_dxl_failure_expected);
 }
@@ -95,8 +94,6 @@ void gpos_init(struct gpos_init_params *params) {
   CWorkerPoolManager::Init();
   CMessageRepository::Init();
   CCacheFactory::Init();
-
-
 }
 
 //---------------------------------------------------------------------------
@@ -138,7 +135,7 @@ int gpos_exec(gpos_exec_params *params) {
     }
 
     // put worker to stack - main thread has id '0'
-    CWorker wrkr(GPOS_WORKER_STACK_SIZE, (ULONG_PTR)pvStackStart);
+    CWorker wrkr(GPOS_WORKER_STACK_SIZE, (uintptr_t)pvStackStart);
 
     // scope for memory pool
     {
@@ -167,7 +164,7 @@ int gpos_exec(gpos_exec_params *params) {
           GPOS_ASSERT(0 < params->error_buffer_size);
 
           apwstr = GPOS_NEW(mp)
-              CWStringStatic((WCHAR *)params->error_buffer, params->error_buffer_size / GPOS_SIZEOF(WCHAR));
+              CWStringStatic((wchar_t *)params->error_buffer, params->error_buffer_size / GPOS_SIZEOF(wchar_t));
           aposs = GPOS_NEW(mp) COstreamString(apwstr.Value());
           aplogger = GPOS_NEW(mp) CLoggerStream(*aposs.Value());
 
@@ -207,7 +204,6 @@ int gpos_exec(gpos_exec_params *params) {
 //
 //---------------------------------------------------------------------------
 void gpos_terminate() {
-
 #ifdef GPOS_DEBUG
   CMessageRepository::Shutdown();
   CWorkerPoolManager::Shutdown();

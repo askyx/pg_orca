@@ -40,7 +40,7 @@ class CXformImplementCTEConsumer : public CXformImplementation {
   EXformId Exfid() const override { return ExfImplementCTEConsumer; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformImplementCTEConsumer"; }
+  const char *SzId() const override { return "CXformImplementCTEConsumer"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

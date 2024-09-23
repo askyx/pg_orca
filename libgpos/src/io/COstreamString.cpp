@@ -33,10 +33,10 @@ COstreamString::COstreamString(CWString *pws) : COstream(), m_string(pws) {
 //		COstreamString::operator<<
 //
 //	@doc:
-//		WCHAR array write thru;
+//		wchar_t array write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &COstreamString::operator<<(const WCHAR *wc_array) {
+IOstream &COstreamString::operator<<(const wchar_t *wc_array) {
   m_string->AppendWideCharArray(wc_array);
 
   return *this;
@@ -47,10 +47,10 @@ IOstream &COstreamString::operator<<(const WCHAR *wc_array) {
 //		COstreamString::operator<<
 //
 //	@doc:
-//		CHAR array write thru;
+//		char array write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &COstreamString::operator<<(const CHAR *c) {
+IOstream &COstreamString::operator<<(const char *c) {
   m_string->AppendCharArray(c);
 
   return *this;
@@ -61,11 +61,11 @@ IOstream &COstreamString::operator<<(const CHAR *c) {
 //		COstreamString::operator<<
 //
 //	@doc:
-//		WCHAR write thru;
+//		wchar_t write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &COstreamString::operator<<(const WCHAR wc) {
-  WCHAR wc_array[2];
+IOstream &COstreamString::operator<<(const wchar_t wc) {
+  wchar_t wc_array[2];
   wc_array[0] = wc;
   wc_array[1] = L'\0';
   m_string->AppendWideCharArray(wc_array);
@@ -78,11 +78,11 @@ IOstream &COstreamString::operator<<(const WCHAR wc) {
 //		COstreamString::operator<<
 //
 //	@doc:
-//		CHAR write thru;
+//		char write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &COstreamString::operator<<(const CHAR c) {
-  CHAR char_array[2];
+IOstream &COstreamString::operator<<(const char c) {
+  char char_array[2];
   char_array[0] = c;
   char_array[1] = '\0';
   m_string->AppendCharArray(char_array);

@@ -63,10 +63,10 @@ class CDXLWindowFrame : public CRefCount {
   OID m_in_range_coll;
 
   // use ASC sort order for in_range tests
-  BOOL m_in_range_asc;
+  bool m_in_range_asc;
 
   // nulls sort first for in_range tests
-  BOOL m_in_range_nulls_first;
+  bool m_in_range_nulls_first;
 
  public:
   CDXLWindowFrame(const CDXLWindowFrame &) = delete;
@@ -96,9 +96,9 @@ class CDXLWindowFrame : public CRefCount {
 
   OID PdxlnInRangeColl() const { return m_in_range_coll; }
 
-  BOOL PdxlnInRangeAsc() const { return m_in_range_asc; }
+  bool PdxlnInRangeAsc() const { return m_in_range_asc; }
 
-  BOOL PdxlnInRangeNullsFirst() const { return m_in_range_nulls_first; }
+  bool PdxlnInRangeNullsFirst() const { return m_in_range_nulls_first; }
 
   // return the string representation of the exclusion strategy
   static const CWStringConst *PstrES(EdxlFrameExclusionStrategy edxles);

@@ -32,13 +32,13 @@ class CDXLPhysicalAssert : public CDXLPhysical {
 
  private:
   // error code
-  CHAR m_sql_state[GPOS_SQLSTATE_LENGTH + 1];
+  char m_sql_state[GPOS_SQLSTATE_LENGTH + 1];
 
  public:
   CDXLPhysicalAssert(CDXLPhysicalAssert &) = delete;
 
   // ctor
-  CDXLPhysicalAssert(CMemoryPool *mp, const CHAR *sql_state);
+  CDXLPhysicalAssert(CMemoryPool *mp, const char *sql_state);
 
   // dtor
   ~CDXLPhysicalAssert() override;
@@ -50,14 +50,14 @@ class CDXLPhysicalAssert : public CDXLPhysical {
   const CWStringConst *GetOpNameStr() const override;
 
   // error code
-  const CHAR *GetSQLState() const { return m_sql_state; }
+  const char *GetSQLState() const { return m_sql_state; }
 
   // serialize operator in DXL format
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 
   // conversion function

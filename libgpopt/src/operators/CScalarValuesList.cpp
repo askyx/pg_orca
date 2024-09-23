@@ -34,7 +34,7 @@ CScalarValuesList::CScalarValuesList(CMemoryPool *mp) : CScalar(mp) {}
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarValuesList::Matches(COperator *pop) const {
+bool CScalarValuesList::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }

@@ -39,20 +39,20 @@ class CDXLScalarCoerceBase : public CDXLScalar {
   IMDId *m_result_type_mdid;
 
   // output type modifier
-  INT m_type_modifier;
+  int32_t m_type_modifier;
 
   // coercion form
   EdxlCoercionForm m_dxl_coerce_format;
 
   // location of token to be coerced
-  INT m_location;
+  int32_t m_location;
 
  public:
   CDXLScalarCoerceBase(const CDXLScalarCoerceBase &) = delete;
 
   // ctor/dtor
-  CDXLScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, EdxlCoercionForm dxl_coerce_format,
-                       INT location);
+  CDXLScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, EdxlCoercionForm dxl_coerce_format,
+                       int32_t location);
 
   ~CDXLScalarCoerceBase() override;
 
@@ -60,21 +60,21 @@ class CDXLScalarCoerceBase : public CDXLScalar {
   IMDId *GetResultTypeMdId() const { return m_result_type_mdid; }
 
   // return type modifier
-  INT TypeModifier() const { return m_type_modifier; }
+  int32_t TypeModifier() const { return m_type_modifier; }
 
   // return coercion form
   EdxlCoercionForm GetDXLCoercionForm() const { return m_dxl_coerce_format; }
 
   // return token location
-  INT GetLocation() const { return m_location; }
+  int32_t GetLocation() const { return m_location; }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
+  bool HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *node, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 
   // serialize operator in DXL format

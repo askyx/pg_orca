@@ -30,19 +30,19 @@ using namespace gpmd;
 class CDXLScalarParam : public CDXLScalar {
  private:
   // param id
-  ULONG m_id;
+  uint32_t m_id;
 
   // param type
   IMDId *m_mdid_type;
 
   // param type modifier
-  INT m_type_modifer;
+  int32_t m_type_modifer;
 
  public:
   CDXLScalarParam(CDXLScalarParam &) = delete;
 
   // ctor/dtor
-  CDXLScalarParam(CMemoryPool *, ULONG, IMDId *, INT);
+  CDXLScalarParam(CMemoryPool *, uint32_t, IMDId *, int32_t);
 
   ~CDXLScalarParam() override;
 
@@ -53,11 +53,11 @@ class CDXLScalarParam : public CDXLScalar {
   const CWStringConst *GetOpNameStr() const override;
 
   // accessors
-  ULONG GetId() const;
+  uint32_t GetId() const;
 
   IMDId *GetMDIdType() const;
 
-  INT GetTypeModifier() const;
+  int32_t GetTypeModifier() const;
 
   // serialize operator in DXL format
 
@@ -70,11 +70,11 @@ class CDXLScalarParam : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
+  bool HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure
-  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *node, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

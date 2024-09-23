@@ -42,8 +42,8 @@ void ICostModel::SetParams(ICostModelParamsArray *pdrgpcp) const {
   }
 
   // overwrite default values of cost model parameters
-  const ULONG size = pdrgpcp->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = pdrgpcp->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     ICostModelParams::SCostParam *pcp = (*pdrgpcp)[ul];
     GetCostModelParams()->SetParam(pcp->Id(), pcp->Get(), pcp->GetLowerBoundVal(), pcp->GetUpperBoundVal());
   }

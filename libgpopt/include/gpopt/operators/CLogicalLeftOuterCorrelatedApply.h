@@ -27,7 +27,7 @@ namespace gpopt {
 //---------------------------------------------------------------------------
 class CLogicalLeftOuterCorrelatedApply : public CLogicalLeftOuterApply {
  private:
-  BOOL m_allow_predicate_pushdown{true};
+  bool m_allow_predicate_pushdown{true};
 
  public:
   CLogicalLeftOuterCorrelatedApply(const CLogicalLeftOuterCorrelatedApply &) = delete;
@@ -45,21 +45,21 @@ class CLogicalLeftOuterCorrelatedApply : public CLogicalLeftOuterApply {
   EOperatorId Eopid() const override { return EopLogicalLeftOuterCorrelatedApply; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalLeftOuterCorrelatedApply"; }
+  const char *SzId() const override { return "CLogicalLeftOuterCorrelatedApply"; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // applicable transformations
   CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
   // return true if operator is a correlated apply
-  BOOL FCorrelated() const override { return true; }
+  bool FCorrelated() const override { return true; }
 
-  BOOL IsPredicatePushDownAllowed() const { return m_allow_predicate_pushdown; }
+  bool IsPredicatePushDownAllowed() const { return m_allow_predicate_pushdown; }
 
   // conversion function
   static CLogicalLeftOuterCorrelatedApply *PopConvert(COperator *pop) {

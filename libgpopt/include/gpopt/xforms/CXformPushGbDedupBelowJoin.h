@@ -39,7 +39,7 @@ class CXformPushGbDedupBelowJoin : public CXformPushGbBelowJoin {
   // ident accessors
   EXformId Exfid() const override { return ExfPushGbDedupBelowJoin; }
 
-  const CHAR *SzId() const override { return "CXformPushGbDedupBelowJoin"; }
+  const char *SzId() const override { return "CXformPushGbDedupBelowJoin"; }
 
 };  // class CXformPushGbDedupBelowJoin
 

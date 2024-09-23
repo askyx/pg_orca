@@ -57,11 +57,10 @@ class CTaskSchedulerFifo : public ITaskScheduler {
   GPOS_RESULT Cancel(CTask *task) override;
 
   // get number of waiting tasks
-  ULONG
-  GetQueueSize() override { return m_task_queue.Size(); }
+  uint32_t GetQueueSize() override { return m_task_queue.Size(); }
 
   // check if task queue is empty
-  BOOL IsEmpty() const override { return m_task_queue.IsEmpty(); }
+  bool IsEmpty() const override { return m_task_queue.IsEmpty(); }
 
 };  // class CTaskSchedulerFifo
 }  // namespace gpos

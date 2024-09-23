@@ -30,8 +30,8 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarCoerceViaIO::CScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, ECoercionForm ecf,
-                                       INT location)
+CScalarCoerceViaIO::CScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, ECoercionForm ecf,
+                                       int32_t location)
     : CScalarCoerceBase(mp, mdid_type, type_modifier, ecf, location) {}
 
 //---------------------------------------------------------------------------
@@ -42,7 +42,7 @@ CScalarCoerceViaIO::CScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, INT ty
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarCoerceViaIO::Matches(COperator *pop) const {
+bool CScalarCoerceViaIO::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarCoerceViaIO *popCoerce = CScalarCoerceViaIO::PopConvert(pop);
 

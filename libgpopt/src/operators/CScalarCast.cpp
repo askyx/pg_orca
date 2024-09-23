@@ -30,7 +30,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarCast::CScalarCast(CMemoryPool *mp, IMDId *return_type_mdid, IMDId *mdid_func, BOOL is_binary_coercible)
+CScalarCast::CScalarCast(CMemoryPool *mp, IMDId *return_type_mdid, IMDId *mdid_func, bool is_binary_coercible)
     : CScalar(mp),
       m_return_type_mdid(return_type_mdid),
       m_func_mdid(mdid_func),
@@ -54,7 +54,7 @@ CScalarCast::CScalarCast(CMemoryPool *mp, IMDId *return_type_mdid, IMDId *mdid_f
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarCast::Matches(COperator *pop) const {
+bool CScalarCast::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarCast *pscop = CScalarCast::PopConvert(pop);
 

@@ -54,11 +54,11 @@ class CPartPruneStepsBuilder {
 
   PartitionedRelPruneInfo *CreatePartPruneInfoForOneLevel(CDXLNode *filterNode);
 
-  List *PartPruneStepsFromFilter(CDXLNode *filterNode, INT *step_id, List *steps_list);
+  List *PartPruneStepsFromFilter(CDXLNode *filterNode, int32_t *step_id, List *steps_list);
 
-  List *PartPruneStepFromScalarCmp(CDXLNode *node, INT *step_id, List *steps_list);
+  List *PartPruneStepFromScalarCmp(CDXLNode *node, int32_t *step_id, List *steps_list);
 
-  List *PartPruneStepFromScalarBoolExpr(CDXLNode *node, INT *step_id, List *steps_list);
+  List *PartPruneStepFromScalarBoolExpr(CDXLNode *node, int32_t *step_id, List *steps_list);
 };
 }  // namespace gpdxl
 

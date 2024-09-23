@@ -33,8 +33,8 @@ CDXLLogicalConstTable::CDXLLogicalConstTable(CMemoryPool *mp, CDXLColDescrArray 
   GPOS_ASSERT(nullptr != const_tuples_datum_array);
 
 #ifdef GPOS_DEBUG
-  const ULONG length = const_tuples_datum_array->Size();
-  for (ULONG idx = 0; idx < length; idx++) {
+  const uint32_t length = const_tuples_datum_array->Size();
+  for (uint32_t idx = 0; idx < length; idx++) {
     CDXLDatumArray *pdrgpdxldatum = (*const_tuples_datum_array)[idx];
     GPOS_ASSERT(pdrgpdxldatum->Size() == col_descr_array->Size());
   }
@@ -86,7 +86,7 @@ const CWStringConst *CDXLLogicalConstTable::GetOpNameStr() const {
 //		Type of const table element at given position
 //
 //---------------------------------------------------------------------------
-CDXLColDescr *CDXLLogicalConstTable::GetColumnDescrAt(ULONG idx) const {
+CDXLColDescr *CDXLLogicalConstTable::GetColumnDescrAt(uint32_t idx) const {
   GPOS_ASSERT(m_col_descr_array->Size() > idx);
   return (*m_col_descr_array)[idx];
 }
@@ -99,8 +99,7 @@ CDXLColDescr *CDXLLogicalConstTable::GetColumnDescrAt(ULONG idx) const {
 //		Const table arity
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLLogicalConstTable::Arity() const {
+uint32_t CDXLLogicalConstTable::Arity() const {
   return m_col_descr_array->Size();
 }
 
@@ -112,10 +111,10 @@ CDXLLogicalConstTable::Arity() const {
 //		Check if given column is defined by operator
 //
 //---------------------------------------------------------------------------
-BOOL CDXLLogicalConstTable::IsColDefined(ULONG colid) const {
-  const ULONG size = Arity();
-  for (ULONG descr_idx = 0; descr_idx < size; descr_idx++) {
-    ULONG id = GetColumnDescrAt(descr_idx)->Id();
+bool CDXLLogicalConstTable::IsColDefined(uint32_t colid) const {
+  const uint32_t size = Arity();
+  for (uint32_t descr_idx = 0; descr_idx < size; descr_idx++) {
+    uint32_t id = GetColumnDescrAt(descr_idx)->Id();
     if (id == colid) {
       return true;
     }
@@ -134,7 +133,7 @@ BOOL CDXLLogicalConstTable::IsColDefined(ULONG colid) const {
 //
 //---------------------------------------------------------------------------
 void CDXLLogicalConstTable::AssertValid(const CDXLNode *node,
-                                        BOOL  // validate_children
+                                        bool  // validate_children
 ) const {
   // assert validity of col descr
   GPOS_ASSERT(m_col_descr_array != nullptr);

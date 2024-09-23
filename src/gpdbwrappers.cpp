@@ -234,7 +234,7 @@ bool gpdb::WalkExpressionTree(Node *node, bool (*walker)(Node *node, void *conte
   return expression_tree_walker(node, walker, context);
 }
 
-gpos::BOOL gpdb::WalkQueryTree(Query *query, bool (*walker)(Node *node, void *context), void *context, int flags) {
+bool gpdb::WalkQueryTree(Query *query, bool (*walker)(Node *node, void *context), void *context, int flags) {
   { return query_tree_walker(query, walker, context, flags); }
 
   return false;
@@ -385,7 +385,7 @@ Oid gpdb::ResolveAggregateTransType(Oid aggfnoid, Oid aggtranstype, Oid *inputTy
   return resolve_aggregate_transtype(aggfnoid, aggtranstype, inputTypes, numArguments);
 }
 
-Query *gpdb::FlattenJoinAliasVar(Query *query, gpos::ULONG queryLevel) {
+Query *gpdb::FlattenJoinAliasVar(Query *query, uint32_t queryLevel) {
   Query *queryNew = (Query *)copyObject(query);
 
   /*
@@ -1162,7 +1162,7 @@ bool gpdb::HasSubclassSlow(Oid rel_oid) {
   return false;
 }
 
-gpos::BOOL gpdb::IsChildPartDistributionMismatched(Relation rel) {
+bool gpdb::IsChildPartDistributionMismatched(Relation rel) {
   {
     /* catalog tables: pg_class, pg_inherits */
     return false;
@@ -1340,7 +1340,7 @@ void gpdb::IndexOpProperties(Oid opno, Oid opfamily, StrategyNumber *strategynum
     // Only the right type is returned to the caller, the left
     // type is simply ignored.
     Oid lefttype;
-    INT strategy;
+    int32_t strategy;
 
     get_op_opfamily_properties(opno, opfamily, false, &strategy, &lefttype, righttype);
 
@@ -1352,7 +1352,7 @@ void gpdb::IndexOpProperties(Oid opno, Oid opfamily, StrategyNumber *strategynum
 }
 
 // check whether index column is returnable (for index-only scans)
-gpos::BOOL gpdb::IndexCanReturn(Relation index, int attno) {
+bool gpdb::IndexCanReturn(Relation index, int attno) {
   { return index_can_return(index, attno); }
 }
 

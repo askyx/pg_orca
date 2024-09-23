@@ -42,7 +42,7 @@ CDXLScalarValuesList *CDXLScalarValuesList::Cast(CDXLOperator *dxl_op) {
 }
 
 // does the operator return a boolean result
-BOOL CDXLScalarValuesList::HasBoolResult(CMDAccessor *  // md_accessor
+bool CDXLScalarValuesList::HasBoolResult(CMDAccessor *  // md_accessor
 ) const {
   return false;
 }
@@ -50,10 +50,10 @@ BOOL CDXLScalarValuesList::HasBoolResult(CMDAccessor *  // md_accessor
 #ifdef GPOS_DEBUG
 
 // checks whether operator node is well-structured
-void CDXLScalarValuesList::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
-  const ULONG arity = dxlnode->Arity();
+void CDXLScalarValuesList::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
+  const uint32_t arity = dxlnode->Arity();
 
-  for (ULONG idx = 0; idx < arity; ++idx) {
+  for (uint32_t idx = 0; idx < arity; ++idx) {
     CDXLNode *pdxlnConstVal = (*dxlnode)[idx];
     GPOS_ASSERT(EdxloptypeScalar == pdxlnConstVal->GetOperator()->GetDXLOperatorType());
 

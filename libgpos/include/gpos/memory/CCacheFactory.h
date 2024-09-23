@@ -66,7 +66,7 @@ class CCacheFactory {
 
   // create a cache instance
   template <class T, class K>
-  static CCache<T, K> *CreateCache(BOOL unique, ULLONG cache_quota, typename CCache<T, K>::HashFuncPtr hash_func,
+  static CCache<T, K> *CreateCache(bool unique, uint64_t cache_quota, typename CCache<T, K>::HashFuncPtr hash_func,
                                    typename CCache<T, K>::EqualFuncPtr equal_func) {
     GPOS_ASSERT(nullptr != m_factory && "Cache factory has not been initialized");
 

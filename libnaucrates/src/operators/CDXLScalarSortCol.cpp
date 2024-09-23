@@ -24,8 +24,8 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarSortCol::CDXLScalarSortCol(CMemoryPool *mp, ULONG colid, IMDId *mdid_sort_op, CWStringConst *sort_op_name_str,
-                                     BOOL sort_nulls_first)
+CDXLScalarSortCol::CDXLScalarSortCol(CMemoryPool *mp, uint32_t colid, IMDId *mdid_sort_op,
+                                     CWStringConst *sort_op_name_str, bool sort_nulls_first)
     : CDXLScalar(mp),
       m_colid(colid),
       m_mdid_sort_op(mdid_sort_op),
@@ -79,8 +79,7 @@ const CWStringConst *CDXLScalarSortCol::GetOpNameStr() const {
 //		Id of the sorting column
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLScalarSortCol::GetColId() const {
+uint32_t CDXLScalarSortCol::GetColId() const {
   return m_colid;
 }
 
@@ -104,7 +103,7 @@ IMDId *CDXLScalarSortCol::GetMdIdSortOp() const {
 //		Whether nulls are sorted before other values
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarSortCol::IsSortedNullsFirst() const {
+bool CDXLScalarSortCol::IsSortedNullsFirst() const {
   return m_must_sort_nulls_first;
 }
 
@@ -118,7 +117,7 @@ BOOL CDXLScalarSortCol::IsSortedNullsFirst() const {
 //
 //---------------------------------------------------------------------------
 void CDXLScalarSortCol::AssertValid(const CDXLNode *dxlnode,
-                                    BOOL  // validate_children
+                                    bool  // validate_children
 ) const {
   GPOS_ASSERT(0 == dxlnode->Arity());
 }

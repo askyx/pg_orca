@@ -132,7 +132,7 @@ void CXformEagerAgg::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CEx
 // check if an aggregate can be pushed below a join
 // Only following aggregates are supported:
 // 	min, max, sum, count, avg
-BOOL CXformEagerAgg::CanPushAggBelowJoin(CExpression *scalar_agg_func_expr) {
+bool CXformEagerAgg::CanPushAggBelowJoin(CExpression *scalar_agg_func_expr) {
   CScalarAggFunc *scalar_agg_func = CScalarAggFunc::PopConvert(scalar_agg_func_expr->Pop());
   if ((*scalar_agg_func_expr)[0]->Arity() != 1) {
     /* currently only supporting single-input aggregates */
@@ -169,7 +169,7 @@ BOOL CXformEagerAgg::CanPushAggBelowJoin(CExpression *scalar_agg_func_expr) {
 //		- Aggregate is not a DQA
 //		- Single expression input in the agg
 //		- Input expression only part of outer child
-BOOL CXformEagerAgg::CanApplyTransform(CExpression *gb_agg_expr) {
+bool CXformEagerAgg::CanApplyTransform(CExpression *gb_agg_expr) {
   CExpression *join_expr = (*gb_agg_expr)[0];
   CExpression *agg_proj_list_expr = (*gb_agg_expr)[1];
   CExpression *join_outer_child_expr = (*join_expr)[0];
@@ -183,12 +183,12 @@ BOOL CXformEagerAgg::CanApplyTransform(CExpression *gb_agg_expr) {
     return false;
   }
 
-  const ULONG num_aggregates = agg_proj_list_expr->Arity();
+  const uint32_t num_aggregates = agg_proj_list_expr->Arity();
   if (num_aggregates == 0) {
     // at least one aggregate must be present to push down
     return false;
   }
-  for (ULONG agg_index = 0; agg_index < num_aggregates; agg_index++) {
+  for (uint32_t agg_index = 0; agg_index < num_aggregates; agg_index++) {
     CExpression *scalar_agg_proj_expr = (*agg_proj_list_expr)[agg_index];
     if (!CanPushAggBelowJoin((*scalar_agg_proj_expr)[0])) {
       // No aggregate is pushed below join if an unsupported aggregate is
@@ -210,10 +210,10 @@ void CXformEagerAgg::PopulateLowerUpperProjectList(
   // build an array of project elements for the new lower and upper aggregates
   CExpressionArray *lower_proj_elem_array = GPOS_NEW(mp) CExpressionArray(mp);
   CExpressionArray *upper_proj_elem_array = GPOS_NEW(mp) CExpressionArray(mp);
-  const ULONG num_proj_elements = orig_proj_list->Arity();
+  const uint32_t num_proj_elements = orig_proj_list->Arity();
 
   // loop over each project element
-  for (ULONG ul = 0; ul < num_proj_elements; ul++) {
+  for (uint32_t ul = 0; ul < num_proj_elements; ul++) {
     CExpression *orig_proj_elem_expr = (*orig_proj_list)[ul];
     CScalarProjectElement *orig_proj_elem = CScalarProjectElement::PopConvert(orig_proj_elem_expr->Pop());
 
@@ -246,7 +246,7 @@ void CXformEagerAgg::PopulateLowerUpperProjectList(
 void CXformEagerAgg::PopulateLowerProjectElement(
     CMemoryPool *mp,  // memory pool
     IMDId *agg_mdid,  // original global aggregate function
-    CWStringConst *agg_name, CExpressionArray *agg_arg_array, BOOL is_distinct, ULongPtrArray *arg_types,
+    CWStringConst *agg_name, CExpressionArray *agg_arg_array, bool is_distinct, ULongPtrArray *arg_types,
     CExpression **lower_proj_elem_expr  // output project element of the new lower aggregate
 ) {
   CColumnFactory *col_factory = COptCtxt::PoctxtFromTLS()->Pcf();
@@ -276,7 +276,7 @@ void CXformEagerAgg::PopulateLowerProjectElement(
 void CXformEagerAgg::PopulateUpperProjectElement(
     CMemoryPool *mp,  // memory pool
     IMDId *agg_mdid,  // original global aggregate function
-    CWStringConst *agg_name, CColRef *lower_colref, CColRef *output_colref, BOOL is_distinct, ULongPtrArray *arg_types,
+    CWStringConst *agg_name, CColRef *lower_colref, CColRef *output_colref, bool is_distinct, ULongPtrArray *arg_types,
     CExpression **upper_proj_elem_expr  // output project element of the new lower aggregate
 ) {
   // create a new operator

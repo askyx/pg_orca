@@ -47,22 +47,22 @@ class CDXLRelStats : public IMDRelStats {
   CDouble m_rows;
 
   // flag to indicate if input relation is empty
-  BOOL m_empty;
+  bool m_empty;
 
   // DXL string for object
   CWStringDynamic *m_dxl_str = nullptr;
 
   // number of blocks (not always up to-to-date)
-  ULONG m_relpages;
+  uint32_t m_relpages;
 
   // number of all-visible blocks (not always up-to-date)
-  ULONG m_relallvisible;
+  uint32_t m_relallvisible;
 
  public:
   CDXLRelStats(const CDXLRelStats &) = delete;
 
-  CDXLRelStats(CMemoryPool *mp, CMDIdRelStats *rel_stats_mdid, CMDName *mdname, CDouble rows, BOOL is_empty,
-               ULONG relpages, ULONG relallvisible);
+  CDXLRelStats(CMemoryPool *mp, CMDIdRelStats *rel_stats_mdid, CMDName *mdname, CDouble rows, bool is_empty,
+               uint32_t relpages, uint32_t relallvisible);
 
   ~CDXLRelStats() override;
 
@@ -78,15 +78,13 @@ class CDXLRelStats : public IMDRelStats {
   CDouble Rows() const override;
 
   // number of blocks (not always up to-to-date)
-  ULONG
-  RelPages() const override { return m_relpages; }
+  uint32_t RelPages() const override { return m_relpages; }
 
   // number of all-visible blocks (not always up-to-date)
-  ULONG
-  RelAllVisible() const override { return m_relallvisible; }
+  uint32_t RelAllVisible() const override { return m_relallvisible; }
 
   // is statistics on an empty input
-  BOOL IsEmpty() const override { return m_empty; }
+  bool IsEmpty() const override { return m_empty; }
 
   // serialize relation stats in DXL format given a serializer object
 

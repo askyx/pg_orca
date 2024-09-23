@@ -38,39 +38,39 @@ class IDatumInt2 : public IDatum {
   IMDType::ETypeInfo GetDatumType() override { return IMDType::EtiInt2; }
 
   // accessor of integer value
-  virtual SINT Value() const = 0;
+  virtual int16_t Value() const = 0;
 
   // can datum be mapped to a double
-  BOOL IsDatumMappableToDouble() const override { return true; }
+  bool IsDatumMappableToDouble() const override { return true; }
 
   // map to double for stats computation
   CDouble GetDoubleMapping() const override { return CDouble(Value()); }
 
-  // can datum be mapped to LINT
-  BOOL IsDatumMappableToLINT() const override { return true; }
+  // can datum be mapped to int64_t
+  bool IsDatumMappableToLINT() const override { return true; }
 
-  // map to LINT for statistics computation
-  LINT GetLINTMapping() const override { return LINT(Value()); }
+  // map to int64_t for statistics computation
+  int64_t GetLINTMapping() const override { return int64_t(Value()); }
 
   // byte array representation of datum
-  const BYTE *GetByteArrayValue() const override {
+  const uint8_t *GetByteArrayValue() const override {
     GPOS_ASSERT(!"Invalid invocation of MakeCopyOfValue");
     return nullptr;
   }
 
   // does the datum need to be padded before statistical derivation
-  BOOL NeedsPadding() const override { return false; }
+  bool NeedsPadding() const override { return false; }
 
   // return the padded datum
   IDatum *MakePaddedDatum(CMemoryPool *,  // mp,
-                          ULONG           // col_len
+                          uint32_t        // col_len
   ) const override {
     GPOS_ASSERT(!"Invalid invocation of MakePaddedDatum");
     return nullptr;
   }
 
   // does datum support like predicate
-  BOOL SupportsLikePredicate() const override { return false; }
+  bool SupportsLikePredicate() const override { return false; }
 
   // return the default scale factor of like predicate
   CDouble GetLikePredicateScaleFactor() const override {

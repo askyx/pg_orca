@@ -26,8 +26,8 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLColDescr::CDXLColDescr(CMDName *md_name, ULONG column_id, INT attr_no, IMDId *column_mdid_type, INT type_modifier,
-                           BOOL is_dropped, ULONG width)
+CDXLColDescr::CDXLColDescr(CMDName *md_name, uint32_t column_id, int32_t attr_no, IMDId *column_mdid_type,
+                           int32_t type_modifier, bool is_dropped, uint32_t width)
     : m_md_name(md_name),
       m_column_id(column_id),
       m_attr_no(attr_no),
@@ -71,8 +71,7 @@ const CMDName *CDXLColDescr::MdName() const {
 //		Returns the column Id
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLColDescr::Id() const {
+uint32_t CDXLColDescr::Id() const {
   return m_column_id;
 }
 
@@ -84,7 +83,7 @@ CDXLColDescr::Id() const {
 //		Returns the column attribute number in GPDB
 //
 //---------------------------------------------------------------------------
-INT CDXLColDescr::AttrNum() const {
+int32_t CDXLColDescr::AttrNum() const {
   return m_attr_no;
 }
 
@@ -100,7 +99,7 @@ IMDId *CDXLColDescr::MdidType() const {
   return m_column_mdid_type;
 }
 
-INT CDXLColDescr::TypeModifier() const {
+int32_t CDXLColDescr::TypeModifier() const {
   return m_type_modifier;
 }
 
@@ -112,7 +111,7 @@ INT CDXLColDescr::TypeModifier() const {
 //		Is the column dropped from the relation
 //
 //---------------------------------------------------------------------------
-BOOL CDXLColDescr::IsDropped() const {
+bool CDXLColDescr::IsDropped() const {
   return m_is_dropped;
 }
 
@@ -124,7 +123,6 @@ BOOL CDXLColDescr::IsDropped() const {
 //		Returns the width of the column
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLColDescr::Width() const {
+uint32_t CDXLColDescr::Width() const {
   return m_column_width;
 }

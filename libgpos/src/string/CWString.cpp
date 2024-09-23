@@ -23,7 +23,7 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CWString::CWString(ULONG length)
+CWString::CWString(uint32_t length)
     : CWStringBase(length,
                    true  // owns_memory
                    ),
@@ -37,7 +37,7 @@ CWString::CWString(ULONG length)
 //		Returns the wide character buffer storing the string
 //
 //---------------------------------------------------------------------------
-const WCHAR *CWString::GetBuffer() const {
+const wchar_t *CWString::GetBuffer() const {
   return m_w_str_buffer;
 }
 

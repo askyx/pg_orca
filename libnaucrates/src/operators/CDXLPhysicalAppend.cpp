@@ -26,7 +26,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalAppend::CDXLPhysicalAppend(CMemoryPool *mp, BOOL fIsTarget, BOOL fIsZapped)
+CDXLPhysicalAppend::CDXLPhysicalAppend(CMemoryPool *mp, bool fIsTarget, bool fIsZapped)
     : CDXLPhysical(mp), m_used_in_upd_del(fIsTarget), m_is_zapped(fIsZapped) {}
 
 //---------------------------------------------------------------------------
@@ -61,7 +61,7 @@ const CWStringConst *CDXLPhysicalAppend::GetOpNameStr() const {
 //		Is the append node updating a target relation
 //
 //---------------------------------------------------------------------------
-BOOL CDXLPhysicalAppend::IsUsedInUpdDel() const {
+bool CDXLPhysicalAppend::IsUsedInUpdDel() const {
   return m_used_in_upd_del;
 }
 
@@ -73,7 +73,7 @@ BOOL CDXLPhysicalAppend::IsUsedInUpdDel() const {
 //		Is the append node zapped
 //
 //---------------------------------------------------------------------------
-BOOL CDXLPhysicalAppend::IsZapped() const {
+bool CDXLPhysicalAppend::IsZapped() const {
   return m_is_zapped;
 }
 
@@ -86,12 +86,12 @@ BOOL CDXLPhysicalAppend::IsZapped() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalAppend::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLPhysicalAppend::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   // assert proj list and filter are valid
   CDXLPhysical::AssertValid(dxlnode, validate_children);
 
-  const ULONG ulChildren = dxlnode->Arity();
-  for (ULONG ul = EdxlappendIndexFirstChild; ul < ulChildren; ul++) {
+  const uint32_t ulChildren = dxlnode->Arity();
+  for (uint32_t ul = EdxlappendIndexFirstChild; ul < ulChildren; ul++) {
     CDXLNode *child_dxlnode = (*dxlnode)[ul];
     GPOS_ASSERT(EdxloptypePhysical == child_dxlnode->GetOperator()->GetDXLOperatorType());
 

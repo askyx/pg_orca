@@ -27,7 +27,7 @@ namespace gpopt {
 class CLogicalCTEConsumer : public CLogical {
  private:
   // cte identifier
-  ULONG m_id;
+  uint32_t m_id;
 
   // mapped cte columns
   CColRefArray *m_pdrgpcr;
@@ -51,7 +51,7 @@ class CLogicalCTEConsumer : public CLogical {
   explicit CLogicalCTEConsumer(CMemoryPool *mp);
 
   // ctor
-  CLogicalCTEConsumer(CMemoryPool *mp, ULONG id, CColRefArray *colref_array);
+  CLogicalCTEConsumer(CMemoryPool *mp, uint32_t id, CColRefArray *colref_array);
 
   // dtor
   ~CLogicalCTEConsumer() override;
@@ -59,11 +59,10 @@ class CLogicalCTEConsumer : public CLogical {
   // ident accessors
   EOperatorId Eopid() const override { return EopLogicalCTEConsumer; }
 
-  const CHAR *SzId() const override { return "CLogicalCTEConsumer"; }
+  const char *SzId() const override { return "CLogicalCTEConsumer"; }
 
   // cte identifier
-  ULONG
-  UlCTEId() const { return m_id; }
+  uint32_t UlCTEId() const { return m_id; }
 
   // cte columns
   CColRefArray *Pdrgpcr() const { return m_pdrgpcr; }
@@ -74,16 +73,16 @@ class CLogicalCTEConsumer : public CLogical {
   CExpression *PexprInlined() const { return m_pexprInlined; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -99,7 +98,7 @@ class CLogicalCTEConsumer : public CLogical {
   CMaxCard DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // derive join depth
-  ULONG DeriveJoinDepth(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
+  uint32_t DeriveJoinDepth(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // derive not nullable output columns
   CColRefSet *DeriveNotNullColumns(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
@@ -117,7 +116,7 @@ class CLogicalCTEConsumer : public CLogical {
   CColRefSet *PcrsStat(CMemoryPool *,        // mp
                        CExpressionHandle &,  // exprhdl
                        CColRefSet *,         // pcrsInput,
-                       ULONG                 // child_index
+                       uint32_t              // child_index
   ) const override {
     GPOS_ASSERT(!"CLogicalCTEConsumer has no children");
     return nullptr;

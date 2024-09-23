@@ -97,7 +97,7 @@ CMDTypeInt2GPDB::~CMDTypeInt2GPDB() {
 //		Factory function for creating INT2 datums
 //
 //---------------------------------------------------------------------------
-IDatumInt2 *CMDTypeInt2GPDB::CreateInt2Datum(CMemoryPool *mp, SINT value, BOOL is_null) const {
+IDatumInt2 *CMDTypeInt2GPDB::CreateInt2Datum(CMemoryPool *mp, int16_t value, bool is_null) const {
   return GPOS_NEW(mp) CDatumInt2GPDB(m_mdid->Sysid(), value, is_null);
 }
 
@@ -207,8 +207,8 @@ IDatum *CMDTypeInt2GPDB::GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_
 //---------------------------------------------------------------------------
 IDatum *CMDTypeInt2GPDB::GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const {
   CDXLDatumInt2 *int2_dxl_datum = CDXLDatumInt2::Cast(const_cast<CDXLDatum *>(dxl_datum));
-  SINT val = int2_dxl_datum->Value();
-  BOOL is_null = int2_dxl_datum->IsNull();
+  int16_t val = int2_dxl_datum->Value();
+  bool is_null = int2_dxl_datum->IsNull();
 
   return GPOS_NEW(mp) CDatumInt2GPDB(m_mdid->Sysid(), val, is_null);
 }

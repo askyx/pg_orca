@@ -95,8 +95,9 @@ using namespace gpopt;
 //	@doc:
 //		Ctor
 //---------------------------------------------------------------------------
-CTranslatorScalarToDXL::CTranslatorScalarToDXL(CContextQueryToDXL *context, CMDAccessor *md_accessor, ULONG query_level,
-                                               HMUlCTEListEntry *cte_entries, CDXLNodeArray *cte_dxlnode_array)
+CTranslatorScalarToDXL::CTranslatorScalarToDXL(CContextQueryToDXL *context, CMDAccessor *md_accessor,
+                                               uint32_t query_level, HMUlCTEListEntry *cte_entries,
+                                               CDXLNodeArray *cte_dxlnode_array)
     : m_context(context),
       m_mp(context->m_mp),
       m_md_accessor(md_accessor),
@@ -158,7 +159,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateStandaloneExprToDXL(CMemoryPool *mp, 
 //		Return the EdxlBoolExprType for a given GPDB BoolExprType
 //---------------------------------------------------------------------------
 EdxlBoolExprType CTranslatorScalarToDXL::EdxlbooltypeFromGPDBBoolType(BoolExprType boolexprtype) {
-  static ULONG mapping[][2] = {
+  static uint32_t mapping[][2] = {
       {NOT_EXPR, Edxlnot},
       {AND_EXPR, Edxland},
       {OR_EXPR, Edxlor},
@@ -166,10 +167,10 @@ EdxlBoolExprType CTranslatorScalarToDXL::EdxlbooltypeFromGPDBBoolType(BoolExprTy
 
   EdxlBoolExprType type = EdxlBoolExprTypeSentinel;
 
-  const ULONG arity = GPOS_ARRAY_SIZE(mapping);
-  for (ULONG ul = 0; ul < arity; ul++) {
-    ULONG *elem = mapping[ul];
-    if ((ULONG)boolexprtype == elem[0]) {
+  const uint32_t arity = GPOS_ARRAY_SIZE(mapping);
+  for (uint32_t ul = 0; ul < arity; ul++) {
+    uint32_t *elem = mapping[ul];
+    if ((uint32_t)boolexprtype == elem[0]) {
       type = (EdxlBoolExprType)elem[1];
       break;
     }
@@ -203,7 +204,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateVarToDXL(const Expr *expr, const CMap
   const CWStringBase *str = var_colid_mapping->GetOptColName(m_query_level, var, m_op_type);
 
   // column id
-  ULONG id;
+  uint32_t id;
 
   if (var->varattno != 0 || EpspotIndexScan == m_op_type || EpspotIndexOnlyScan == m_op_type) {
     id = var_colid_mapping->GetColId(m_query_level, var, m_op_type);
@@ -266,7 +267,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateScalarToDXL(const Expr *expr, const C
     default: {
       // This expression is not supported. Check for a few common cases, to
       // give a better message.
-      CHAR *str = (CHAR *)gpdb::NodeToString(const_cast<Expr *>(expr));
+      char *str = (char *)gpdb::NodeToString(const_cast<Expr *>(expr));
       CWStringDynamic *wcstr = CDXLUtils::CreateDynamicStringFromCharArray(m_mp, str);
       GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiQuery2DXLUnsupportedFeature, wcstr->GetBuffer());
     }
@@ -460,7 +461,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateOpExprToDXL(const Expr *expr, const C
   CMDIdGPDB *return_type_mdid = GPOS_NEW(m_mp) CMDIdGPDB(IMDId::EmdidGeneral, ((OpExpr *)expr)->opresulttype);
   const IMDType *md_type = m_md_accessor->RetrieveType(return_type_mdid);
 
-  const ULONG num_args = gpdb::ListLength(op_expr->args);
+  const uint32_t num_args = gpdb::ListLength(op_expr->args);
 
   if (IMDType::EtiBool == md_type->GetDatumType() && 2 == num_args) {
     return_type_mdid->Release();
@@ -653,7 +654,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateBoolExprToDXL(const Expr *expr, const
   // create the DXL node holding the scalar boolean operator
   CDXLNode *dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarBoolExpr(m_mp, type));
 
-  ULONG count = gpdb::ListLength(bool_expr->args);
+  uint32_t count = gpdb::ListLength(bool_expr->args);
 
   if ((NOT_EXPR != bool_expr->boolop) && (2 > count)) {
     GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiQuery2DXLUnsupportedFeature,
@@ -687,17 +688,17 @@ CDXLNode *CTranslatorScalarToDXL::TranslateBooleanTestToDXL(const Expr *expr,
 
   GPOS_ASSERT(nullptr != boolean_test->arg);
 
-  static ULONG mapping[][2] = {
+  static uint32_t mapping[][2] = {
       {IS_TRUE, EdxlbooleantestIsTrue},       {IS_NOT_TRUE, EdxlbooleantestIsNotTrue},
       {IS_FALSE, EdxlbooleantestIsFalse},     {IS_NOT_FALSE, EdxlbooleantestIsNotFalse},
       {IS_UNKNOWN, EdxlbooleantestIsUnknown}, {IS_NOT_UNKNOWN, EdxlbooleantestIsNotUnknown},
   };
 
   EdxlBooleanTestType type = EdxlbooleantestSentinel;
-  const ULONG arity = GPOS_ARRAY_SIZE(mapping);
-  for (ULONG ul = 0; ul < arity; ul++) {
-    ULONG *elem = mapping[ul];
-    if ((ULONG)boolean_test->booltesttype == elem[0]) {
+  const uint32_t arity = GPOS_ARRAY_SIZE(mapping);
+  for (uint32_t ul = 0; ul < arity; ul++) {
+    uint32_t *elem = mapping[ul];
+    if ((uint32_t)boolean_test->booltesttype == elem[0]) {
       type = (EdxlBooleanTestType)elem[1];
       break;
     }
@@ -732,7 +733,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateNullTestToDXL(const Expr *expr, const
   GPOS_ASSERT(nullptr != child_node);
   GPOS_ASSERT(IS_NULL == null_test->nulltesttype || IS_NOT_NULL == null_test->nulltesttype);
 
-  BOOL is_null = false;
+  bool is_null = false;
   if (IS_NULL == null_test->nulltesttype) {
     is_null = true;
   }
@@ -927,12 +928,12 @@ CDXLNode *CTranslatorScalarToDXL::TranslateCaseTestExprToDXL(const Expr *expr,
 CDXLNode *CTranslatorScalarToDXL::CreateScalarIfStmtFromCaseExpr(const CaseExpr *case_expr,
                                                                  const CMappingVarColId *var_colid_mapping) {
   GPOS_ASSERT(nullptr == case_expr->arg);
-  const ULONG when_clause_count = gpdb::ListLength(case_expr->args);
+  const uint32_t when_clause_count = gpdb::ListLength(case_expr->args);
 
   CDXLNode *root_if_tree_node = nullptr;
   CDXLNode *cur_node = nullptr;
 
-  for (ULONG ul = 0; ul < when_clause_count; ul++) {
+  for (uint32_t ul = 0; ul < when_clause_count; ul++) {
     CDXLScalarIfStmt *if_stmt_new_dxl =
         GPOS_NEW(m_mp) CDXLScalarIfStmt(m_mp, GPOS_NEW(m_mp) CMDIdGPDB(IMDId::EmdidGeneral, case_expr->casetype));
 
@@ -1163,7 +1164,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateFuncExprToDXL(const Expr *expr, const
 CDXLNode *CTranslatorScalarToDXL::TranslateAggrefToDXL(const Expr *expr, const CMappingVarColId *var_colid_mapping) {
   GPOS_ASSERT(IsA(expr, Aggref));
   const Aggref *aggref = (Aggref *)expr;
-  BOOL is_distinct = false;
+  bool is_distinct = false;
 
   if (aggref->aggorder != NIL && GPOS_FTRACE(EopttraceDisableOrderedAgg)) {
     GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiQuery2DXLUnsupportedFeature,
@@ -1205,7 +1206,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateAggrefToDXL(const Expr *expr, const C
   ULongPtrArray *aggargtypes_values = GPOS_NEW(m_mp) ULongPtrArray(m_mp);
   ListCell *lc;
   foreach (lc, aggref->aggargtypes) {
-    ULONG *poid = GPOS_NEW(m_mp) ULONG(lfirst_oid(lc));
+    uint32_t *poid = GPOS_NEW(m_mp) uint32_t(lfirst_oid(lc));
 
     aggargtypes_values->Append(poid);
   }
@@ -1399,7 +1400,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateWindowFrameEdgeToDXL(const Node *node
     GPOS_ASSERT(nullptr != new_scalar_proj_list);
     CWStringConst unnamed_col(GPOS_WSZ_LIT("?column?"));
     CMDName *alias_mdname = GPOS_NEW(m_mp) CMDName(m_mp, &unnamed_col);
-    ULONG project_element_id = m_context->m_colid_counter->next_id();
+    uint32_t project_element_id = m_context->m_colid_counter->next_id();
 
     // construct a projection element
     CDXLNode *project_element_node =
@@ -1446,7 +1447,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateWindowFuncToDXL(const Expr *expr,
                GPOS_WSZ_LIT("Window function in a stand-alone expression"));
   }
 
-  ULONG win_spec_pos = (ULONG)window_func->winref - 1;
+  uint32_t win_spec_pos = (uint32_t)window_func->winref - 1;
 
   /*
    * ORCA's ScalarWindowRef object doesn't have fields for the 'winstar'
@@ -1592,7 +1593,7 @@ CDXLNode *CTranslatorScalarToDXL::CreateQuantifiedSubqueryFromSublink(const SubL
 
   // get the dxl column reference
   const CDXLColRef *dxl_colref = scalar_ident->GetDXLColRef();
-  const ULONG colid = dxl_colref->Id();
+  const uint32_t colid = dxl_colref->Id();
 
   // get the test expression
   GPOS_ASSERT(IsA(sublink->testexpr, OpExpr));
@@ -1660,7 +1661,7 @@ CDXLNode *CTranslatorScalarToDXL::CreateScalarSubqueryFromSublink(const SubLink 
 
   // get the dxl column reference
   const CDXLColRef *dxl_colref = scalar_ident->GetDXLColRef();
-  const ULONG colid = dxl_colref->Id();
+  const uint32_t colid = dxl_colref->Id();
 
   CDXLNode *dxlnode = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarSubquery(m_mp, colid));
 
@@ -1707,7 +1708,7 @@ CDXLNode *CTranslatorScalarToDXL::TranslateArrayRefToDXL(const Expr *expr, const
   const SubscriptingRef *parrayref = (SubscriptingRef *)expr;
   Oid restype;
 
-  INT type_modifier = parrayref->reftypmod;
+  int32_t type_modifier = parrayref->reftypmod;
   /* slice and/or store operations yield the array type */
   if (parrayref->reflowerindexpr || parrayref->refassgnexpr) {
     restype = parrayref->refcontainertype;
@@ -1836,8 +1837,8 @@ CDXLNode *CTranslatorScalarToDXL::CreateExistSubqueryFromSublink(const SubLink *
 //	@doc:
 //		Create CDXLDatum from GPDB datum
 //---------------------------------------------------------------------------
-CDXLDatum *CTranslatorScalarToDXL::TranslateDatumToDXL(CMemoryPool *mp, const IMDType *md_type, INT type_modifier,
-                                                       BOOL is_null, ULONG len, Datum datum) {
+CDXLDatum *CTranslatorScalarToDXL::TranslateDatumToDXL(CMemoryPool *mp, const IMDType *md_type, int32_t type_modifier,
+                                                       bool is_null, uint32_t len, Datum datum) {
   switch (md_type->GetDatumType()) {
     default: {
       // generate a datum of generic type
@@ -1869,14 +1870,15 @@ CDXLDatum *CTranslatorScalarToDXL::TranslateDatumToDXL(CMemoryPool *mp, const IM
 //		Translate a datum of generic type
 //---------------------------------------------------------------------------
 CDXLDatum *CTranslatorScalarToDXL::TranslateGenericDatumToDXL(CMemoryPool *mp, const IMDType *md_type,
-                                                              INT type_modifier, BOOL is_null, ULONG len, Datum datum) {
+                                                              int32_t type_modifier, bool is_null, uint32_t len,
+                                                              Datum datum) {
   CMDIdGPDB *mdid_old = CMDIdGPDB::CastMdid(md_type->MDId());
   CMDIdGPDB *mdid = GPOS_NEW(mp) CMDIdGPDB(*mdid_old);
 
-  BYTE *bytes = ExtractByteArrayFromDatum(mp, md_type, is_null, len, datum);
-  ULONG length = 0;
+  uint8_t *bytes = ExtractByteArrayFromDatum(mp, md_type, is_null, len, datum);
+  uint32_t length = 0;
   if (!is_null) {
-    length = (ULONG)gpdb::DatumSize(datum, md_type->IsPassedByValue(), len);
+    length = (uint32_t)gpdb::DatumSize(datum, md_type->IsPassedByValue(), len);
   }
 
   CDouble double_value(0);
@@ -1884,7 +1886,7 @@ CDXLDatum *CTranslatorScalarToDXL::TranslateGenericDatumToDXL(CMemoryPool *mp, c
     double_value = ExtractDoubleValueFromDatum(mdid, is_null, bytes, datum);
   }
 
-  LINT lint_value = 0;
+  int64_t lint_value = 0;
   if (CMDTypeGenericGPDB::HasByte2IntMapping(md_type)) {
     IMDId *base_mdid = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, gpdb::GetBaseType(mdid->Oid()));
     // base_mdid is used for text related domain types
@@ -1903,8 +1905,8 @@ CDXLDatum *CTranslatorScalarToDXL::TranslateGenericDatumToDXL(CMemoryPool *mp, c
 //	@doc:
 //		Translate a datum of type bool
 //---------------------------------------------------------------------------
-CDXLDatum *CTranslatorScalarToDXL::TranslateBoolDatumToDXL(CMemoryPool *mp, const IMDType *md_type, BOOL is_null,
-                                                           ULONG,  // len,
+CDXLDatum *CTranslatorScalarToDXL::TranslateBoolDatumToDXL(CMemoryPool *mp, const IMDType *md_type, bool is_null,
+                                                           uint32_t,  // len,
                                                            Datum datum) {
   GPOS_ASSERT(md_type->IsPassedByValue());
   CMDIdGPDB *mdid_old = CMDIdGPDB::CastMdid(md_type->MDId());
@@ -1920,8 +1922,8 @@ CDXLDatum *CTranslatorScalarToDXL::TranslateBoolDatumToDXL(CMemoryPool *mp, cons
 //	@doc:
 //		Translate a datum of type oid
 //---------------------------------------------------------------------------
-CDXLDatum *CTranslatorScalarToDXL::TranslateOidDatumToDXL(CMemoryPool *mp, const IMDType *md_type, BOOL is_null,
-                                                          ULONG,  // len,
+CDXLDatum *CTranslatorScalarToDXL::TranslateOidDatumToDXL(CMemoryPool *mp, const IMDType *md_type, bool is_null,
+                                                          uint32_t,  // len,
                                                           Datum datum) {
   GPOS_ASSERT(md_type->IsPassedByValue());
   CMDIdGPDB *mdid_old = CMDIdGPDB::CastMdid(md_type->MDId());
@@ -1937,8 +1939,8 @@ CDXLDatum *CTranslatorScalarToDXL::TranslateOidDatumToDXL(CMemoryPool *mp, const
 //	@doc:
 //		Translate a datum of type int2
 //---------------------------------------------------------------------------
-CDXLDatum *CTranslatorScalarToDXL::TranslateInt2DatumToDXL(CMemoryPool *mp, const IMDType *md_type, BOOL is_null,
-                                                           ULONG,  // len,
+CDXLDatum *CTranslatorScalarToDXL::TranslateInt2DatumToDXL(CMemoryPool *mp, const IMDType *md_type, bool is_null,
+                                                           uint32_t,  // len,
                                                            Datum datum) {
   GPOS_ASSERT(md_type->IsPassedByValue());
   CMDIdGPDB *mdid_old = CMDIdGPDB::CastMdid(md_type->MDId());
@@ -1954,8 +1956,8 @@ CDXLDatum *CTranslatorScalarToDXL::TranslateInt2DatumToDXL(CMemoryPool *mp, cons
 //	@doc:
 //		Translate a datum of type int4
 //---------------------------------------------------------------------------
-CDXLDatum *CTranslatorScalarToDXL::TranslateInt4DatumToDXL(CMemoryPool *mp, const IMDType *md_type, BOOL is_null,
-                                                           ULONG,  // len,
+CDXLDatum *CTranslatorScalarToDXL::TranslateInt4DatumToDXL(CMemoryPool *mp, const IMDType *md_type, bool is_null,
+                                                           uint32_t,  // len,
                                                            Datum datum) {
   GPOS_ASSERT(md_type->IsPassedByValue());
   CMDIdGPDB *mdid_old = CMDIdGPDB::CastMdid(md_type->MDId());
@@ -1971,8 +1973,8 @@ CDXLDatum *CTranslatorScalarToDXL::TranslateInt4DatumToDXL(CMemoryPool *mp, cons
 //	@doc:
 //		Translate a datum of type int8
 //---------------------------------------------------------------------------
-CDXLDatum *CTranslatorScalarToDXL::TranslateInt8DatumToDXL(CMemoryPool *mp, const IMDType *md_type, BOOL is_null,
-                                                           ULONG,  // len,
+CDXLDatum *CTranslatorScalarToDXL::TranslateInt8DatumToDXL(CMemoryPool *mp, const IMDType *md_type, bool is_null,
+                                                           uint32_t,  // len,
                                                            Datum datum) {
   GPOS_ASSERT(md_type->IsPassedByValue());
   CMDIdGPDB *mdid_old = CMDIdGPDB::CastMdid(md_type->MDId());
@@ -1988,7 +1990,7 @@ CDXLDatum *CTranslatorScalarToDXL::TranslateInt8DatumToDXL(CMemoryPool *mp, cons
 //	@doc:
 //		Extract the double value of the datum
 //---------------------------------------------------------------------------
-CDouble CTranslatorScalarToDXL::ExtractDoubleValueFromDatum(IMDId *mdid, BOOL is_null, BYTE *bytes, Datum datum) {
+CDouble CTranslatorScalarToDXL::ExtractDoubleValueFromDatum(IMDId *mdid, bool is_null, uint8_t *bytes, Datum datum) {
   GPOS_ASSERT(CMDTypeGenericGPDB::HasByte2DoubleMapping(mdid));
 
   double d = 0;
@@ -2036,22 +2038,22 @@ CDouble CTranslatorScalarToDXL::ExtractDoubleValueFromDatum(IMDId *mdid, BOOL is
 //	@doc:
 //		Extract the byte array value of the datum. The result is NULL if datum is NULL
 //---------------------------------------------------------------------------
-BYTE *CTranslatorScalarToDXL::ExtractByteArrayFromDatum(CMemoryPool *mp, const IMDType *md_type, BOOL is_null,
-                                                        ULONG len, Datum datum) {
-  ULONG length = 0;
-  BYTE *bytes = nullptr;
+uint8_t *CTranslatorScalarToDXL::ExtractByteArrayFromDatum(CMemoryPool *mp, const IMDType *md_type, bool is_null,
+                                                           uint32_t len, Datum datum) {
+  uint32_t length = 0;
+  uint8_t *bytes = nullptr;
 
   if (is_null) {
     return bytes;
   }
 
-  length = (ULONG)gpdb::DatumSize(datum, md_type->IsPassedByValue(), len);
+  length = (uint32_t)gpdb::DatumSize(datum, md_type->IsPassedByValue(), len);
   GPOS_ASSERT(length > 0);
 
-  bytes = GPOS_NEW_ARRAY(mp, BYTE, length);
+  bytes = GPOS_NEW_ARRAY(mp, uint8_t, length);
 
   if (md_type->IsPassedByValue()) {
-    GPOS_ASSERT(length <= ULONG(sizeof(Datum)));
+    GPOS_ASSERT(length <= uint32_t(sizeof(Datum)));
     clib::Memcpy(bytes, &datum, length);
   } else {
     clib::Memcpy(bytes, gpdb::PointerFromDatum(datum), length);
@@ -2067,12 +2069,12 @@ BYTE *CTranslatorScalarToDXL::ExtractByteArrayFromDatum(CMemoryPool *mp, const I
 //	@doc:
 //		Extract the long int value of a datum
 //---------------------------------------------------------------------------
-LINT CTranslatorScalarToDXL::ExtractLintValueFromDatum(const IMDType *md_type, BOOL is_null, BYTE *bytes, ULONG length,
-                                                       IMDId *base_mdid) {
+int64_t CTranslatorScalarToDXL::ExtractLintValueFromDatum(const IMDType *md_type, bool is_null, uint8_t *bytes,
+                                                          uint32_t length, IMDId *base_mdid) {
   IMDId *mdid = md_type->MDId();
   GPOS_ASSERT(CMDTypeGenericGPDB::HasByte2IntMapping(md_type));
 
-  LINT lint_value = 0;
+  int64_t lint_value = 0;
   if (is_null) {
     return lint_value;
   }
@@ -2082,12 +2084,12 @@ LINT CTranslatorScalarToDXL::ExtractLintValueFromDatum(const IMDType *md_type, B
     Datum datumConstVal = (Datum)0;
     clib::Memcpy(&datumConstVal, bytes, length);
     // Date is internally represented as an int32
-    lint_value = (LINT)(gpdb::Int32FromDatum(datumConstVal));
+    lint_value = (int64_t)(gpdb::Int32FromDatum(datumConstVal));
   } else {
     // use hash value
-    ULONG hash = 0;
+    uint32_t hash = 0;
     if (is_null) {
-      hash = gpos::HashValue<ULONG>(&hash);
+      hash = gpos::HashValue<uint32_t>(&hash);
     } else {
       if (mdid->Equals(&CMDIdGPDB::m_mdid_uuid)) {
         hash = gpdb::UUIDHash((Datum)bytes);
@@ -2105,7 +2107,7 @@ LINT CTranslatorScalarToDXL::ExtractLintValueFromDatum(const IMDType *md_type, B
       }
     }
 
-    lint_value = (LINT)hash;
+    lint_value = (int64_t)hash;
   }
 
   return lint_value;
@@ -2118,12 +2120,12 @@ LINT CTranslatorScalarToDXL::ExtractLintValueFromDatum(const IMDType *md_type, B
 //	@doc:
 //		Create IDatum from GPDB datum
 //---------------------------------------------------------------------------
-IDatum *CTranslatorScalarToDXL::CreateIDatumFromGpdbDatum(CMemoryPool *mp, const IMDType *md_type, BOOL is_null,
+IDatum *CTranslatorScalarToDXL::CreateIDatumFromGpdbDatum(CMemoryPool *mp, const IMDType *md_type, bool is_null,
                                                           Datum gpdb_datum) {
-  ULONG length = md_type->Length();
+  uint32_t length = md_type->Length();
   if (!md_type->IsPassedByValue() && !is_null) {
-    INT len = dynamic_cast<const CMDTypeGenericGPDB *>(md_type)->GetGPDBLength();
-    length = (ULONG)gpdb::DatumSize(gpdb_datum, md_type->IsPassedByValue(), len);
+    int32_t len = dynamic_cast<const CMDTypeGenericGPDB *>(md_type)->GetGPDBLength();
+    length = (uint32_t)gpdb::DatumSize(gpdb_datum, md_type->IsPassedByValue(), len);
   }
   GPOS_ASSERT(is_null || length > 0);
 

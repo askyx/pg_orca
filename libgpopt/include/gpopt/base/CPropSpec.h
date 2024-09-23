@@ -55,7 +55,7 @@ class CPropSpec : public CRefCount {
                                CExpressionArray *pdrgpexpr, CExpression *pexpr) = 0;
 
   // hash function
-  virtual ULONG HashValue() const = 0;
+  virtual uint32_t HashValue() const = 0;
 
   // extract columns used by the property
   virtual CColRefSet *PcrsUsed(CMemoryPool *mp) const = 0;

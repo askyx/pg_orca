@@ -42,8 +42,8 @@ class CDXLScalarCoerceViaIO : public CDXLScalarCoerceBase {
   CDXLScalarCoerceViaIO(const CDXLScalarCoerceViaIO &) = delete;
 
   // ctor/dtor
-  CDXLScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, EdxlCoercionForm dxl_coerce_format,
-                        INT location);
+  CDXLScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, EdxlCoercionForm dxl_coerce_format,
+                        int32_t location);
 
   ~CDXLScalarCoerceViaIO() override = default;
 

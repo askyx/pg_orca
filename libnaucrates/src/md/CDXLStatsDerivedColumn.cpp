@@ -26,7 +26,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLStatsDerivedColumn::CDXLStatsDerivedColumn(ULONG colid, CDouble width, CDouble null_freq,
+CDXLStatsDerivedColumn::CDXLStatsDerivedColumn(uint32_t colid, CDouble width, CDouble null_freq,
                                                CDouble distinct_remaining, CDouble freq_remaining,
                                                CDXLBucketArray *dxl_stats_bucket_array)
     : m_colid(colid),
@@ -81,8 +81,8 @@ void CDXLStatsDerivedColumn::DebugPrint(IOstream &os) const {
   os << "Width : " << m_width;
   os << std::endl;
 
-  const ULONG num_of_buckets = m_dxl_stats_bucket_array->Size();
-  for (ULONG ul = 0; ul < num_of_buckets; ul++) {
+  const uint32_t num_of_buckets = m_dxl_stats_bucket_array->Size();
+  for (uint32_t ul = 0; ul < num_of_buckets; ul++) {
     const CDXLBucket *dxl_bucket = (*m_dxl_stats_bucket_array)[ul];
     dxl_bucket->DebugPrint(os);
   }

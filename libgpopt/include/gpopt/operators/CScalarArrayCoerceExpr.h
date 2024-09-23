@@ -39,8 +39,8 @@ class CScalarArrayCoerceExpr : public CScalarCoerceBase {
   CScalarArrayCoerceExpr(const CScalarArrayCoerceExpr &) = delete;
 
   // ctor
-  CScalarArrayCoerceExpr(CMemoryPool *mp, IMDId *result_type_mdid, INT type_modifier, ECoercionForm dxl_coerce_format,
-                         INT location);
+  CScalarArrayCoerceExpr(CMemoryPool *mp, IMDId *result_type_mdid, int32_t type_modifier,
+                         ECoercionForm dxl_coerce_format, int32_t location);
 
   // dtor
   ~CScalarArrayCoerceExpr() override = default;
@@ -48,13 +48,13 @@ class CScalarArrayCoerceExpr : public CScalarCoerceBase {
   EOperatorId Eopid() const override;
 
   // return a string for operator name
-  const CHAR *SzId() const override;
+  const char *SzId() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // conversion function
   static CScalarArrayCoerceExpr *PopConvert(COperator *pop);

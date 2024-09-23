@@ -83,14 +83,14 @@ class CReqdProp : public CRefCount {
   ~CReqdProp() override;
 
   // is it a relational property?
-  virtual BOOL FRelational() const { return false; }
+  virtual bool FRelational() const { return false; }
 
   // is it a plan property?
-  virtual BOOL FPlan() const { return false; }
+  virtual bool FPlan() const { return false; }
 
   // required properties computation function
-  virtual void Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, ULONG child_index,
-                       CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) = 0;
+  virtual void Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, uint32_t child_index,
+                       CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) = 0;
 
   virtual gpos::IOstream &OsPrint(gpos::IOstream &os) const = 0;
 

@@ -52,7 +52,7 @@ class CXformPushJoinBelowRightUnionAll : public CXformPushJoinBelowUnionAll {
   ~CXformPushJoinBelowRightUnionAll() override = default;
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformPushJoinBelowRightUnionAll"; }
+  const char *SzId() const override { return "CXformPushJoinBelowRightUnionAll"; }
 
   // ident accessors
   EXformId Exfid() const override { return ExfPushJoinBelowRightUnionAll; }

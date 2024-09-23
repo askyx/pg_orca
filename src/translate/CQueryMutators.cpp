@@ -44,7 +44,7 @@ using namespace gpmd;
 //		Is the group by project list flat (contains only aggregates, grouping
 //		funcs, and grouping columns)
 //---------------------------------------------------------------------------
-BOOL CQueryMutators::NeedsProjListNormalization(const Query *query) {
+bool CQueryMutators::NeedsProjListNormalization(const Query *query) {
   if (!query->hasAggs && nullptr == query->groupClause && nullptr == query->groupingSets) {
     return false;
   }
@@ -79,7 +79,7 @@ BOOL CQueryMutators::NeedsProjListNormalization(const Query *query) {
 //		Fall back when the target list refers to a attribute which algebrizer
 //		at this point cannot resolve
 //---------------------------------------------------------------------------
-BOOL CQueryMutators::ShouldFallback(Node *node, SContextTLWalker *context) {
+bool CQueryMutators::ShouldFallback(Node *node, SContextTLWalker *context) {
   if (nullptr == node) {
     return false;
   }
@@ -165,7 +165,7 @@ Query *CQueryMutators::NormalizeGroupByProjList(CMemoryPool *mp, CMDAccessor *md
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
     GPOS_ASSERT(nullptr != target_entry);
 
-    BOOL is_grouping_col = CTranslatorUtils::IsGroupingColumn(target_entry, derived_table_query->groupClause);
+    bool is_grouping_col = CTranslatorUtils::IsGroupingColumn(target_entry, derived_table_query->groupClause);
     if (!is_grouping_col) {
       target_entry->expr = (Expr *)RunExtractAggregatesMutator((Node *)target_entry->expr, &context);
       GPOS_ASSERT(!IsA(target_entry->expr, Aggref) && "New target list entry should not contain any Aggrefs");
@@ -240,7 +240,7 @@ Node *CQueryMutators::RunIncrLevelsUpMutator(Node *node, SContextIncLevelsupMuta
 // Increment CTE range table reference by one if it refers to
 // an ancestor of the original Query node (level 0 in the context)
 //---------------------------------------------------------------------------
-BOOL CQueryMutators::RunFixCTELevelsUpWalker(Node *node, SContextIncLevelsupMutator *context) {
+bool CQueryMutators::RunFixCTELevelsUpWalker(Node *node, SContextIncLevelsupMutator *context) {
   if (nullptr == node) {
     return false;
   }
@@ -260,7 +260,7 @@ BOOL CQueryMutators::RunFixCTELevelsUpWalker(Node *node, SContextIncLevelsupMuta
   // recurse into query structure, incrementing the query level
   if (IsA(node, Query)) {
     context->m_current_query_level++;
-    BOOL result = query_tree_walker((Query *)node, (ExprWalkerFn)CQueryMutators::RunFixCTELevelsUpWalker, context,
+    bool result = query_tree_walker((Query *)node, (ExprWalkerFn)CQueryMutators::RunFixCTELevelsUpWalker, context,
                                     QTW_EXAMINE_RTES_BEFORE  // flags - visit RTEs
     );
     context->m_current_query_level--;
@@ -312,7 +312,7 @@ Node *CQueryMutators::RunGroupingColMutator(Node *node, SContextGrpbyPlMutator *
     List *new_args = NIL;
     ListCell *lc = nullptr;
 
-    BOOL is_agg = context->m_is_mutating_agg_arg;
+    bool is_agg = context->m_is_mutating_agg_arg;
     context->m_is_mutating_agg_arg = true;
 
     foreach (lc, old_aggref->args) {
@@ -419,12 +419,12 @@ Node *CQueryMutators::RunGroupingColMutator(Node *node, SContextGrpbyPlMutator *
 Node *CQueryMutators::FixGroupingCols(Node *node, TargetEntry *orginal_target_entry, SContextGrpbyPlMutator *context) {
   GPOS_ASSERT(nullptr != node);
 
-  ULONG arity = gpdb::ListLength(context->m_lower_table_tlist) + 1;
+  uint32_t arity = gpdb::ListLength(context->m_lower_table_tlist) + 1;
 
   // fix any outer references in the grouping column expression
   Node *expr = (Node *)RunGroupingColMutator(node, context);
 
-  CHAR *name = CQueryMutators::GetTargetEntryColName(orginal_target_entry, context->m_query);
+  char *name = CQueryMutators::GetTargetEntryColName(orginal_target_entry, context->m_query);
   TargetEntry *new_target_entry = gpdb::MakeTargetEntry((Expr *)expr, (AttrNumber)arity, name, false /*resjunk */);
 
   new_target_entry->ressortgroupref = orginal_target_entry->ressortgroupref;
@@ -449,11 +449,11 @@ Node *CQueryMutators::FixGroupingCols(Node *node, TargetEntry *orginal_target_en
 // 		Return a target entry for an aggregate expression
 //---------------------------------------------------------------------------
 TargetEntry *CQueryMutators::GetTargetEntryForAggExpr(CMemoryPool *mp, CMDAccessor *md_accessor, Node *node,
-                                                      ULONG attno) {
+                                                      uint32_t attno) {
   GPOS_ASSERT(IsA(node, Aggref) || IsA(node, GroupingFunc));
 
   // get the function/aggregate name
-  CHAR *name = nullptr;
+  char *name = nullptr;
   if (IsA(node, GroupingFunc)) {
     name = CTranslatorUtils::CreateMultiByteCharStringFromWCString(GPOS_WSZ_LIT("grouping"));
   } else {
@@ -499,8 +499,8 @@ Node *CQueryMutators::RunExtractAggregatesMutator(Node *node, SContextGrpbyPlMut
     if (old_aggref->agglevelsup == context->m_current_query_level) {
       Aggref *new_aggref = FlatCopyAggref(old_aggref);
 
-      BOOL is_agg_old = context->m_is_mutating_agg_arg;
-      ULONG agg_levels_up = context->m_agg_levels_up;
+      bool is_agg_old = context->m_is_mutating_agg_arg;
+      uint32_t agg_levels_up = context->m_agg_levels_up;
 
       context->m_is_mutating_agg_arg = true;
       context->m_agg_levels_up = old_aggref->agglevelsup;
@@ -714,7 +714,7 @@ Var *CQueryMutators::MakeVarInDerivedTable(Node *node, SContextGrpbyPlMutator *c
   GPOS_ASSERT(IsA(node, Aggref) || IsA(node, Var) || IsA(node, GroupingFunc));
 
   // Append a new target entry for the node to the derived target list ...
-  const ULONG attno = gpdb::ListLength(context->m_lower_table_tlist) + 1;
+  const uint32_t attno = gpdb::ListLength(context->m_lower_table_tlist) + 1;
   TargetEntry *tle = nullptr;
   if (IsA(node, Aggref) || IsA(node, GroupingFunc)) {
     tle = GetTargetEntryForAggExpr(context->m_mp, context->m_mda, node, attno);
@@ -816,7 +816,7 @@ Query *CQueryMutators::NormalizeHaving(CMemoryPool *mp, CMDAccessor *md_accessor
   // Add all necessary target list entries of subquery
   // into the target list of the RTE as well as the new top most query
   ListCell *lc = nullptr;
-  ULONG num_target_entries = 1;
+  uint32_t num_target_entries = 1;
   foreach (lc, derived_table_query->targetList) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
     GPOS_ASSERT(nullptr != target_entry);
@@ -891,7 +891,7 @@ Query *CQueryMutators::NormalizeHaving(CMemoryPool *mp, CMDAccessor *md_accessor
 //		Normalize queries with having and group by clauses
 //---------------------------------------------------------------------------
 Query *CQueryMutators::NormalizeQuery(CMemoryPool *mp, CMDAccessor *md_accessor, const Query *query,
-                                      ULONG query_level) {
+                                      uint32_t query_level) {
   // flatten join alias vars defined at the current level of the query
   Query *pqueryResolveJoinVarReferences = gpdb::FlattenJoinAliasVar(const_cast<Query *>(query), query_level);
 
@@ -925,7 +925,7 @@ Query *CQueryMutators::NormalizeQuery(CMemoryPool *mp, CMDAccessor *md_accessor,
 //		TargetEntry to be added to the top level query. This function allocates
 //		memory
 //---------------------------------------------------------------------------
-TargetEntry *CQueryMutators::MakeTopLevelTargetEntry(TargetEntry *old_target_entry, ULONG attno) {
+TargetEntry *CQueryMutators::MakeTopLevelTargetEntry(TargetEntry *old_target_entry, uint32_t attno) {
   Var *new_var = gpdb::MakeVar(1, (AttrNumber)attno, gpdb::ExprType((Node *)old_target_entry->expr),
                                gpdb::ExprTypeMod((Node *)old_target_entry->expr),
                                0  // query levelsup
@@ -944,7 +944,7 @@ TargetEntry *CQueryMutators::MakeTopLevelTargetEntry(TargetEntry *old_target_ent
 //	@doc:
 //		Return the column name of the target list entry
 //---------------------------------------------------------------------------
-CHAR *CQueryMutators::GetTargetEntryColName(TargetEntry *target_entry, Query *query) {
+char *CQueryMutators::GetTargetEntryColName(TargetEntry *target_entry, Query *query) {
   if (nullptr != target_entry->resname) {
     return target_entry->resname;
   }
@@ -980,8 +980,8 @@ CHAR *CQueryMutators::GetTargetEntryColName(TargetEntry *target_entry, Query *qu
 //    * an empty target list
 //
 //---------------------------------------------------------------------------
-Query *CQueryMutators::ConvertToDerivedTable(const Query *original_query, BOOL should_fix_target_list,
-                                             BOOL should_fix_having_qual) {
+Query *CQueryMutators::ConvertToDerivedTable(const Query *original_query, bool should_fix_target_list,
+                                             bool should_fix_having_qual) {
   // Step 1: Make a copy of the original Query, this will become the lower query
 
   Query *query_copy = (Query *)gpdb::CopyObject(const_cast<Query *>(original_query));
@@ -1085,7 +1085,7 @@ Query *CQueryMutators::EliminateDistinctClause(const Query *query) {
 
   // build the project list of the new top-level query
   foreach (lc, target_entries) {
-    ULONG resno = gpdb::ListLength(new_query->targetList) + 1;
+    uint32_t resno = gpdb::ListLength(new_query->targetList) + 1;
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
     GPOS_ASSERT(nullptr != target_entry);
 
@@ -1144,7 +1144,7 @@ Query *CQueryMutators::EliminateDistinctClause(const Query *query) {
 //   select (SQ), rank over(...)
 // Some of these, e.g. the second one, may not strictly need normalization.
 //---------------------------------------------------------------------------
-BOOL CQueryMutators::NeedsProjListWindowNormalization(const Query *query) {
+bool CQueryMutators::NeedsProjListWindowNormalization(const Query *query) {
   if (!query->hasWindowFuncs) {
     return false;
   }
@@ -1214,7 +1214,7 @@ Query *CQueryMutators::NormalizeWindowProjList(CMemoryPool *mp, CMDAccessor *md_
     // they reference in the current scope are produced by the lower query and are adjusted
     // to refer to the new, single RTE of the upper query.
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
-    const ULONG ulResNoNew = gpdb::ListLength(upper_query->targetList) + 1;
+    const uint32_t ulResNoNew = gpdb::ListLength(upper_query->targetList) + 1;
 
     if (CTranslatorUtils::IsReferencedInWindowSpec(target_entry, original_query->windowClause)) {
       // This entry is used in a window spec. Since this clause refers to its argument by
@@ -1228,7 +1228,7 @@ Query *CQueryMutators::NormalizeWindowProjList(CMemoryPool *mp, CMDAccessor *md_
       lower_target_entry->resno = gpdb::ListLength(projlist_context.m_lower_table_tlist) + 1;
       projlist_context.m_lower_table_tlist = gpdb::LAppend(projlist_context.m_lower_table_tlist, lower_target_entry);
 
-      BOOL is_sorting_col = CTranslatorUtils::IsSortingColumn(target_entry, original_query->sortClause);
+      bool is_sorting_col = CTranslatorUtils::IsSortingColumn(target_entry, original_query->sortClause);
 
       if (!target_entry->resjunk || is_sorting_col) {
         // the target list entry is present in the query output or it is used in the ORDER BY,
@@ -1283,7 +1283,7 @@ Node *CQueryMutators::RunWindowProjListMutator(Node *node, SContextGrpbyPlMutato
     return nullptr;
   }
 
-  const ULONG resno = gpdb::ListLength(context->m_lower_table_tlist) + 1;
+  const uint32_t resno = gpdb::ListLength(context->m_lower_table_tlist) + 1;
 
   if (IsA(node, WindowFunc) && 0 == context->m_current_query_level) {
     // This is a window function that needs to be executed in the lower Query.

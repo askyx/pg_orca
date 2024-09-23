@@ -185,7 +185,7 @@ void CWorkerPoolManager::Schedule(CTask *task) {
 //
 //---------------------------------------------------------------------------
 void CWorkerPoolManager::Cancel(CTaskId tid) {
-  BOOL is_queued = false;
+  bool is_queued = false;
 
   CTask *task = nullptr;
 

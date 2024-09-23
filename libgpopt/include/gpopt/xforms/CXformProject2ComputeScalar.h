@@ -40,7 +40,7 @@ class CXformProject2ComputeScalar : public CXformImplementation {
   // ident accessors
   EXformId Exfid() const override { return ExfProject2ComputeScalar; }
 
-  const CHAR *SzId() const override { return "CXformProject2ComputeScalar"; }
+  const char *SzId() const override { return "CXformProject2ComputeScalar"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override {

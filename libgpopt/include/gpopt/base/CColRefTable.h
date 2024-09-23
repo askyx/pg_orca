@@ -32,32 +32,32 @@ using namespace gpos;
 class CColRefTable : public CColRef {
  private:
   // attno from catalog
-  INT m_iAttno;
+  int32_t m_iAttno;
 
   // does column allow null values
-  BOOL m_is_nullable;
+  bool m_is_nullable;
 
   // id of the operator which is the source of this column reference
   // not owned
-  ULONG m_ulSourceOpId;
+  uint32_t m_ulSourceOpId;
 
   // is the column a distribution key
-  BOOL m_is_dist_col;
+  bool m_is_dist_col;
 
   // is the column a partition key
-  BOOL m_is_part_col;
+  bool m_is_part_col;
 
   // width of the column, for instance  char(10) column has width 10
-  ULONG m_width;
+  uint32_t m_width;
 
  public:
   CColRefTable(const CColRefTable &) = delete;
 
   // ctors
-  CColRefTable(const CColumnDescriptor *pcd, ULONG id, const CName *pname, ULONG ulOpSource);
+  CColRefTable(const CColumnDescriptor *pcd, uint32_t id, const CName *pname, uint32_t ulOpSource);
 
-  CColRefTable(const IMDType *pmdtype, INT type_modifier, INT attno, BOOL is_nullable, ULONG id, const CName *pname,
-               ULONG ulOpSource, BOOL is_dist_col, ULONG ulWidth = gpos::ulong_max);
+  CColRefTable(const IMDType *pmdtype, int32_t type_modifier, int32_t attno, bool is_nullable, uint32_t id,
+               const CName *pname, uint32_t ulOpSource, bool is_dist_col, uint32_t ulWidth = UINT32_MAX);
 
   // dtor
   ~CColRefTable() override;
@@ -66,31 +66,29 @@ class CColRefTable : public CColRef {
   CColRef::Ecolreftype Ecrt() const override { return CColRef::EcrtTable; }
 
   // accessor of attribute number
-  INT AttrNum() const { return m_iAttno; }
+  int32_t AttrNum() const { return m_iAttno; }
 
   // does column allow null values?
-  BOOL IsNullable() const { return m_is_nullable; }
+  bool IsNullable() const { return m_is_nullable; }
 
   // is column a system column?
-  BOOL IsSystemCol() const override {
+  bool IsSystemCol() const override {
     // TODO-  04/13/2012, make this check system independent
     // using MDAccessor
     return 0 >= m_iAttno;
   }
 
   // is column a distribution column?
-  BOOL IsDistCol() const override { return m_is_dist_col; }
+  bool IsDistCol() const override { return m_is_dist_col; }
 
   // is column a partition column?
-  BOOL IsPartCol() const override { return m_is_part_col; }
+  bool IsPartCol() const override { return m_is_part_col; }
 
   // width of the column
-  ULONG
-  Width() const { return m_width; }
+  uint32_t Width() const { return m_width; }
 
   // id of source operator
-  ULONG
-  UlSourceOpId() const { return m_ulSourceOpId; }
+  uint32_t UlSourceOpId() const { return m_ulSourceOpId; }
 
   // conversion
   static CColRefTable *PcrConvert(CColRef *cr) {

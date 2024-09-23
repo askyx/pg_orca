@@ -47,7 +47,7 @@ CLogicalUpdate::CLogicalUpdate(CMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 CLogicalUpdate::CLogicalUpdate(CMemoryPool *mp, CTableDescriptor *ptabdesc, CColRefArray *pdrgpcrDelete,
-                               CColRefArray *pdrgpcrInsert, CColRef *pcrCtid, CColRef *pcrSegmentId, BOOL fSplit)
+                               CColRefArray *pdrgpcrInsert, CColRef *pcrCtid, CColRef *pcrSegmentId, bool fSplit)
     : CLogical(mp),
       m_ptabdesc(ptabdesc),
       m_pdrgpcrDelete(pdrgpcrDelete),
@@ -92,7 +92,7 @@ CLogicalUpdate::~CLogicalUpdate() {
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalUpdate::Matches(COperator *pop) const {
+bool CLogicalUpdate::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -112,9 +112,8 @@ BOOL CLogicalUpdate::Matches(COperator *pop) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalUpdate::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
+uint32_t CLogicalUpdate::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrDelete));
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrInsert));
   ulHash = gpos::CombineHashes(ulHash, gpos::HashPtr<CColRef>(m_pcrCtid));
@@ -132,7 +131,7 @@ CLogicalUpdate::HashValue() const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalUpdate::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                      BOOL must_exist) {
+                                                      bool must_exist) {
   CColRefArray *pdrgpcrDelete = CUtils::PdrgpcrRemap(mp, m_pdrgpcrDelete, colref_mapping, must_exist);
   CColRefArray *pdrgpcrInsert = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInsert, colref_mapping, must_exist);
   CColRef *pcrCtid = CUtils::PcrRemap(m_pcrCtid, colref_mapping, must_exist);

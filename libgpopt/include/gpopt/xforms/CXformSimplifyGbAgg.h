@@ -30,7 +30,7 @@ using namespace gpos;
 class CXformSimplifyGbAgg : public CXformExploration {
  private:
   // helper to check if GbAgg can be transformed to a Select
-  static BOOL FDropGbAgg(CMemoryPool *mp, CExpression *pexpr, CXformResult *pxfres);
+  static bool FDropGbAgg(CMemoryPool *mp, CExpression *pexpr, CXformResult *pxfres);
 
  public:
   CXformSimplifyGbAgg(const CXformSimplifyGbAgg &) = delete;
@@ -45,10 +45,10 @@ class CXformSimplifyGbAgg : public CXformExploration {
   EXformId Exfid() const override { return ExfSimplifyGbAgg; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformSimplifyGbAgg"; }
+  const char *SzId() const override { return "CXformSimplifyGbAgg"; }
 
   // Compatibility function for simplifying aggregates
-  BOOL FCompatible(CXform::EXformId exfid) override {
+  bool FCompatible(CXform::EXformId exfid) override {
     return (CXform::ExfSimplifyGbAgg != exfid) && (CXform::ExfSplitDQA != exfid) && (CXform::ExfSplitGbAgg != exfid) &&
            (CXform::ExfEagerAgg != exfid);
   }

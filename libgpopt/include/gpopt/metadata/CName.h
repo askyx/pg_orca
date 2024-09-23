@@ -39,7 +39,7 @@ class CName {
   const CWStringConst *m_str_name;
 
   // keep track of copy status
-  BOOL m_fDeepCopy;
+  bool m_fDeepCopy;
 
   // deep copy function
   void DeepCopy(CMemoryPool *mp, const CWStringConst *str);
@@ -47,7 +47,7 @@ class CName {
  public:
   // ctors
   CName(CMemoryPool *, const CWStringBase *);
-  CName(const CWStringConst *, BOOL fOwnsMemory = false);
+  CName(const CWStringConst *, bool fOwnsMemory = false);
   CName(const CName &);
 
   CName(CMemoryPool *mp, const CName &);
@@ -59,11 +59,10 @@ class CName {
   // accessors
   const CWStringConst *Pstr() const { return m_str_name; }
 
-  ULONG
-  Length() const { return m_str_name->Length(); }
+  uint32_t Length() const { return m_str_name->Length(); }
 
   // comparison
-  BOOL Equals(const CName &) const;
+  bool Equals(const CName &) const;
 
   // debug print
   IOstream &OsPrint(IOstream &) const;

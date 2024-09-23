@@ -43,10 +43,10 @@ class CLogicalLeftAntiSemiApply : public CLogicalApply {
   EOperatorId Eopid() const override { return EopLogicalLeftAntiSemiApply; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalLeftAntiSemiApply"; }
+  const char *SzId() const override { return "CLogicalLeftAntiSemiApply"; }
 
   // return true if we can pull projections up past this operator from its given child
-  BOOL FCanPullProjectionsUp(ULONG child_index) const override { return (0 == child_index); }
+  bool FCanPullProjectionsUp(uint32_t child_index) const override { return (0 == child_index); }
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -90,10 +90,10 @@ class CLogicalLeftAntiSemiApply : public CLogicalApply {
   //-------------------------------------------------------------------------------------
 
   // return true if operator is a left anti semi apply
-  BOOL FLeftAntiSemiApply() const override { return true; }
+  bool FLeftAntiSemiApply() const override { return true; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // conversion function
   static CLogicalLeftAntiSemiApply *PopConvert(COperator *pop) {

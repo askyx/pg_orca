@@ -27,8 +27,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLLogicalDelete::CDXLLogicalDelete(CMemoryPool *mp, CDXLTableDescr *table_descr, ULONG ctid_colid, ULONG segid_colid,
-                                     ULongPtrArray *delete_colid_array)
+CDXLLogicalDelete::CDXLLogicalDelete(CMemoryPool *mp, CDXLTableDescr *table_descr, uint32_t ctid_colid,
+                                     uint32_t segid_colid, ULongPtrArray *delete_colid_array)
     : CDXLLogical(mp),
       m_dxl_table_descr(table_descr),
       m_ctid_colid(ctid_colid),
@@ -84,7 +84,7 @@ const CWStringConst *CDXLLogicalDelete::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalDelete::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLLogicalDelete::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(1 == node->Arity());
 
   CDXLNode *child_dxlnode = (*node)[0];

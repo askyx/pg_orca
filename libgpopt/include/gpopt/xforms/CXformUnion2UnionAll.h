@@ -45,7 +45,7 @@ class CXformUnion2UnionAll : public CXformExploration {
   // ident accessors
   EXformId Exfid() const override { return ExfUnion2UnionAll; }
 
-  const CHAR *SzId() const override { return "CXformUnion2UnionAll"; }
+  const char *SzId() const override { return "CXformUnion2UnionAll"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &  // exprhdl

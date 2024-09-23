@@ -51,7 +51,7 @@ class CEngine {
   CSearchStageArray *m_search_stage_array;
 
   // index of current search stage
-  ULONG m_ulCurrSearchStage;
+  uint32_t m_ulCurrSearchStage;
 
   // memo table
   CMemo *m_pmemo;
@@ -96,16 +96,16 @@ class CEngine {
                                  CExpressionHandle &exprhdlPlan,   // handle to compute required plan properties
                                  CExpressionHandle &exprhdlRel,    // handle to compute required relational properties
                                  CDrvdPropArray *pdrgpdpChildren,  // derived plan properties of optimized children
-                                 IStatisticsArray *pdrgpstatCurrentCtxt, ULONG child_index, ULONG ulOptReq);
+                                 IStatisticsArray *pdrgpstatCurrentCtxt, uint32_t child_index, uint32_t ulOptReq);
 
   // optimize child group and return best cost context satisfying required properties
   CCostContext *PccOptimizeChild(CExpressionHandle &exprhdl, CExpressionHandle &exprhdlRel,
                                  COptimizationContext *pocOrigin, CDrvdPropArray *pdrgpdp,
-                                 IStatisticsArray *pdrgpstatCurrentCtxt, ULONG child_index, ULONG ulOptReq);
+                                 IStatisticsArray *pdrgpstatCurrentCtxt, uint32_t child_index, uint32_t ulOptReq);
 
   // optimize child groups of a given group expression
   COptimizationContextArray *PdrgpocOptimizeChildren(CExpressionHandle &exprhdl, COptimizationContext *pocOrigin,
-                                                     ULONG ulOptReq);
+                                                     uint32_t ulOptReq);
 
   // optimize group expression under a given context
   void OptimizeGroupExpression(CGroupExpression *pgexpr, COptimizationContext *poc);
@@ -134,43 +134,43 @@ class CEngine {
   void ProcessTraceFlags();
 
   // check if search has terminated
-  BOOL FSearchTerminated() const {
+  bool FSearchTerminated() const {
     // at least one stage has completed and achieved required cost
     return (nullptr != PssPrevious() && PssPrevious()->FAchievedReqdCost());
   }
 
   // generate random plan id
-  ULLONG UllRandomPlanId(ULONG *seed);
+  uint64_t UllRandomPlanId(uint32_t *seed);
 
   // extract a plan sample and handle exceptions according to enumerator configurations
-  BOOL FValidPlanSample(CEnumeratorConfig *pec, ULLONG plan_id, CExpression **ppexpr);
+  bool FValidPlanSample(CEnumeratorConfig *pec, uint64_t plan_id, CExpression **ppexpr);
 
   // sample possible plans uniformly
   void SamplePlans();
 
   // check if all children were successfully optimized
-  static BOOL FChildrenOptimized(COptimizationContextArray *pdrgpoc);
+  static bool FChildrenOptimized(COptimizationContextArray *pdrgpoc);
 
   // check if ayn of the given property enforcing types prohibits enforcement
-  static BOOL FProhibited(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetPropagation);
+  static bool FProhibited(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetPropagation);
 
   // check whether the given memo groups can be marked as duplicates. This is
   // true only if they have the same logical properties
-  static BOOL FPossibleDuplicateGroups(CGroup *pgroupFst, CGroup *pgroupSnd);
+  static bool FPossibleDuplicateGroups(CGroup *pgroupFst, CGroup *pgroupSnd);
 
   // check if optimization is possible under the given property enforcing types
-  static BOOL FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetPropagation);
+  static bool FOptimize(CEnfdProp::EPropEnforcingType epetOrder, CEnfdProp::EPropEnforcingType epetPropagation);
 
   // unrank the plan with the given 'plan_id' from the memo
-  CExpression *PexprUnrank(ULLONG plan_id);
+  CExpression *PexprUnrank(uint64_t plan_id);
 
   // determine if a plan, rooted by given group expression, can be safely pruned based on cost bounds
   // when stats for Dynamic Partition Elimination are derived
-  BOOL FSafeToPruneWithDPEStats(CGroupExpression *pgexpr, CReqdPropPlan *prpp, CCostContext *pccChild,
-                                ULONG child_index);
+  bool FSafeToPruneWithDPEStats(CGroupExpression *pgexpr, CReqdPropPlan *prpp, CCostContext *pccChild,
+                                uint32_t child_index);
 
   // print current memory consumption
-  IOstream &OsPrintMemoryConsumption(IOstream &os, const CHAR *szHeader) const;
+  IOstream &OsPrintMemoryConsumption(IOstream &os, const char *szHeader) const;
 
  public:
   CEngine(const CEngine &) = delete;
@@ -192,15 +192,15 @@ class CEngine {
   }
 
   // check if a group is the root one
-  BOOL FRoot(CGroup *pgroup) const { return (PgroupRoot() == pgroup); }
+  bool FRoot(CGroup *pgroup) const { return (PgroupRoot() == pgroup); }
 
   // insert expression tree to memo
   CGroup *PgroupInsert(CGroup *pgroupTarget, CExpression *pexpr, CXform::EXformId exfidOrigin,
-                       CGroupExpression *pgexprOrigin, BOOL fIntermediate);
+                       CGroupExpression *pgexprOrigin, bool fIntermediate);
 
   // insert a set of xform results into the memo
   void InsertXformResult(CGroup *pgroupOrigin, CXformResult *pxfres, CXform::EXformId exfidOrigin,
-                         CGroupExpression *pgexprOrigin, ULONG ulXformTime, ULONG ulNumberOfBindings);
+                         CGroupExpression *pgexprOrigin, uint32_t ulXformTime, uint32_t ulNumberOfBindings);
 
   // add enforcers to the memo
   void AddEnforcers(CGroupExpression *pgexprChild, CExpressionArray *pdrgpexprEnforcers);
@@ -210,11 +210,11 @@ class CEngine {
 
   // check required properties;
   // return false if it's impossible for the operator to satisfy one or more
-  BOOL FCheckReqdProps(CExpressionHandle &exprhdl, CReqdPropPlan *prpp, ULONG ulOptReq);
+  bool FCheckReqdProps(CExpressionHandle &exprhdl, CReqdPropPlan *prpp, uint32_t ulOptReq);
 
   // check enforceable properties;
   // return false if it's impossible for the operator to satisfy one or more
-  BOOL FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimizationContext *poc, ULONG ulOptReq,
+  bool FCheckEnfdProps(CMemoryPool *mp, CGroupExpression *pgexpr, COptimizationContext *poc, uint32_t ulOptReq,
                        COptimizationContextArray *pdrgpoc);
 
 #ifdef GPOS_DEBUG
@@ -256,8 +256,7 @@ class CEngine {
   CSearchStage *PssCurrent() const { return (*m_search_stage_array)[m_ulCurrSearchStage]; }
 
   // current search stage index accessor
-  ULONG
-  UlCurrSearchStage() const { return m_ulCurrSearchStage; }
+  uint32_t UlCurrSearchStage() const { return m_ulCurrSearchStage; }
 
   // return previous search stage
   CSearchStage *PssPrevious() const {
@@ -269,8 +268,7 @@ class CEngine {
   }
 
   // number of search stages accessor
-  ULONG
-  UlSearchStages() const { return m_search_stage_array->Size(); }
+  uint32_t UlSearchStages() const { return m_search_stage_array->Size(); }
 
   // set of xforms of current stage
   CXformSet *PxfsCurrentStage() const { return (*m_search_stage_array)[m_ulCurrSearchStage]->GetXformSet(); }
@@ -285,11 +283,11 @@ class CEngine {
   void ResetTreeMap() { m_pmemo->ResetTreeMap(); }
 
   // check if parent group expression can optimize child group expression
-  BOOL FOptimizeChild(CGroupExpression *pgexprParent, CGroupExpression *pgexprChild, COptimizationContext *pocChild,
+  bool FOptimizeChild(CGroupExpression *pgexprParent, CGroupExpression *pgexprChild, COptimizationContext *pocChild,
                       EOptimizationLevel eol);
 
   // determine if a plan, rooted by given group expression, can be safely pruned based on cost bounds
-  BOOL FSafeToPrune(CGroupExpression *pgexpr, CReqdPropPlan *prpp, CCostContext *pccChild, ULONG child_index,
+  bool FSafeToPrune(CGroupExpression *pgexpr, CReqdPropPlan *prpp, CCostContext *pccChild, uint32_t child_index,
                     CCost *pcostLowerBound);
 
   // print

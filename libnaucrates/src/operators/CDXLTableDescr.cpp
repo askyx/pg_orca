@@ -27,8 +27,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLTableDescr::CDXLTableDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, ULONG ulExecuteAsUser, int lockmode,
-                               ULONG acl_mode, ULONG assigned_query_id_for_target_rel)
+CDXLTableDescr::CDXLTableDescr(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, uint32_t ulExecuteAsUser, int lockmode,
+                               uint32_t acl_mode, uint32_t assigned_query_id_for_target_rel)
     : m_mdid(mdid),
       m_mdname(mdname),
       m_dxl_column_descr_array(nullptr),
@@ -86,8 +86,7 @@ const CMDName *CDXLTableDescr::MdName() const {
 //		Return number of columns in the table
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLTableDescr::Arity() const {
+uint32_t CDXLTableDescr::Arity() const {
   return (m_dxl_column_descr_array == nullptr) ? 0 : m_dxl_column_descr_array->Size();
 }
 
@@ -99,17 +98,15 @@ CDXLTableDescr::Arity() const {
 //		Id of the user the table needs to be accessed with
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLTableDescr::GetExecuteAsUserId() const {
+uint32_t CDXLTableDescr::GetExecuteAsUserId() const {
   return m_execute_as_user_id;
 }
 
-INT CDXLTableDescr::LockMode() const {
+int32_t CDXLTableDescr::LockMode() const {
   return m_lockmode;
 }
 
-ULONG
-CDXLTableDescr::GetAclMode() const {
+uint32_t CDXLTableDescr::GetAclMode() const {
   return m_acl_mode;
 }
 
@@ -148,7 +145,7 @@ void CDXLTableDescr::AddColumnDescr(CDXLColDescr *column_descr_dxl) {
 //		Get the column descriptor at the specified position from the col descr list
 //
 //---------------------------------------------------------------------------
-const CDXLColDescr *CDXLTableDescr::GetColumnDescrAt(ULONG idx) const {
+const CDXLColDescr *CDXLTableDescr::GetColumnDescrAt(uint32_t idx) const {
   GPOS_ASSERT(idx < Arity());
 
   return (*m_dxl_column_descr_array)[idx];
@@ -164,8 +161,7 @@ const CDXLColDescr *CDXLTableDescr::GetColumnDescrAt(ULONG idx) const {
 //		else UNASSIGNED_QUERYID returned)
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLTableDescr::GetAssignedQueryIdForTargetRel() const {
+uint32_t CDXLTableDescr::GetAssignedQueryIdForTargetRel() const {
   return m_assigned_query_id_for_target_rel;
 }
 

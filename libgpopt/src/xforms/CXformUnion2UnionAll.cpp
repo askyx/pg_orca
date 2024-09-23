@@ -55,9 +55,9 @@ void CXformUnion2UnionAll::Transform(CXformContext *pxfctxt, CXformResult *pxfre
   CColRef2dArray *pdrgpdrgpcrInput = popUnion->PdrgpdrgpcrInput();
 
   CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
-  const ULONG arity = pexpr->Arity();
+  const uint32_t arity = pexpr->Arity();
 
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprChild = (*pexpr)[ul];
     pexprChild->AddRef();
     pdrgpexpr->Append(pexprChild);

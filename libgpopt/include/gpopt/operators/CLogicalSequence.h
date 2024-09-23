@@ -39,18 +39,18 @@ class CLogicalSequence : public CLogical {
   EOperatorId Eopid() const override { return EopLogicalSequence; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalSequence"; }
+  const char *SzId() const override { return "CLogicalSequence"; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
@@ -83,8 +83,8 @@ class CLogicalSequence : public CLogical {
 
   // compute required stat columns of the n-th child
   CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                       ULONG child_index) const override {
-    const ULONG ulLastChildIndex = exprhdl.Arity() - 1;
+                       uint32_t child_index) const override {
+    const uint32_t ulLastChildIndex = exprhdl.Arity() - 1;
     if (child_index == ulLastChildIndex) {
       // only pass through the required stats column to the last child since
       // the output of the sequence operator is the output of the last child

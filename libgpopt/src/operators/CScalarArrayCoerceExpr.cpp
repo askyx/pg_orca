@@ -30,8 +30,8 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarArrayCoerceExpr::CScalarArrayCoerceExpr(CMemoryPool *mp, IMDId *result_type_mdid, INT type_modifier,
-                                               ECoercionForm ecf, INT location)
+CScalarArrayCoerceExpr::CScalarArrayCoerceExpr(CMemoryPool *mp, IMDId *result_type_mdid, int32_t type_modifier,
+                                               ECoercionForm ecf, int32_t location)
     : CScalarCoerceBase(mp, result_type_mdid, type_modifier, ecf, location) {}
 
 //---------------------------------------------------------------------------
@@ -54,7 +54,7 @@ CScalar::EOperatorId CScalarArrayCoerceExpr::Eopid() const {
 //		Return a string for operator name
 //
 //---------------------------------------------------------------------------
-const CHAR *CScalarArrayCoerceExpr::SzId() const {
+const char *CScalarArrayCoerceExpr::SzId() const {
   return "CScalarArrayCoerceExpr";
 }
 
@@ -66,7 +66,7 @@ const CHAR *CScalarArrayCoerceExpr::SzId() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarArrayCoerceExpr::Matches(COperator *pop) const {
+bool CScalarArrayCoerceExpr::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -85,7 +85,7 @@ BOOL CScalarArrayCoerceExpr::Matches(COperator *pop) const {
 //		Sensitivity to order of inputs
 //
 //---------------------------------------------------------------------------
-BOOL CScalarArrayCoerceExpr::FInputOrderSensitive() const {
+bool CScalarArrayCoerceExpr::FInputOrderSensitive() const {
   return false;
 }
 

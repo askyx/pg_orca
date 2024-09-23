@@ -56,7 +56,7 @@ Edxloptype CDXLPhysical::GetDXLOperatorType() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysical::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLPhysical::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(nullptr != node);
 
   GPOS_ASSERT(2 <= node->Arity());

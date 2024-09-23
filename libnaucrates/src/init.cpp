@@ -24,10 +24,10 @@ static CMemoryPool *pmpXerces = nullptr;
 static CMemoryPool *pmpDXL = nullptr;
 
 // safe-guard to prevent initializing DXL support more than once
-static ULONG_PTR m_ulpInitDXL = 0;
+static uintptr_t m_ulpInitDXL = 0;
 
 // safe-guard to prevent shutting DXL support down more than once
-static ULONG_PTR m_ulpShutdownDXL = 0;
+static uintptr_t m_ulpShutdownDXL = 0;
 
 //---------------------------------------------------------------------------
 //      @function:

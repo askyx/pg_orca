@@ -57,16 +57,16 @@ class CFunctionalDependency : public CRefCount {
   CColRefSet *PcrsDetermined() const { return m_pcrsDetermined; }
 
   // determine if all FD columns are included in the given column set
-  BOOL FIncluded(CColRefSet *pcrs) const;
+  bool FIncluded(CColRefSet *pcrs) const;
 
   // hash function
-  virtual ULONG HashValue() const;
+  virtual uint32_t HashValue() const;
 
   // equality function
-  BOOL Equals(const CFunctionalDependency *pfd) const;
+  bool Equals(const CFunctionalDependency *pfd) const;
 
   // do the given arguments form a functional dependency
-  BOOL FFunctionallyDependent(CColRefSet *pcrsKey, CColRef *colref) {
+  bool FFunctionallyDependent(CColRefSet *pcrsKey, CColRef *colref) {
     GPOS_ASSERT(nullptr != pcrsKey);
     GPOS_ASSERT(nullptr != colref);
 
@@ -77,10 +77,10 @@ class CFunctionalDependency : public CRefCount {
   IOstream &OsPrint(IOstream &os) const;
 
   // hash function
-  static ULONG HashValue(const CFunctionalDependencyArray *pdrgpfd);
+  static uint32_t HashValue(const CFunctionalDependencyArray *pdrgpfd);
 
   // equality function
-  static BOOL Equals(const CFunctionalDependencyArray *pdrgpfdFst, const CFunctionalDependencyArray *pdrgpfdSnd);
+  static bool Equals(const CFunctionalDependencyArray *pdrgpfdFst, const CFunctionalDependencyArray *pdrgpfdSnd);
 
   // create a set of all keys in the passed FD's array
   static CColRefSet *PcrsKeys(CMemoryPool *mp, const CFunctionalDependencyArray *pdrgpfd);

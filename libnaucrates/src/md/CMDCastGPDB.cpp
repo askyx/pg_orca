@@ -27,7 +27,7 @@ using namespace gpdxl;
 //
 //---------------------------------------------------------------------------
 CMDCastGPDB::CMDCastGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *mdid_src, IMDId *mdid_dest,
-                         BOOL is_binary_coercible, IMDId *mdid_cast_func, EmdCoercepathType path_type)
+                         bool is_binary_coercible, IMDId *mdid_cast_func, EmdCoercepathType path_type)
     : m_mp(mp),
       m_mdid(mdid),
       m_mdname(mdname),
@@ -130,7 +130,7 @@ IMDId *CMDCastGPDB::GetCastFuncMdId() const {
 //		types are binary compatible
 //
 //---------------------------------------------------------------------------
-BOOL CMDCastGPDB::IsBinaryCoercible() const {
+bool CMDCastGPDB::IsBinaryCoercible() const {
   return m_is_binary_coercible;
 }
 

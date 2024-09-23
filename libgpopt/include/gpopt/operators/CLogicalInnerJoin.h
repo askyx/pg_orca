@@ -41,7 +41,7 @@ class CLogicalInnerJoin : public CLogicalJoin {
   EOperatorId Eopid() const override { return EopLogicalInnerJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalInnerJoin"; }
+  const char *SzId() const override { return "CLogicalInnerJoin"; }
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -81,7 +81,7 @@ class CLogicalInnerJoin : public CLogicalJoin {
 
   // determine if an innerJoin group expression has
   // less conjuncts than another
-  static BOOL FFewerConj(CMemoryPool *mp, CGroupExpression *pgexprFst, CGroupExpression *pgexprSnd);
+  static bool FFewerConj(CMemoryPool *mp, CGroupExpression *pgexprFst, CGroupExpression *pgexprSnd);
 
 };  // class CLogicalInnerJoin
 

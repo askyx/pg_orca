@@ -26,7 +26,7 @@ using namespace gpopt;
 //---------------------------------------------------------------------------
 CPhysicalRightOuterHashJoin::CPhysicalRightOuterHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys,
                                                          CExpressionArray *pdrgpexprInnerKeys,
-                                                         IMdIdArray *hash_opfamilies, BOOL is_null_aware,
+                                                         IMdIdArray *hash_opfamilies, bool is_null_aware,
                                                          CXform::EXformId origin_xform)
     : CPhysicalHashJoin(mp, pdrgpexprOuterKeys, pdrgpexprInnerKeys, hash_opfamilies, is_null_aware, origin_xform) {
   SetPartPropagateRequests(2);
@@ -48,8 +48,8 @@ void CPhysicalRightOuterHashJoin::CreateOptRequests() {
 
 CPartitionPropagationSpec *CPhysicalRightOuterHashJoin::PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
                                                                      CPartitionPropagationSpec *pppsRequired,
-                                                                     ULONG child_index, CDrvdPropArray *pdrgpdpCtxt,
-                                                                     ULONG ulOptReq) const {
+                                                                     uint32_t child_index, CDrvdPropArray *pdrgpdpCtxt,
+                                                                     uint32_t ulOptReq) const {
   return PppsRequiredForJoins(mp, exprhdl, pppsRequired, child_index, pdrgpdpCtxt, ulOptReq);
 }
 

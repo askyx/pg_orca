@@ -33,9 +33,9 @@ class CPhysicalHashAggDeduplicate : public CPhysicalHashAgg {
 
   // ctor
   CPhysicalHashAggDeduplicate(CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal,
-                              COperator::EGbAggType egbaggtype, CColRefArray *pdrgpcrKeys, BOOL fGeneratesDuplicates,
-                              BOOL fMultiStage, BOOL isAggFromSplitDQA, CLogicalGbAgg::EAggStage aggStage,
-                              BOOL should_enforce_distribution);
+                              COperator::EGbAggType egbaggtype, CColRefArray *pdrgpcrKeys, bool fGeneratesDuplicates,
+                              bool fMultiStage, bool isAggFromSplitDQA, CLogicalGbAgg::EAggStage aggStage,
+                              bool should_enforce_distribution);
 
   // dtor
   ~CPhysicalHashAggDeduplicate() override;
@@ -44,7 +44,7 @@ class CPhysicalHashAggDeduplicate : public CPhysicalHashAgg {
   EOperatorId Eopid() const override { return EopPhysicalHashAggDeduplicate; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalHashAggDeduplicate"; }
+  const char *SzId() const override { return "CPhysicalHashAggDeduplicate"; }
 
   // array of keys from the join's child
   CColRefArray *PdrgpcrKeys() const { return m_pdrgpcrKeys; }
@@ -54,9 +54,9 @@ class CPhysicalHashAggDeduplicate : public CPhysicalHashAgg {
   //-------------------------------------------------------------------------------------
 
   // compute required output columns of the n-th child
-  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG child_index,
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t child_index,
                            CDrvdPropArray *,  // pdrgpdpCtxt,
-                           ULONG              // ulOptReq
+                           uint32_t           // ulOptReq
                            ) override {
     return PcrsRequiredAgg(mp, exprhdl, pcrsRequired, child_index, m_pdrgpcrKeys);
   }

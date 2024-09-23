@@ -41,10 +41,10 @@ class CCostModelGPDB : public ICostModel {
   CCostModelParamsGPDB *m_cost_model_params;
 
   // return cost of processing the given number of rows
-  static CCost CostTupleProcessing(DOUBLE rows, DOUBLE width, ICostModelParams *pcp);
+  static CCost CostTupleProcessing(double rows, double width, ICostModelParams *pcp);
 
   // helper function to return cost of producing output tuples from Scan operator
-  static CCost CostScanOutput(CMemoryPool *mp, DOUBLE rows, DOUBLE width, DOUBLE num_rebinds, ICostModelParams *pcp);
+  static CCost CostScanOutput(CMemoryPool *mp, double rows, double width, double num_rebinds, ICostModelParams *pcp);
 
   // helper function to return cost of a plan rooted by unary operator
   static CCost CostUnary(CMemoryPool *mp, CExpressionHandle &exprhdl, const SCostingInfo *pci, ICostModelParams *pcp);
@@ -62,7 +62,7 @@ class CCostModelGPDB : public ICostModel {
                             ICostModelParams *pcp);
 
   // check if given operator is unary
-  static BOOL FUnary(COperator::EOperatorId op_id);
+  static bool FUnary(COperator::EOperatorId op_id);
 
   // cost of scan
   static CCost CostScan(CMemoryPool *mp, CExpressionHandle &exprhdl, const CCostModelGPDB *pcmgpdb,
@@ -167,7 +167,7 @@ class CCostModelGPDB : public ICostModel {
   // and table statistics for Index Scan, Index only scan, Dynamic Index scan
   // & Dynamic Index only scan
   template <typename T>
-  static void GetCommonIndexData(T *ptr, ULONG &ulIndexKeys, ULONG &ulIncludedColWidth,
+  static void GetCommonIndexData(T *ptr, uint32_t &ulIndexKeys, uint32_t &ulIncludedColWidth,
                                  CColRefArray *&pdrgpcrIndexColumns, IStatistics *&stats, CMDAccessor *md_accessor,
                                  CMemoryPool *mp);
 

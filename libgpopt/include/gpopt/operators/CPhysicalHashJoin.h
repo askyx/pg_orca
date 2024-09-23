@@ -41,25 +41,25 @@ class CPhysicalHashJoin : public CPhysicalJoin {
   // if the join condition is null-aware
   // true by default, and false if the join condition doesn't contain
   // any INDF predicates
-  BOOL m_is_null_aware;
+  bool m_is_null_aware;
 
  protected:
-  BOOL FSelfJoinWithMatchingJoinKeys(CMemoryPool *mp, CExpressionHandle &exprhdl) const;
+  bool FSelfJoinWithMatchingJoinKeys(CMemoryPool *mp, CExpressionHandle &exprhdl) const;
 
  private:
   // check whether a hash key is nullable
-  BOOL FNullableHashKey(ULONG ulKey, CColRefSet *pcrsNotNullInner, BOOL fInner) const;
+  bool FNullableHashKey(uint32_t ulKey, CColRefSet *pcrsNotNullInner, bool fInner) const;
 
  protected:
   // check whether the hash keys from one child are nullable
-  BOOL FNullableHashKeys(CColRefSet *pcrsNotNullInner, BOOL fInner) const;
+  bool FNullableHashKeys(CColRefSet *pcrsNotNullInner, bool fInner) const;
 
   // create optimization requests
   virtual void CreateOptRequests();
 
   CPartitionPropagationSpec *PppsRequiredForJoins(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                  CPartitionPropagationSpec *pppsRequired, ULONG child_index,
-                                                  CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const;
+                                                  CPartitionPropagationSpec *pppsRequired, uint32_t child_index,
+                                                  CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const;
 
   CExpression *PexprJoinPredOnPartKeys(CMemoryPool *mp, CExpression *pexprScalar, CPartKeysArray *pdrgppartkeys,
                                        CColRefSet *pcrsAllowedRefs) const;
@@ -71,7 +71,7 @@ class CPhysicalHashJoin : public CPhysicalJoin {
 
   // ctor
   CPhysicalHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys, CExpressionArray *pdrgpexprInnerKeys,
-                    IMdIdArray *hash_opfamilies, BOOL is_null_aware = true,
+                    IMdIdArray *hash_opfamilies, bool is_null_aware = true,
                     CXform::EXformId origin_xform = CXform::ExfSentinel);
 
   // dtor
@@ -88,8 +88,8 @@ class CPhysicalHashJoin : public CPhysicalJoin {
   //-------------------------------------------------------------------------------------
 
   // compute required sort order of the n-th child
-  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, ULONG child_index,
-                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, uint32_t child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties

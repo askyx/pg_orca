@@ -38,23 +38,23 @@ enum Edxlappend {
 class CDXLPhysicalAppend : public CDXLPhysical {
  private:
   // is the append node used in an update/delete statement
-  BOOL m_used_in_upd_del = false;
+  bool m_used_in_upd_del = false;
 
   // TODO:  - Apr 12, 2011; find a better name (and comments) for this variable
-  BOOL m_is_zapped = false;
+  bool m_is_zapped = false;
 
  public:
   CDXLPhysicalAppend(const CDXLPhysicalAppend &) = delete;
 
   // ctor/dtor
-  CDXLPhysicalAppend(CMemoryPool *mp, BOOL fIsTarget, BOOL fIsZapped);
+  CDXLPhysicalAppend(CMemoryPool *mp, bool fIsTarget, bool fIsZapped);
 
   // accessors
   Edxlopid GetDXLOperator() const override;
   const CWStringConst *GetOpNameStr() const override;
 
-  BOOL IsUsedInUpdDel() const;
-  BOOL IsZapped() const;
+  bool IsUsedInUpdDel() const;
+  bool IsZapped() const;
 
   // serialize operator in DXL format
 
@@ -69,7 +69,7 @@ class CDXLPhysicalAppend : public CDXLPhysical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

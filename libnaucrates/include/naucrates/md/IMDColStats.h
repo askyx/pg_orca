@@ -34,7 +34,7 @@ class IMDColStats : public IMDCacheObject {
   Emdtype MDType() const override { return EmdtColStats; }
 
   // number of buckets
-  virtual ULONG Buckets() const = 0;
+  virtual uint32_t Buckets() const = 0;
 
   // width
   virtual CDouble Width() const = 0;
@@ -49,10 +49,10 @@ class IMDColStats : public IMDCacheObject {
   virtual CDouble GetFreqRemain() const = 0;
 
   // is the columns statistics missing in the database
-  virtual BOOL IsColStatsMissing() const = 0;
+  virtual bool IsColStatsMissing() const = 0;
 
   // get the bucket at the given position
-  virtual const CDXLBucket *GetDXLBucketAt(ULONG ul) const = 0;
+  virtual const CDXLBucket *GetDXLBucketAt(uint32_t ul) const = 0;
 };
 }  // namespace gpmd
 

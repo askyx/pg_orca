@@ -48,10 +48,10 @@ class ITaskScheduler {
   virtual GPOS_RESULT Cancel(CTask *task) = 0;
 
   // get number of waiting tasks
-  virtual ULONG GetQueueSize() = 0;
+  virtual uint32_t GetQueueSize() = 0;
 
   // check if task queue is empty
-  virtual BOOL IsEmpty() const = 0;
+  virtual bool IsEmpty() const = 0;
 
 };  // class ITaskScheduler
 }  // namespace gpos

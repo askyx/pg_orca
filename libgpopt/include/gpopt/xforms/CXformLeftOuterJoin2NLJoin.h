@@ -40,7 +40,7 @@ class CXformLeftOuterJoin2NLJoin : public CXformImplementation {
   EXformId Exfid() const override { return ExfLeftOuterJoin2NLJoin; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformLeftOuterJoin2NLJoin"; }
+  const char *SzId() const override { return "CXformLeftOuterJoin2NLJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

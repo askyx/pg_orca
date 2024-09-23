@@ -56,8 +56,7 @@ CEnfdPartitionPropagation::~CEnfdPartitionPropagation() {
 // 		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CEnfdPartitionPropagation::HashValue() const {
+uint32_t CEnfdPartitionPropagation::HashValue() const {
   return m_ppps->HashValue();
 }
 
@@ -70,7 +69,7 @@ CEnfdPartitionPropagation::HashValue() const {
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType CEnfdPartitionPropagation::Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical,
-                                                              BOOL fPropagationReqd) const {
+                                                              bool fPropagationReqd) const {
   if (fPropagationReqd) {
     return popPhysical->EpetPartitionPropagation(exprhdl, this);
   }
@@ -98,20 +97,20 @@ IOstream &CEnfdPartitionPropagation::OsPrint(IOstream &os) const {
 //		Propagation matching string
 //
 //---------------------------------------------------------------------------
-const CHAR *CEnfdPartitionPropagation::SzPropagationMatching(EPartitionPropagationMatching eppm) {
+const char *CEnfdPartitionPropagation::SzPropagationMatching(EPartitionPropagationMatching eppm) {
   GPOS_ASSERT(EppmSentinel > eppm);
-  const CHAR *rgszPropagationMatching[EppmSentinel] = {"satisfy"};
+  const char *rgszPropagationMatching[EppmSentinel] = {"satisfy"};
 
   return rgszPropagationMatching[eppm];
 }
 
-BOOL CEnfdPartitionPropagation::Matches(CEnfdPartitionPropagation *pepp) {
+bool CEnfdPartitionPropagation::Matches(CEnfdPartitionPropagation *pepp) {
   GPOS_ASSERT(nullptr != pepp);
 
   return m_eppm == pepp->Eppm() && m_ppps->Equals(pepp->PppsRequired());
 }
 
-BOOL CEnfdPartitionPropagation::FCompatible(CPartitionPropagationSpec *pps_drvd) const {
+bool CEnfdPartitionPropagation::FCompatible(CPartitionPropagationSpec *pps_drvd) const {
   GPOS_ASSERT(nullptr != pps_drvd);
 
   switch (m_eppm) {

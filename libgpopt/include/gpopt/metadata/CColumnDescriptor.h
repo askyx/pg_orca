@@ -35,30 +35,30 @@ class CColumnDescriptor : public CRefCount {
   const IMDType *m_pmdtype;
 
   // type modifier
-  const INT m_type_modifier;
+  const int32_t m_type_modifier;
 
   // name of column -- owned
   CName m_name;
 
   // attribute number
-  INT m_iAttno;
+  int32_t m_iAttno;
 
   // does column allow null values?
-  BOOL m_is_nullable;
+  bool m_is_nullable;
 
   // width of the column, for instance  char(10) column has width 10
-  ULONG m_width;
+  uint32_t m_width;
 
   // is the column a distribution col
-  BOOL m_is_dist_col;
+  bool m_is_dist_col;
 
   // is the column a partition col
-  BOOL m_is_part_col;
+  bool m_is_part_col;
 
  public:
   // ctor
-  CColumnDescriptor(CMemoryPool *mp, const IMDType *pmdtype, INT type_modifier, const CName &name, INT attno,
-                    BOOL is_nullable, ULONG ulWidth = gpos::ulong_max);
+  CColumnDescriptor(CMemoryPool *mp, const IMDType *pmdtype, int32_t type_modifier, const CName &name, int32_t attno,
+                    bool is_nullable, uint32_t ulWidth = UINT32_MAX);
 
   // dtor
   ~CColumnDescriptor() override;
@@ -70,25 +70,25 @@ class CColumnDescriptor : public CRefCount {
   const IMDType *RetrieveType() const { return m_pmdtype; }
 
   // type modifier
-  INT TypeModifier() const { return m_type_modifier; }
+  int32_t TypeModifier() const { return m_type_modifier; }
 
   // return attribute number
-  INT AttrNum() const { return m_iAttno; }
+  int32_t AttrNum() const { return m_iAttno; }
 
   // does column allow null values?
-  BOOL IsNullable() const { return m_is_nullable; }
+  bool IsNullable() const { return m_is_nullable; }
 
   // is this a system column
-  virtual BOOL IsSystemColumn() const { return (0 > m_iAttno); }
+  virtual bool IsSystemColumn() const { return (0 > m_iAttno); }
 
   // width of the column
-  virtual ULONG Width() const { return m_width; }
+  virtual uint32_t Width() const { return m_width; }
 
   // is this a distribution column
-  BOOL IsDistCol() const { return m_is_dist_col; }
+  bool IsDistCol() const { return m_is_dist_col; }
 
   // is this a partition column
-  BOOL IsPartCol() const { return m_is_part_col; }
+  bool IsPartCol() const { return m_is_part_col; }
 
   // set this column as a distribution column
   void SetAsDistCol() { m_is_dist_col = true; }
@@ -98,7 +98,7 @@ class CColumnDescriptor : public CRefCount {
 
   IOstream &OsPrint(IOstream &os) const;
 
-  BOOL operator==(const CColumnDescriptor &other) const {
+  bool operator==(const CColumnDescriptor &other) const {
     if (this == &other) {
       // same object reference
       return true;

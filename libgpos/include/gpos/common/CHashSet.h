@@ -28,7 +28,7 @@
 
 namespace gpos {
 // fwd declaration
-template <class T, ULONG (*HashFn)(const T *), BOOL (*EqFn)(const T *, const T *), void (*CleanupFn)(T *)>
+template <class T, uint32_t (*HashFn)(const T *), bool (*EqFn)(const T *, const T *), void (*CleanupFn)(T *)>
 class CHashSetIter;
 
 //---------------------------------------------------------------------------
@@ -39,7 +39,7 @@ class CHashSetIter;
 //		Hash set
 //
 //---------------------------------------------------------------------------
-template <class T, ULONG (*HashFn)(const T *), BOOL (*EqFn)(const T *, const T *), void (*CleanupFn)(T *)>
+template <class T, uint32_t (*HashFn)(const T *), bool (*EqFn)(const T *, const T *), void (*CleanupFn)(T *)>
 class CHashSet : public CRefCount {
   // fwd declaration
   friend class CHashSetIter<T, HashFn, EqFn, CleanupFn>;
@@ -59,13 +59,13 @@ class CHashSet : public CRefCount {
     T *m_value;
 
     // does hash set element own object?
-    BOOL m_owns_object;
+    bool m_owns_object;
 
    public:
     CHashSetElem(const CHashSetElem &) = delete;
 
     // ctor
-    CHashSetElem(T *value, BOOL fOwn) : m_value(value), m_owns_object(fOwn) { GPOS_ASSERT(nullptr != value); }
+    CHashSetElem(T *value, bool fOwn) : m_value(value), m_owns_object(fOwn) { GPOS_ASSERT(nullptr != value); }
 
     // dtor
     ~CHashSetElem() {
@@ -80,17 +80,17 @@ class CHashSet : public CRefCount {
     T *Value() const { return m_value; }
 
     // equality operator
-    BOOL operator==(const CHashSetElem &hse) const { return EqFn(m_value, hse.m_value); }
+    bool operator==(const CHashSetElem &hse) const { return EqFn(m_value, hse.m_value); }
   };  // class CHashSetElem
 
   // memory pool
   CMemoryPool *m_mp;
 
   // number of hash chains
-  ULONG m_num_chains;
+  uint32_t m_num_chains;
 
   // total number of entries
-  ULONG m_size;
+  uint32_t m_size;
 
   // each hash chain is an array of hashset elements
   using HashSetElemArray = CDynamicPtrArray<CHashSetElem, CleanupDelete>;
@@ -112,7 +112,7 @@ class CHashSet : public CRefCount {
 
   // clear elements
   void Clear() {
-    for (ULONG i = 0; i < m_filled_chains->Size(); i++) {
+    for (uint32_t i = 0; i < m_filled_chains->Size(); i++) {
       // release each hash chain
       m_chains[*(*m_filled_chains)[i]]->Release();
     }
@@ -137,7 +137,7 @@ class CHashSet : public CRefCount {
   CHashSet(const CHashSet<T, HashFn, EqFn, CleanupFn> &) = delete;
 
   // ctor
-  CHashSet(CMemoryPool *mp, ULONG size = 127)
+  CHashSet(CMemoryPool *mp, uint32_t size = 127)
       : m_mp(mp),
         m_num_chains(size),
         m_size(0),
@@ -159,7 +159,7 @@ class CHashSet : public CRefCount {
   }
 
   // insert an element if not present
-  BOOL Insert(T *value) {
+  bool Insert(T *value) {
     if (Contains(value)) {
       return false;
     }
@@ -167,8 +167,8 @@ class CHashSet : public CRefCount {
     HashSetElemArray **chain = GetChain(value);
     if (nullptr == *chain) {
       *chain = GPOS_NEW(m_mp) HashSetElemArray(m_mp);
-      INT chain_idx = HashFn(value) % m_num_chains;
-      m_filled_chains->Append(GPOS_NEW(m_mp) INT(chain_idx));
+      int32_t chain_idx = HashFn(value) % m_num_chains;
+      m_filled_chains->Append(GPOS_NEW(m_mp) int32_t(chain_idx));
     }
 
     CHashSetElem *elem = GPOS_NEW(m_mp) CHashSetElem(value, true /*fOwn*/);
@@ -181,7 +181,7 @@ class CHashSet : public CRefCount {
   }
 
   // lookup element
-  BOOL Contains(const T *value) const {
+  bool Contains(const T *value) const {
     CHashSetElem hse(const_cast<T *>(value), false /*fOwn*/);
     HashSetElemArray **chain = GetChain(value);
     if (nullptr != *chain) {
@@ -194,8 +194,7 @@ class CHashSet : public CRefCount {
   }
 
   // return number of map entries
-  ULONG
-  Size() const { return m_size; }
+  uint32_t Size() const { return m_size; }
 
   T *First() {
     if (m_elements->Size() == 0 || m_size == 0) {

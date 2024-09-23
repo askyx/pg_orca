@@ -45,7 +45,7 @@ class CLogicalLeftAntiSemiJoinNotIn : public CLogicalLeftAntiSemiJoin {
   EOperatorId Eopid() const override { return EopLogicalLeftAntiSemiJoinNotIn; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalLeftAntiSemiJoinNotIn"; }
+  const char *SzId() const override { return "CLogicalLeftAntiSemiJoinNotIn"; }
 
   //-------------------------------------------------------------------------------------
   // Transformations

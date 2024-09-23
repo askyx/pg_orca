@@ -6,7 +6,7 @@
 //		CDXLDatumStatsLintMappable.cpp
 //
 //	@doc:
-//		Implementation of DXL datum of types having LINT mapping
+//		Implementation of DXL datum of types having int64_t mapping
 //
 //	@owner:
 //
@@ -30,6 +30,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLDatumStatsLintMappable::CDXLDatumStatsLintMappable(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier,
-                                                       BOOL is_null, BYTE *byte_array, ULONG length, LINT value)
+CDXLDatumStatsLintMappable::CDXLDatumStatsLintMappable(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier,
+                                                       bool is_null, uint8_t *byte_array, uint32_t length,
+                                                       int64_t value)
     : CDXLDatumGeneric(mp, mdid_type, type_modifier, is_null, byte_array, length), m_val(value) {}

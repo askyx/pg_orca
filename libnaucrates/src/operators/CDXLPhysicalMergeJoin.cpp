@@ -24,7 +24,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalMergeJoin::CDXLPhysicalMergeJoin(CMemoryPool *mp, EdxlJoinType join_type, BOOL is_unique_outer)
+CDXLPhysicalMergeJoin::CDXLPhysicalMergeJoin(CMemoryPool *mp, EdxlJoinType join_type, bool is_unique_outer)
     : CDXLPhysicalJoin(mp, join_type), m_is_unique_outer(is_unique_outer) {}
 
 //---------------------------------------------------------------------------
@@ -60,7 +60,7 @@ const CWStringConst *CDXLPhysicalMergeJoin::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalMergeJoin::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLPhysicalMergeJoin::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   // assert proj list and filter are valid
   CDXLPhysical::AssertValid(dxlnode, validate_children);
 

@@ -129,7 +129,7 @@ CMDIdGPDB::CMDIdGPDB(CSystemId sysid, OID oid)
   }
 }
 
-CMDIdGPDB::CMDIdGPDB(EMDIdType mdIdType, OID oid, ULONG version_major, ULONG version_minor)
+CMDIdGPDB::CMDIdGPDB(EMDIdType mdIdType, OID oid, uint32_t version_major, uint32_t version_minor)
     : m_sysid(mdIdType, GPMD_GPDB_SYSID),
       m_oid(oid),
       m_major_version(version_major),
@@ -184,7 +184,7 @@ void CMDIdGPDB::Serialize() const {
 //		Returns the string representation of the mdid
 //
 //---------------------------------------------------------------------------
-const WCHAR *CMDIdGPDB::GetBuffer() const {
+const wchar_t *CMDIdGPDB::GetBuffer() const {
   Serialize();
   return m_str.GetBuffer();
 }
@@ -210,8 +210,7 @@ OID CMDIdGPDB::Oid() const {
 //		Returns the object's major version
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIdGPDB::VersionMajor() const {
+uint32_t CMDIdGPDB::VersionMajor() const {
   return m_major_version;
 }
 
@@ -223,8 +222,7 @@ CMDIdGPDB::VersionMajor() const {
 //		Returns the object's minor version
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIdGPDB::VersionMinor() const {
+uint32_t CMDIdGPDB::VersionMinor() const {
   return m_minor_version;
 }
 
@@ -237,7 +235,7 @@ CMDIdGPDB::VersionMinor() const {
 //		of the same object
 //
 //---------------------------------------------------------------------------
-BOOL CMDIdGPDB::Equals(const IMDId *mdid) const {
+bool CMDIdGPDB::Equals(const IMDId *mdid) const {
   if (nullptr == mdid || MdidType() != mdid->MdidType()) {
     return false;
   }
@@ -256,7 +254,7 @@ BOOL CMDIdGPDB::Equals(const IMDId *mdid) const {
 //		Is the mdid valid
 //
 //---------------------------------------------------------------------------
-BOOL CMDIdGPDB::IsValid() const {
+bool CMDIdGPDB::IsValid() const {
   const CMDIdGPDB *invalid = &CMDIdGPDB::m_mdid_invalid_key;
   return !(m_oid == invalid->Oid() && m_major_version == invalid->VersionMajor() &&
            m_minor_version == invalid->VersionMinor());

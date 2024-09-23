@@ -29,8 +29,8 @@ using namespace gpmd;
 CMDScalarOpGPDB::CMDScalarOpGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *mdid_type_left,
                                  IMDId *mdid_type_right, IMDId *result_type_mdid, IMDId *mdid_func,
                                  IMDId *mdid_commute_opr, IMDId *m_mdid_inverse_opr, IMDType::ECmpType cmp_type,
-                                 BOOL returns_null_on_null_input, IMdIdArray *mdid_opfamilies_array,
-                                 IMDId *mdid_hash_opfamily, IMDId *mdid_legacy_hash_opfamily, BOOL is_ndv_preserving)
+                                 bool returns_null_on_null_input, IMdIdArray *mdid_opfamilies_array,
+                                 IMDId *mdid_hash_opfamily, IMDId *mdid_legacy_hash_opfamily, bool is_ndv_preserving)
     : m_mp(mp),
       m_mdid(mdid),
       m_mdname(mdname),
@@ -180,7 +180,7 @@ IMDId *CMDScalarOpGPDB::GetInverseOpMdid() const {
 //		Is this an equality operator
 //
 //---------------------------------------------------------------------------
-BOOL CMDScalarOpGPDB::IsEqualityOp() const {
+bool CMDScalarOpGPDB::IsEqualityOp() const {
   return IMDType::EcmptEq == m_comparision_type;
 }
 
@@ -194,11 +194,11 @@ BOOL CMDScalarOpGPDB::IsEqualityOp() const {
 //		the implementation in GPDB returns what STRICT property states
 //
 //---------------------------------------------------------------------------
-BOOL CMDScalarOpGPDB::ReturnsNullOnNullInput() const {
+bool CMDScalarOpGPDB::ReturnsNullOnNullInput() const {
   return m_returns_null_on_null_input;
 }
 
-BOOL CMDScalarOpGPDB::IsNDVPreserving() const {
+bool CMDScalarOpGPDB::IsNDVPreserving() const {
   return m_is_ndv_preserving;
 }
 
@@ -222,8 +222,7 @@ IMDType::ECmpType CMDScalarOpGPDB::ParseCmpType() const {
 //		Number of opfamilies this operator belongs to
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDScalarOpGPDB::OpfamiliesCount() const {
+uint32_t CMDScalarOpGPDB::OpfamiliesCount() const {
   return m_mdid_opfamilies_array->Size();
 }
 
@@ -235,7 +234,7 @@ CMDScalarOpGPDB::OpfamiliesCount() const {
 //		Operator family at given position
 //
 //---------------------------------------------------------------------------
-IMDId *CMDScalarOpGPDB::OpfamilyMdidAt(ULONG pos) const {
+IMDId *CMDScalarOpGPDB::OpfamilyMdidAt(uint32_t pos) const {
   GPOS_ASSERT(pos < m_mdid_opfamilies_array->Size());
 
   return (*m_mdid_opfamilies_array)[pos];

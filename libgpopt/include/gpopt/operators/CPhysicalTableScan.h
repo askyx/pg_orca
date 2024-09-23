@@ -37,13 +37,13 @@ class CPhysicalTableScan : public CPhysicalScan {
   EOperatorId Eopid() const override { return EopPhysicalTableScan; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalTableScan"; }
+  const char *SzId() const override { return "CPhysicalTableScan"; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   //-------------------------------------------------------------------------------------
   //-------------------------------------------------------------------------------------

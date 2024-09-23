@@ -44,16 +44,16 @@ class IErrorContext {
   virtual CException GetException() const = 0;
 
   // error message accessor
-  virtual const WCHAR *GetErrorMsg() const = 0;
+  virtual const wchar_t *GetErrorMsg() const = 0;
 
   // copy necessary info for error propagation
   virtual void CopyPropErrCtxt(const IErrorContext *err_ctxt) = 0;
 
   // severity accessor
-  virtual ULONG GetSeverity() const = 0;
+  virtual uint32_t GetSeverity() const = 0;
 
   // set severity
-  virtual void SetSev(ULONG severity) = 0;
+  virtual void SetSev(uint32_t severity) = 0;
 
   // print error stack trace
   virtual void AppendStackTrace() = 0;
@@ -62,10 +62,10 @@ class IErrorContext {
   virtual void AppendErrnoMsg() = 0;
 
   // check if there is a pending exception
-  virtual BOOL IsPending() const = 0;
+  virtual bool IsPending() const = 0;
 
   // check if exception is rethrown
-  virtual BOOL IsRethrown() const = 0;
+  virtual bool IsRethrown() const = 0;
 
   // mark that exception is rethrown
   virtual void SetRethrow() = 0;

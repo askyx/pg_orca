@@ -30,13 +30,13 @@ class CBitSetIter {
   const CBitSet &m_bs;
 
   // current cursor position (in current link)
-  ULONG m_cursor;
+  uint32_t m_cursor;
 
   // current cursor link
   CBitSet::CBitSetLink *m_bsl;
 
   // is iterator active or exhausted
-  BOOL m_active;
+  bool m_active;
 
  public:
   CBitSetIter(const CBitSetIter &) = delete;
@@ -47,13 +47,13 @@ class CBitSetIter {
   ~CBitSetIter() = default;
 
   // short hand for cast
-  operator BOOL() const { return m_active; }
+  operator bool() const { return m_active; }
 
   // move to next bit
-  BOOL Advance();
+  bool Advance();
 
   // current bit
-  ULONG Bit() const;
+  uint32_t Bit() const;
 
 };  // class CBitSetIter
 }  // namespace gpos

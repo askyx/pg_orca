@@ -81,10 +81,10 @@ void CXformJoinAssociativity::CreatePredicates(CMemoryPool *mp, CExpression *pex
   // convert current predicates into arrays of conjuncts
   CExpressionArray *pdrgpexprOrig = GPOS_NEW(mp) CExpressionArray(mp);
 
-  for (ULONG ul = 0; ul < 2; ul++) {
+  for (uint32_t ul = 0; ul < 2; ul++) {
     CExpressionArray *pdrgpexprPreds = CPredicateUtils::PdrgpexprConjuncts(mp, (*(*pdrgpexprJoins)[ul])[2]);
-    ULONG length = pdrgpexprPreds->Size();
-    for (ULONG ulConj = 0; ulConj < length; ulConj++) {
+    uint32_t length = pdrgpexprPreds->Size();
+    for (uint32_t ulConj = 0; ulConj < length; ulConj++) {
       CExpression *pexprConj = (*pdrgpexprPreds)[ulConj];
       pexprConj->AddRef();
 
@@ -94,8 +94,8 @@ void CXformJoinAssociativity::CreatePredicates(CMemoryPool *mp, CExpression *pex
   }
 
   // divvy up conjuncts for upper and lower join
-  ULONG ulConj = pdrgpexprOrig->Size();
-  for (ULONG ul = 0; ul < ulConj; ul++) {
+  uint32_t ulConj = pdrgpexprOrig->Size();
+  for (uint32_t ul = 0; ul < ulConj; ul++) {
     CExpression *pexprPred = (*pdrgpexprOrig)[ul];
     CColRefSet *pcrs = pexprPred->DeriveUsedColumns();
 
@@ -220,10 +220,10 @@ void CXformJoinAssociativity::Transform(CXformContext *pxfctxt, CXformResult *px
   // though a new cross join will be created.
 
   // check if the input lower join expression is a cross join
-  BOOL fInputLeftIsCrossJoin = CUtils::FCrossJoin((*pexpr)[0]);
+  bool fInputLeftIsCrossJoin = CUtils::FCrossJoin((*pexpr)[0]);
 
   // check if the output lower join would result in a cross join
-  BOOL fOutputLeftIsCrossJoin = (1 == pdrgpexprLower->Size() && CUtils::FScalarConstTrue((*pdrgpexprLower)[0]));
+  bool fOutputLeftIsCrossJoin = (1 == pdrgpexprLower->Size() && CUtils::FScalarConstTrue((*pdrgpexprLower)[0]));
 
   // build a join only if it does not result in a cross join
   // unless the input itself was a cross join (see earlier comments)

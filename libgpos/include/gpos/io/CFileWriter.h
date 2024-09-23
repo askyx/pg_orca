@@ -27,7 +27,7 @@ namespace gpos {
 class CFileWriter : public CFileDescriptor {
  private:
   // file size
-  ULLONG m_file_size{0};
+  uint64_t m_file_size{0};
 
  public:
   CFileWriter(const CFileWriter &) = delete;
@@ -38,17 +38,16 @@ class CFileWriter : public CFileDescriptor {
   // dtor
   ~CFileWriter() override = default;
 
-  ULLONG
-  FileSize() const { return m_file_size; }
+  uint64_t FileSize() const { return m_file_size; }
 
   // open file for writing
-  void Open(const CHAR *file_path, ULONG permission_bits);
+  void Open(const char *file_path, uint32_t permission_bits);
 
   // close file
   void Close();
 
   // write bytes to file
-  void Write(const BYTE *read_buffer, const ULONG_PTR write_size);
+  void Write(const uint8_t *read_buffer, const uintptr_t write_size);
 
 };  // class CFileWriter
 

@@ -35,14 +35,14 @@ using namespace gpos;
 class CDXLScalarNullTest : public CDXLScalar {
  private:
   // is nul or is not null operation
-  BOOL m_is_null;
+  bool m_is_null;
 
   // private copy ctor
   CDXLScalarNullTest(const CDXLScalarNullTest &);
 
  public:
   // ctor/
-  CDXLScalarNullTest(CMemoryPool *mp, BOOL is_null);
+  CDXLScalarNullTest(CMemoryPool *mp, bool is_null);
 
   // ident accessors
   Edxlopid GetDXLOperator() const override;
@@ -51,7 +51,7 @@ class CDXLScalarNullTest : public CDXLScalar {
   const CWStringConst *GetOpNameStr() const override;
 
   // NullTest operator type
-  BOOL IsNullTest() const;
+  bool IsNullTest() const;
 
   // name of the operator
   const CWStringConst *PstrTestName() const;
@@ -67,7 +67,7 @@ class CDXLScalarNullTest : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     return true;
   }
@@ -75,7 +75,7 @@ class CDXLScalarNullTest : public CDXLScalar {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

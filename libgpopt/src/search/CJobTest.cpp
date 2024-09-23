@@ -23,7 +23,7 @@ using namespace gpos;
 #define GPOPT_JOB_TEST_DUMMY_CONST 45
 
 // initialization of static members
-ULONG_PTR CJobTest::m_ulpCnt;
+uintptr_t CJobTest::m_ulpCnt;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -53,8 +53,8 @@ CJobTest::~CJobTest() = default;
 //		Execution of test job
 //
 //---------------------------------------------------------------------------
-BOOL CJobTest::FExecute(CSchedulerContext *psc) {
-  BOOL fRes = false;
+bool CJobTest::FExecute(CSchedulerContext *psc) {
+  bool fRes = false;
 
   switch (m_ett) {
     case EttSpawn:
@@ -81,8 +81,8 @@ BOOL CJobTest::FExecute(CSchedulerContext *psc) {
 //		Test job spawning
 //
 //---------------------------------------------------------------------------
-BOOL CJobTest::FSpawn(CSchedulerContext *psc) {
-  ULONG_PTR ulpOffset = m_ulpCnt++;
+bool CJobTest::FSpawn(CSchedulerContext *psc) {
+  uintptr_t ulpOffset = m_ulpCnt++;
 
 #ifdef GPOS_DEBUG
   if (10 == ulpOffset && psc->Psched()->FTrackingJobs()) {
@@ -96,7 +96,7 @@ BOOL CJobTest::FSpawn(CSchedulerContext *psc) {
 #endif  // GPOS_DEBUG
 
   if (m_ulRounds > ulpOffset) {
-    for (ULONG i = 0; i < m_ulFanout; i++) {
+    for (uint32_t i = 0; i < m_ulFanout; i++) {
       // get new job from factory
       CJob *pj = psc->Pjf()->PjCreate(CJob::EjtTest);
 
@@ -128,11 +128,11 @@ BOOL CJobTest::FSpawn(CSchedulerContext *psc) {
 //		Start jobs to be queued
 //
 //---------------------------------------------------------------------------
-BOOL CJobTest::FStartQueue(CSchedulerContext *psc) {
-  ULONG_PTR ulpOffset = m_ulpCnt++;
+bool CJobTest::FStartQueue(CSchedulerContext *psc) {
+  uintptr_t ulpOffset = m_ulpCnt++;
 
   if (0 == ulpOffset) {
-    for (ULONG i = 0; i < m_ulFanout; i++) {
+    for (uint32_t i = 0; i < m_ulFanout; i++) {
       // get new job from factory
       CJob *pj = psc->Pjf()->PjCreate(CJob::EjtTest);
 
@@ -160,8 +160,8 @@ BOOL CJobTest::FStartQueue(CSchedulerContext *psc) {
 //		Test job queueing
 //
 //---------------------------------------------------------------------------
-BOOL CJobTest::FQueue(CSchedulerContext *psc) {
-  BOOL fCompleted = true;
+bool CJobTest::FQueue(CSchedulerContext *psc) {
+  bool fCompleted = true;
 
   switch (m_pjq->EjqrAdd(this)) {
     case CJobQueue::EjqrMain:
@@ -208,9 +208,9 @@ BOOL CJobTest::FQueue(CSchedulerContext *psc) {
 //
 //---------------------------------------------------------------------------
 void CJobTest::Loop() const {
-  ULONG ulOuter = 0;
+  uint32_t ulOuter = 0;
   while (ulOuter < m_ulIters) {
-    for (ULONG ulInner = ulOuter; ulInner > 0; ulInner--) {
+    for (uint32_t ulInner = ulOuter; ulInner > 0; ulInner--) {
       if (0 < ulOuter * (ulOuter + GPOPT_JOB_TEST_DUMMY_CONST)) {
         ulOuter++;
       }

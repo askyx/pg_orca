@@ -30,12 +30,12 @@ using namespace gpos;
 
 namespace gpdxl {
 // hash on character arrays
-inline ULONG HashStr(const CHAR *str) {
-  return gpos::HashByteArray((BYTE *)str, clib::Strlen(str));
+inline uint32_t HashStr(const char *str) {
+  return gpos::HashByteArray((uint8_t *)str, clib::Strlen(str));
 }
 
 // equality on character arrays
-inline BOOL StrEqual(const CHAR *str_a, const CHAR *str_b) {
+inline bool StrEqual(const char *str_a, const char *str_b) {
   return (0 == clib::Strcmp(str_a, str_b));
 }
 
@@ -60,46 +60,45 @@ class CCTEListEntry : public CRefCount {
         : m_cte_producer(cte_producer), m_target_list(target_list) {}
   };
 
-  // hash maps mapping CHAR *->SCTEProducerInfo
-  using HMSzCTEInfo = CHashMap<CHAR, SCTEProducerInfo, HashStr, StrEqual, CleanupNULL, CleanupDelete>;
+  // hash maps mapping char *->SCTEProducerInfo
+  using HMSzCTEInfo = CHashMap<char, SCTEProducerInfo, HashStr, StrEqual, CleanupNULL, CleanupDelete>;
 
   // query level where the CTEs are defined
-  ULONG m_query_level;
+  uint32_t m_query_level;
 
   // CTE producers at that level indexed by their name
   HMSzCTEInfo *m_cte_info;
 
  public:
   // ctor: single CTE
-  CCTEListEntry(CMemoryPool *mp, ULONG query_level, CommonTableExpr *cte, CDXLNode *cte_producer);
+  CCTEListEntry(CMemoryPool *mp, uint32_t query_level, CommonTableExpr *cte, CDXLNode *cte_producer);
 
   // ctor: multiple CTEs
-  CCTEListEntry(CMemoryPool *mp, ULONG query_level, List *cte_list, CDXLNodeArray *dxlnodes);
+  CCTEListEntry(CMemoryPool *mp, uint32_t query_level, List *cte_list, CDXLNodeArray *dxlnodes);
 
   // dtor
   ~CCTEListEntry() override { m_cte_info->Release(); };
 
   // the query level
-  ULONG
-  GetQueryLevel() const { return m_query_level; }
+  uint32_t GetQueryLevel() const { return m_query_level; }
 
   // lookup CTE producer by its name
-  const CDXLNode *GetCTEProducer(const CHAR *cte_str) const;
+  const CDXLNode *GetCTEProducer(const char *cte_str) const;
 
   // lookup CTE producer target list by its name
-  List *GetCTEProducerTargetList(const CHAR *cte_str) const;
+  List *GetCTEProducerTargetList(const char *cte_str) const;
 
   // add a new CTE producer for this level
   void AddCTEProducer(CMemoryPool *mp, CommonTableExpr *cte, const CDXLNode *cte_producer);
 };
 
-// hash maps mapping ULONG -> CCTEListEntry
-using HMUlCTEListEntry =
-    CHashMap<ULONG, CCTEListEntry, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>, CleanupRelease>;
+// hash maps mapping uint32_t -> CCTEListEntry
+using HMUlCTEListEntry = CHashMap<uint32_t, CCTEListEntry, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                  CleanupDelete<uint32_t>, CleanupRelease>;
 
 // iterator
-using HMIterUlCTEListEntry = CHashMapIter<ULONG, CCTEListEntry, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                          CleanupDelete<ULONG>, CleanupRelease>;
+using HMIterUlCTEListEntry = CHashMapIter<uint32_t, CCTEListEntry, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                          CleanupDelete<uint32_t>, CleanupRelease>;
 
 }  // namespace gpdxl
 #endif  // !GPDXL_CCTEListEntry_H

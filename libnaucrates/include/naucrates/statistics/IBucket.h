@@ -45,7 +45,7 @@ class IBucket {
   virtual CPoint *GetUpperBound() const = 0;
 
   // is bucket singleton?
-  BOOL IsSingleton() const { return GetLowerBound()->Equals(GetUpperBound()); }
+  bool IsSingleton() const { return GetLowerBound()->Equals(GetUpperBound()); }
 
   // d'tor
   virtual ~IBucket() = default;

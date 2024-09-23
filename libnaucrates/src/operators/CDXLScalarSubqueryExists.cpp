@@ -70,7 +70,7 @@ const CWStringConst *CDXLScalarSubqueryExists::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarSubqueryExists::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarSubqueryExists::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(1 == dxlnode->Arity());
 
   CDXLNode *child_dxlnode = (*dxlnode)[0];

@@ -29,7 +29,7 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CStatisticsConfig::CStatisticsConfig(CMemoryPool *mp, CDouble damping_factor_filter, CDouble damping_factor_join,
-                                     CDouble damping_factor_groupby, ULONG max_stats_buckets)
+                                     CDouble damping_factor_groupby, uint32_t max_stats_buckets)
     : m_mp(mp),
       m_damping_factor_filter(damping_factor_filter),
       m_damping_factor_join(damping_factor_join),

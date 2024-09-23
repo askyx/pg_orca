@@ -38,8 +38,8 @@ class CXformSplitDQA : public CXformExploration {
                                                  CExpressionArray *pdrgpexprPrElFirstStage,
                                                  CExpressionArray *pdrgpexprPrElSecondStage,
                                                  CExpressionArray *pdrgpexprPrElThirdStage, CColRefArray *pdrgpcrArgDQA,
-                                                 CColRefArray *pdrgpcrLastStage, BOOL fSplit2LevelsOnly,
-                                                 BOOL fAddDistinctColToLocalGb, CLogicalGbAgg::EAggStage aggStage);
+                                                 CColRefArray *pdrgpcrLastStage, bool fSplit2LevelsOnly,
+                                                 bool fAddDistinctColToLocalGb, CLogicalGbAgg::EAggStage aggStage);
 
   // split DQA into a local DQA and global non-DQA aggregate function
   static CExpression *PexprSplitIntoLocalDQAGlobalAgg(CMemoryPool *mp, CColumnFactory *col_factory,
@@ -59,7 +59,7 @@ class CXformSplitDQA : public CXformExploration {
   static void PopulatePrLMultiPhaseAgg(CMemoryPool *mp, CColumnFactory *col_factory, CMDAccessor *md_accessor,
                                        CExpression *pexprPrEl, CExpressionArray *pdrgpexprPrElFirstStage,
                                        CExpressionArray *pdrgpexprPrElSecondStage,
-                                       CExpressionArray *pdrgpexprPrElLastStage, BOOL fSplit2LevelsOnly);
+                                       CExpressionArray *pdrgpexprPrElLastStage, bool fSplit2LevelsOnly);
 
   // create project element for the aggregate function of a particular level
   static CExpression *PexprPrElAgg(CMemoryPool *mp, CExpression *pexprAggFunc, EAggfuncStage eaggfuncstage,
@@ -87,10 +87,10 @@ class CXformSplitDQA : public CXformExploration {
   EXformId Exfid() const override { return ExfSplitDQA; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformSplitDQA"; }
+  const char *SzId() const override { return "CXformSplitDQA"; }
 
   // Compatibility function for splitting aggregates
-  BOOL FCompatible(CXform::EXformId exfid) override {
+  bool FCompatible(CXform::EXformId exfid) override {
     return (CXform::ExfSplitDQA != exfid) && (CXform::ExfSplitGbAgg != exfid);
   }
 

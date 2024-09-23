@@ -35,16 +35,16 @@ enum Edxlspooltype { EdxlspoolNone, EdxlspoolMaterialize, EdxlspoolSort, Edxlspo
 class CDXLSpoolInfo {
  private:
   // id of the spooling operator
-  ULONG m_spool_id;
+  uint32_t m_spool_id;
 
   // type of the underlying spool
   Edxlspooltype m_spool_type;
 
   // is the spool shared across multiple slices
-  BOOL m_is_multi_slice_shared;
+  bool m_is_multi_slice_shared;
 
   // slice executing the underlying sort or materialize
-  INT m_executor_slice_id;
+  int32_t m_executor_slice_id;
 
   // spool type name
   const CWStringConst *GetSpoolTypeName() const;
@@ -53,21 +53,21 @@ class CDXLSpoolInfo {
   CDXLSpoolInfo(CDXLSpoolInfo &) = delete;
 
   // ctor/dtor
-  CDXLSpoolInfo(ULONG ulSpoolId, Edxlspooltype edxlspstype, BOOL fMultiSlice, INT iExecutorSlice);
+  CDXLSpoolInfo(uint32_t ulSpoolId, Edxlspooltype edxlspstype, bool fMultiSlice, int32_t iExecutorSlice);
 
   // accessors
 
   // spool id
-  ULONG GetSpoolId() const;
+  uint32_t GetSpoolId() const;
 
   // spool type (sort or materialize)
   Edxlspooltype GetSpoolType() const;
 
   // is spool shared across multiple slices
-  BOOL IsMultiSlice() const;
+  bool IsMultiSlice() const;
 
   // id of slice executing the underlying operation
-  INT GetExecutorSliceId() const;
+  int32_t GetExecutorSliceId() const;
 
   // serialize operator in DXL format
 };

@@ -87,7 +87,7 @@ CExpression *CXformResult::PexprNext() {
 IOstream &CXformResult::OsPrint(IOstream &os) const {
   os << "Alternatives:" << std::endl;
 
-  for (ULONG i = 0; i < m_pdrgpexpr->Size(); i++) {
+  for (uint32_t i = 0; i < m_pdrgpexpr->Size(); i++) {
     os << i << ": " << std::endl;
     (*m_pdrgpexpr)[i]->OsPrint(os);
   }

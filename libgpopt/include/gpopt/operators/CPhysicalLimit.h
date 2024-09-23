@@ -30,13 +30,13 @@ class CPhysicalLimit : public CPhysical {
   COrderSpec *m_pos;
 
   // global limit
-  BOOL m_fGlobal;
+  bool m_fGlobal;
 
   // does limit specify a number of rows?
-  BOOL m_fHasCount;
+  bool m_fHasCount;
 
   // this is a top limit right under a DML or CTAS operation
-  BOOL m_top_limit_under_dml;
+  bool m_top_limit_under_dml;
 
   // columns used by order spec
   CColRefSet *m_pcrsSort;
@@ -45,7 +45,7 @@ class CPhysicalLimit : public CPhysical {
   CPhysicalLimit(const CPhysicalLimit &) = delete;
 
   // ctor
-  CPhysicalLimit(CMemoryPool *mp, COrderSpec *pos, BOOL fGlobal, BOOL fHasCount, BOOL fTopLimitUnderDML);
+  CPhysicalLimit(CMemoryPool *mp, COrderSpec *pos, bool fGlobal, bool fHasCount, bool fTopLimitUnderDML);
 
   // dtor
   ~CPhysicalLimit() override;
@@ -53,52 +53,51 @@ class CPhysicalLimit : public CPhysical {
   // ident accessors
   EOperatorId Eopid() const override { return EopPhysicalLimit; }
 
-  const CHAR *SzId() const override { return "CPhysicalLimit"; }
+  const char *SzId() const override { return "CPhysicalLimit"; }
 
   // hash function
-  ULONG
-  HashValue() const override {
+  uint32_t HashValue() const override {
     return gpos::CombineHashes(
         gpos::CombineHashes(COperator::HashValue(), m_pos->HashValue()),
-        gpos::CombineHashes(gpos::HashValue<BOOL>(&m_fGlobal), gpos::HashValue<BOOL>(&m_fHasCount)));
+        gpos::CombineHashes(gpos::HashValue<bool>(&m_fGlobal), gpos::HashValue<bool>(&m_fHasCount)));
   }
 
   // order spec
   COrderSpec *Pos() const { return m_pos; }
 
   // global limit
-  BOOL FGlobal() const { return m_fGlobal; }
+  bool FGlobal() const { return m_fGlobal; }
 
   // does limit specify a number of rows
-  BOOL FHasCount() const { return m_fHasCount; }
+  bool FHasCount() const { return m_fHasCount; }
 
   // must the limit be always kept
-  BOOL IsTopLimitUnderDMLorCTAS() const { return m_top_limit_under_dml; }
+  bool IsTopLimitUnderDMLorCTAS() const { return m_top_limit_under_dml; }
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   //-------------------------------------------------------------------------------------
   // Required Plan Properties
   //-------------------------------------------------------------------------------------
 
   // compute required output columns of the n-th child
-  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG child_index,
-                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t child_index,
+                           CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) override;
 
   // compute required ctes of the n-th child
-  CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
-                        CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, uint32_t child_index,
+                        CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // compute required sort order of the n-th child
-  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
-                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, uint32_t child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // check if required columns are included in output columns
-  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
+  bool FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t ulOptReq) const override;
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties
@@ -116,7 +115,7 @@ class CPhysicalLimit : public CPhysical {
 
   // return true if operator passes through stats obtained from children,
   // this is used when computing stats during costing
-  BOOL FPassThruStats() const override { return false; }
+  bool FPassThruStats() const override { return false; }
 
   //-------------------------------------------------------------------------------------
   //-------------------------------------------------------------------------------------

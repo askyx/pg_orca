@@ -26,8 +26,8 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CPhysicalIndexScan::CPhysicalIndexScan(CMemoryPool *mp, CIndexDescriptor *pindexdesc, CTableDescriptor *ptabdesc,
-                                       ULONG ulOriginOpId, const CName *pnameAlias, CColRefArray *pdrgpcrOutput,
-                                       COrderSpec *pos, ULONG ulUnindexedPredColCount,
+                                       uint32_t ulOriginOpId, const CName *pnameAlias, CColRefArray *pdrgpcrOutput,
+                                       COrderSpec *pos, uint32_t ulUnindexedPredColCount,
                                        EIndexScanDirection scan_direction)
     : CPhysicalScan(mp, pnameAlias, ptabdesc, pdrgpcrOutput),
       m_pindexdesc(pindexdesc),
@@ -82,9 +82,8 @@ CEnfdProp::EPropEnforcingType CPhysicalIndexScan::EpetOrder(CExpressionHandle &,
 //		Combine pointers for table descriptor, index descriptor and Eop
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysicalIndexScan::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(
+uint32_t CPhysicalIndexScan::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(
       COperator::HashValue(),
       gpos::CombineHashes(m_pindexdesc->MDId()->HashValue(), gpos::HashPtr<CTableDescriptor>(m_ptabdesc)));
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
@@ -100,7 +99,7 @@ CPhysicalIndexScan::HashValue() const {
 //		match operator
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalIndexScan::Matches(COperator *pop) const {
+bool CPhysicalIndexScan::Matches(COperator *pop) const {
   return CUtils::FMatchIndex(this, pop);
 }
 

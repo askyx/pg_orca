@@ -42,18 +42,18 @@ class CXformExpandNAryJoinMinCard : public CXformExploration {
   EXformId Exfid() const override { return ExfExpandNAryJoinMinCard; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformExpandNAryJoinMinCard"; }
+  const char *SzId() const override { return "CXformExpandNAryJoinMinCard"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 
   // do stats need to be computed before applying xform?
-  BOOL FNeedsStats() const override { return true; }
+  bool FNeedsStats() const override { return true; }
 
   // actual transform
   void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
-  BOOL IsApplyOnce() override { return true; }
+  bool IsApplyOnce() override { return true; }
 };  // class CXformExpandNAryJoinMinCard
 
 }  // namespace gpopt

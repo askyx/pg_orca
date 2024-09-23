@@ -64,7 +64,7 @@ CLogicalForeignGet::CLogicalForeignGet(CMemoryPool *mp, const CName *pnameAlias,
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalForeignGet::Matches(COperator *pop) const {
+bool CLogicalForeignGet::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -82,7 +82,7 @@ BOOL CLogicalForeignGet::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalForeignGet::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                          BOOL must_exist) {
+                                                          bool must_exist) {
   CColRefArray *pdrgpcrOutput = nullptr;
   if (must_exist) {
     pdrgpcrOutput = CUtils::PdrgpcrRemapAndCreate(mp, PdrgpcrOutput(), colref_mapping);

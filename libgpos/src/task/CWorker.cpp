@@ -29,7 +29,7 @@ bool (*CWorker::abort_requested_by_system)(void);
 //		ctor
 //
 //---------------------------------------------------------------------------
-CWorker::CWorker(ULONG stack_size, ULONG_PTR stack_start)
+CWorker::CWorker(uint32_t stack_size, uintptr_t stack_start)
     : m_task(nullptr), m_stack_size(stack_size), m_stack_start(stack_start) {
   GPOS_ASSERT(stack_size >= 2 * 1024 && "Worker has to have at least 2KB stack");
 
@@ -86,7 +86,7 @@ void CWorker::Execute(CTask *task) {
 //		Check pending abort flag; throw if abort is flagged
 //
 //---------------------------------------------------------------------------
-void CWorker::CheckForAbort(const CHAR *, ULONG) {
+void CWorker::CheckForAbort(const char *, uint32_t) {
   // check if there is a task assigned to worker,
   // task is still running and CFA is not suspended
   if (nullptr != m_task && m_task->IsRunning() && !m_task->IsAbortSuspended()) {
@@ -110,11 +110,11 @@ void CWorker::CheckForAbort(const CHAR *, ULONG) {
 //		else we check if requested space can fit in stack
 //
 //---------------------------------------------------------------------------
-BOOL CWorker::CheckStackSize(ULONG request) const {
-  ULONG_PTR ptr = 0;
+bool CWorker::CheckStackSize(uint32_t request) const {
+  uintptr_t ptr = 0;
 
   // get current stack size
-  ULONG_PTR size = m_stack_start - (ULONG_PTR)&ptr;
+  uintptr_t size = m_stack_start - (uintptr_t)&ptr;
 
   // check if we have exceeded stack space
   if (size >= m_stack_size) {

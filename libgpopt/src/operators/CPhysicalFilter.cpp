@@ -54,9 +54,9 @@ CPhysicalFilter::~CPhysicalFilter() = default;
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalFilter::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                          ULONG child_index,
+                                          uint32_t child_index,
                                           CDrvdPropArray *,  // pdrgpdpCtxt
-                                          ULONG              // ulOptReq
+                                          uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(0 == child_index && "Required properties can only be computed on the relational child");
 
@@ -72,9 +72,9 @@ CColRefSet *CPhysicalFilter::PcrsRequired(CMemoryPool *mp, CExpressionHandle &ex
 //
 //---------------------------------------------------------------------------
 COrderSpec *CPhysicalFilter::PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired,
-                                         ULONG child_index,
+                                         uint32_t child_index,
                                          CDrvdPropArray *,  // pdrgpdpCtxt
-                                         ULONG              // ulOptReq
+                                         uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
 
@@ -92,13 +92,13 @@ COrderSpec *CPhysicalFilter::PosRequired(CMemoryPool *mp, CExpressionHandle &exp
 CCTEReq *CPhysicalFilter::PcteRequired(CMemoryPool *,        // mp,
                                        CExpressionHandle &,  // exprhdl,
                                        CCTEReq *pcter,
-                                       ULONG
+                                       uint32_t
 #ifdef GPOS_DEBUG
                                            child_index
 #endif
                                        ,
                                        CDrvdPropArray *,  // pdrgpdpCtxt,
-                                       ULONG              // ulOptReq
+                                       uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -125,7 +125,7 @@ COrderSpec *CPhysicalFilter::PosDerive(CMemoryPool *,  // mp
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalFilter::Matches(COperator *pop) const {
+bool CPhysicalFilter::Matches(COperator *pop) const {
   // filter doesn't contain any members as of now
   return Eopid() == pop->Eopid();
 }
@@ -138,8 +138,8 @@ BOOL CPhysicalFilter::Matches(COperator *pop) const {
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalFilter::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                        ULONG  // ulOptReq
+bool CPhysicalFilter::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                        uint32_t  // ulOptReq
 ) const {
   return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }

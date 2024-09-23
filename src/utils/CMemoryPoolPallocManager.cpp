@@ -36,8 +36,7 @@ void CMemoryPoolPallocManager::DeleteImpl(void *ptr, CMemoryPool::EAllocationTyp
 }
 
 // get user requested size of allocation
-ULONG
-CMemoryPoolPallocManager::UserSizeOfAlloc(const void *ptr) {
+uint32_t CMemoryPoolPallocManager::UserSizeOfAlloc(const void *ptr) {
   return CMemoryPoolPalloc::UserSizeOfAlloc(ptr);
 }
 

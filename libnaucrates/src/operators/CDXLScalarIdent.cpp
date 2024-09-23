@@ -90,7 +90,7 @@ IMDId *CDXLScalarIdent::MdidType() const {
   return m_dxl_colref->MdidType();
 }
 
-INT CDXLScalarIdent::TypeModifier() const {
+int32_t CDXLScalarIdent::TypeModifier() const {
   return m_dxl_colref->TypeModifier();
 }
 
@@ -102,7 +102,7 @@ INT CDXLScalarIdent::TypeModifier() const {
 //		Does the operator return boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarIdent::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarIdent::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_dxl_colref->MdidType())->GetDatumType());
 }
 
@@ -116,7 +116,7 @@ BOOL CDXLScalarIdent::HasBoolResult(CMDAccessor *md_accessor) const {
 //
 //---------------------------------------------------------------------------
 void CDXLScalarIdent::AssertValid(const CDXLNode *node,
-                                  BOOL  // validate_children
+                                  bool  // validate_children
 ) const {
   GPOS_ASSERT(0 == node->Arity());
   GPOS_ASSERT(m_dxl_colref->MdidType()->IsValid());

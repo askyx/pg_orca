@@ -33,12 +33,12 @@ class CMDName {
   const CWStringConst *m_name;
 
   // keep track of copy status
-  BOOL m_deep_copy;
+  bool m_deep_copy;
 
  public:
   // ctor/dtor
   CMDName(CMemoryPool *mp, const CWStringBase *str);
-  CMDName(const CWStringConst *, BOOL fOwnsMemory = false);
+  CMDName(const CWStringConst *, bool fOwnsMemory = false);
 
   // shallow copy ctor
   CMDName(const CMDName &);

@@ -80,13 +80,13 @@ class CJobGroupExploration : public CJobGroup {
   CGroupExpression *PgexprFirstUnsched() override { return CJobGroup::PgexprFirstUnschedLogical(); }
 
   // schedule exploration jobs for of all new group expressions
-  BOOL FScheduleGroupExpressions(CSchedulerContext *psc) override;
+  bool FScheduleGroupExpressions(CSchedulerContext *psc) override;
 
   // schedule a new group exploration job
   static void ScheduleJob(CSchedulerContext *psc, CGroup *pgroup, CJob *pjParent);
 
   // job's function
-  BOOL FExecute(CSchedulerContext *psc) override;
+  bool FExecute(CSchedulerContext *psc) override;
 
 #ifdef GPOS_DEBUG
 
@@ -94,14 +94,14 @@ class CJobGroupExploration : public CJobGroup {
   IOstream &OsPrint(IOstream &os) const override;
 
   // dump state machine diagram in graphviz format
-  virtual IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const WCHAR *wszTitle) const {
+  virtual IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const wchar_t *wszTitle) const {
     (void)m_jsm.OsDiagramToGraphviz(mp, os, wszTitle);
 
     return os;
   }
 
   // compute unreachable states
-  void Unreachable(CMemoryPool *mp, EState **ppestate, ULONG *pulSize) const {
+  void Unreachable(CMemoryPool *mp, EState **ppestate, uint32_t *pulSize) const {
     m_jsm.Unreachable(mp, ppestate, pulSize);
   }
 

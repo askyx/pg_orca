@@ -41,7 +41,7 @@ class CXformCollapseGbAgg : public CXformExploration {
   EXformId Exfid() const override { return ExfCollapseGbAgg; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformCollapseGbAgg"; }
+  const char *SzId() const override { return "CXformCollapseGbAgg"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

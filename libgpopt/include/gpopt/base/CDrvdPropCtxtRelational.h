@@ -52,7 +52,7 @@ class CDrvdPropCtxtRelational : public CDrvdPropCtxt {
 #ifdef GPOS_DEBUG
 
   // is it a relational property context?
-  BOOL FRelational() const override { return true; }
+  bool FRelational() const override { return true; }
 
 #endif  // GPOS_DEBUG
 

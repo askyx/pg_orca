@@ -24,7 +24,7 @@ using namespace gpos;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CBitSetIter::CBitSetIter(const CBitSet &bs) : m_bs(bs), m_cursor((ULONG)-1), m_bsl(nullptr), m_active(true) {}
+CBitSetIter::CBitSetIter(const CBitSet &bs) : m_bs(bs), m_cursor((uint32_t)-1), m_bsl(nullptr), m_active(true) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -34,7 +34,7 @@ CBitSetIter::CBitSetIter(const CBitSet &bs) : m_bs(bs), m_cursor((ULONG)-1), m_b
 //		Move to next bit
 //
 //---------------------------------------------------------------------------
-BOOL CBitSetIter::Advance() {
+bool CBitSetIter::Advance() {
   GPOS_ASSERT(m_active && "called advance on exhausted iterator");
 
   if (nullptr == m_bsl) {
@@ -47,7 +47,7 @@ BOOL CBitSetIter::Advance() {
     }
 
     m_bsl = m_bs.m_bsllist.Next(m_bsl);
-    m_cursor = (ULONG)-1;
+    m_cursor = (uint32_t)-1;
   }
 
   m_active = (nullptr != m_bsl);
@@ -62,8 +62,7 @@ BOOL CBitSetIter::Advance() {
 //		Return current position of cursor
 //
 //---------------------------------------------------------------------------
-ULONG
-CBitSetIter::Bit() const {
+uint32_t CBitSetIter::Bit() const {
   GPOS_ASSERT(m_active && nullptr != m_bsl && "iterator uninitialized");
   GPOS_ASSERT(m_bsl->GetVec()->Get(m_cursor));
 

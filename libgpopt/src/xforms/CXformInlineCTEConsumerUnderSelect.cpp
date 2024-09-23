@@ -67,7 +67,7 @@ void CXformInlineCTEConsumerUnderSelect::Transform(CXformContext *pxfctxt, CXfor
   CExpression *pexprScalar = (*pexpr)[1];
 
   CLogicalCTEConsumer *popConsumer = CLogicalCTEConsumer::PopConvert(pexprConsumer->Pop());
-  ULONG id = popConsumer->UlCTEId();
+  uint32_t id = popConsumer->UlCTEId();
   CCTEInfo *pcteinfo = COptCtxt::PoctxtFromTLS()->Pcteinfo();
   // only attempt to inline if inlining is enabled or if this CTE has only 1 consumer or if subtree of CTE
   // has outer refs (since we disable CXformCTEAnchor2Sequence if cte contains outer refs)

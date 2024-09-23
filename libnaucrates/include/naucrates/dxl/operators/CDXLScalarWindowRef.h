@@ -40,26 +40,26 @@ class CDXLScalarWindowRef : public CDXLScalar {
   IMDId *m_return_type_mdid;
 
   // denotes whether it's agg(DISTINCT ...)
-  BOOL m_is_distinct;
+  bool m_is_distinct;
 
   // is argument list really '*' //
-  BOOL m_is_star_arg;
+  bool m_is_star_arg;
 
   // is function a simple aggregate? //
-  BOOL m_is_simple_agg;
+  bool m_is_simple_agg;
 
   // denotes the win stage
   EdxlWinStage m_dxl_win_stage;
 
   // position the window specification in a parent window operator
-  ULONG m_win_spec_pos;
+  uint32_t m_win_spec_pos;
 
  public:
   CDXLScalarWindowRef(const CDXLScalarWindowRef &) = delete;
 
   // ctor
-  CDXLScalarWindowRef(CMemoryPool *mp, IMDId *pmdidWinfunc, IMDId *mdid_return_type, BOOL is_distinct, BOOL is_star_arg,
-                      BOOL is_simple_agg, EdxlWinStage dxl_win_stage, ULONG ulWinspecPosition);
+  CDXLScalarWindowRef(CMemoryPool *mp, IMDId *pmdidWinfunc, IMDId *mdid_return_type, bool is_distinct, bool is_star_arg,
+                      bool is_simple_agg, EdxlWinStage dxl_win_stage, uint32_t ulWinspecPosition);
 
   // dtor
   ~CDXLScalarWindowRef() override;
@@ -80,18 +80,17 @@ class CDXLScalarWindowRef : public CDXLScalar {
   EdxlWinStage GetDxlWinStage() const { return m_dxl_win_stage; }
 
   // denotes whether it's agg(DISTINCT ...)
-  BOOL IsDistinct() const { return m_is_distinct; }
+  bool IsDistinct() const { return m_is_distinct; }
 
-  BOOL IsStarArg() const { return m_is_star_arg; }
+  bool IsStarArg() const { return m_is_star_arg; }
 
-  BOOL IsSimpleAgg() const { return m_is_simple_agg; }
+  bool IsSimpleAgg() const { return m_is_simple_agg; }
 
   // position the window specification in a parent window operator
-  ULONG
-  GetWindSpecPos() const { return m_win_spec_pos; }
+  uint32_t GetWindSpecPos() const { return m_win_spec_pos; }
 
   // set window spec position
-  void SetWinSpecPos(ULONG win_spec_pos) { m_win_spec_pos = win_spec_pos; }
+  void SetWinSpecPos(uint32_t win_spec_pos) { m_win_spec_pos = win_spec_pos; }
 
   // string representation of win stage
   const CWStringConst *GetWindStageStr() const;
@@ -107,12 +106,12 @@ class CDXLScalarWindowRef : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
+  bool HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

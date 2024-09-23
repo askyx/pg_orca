@@ -55,7 +55,7 @@ class CDXLScalarCaseTest : public CDXLScalar {
   // serialize operator in DXL format
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
+  bool HasBoolResult(CMDAccessor *md_accessor) const override;
 
   // conversion function
   static CDXLScalarCaseTest *Cast(CDXLOperator *dxl_op) {
@@ -68,7 +68,7 @@ class CDXLScalarCaseTest : public CDXLScalar {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

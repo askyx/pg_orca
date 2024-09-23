@@ -102,7 +102,7 @@ const CWStringConst *CDXLScalarNullIf::GetOpNameStr() const {
 //		Does the operator return boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarNullIf::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarNullIf::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
 }
 
@@ -115,11 +115,11 @@ BOOL CDXLScalarNullIf::HasBoolResult(CMDAccessor *md_accessor) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarNullIf::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
-  const ULONG arity = dxlnode->Arity();
+void CDXLScalarNullIf::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
+  const uint32_t arity = dxlnode->Arity();
   GPOS_ASSERT(2 == arity);
 
-  for (ULONG idx = 0; idx < arity; ++idx) {
+  for (uint32_t idx = 0; idx < arity; ++idx) {
     CDXLNode *child_dxlnode = (*dxlnode)[idx];
     GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
 

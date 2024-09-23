@@ -40,16 +40,16 @@ class COstreamString : public COstream {
   ~COstreamString() override = default;
 
   // implement << operator on wide char array
-  IOstream &operator<<(const WCHAR *wc_array) override;
+  IOstream &operator<<(const wchar_t *wc_array) override;
 
   // implement << operator on char array
-  IOstream &operator<<(const CHAR *c_array) override;
+  IOstream &operator<<(const char *c_array) override;
 
   // implement << operator on wide char
-  IOstream &operator<<(const WCHAR wc) override;
+  IOstream &operator<<(const wchar_t wc) override;
 
   // implement << operator on char
-  IOstream &operator<<(const CHAR c) override;
+  IOstream &operator<<(const char c) override;
 };
 
 }  // namespace gpos

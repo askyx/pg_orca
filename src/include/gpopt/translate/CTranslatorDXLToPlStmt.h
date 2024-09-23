@@ -160,7 +160,7 @@ class CTranslatorDXLToPlStmt {
   // Set the bitmapset of a plan to the list of param_ids defined by the plan
   static void SetParamIds(Plan *);
 
-  static List *TranslatePartOids(IMdIdArray *parts, INT lockmode);
+  static List *TranslatePartOids(IMdIdArray *parts, int32_t lockmode);
 
   void TranslatePlan(Plan *plan, const CDXLNode *dxlnode, CDXLTranslateContext *output_context,
                      CContextDXLToPlStmt *dxl_to_plstmt_context, TranslateContextBaseTable *base_table_context,
@@ -369,7 +369,7 @@ class CTranslatorDXLToPlStmt {
   static Cost CostFromStr(const CWStringBase *str);
 
   // add a target entry for a junk column with given colid to the target list
-  static void AddJunkTargetEntryForColId(List **target_list, CDXLTranslateContext *dxl_translate_ctxt, ULONG colid,
+  static void AddJunkTargetEntryForColId(List **target_list, CDXLTranslateContext *dxl_translate_ctxt, uint32_t colid,
                                          const char *resname);
 
   // translate the index condition list in an Index scan

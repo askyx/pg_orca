@@ -27,7 +27,7 @@ using namespace gpopt;
 using namespace gpmd;
 
 // is the given expression a binary coercible cast of a scalar identifier
-BOOL CCastUtils::FBinaryCoercibleCastedScId(CExpression *pexpr, CColRef *colref) {
+bool CCastUtils::FBinaryCoercibleCastedScId(CExpression *pexpr, CColRef *colref) {
   GPOS_ASSERT(nullptr != pexpr);
 
   if (!FBinaryCoercibleCast(pexpr)) {
@@ -42,7 +42,7 @@ BOOL CCastUtils::FBinaryCoercibleCastedScId(CExpression *pexpr, CColRef *colref)
 }
 
 // is the given expression a binary coercible cast of a scalar identifier
-BOOL CCastUtils::FBinaryCoercibleCastedScId(CExpression *pexpr) {
+bool CCastUtils::FBinaryCoercibleCastedScId(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
 
   if (!FBinaryCoercibleCast(pexpr)) {
@@ -56,7 +56,7 @@ BOOL CCastUtils::FBinaryCoercibleCastedScId(CExpression *pexpr) {
 }
 
 // is the given expression a binary coercible cast of a const
-BOOL CCastUtils::FBinaryCoercibleCastedConst(CExpression *pexpr) {
+bool CCastUtils::FBinaryCoercibleCastedConst(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
 
   if (!FBinaryCoercibleCast(pexpr)) {
@@ -75,8 +75,8 @@ BOOL CCastUtils::FBinaryCoercibleCastedConst(CExpression *pexpr) {
 const CColRef *CCastUtils::PcrExtractFromScIdOrCastScId(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
 
-  BOOL fScIdent = COperator::EopScalarIdent == pexpr->Pop()->Eopid();
-  BOOL fCastedScIdent = CScalarIdent::FCastedScId(pexpr);
+  bool fScIdent = COperator::EopScalarIdent == pexpr->Pop()->Eopid();
+  bool fCastedScIdent = CScalarIdent::FCastedScId(pexpr);
 
   // col or cast(col)
   if (!fScIdent && !fCastedScIdent) {
@@ -128,21 +128,21 @@ CExpression *CCastUtils::PexprCast(CMemoryPool *mp, CMDAccessor *md_accessor, co
 }
 
 // check whether the given expression is a binary coercible cast of something
-BOOL CCastUtils::FBinaryCoercibleCast(CExpression *pexpr) {
+bool CCastUtils::FBinaryCoercibleCast(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
   COperator *pop = pexpr->Pop();
 
   return FScalarCast(pexpr) && CScalarCast::PopConvert(pop)->IsBinaryCoercible();
 }
 
-BOOL CCastUtils::FScalarCast(CExpression *pexpr) {
+bool CCastUtils::FScalarCast(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
   COperator *pop = pexpr->Pop();
 
   return COperator::EopScalarCast == pop->Eopid();
 }
 
-BOOL CCastUtils::FScalarCastIdent(CExpression *pexpr) {
+bool CCastUtils::FScalarCastIdent(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
 
   return FScalarCast(pexpr) && CUtils::FScalarIdent((*pexpr)[0]);
@@ -170,8 +170,8 @@ CExpressionArray *CCastUtils::PdrgpexprCastEquality(CMemoryPool *mp, CExpression
 
   CExpressionArray *pdrgpexpr = CPredicateUtils::PdrgpexprConjuncts(mp, pexpr);
   CExpressionArray *pdrgpexprNew = GPOS_NEW(mp) CExpressionArray(mp);
-  const ULONG ulPreds = pdrgpexpr->Size();
-  for (ULONG ul = 0; ul < ulPreds; ul++) {
+  const uint32_t ulPreds = pdrgpexpr->Size();
+  for (uint32_t ul = 0; ul < ulPreds; ul++) {
     CExpression *pexprPred = (*pdrgpexpr)[ul];
     pexprPred->AddRef();
     CExpression *pexprNewPred = pexprPred;
@@ -215,9 +215,9 @@ CExpression *CCastUtils::PexprAddCast(CMemoryPool *mp, CExpression *pexprPred) {
 
   CExpression *pexprNewPred = nullptr;
 
-  BOOL fTypesEqual = mdid_type_left->Equals(mdid_type_right);
-  BOOL fCastLtoR = CMDAccessorUtils::FCastExists(md_accessor, mdid_type_left, mdid_type_right);
-  BOOL fCastRtoL = CMDAccessorUtils::FCastExists(md_accessor, mdid_type_right, mdid_type_left);
+  bool fTypesEqual = mdid_type_left->Equals(mdid_type_right);
+  bool fCastLtoR = CMDAccessorUtils::FCastExists(md_accessor, mdid_type_left, mdid_type_right);
+  bool fCastRtoL = CMDAccessorUtils::FCastExists(md_accessor, mdid_type_right, mdid_type_left);
 
   if (fTypesEqual || !(fCastLtoR || fCastRtoL)) {
     return pexprNewPred;

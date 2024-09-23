@@ -54,10 +54,10 @@ class CWorkerPoolManager {
   CTaskSchedulerFifo m_task_scheduler;
 
   // auto task proxy counter
-  ULONG_PTR m_auto_task_proxy_counter;
+  uintptr_t m_auto_task_proxy_counter;
 
   // active flag
-  BOOL m_active;
+  bool m_active;
 
   // we only support a single worker now
   CWorker *m_single_worker;

@@ -40,13 +40,13 @@ class CPhysicalNLJoin : public CPhysicalJoin {
   //-------------------------------------------------------------------------------------
 
   // compute required sort order of the n-th child
-  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, ULONG child_index,
-                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, uint32_t child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // compute required output columns of the n-th child
-  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG child_index,
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t child_index,
                            CDrvdPropArray *,  // pdrgpdpCtxt
-                           ULONG              // ulOptReq
+                           uint32_t           // ulOptReq
                            ) override;
 
   //-------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ class CPhysicalNLJoin : public CPhysicalJoin {
   //-------------------------------------------------------------------------------------
 
   // return true if operator is a correlated NL Join
-  virtual BOOL FCorrelated() const { return false; }
+  virtual bool FCorrelated() const { return false; }
 
   // return required inner columns -- overloaded by correlated join children
   virtual CColRefArray *PdrgPcrInner() const { return nullptr; }

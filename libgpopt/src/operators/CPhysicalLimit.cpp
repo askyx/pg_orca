@@ -25,7 +25,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalLimit::CPhysicalLimit(CMemoryPool *mp, COrderSpec *pos, BOOL fGlobal, BOOL fHasCount, BOOL fTopLimitUnderDML)
+CPhysicalLimit::CPhysicalLimit(CMemoryPool *mp, COrderSpec *pos, bool fGlobal, bool fHasCount, bool fTopLimitUnderDML)
     : CPhysical(mp),
       m_pos(pos),
       m_fGlobal(fGlobal),
@@ -59,7 +59,7 @@ CPhysicalLimit::~CPhysicalLimit() {
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalLimit::Matches(COperator *pop) const {
+bool CPhysicalLimit::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CPhysicalLimit *popLimit = CPhysicalLimit::PopConvert(pop);
 
@@ -81,16 +81,16 @@ BOOL CPhysicalLimit::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalLimit::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                         ULONG child_index,
+                                         uint32_t child_index,
                                          CDrvdPropArray *,  // pdrgpdpCtxt
-                                         ULONG              // ulOptReq
+                                         uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(0 == child_index);
 
   CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, *m_pcrsSort);
   pcrs->Union(pcrsRequired);
 
-  CColRefSet *pcrsChildReqd = PcrsChildReqd(mp, exprhdl, pcrs, child_index, gpos::ulong_max);
+  CColRefSet *pcrsChildReqd = PcrsChildReqd(mp, exprhdl, pcrs, child_index, UINT32_MAX);
   pcrs->Release();
 
   return pcrsChildReqd;
@@ -107,13 +107,13 @@ CColRefSet *CPhysicalLimit::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exp
 COrderSpec *CPhysicalLimit::PosRequired(CMemoryPool *,        // mp
                                         CExpressionHandle &,  // exprhdl
                                         COrderSpec *,         // posInput
-                                        ULONG
+                                        uint32_t
 #ifdef GPOS_DEBUG
                                             child_index
 #endif  // GPOS_DEBUG
                                         ,
                                         CDrvdPropArray *,  // pdrgpdpCtxt
-                                        ULONG              // ulOptReq
+                                        uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
 
@@ -136,13 +136,13 @@ COrderSpec *CPhysicalLimit::PosRequired(CMemoryPool *,        // mp
 CCTEReq *CPhysicalLimit::PcteRequired(CMemoryPool *,        // mp,
                                       CExpressionHandle &,  // exprhdl,
                                       CCTEReq *pcter,
-                                      ULONG
+                                      uint32_t
 #ifdef GPOS_DEBUG
                                           child_index
 #endif
                                       ,
                                       CDrvdPropArray *,  // pdrgpdpCtxt,
-                                      ULONG              // ulOptReq
+                                      uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -156,8 +156,8 @@ CCTEReq *CPhysicalLimit::PcteRequired(CMemoryPool *,        // mp,
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalLimit::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                       ULONG  // ulOptReq
+bool CPhysicalLimit::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                       uint32_t  // ulOptReq
 ) const {
   return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }

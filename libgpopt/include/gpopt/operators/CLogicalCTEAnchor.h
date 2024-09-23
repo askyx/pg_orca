@@ -27,7 +27,7 @@ namespace gpopt {
 class CLogicalCTEAnchor : public CLogical {
  private:
   // cte identifier
-  ULONG m_id;
+  uint32_t m_id;
 
  public:
   CLogicalCTEAnchor(const CLogicalCTEAnchor &) = delete;
@@ -36,7 +36,7 @@ class CLogicalCTEAnchor : public CLogical {
   explicit CLogicalCTEAnchor(CMemoryPool *mp);
 
   // ctor
-  CLogicalCTEAnchor(CMemoryPool *mp, ULONG id);
+  CLogicalCTEAnchor(CMemoryPool *mp, uint32_t id);
 
   // dtor
   ~CLogicalCTEAnchor() override = default;
@@ -44,25 +44,24 @@ class CLogicalCTEAnchor : public CLogical {
   // ident accessors
   EOperatorId Eopid() const override { return EopLogicalCTEAnchor; }
 
-  const CHAR *SzId() const override { return "CLogicalCTEAnchor"; }
+  const char *SzId() const override { return "CLogicalCTEAnchor"; }
 
   // cte identifier
-  ULONG
-  Id() const { return m_id; }
+  uint32_t Id() const { return m_id; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
@@ -93,7 +92,7 @@ class CLogicalCTEAnchor : public CLogical {
   CColRefSet *PcrsStat(CMemoryPool *,        // mp
                        CExpressionHandle &,  // exprhdl
                        CColRefSet *pcrsInput,
-                       ULONG  // child_index
+                       uint32_t  // child_index
   ) const override {
     return PcrsStatsPassThru(pcrsInput);
   }

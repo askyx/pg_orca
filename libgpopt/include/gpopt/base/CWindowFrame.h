@@ -101,10 +101,10 @@ class CWindowFrame : public CRefCount {
   OID m_in_range_coll;
 
   // use ASC sort order for in_range tests
-  BOOL m_in_range_asc;
+  bool m_in_range_asc;
 
   // nulls sort first for in_range tests
-  BOOL m_in_range_nulls_first;
+  bool m_in_range_nulls_first;
 
   // private dummy ctor used to create empty frame
   CWindowFrame();
@@ -140,13 +140,13 @@ class CWindowFrame : public CRefCount {
   EFrameExclusionStrategy Efes() const { return m_efes; }
 
   // matching function
-  BOOL Matches(const CWindowFrame *pwf) const;
+  bool Matches(const CWindowFrame *pwf) const;
 
   // hash function
-  virtual ULONG HashValue() const;
+  virtual uint32_t HashValue() const;
 
   // return a copy of the window frame with remapped columns
-  virtual CWindowFrame *PwfCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  virtual CWindowFrame *PwfCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist);
 
   // return columns used by frame edges
   CColRefSet *PcrsUsed() const { return m_pcrsUsed; }
@@ -155,16 +155,16 @@ class CWindowFrame : public CRefCount {
   IOstream &OsPrint(IOstream &os) const;
 
   // matching function over frame arrays
-  static BOOL Equals(const CWindowFrameArray *pdrgpwfFirst, const CWindowFrameArray *pdrgpwfSecond);
+  static bool Equals(const CWindowFrameArray *pdrgpwfFirst, const CWindowFrameArray *pdrgpwfSecond);
 
   // combine hash values of a maximum number of entries
-  static ULONG HashValue(const CWindowFrameArray *pdrgpwfFirst, ULONG ulMaxSize);
+  static uint32_t HashValue(const CWindowFrameArray *pdrgpwfFirst, uint32_t ulMaxSize);
 
   // print array of window frame objects
   static IOstream &OsPrint(IOstream &os, const CWindowFrameArray *pdrgpwf);
 
   // check if a given window frame is empty
-  static BOOL IsEmpty(CWindowFrame *pwf) { return pwf == &m_wfEmpty; }
+  static bool IsEmpty(CWindowFrame *pwf) { return pwf == &m_wfEmpty; }
 
   // return pointer to singleton empty window frame
   static const CWindowFrame *PwfEmpty() { return &m_wfEmpty; }
@@ -175,9 +175,9 @@ class CWindowFrame : public CRefCount {
 
   OID InRangeColl() const { return m_in_range_coll; }
 
-  BOOL InRangeAsc() const { return m_in_range_asc; }
+  bool InRangeAsc() const { return m_in_range_asc; }
 
-  BOOL InRangeNullsFirst() const { return m_in_range_nulls_first; }
+  bool InRangeNullsFirst() const { return m_in_range_nulls_first; }
 
 };  // class CWindowFrame
 

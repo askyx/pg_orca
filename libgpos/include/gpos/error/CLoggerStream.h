@@ -30,8 +30,8 @@ class CLoggerStream : public CLogger {
   IOstream &m_os;
 
   // write string to stream
-  void Write(const WCHAR *log_entry,
-             ULONG  // severity
+  void Write(const wchar_t *log_entry,
+             uint32_t  // severity
              ) override {
     m_os = m_os << log_entry;
   }

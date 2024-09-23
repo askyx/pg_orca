@@ -27,8 +27,8 @@ using namespace gpos;
 //		Ctor - initializes with empty string
 //
 //---------------------------------------------------------------------------
-CWStringStatic::CWStringStatic(WCHAR w_str_buffer[],
-                               ULONG capacity)
+CWStringStatic::CWStringStatic(wchar_t w_str_buffer[],
+                               uint32_t capacity)
     : CWString(0  // length
                ),
       m_capacity(capacity) {
@@ -47,8 +47,8 @@ CWStringStatic::CWStringStatic(WCHAR w_str_buffer[],
 //		Ctor - initializes with passed string
 //
 //---------------------------------------------------------------------------
-CWStringStatic::CWStringStatic(WCHAR w_str_buffer[], ULONG capacity,
-                               const WCHAR w_str_init[])
+CWStringStatic::CWStringStatic(wchar_t w_str_buffer[], uint32_t capacity,
+                               const wchar_t w_str_init[])
     : CWString(0  // length
                ),
       m_capacity(capacity) {
@@ -67,9 +67,9 @@ CWStringStatic::CWStringStatic(WCHAR w_str_buffer[], ULONG capacity,
 //		Appends the contents of a buffer to the current string
 //
 //---------------------------------------------------------------------------
-void CWStringStatic::AppendBuffer(const WCHAR *w_str_buffer) {
+void CWStringStatic::AppendBuffer(const wchar_t *w_str_buffer) {
   GPOS_ASSERT(nullptr != w_str_buffer);
-  ULONG length = GPOS_WSZ_LENGTH(w_str_buffer);
+  uint32_t length = GPOS_WSZ_LENGTH(w_str_buffer);
   if (0 == length || m_capacity == m_length) {
     return;
   }
@@ -99,7 +99,7 @@ void CWStringStatic::AppendBuffer(const WCHAR *w_str_buffer) {
 //		Appends a null terminated wide character array
 //
 //---------------------------------------------------------------------------
-void CWStringStatic::AppendWideCharArray(const WCHAR *w_str) {
+void CWStringStatic::AppendWideCharArray(const wchar_t *w_str) {
   AppendBuffer(w_str);
 }
 
@@ -111,13 +111,13 @@ void CWStringStatic::AppendWideCharArray(const WCHAR *w_str) {
 //		Appends a null terminated character array
 //
 //---------------------------------------------------------------------------
-void CWStringStatic::AppendCharArray(const CHAR *sz) {
+void CWStringStatic::AppendCharArray(const char *sz) {
   GPOS_ASSERT(nullptr != sz);
   if (0 == GPOS_SZ_LENGTH(sz) || m_capacity == m_length) {
     return;
   }
 
-  ULONG length = GPOS_SZ_LENGTH(sz);
+  uint32_t length = GPOS_SZ_LENGTH(sz);
   if (length >= GPOS_STATIC_STR_BUFFER_LENGTH) {
     // if input string is larger than buffer length, use AppendFormat
     AppendFormat(GPOS_WSZ_LIT("%s"), sz);
@@ -125,11 +125,11 @@ void CWStringStatic::AppendCharArray(const CHAR *sz) {
   }
 
   // otherwise, append to wide string character array directly
-  WCHAR w_str_buffer[GPOS_STATIC_STR_BUFFER_LENGTH];
+  wchar_t w_str_buffer[GPOS_STATIC_STR_BUFFER_LENGTH];
 
 // convert input string to wide character buffer
 #ifdef GPOS_DEBUG
-  ULONG wide_length =
+  uint32_t wide_length =
 #endif  // GPOS_DEBUG
       clib::Mbstowcs(w_str_buffer, sz, length);
   GPOS_ASSERT(wide_length == length);
@@ -158,7 +158,7 @@ void CWStringStatic::AppendCharArray(const CHAR *sz) {
 //		Appends a formatted string
 //
 //---------------------------------------------------------------------------
-void CWStringStatic::AppendFormat(const WCHAR *format, ...) {
+void CWStringStatic::AppendFormat(const wchar_t *format, ...) {
   VA_LIST va_args;
 
   // get arguments
@@ -178,11 +178,11 @@ void CWStringStatic::AppendFormat(const WCHAR *format, ...) {
 //		Appends a formatted string based on passed va list
 //
 //---------------------------------------------------------------------------
-void CWStringStatic::AppendFormatVA(const WCHAR *format, VA_LIST va_args) {
+void CWStringStatic::AppendFormatVA(const wchar_t *format, VA_LIST va_args) {
   GPOS_ASSERT(nullptr != format);
 
   // available space in buffer
-  ULONG ulAvailable = m_capacity - m_length;
+  uint32_t ulAvailable = m_capacity - m_length;
 
   // format string
   (void)clib::Vswprintf(m_w_str_buffer + m_length, ulAvailable, format, va_args);
@@ -216,22 +216,22 @@ void CWStringStatic::Reset() {
 //		Appends a string and replaces character with string
 //
 //---------------------------------------------------------------------------
-void CWStringStatic::AppendEscape(const CWStringBase *str, WCHAR wc, const WCHAR *w_str_replace) {
+void CWStringStatic::AppendEscape(const CWStringBase *str, wchar_t wc, const wchar_t *w_str_replace) {
   GPOS_ASSERT(nullptr != str);
 
   if (str->IsEmpty()) {
     return;
   }
 
-  ULONG length = str->Length();
-  ULONG length_replace = GPOS_WSZ_LENGTH(w_str_replace);
-  ULONG ulLengthNew = m_length;
-  const WCHAR *w_str = str->GetBuffer();
+  uint32_t length = str->Length();
+  uint32_t length_replace = GPOS_WSZ_LENGTH(w_str_replace);
+  uint32_t ulLengthNew = m_length;
+  const wchar_t *w_str = str->GetBuffer();
 
-  for (ULONG i = 0; i < length && ulLengthNew < m_capacity - 1; i++) {
+  for (uint32_t i = 0; i < length && ulLengthNew < m_capacity - 1; i++) {
     if (wc == w_str[i] && !str->HasEscapedCharAt(i)) {
       // check for overflow
-      ULONG ulLengthCopy = std::min(length_replace, m_capacity - ulLengthNew - 1);
+      uint32_t ulLengthCopy = std::min(length_replace, m_capacity - ulLengthNew - 1);
 
       clib::WcStrNCpy(m_w_str_buffer + ulLengthNew, w_str_replace, ulLengthCopy);
       ulLengthNew += ulLengthCopy;

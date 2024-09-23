@@ -46,7 +46,7 @@ enum EdxlFrameBoundary {
 class CDXLScalarWindowFrameEdge : public CDXLScalar {
  private:
   // identify if it is a leading or trailing edge
-  BOOL m_leading_edge;
+  bool m_leading_edge;
 
   // frame boundary
   EdxlFrameBoundary m_dxl_frame_boundary;
@@ -55,7 +55,7 @@ class CDXLScalarWindowFrameEdge : public CDXLScalar {
   CDXLScalarWindowFrameEdge(const CDXLScalarWindowFrameEdge &) = delete;
 
   // ctor
-  CDXLScalarWindowFrameEdge(CMemoryPool *mp, BOOL fLeading, EdxlFrameBoundary frame_boundary);
+  CDXLScalarWindowFrameEdge(CMemoryPool *mp, bool fLeading, EdxlFrameBoundary frame_boundary);
 
   // ident accessors
   Edxlopid GetDXLOperator() const override;
@@ -64,7 +64,7 @@ class CDXLScalarWindowFrameEdge : public CDXLScalar {
   const CWStringConst *GetOpNameStr() const override;
 
   // is it a leading or trailing edge
-  BOOL IsLeadingEdge() const { return m_leading_edge; }
+  bool IsLeadingEdge() const { return m_leading_edge; }
 
   // return the dxl representation the frame boundary
   EdxlFrameBoundary ParseDXLFrameBoundary() const { return m_dxl_frame_boundary; }
@@ -75,7 +75,7 @@ class CDXLScalarWindowFrameEdge : public CDXLScalar {
   // serialize operator in DXL format
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     GPOS_ASSERT(!"Invalid function call for a container operator");
     return false;
@@ -84,7 +84,7 @@ class CDXLScalarWindowFrameEdge : public CDXLScalar {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 
   // conversion function

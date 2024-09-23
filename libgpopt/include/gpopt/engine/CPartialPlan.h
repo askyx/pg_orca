@@ -49,7 +49,7 @@ class CPartialPlan : public CRefCount {
   CCostContext *m_pccChild;
 
   // index of known child plan
-  ULONG m_ulChildIndex;
+  uint32_t m_ulChildIndex;
 
   // extract costing info from children
   void ExtractChildrenCostingInfo(CMemoryPool *mp, ICostModel *pcm, CExpressionHandle &exprhdl,
@@ -59,7 +59,7 @@ class CPartialPlan : public CRefCount {
   CPartialPlan(const CPartialPlan &) = delete;
 
   // ctor
-  CPartialPlan(CGroupExpression *pgexpr, CReqdPropPlan *prpp, CCostContext *pccChild, ULONG child_index);
+  CPartialPlan(CGroupExpression *pgexpr, CReqdPropPlan *prpp, CCostContext *pccChild, uint32_t child_index);
 
   // dtor
   ~CPartialPlan() override;
@@ -74,17 +74,16 @@ class CPartialPlan : public CRefCount {
   CCostContext *PccChild() const { return m_pccChild; }
 
   // child index accessor
-  ULONG
-  UlChildIndex() const { return m_ulChildIndex; }
+  uint32_t UlChildIndex() const { return m_ulChildIndex; }
 
   // compute partial plan cost
   CCost CostCompute(CMemoryPool *mp);
 
   // hash function used for cost bounding
-  static ULONG HashValue(const CPartialPlan *ppp);
+  static uint32_t HashValue(const CPartialPlan *ppp);
 
   // equality function used for for cost bounding
-  static BOOL Equals(const CPartialPlan *pppFst, const CPartialPlan *pppSnd);
+  static bool Equals(const CPartialPlan *pppFst, const CPartialPlan *pppSnd);
 
 };  // class CPartialPlan
 }  // namespace gpopt

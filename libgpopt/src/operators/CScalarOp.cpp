@@ -79,8 +79,7 @@ IMDId *CScalarOp::MdIdOp() const {
 //		metadata id
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarOp::HashValue() const {
+uint32_t CScalarOp::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), m_mdid_op->HashValue());
 }
 
@@ -92,7 +91,7 @@ CScalarOp::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarOp::Matches(COperator *pop) const {
+bool CScalarOp::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarOp *pscop = CScalarOp::PopConvert(pop);
 
@@ -140,7 +139,7 @@ IMDId *CScalarOp::MdidType() const {
 //		Sensitivity to order of inputs
 //
 //---------------------------------------------------------------------------
-BOOL CScalarOp::FInputOrderSensitive() const {
+bool CScalarOp::FInputOrderSensitive() const {
   return !m_fCommutative;
 }
 

@@ -39,7 +39,7 @@ class CMDIdScCmp : public IMDId {
   IMDType::ECmpType m_comparision_type;
 
   // buffer for the serialized mdid
-  WCHAR m_mdid_array[GPDXL_MDID_LENGTH];
+  wchar_t m_mdid_array[GPDXL_MDID_LENGTH];
 
   // string representation of the mdid
   mutable CWStringStatic m_str;
@@ -59,7 +59,7 @@ class CMDIdScCmp : public IMDId {
   EMDIdType MdidType() const override { return EmdidScCmp; }
 
   // string representation of mdid
-  const WCHAR *GetBuffer() const override;
+  const wchar_t *GetBuffer() const override;
 
   // source system id
   CSystemId Sysid() const override { return m_mdid_left->Sysid(); }
@@ -73,13 +73,13 @@ class CMDIdScCmp : public IMDId {
   IMDType::ECmpType ParseCmpType() const { return m_comparision_type; }
 
   // equality check
-  BOOL Equals(const IMDId *mdid) const override;
+  bool Equals(const IMDId *mdid) const override;
 
   // computes the hash value for the metadata id
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // is the mdid valid
-  BOOL IsValid() const override {
+  bool IsValid() const override {
     return IMDId::IsValid(m_mdid_left) && IMDId::IsValid(m_mdid_right) && IMDType::EcmptOther != m_comparision_type;
   }
 

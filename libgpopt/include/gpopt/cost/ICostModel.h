@@ -66,8 +66,7 @@ class ICostModel : public CRefCount {
     ~CCostingStats() override { m_pstats->Release(); }
 
     // the risk of errors in cardinality estimation
-    ULONG
-    StatsEstimationRisk() const { return m_pstats->StatsEstimationRisk(); }
+    uint32_t StatsEstimationRisk() const { return m_pstats->StatsEstimationRisk(); }
 
     // look up the number of distinct values of a particular column
     CDouble GetNDVs(const CColRef *colref) { return m_pstats->GetNDVs(colref); }
@@ -90,38 +89,38 @@ class ICostModel : public CRefCount {
   struct SCostingInfo {
    private:
     // number of children excluding scalar children
-    ULONG m_ulChildren;
+    uint32_t m_ulChildren;
 
     // stats of the root
     CCostingStats *m_pcstats;
 
     // row estimate of root
-    DOUBLE m_rows;
+    double m_rows;
 
     // width estimate of root
-    DOUBLE m_width;
+    double m_width;
 
     // number of rebinds of root
-    DOUBLE m_num_rebinds;
+    double m_num_rebinds;
 
     // row estimates of child operators
-    DOUBLE *m_pdRowsChildren;
+    double *m_pdRowsChildren;
 
     // width estimates of child operators
-    DOUBLE *m_pdWidthChildren;
+    double *m_pdWidthChildren;
 
     // number of rebinds of child operators
-    DOUBLE *m_pdRebindsChildren;
+    double *m_pdRebindsChildren;
 
     // computed cost of child operators
-    DOUBLE *m_pdCostChildren;
+    double *m_pdCostChildren;
 
     // stats of the children
     CCostingStats **m_pdrgstatsChildren;
 
    public:
     // ctor
-    SCostingInfo(CMemoryPool *mp, ULONG ulChildren, CCostingStats *pcstats)
+    SCostingInfo(CMemoryPool *mp, uint32_t ulChildren, CCostingStats *pcstats)
         : m_ulChildren(ulChildren),
           m_pcstats(pcstats),
           m_rows(0),
@@ -134,13 +133,13 @@ class ICostModel : public CRefCount {
           m_pdrgstatsChildren(nullptr) {
       GPOS_ASSERT(nullptr != pcstats);
       if (0 < ulChildren) {
-        m_pdRowsChildren = GPOS_NEW_ARRAY(mp, DOUBLE, ulChildren);
-        m_pdWidthChildren = GPOS_NEW_ARRAY(mp, DOUBLE, ulChildren);
-        m_pdRebindsChildren = GPOS_NEW_ARRAY(mp, DOUBLE, ulChildren);
-        m_pdCostChildren = GPOS_NEW_ARRAY(mp, DOUBLE, ulChildren);
+        m_pdRowsChildren = GPOS_NEW_ARRAY(mp, double, ulChildren);
+        m_pdWidthChildren = GPOS_NEW_ARRAY(mp, double, ulChildren);
+        m_pdRebindsChildren = GPOS_NEW_ARRAY(mp, double, ulChildren);
+        m_pdCostChildren = GPOS_NEW_ARRAY(mp, double, ulChildren);
         m_pdrgstatsChildren = GPOS_NEW_ARRAY(mp, CCostingStats *, ulChildren);
 
-        for (ULONG ul = 0; ul < m_ulChildren; ul++) {
+        for (uint32_t ul = 0; ul < m_ulChildren; ul++) {
           m_pdrgstatsChildren[ul] = nullptr;
         }
       }
@@ -153,7 +152,7 @@ class ICostModel : public CRefCount {
       GPOS_DELETE_ARRAY(m_pdRebindsChildren);
       GPOS_DELETE_ARRAY(m_pdCostChildren);
 
-      for (ULONG ul = 0; ul < m_ulChildren; ul++) {
+      for (uint32_t ul = 0; ul < m_ulChildren; ul++) {
         CRefCount::SafeRelease(m_pdrgstatsChildren[ul]);
       }
 
@@ -162,47 +161,43 @@ class ICostModel : public CRefCount {
     }
 
     // children accessor
-    ULONG
-    ChildCount() const { return m_ulChildren; }
+    uint32_t ChildCount() const { return m_ulChildren; }
 
     // rows accessor
-    DOUBLE
-    Rows() const { return m_rows; }
+    double Rows() const { return m_rows; }
 
     // rows setter
-    void SetRows(DOUBLE rows) {
+    void SetRows(double rows) {
       GPOS_ASSERT(0 <= rows);
 
       m_rows = rows;
     }
 
     // width accessor
-    DOUBLE
-    Width() const { return m_width; }
+    double Width() const { return m_width; }
 
     // width setter
-    void SetWidth(DOUBLE width) {
+    void SetWidth(double width) {
       GPOS_ASSERT(0 <= width);
 
       m_width = width;
     }
 
     // rebinds accessor
-    DOUBLE
-    NumRebinds() const { return m_num_rebinds; }
+    double NumRebinds() const { return m_num_rebinds; }
 
     // rebinds setter
-    void SetRebinds(DOUBLE num_rebinds) {
+    void SetRebinds(double num_rebinds) {
       GPOS_ASSERT(GPOPT_DEFAULT_REBINDS <= num_rebinds);
 
       m_num_rebinds = num_rebinds;
     }
 
     // children rows accessor
-    DOUBLE *PdRows() const { return m_pdRowsChildren; }
+    double *PdRows() const { return m_pdRowsChildren; }
 
     // child rows setter
-    void SetChildRows(ULONG ulPos, DOUBLE dRowsChild) {
+    void SetChildRows(uint32_t ulPos, double dRowsChild) {
       GPOS_ASSERT(0 <= dRowsChild);
       GPOS_ASSERT(ulPos < m_ulChildren);
 
@@ -210,10 +205,10 @@ class ICostModel : public CRefCount {
     }
 
     // children width accessor
-    DOUBLE *GetWidth() const { return m_pdWidthChildren; }
+    double *GetWidth() const { return m_pdWidthChildren; }
 
     // child width setter
-    void SetChildWidth(ULONG ulPos, DOUBLE dWidthChild) {
+    void SetChildWidth(uint32_t ulPos, double dWidthChild) {
       GPOS_ASSERT(0 <= dWidthChild);
       GPOS_ASSERT(ulPos < m_ulChildren);
 
@@ -221,10 +216,10 @@ class ICostModel : public CRefCount {
     }
 
     // children rebinds accessor
-    DOUBLE *PdRebinds() const { return m_pdRebindsChildren; }
+    double *PdRebinds() const { return m_pdRebindsChildren; }
 
     // child rebinds setter
-    void SetChildRebinds(ULONG ulPos, DOUBLE dRebindsChild) {
+    void SetChildRebinds(uint32_t ulPos, double dRebindsChild) {
       GPOS_ASSERT(GPOPT_DEFAULT_REBINDS <= dRebindsChild);
       GPOS_ASSERT(ulPos < m_ulChildren);
 
@@ -232,10 +227,10 @@ class ICostModel : public CRefCount {
     }
 
     // children cost accessor
-    DOUBLE *PdCost() const { return m_pdCostChildren; }
+    double *PdCost() const { return m_pdCostChildren; }
 
     // child cost setter
-    void SetChildCost(ULONG ulPos, DOUBLE dCostChild) {
+    void SetChildCost(uint32_t ulPos, double dCostChild) {
       GPOS_ASSERT(0 <= dCostChild);
       GPOS_ASSERT(ulPos < m_ulChildren);
 
@@ -243,13 +238,13 @@ class ICostModel : public CRefCount {
     }
 
     // child stats setter
-    void SetChildStats(ULONG ulPos, CCostingStats *child_stats) { m_pdrgstatsChildren[ulPos] = child_stats; }
+    void SetChildStats(uint32_t ulPos, CCostingStats *child_stats) { m_pdrgstatsChildren[ulPos] = child_stats; }
 
     // return additional cost statistics
     CCostingStats *Pcstats() const { return m_pcstats; }
 
     // return additional child statistics
-    CCostingStats *Pcstats(ULONG child_index) const { return m_pdrgstatsChildren[child_index]; }
+    CCostingStats *Pcstats(uint32_t child_index) const { return m_pdrgstatsChildren[child_index]; }
 
   };  // struct SCostingInfo
 

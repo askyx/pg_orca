@@ -88,11 +88,11 @@ class CXformPushGbBelowSetOp : public CXformExploration {
     CColRef2dArray *pdrgpdrgpcrInput = popSetOp->PdrgpdrgpcrInput();
     CExpressionArray *pdrgpexprNewChildren = GPOS_NEW(mp) CExpressionArray(mp);
     CColRef2dArray *pdrgpdrgpcrNewInput = GPOS_NEW(mp) CColRef2dArray(mp);
-    const ULONG arity = pexprSetOp->Arity();
+    const uint32_t arity = pexprSetOp->Arity();
 
-    BOOL fNewChild = false;
+    bool fNewChild = false;
 
-    for (ULONG ulChild = 0; ulChild < arity; ulChild++) {
+    for (uint32_t ulChild = 0; ulChild < arity; ulChild++) {
       CExpression *pexprChild = (*pexprSetOp)[ulChild];
       CColRefArray *pdrgpcrChild = (*pdrgpdrgpcrInput)[ulChild];
       CColRefSet *pcrsChild = GPOS_NEW(mp) CColRefSet(mp, pdrgpcrChild);

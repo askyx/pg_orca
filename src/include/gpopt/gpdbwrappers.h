@@ -178,7 +178,7 @@ Oid ResolveAggregateTransType(Oid aggfnoid, Oid aggtranstype, Oid *inputTypes, i
 
 // replace Vars that reference JOIN outputs with references to the original
 // relation variables instead
-Query *FlattenJoinAliasVar(Query *query, gpos::ULONG query_level);
+Query *FlattenJoinAliasVar(Query *query, uint32_t query_level);
 
 // is aggregate ordered
 bool IsOrderedAgg(Oid aggid);
@@ -469,7 +469,7 @@ bool HasSubclassSlow(Oid rel_oid);
 
 // return true if the table is partitioned and hash-distributed, and one of
 // the child partitions is randomly distributed
-gpos::BOOL IsChildPartDistributionMismatched(Relation rel);
+bool IsChildPartDistributionMismatched(Relation rel);
 
 double CdbEstimatePartitionedNumTuples(Relation rel);
 
@@ -544,7 +544,7 @@ bool HasUpdateTriggers(Oid relid);
 void IndexOpProperties(Oid opno, Oid opfamily, StrategyNumber *strategynumber, Oid *righttype);
 
 // check whether index column is returnable (for index-only scans)
-gpos::BOOL IndexCanReturn(Relation index, int attno);
+bool IndexCanReturn(Relation index, int attno);
 
 // get oids of families this operator belongs to
 List *GetOpFamiliesForScOp(Oid opno);
@@ -643,7 +643,7 @@ PartitionKey GPDBRelationRetrievePartitionKey(Relation rel);
 
 bool TestexprIsHashable(Node *testexpr, List *param_ids);
 
-gpos::BOOL WalkQueryTree(Query *query, bool (*walker)(Node *node, void *context), void *context, int flags);
+bool WalkQueryTree(Query *query, bool (*walker)(Node *node, void *context), void *context, int flags);
 
 }  // namespace gpdb
 

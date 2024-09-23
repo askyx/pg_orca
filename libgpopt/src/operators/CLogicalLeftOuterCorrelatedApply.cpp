@@ -101,7 +101,7 @@ CXformSet *CLogicalLeftOuterCorrelatedApply::PxfsCandidates(CMemoryPool *mp) con
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalLeftOuterCorrelatedApply::Matches(COperator *pop) const {
+bool CLogicalLeftOuterCorrelatedApply::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     return m_pdrgpcrInner->Equals(CLogicalLeftOuterCorrelatedApply::PopConvert(pop)->PdrgPcrInner());
   }
@@ -119,7 +119,7 @@ BOOL CLogicalLeftOuterCorrelatedApply::Matches(COperator *pop) const {
 //---------------------------------------------------------------------------
 COperator *CLogicalLeftOuterCorrelatedApply::PopCopyWithRemappedColumns(CMemoryPool *mp,
                                                                         UlongToColRefMap *colref_mapping,
-                                                                        BOOL must_exist) {
+                                                                        bool must_exist) {
   CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
   return GPOS_NEW(mp) CLogicalLeftOuterCorrelatedApply(mp, pdrgpcrInner, m_eopidOriginSubq);

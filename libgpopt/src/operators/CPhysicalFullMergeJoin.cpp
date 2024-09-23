@@ -24,7 +24,7 @@ using namespace gpopt;
 
 // ctor
 CPhysicalFullMergeJoin::CPhysicalFullMergeJoin(CMemoryPool *mp, CExpressionArray *outer_merge_clauses,
-                                               CExpressionArray *inner_merge_clauses, IMdIdArray *, BOOL,
+                                               CExpressionArray *inner_merge_clauses, IMdIdArray *, bool,
                                                CXform::EXformId origin_xform)
     : CPhysicalJoin(mp, origin_xform),
       m_outer_merge_clauses(outer_merge_clauses),
@@ -36,7 +36,7 @@ CPhysicalFullMergeJoin::CPhysicalFullMergeJoin(CMemoryPool *mp, CExpressionArray
 
   // There is one request per col, up to the max number of requests
   // plus an additional request for all the cols, and one for the singleton.
-  ULONG num_hash_reqs = std::min((ULONG)GPOPT_MAX_HASH_DIST_REQUESTS, outer_merge_clauses->Size());
+  uint32_t num_hash_reqs = std::min((uint32_t)GPOPT_MAX_HASH_DIST_REQUESTS, outer_merge_clauses->Size());
   SetDistrRequests(num_hash_reqs + 2);
 }
 
@@ -49,9 +49,9 @@ CPhysicalFullMergeJoin::~CPhysicalFullMergeJoin() {
 COrderSpec *CPhysicalFullMergeJoin::PosRequired(CMemoryPool *mp,
                                                 CExpressionHandle &,  // exprhdl,
                                                 COrderSpec *,         // posInput
-                                                ULONG child_index,
+                                                uint32_t child_index,
                                                 CDrvdPropArray *,  // pdrgpdpCtxt
-                                                ULONG              // ulOptReq
+                                                uint32_t           // ulOptReq
 ) const {
   // Merge joins require their input to be sorted on corresponsing join clauses. Without
   // making dangerous assumptions of the implementation of the merge joins, it is difficult
@@ -68,7 +68,7 @@ COrderSpec *CPhysicalFullMergeJoin::PosRequired(CMemoryPool *mp,
     clauses = m_inner_merge_clauses;
   }
 
-  for (ULONG ul = 0; ul < clauses->Size(); ++ul) {
+  for (uint32_t ul = 0; ul < clauses->Size(); ++ul) {
     CExpression *expr = (*clauses)[ul];
 
     GPOS_ASSERT(CUtils::FScalarIdent(expr));

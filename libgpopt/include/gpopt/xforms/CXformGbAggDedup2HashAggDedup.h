@@ -40,7 +40,7 @@ class CXformGbAggDedup2HashAggDedup : public CXformGbAgg2HashAgg {
   EXformId Exfid() const override { return ExfGbAggDedup2HashAggDedup; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformGbAggDedup2HashAggDedup"; }
+  const char *SzId() const override { return "CXformGbAggDedup2HashAggDedup"; }
 
   // actual transform
   void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;

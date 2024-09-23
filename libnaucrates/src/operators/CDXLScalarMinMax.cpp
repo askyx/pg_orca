@@ -83,7 +83,7 @@ const CWStringConst *CDXLScalarMinMax::GetOpNameStr() const {
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarMinMax::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarMinMax::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
 }
 
@@ -96,11 +96,11 @@ BOOL CDXLScalarMinMax::HasBoolResult(CMDAccessor *md_accessor) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarMinMax::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarMinMax::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(0 < dxlnode->Arity());
 
-  const ULONG arity = dxlnode->Arity();
-  for (ULONG idx = 0; idx < arity; ++idx) {
+  const uint32_t arity = dxlnode->Arity();
+  for (uint32_t idx = 0; idx < arity; ++idx) {
     CDXLNode *dxlnode_arg = (*dxlnode)[idx];
     GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 

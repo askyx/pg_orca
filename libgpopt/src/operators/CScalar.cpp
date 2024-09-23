@@ -52,15 +52,15 @@ CReqdProp *CScalar::PrpCreate(CMemoryPool *  // mp
 //		Derive existence of subqueries from expression handle
 //
 //---------------------------------------------------------------------------
-BOOL CScalar::FHasSubquery(CExpressionHandle &exprhdl) {
+bool CScalar::FHasSubquery(CExpressionHandle &exprhdl) {
   // if operator is a subquery, return immediately
   if (CUtils::FSubquery(exprhdl.Pop())) {
     return true;
   }
 
   // otherwise, iterate over scalar children
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG i = 0; i < arity; i++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t i = 0; i < arity; i++) {
     if (exprhdl.FScalarChild(i)) {
       if (exprhdl.DeriveHasSubquery(i)) {
         return true;
@@ -89,12 +89,12 @@ CScalar::EBoolEvalResult CScalar::EberConjunction(ULongPtrArray *pdrgpulChildren
   // - else if all children are ANY or TRUE, the result is ANY
   // - else if all children are NULL or TRUE, the result is NULL
   // - else (a mix of TRUE, ANY and NULL), the result is NotTrue
-  BOOL fAllChildrenTrue = true;
-  BOOL fAllChildrenAnyOrTrue = true;
-  BOOL fAllChildrenNullOrTrue = true;
+  bool fAllChildrenTrue = true;
+  bool fAllChildrenAnyOrTrue = true;
+  bool fAllChildrenNullOrTrue = true;
 
-  const ULONG ulChildren = pdrgpulChildren->Size();
-  for (ULONG ul = 0; ul < ulChildren; ul++) {
+  const uint32_t ulChildren = pdrgpulChildren->Size();
+  for (uint32_t ul = 0; ul < ulChildren; ul++) {
     EBoolEvalResult eber = (EBoolEvalResult) * ((*pdrgpulChildren)[ul]);
 
     if (EberFalse == eber) {
@@ -134,13 +134,13 @@ CScalar::EBoolEvalResult CScalar::EberDisjunction(ULongPtrArray *pdrgpulChildren
   GPOS_ASSERT(nullptr != pdrgpulChildren);
   GPOS_ASSERT(1 < pdrgpulChildren->Size());
 
-  BOOL fAllChildrenFalse = true;
-  BOOL fNullChild = false;
-  BOOL fNotTrueChild = false;
-  BOOL fAnyChild = false;
+  bool fAllChildrenFalse = true;
+  bool fNullChild = false;
+  bool fNotTrueChild = false;
+  bool fAnyChild = false;
 
-  const ULONG ulChildren = pdrgpulChildren->Size();
-  for (ULONG ul = 0; ul < ulChildren; ul++) {
+  const uint32_t ulChildren = pdrgpulChildren->Size();
+  for (uint32_t ul = 0; ul < ulChildren; ul++) {
     EBoolEvalResult eber = (EBoolEvalResult) * ((*pdrgpulChildren)[ul]);
     switch (eber) {
       case EberTrue:
@@ -209,8 +209,8 @@ CScalar::EBoolEvalResult CScalar::EberDisjunction(ULongPtrArray *pdrgpulChildren
 CScalar::EBoolEvalResult CScalar::EberNullOnAnyNullChild(ULongPtrArray *pdrgpulChildren) {
   GPOS_ASSERT(nullptr != pdrgpulChildren);
 
-  const ULONG ulChildren = pdrgpulChildren->Size();
-  for (ULONG ul = 0; ul < ulChildren; ul++) {
+  const uint32_t ulChildren = pdrgpulChildren->Size();
+  for (uint32_t ul = 0; ul < ulChildren; ul++) {
     EBoolEvalResult eber = (EBoolEvalResult) * ((*pdrgpulChildren)[ul]);
     if (EberNull == eber) {
       return EberNull;
@@ -231,8 +231,8 @@ CScalar::EBoolEvalResult CScalar::EberNullOnAnyNullChild(ULongPtrArray *pdrgpulC
 CScalar::EBoolEvalResult CScalar::EberNullOnAllNullChildren(ULongPtrArray *pdrgpulChildren) {
   GPOS_ASSERT(nullptr != pdrgpulChildren);
 
-  const ULONG ulChildren = pdrgpulChildren->Size();
-  for (ULONG ul = 0; ul < ulChildren; ul++) {
+  const uint32_t ulChildren = pdrgpulChildren->Size();
+  for (uint32_t ul = 0; ul < ulChildren; ul++) {
     EBoolEvalResult eber = (EBoolEvalResult) * ((*pdrgpulChildren)[ul]);
     if (EberNull != eber) {
       return EberAny;
@@ -257,15 +257,15 @@ CScalar::EBoolEvalResult CScalar::EberEvaluate(CMemoryPool *mp, CExpression *pex
   COperator *pop = pexprScalar->Pop();
   GPOS_ASSERT(pop->FScalar());
 
-  const ULONG arity = pexprScalar->Arity();
+  const uint32_t arity = pexprScalar->Arity();
   ULongPtrArray *pdrgpulChildren = GPOS_NEW(mp) ULongPtrArray(mp);
 
   if (!CUtils::FSubquery(pop)) {
     // do not recurse into subqueries
-    for (ULONG ul = 0; ul < arity; ul++) {
+    for (uint32_t ul = 0; ul < arity; ul++) {
       CExpression *pexprChild = (*pexprScalar)[ul];
       EBoolEvalResult eberChild = EberEvaluate(mp, pexprChild);
-      pdrgpulChildren->Append(GPOS_NEW(mp) ULONG(eberChild));
+      pdrgpulChildren->Append(GPOS_NEW(mp) uint32_t(eberChild));
     }
   }
 
@@ -283,15 +283,15 @@ CScalar::EBoolEvalResult CScalar::EberEvaluate(CMemoryPool *mp, CExpression *pex
 //		Derive existence of non-scalar functions from expression handle
 //
 //---------------------------------------------------------------------------
-BOOL CScalar::FHasNonScalarFunction(CExpressionHandle &exprhdl) {
+bool CScalar::FHasNonScalarFunction(CExpressionHandle &exprhdl) {
   // if operator is a subquery, return immediately
   if (CUtils::FSubquery(exprhdl.Pop())) {
     return false;
   }
 
   // otherwise, iterate over scalar children
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG i = 0; i < arity; i++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t i = 0; i < arity; i++) {
     if (exprhdl.FScalarChild(i)) {
       if (exprhdl.DeriveHasNonScalarFunction(i)) {
         return true;
@@ -311,12 +311,12 @@ BOOL CScalar::FHasNonScalarFunction(CExpressionHandle &exprhdl) {
 //
 //---------------------------------------------------------------------------
 CPartInfo *CScalar::PpartinfoDeriveCombineScalar(CMemoryPool *mp, CExpressionHandle &exprhdl) {
-  const ULONG arity = exprhdl.Arity();
+  const uint32_t arity = exprhdl.Arity();
   GPOS_ASSERT(0 < arity);
 
   CPartInfo *ppartinfo = GPOS_NEW(mp) CPartInfo(mp);
 
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     if (exprhdl.FScalarChild(ul)) {
       CPartInfo *ppartinfoChild = exprhdl.DeriveScalarPartitionInfo(ul);
       GPOS_ASSERT(nullptr != ppartinfoChild);
@@ -329,15 +329,15 @@ CPartInfo *CScalar::PpartinfoDeriveCombineScalar(CMemoryPool *mp, CExpressionHan
   return ppartinfo;
 }
 
-BOOL CScalar::FHasScalarArrayCmp(CExpressionHandle &exprhdl) {
+bool CScalar::FHasScalarArrayCmp(CExpressionHandle &exprhdl) {
   // if operator is a ScalarArrayCmp, return immediately
   if (COperator::EopScalarArrayCmp == exprhdl.Pop()->Eopid()) {
     return true;
   }
 
   // otherwise, iterate over scalar children
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG i = 0; i < arity; i++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t i = 0; i < arity; i++) {
     if (exprhdl.FScalarChild(i)) {
       if (exprhdl.DeriveHasScalarArrayCmp(i)) {
         return true;

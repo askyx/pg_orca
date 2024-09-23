@@ -75,12 +75,12 @@ const CJobGroupOptimization::EEvent rgeev[CJobGroupOptimization::estSentinel][CJ
 #ifdef GPOS_DEBUG
 
 // names for states
-const WCHAR rgwszStates[CJobGroupOptimization::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
+const wchar_t rgwszStates[CJobGroupOptimization::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
     GPOS_WSZ_LIT("initialized"), GPOS_WSZ_LIT("optimizing children"), GPOS_WSZ_LIT("damping optimization level"),
     GPOS_WSZ_LIT("completed")};
 
 // names for events
-const WCHAR rgwszEvents[CJobGroupOptimization::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
+const wchar_t rgwszEvents[CJobGroupOptimization::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
     GPOS_WSZ_LIT("ongoing implementation"), GPOS_WSZ_LIT("done implementation"), GPOS_WSZ_LIT("ongoing optimization"),
     GPOS_WSZ_LIT("optimization level complete"), GPOS_WSZ_LIT("finalizing")};
 
@@ -158,7 +158,7 @@ void CJobGroupOptimization::Init(CGroup *pgroup,
 //		the function returns true if it could schedule any new jobs
 //
 //---------------------------------------------------------------------------
-BOOL CJobGroupOptimization::FScheduleGroupExpressions(CSchedulerContext *psc) {
+bool CJobGroupOptimization::FScheduleGroupExpressions(CSchedulerContext *psc) {
   CGroupExpression *pgexprLast = m_pgexprLastScheduled;
 
   // iterate on expressions and schedule them as needed
@@ -168,8 +168,8 @@ BOOL CJobGroupOptimization::FScheduleGroupExpressions(CSchedulerContext *psc) {
     // other group expressions will be optimized when damping current
     // optimization level
     if (psc->Peng()->FOptimizeChild(m_pgexprOrigin, pgexpr, m_poc, EolCurrent())) {
-      const ULONG ulOptRequests = CPhysical::PopConvert(pgexpr->Pop())->UlOptRequests();
-      for (ULONG ul = 0; ul < ulOptRequests; ul++) {
+      const uint32_t ulOptRequests = CPhysical::PopConvert(pgexpr->Pop())->UlOptRequests();
+      for (uint32_t ul = 0; ul < ulOptRequests; ul++) {
         // schedule an optimization job for each request
         CJobGroupExpressionOptimization::ScheduleJob(psc, pgexpr, m_poc, ul, this);
       }
@@ -183,7 +183,7 @@ BOOL CJobGroupOptimization::FScheduleGroupExpressions(CSchedulerContext *psc) {
     }
   }
 
-  BOOL fNewJobs = (m_pgexprLastScheduled != pgexprLast);
+  bool fNewJobs = (m_pgexprLastScheduled != pgexprLast);
 
   // set last scheduled expression
   m_pgexprLastScheduled = pgexprLast;
@@ -285,7 +285,7 @@ CJobGroupOptimization::EEvent CJobGroupOptimization::EevtCompleteOptimization(CS
 //		Main job function
 //
 //---------------------------------------------------------------------------
-BOOL CJobGroupOptimization::FExecute(CSchedulerContext *psc) {
+bool CJobGroupOptimization::FExecute(CSchedulerContext *psc) {
   GPOS_ASSERT(FInit());
 
   return m_jsm.FRun(psc, this);

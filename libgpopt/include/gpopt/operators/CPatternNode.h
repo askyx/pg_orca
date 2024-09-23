@@ -39,12 +39,12 @@ class CPatternNode : public CPattern {
   ~CPatternNode() override = default;
 
   // match function
-  BOOL Matches(COperator *pop) const override {
+  bool Matches(COperator *pop) const override {
     return Eopid() == pop->Eopid() && m_match == static_cast<CPatternNode *>(pop)->m_match;
   }
 
   // check if operator is a pattern leaf
-  BOOL FLeaf() const override { return false; }
+  bool FLeaf() const override { return false; }
 
   // conversion function
   static CPatternNode *PopConvert(COperator *pop) {
@@ -58,9 +58,9 @@ class CPatternNode : public CPattern {
   EOperatorId Eopid() const override { return EopPatternNode; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPatternNode"; }
+  const char *SzId() const override { return "CPatternNode"; }
 
-  BOOL MatchesOperator(enum COperator::EOperatorId opid) const {
+  bool MatchesOperator(enum COperator::EOperatorId opid) const {
     switch (m_match) {
       case EmtMatchInnerOrLeftOuterJoin:
         return COperator::EopLogicalInnerJoin == opid || COperator::EopLogicalLeftOuterJoin == opid;

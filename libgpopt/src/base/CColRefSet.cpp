@@ -26,7 +26,7 @@ using namespace gpopt;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CColRefSet::CColRefSet(CMemoryPool *mp, ULONG ulSizeBits) : CBitSet(mp, ulSizeBits) {}
+CColRefSet::CColRefSet(CMemoryPool *mp, uint32_t ulSizeBits) : CBitSet(mp, ulSizeBits) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -46,7 +46,7 @@ CColRefSet::CColRefSet(CMemoryPool *mp, const CColRefSet &bs) : CBitSet(mp, bs) 
 //		ctor, copy from col refs array
 //
 //---------------------------------------------------------------------------
-CColRefSet::CColRefSet(CMemoryPool *mp, const CColRefArray *colref_array, ULONG size) : CBitSet(mp, size) {
+CColRefSet::CColRefSet(CMemoryPool *mp, const CColRefArray *colref_array, uint32_t size) : CBitSet(mp, size) {
   Include(colref_array);
 }
 
@@ -68,7 +68,7 @@ CColRefSet::~CColRefSet() = default;
 //		Check if given column ref is in the set
 //
 //---------------------------------------------------------------------------
-BOOL CColRefSet::FMember(const CColRef *colref) const {
+bool CColRefSet::FMember(const CColRef *colref) const {
   return CBitSet::Get(colref->Id());
 }
 
@@ -124,8 +124,8 @@ void CColRefSet::Include(const CColRef *colref) {
 //
 //---------------------------------------------------------------------------
 void CColRefSet::Include(const CColRefArray *colref_array) {
-  ULONG length = colref_array->Size();
-  for (ULONG i = 0; i < length; i++) {
+  uint32_t length = colref_array->Size();
+  for (uint32_t i = 0; i < length; i++) {
     Include((*colref_array)[i]);
   }
 }
@@ -181,7 +181,7 @@ void CColRefSet::Exclude(const CColRefSet *pcrs) {
 //
 //---------------------------------------------------------------------------
 void CColRefSet::Exclude(const CColRefArray *colref_array) {
-  for (ULONG i = 0; i < colref_array->Size(); i++) {
+  for (uint32_t i = 0; i < colref_array->Size(); i++) {
     Exclude((*colref_array)[i]);
   }
 }
@@ -210,10 +210,10 @@ void CColRefSet::Replace(const CColRef *pcrOut, const CColRef *pcrIn) {
 //
 //---------------------------------------------------------------------------
 void CColRefSet::Replace(const CColRefArray *pdrgpcrOut, const CColRefArray *pdrgpcrIn) {
-  const ULONG length = pdrgpcrOut->Size();
+  const uint32_t length = pdrgpcrOut->Size();
   GPOS_ASSERT(length == pdrgpcrIn->Size());
 
-  for (ULONG ul = 0; ul < length; ul++) {
+  for (uint32_t ul = 0; ul < length; ul++) {
     Replace((*pdrgpcrOut)[ul], (*pdrgpcrIn)[ul]);
   }
 }
@@ -250,7 +250,7 @@ IntToColRefMap *CColRefSet::Phmicr(CMemoryPool *mp) const {
 
   CColRefSetIter crsi(*this);
   while (crsi.Advance()) {
-    phmicr->Insert(GPOS_NEW(mp) INT(crsi.Pcr()->Id()), crsi.Pcr());
+    phmicr->Insert(GPOS_NEW(mp) int32_t(crsi.Pcr()->Id()), crsi.Pcr());
   }
 
   return phmicr;
@@ -264,16 +264,15 @@ IntToColRefMap *CColRefSet::Phmicr(CMemoryPool *mp) const {
 //		Compute hash value by combining hashes of components
 //
 //---------------------------------------------------------------------------
-ULONG
-CColRefSet::HashValue() {
-  ULONG size = this->Size();
-  ULONG ulHash = gpos::HashValue<ULONG>(&size);
+uint32_t CColRefSet::HashValue() {
+  uint32_t size = this->Size();
+  uint32_t ulHash = gpos::HashValue<uint32_t>(&size);
 
   // limit the number of columns used in hash computation
-  ULONG length = std::min(size, (ULONG)8);
+  uint32_t length = std::min(size, (uint32_t)8);
 
   CColRefSetIter crsi(*this);
-  for (ULONG i = 0; i < length; i++) {
+  for (uint32_t i = 0; i < length; i++) {
     (void)crsi.Advance();
     ulHash = gpos::CombineHashes(ulHash, gpos::HashPtr<CColRef>(crsi.Pcr()));
   }
@@ -290,12 +289,12 @@ CColRefSet::HashValue() {
 //
 //---------------------------------------------------------------------------
 IOstream &CColRefSet::OsPrint(IOstream &os) const {
-  return OsPrint(os, gpos::ulong_max);
+  return OsPrint(os, UINT32_MAX);
 }
 
-IOstream &CColRefSet::OsPrint(IOstream &os, ULONG ulLenMax) const {
-  ULONG length = Size();
-  ULONG ul = 0;
+IOstream &CColRefSet::OsPrint(IOstream &os, uint32_t ulLenMax) const {
+  uint32_t length = Size();
+  uint32_t ul = 0;
 
   CColRefSetIter crsi(*this);
   while (crsi.Advance() && ul < std::min(length, ulLenMax)) {
@@ -333,11 +332,11 @@ std::vector<uint32_t> CColRefSet::ExtractColIds() const {
 //		the given array
 //
 //---------------------------------------------------------------------------
-BOOL CColRefSet::FContained(const CColRefSetArray *pdrgpcrs) {
+bool CColRefSet::FContained(const CColRefSetArray *pdrgpcrs) {
   GPOS_ASSERT(nullptr != pdrgpcrs);
 
-  const ULONG length = pdrgpcrs->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
+  const uint32_t length = pdrgpcrs->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
     if ((*pdrgpcrs)[ul]->ContainsAll(this)) {
       return true;
     }
@@ -346,12 +345,12 @@ BOOL CColRefSet::FContained(const CColRefSetArray *pdrgpcrs) {
   return false;
 }
 
-BOOL CColRefSet::FIntersects(const CColRefSet *pcrs) {
+bool CColRefSet::FIntersects(const CColRefSet *pcrs) {
   GPOS_ASSERT(nullptr != pcrs);
   CColRefSet *intersecting_colrefset = GPOS_NEW(m_mp) CColRefSet(m_mp, *this);
   intersecting_colrefset->Intersection(pcrs);
 
-  BOOL intersects = intersecting_colrefset->Size() > 0;
+  bool intersects = intersecting_colrefset->Size() > 0;
   intersecting_colrefset->Release();
 
   return intersects;
@@ -365,7 +364,7 @@ BOOL CColRefSet::FIntersects(const CColRefSet *pcrs) {
 //		Are the columns in the column reference set covered by the array of
 //		column ref sets
 //---------------------------------------------------------------------------
-BOOL CColRefSet::FCovered(CColRefSetArray *pdrgpcrs, CColRefSet *pcrs) {
+bool CColRefSet::FCovered(CColRefSetArray *pdrgpcrs, CColRefSet *pcrs) {
   GPOS_ASSERT(nullptr != pdrgpcrs);
   GPOS_ASSERT(nullptr != pcrs);
   GPOS_ASSERT(0 < pdrgpcrs->Size());
@@ -377,9 +376,9 @@ BOOL CColRefSet::FCovered(CColRefSetArray *pdrgpcrs, CColRefSet *pcrs) {
   CColRefSetIter crsi(*pcrs);
   while (crsi.Advance()) {
     CColRef *colref = crsi.Pcr();
-    BOOL fFound = false;
-    const ULONG length = pdrgpcrs->Size();
-    for (ULONG ul = 0; ul < length && !fFound; ul++) {
+    bool fFound = false;
+    const uint32_t length = pdrgpcrs->Size();
+    for (uint32_t ul = 0; ul < length && !fFound; ul++) {
       CColRefSet *pcrs = (*pdrgpcrs)[ul];
       if (pcrs->FMember(colref)) {
         fFound = true;

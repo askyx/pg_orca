@@ -52,7 +52,7 @@ class CDXLScalarDistinctComp : public CDXLScalarComp {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     return true;
   }
@@ -60,7 +60,7 @@ class CDXLScalarDistinctComp : public CDXLScalarComp {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *node, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

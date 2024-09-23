@@ -42,7 +42,7 @@ CScalar::EBoolEvalResult CScalarIsDistinctFrom::Eber(ULongPtrArray *pdrgpulChild
   return CScalar::EberFalse;
 }
 
-BOOL CScalarIsDistinctFrom::Matches(COperator *pop) const {
+bool CScalarIsDistinctFrom::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarIsDistinctFrom *popIDF = CScalarIsDistinctFrom::PopConvert(pop);
 

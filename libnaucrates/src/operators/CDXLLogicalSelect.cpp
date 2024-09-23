@@ -60,7 +60,7 @@ const CWStringConst *CDXLLogicalSelect::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalSelect::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLLogicalSelect::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(2 == node->Arity());
 
   CDXLNode *condition_dxl = (*node)[0];

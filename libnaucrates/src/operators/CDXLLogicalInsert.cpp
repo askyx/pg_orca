@@ -79,7 +79,7 @@ const CWStringConst *CDXLLogicalInsert::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalInsert::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLLogicalInsert::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(1 == node->Arity());
 
   CDXLNode *child_dxlnode = (*node)[0];

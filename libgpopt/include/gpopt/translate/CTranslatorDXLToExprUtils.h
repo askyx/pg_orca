@@ -40,8 +40,8 @@ using namespace gpdxl;
 //---------------------------------------------------------------------------
 class CTranslatorDXLToExprUtils {
  public:
-  // create a cast expression from INT to INT8
-  static CExpression *PexprConstInt8(CMemoryPool *mp, CMDAccessor *md_accessor, CSystemId sysid, LINT liValue);
+  // create a cast expression from int32_t to INT8
+  static CExpression *PexprConstInt8(CMemoryPool *mp, CMDAccessor *md_accessor, CSystemId sysid, int64_t liValue);
 
   // create a scalar const operator from a DXL scalar const operator
   static CScalarConst *PopConst(CMemoryPool *mp, CMDAccessor *md_accessor, const CDXLScalarConstValue *dxl_op);
@@ -57,7 +57,7 @@ class CTranslatorDXLToExprUtils {
                          UlongToUlongMap *phmululColMapping);
 
   // check if a dxl node is a boolean expression of the given type
-  static BOOL FScalarBool(const CDXLNode *dxlnode, EdxlBoolExprType edxlboolexprtype);
+  static bool FScalarBool(const CDXLNode *dxlnode, EdxlBoolExprType edxlboolexprtype);
 
   // returns the equivalent bool expression type in the optimizer for
   // a given DXL bool expression type
@@ -67,7 +67,7 @@ class CTranslatorDXLToExprUtils {
   static CColRefArray *Pdrgpcr(CMemoryPool *mp, UlongToColRefMap *colref_mapping, const ULongPtrArray *colids);
 
   // is the given expression is a scalar function that casts
-  static BOOL FCastFunc(CMDAccessor *md_accessor, const CDXLNode *dxlnode, IMDId *pmdidInput);
+  static bool FCastFunc(CMDAccessor *md_accessor, const CDXLNode *dxlnode, IMDId *pmdidInput);
 };
 }  // namespace gpopt
 

@@ -21,7 +21,7 @@ using namespace gpopt;
 using namespace gpmd;
 
 // Ctor
-CScalarArray::CScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, BOOL is_multidimenstional)
+CScalarArray::CScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, bool is_multidimenstional)
     : CScalar(mp),
       m_pmdidElem(elem_type_mdid),
       m_pmdidArray(array_type_mdid),
@@ -32,7 +32,7 @@ CScalarArray::CScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_
 }
 
 // Ctor
-CScalarArray::CScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, BOOL is_multidimenstional,
+CScalarArray::CScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, bool is_multidimenstional,
                            CScalarConstArray *pdrgPconst)
     : CScalar(mp),
       m_pmdidElem(elem_type_mdid),
@@ -82,7 +82,7 @@ IMDId *CScalarArray::PmdidArray() const {
 //		Is array multi-dimensional
 //
 //---------------------------------------------------------------------------
-BOOL CScalarArray::FMultiDimensional() const {
+bool CScalarArray::FMultiDimensional() const {
   return m_fMultiDimensional;
 }
 
@@ -94,10 +94,9 @@ BOOL CScalarArray::FMultiDimensional() const {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarArray::HashValue() const {
+uint32_t CScalarArray::HashValue() const {
   return gpos::CombineHashes(CombineHashes(m_pmdidElem->HashValue(), m_pmdidArray->HashValue()),
-                             gpos::HashValue<BOOL>(&m_fMultiDimensional));
+                             gpos::HashValue<bool>(&m_fMultiDimensional));
 }
 
 //---------------------------------------------------------------------------
@@ -108,14 +107,14 @@ CScalarArray::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarArray::Matches(COperator *pop) const {
+bool CScalarArray::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarArray *popArray = CScalarArray::PopConvert(pop);
 
     // match if components are identical
     if (popArray->FMultiDimensional() == FMultiDimensional() && PmdidElem()->Equals(popArray->PmdidElem()) &&
         PmdidArray()->Equals(popArray->PmdidArray()) && m_pdrgPconst->Size() == popArray->PdrgPconst()->Size()) {
-      for (ULONG ul = 0; ul < m_pdrgPconst->Size(); ul++) {
+      for (uint32_t ul = 0; ul < m_pdrgPconst->Size(); ul++) {
         CScalarConst *popConst1 = (*m_pdrgPconst)[ul];
         CScalarConst *popConst2 = (*popArray->PdrgPconst())[ul];
         if (!popConst1->Matches(popConst2)) {
@@ -153,7 +152,7 @@ IOstream &CScalarArray::OsPrint(IOstream &os) const {
   if (m_fMultiDimensional) {
     os << ", multidimensional";
   }
-  for (ULONG ul = 0; ul < m_pdrgPconst->Size(); ul++) {
+  for (uint32_t ul = 0; ul < m_pdrgPconst->Size(); ul++) {
     os << " ";
     (*m_pdrgPconst)[ul]->OsPrint(os);
   }

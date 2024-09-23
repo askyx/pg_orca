@@ -40,7 +40,7 @@ class CXformMaxOneRow2Assert : public CXformExploration {
   EXformId Exfid() const override { return ExfMaxOneRow2Assert; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformMaxOneRow2Assert"; }
+  const char *SzId() const override { return "CXformMaxOneRow2Assert"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

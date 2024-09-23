@@ -31,8 +31,8 @@ class CPhysicalJoin : public CPhysical {
   CPhysicalJoin(const CPhysicalJoin &);
 
   // check whether the child being processed is the child that has the part consumer
-  static BOOL FProcessingChildWithPartConsumer(BOOL fOuterPartConsumerTest, ULONG ulChildIndexToTestFirst,
-                                               ULONG ulChildIndexToTestSecond, ULONG child_index);
+  static bool FProcessingChildWithPartConsumer(bool fOuterPartConsumerTest, uint32_t ulChildIndexToTestFirst,
+                                               uint32_t ulChildIndexToTestSecond, uint32_t child_index);
 
   // xform that join order originated from
   CXform::EXformId m_origin_xform;
@@ -45,44 +45,44 @@ class CPhysicalJoin : public CPhysical {
   ~CPhysicalJoin() override = default;
 
   // helper to check if given child index correspond to first child to be optimized
-  BOOL FFirstChildToOptimize(ULONG child_index) const;
+  bool FFirstChildToOptimize(uint32_t child_index) const;
 
   // helper for propagating required sort order to outer child
   static COrderSpec *PosPropagateToOuter(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired);
 
   // helper for checking if required sort columns come from outer child
-  static BOOL FSortColsInOuterChild(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *pos);
+  static bool FSortColsInOuterChild(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *pos);
 
   // helper for checking if the outer input of a binary join operator
   // includes the required columns
-  static BOOL FOuterProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired);
+  static bool FOuterProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired);
 
   // Do each of the given predicate children use columns from a different
   // join child?
-  static BOOL FPredKeysSeparated(CExpression *pexprOuter, CExpression *pexprInner, CExpression *pexprPredOuter,
+  static bool FPredKeysSeparated(CExpression *pexprOuter, CExpression *pexprInner, CExpression *pexprPredOuter,
                                  CExpression *pexprPredInner);
 
  public:
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   //-------------------------------------------------------------------------------------
   // Required Plan Properties
   //-------------------------------------------------------------------------------------
 
   // compute required output columns of the n-th child
-  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG child_index,
-                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t child_index,
+                           CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) override;
 
   // compute required ctes of the n-th child
-  CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
-                        CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, uint32_t child_index,
+                        CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // check if required columns are included in output columns
-  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
+  bool FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t ulOptReq) const override;
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties
@@ -100,7 +100,7 @@ class CPhysicalJoin : public CPhysical {
 
   // return true if operator passes through stats obtained from children,
   // this is used when computing stats during costing
-  BOOL FPassThruStats() const override { return false; }
+  bool FPassThruStats() const override { return false; }
 
   CXform::EXformId OriginXform() { return m_origin_xform; }
   //-------------------------------------------------------------------------------------
@@ -108,13 +108,13 @@ class CPhysicalJoin : public CPhysical {
   //-------------------------------------------------------------------------------------
 
   // is given predicate hash-join compatible
-  static BOOL FHashJoinCompatible(CExpression *pexprPred, CExpression *pexprOuter, CExpression *pexprInner);
+  static bool FHashJoinCompatible(CExpression *pexprPred, CExpression *pexprOuter, CExpression *pexprInner);
 
   // is given predicate merge-join compatible
-  static BOOL FMergeJoinCompatible(CExpression *pexprPred, CExpression *pexprOuter, CExpression *pexprInner);
+  static bool FMergeJoinCompatible(CExpression *pexprPred, CExpression *pexprOuter, CExpression *pexprInner);
 
   // return number of distribution requests for correlated join
-  static ULONG UlDistrRequestsForCorrelatedJoin();
+  static uint32_t UlDistrRequestsForCorrelatedJoin();
 
   static void AlignJoinKeyOuterInner(CExpression *pexprConjunct, CExpression *pexprOuter, CExpression *pexprInner,
                                      CExpression **ppexprKeyOuter, CExpression **ppexprKeyInner, IMDId **mdid_scop);

@@ -55,7 +55,7 @@ CPhysicalInnerIndexNLJoin::~CPhysicalInnerIndexNLJoin() {
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalInnerIndexNLJoin::Matches(COperator *pop) const {
+bool CPhysicalInnerIndexNLJoin::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     return m_pdrgpcrOuterRefs->Equals(CPhysicalInnerIndexNLJoin::PopConvert(pop)->PdrgPcrOuterRefs());
   }

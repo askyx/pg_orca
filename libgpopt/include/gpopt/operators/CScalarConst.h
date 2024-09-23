@@ -47,24 +47,24 @@ class CScalarConst : public CScalar {
   EOperatorId Eopid() const override { return EopScalarConst; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarConst"; }
+  const char *SzId() const override { return "CScalarConst"; }
 
   // accessor of contained constant
   IDatum *GetDatum() const { return m_pdatum; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
@@ -80,7 +80,7 @@ class CScalarConst : public CScalar {
   // the type of the scalar expression
   IMDId *MdidType() const override;
 
-  INT TypeModifier() const override;
+  int32_t TypeModifier() const override;
 
   // boolean expression evaluation
   EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const override;
@@ -89,7 +89,7 @@ class CScalarConst : public CScalar {
   IOstream &OsPrint(IOstream &) const override;
 
   // is the given expression a scalar cast of a constant
-  static BOOL FCastedConst(CExpression *pexpr);
+  static bool FCastedConst(CExpression *pexpr);
 
   // extract the constant from the given constant expression or a casted constant expression.
   // Else return NULL.

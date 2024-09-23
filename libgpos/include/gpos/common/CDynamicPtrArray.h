@@ -21,7 +21,7 @@ template <class T, void (*CleanupFn)(T *)>
 class CDynamicPtrArray;
 
 // comparison function signature
-using CompareFn = INT (*)(const void *, const void *);
+using CompareFn = int32_t (*)(const void *, const void *);
 
 // frequently used destroy functions
 
@@ -48,19 +48,19 @@ inline void CleanupRelease(T *elem) {
 }
 
 // Compare function used by CDynamicPtrArray::Sort
-inline INT CompareUlongPtr(const void *right, const void *left) {
-  return *((ULONG *)right) - *((ULONG *)left);
+inline int32_t CompareUlongPtr(const void *right, const void *left) {
+  return *((uint32_t *)right) - *((uint32_t *)left);
 }
 
 // commonly used array types
 
 // arrays of unsigned integers
-using ULongPtrArray = CDynamicPtrArray<ULONG, CleanupDelete>;
+using ULongPtrArray = CDynamicPtrArray<uint32_t, CleanupDelete>;
 // array of unsigned integer arrays
 using ULongPtr2dArray = CDynamicPtrArray<ULongPtrArray, CleanupRelease>;
 
 // arrays of integers
-using IntPtrArray = CDynamicPtrArray<INT, CleanupDelete>;
+using IntPtrArray = CDynamicPtrArray<int32_t, CleanupDelete>;
 
 // array of strings
 using StringPtrArray = CDynamicPtrArray<CWStringBase, CleanupDelete>;
@@ -69,7 +69,7 @@ using StringPtrArray = CDynamicPtrArray<CWStringBase, CleanupDelete>;
 using StringPtr2dArray = CDynamicPtrArray<StringPtrArray, CleanupRelease>;
 
 // arrays of chars
-using CharPtrArray = CDynamicPtrArray<CHAR, CleanupDelete>;
+using CharPtrArray = CDynamicPtrArray<char, CleanupDelete>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -86,22 +86,22 @@ class CDynamicPtrArray : public CRefCount {
   CMemoryPool *m_mp;
 
   // currently allocated size
-  ULONG m_capacity;
+  uint32_t m_capacity;
 
   // min size
-  ULONG m_min_size;
+  uint32_t m_min_size;
 
   // current size
-  ULONG m_size;
+  uint32_t m_size;
 
   // expansion factor
-  ULONG m_expansion_factor;
+  uint32_t m_expansion_factor;
 
   // actual array
   T **m_elems;
 
   // resize function
-  void Resize(ULONG new_size) {
+  void Resize(uint32_t new_size) {
     GPOS_ASSERT(new_size > m_capacity && "Invalid call to Resize, cannot shrink array");
 
     // get new target array
@@ -121,12 +121,12 @@ class CDynamicPtrArray : public CRefCount {
   CDynamicPtrArray(const CDynamicPtrArray<T, CleanupFn> &) = delete;
 
   // ctor
-  explicit CDynamicPtrArray(CMemoryPool *mp, ULONG min_size = 4, ULONG expansion_factor = 10)
+  explicit CDynamicPtrArray(CMemoryPool *mp, uint32_t min_size = 4, uint32_t expansion_factor = 10)
       : m_mp(mp),
         m_capacity(0),
-        m_min_size(std::max((ULONG)4, min_size)),
+        m_min_size(std::max((uint32_t)4, min_size)),
         m_size(0),
-        m_expansion_factor(std::max((ULONG)2, expansion_factor)),
+        m_expansion_factor(std::max((uint32_t)2, expansion_factor)),
         m_elems(nullptr) {
     // do not allocate in constructor; defer allocation to first insertion
     GPOS_CPL_ASSERT(nullptr != CleanupFn, "No valid destroy function specified");
@@ -141,7 +141,7 @@ class CDynamicPtrArray : public CRefCount {
 
   // clear elements
   void Clear() {
-    for (ULONG i = 0; i < m_size; i++) {
+    for (uint32_t i = 0; i < m_size; i++) {
       CleanupFn(m_elems[i]);
     }
     m_size = 0;
@@ -151,8 +151,8 @@ class CDynamicPtrArray : public CRefCount {
   void Append(T *elem) {
     if (m_size == m_capacity) {
       // resize at least by 4 elements or percentage as given by ulExp
-      ULONG new_size = (ULONG)(m_capacity * (1 + (m_expansion_factor / 100.0)));
-      ULONG min_expand_size = m_capacity + 4;
+      uint32_t new_size = (uint32_t)(m_capacity * (1 + (m_expansion_factor / 100.0)));
+      uint32_t min_expand_size = m_capacity + 4;
 
       Resize(std::max(std::max(min_expand_size, new_size), m_min_size));
     }
@@ -168,7 +168,7 @@ class CDynamicPtrArray : public CRefCount {
     GPOS_ASSERT(nullptr != arr);
     GPOS_ASSERT(this != arr && "Cannot append array to itself");
 
-    ULONG total_size = m_size + arr->m_size;
+    uint32_t total_size = m_size + arr->m_size;
     if (total_size > m_capacity) {
       Resize(total_size);
     }
@@ -188,8 +188,7 @@ class CDynamicPtrArray : public CRefCount {
   }
 
   // number of elements currently held
-  ULONG
-  Size() const { return m_size; }
+  uint32_t Size() const { return m_size; }
 
   // sort array
   void Sort(CompareFn compare_func) {
@@ -201,17 +200,17 @@ class CDynamicPtrArray : public CRefCount {
   }
 
   // equality check
-  BOOL Equals(const CDynamicPtrArray<T, CleanupFn> *arr) const {
-    BOOL is_equal = (Size() == arr->Size());
+  bool Equals(const CDynamicPtrArray<T, CleanupFn> *arr) const {
+    bool is_equal = (Size() == arr->Size());
 
-    for (ULONG i = 0; i < m_size && is_equal; i++) {
+    for (uint32_t i = 0; i < m_size && is_equal; i++) {
       is_equal = (*m_elems[i] == *arr->m_elems[i]);
     }
 
     return is_equal;
   }
 
-  BOOL operator==(const CDynamicPtrArray<T, CleanupFn> &other) const {
+  bool operator==(const CDynamicPtrArray<T, CleanupFn> &other) const {
     if (this == &other) {
       // same object reference
       return true;
@@ -224,7 +223,7 @@ class CDynamicPtrArray : public CRefCount {
   T *Find(const T *elem) const {
     GPOS_ASSERT(nullptr != elem);
 
-    for (ULONG i = 0; i < m_size; i++) {
+    for (uint32_t i = 0; i < m_size; i++) {
       if (*m_elems[i] == *elem) {
         return m_elems[i];
       }
@@ -234,22 +233,21 @@ class CDynamicPtrArray : public CRefCount {
   }
 
   // lookup object position
-  ULONG
-  IndexOf(const T *elem) const {
+  uint32_t IndexOf(const T *elem) const {
     GPOS_ASSERT(nullptr != elem);
 
-    for (ULONG ul = 0; ul < m_size; ul++) {
+    for (uint32_t ul = 0; ul < m_size; ul++) {
       if (*m_elems[ul] == *elem) {
         return ul;
       }
     }
 
-    return gpos::ulong_max;
+    return UINT32_MAX;
   }
 
   // check if array is sorted
-  BOOL IsSorted(CompareFn compare_func) const {
-    for (ULONG i = 1; i < m_size; i++) {
+  bool IsSorted(CompareFn compare_func) const {
+    for (uint32_t i = 1; i < m_size; i++) {
       if (compare_func(&m_elems[i - 1], &m_elems[i]) > 0) {
         return false;
       }
@@ -259,20 +257,20 @@ class CDynamicPtrArray : public CRefCount {
   }
 
   // accessor for n-th element
-  T *operator[](ULONG pos) const {
+  T *operator[](uint32_t pos) const {
     GPOS_ASSERT(pos < m_size && "Out of bounds access");
     return (T *)m_elems[pos];
   }
 
   // replace an element in the array
-  void Replace(ULONG pos, T *new_elem) {
+  void Replace(uint32_t pos, T *new_elem) {
     GPOS_ASSERT(pos < m_size && "Out of bounds access");
     CleanupFn(m_elems[pos]);
     m_elems[pos] = new_elem;
   }
 
   // swap two array entries
-  void Swap(ULONG pos1, ULONG pos2) {
+  void Swap(uint32_t pos1, uint32_t pos2) {
     GPOS_ASSERT(pos1 < m_size && pos2 < m_size && "Swap positions out of bounds");
     T *temp = m_elems[pos1];
 
@@ -296,19 +294,19 @@ class CDynamicPtrArray : public CRefCount {
   ULongPtrArray *IndexesOfSubsequence(CDynamicPtrArray<T, CleanupFn> *subsequence) {
     GPOS_ASSERT(nullptr != subsequence);
 
-    ULONG subsequence_length = subsequence->Size();
+    uint32_t subsequence_length = subsequence->Size();
     ULongPtrArray *indexes = GPOS_NEW(m_mp) ULongPtrArray(m_mp);
 
-    for (ULONG ul1 = 0; ul1 < subsequence_length; ul1++) {
+    for (uint32_t ul1 = 0; ul1 < subsequence_length; ul1++) {
       T *elem = (*subsequence)[ul1];
-      ULONG index = IndexOf(elem);
-      if (gpos::ulong_max == index) {
+      uint32_t index = IndexOf(elem);
+      if (UINT32_MAX == index) {
         // not found
         indexes->Release();
         return nullptr;
       }
 
-      indexes->Append(GPOS_NEW(m_mp) ULONG(index));
+      indexes->Append(GPOS_NEW(m_mp) uint32_t(index));
     }
     return indexes;
   }
@@ -317,9 +315,9 @@ class CDynamicPtrArray : public CRefCount {
   CDynamicPtrArray<T, CleanupFn> *CreateReducedArray(ULongPtrArray *indexes_to_choose) {
     CDynamicPtrArray<T, CleanupFn> *result =
         GPOS_NEW(m_mp) CDynamicPtrArray<T, CleanupFn>(m_mp, m_min_size, m_expansion_factor);
-    ULONG list_size = indexes_to_choose->Size();
+    uint32_t list_size = indexes_to_choose->Size();
 
-    for (ULONG i = 0; i < list_size; i++) {
+    for (uint32_t i = 0; i < list_size; i++) {
       result->Append((*this)[*((*indexes_to_choose)[i])]);
     }
     return result;

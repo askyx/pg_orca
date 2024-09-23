@@ -42,7 +42,7 @@ class CXformSequenceProject2Apply : public CXformSubqueryUnnest {
   EXformId Exfid() const override { return ExfSequenceProject2Apply; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformSequenceProject2Apply"; }
+  const char *SzId() const override { return "CXformSequenceProject2Apply"; }
 
 };  // class CXformSequenceProject2Apply
 

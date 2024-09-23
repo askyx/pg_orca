@@ -25,7 +25,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalSort::CDXLPhysicalSort(CMemoryPool *mp, BOOL discard_duplicates)
+CDXLPhysicalSort::CDXLPhysicalSort(CMemoryPool *mp, bool discard_duplicates)
     : CDXLPhysical(mp), m_discard_duplicates(discard_duplicates) {}
 
 //---------------------------------------------------------------------------
@@ -60,7 +60,7 @@ const CWStringConst *CDXLPhysicalSort::GetOpNameStr() const {
 //		Whether sort operator discards duplicated tuples.
 //
 //---------------------------------------------------------------------------
-BOOL CDXLPhysicalSort::FDiscardDuplicates() const {
+bool CDXLPhysicalSort::FDiscardDuplicates() const {
   return m_discard_duplicates;
 }
 
@@ -73,7 +73,7 @@ BOOL CDXLPhysicalSort::FDiscardDuplicates() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalSort::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLPhysicalSort::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   // assert proj list and filter are valid
   CDXLPhysical::AssertValid(dxlnode, validate_children);
 

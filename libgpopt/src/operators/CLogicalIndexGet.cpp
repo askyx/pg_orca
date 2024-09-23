@@ -37,7 +37,7 @@ CLogicalIndexGet::CLogicalIndexGet(CMemoryPool *mp)
     : CLogical(mp),
       m_pindexdesc(nullptr),
       m_ptabdesc(nullptr),
-      m_ulOriginOpId(gpos::ulong_max),
+      m_ulOriginOpId(UINT32_MAX),
       m_pnameAlias(nullptr),
       m_pdrgpcrOutput(nullptr),
       m_pcrsOutput(nullptr),
@@ -56,8 +56,8 @@ CLogicalIndexGet::CLogicalIndexGet(CMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 CLogicalIndexGet::CLogicalIndexGet(CMemoryPool *mp, const IMDIndex *pmdindex, CTableDescriptor *ptabdesc,
-                                   ULONG ulOriginOpId, const CName *pnameAlias, CColRefArray *pdrgpcrOutput,
-                                   ULONG ulUnindexedPredColCount, EIndexScanDirection scan_direction)
+                                   uint32_t ulOriginOpId, const CName *pnameAlias, CColRefArray *pdrgpcrOutput,
+                                   uint32_t ulUnindexedPredColCount, EIndexScanDirection scan_direction)
     : CLogical(mp),
       m_pindexdesc(nullptr),
       m_ptabdesc(ptabdesc),
@@ -113,9 +113,8 @@ CLogicalIndexGet::~CLogicalIndexGet() {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalIndexGet::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_pindexdesc->MDId()->HashValue());
+uint32_t CLogicalIndexGet::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_pindexdesc->MDId()->HashValue());
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
   return ulHash;
 }
@@ -128,7 +127,7 @@ CLogicalIndexGet::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalIndexGet::Matches(COperator *pop) const {
+bool CLogicalIndexGet::Matches(COperator *pop) const {
   return CUtils::FMatchIndex(this, pop);
 }
 
@@ -141,7 +140,7 @@ BOOL CLogicalIndexGet::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalIndexGet::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                        BOOL must_exist) {
+                                                        bool must_exist) {
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
   const IMDIndex *pmdindex = md_accessor->RetrieveIndex(m_pindexdesc->MDId());
 
@@ -204,7 +203,7 @@ CKeyCollection *CLogicalIndexGet::DeriveKeyCollection(CMemoryPool *mp,
 //		Is input order sensitive
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalIndexGet::FInputOrderSensitive() const {
+bool CLogicalIndexGet::FInputOrderSensitive() const {
   return true;
 }
 

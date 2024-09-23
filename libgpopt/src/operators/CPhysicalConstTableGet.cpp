@@ -53,7 +53,7 @@ CPhysicalConstTableGet::~CPhysicalConstTableGet() {
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalConstTableGet::Matches(COperator *pop) const {
+bool CPhysicalConstTableGet::Matches(COperator *pop) const {
   if (Eopid() == pop->Eopid()) {
     CPhysicalConstTableGet *popCTG = CPhysicalConstTableGet::PopConvert(pop);
     return m_pdrgpcoldesc == popCTG->Pdrgpcoldesc() && m_pdrgpdrgpdatum == popCTG->Pdrgpdrgpdatum() &&
@@ -75,9 +75,9 @@ BOOL CPhysicalConstTableGet::Matches(COperator *pop) const {
 CColRefSet *CPhysicalConstTableGet::PcrsRequired(CMemoryPool *,        // mp,
                                                  CExpressionHandle &,  // exprhdl,
                                                  CColRefSet *,         // pcrsRequired,
-                                                 ULONG,                // child_index,
+                                                 uint32_t,             // child_index,
                                                  CDrvdPropArray *,     // pdrgpdpCtxt
-                                                 ULONG                 // ulOptReq
+                                                 uint32_t              // ulOptReq
 ) {
   GPOS_ASSERT(!"CPhysicalConstTableGet has no children");
   return nullptr;
@@ -94,9 +94,9 @@ CColRefSet *CPhysicalConstTableGet::PcrsRequired(CMemoryPool *,        // mp,
 COrderSpec *CPhysicalConstTableGet::PosRequired(CMemoryPool *,        // mp,
                                                 CExpressionHandle &,  // exprhdl,
                                                 COrderSpec *,         // posRequired,
-                                                ULONG,                // child_index,
+                                                uint32_t,             // child_index,
                                                 CDrvdPropArray *,     // pdrgpdpCtxt
-                                                ULONG                 // ulOptReq
+                                                uint32_t              // ulOptReq
 ) const {
   GPOS_ASSERT(!"CPhysicalConstTableGet has no children");
   return nullptr;
@@ -113,9 +113,9 @@ COrderSpec *CPhysicalConstTableGet::PosRequired(CMemoryPool *,        // mp,
 CCTEReq *CPhysicalConstTableGet::PcteRequired(CMemoryPool *,        // mp,
                                               CExpressionHandle &,  // exprhdl,
                                               CCTEReq *,            // pcter,
-                                              ULONG,                // child_index,
+                                              uint32_t,             // child_index,
                                               CDrvdPropArray *,     // pdrgpdpCtxt,
-                                              ULONG                 // ulOptReq
+                                              uint32_t              // ulOptReq
 ) const {
   GPOS_ASSERT(!"CPhysicalConstTableGet has no children");
   return nullptr;
@@ -129,16 +129,16 @@ CCTEReq *CPhysicalConstTableGet::PcteRequired(CMemoryPool *,        // mp,
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalConstTableGet::FProvidesReqdCols(CExpressionHandle &,  // exprhdl,
+bool CPhysicalConstTableGet::FProvidesReqdCols(CExpressionHandle &,  // exprhdl,
                                                CColRefSet *pcrsRequired,
-                                               ULONG  // ulOptReq
+                                               uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcrsRequired);
 
   CColRefSet *pcrs = GPOS_NEW(m_mp) CColRefSet(m_mp);
   pcrs->Include(m_pdrgpcrOutput);
 
-  BOOL result = pcrs->ContainsAll(pcrsRequired);
+  bool result = pcrs->ContainsAll(pcrsRequired);
 
   pcrs->Release();
 
@@ -203,15 +203,15 @@ IOstream &CPhysicalConstTableGet::OsPrint(IOstream &os) const {
     CUtils::OsPrintDrgPcr(os, m_pdrgpcrOutput);
     os << "] ";
     os << "Values: [";
-    for (ULONG ulA = 0; ulA < m_pdrgpdrgpdatum->Size(); ulA++) {
+    for (uint32_t ulA = 0; ulA < m_pdrgpdrgpdatum->Size(); ulA++) {
       if (0 < ulA) {
         os << "; ";
       }
       os << "(";
       IDatumArray *pdrgpdatum = (*m_pdrgpdrgpdatum)[ulA];
 
-      const ULONG length = pdrgpdatum->Size();
-      for (ULONG ulB = 0; ulB < length; ulB++) {
+      const uint32_t length = pdrgpdatum->Size();
+      for (uint32_t ulB = 0; ulB < length; ulB++) {
         IDatum *datum = (*pdrgpdatum)[ulB];
         datum->OsPrint(os);
 

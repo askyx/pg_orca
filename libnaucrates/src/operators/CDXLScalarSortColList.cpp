@@ -58,9 +58,9 @@ const CWStringConst *CDXLScalarSortColList::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarSortColList::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
-  const ULONG arity = dxlnode->Arity();
-  for (ULONG idx = 0; idx < arity; idx++) {
+void CDXLScalarSortColList::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
+  const uint32_t arity = dxlnode->Arity();
+  for (uint32_t idx = 0; idx < arity; idx++) {
     CDXLNode *child_dxlnode = (*dxlnode)[idx];
     GPOS_ASSERT(EdxlopScalarSortCol == child_dxlnode->GetOperator()->GetDXLOperator());
 

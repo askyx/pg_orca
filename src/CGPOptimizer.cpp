@@ -52,7 +52,7 @@ PlannedStmt *CGPOptimizer::GPOPTOptimizedPlan(Query *query, gpdxl::OptConfig *co
   }
   GPOS_CATCH_EX(ex) {
     // clone the error message before context free.
-    CHAR *serialized_error_msg = gpopt_context.CloneErrorMsg(MessageContext);
+    char *serialized_error_msg = gpopt_context.CloneErrorMsg(MessageContext);
     // clean up context
     gpopt_context.Free(gpopt_context.epinQuery, gpopt_context.epinPlStmt);
 

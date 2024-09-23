@@ -40,7 +40,7 @@ class CXformImplementSequenceProject : public CXformImplementation {
   // ident accessors
   EXformId Exfid() const override { return ExfImplementSequenceProject; }
 
-  const CHAR *SzId() const override { return "CXformImplementSequenceProject"; }
+  const char *SzId() const override { return "CXformImplementSequenceProject"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override {

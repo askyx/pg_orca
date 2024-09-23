@@ -36,7 +36,7 @@ class CGroupProxy {
   CGroup *m_pgroup;
 
   // skip group expressions starting from the given expression;
-  CGroupExpression *PgexprSkip(CGroupExpression *pgexprStart, BOOL fSkipLogical);
+  CGroupExpression *PgexprSkip(CGroupExpression *pgexprStart, bool fSkipLogical);
 
  public:
   // ctor
@@ -46,7 +46,7 @@ class CGroupProxy {
   ~CGroupProxy();
 
   // set group id
-  void SetId(ULONG id) { m_pgroup->SetId(id); }
+  void SetId(uint32_t id) { m_pgroup->SetId(id); }
 
   // set group state
   void SetState(CGroup::EState estNewState) { m_pgroup->SetState(estNewState); }
@@ -85,7 +85,7 @@ class CGroupProxy {
 
 #ifdef GPOS_DEBUG
   // is group transition to given state complete?
-  BOOL FTransitioned(CGroup::EState estate) const {
+  bool FTransitioned(CGroup::EState estate) const {
     return (CGroup::estExplored == estate && m_pgroup->FExplored()) ||
            (CGroup::estImplemented == estate && m_pgroup->FImplemented()) ||
            (CGroup::estOptimized == estate && m_pgroup->FOptimized());

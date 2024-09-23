@@ -44,13 +44,13 @@ class CLogicalForeignGet : public CLogicalGet {
   EOperatorId Eopid() const override { return EopLogicalForeignGet; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalForeignGet"; }
+  const char *SzId() const override { return "CLogicalForeignGet"; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Required Relational Properties
@@ -60,7 +60,7 @@ class CLogicalForeignGet : public CLogicalGet {
   CColRefSet *PcrsStat(CMemoryPool *,        // mp,
                        CExpressionHandle &,  // exprhdl
                        CColRefSet *,         // pcrsInput
-                       ULONG                 // child_index
+                       uint32_t              // child_index
   ) const override {
     GPOS_ASSERT(!"CLogicalForeignGet has no children");
     return nullptr;

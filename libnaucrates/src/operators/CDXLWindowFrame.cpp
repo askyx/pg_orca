@@ -69,16 +69,16 @@ CDXLWindowFrame::~CDXLWindowFrame() {
 //---------------------------------------------------------------------------
 const CWStringConst *CDXLWindowFrame::PstrES(EdxlFrameExclusionStrategy edxles) {
   GPOS_ASSERT(EdxlfesSentinel > edxles);
-  ULONG window_frame_boundary_to_frame_boundary_mapping[][2] = {{EdxlfesNone, EdxltokenWindowESNone},
-                                                                {EdxlfesNulls, EdxltokenWindowESNulls},
-                                                                {EdxlfesCurrentRow, EdxltokenWindowESCurrentRow},
-                                                                {EdxlfesGroup, EdxltokenWindowESGroup},
-                                                                {EdxlfesTies, EdxltokenWindowESTies}};
+  uint32_t window_frame_boundary_to_frame_boundary_mapping[][2] = {{EdxlfesNone, EdxltokenWindowESNone},
+                                                                   {EdxlfesNulls, EdxltokenWindowESNulls},
+                                                                   {EdxlfesCurrentRow, EdxltokenWindowESCurrentRow},
+                                                                   {EdxlfesGroup, EdxltokenWindowESGroup},
+                                                                   {EdxlfesTies, EdxltokenWindowESTies}};
 
-  const ULONG arity = GPOS_ARRAY_SIZE(window_frame_boundary_to_frame_boundary_mapping);
-  for (ULONG ul = 0; ul < arity; ul++) {
-    ULONG *pulElem = window_frame_boundary_to_frame_boundary_mapping[ul];
-    if ((ULONG)edxles == pulElem[0]) {
+  const uint32_t arity = GPOS_ARRAY_SIZE(window_frame_boundary_to_frame_boundary_mapping);
+  for (uint32_t ul = 0; ul < arity; ul++) {
+    uint32_t *pulElem = window_frame_boundary_to_frame_boundary_mapping[ul];
+    if ((uint32_t)edxles == pulElem[0]) {
       Edxltoken edxltk = (Edxltoken)pulElem[1];
       return CDXLTokens::GetDXLTokenStr(edxltk);
       break;

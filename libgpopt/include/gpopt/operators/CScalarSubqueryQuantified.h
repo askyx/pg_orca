@@ -72,13 +72,13 @@ class CScalarSubqueryQuantified : public CScalar {
   IMDId *MdidType() const override;
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return locally used columns
   CColRefSet *PcrsUsed(CMemoryPool *mp, CExpressionHandle &exprhdl) override;

@@ -38,7 +38,7 @@ CLogicalCTEAnchor::CLogicalCTEAnchor(CMemoryPool *mp) : CLogical(mp), m_id(0) {
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalCTEAnchor::CLogicalCTEAnchor(CMemoryPool *mp, ULONG id) : CLogical(mp), m_id(id) {}
+CLogicalCTEAnchor::CLogicalCTEAnchor(CMemoryPool *mp, uint32_t id) : CLogical(mp), m_id(id) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -107,7 +107,7 @@ CMaxCard CLogicalCTEAnchor::DeriveMaxCard(CMemoryPool *,  // mp
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalCTEAnchor::Matches(COperator *pop) const {
+bool CLogicalCTEAnchor::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -125,8 +125,7 @@ BOOL CLogicalCTEAnchor::Matches(COperator *pop) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalCTEAnchor::HashValue() const {
+uint32_t CLogicalCTEAnchor::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), m_id);
 }
 

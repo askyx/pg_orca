@@ -75,7 +75,7 @@ const CWStringConst *CDXLScalarConstValue::GetOpNameStr() const {
 //		Does the operator return boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarConstValue::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarConstValue::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_dxl_datum->MDId())->GetDatumType());
 }
 
@@ -89,7 +89,7 @@ BOOL CDXLScalarConstValue::HasBoolResult(CMDAccessor *md_accessor) const {
 //
 //---------------------------------------------------------------------------
 void CDXLScalarConstValue::AssertValid(const CDXLNode *node,
-                                       BOOL  // validate_children
+                                       bool  // validate_children
 ) const {
   GPOS_ASSERT(0 == node->Arity());
   GPOS_ASSERT(m_dxl_datum->MDId()->IsValid());

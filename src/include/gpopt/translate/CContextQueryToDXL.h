@@ -55,8 +55,7 @@ class CContextQueryToDXL {
   CIdGenerator *m_queryid_counter;
 
   // does the query have any distributed tables?
-  BOOL m_has_distributed_tables;
-
+  bool m_has_distributed_tables;
 
  public:
   // ctor
@@ -65,7 +64,7 @@ class CContextQueryToDXL {
   // dtor
   ~CContextQueryToDXL();
 
-  ULONG GetNextQueryId();
+  uint32_t GetNextQueryId();
 };
 }  // namespace gpdxl
 #endif  // GPDXL_CContextQueryToDXL_H

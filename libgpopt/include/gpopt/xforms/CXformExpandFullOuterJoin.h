@@ -30,8 +30,8 @@ class CXformExpandFullOuterJoin : public CXformExploration {
  private:
   // construct a join expression of two CTEs using the given CTE ids
   // and output columns
-  static CExpression *PexprLogicalJoinOverCTEs(CMemoryPool *mp, EdxlJoinType edxljointype, ULONG ulLeftCTEId,
-                                               CColRefArray *pdrgpcrLeft, ULONG ulRightCTEId,
+  static CExpression *PexprLogicalJoinOverCTEs(CMemoryPool *mp, EdxlJoinType edxljointype, uint32_t ulLeftCTEId,
+                                               CColRefArray *pdrgpcrLeft, uint32_t ulRightCTEId,
                                                CColRefArray *pdrgpcrRight, CExpression *pexprScalar);
 
  public:
@@ -47,7 +47,7 @@ class CXformExpandFullOuterJoin : public CXformExploration {
   EXformId Exfid() const override { return ExfExpandFullOuterJoin; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformExpandFullOuterJoin"; }
+  const char *SzId() const override { return "CXformExpandFullOuterJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

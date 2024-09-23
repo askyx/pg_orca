@@ -39,24 +39,24 @@ class CLogicalMaxOneRow : public CLogical {
   EOperatorId Eopid() const override { return EopLogicalMaxOneRow; }
 
   // name of operator
-  const CHAR *SzId() const override { return "CLogicalMaxOneRow"; }
+  const char *SzId() const override { return "CLogicalMaxOneRow"; }
 
   // match function;
-  BOOL Matches(COperator *pop) const override { return (Eopid() == pop->Eopid()); }
+  bool Matches(COperator *pop) const override { return (Eopid() == pop->Eopid()); }
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
 
   // return true if we can pull projections up past this operator from its given child
-  BOOL FCanPullProjectionsUp(ULONG  // child_index
+  bool FCanPullProjectionsUp(uint32_t  // child_index
   ) const override {
     return false;
   }
@@ -103,7 +103,7 @@ class CLogicalMaxOneRow : public CLogical {
 
   // compute required stat columns of the n-th child
   CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                       ULONG child_index) const override;
+                       uint32_t child_index) const override;
 
   //-------------------------------------------------------------------------------------
   // Transformations

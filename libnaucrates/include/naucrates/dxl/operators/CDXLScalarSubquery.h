@@ -28,13 +28,13 @@ namespace gpdxl {
 class CDXLScalarSubquery : public CDXLScalar {
  private:
   // id of column computed by the subquery
-  ULONG m_colid;
+  uint32_t m_colid;
 
  public:
   CDXLScalarSubquery(CDXLScalarSubquery &) = delete;
 
   // ctor/dtor
-  CDXLScalarSubquery(CMemoryPool *mp, ULONG colid);
+  CDXLScalarSubquery(CMemoryPool *mp, uint32_t colid);
 
   ~CDXLScalarSubquery() override;
 
@@ -42,8 +42,7 @@ class CDXLScalarSubquery : public CDXLScalar {
   Edxlopid GetDXLOperator() const override;
 
   // colid of subquery column
-  ULONG
-  GetColId() const { return m_colid; }
+  uint32_t GetColId() const { return m_colid; }
 
   // name of the operator
   const CWStringConst *GetOpNameStr() const override;
@@ -59,7 +58,7 @@ class CDXLScalarSubquery : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     return true;
   }
@@ -67,7 +66,7 @@ class CDXLScalarSubquery : public CDXLScalar {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

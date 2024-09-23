@@ -47,20 +47,20 @@ class CConstraintNegation : public CConstraint {
   CConstraint *PcnstrChild() const { return m_pcnstr; }
 
   // is this constraint a contradiction
-  BOOL FContradiction() const override { return m_pcnstr->IsConstraintUnbounded(); }
+  bool FContradiction() const override { return m_pcnstr->IsConstraintUnbounded(); }
 
   // is this constraint unbounded
-  BOOL IsConstraintUnbounded() const override { return m_pcnstr->FContradiction(); }
+  bool IsConstraintUnbounded() const override { return m_pcnstr->FContradiction(); }
 
   // scalar expression
   CExpression *PexprScalar(CMemoryPool *mp) override;
 
   // check if there is a constraint on the given column
-  BOOL FConstraint(const CColRef *colref) const override { return m_pcnstr->FConstraint(colref); }
+  bool FConstraint(const CColRef *colref) const override { return m_pcnstr->FConstraint(colref); }
 
   // return a copy of the constraint with remapped columns
   CConstraint *PcnstrCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                             BOOL must_exist) override;
+                                             bool must_exist) override;
 
   // return constraint on a given column
   CConstraint *Pcnstr(CMemoryPool *mp, const CColRef *colref) override;

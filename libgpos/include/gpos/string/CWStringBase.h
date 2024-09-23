@@ -43,19 +43,19 @@ class CWStringBase {
  private:
  protected:
   // represents end-of-wide-string character
-  static const WCHAR m_empty_wcstr;
+  static const wchar_t m_empty_wcstr;
 
-  // size of the string in number of WCHAR units (not counting the terminating '\0')
-  ULONG m_length;
+  // size of the string in number of wchar_t units (not counting the terminating '\0')
+  uint32_t m_length;
 
   // whether string owns its memory and should take care of deallocating it at destruction time
-  BOOL m_owns_memory;
+  bool m_owns_memory;
 
  public:
   CWStringBase(const CWStringBase &) = delete;
 
   // ctor
-  CWStringBase(ULONG length, BOOL owns_memory) : m_length(length), m_owns_memory(owns_memory) {}
+  CWStringBase(uint32_t length, bool owns_memory) : m_length(length), m_owns_memory(owns_memory) {}
 
   // dtor
   virtual ~CWStringBase() = default;
@@ -64,36 +64,36 @@ class CWStringBase {
   virtual CWStringConst *Copy(CMemoryPool *mp) const;
 
   // accessors
-  virtual ULONG Length() const;
+  virtual uint32_t Length() const;
 
   // checks whether the string is byte-wise equal to another string
-  virtual BOOL Equals(const CWStringBase *str) const;
+  virtual bool Equals(const CWStringBase *str) const;
 
   // checks whether the string is equal to a string literal
-  virtual BOOL Equals(const WCHAR *str) const;
+  virtual bool Equals(const wchar_t *str) const;
 
   // checks whether the string contains any characters
-  virtual BOOL IsEmpty() const;
+  virtual bool IsEmpty() const;
 
   // checks whether a string is properly null-terminated
   bool IsValid() const;
 
   // equality operator
-  BOOL operator==(const CWStringBase &str) const;
+  bool operator==(const CWStringBase &str) const;
 
   // returns the wide character buffer storing the string
-  virtual const WCHAR *GetBuffer() const = 0;
+  virtual const wchar_t *GetBuffer() const = 0;
 
   // returns the index of the first occurrence of a character, -1 if not found
-  INT Find(WCHAR wc) const;
+  int32_t Find(wchar_t wc) const;
 
   // checks if a character is escaped
-  BOOL HasEscapedCharAt(ULONG offset) const;
+  bool HasEscapedCharAt(uint32_t offset) const;
 
   // count how many times the character appears in string
-  ULONG CountOccurrencesOf(const WCHAR wc) const;
+  uint32_t CountOccurrencesOf(const wchar_t wc) const;
 
-  static INT Compare(const void *left, const void *right) {
+  static int32_t Compare(const void *left, const void *right) {
     CWStringBase *leftstr = *(CWStringBase **)left;
     CWStringBase *rightstr = *(CWStringBase **)right;
     return wcscmp(leftstr->GetBuffer(), rightstr->GetBuffer());

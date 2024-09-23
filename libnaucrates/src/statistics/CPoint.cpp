@@ -38,7 +38,7 @@ CPoint::CPoint(IDatum *datum) : m_datum(datum) {
 //		Equality check
 //
 //---------------------------------------------------------------------------
-BOOL CPoint::Equals(const CPoint *point) const {
+bool CPoint::Equals(const CPoint *point) const {
   GPOS_ASSERT(nullptr != point);
   return m_datum->StatsAreEqual(point->m_datum);
 }
@@ -51,7 +51,7 @@ BOOL CPoint::Equals(const CPoint *point) const {
 //		Inequality check
 //
 //---------------------------------------------------------------------------
-BOOL CPoint::IsNotEqual(const CPoint *point) const {
+bool CPoint::IsNotEqual(const CPoint *point) const {
   return !(this->Equals(point));
 }
 
@@ -63,7 +63,7 @@ BOOL CPoint::IsNotEqual(const CPoint *point) const {
 //		Less than check
 //
 //---------------------------------------------------------------------------
-BOOL CPoint::IsLessThan(const CPoint *point) const {
+bool CPoint::IsLessThan(const CPoint *point) const {
   GPOS_ASSERT(nullptr != point);
   return m_datum->StatsAreComparable(point->m_datum) && m_datum->StatsAreLessThan(point->m_datum);
 }
@@ -76,7 +76,7 @@ BOOL CPoint::IsLessThan(const CPoint *point) const {
 //		Less than or equals check
 //
 //---------------------------------------------------------------------------
-BOOL CPoint::IsLessThanOrEqual(const CPoint *point) const {
+bool CPoint::IsLessThanOrEqual(const CPoint *point) const {
   return (this->IsLessThan(point) || this->Equals(point));
 }
 
@@ -88,7 +88,7 @@ BOOL CPoint::IsLessThanOrEqual(const CPoint *point) const {
 //		Greater than check
 //
 //---------------------------------------------------------------------------
-BOOL CPoint::IsGreaterThan(const CPoint *point) const {
+bool CPoint::IsGreaterThan(const CPoint *point) const {
   return m_datum->StatsAreComparable(point->m_datum) && m_datum->StatsAreGreaterThan(point->m_datum);
 }
 
@@ -100,7 +100,7 @@ BOOL CPoint::IsGreaterThan(const CPoint *point) const {
 //		Greater than or equals check
 //
 //---------------------------------------------------------------------------
-BOOL CPoint::IsGreaterThanOrEqual(const CPoint *point) const {
+bool CPoint::IsGreaterThanOrEqual(const CPoint *point) const {
   return (this->IsGreaterThan(point) || this->Equals(point));
 }
 
@@ -112,7 +112,7 @@ CDouble CPoint::Distance(const CPoint *point) const {
 // Distance between two points, taking bounds into account
 // this" is usually the higher value and "point" is the lower value
 // [0,5) would return 5, [0,5] would return 6 and (0,5) would return 4
-CDouble CPoint::Width(const CPoint *point, BOOL include_lower, BOOL include_upper) const {
+CDouble CPoint::Width(const CPoint *point, bool include_lower, bool include_upper) const {
   // default to a non zero constant for overlap computation
   CDouble width = CDouble(1.0);
   CDouble adjust = CDouble(0.0);

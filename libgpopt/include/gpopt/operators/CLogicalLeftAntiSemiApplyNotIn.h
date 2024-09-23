@@ -43,7 +43,7 @@ class CLogicalLeftAntiSemiApplyNotIn : public CLogicalLeftAntiSemiApply {
   EOperatorId Eopid() const override { return EopLogicalLeftAntiSemiApplyNotIn; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalLeftAntiSemiApplyNotIn"; }
+  const char *SzId() const override { return "CLogicalLeftAntiSemiApplyNotIn"; }
 
   //-------------------------------------------------------------------------------------
   // Transformations
@@ -57,7 +57,7 @@ class CLogicalLeftAntiSemiApplyNotIn : public CLogicalLeftAntiSemiApply {
   //-------------------------------------------------------------------------------------
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // conversion function
   static CLogicalLeftAntiSemiApplyNotIn *PopConvert(COperator *pop) {

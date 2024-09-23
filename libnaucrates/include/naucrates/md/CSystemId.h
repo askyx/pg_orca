@@ -34,11 +34,11 @@ class CSystemId {
   IMDId::EMDIdType m_mdid_type;
 
   // system id
-  WCHAR m_sysid_char[GPDXL_SYSID_LENGTH + 1];
+  wchar_t m_sysid_char[GPDXL_SYSID_LENGTH + 1];
 
  public:
   // ctor
-  CSystemId(IMDId::EMDIdType mdid_type, const WCHAR *sysid_char, ULONG length = GPDXL_SYSID_LENGTH);
+  CSystemId(IMDId::EMDIdType mdid_type, const wchar_t *sysid_char, uint32_t length = GPDXL_SYSID_LENGTH);
 
   // copy ctor
   CSystemId(const CSystemId &);
@@ -47,13 +47,13 @@ class CSystemId {
   IMDId::EMDIdType MdidType() const { return m_mdid_type; }
 
   // system id string
-  const WCHAR *GetBuffer() const { return m_sysid_char; }
+  const wchar_t *GetBuffer() const { return m_sysid_char; }
 
   // equality
-  BOOL Equals(const CSystemId &sysid) const;
+  bool Equals(const CSystemId &sysid) const;
 
   // hash function
-  ULONG HashValue() const;
+  uint32_t HashValue() const;
 };
 
 // dynamic arrays over md system id elements

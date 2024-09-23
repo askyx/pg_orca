@@ -45,7 +45,7 @@ CFileReader::~CFileReader() = default;
 //		Open file for reading
 //
 //---------------------------------------------------------------------------
-void CFileReader::Open(const CHAR *file_path, const ULONG permission_bits) {
+void CFileReader::Open(const char *file_path, const uint32_t permission_bits) {
   GPOS_ASSERT(nullptr != file_path);
 
   OpenFile(file_path, O_RDONLY, permission_bits);
@@ -74,16 +74,15 @@ void CFileReader::Close() {
 //		Read bytes from file
 //
 //---------------------------------------------------------------------------
-ULONG_PTR
-CFileReader::ReadBytesToBuffer(BYTE *read_buffer, const ULONG_PTR file_read_size) {
+uintptr_t CFileReader::ReadBytesToBuffer(uint8_t *read_buffer, const uintptr_t file_read_size) {
   GPOS_ASSERT(CFileDescriptor::IsFileOpen() && "Attempt to read from invalid file descriptor");
   GPOS_ASSERT(0 < file_read_size);
   GPOS_ASSERT(nullptr != read_buffer);
 
-  ULONG_PTR bytes_to_read = file_read_size;
+  uintptr_t bytes_to_read = file_read_size;
 
   while (0 < bytes_to_read) {
-    INT_PTR current_byte;
+    intptr_t current_byte;
 
     // read from file
     current_byte = ioutils::Read(GetFileDescriptor(), read_buffer, bytes_to_read);
@@ -120,8 +119,7 @@ CFileReader::ReadBytesToBuffer(BYTE *read_buffer, const ULONG_PTR file_read_size
 //		Get file size
 //
 //---------------------------------------------------------------------------
-ULLONG
-CFileReader::FileSize() const {
+uint64_t CFileReader::FileSize() const {
   return m_file_size;
 }
 
@@ -133,8 +131,7 @@ CFileReader::FileSize() const {
 //		Get file read size
 //
 //---------------------------------------------------------------------------
-ULLONG
-CFileReader::FileReadSize() const {
+uint64_t CFileReader::FileReadSize() const {
   return m_file_read_size;
 }
 

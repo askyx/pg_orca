@@ -39,7 +39,7 @@ class CXformLimit2IndexOnlyGet : public CXformLimit2IndexGet {
   EXformId Exfid() const override { return ExfLimit2IndexOnlyGet; }
 
   // xform name
-  const CHAR *SzId() const override { return "CXformLimit2IndexOnlyGet"; }
+  const char *SzId() const override { return "CXformLimit2IndexOnlyGet"; }
 
 };  // class CXformLimit2IndexOnlyGet
 

@@ -26,10 +26,10 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMDRelationGPDB::CMDRelationGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, BOOL fTemporary,
+CMDRelationGPDB::CMDRelationGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, bool fTemporary,
                                  Erelstoragetype rel_storage_type, CMDColumnArray *mdcol_array,
                                  ULongPtrArray *partition_cols_array, CharPtrArray *str_part_types_array,
-                                 IMdIdArray *partition_oids, BOOL convert_hash_to_random, ULongPtr2dArray *keyset_array,
+                                 IMdIdArray *partition_oids, bool convert_hash_to_random, ULongPtr2dArray *keyset_array,
                                  CMDIndexInfoArray *md_index_info_array, IMdIdArray *mdid_check_constraint_array,
                                  CDXLNode *mdpart_constraint, IMDId *foreign_server, CDouble rows)
     : m_mp(mp),
@@ -63,24 +63,25 @@ CMDRelationGPDB::CMDRelationGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, 
   m_nondrop_col_pos_array = GPOS_NEW(m_mp) ULongPtrArray(m_mp);
   m_col_width_array = GPOS_NEW(mp) CDoubleArray(mp);
 
-  const ULONG arity = mdcol_array->Size();
-  ULONG non_dropped_col_pos = 0;
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = mdcol_array->Size();
+  uint32_t non_dropped_col_pos = 0;
+  for (uint32_t ul = 0; ul < arity; ul++) {
     IMDColumn *mdcol = (*mdcol_array)[ul];
-    BOOL is_system_col = mdcol->IsSystemColumn();
+    bool is_system_col = mdcol->IsSystemColumn();
     if (is_system_col) {
       m_system_columns++;
     }
 
-    (void)m_attrno_nondrop_col_pos_map->Insert(GPOS_NEW(m_mp) INT(mdcol->AttrNum()), GPOS_NEW(m_mp) ULONG(ul));
+    (void)m_attrno_nondrop_col_pos_map->Insert(GPOS_NEW(m_mp) int32_t(mdcol->AttrNum()), GPOS_NEW(m_mp) uint32_t(ul));
 
     if (mdcol->IsDropped()) {
       m_dropped_cols++;
     } else {
       if (!is_system_col) {
-        m_nondrop_col_pos_array->Append(GPOS_NEW(m_mp) ULONG(ul));
+        m_nondrop_col_pos_array->Append(GPOS_NEW(m_mp) uint32_t(ul));
       }
-      (void)m_colpos_nondrop_colpos_map->Insert(GPOS_NEW(m_mp) ULONG(ul), GPOS_NEW(m_mp) ULONG(non_dropped_col_pos));
+      (void)m_colpos_nondrop_colpos_map->Insert(GPOS_NEW(m_mp) uint32_t(ul),
+                                                GPOS_NEW(m_mp) uint32_t(non_dropped_col_pos));
       non_dropped_col_pos++;
     }
 
@@ -149,7 +150,7 @@ CMDName CMDRelationGPDB::Mdname() const {
 //		Is the relation temporary
 //
 //---------------------------------------------------------------------------
-BOOL CMDRelationGPDB::IsTemporary() const {
+bool CMDRelationGPDB::IsTemporary() const {
   return m_is_temp_table;
 }
 
@@ -173,16 +174,14 @@ IMDRelation::Erelstoragetype CMDRelationGPDB::RetrieveRelStorageType() const {
 //		Returns the number of columns of this relation
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDRelationGPDB::ColumnCount() const {
+uint32_t CMDRelationGPDB::ColumnCount() const {
   GPOS_ASSERT(nullptr != m_md_col_array);
 
   return m_md_col_array->Size();
 }
 
 // Return the width of a column with regards to the position
-DOUBLE
-CMDRelationGPDB::ColWidth(ULONG pos) const {
+double CMDRelationGPDB::ColWidth(uint32_t pos) const {
   return (*m_col_width_array)[pos]->Get();
 }
 
@@ -194,7 +193,7 @@ CMDRelationGPDB::ColWidth(ULONG pos) const {
 //		Does relation have dropped columns
 //
 //---------------------------------------------------------------------------
-BOOL CMDRelationGPDB::HasDroppedColumns() const {
+bool CMDRelationGPDB::HasDroppedColumns() const {
   return 0 < m_dropped_cols;
 }
 
@@ -206,8 +205,7 @@ BOOL CMDRelationGPDB::HasDroppedColumns() const {
 //		Number of non-dropped columns
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDRelationGPDB::NonDroppedColsCount() const {
+uint32_t CMDRelationGPDB::NonDroppedColsCount() const {
   return ColumnCount() - m_dropped_cols;
 }
 
@@ -220,15 +218,14 @@ CMDRelationGPDB::NonDroppedColsCount() const {
 //		dropped columns
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDRelationGPDB::NonDroppedColAt(ULONG pos) const {
+uint32_t CMDRelationGPDB::NonDroppedColAt(uint32_t pos) const {
   GPOS_ASSERT(pos <= ColumnCount());
 
   if (!HasDroppedColumns()) {
     return pos;
   }
 
-  ULONG *colid = m_colpos_nondrop_colpos_map->Find(&pos);
+  uint32_t *colid = m_colpos_nondrop_colpos_map->Find(&pos);
 
   GPOS_ASSERT(nullptr != colid);
   return *colid;
@@ -242,9 +239,8 @@ CMDRelationGPDB::NonDroppedColAt(ULONG pos) const {
 //		Return the position of a column in the metadata object given the
 //      attribute number in the system catalog
 //---------------------------------------------------------------------------
-ULONG
-CMDRelationGPDB::GetPosFromAttno(INT attno) const {
-  ULONG *att_pos = m_attrno_nondrop_col_pos_map->Find(&attno);
+uint32_t CMDRelationGPDB::GetPosFromAttno(int32_t attno) const {
+  uint32_t *att_pos = m_attrno_nondrop_col_pos_map->Find(&attno);
   GPOS_ASSERT(nullptr != att_pos);
 
   return *att_pos;
@@ -270,8 +266,7 @@ ULongPtrArray *CMDRelationGPDB::NonDroppedColsArray() const {
 //		Returns the number of system columns of this relation
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDRelationGPDB::SystemColumnsCount() const {
+uint32_t CMDRelationGPDB::SystemColumnsCount() const {
   return m_system_columns;
 }
 
@@ -283,8 +278,7 @@ CMDRelationGPDB::SystemColumnsCount() const {
 //		Returns the number of key sets
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDRelationGPDB::KeySetCount() const {
+uint32_t CMDRelationGPDB::KeySetCount() const {
   return (m_keyset_array == nullptr) ? 0 : m_keyset_array->Size();
 }
 
@@ -296,7 +290,7 @@ CMDRelationGPDB::KeySetCount() const {
 //		Returns the key set at the specified position
 //
 //---------------------------------------------------------------------------
-const ULongPtrArray *CMDRelationGPDB::KeySetAt(ULONG pos) const {
+const ULongPtrArray *CMDRelationGPDB::KeySetAt(uint32_t pos) const {
   GPOS_ASSERT(nullptr != m_keyset_array);
 
   return (*m_keyset_array)[pos];
@@ -310,7 +304,7 @@ const ULongPtrArray *CMDRelationGPDB::KeySetAt(ULONG pos) const {
 //		Is the table partitioned
 //
 //---------------------------------------------------------------------------
-BOOL CMDRelationGPDB::IsPartitioned() const {
+bool CMDRelationGPDB::IsPartitioned() const {
   return (0 < PartColumnCount());
 }
 
@@ -322,8 +316,7 @@ BOOL CMDRelationGPDB::IsPartitioned() const {
 //		Returns the number of partition keys
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDRelationGPDB::PartColumnCount() const {
+uint32_t CMDRelationGPDB::PartColumnCount() const {
   return (m_partition_cols_array == nullptr) ? 0 : m_partition_cols_array->Size();
 }
 
@@ -333,7 +326,7 @@ CharPtrArray *CMDRelationGPDB::GetPartitionTypes() const {
 }
 
 // Returns the partition type of the given level
-CHAR CMDRelationGPDB::PartTypeAtLevel(ULONG ulLevel) const {
+char CMDRelationGPDB::PartTypeAtLevel(uint32_t ulLevel) const {
   return *(*m_str_part_types_array)[ulLevel];
 }
 
@@ -346,8 +339,8 @@ CHAR CMDRelationGPDB::PartTypeAtLevel(ULONG ulLevel) const {
 //		partition key list
 //
 //---------------------------------------------------------------------------
-const IMDColumn *CMDRelationGPDB::PartColAt(ULONG pos) const {
-  ULONG partition_key_pos = (*(*m_partition_cols_array)[pos]);
+const IMDColumn *CMDRelationGPDB::PartColAt(uint32_t pos) const {
+  uint32_t partition_key_pos = (*(*m_partition_cols_array)[pos]);
   return GetMdCol(partition_key_pos);
 }
 
@@ -359,8 +352,7 @@ const IMDColumn *CMDRelationGPDB::PartColAt(ULONG pos) const {
 //		Returns the number of indices of this relation
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDRelationGPDB::IndexCount() const {
+uint32_t CMDRelationGPDB::IndexCount() const {
   return m_mdindex_info_array->Size();
 }
 
@@ -372,7 +364,7 @@ CMDRelationGPDB::IndexCount() const {
 //		Returns the column at the specified position
 //
 //---------------------------------------------------------------------------
-const IMDColumn *CMDRelationGPDB::GetMdCol(ULONG pos) const {
+const IMDColumn *CMDRelationGPDB::GetMdCol(uint32_t pos) const {
   GPOS_ASSERT(pos < m_md_col_array->Size());
 
   return (*m_md_col_array)[pos];
@@ -385,7 +377,7 @@ const IMDColumn *CMDRelationGPDB::GetMdCol(ULONG pos) const {
 //	@doc:
 //		Return true if a hash distributed table needs to be considered as random during planning
 //---------------------------------------------------------------------------
-BOOL CMDRelationGPDB::ConvertHashToRandom() const {
+bool CMDRelationGPDB::ConvertHashToRandom() const {
   return m_convert_hash_to_random;
 }
 
@@ -397,7 +389,7 @@ BOOL CMDRelationGPDB::ConvertHashToRandom() const {
 //		Returns the id of the index at the specified position of the index array
 //
 //---------------------------------------------------------------------------
-IMDId *CMDRelationGPDB::IndexMDidAt(ULONG pos) const {
+IMDId *CMDRelationGPDB::IndexMDidAt(uint32_t pos) const {
   return (*m_mdindex_info_array)[pos]->MDId();
 }
 
@@ -409,8 +401,7 @@ IMDId *CMDRelationGPDB::IndexMDidAt(ULONG pos) const {
 //		Returns the number of check constraints on this relation
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDRelationGPDB::CheckConstraintCount() const {
+uint32_t CMDRelationGPDB::CheckConstraintCount() const {
   return m_mdid_check_constraint_array->Size();
 }
 
@@ -423,7 +414,7 @@ CMDRelationGPDB::CheckConstraintCount() const {
 //		the check constraint array
 //
 //---------------------------------------------------------------------------
-IMDId *CMDRelationGPDB::CheckConstraintMDidAt(ULONG pos) const {
+IMDId *CMDRelationGPDB::CheckConstraintMDidAt(uint32_t pos) const {
   return (*m_mdid_check_constraint_array)[pos];
 }
 
@@ -470,8 +461,8 @@ void CMDRelationGPDB::DebugPrint(IOstream &os) const {
   os << "Storage type: " << IMDRelation::GetStorageTypeStr(m_rel_storage_type)->GetBuffer() << std::endl;
 
   os << "Relation columns: " << std::endl;
-  const ULONG num_of_columns = ColumnCount();
-  for (ULONG ul = 0; ul < num_of_columns; ul++) {
+  const uint32_t num_of_columns = ColumnCount();
+  for (uint32_t ul = 0; ul < num_of_columns; ul++) {
     const IMDColumn *mdcol = GetMdCol(ul);
     mdcol->DebugPrint(os);
   }
@@ -480,8 +471,8 @@ void CMDRelationGPDB::DebugPrint(IOstream &os) const {
   os << std::endl;
 
   os << "Partition keys: ";
-  const ULONG part_columns = PartColumnCount();
-  for (ULONG ul = 0; ul < part_columns; ul++) {
+  const uint32_t part_columns = PartColumnCount();
+  for (uint32_t ul = 0; ul < part_columns; ul++) {
     if (0 < ul) {
       os << ", ";
     }
@@ -493,8 +484,8 @@ void CMDRelationGPDB::DebugPrint(IOstream &os) const {
   os << std::endl;
 
   os << "Index Info: ";
-  const ULONG indexes = m_mdindex_info_array->Size();
-  for (ULONG ul = 0; ul < indexes; ul++) {
+  const uint32_t indexes = m_mdindex_info_array->Size();
+  for (uint32_t ul = 0; ul < indexes; ul++) {
     CMDIndexInfo *mdindex_info = (*m_mdindex_info_array)[ul];
     mdindex_info->DebugPrint(os);
   }

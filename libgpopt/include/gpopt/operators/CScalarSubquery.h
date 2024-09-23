@@ -31,16 +31,16 @@ class CScalarSubquery : public CScalar {
   const CColRef *m_pcr;
 
   // is subquery generated from existential subquery?
-  BOOL m_fGeneratedByExist;
+  bool m_fGeneratedByExist;
 
   // is subquery generated from quantified subquery?
-  BOOL m_fGeneratedByQuantified;
+  bool m_fGeneratedByQuantified;
 
  public:
   CScalarSubquery(const CScalarSubquery &) = delete;
 
   // ctor
-  CScalarSubquery(CMemoryPool *mp, const CColRef *colref, BOOL fGeneratedByExist, BOOL fGeneratedByQuantified);
+  CScalarSubquery(CMemoryPool *mp, const CColRef *colref, bool fGeneratedByExist, bool fGeneratedByQuantified);
 
   // dtor
   ~CScalarSubquery() override;
@@ -49,7 +49,7 @@ class CScalarSubquery : public CScalar {
   EOperatorId Eopid() const override { return EopScalarSubquery; }
 
   // return a string for scalar subquery
-  const CHAR *SzId() const override { return "CScalarSubquery"; }
+  const char *SzId() const override { return "CScalarSubquery"; }
 
   // accessor to computed column reference
   const CColRef *Pcr() const { return m_pcr; }
@@ -58,25 +58,25 @@ class CScalarSubquery : public CScalar {
   IMDId *MdidType() const override;
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // return locally used columns
   CColRefSet *PcrsUsed(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
 
   // is subquery generated from existential subquery?
-  BOOL FGeneratedByExist() const { return m_fGeneratedByExist; }
+  bool FGeneratedByExist() const { return m_fGeneratedByExist; }
 
   // is subquery generated from quantified subquery?
-  BOOL FGeneratedByQuantified() const { return m_fGeneratedByQuantified; }
+  bool FGeneratedByQuantified() const { return m_fGeneratedByQuantified; }
 
   // derive partition consumer info
   CPartInfo *PpartinfoDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;

@@ -26,16 +26,16 @@ using namespace gpopt;
 //		Dump given string to output file
 //
 //---------------------------------------------------------------------------
-void CIOUtils::Dump(CHAR *file_name, CHAR *sz) {
+void CIOUtils::Dump(char *file_name, char *sz) {
   CAutoSuspendAbort asa;
 
-  const ULONG ulWrPerms = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+  const uint32_t ulWrPerms = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 
   GPOS_TRY {
     CFileWriter fw;
     fw.Open(file_name, ulWrPerms);
-    const BYTE *pb = reinterpret_cast<const BYTE *>(sz);
-    ULONG_PTR ulpLength = (ULONG_PTR)clib::Strlen(sz);
+    const uint8_t *pb = reinterpret_cast<const uint8_t *>(sz);
+    uintptr_t ulpLength = (uintptr_t)clib::Strlen(sz);
     fw.Write(pb, ulpLength);
     fw.Close();
   }

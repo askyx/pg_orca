@@ -29,14 +29,14 @@ class CWString;
 class CStackDescriptor {
  private:
   // stack depth
-  ULONG m_depth{0};
+  uint32_t m_depth{0};
 
   // array with frame return addresses
   void *m_array_of_addresses[GPOS_STACK_TRACE_DEPTH];
 
   // append formatted symbol description
-  void AppendSymbolInfo(CWString *ws, CHAR *demangling_symbol_buffer, SIZE_T size, const Dl_info &symbol_info_array,
-                        ULONG index) const;
+  void AppendSymbolInfo(CWString *ws, char *demangling_symbol_buffer, size_t size, const Dl_info &symbol_info_array,
+                        uint32_t index) const;
 
   // reset descriptor
   void Reset() {
@@ -49,16 +49,16 @@ class CStackDescriptor {
   CStackDescriptor() { Reset(); }
 
   // store current stack skipping (top_frames_to_skip) top frames
-  void BackTrace(ULONG top_frames_to_skip = 0);
+  void BackTrace(uint32_t top_frames_to_skip = 0);
 
   // append trace of stored stack to string
-  void AppendTrace(CWString *ws, ULONG depth = GPOS_STACK_TRACE_DEPTH) const;
+  void AppendTrace(CWString *ws, uint32_t depth = GPOS_STACK_TRACE_DEPTH) const;
 
   // append trace of stored stack to stream
-  void AppendTrace(IOstream &os, ULONG depth = GPOS_STACK_TRACE_DEPTH) const;
+  void AppendTrace(IOstream &os, uint32_t depth = GPOS_STACK_TRACE_DEPTH) const;
 
   // get hash value for stored stack
-  ULONG HashValue() const;
+  uint32_t HashValue() const;
 
 };  // class CStackTrace
 

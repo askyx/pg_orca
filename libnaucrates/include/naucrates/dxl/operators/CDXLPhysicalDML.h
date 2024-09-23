@@ -42,23 +42,23 @@ class CDXLPhysicalDML : public CDXLPhysical {
   ULongPtrArray *m_src_colids_array;
 
   // action column id
-  ULONG m_action_colid;
+  uint32_t m_action_colid;
 
   // ctid column id
-  ULONG m_ctid_colid;
+  uint32_t m_ctid_colid;
 
   // segmentid column id
-  ULONG m_segid_colid;
+  uint32_t m_segid_colid;
 
   // Is Split Update
-  BOOL m_fSplit;
+  bool m_fSplit;
 
  public:
   CDXLPhysicalDML(const CDXLPhysicalDML &) = delete;
 
   // ctor
   CDXLPhysicalDML(CMemoryPool *mp, const EdxlDmlType dxl_dml_type, CDXLTableDescr *table_descr,
-                  ULongPtrArray *src_colids_array, ULONG action_colid, ULONG ctid_colid, ULONG segid_colid);
+                  ULongPtrArray *src_colids_array, uint32_t action_colid, uint32_t ctid_colid, uint32_t segid_colid);
 
   // dtor
   ~CDXLPhysicalDML() override;
@@ -79,24 +79,21 @@ class CDXLPhysicalDML : public CDXLPhysical {
   ULongPtrArray *GetSrcColIdsArray() const { return m_src_colids_array; }
 
   // action column id
-  ULONG
-  ActionColId() const { return m_action_colid; }
+  uint32_t ActionColId() const { return m_action_colid; }
 
   // ctid column id
-  ULONG
-  GetCtIdColId() const { return m_ctid_colid; }
+  uint32_t GetCtIdColId() const { return m_ctid_colid; }
 
   // segmentid column id
-  ULONG
-  GetSegmentIdColId() const { return m_segid_colid; }
+  uint32_t GetSegmentIdColId() const { return m_segid_colid; }
 
   // Is update using split
-  BOOL FSplit() const { return m_fSplit; }
+  bool FSplit() const { return m_fSplit; }
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *node, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 
   // serialize operator in DXL format

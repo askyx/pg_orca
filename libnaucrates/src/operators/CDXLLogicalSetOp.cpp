@@ -33,7 +33,7 @@ using namespace gpdxl;
 //
 //---------------------------------------------------------------------------
 CDXLLogicalSetOp::CDXLLogicalSetOp(CMemoryPool *mp, EdxlSetOpType edxlsetoptype, CDXLColDescrArray *col_descr_array,
-                                   ULongPtr2dArray *input_colids_arrays, BOOL fCastAcrossInputs)
+                                   ULongPtr2dArray *input_colids_arrays, bool fCastAcrossInputs)
     : CDXLLogical(mp),
       m_set_operation_dxl_type(edxlsetoptype),
       m_col_descr_array(col_descr_array),
@@ -44,9 +44,9 @@ CDXLLogicalSetOp::CDXLLogicalSetOp(CMemoryPool *mp, EdxlSetOpType edxlsetoptype,
   GPOS_ASSERT(EdxlsetopSentinel > edxlsetoptype);
 
 #ifdef GPOS_DEBUG
-  const ULONG num_of_cols = m_col_descr_array->Size();
-  const ULONG length = m_input_colids_arrays->Size();
-  for (ULONG idx = 0; idx < length; idx++) {
+  const uint32_t num_of_cols = m_col_descr_array->Size();
+  const uint32_t length = m_input_colids_arrays->Size();
+  for (uint32_t idx = 0; idx < length; idx++) {
     ULongPtrArray *input_colids_array = (*m_input_colids_arrays)[idx];
     GPOS_ASSERT(num_of_cols == input_colids_array->Size());
   }
@@ -121,10 +121,10 @@ const CWStringConst *CDXLLogicalSetOp::GetOpNameStr() const {
 //		Check if given column is defined by operator
 //
 //---------------------------------------------------------------------------
-BOOL CDXLLogicalSetOp::IsColDefined(ULONG colid) const {
-  const ULONG size = Arity();
-  for (ULONG descr_id = 0; descr_id < size; descr_id++) {
-    ULONG id = GetColumnDescrAt(descr_id)->Id();
+bool CDXLLogicalSetOp::IsColDefined(uint32_t colid) const {
+  const uint32_t size = Arity();
+  for (uint32_t descr_id = 0; descr_id < size; descr_id++) {
+    uint32_t id = GetColumnDescrAt(descr_id)->Id();
     if (id == colid) {
       return true;
     }
@@ -142,17 +142,17 @@ BOOL CDXLLogicalSetOp::IsColDefined(ULONG colid) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalSetOp::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLLogicalSetOp::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(2 <= node->Arity());
   GPOS_ASSERT(nullptr != m_col_descr_array);
 
   // validate output columns
-  const ULONG num_of_output_cols = m_col_descr_array->Size();
+  const uint32_t num_of_output_cols = m_col_descr_array->Size();
   GPOS_ASSERT(0 < num_of_output_cols);
 
   // validate children
-  const ULONG num_of_child = node->Arity();
-  for (ULONG idx = 0; idx < num_of_child; ++idx) {
+  const uint32_t num_of_child = node->Arity();
+  for (uint32_t idx = 0; idx < num_of_child; ++idx) {
     CDXLNode *child_dxlnode = (*node)[idx];
     GPOS_ASSERT(EdxloptypeLogical == child_dxlnode->GetOperator()->GetDXLOperatorType());
 

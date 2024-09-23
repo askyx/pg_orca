@@ -113,7 +113,7 @@ class CMDTypeInt2GPDB : public IMDTypeInt2 {
   ~CMDTypeInt2GPDB() override;
 
   // factory method for creating INT2 datums
-  IDatumInt2 *CreateInt2Datum(CMemoryPool *mp, SINT value, BOOL is_null) const override;
+  IDatumInt2 *CreateInt2Datum(CMemoryPool *mp, int16_t value, bool is_null) const override;
 
   // accessors
 
@@ -132,29 +132,28 @@ class CMDTypeInt2GPDB : public IMDTypeInt2 {
   IMDId *GetMdidForAggType(EAggType agg_type) const override;
 
   // is type has fixed length
-  BOOL IsFixedLength() const override { return true; }
+  bool IsFixedLength() const override { return true; }
 
   // is type composite
-  BOOL IsComposite() const override { return false; }
+  bool IsComposite() const override { return false; }
 
   // size of type
-  ULONG
-  Length() const override { return GPDB_INT2_LENGTH; }
+  uint32_t Length() const override { return GPDB_INT2_LENGTH; }
 
   // return the GPDB length
-  virtual INT GetGPDBLength() const { return GPDB_INT2_LENGTH; }
+  virtual int32_t GetGPDBLength() const { return GPDB_INT2_LENGTH; }
 
   // is type passed by value
-  BOOL IsPassedByValue() const override { return true; }
+  bool IsPassedByValue() const override { return true; }
 
   // metadata id of b-tree lookup operator
   const IMDId *CmpOpMdid() const override { return m_mdid_op_cmp; }
 
   // is type hashable
-  BOOL IsHashable() const override { return true; }
+  bool IsHashable() const override { return true; }
 
   // is type merge joinable
-  BOOL IsMergeJoinable() const override { return true; }
+  bool IsMergeJoinable() const override { return true; }
 
   // metadata id of array type
   IMDId *GetArrayTypeMdid() const override { return m_mdid_type_array; }

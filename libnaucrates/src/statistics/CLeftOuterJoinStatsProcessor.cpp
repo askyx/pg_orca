@@ -75,7 +75,7 @@ UlongToHistogramMap *CLeftOuterJoinStatsProcessor::MakeLOJHistogram(
 
   // build a bitset with all outer child columns contributing to the join
   CBitSet *outer_side_join_cols = GPOS_NEW(mp) CBitSet(mp);
-  for (ULONG j = 0; j < join_preds_stats->Size(); j++) {
+  for (uint32_t j = 0; j < join_preds_stats->Size(); j++) {
     CStatsPredJoin *join_stats = (*join_preds_stats)[j];
     if (join_stats->HasValidColIdOuter()) {
       (void)outer_side_join_cols->ExchangeSet(join_stats->ColIdOuter());
@@ -94,10 +94,10 @@ UlongToHistogramMap *CLeftOuterJoinStatsProcessor::MakeLOJHistogram(
   UlongToHistogramMap *LOJ_histograms = GPOS_NEW(mp) UlongToHistogramMap(mp);
 
   ULongPtrArray *outer_colids_with_stats = outer_side_stats->GetColIdsWithStats(mp);
-  const ULONG num_outer_cols = outer_colids_with_stats->Size();
+  const uint32_t num_outer_cols = outer_colids_with_stats->Size();
 
-  for (ULONG i = 0; i < num_outer_cols; i++) {
-    ULONG colid = *(*outer_colids_with_stats)[i];
+  for (uint32_t i = 0; i < num_outer_cols; i++) {
+    uint32_t colid = *(*outer_colids_with_stats)[i];
     const CHistogram *inner_join_histogram = inner_join_stats->GetHistogram(colid);
     GPOS_ASSERT(nullptr != inner_join_histogram);
 
@@ -149,10 +149,10 @@ void CLeftOuterJoinStatsProcessor::AddHistogramsLOJInner(CMemoryPool *mp, const 
   GPOS_ASSERT(nullptr != inner_colids_with_stats);
   GPOS_ASSERT(nullptr != LOJ_histograms);
 
-  const ULONG num_inner_cols = inner_colids_with_stats->Size();
+  const uint32_t num_inner_cols = inner_colids_with_stats->Size();
 
-  for (ULONG ul = 0; ul < num_inner_cols; ul++) {
-    ULONG colid = *(*inner_colids_with_stats)[ul];
+  for (uint32_t ul = 0; ul < num_inner_cols; ul++) {
+    uint32_t colid = *(*inner_colids_with_stats)[ul];
 
     const CHistogram *inner_join_histogram = inner_join_stats->GetHistogram(colid);
     GPOS_ASSERT(nullptr != inner_join_histogram);

@@ -28,16 +28,16 @@ namespace gpos {
 class CLoggerSyslog : public CLogger {
  private:
   // executable name
-  const CHAR *m_proc_name;
+  const char *m_proc_name;
 
   // initialization flags
-  ULONG m_init_mask;
+  uint32_t m_init_mask;
 
   // message priotity
-  ULONG m_message_priority;
+  uint32_t m_message_priority;
 
   // write string to syslog
-  void Write(const WCHAR *log_entry, ULONG severity) override;
+  void Write(const wchar_t *log_entry, uint32_t severity) override;
 
   static CLoggerSyslog m_alert_logger;
 
@@ -45,13 +45,13 @@ class CLoggerSyslog : public CLogger {
   CLoggerSyslog(const CLoggerSyslog &) = delete;
 
   // ctor
-  CLoggerSyslog(const CHAR *proc_name, ULONG init_mask, ULONG message_priority);
+  CLoggerSyslog(const char *proc_name, uint32_t init_mask, uint32_t message_priority);
 
   // dtor
   ~CLoggerSyslog() override;
 
   // write alert message to syslog - use ASCII characters only
-  static void Alert(const WCHAR *msg);
+  static void Alert(const wchar_t *msg);
 
 };  // class CLoggerSyslog
 }  // namespace gpos

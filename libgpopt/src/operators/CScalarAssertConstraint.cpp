@@ -51,7 +51,7 @@ CScalarAssertConstraint::~CScalarAssertConstraint() {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarAssertConstraint::Matches(COperator *pop) const {
+bool CScalarAssertConstraint::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }

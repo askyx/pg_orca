@@ -99,8 +99,8 @@ class CJobStateMachine {
   void Init(const TEnumEvent rgfTransitions[estSentinel][estSentinel]
 #ifdef GPOS_DEBUG
             ,
-            const WCHAR wszStates[estSentinel][GPOPT_FSM_NAME_LENGTH],
-            const WCHAR wszEvent[estSentinel][GPOPT_FSM_NAME_LENGTH]
+            const wchar_t wszStates[estSentinel][GPOPT_FSM_NAME_LENGTH],
+            const wchar_t wszEvent[estSentinel][GPOPT_FSM_NAME_LENGTH]
 #endif  // GPOS_DEBUG
   ) {
     Reset();
@@ -122,7 +122,7 @@ class CJobStateMachine {
   }
 
   // run the state machine
-  BOOL FRun(CSchedulerContext *psc, CJob *pjOwner) {
+  bool FRun(CSchedulerContext *psc, CJob *pjOwner) {
     GPOS_ASSERT(nullptr != psc);
     GPOS_ASSERT(nullptr != pjOwner);
 
@@ -148,7 +148,7 @@ class CJobStateMachine {
 
       // use the event to transition state machine
       estNext = estCurrent;
-      BOOL fSucceeded GPOS_ASSERTS_ONLY = m_sm.FTransition(eev, estNext);
+      bool fSucceeded GPOS_ASSERTS_ONLY = m_sm.FTransition(eev, estNext);
 
       GPOS_ASSERT(fSucceeded);
     } while (estNext != estCurrent && estNext != m_sm.TesFinal());
@@ -161,7 +161,7 @@ class CJobStateMachine {
     m_sm.Reset();
 
     // initialize actions array
-    for (ULONG i = 0; i < estSentinel; i++) {
+    for (uint32_t i = 0; i < estSentinel; i++) {
       m_rgPfuncAction[i] = nullptr;
     }
   }
@@ -174,14 +174,14 @@ class CJobStateMachine {
   }
 
   // dump state machine diagram in graphviz format
-  IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const WCHAR *wszTitle) const {
+  IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const wchar_t *wszTitle) const {
     (void)m_sm.OsDiagramToGraphviz(mp, os, wszTitle);
 
     return os;
   }
 
   // compute unreachable states
-  void Unreachable(CMemoryPool *mp, TEnumState **ppestate, ULONG *pulSize) const {
+  void Unreachable(CMemoryPool *mp, TEnumState **ppestate, uint32_t *pulSize) const {
     m_sm.Unreachable(mp, ppestate, pulSize);
   }
 

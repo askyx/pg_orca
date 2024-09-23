@@ -48,7 +48,7 @@ CXform::EXformPromise CXformSubqueryUnnest::Exfp(CExpressionHandle &exprhdl) con
 //
 //---------------------------------------------------------------------------
 CExpression *CXformSubqueryUnnest::PexprSubqueryUnnest(CMemoryPool *mp, CExpression *pexpr,
-                                                       BOOL fEnforceCorrelatedApply) {
+                                                       bool fEnforceCorrelatedApply) {
   GPOS_ASSERT(nullptr != pexpr);
 
   if (GPOS_FTRACE(EopttraceEnforceCorrelatedExecution) && !fEnforceCorrelatedApply) {
@@ -125,7 +125,7 @@ CExpression *CXformSubqueryUnnest::PexprSubqueryUnnest(CMemoryPool *mp, CExpress
 }
 
 void CXformSubqueryUnnest::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr,
-                                     BOOL fEnforceCorrelatedApply) const {
+                                     bool fEnforceCorrelatedApply) const {
   CMemoryPool *pmp = pxfctxt->Pmp();
 
   CExpression *pexprAvoidCorrelatedApply = PexprSubqueryUnnest(pmp, pexpr, fEnforceCorrelatedApply);

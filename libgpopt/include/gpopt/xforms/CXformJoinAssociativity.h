@@ -44,7 +44,7 @@ class CXformJoinAssociativity : public CXformExploration {
   EXformId Exfid() const override { return ExfJoinAssociativity; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformJoinAssociativity"; }
+  const char *SzId() const override { return "CXformJoinAssociativity"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

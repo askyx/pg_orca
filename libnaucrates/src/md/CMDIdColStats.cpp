@@ -22,7 +22,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMDIdColStats::CMDIdColStats(CMDIdGPDB *rel_mdid, ULONG pos)
+CMDIdColStats::CMDIdColStats(CMDIdGPDB *rel_mdid, uint32_t pos)
     : m_rel_mdid(rel_mdid), m_attr_pos(pos), m_str(m_mdid_buffer, GPOS_ARRAY_SIZE(m_mdid_buffer)) {
   GPOS_ASSERT(rel_mdid->IsValid());
 }
@@ -66,7 +66,7 @@ void CMDIdColStats::Serialize() const {
 //		Returns the string representation of the mdid
 //
 //---------------------------------------------------------------------------
-const WCHAR *CMDIdColStats::GetBuffer() const {
+const wchar_t *CMDIdColStats::GetBuffer() const {
   Serialize();
   return m_str.GetBuffer();
 }
@@ -91,8 +91,7 @@ IMDId *CMDIdColStats::GetRelMdId() const {
 //		Returns the attribute number
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIdColStats::Position() const {
+uint32_t CMDIdColStats::Position() const {
   return m_attr_pos;
 }
 
@@ -104,7 +103,7 @@ CMDIdColStats::Position() const {
 //		Checks if the mdids are equal
 //
 //---------------------------------------------------------------------------
-BOOL CMDIdColStats::Equals(const IMDId *mdid) const {
+bool CMDIdColStats::Equals(const IMDId *mdid) const {
   if (nullptr == mdid || EmdidColStats != mdid->MdidType()) {
     return false;
   }

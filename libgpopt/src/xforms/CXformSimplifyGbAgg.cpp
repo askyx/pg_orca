@@ -69,7 +69,7 @@ CXform::EXformPromise CXformSimplifyGbAgg::Exfp(CExpressionHandle &exprhdl) cons
 //		columns include a key
 //
 //---------------------------------------------------------------------------
-BOOL CXformSimplifyGbAgg::FDropGbAgg(CMemoryPool *mp, CExpression *pexpr, CXformResult *pxfres) {
+bool CXformSimplifyGbAgg::FDropGbAgg(CMemoryPool *mp, CExpression *pexpr, CXformResult *pxfres) {
   CLogicalGbAgg *popAgg = CLogicalGbAgg::PopConvert(pexpr->Pop());
   CExpression *pexprRelational = (*pexpr)[0];
   CExpression *pexprProjectList = (*pexpr)[1];
@@ -85,16 +85,16 @@ BOOL CXformSimplifyGbAgg::FDropGbAgg(CMemoryPool *mp, CExpression *pexpr, CXform
     return false;
   }
 
-  const ULONG ulKeys = pkc->Keys();
-  BOOL fDrop = false;
-  for (ULONG ul = 0; !fDrop && ul < ulKeys; ul++) {
+  const uint32_t ulKeys = pkc->Keys();
+  bool fDrop = false;
+  for (uint32_t ul = 0; !fDrop && ul < ulKeys; ul++) {
     CColRefArray *pdrgpcrKey = pkc->PdrgpcrKey(mp, ul);
     CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, pdrgpcrKey);
     pdrgpcrKey->Release();
 
     CColRefSet *pcrsGrpCols = GPOS_NEW(mp) CColRefSet(mp);
     pcrsGrpCols->Include(popAgg->Pdrgpcr());
-    BOOL fGrpColsHasKey = pcrsGrpCols->ContainsAll(pcrs);
+    bool fGrpColsHasKey = pcrsGrpCols->ContainsAll(pcrs);
 
     pcrs->Release();
     pcrsGrpCols->Release();
@@ -146,8 +146,8 @@ void CXformSimplifyGbAgg::Transform(CXformContext *pxfctxt, CXformResult *pxfres
   CFunctionalDependencyArray *pdrgpfd = pexpr->DeriveFunctionalDependencies();
 
   // collect grouping columns FD's
-  const ULONG size = (pdrgpfd == nullptr) ? 0 : pdrgpfd->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = (pdrgpfd == nullptr) ? 0 : pdrgpfd->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     CFunctionalDependency *pfd = (*pdrgpfd)[ul];
     if (pfd->FIncluded(pcrsGrpCols)) {
       pcrsCovered->Include(pfd->PcrsDetermined());
@@ -155,7 +155,7 @@ void CXformSimplifyGbAgg::Transform(CXformContext *pxfctxt, CXformResult *pxfres
       pcrsMinimal->Include(pfd->PcrsKey());
     }
   }
-  BOOL fCovered = pcrsCovered->Equals(pcrsGrpCols);
+  bool fCovered = pcrsCovered->Equals(pcrsGrpCols);
   pcrsGrpCols->Release();
   pcrsCovered->Release();
 

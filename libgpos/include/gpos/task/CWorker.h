@@ -39,31 +39,31 @@ class CWorker : public IWorker {
   CTask *m_task;
 
   // available stack
-  ULONG m_stack_size;
+  uint32_t m_stack_size;
 
   // start address of current thread's stack
-  const ULONG_PTR m_stack_start;
+  const uintptr_t m_stack_start;
 
   // execute single task
   void Execute(CTask *task);
 
   // check for abort request
-  void CheckForAbort(const CHAR *file, ULONG line_num) override;
+  void CheckForAbort(const char *file, uint32_t line_num) override;
 
  public:
   CWorker(const CWorker &) = delete;
 
   // ctor
-  CWorker(ULONG stack_size, ULONG_PTR stack_start);
+  CWorker(uint32_t stack_size, uintptr_t stack_start);
 
   // dtor
   ~CWorker() override;
 
   // stack start accessor
-  inline ULONG_PTR GetStackStart() const override { return m_stack_start; }
+  inline uintptr_t GetStackStart() const override { return m_stack_start; }
 
   // stack check
-  BOOL CheckStackSize(ULONG request = 0) const override;
+  bool CheckStackSize(uint32_t request = 0) const override;
 
   // accessor
   inline CTask *GetTask() override { return m_task; }

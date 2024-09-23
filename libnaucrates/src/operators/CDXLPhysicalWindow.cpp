@@ -77,8 +77,7 @@ const CWStringConst *CDXLPhysicalWindow::GetOpNameStr() const {
 //		Returns the number of partition columns
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLPhysicalWindow::PartByColsCount() const {
+uint32_t CDXLPhysicalWindow::PartByColsCount() const {
   return m_part_by_colid_array->Size();
 }
 
@@ -90,8 +89,7 @@ CDXLPhysicalWindow::PartByColsCount() const {
 //		Returns the number of window keys
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLPhysicalWindow::WindowKeysCount() const {
+uint32_t CDXLPhysicalWindow::WindowKeysCount() const {
   return m_dxl_window_key_array->Size();
 }
 
@@ -103,7 +101,7 @@ CDXLPhysicalWindow::WindowKeysCount() const {
 //		Return the window key at a given position
 //
 //---------------------------------------------------------------------------
-CDXLWindowKey *CDXLPhysicalWindow::GetDXLWindowKeyAt(ULONG position) const {
+CDXLWindowKey *CDXLPhysicalWindow::GetDXLWindowKeyAt(uint32_t position) const {
   GPOS_ASSERT(position <= m_dxl_window_key_array->Size());
   return (*m_dxl_window_key_array)[position];
 }
@@ -117,7 +115,7 @@ CDXLWindowKey *CDXLPhysicalWindow::GetDXLWindowKeyAt(ULONG position) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalWindow::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLPhysicalWindow::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   // assert proj list and filter are valid
   CDXLPhysical::AssertValid(dxlnode, validate_children);
   GPOS_ASSERT(nullptr != m_part_by_colid_array);

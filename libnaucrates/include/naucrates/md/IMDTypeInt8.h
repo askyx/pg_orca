@@ -40,7 +40,7 @@ class IMDTypeInt8 : public IMDType {
   ETypeInfo GetDatumType() const override { return IMDTypeInt8::GetTypeInfo(); }
 
   // factory function for INT8 datums
-  virtual IDatumInt8 *CreateInt8Datum(CMemoryPool *mp, LINT value, BOOL is_null) const = 0;
+  virtual IDatumInt8 *CreateInt8Datum(CMemoryPool *mp, int64_t value, bool is_null) const = 0;
 };
 
 }  // namespace gpmd

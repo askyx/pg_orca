@@ -38,7 +38,7 @@ CPhysicalForeignScan::CPhysicalForeignScan(CMemoryPool *mp, const CName *pnameAl
 //		match operator
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalForeignScan::Matches(COperator *pop) const {
+bool CPhysicalForeignScan::Matches(COperator *pop) const {
   if (Eopid() != pop->Eopid()) {
     return false;
   }

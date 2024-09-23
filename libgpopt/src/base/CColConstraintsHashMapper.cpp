@@ -17,9 +17,9 @@ CConstraintArray *CColConstraintsHashMapper::PdrgPcnstrLookup(CColRef *colref) {
 static ColRefToConstraintArrayMap *PhmcolconstrSingleColConstr(CMemoryPool *mp, const CConstraintArray *drgPcnstr) {
   ColRefToConstraintArrayMap *phmcolconstr = GPOS_NEW(mp) ColRefToConstraintArrayMap(mp);
 
-  const ULONG length = drgPcnstr->Size();
+  const uint32_t length = drgPcnstr->Size();
 
-  for (ULONG ul = 0; ul < length; ul++) {
+  for (uint32_t ul = 0; ul < length; ul++) {
     CConstraint *pcnstrChild = (*drgPcnstr)[ul];
     CColRefSet *pcrs = pcnstrChild->PcrsUsed();
 

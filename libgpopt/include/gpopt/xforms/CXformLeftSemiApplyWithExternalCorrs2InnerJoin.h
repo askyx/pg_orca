@@ -34,12 +34,12 @@ class CXformLeftSemiApplyWithExternalCorrs2InnerJoin
     : public CXformApply2Join<CLogicalLeftSemiApply, CLogicalInnerJoin> {
  private:
   // helper for splitting correlations into external and residual
-  static BOOL FSplitCorrelations(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner,
+  static bool FSplitCorrelations(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner,
                                  CExpressionArray *pdrgpexprAllCorr, CExpressionArray **ppdrgpexprExternal,
                                  CExpressionArray **ppdrgpexprResidual, CColRefSet **ppcrsInnerUsed);
 
   // helper for collecting correlations
-  static BOOL FDecorrelate(CMemoryPool *mp, CExpression *pexpr, CExpression **ppexprInnerNew,
+  static bool FDecorrelate(CMemoryPool *mp, CExpression *pexpr, CExpression **ppexprInnerNew,
                            CExpressionArray **ppdrgpexprCorr);
 
   // decorrelate semi apply with external correlations
@@ -62,7 +62,7 @@ class CXformLeftSemiApplyWithExternalCorrs2InnerJoin
   // ident accessors
   EXformId Exfid() const override { return ExfLeftSemiApplyWithExternalCorrs2InnerJoin; }
 
-  const CHAR *SzId() const override { return "CXformLeftSemiApplyWithExternalCorrs2InnerJoin"; }
+  const char *SzId() const override { return "CXformLeftSemiApplyWithExternalCorrs2InnerJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

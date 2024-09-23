@@ -102,7 +102,7 @@ IMDId *CDXLScalarCast::FuncMdId() const {
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarCast::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarCast::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
 }
 
@@ -115,7 +115,7 @@ BOOL CDXLScalarCast::HasBoolResult(CMDAccessor *md_accessor) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarCast::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarCast::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(1 == dxlnode->Arity());
 
   CDXLNode *child_dxlnode = (*dxlnode)[0];

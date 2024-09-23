@@ -30,7 +30,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLDatumInt8::CDXLDatumInt8(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, LINT val)
+CDXLDatumInt8::CDXLDatumInt8(CMemoryPool *mp, IMDId *mdid_type, bool is_null, int64_t val)
     : CDXLDatum(mp, mdid_type, default_type_modifier, is_null, 8 /*length*/), m_val(val) {
   if (is_null) {
     m_val = 0;
@@ -45,6 +45,6 @@ CDXLDatumInt8::CDXLDatumInt8(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, LI
 //		Return the long int value
 //
 //---------------------------------------------------------------------------
-LINT CDXLDatumInt8::Value() const {
+int64_t CDXLDatumInt8::Value() const {
   return m_val;
 }

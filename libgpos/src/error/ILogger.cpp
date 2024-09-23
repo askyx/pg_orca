@@ -48,7 +48,7 @@ ILogger::~ILogger() = default;
 //		Retrieve warning message from repository and log it to error log
 //
 //---------------------------------------------------------------------------
-void ILogger::Warning(const CHAR *filename, ULONG line, ULONG major, ULONG minor...) {
+void ILogger::Warning(const char *filename, uint32_t line, uint32_t major, uint32_t minor...) {
   GPOS_CHECK_ABORT;
 
   // get warning
@@ -67,7 +67,7 @@ void ILogger::Warning(const CHAR *filename, ULONG line, ULONG major, ULONG minor
 
   GPOS_ASSERT(CException::ExsevWarning == msg->GetSeverity());
 
-  WCHAR buffer[GPOS_LOG_MESSAGE_BUFFER_SIZE];
+  wchar_t buffer[GPOS_LOG_MESSAGE_BUFFER_SIZE];
   CWStringStatic str(buffer, GPOS_ARRAY_SIZE(buffer));
 
   // format warning message
@@ -92,7 +92,7 @@ void ILogger::Warning(const CHAR *filename, ULONG line, ULONG major, ULONG minor
 //		Format and log debugging message to current task's output or error log
 //
 //---------------------------------------------------------------------------
-void ILogger::Trace(const CHAR *filename, ULONG line, BOOL is_err, const WCHAR *msg) {
+void ILogger::Trace(const char *filename, uint32_t line, bool is_err, const wchar_t *msg) {
   GPOS_CHECK_ABORT;
 
   LogTask(msg, CException::ExsevTrace, is_err, filename, line);
@@ -106,10 +106,10 @@ void ILogger::Trace(const CHAR *filename, ULONG line, BOOL is_err, const WCHAR *
 //		Format and log debugging message to current task's output or error log
 //
 //---------------------------------------------------------------------------
-void ILogger::TraceFormat(const CHAR *filename, ULONG line, BOOL is_err, const WCHAR *format, ...) {
+void ILogger::TraceFormat(const char *filename, uint32_t line, bool is_err, const wchar_t *format, ...) {
   GPOS_CHECK_ABORT;
 
-  WCHAR buffer[GPOS_LOG_TRACE_BUFFER_SIZE];
+  wchar_t buffer[GPOS_LOG_TRACE_BUFFER_SIZE];
   CWStringStatic str(buffer, GPOS_ARRAY_SIZE(buffer));
 
   VA_LIST va_args;
@@ -134,7 +134,7 @@ void ILogger::TraceFormat(const CHAR *filename, ULONG line, BOOL is_err, const W
 // 		Use stdout/stderr-wrapping loggers outside worker framework;
 //
 //---------------------------------------------------------------------------
-void ILogger::LogTask(const WCHAR *msg, ULONG severity, BOOL is_err, const CHAR *filename, ULONG line) {
+void ILogger::LogTask(const wchar_t *msg, uint32_t severity, bool is_err, const char *filename, uint32_t line) {
   CLogger *log = nullptr;
 
   if (is_err) {

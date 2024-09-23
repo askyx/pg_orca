@@ -62,7 +62,7 @@ class CQueryContext {
   CExpression *m_pexpr;
 
   // should statistics derivation take place
-  BOOL m_fDeriveStats;
+  bool m_fDeriveStats;
 
   // collect system columns from output columns
   void SetSystemCols(CMemoryPool *mp);
@@ -75,12 +75,12 @@ class CQueryContext {
 
   // ctor
   CQueryContext(CMemoryPool *mp, CExpression *pexpr, CReqdPropPlan *prpp, CColRefArray *colref_array,
-                CMDNameArray *pdrgpmdname, BOOL fDeriveStats);
+                CMDNameArray *pdrgpmdname, bool fDeriveStats);
 
   // dtor
   virtual ~CQueryContext();
 
-  BOOL FDeriveStats() const { return m_fDeriveStats; }
+  bool FDeriveStats() const { return m_fDeriveStats; }
 
   // expression accessor
   CExpression *Pexpr() const { return m_pexpr; }
@@ -102,7 +102,7 @@ class CQueryContext {
                                     CExpression *pexpr,                         // expression representing the query
                                     ULongPtrArray *pdrgpulQueryOutputColRefId,  // array of output column reference id
                                     CMDNameArray *pdrgpmdname,                  // array of output column names
-                                    BOOL fDeriveStats);
+                                    bool fDeriveStats);
 
 #ifdef GPOS_DEBUG
   // debug print

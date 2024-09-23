@@ -67,8 +67,7 @@ CScalarBitmapIndexProbe::~CScalarBitmapIndexProbe() {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarBitmapIndexProbe::HashValue() const {
+uint32_t CScalarBitmapIndexProbe::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), m_pindexdesc->MDId()->HashValue());
 }
 
@@ -80,7 +79,7 @@ CScalarBitmapIndexProbe::HashValue() const {
 //		Match this operator with the given one.
 //
 //---------------------------------------------------------------------------
-BOOL CScalarBitmapIndexProbe::Matches(COperator *pop) const {
+bool CScalarBitmapIndexProbe::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }

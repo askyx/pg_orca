@@ -41,18 +41,18 @@ class CScalarNAryJoinPredList : public CScalar {
   EOperatorId Eopid() const override { return EopScalarNAryJoinPredList; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarNAryJoinPredList"; }
+  const char *SzId() const override { return "CScalarNAryJoinPredList"; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

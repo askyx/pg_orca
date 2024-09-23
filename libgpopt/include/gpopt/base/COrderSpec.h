@@ -91,7 +91,7 @@ class COrderSpec : public CPropSpec {
     ENullTreatment Ent() const { return m_ent; }
 
     // check if order specs match
-    BOOL Matches(const COrderExpression *poe) const;
+    bool Matches(const COrderExpression *poe) const;
 
     // print
     IOstream &OsPrint(IOstream &os) const;
@@ -120,29 +120,28 @@ class COrderSpec : public CPropSpec {
   ~COrderSpec() override;
 
   // number of sort expressions
-  ULONG
-  UlSortColumns() const { return m_pdrgpoe->Size(); }
+  uint32_t UlSortColumns() const { return m_pdrgpoe->Size(); }
 
   // accessor of sort operator of the n-th component
-  IMDId *GetMdIdSortOp(ULONG ul) const {
+  IMDId *GetMdIdSortOp(uint32_t ul) const {
     COrderExpression *poe = (*m_pdrgpoe)[ul];
     return poe->GetMdIdSortOp();
   }
 
   // accessor of sort column of the n-th component
-  const CColRef *Pcr(ULONG ul) const {
+  const CColRef *Pcr(uint32_t ul) const {
     COrderExpression *poe = (*m_pdrgpoe)[ul];
     return poe->Pcr();
   }
 
   // accessor of null treatment of the n-th component
-  ENullTreatment Ent(ULONG ul) const {
+  ENullTreatment Ent(uint32_t ul) const {
     COrderExpression *poe = (*m_pdrgpoe)[ul];
     return poe->Ent();
   }
 
   // check if order spec has no columns
-  BOOL IsEmpty() const { return UlSortColumns() == 0; }
+  bool IsEmpty() const { return UlSortColumns() == 0; }
 
   // append new component
   void Append(gpmd::IMDId *mdid, const CColRef *colref, ENullTreatment ent);
@@ -154,20 +153,20 @@ class COrderSpec : public CPropSpec {
   EPropSpecType Epst() const override { return EpstOrder; }
 
   // check if order specs match
-  BOOL Matches(const COrderSpec *pos) const;
+  bool Matches(const COrderSpec *pos) const;
 
   // check if order specs satisfies req'd spec
-  BOOL FSatisfies(const COrderSpec *pos) const;
+  bool FSatisfies(const COrderSpec *pos) const;
 
   // append enforcers to dynamic array for the given plan properties
   void AppendEnforcers(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPropPlan *prpp, CExpressionArray *pdrgpexpr,
                        CExpression *pexpr) override;
 
   // hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // return a copy of the order spec with remapped columns
-  virtual COrderSpec *PosCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  virtual COrderSpec *PosCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist);
 
   // return a copy of the order spec after excluding the given columns
   virtual COrderSpec *PosExcludeColumns(CMemoryPool *mp, CColRefSet *pcrs);
@@ -176,10 +175,10 @@ class COrderSpec : public CPropSpec {
   IOstream &OsPrint(IOstream &os) const override;
 
   // matching function over order spec arrays
-  static BOOL Equals(const COrderSpecArray *pdrgposFirst, const COrderSpecArray *pdrgposSecond);
+  static bool Equals(const COrderSpecArray *pdrgposFirst, const COrderSpecArray *pdrgposSecond);
 
   // combine hash values of a maximum number of entries
-  static ULONG HashValue(const COrderSpecArray *pdrgpos, ULONG ulMaxSize);
+  static uint32_t HashValue(const COrderSpecArray *pdrgpos, uint32_t ulMaxSize);
 
   // print array of order spec objects
   static IOstream &OsPrint(IOstream &os, const COrderSpecArray *pdrgpos);

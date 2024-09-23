@@ -28,7 +28,7 @@ CPhysicalLeftOuterIndexNLJoin::~CPhysicalLeftOuterIndexNLJoin() {
   CRefCount::SafeRelease(m_origJoinPred);
 }
 
-BOOL CPhysicalLeftOuterIndexNLJoin::Matches(COperator *pop) const {
+bool CPhysicalLeftOuterIndexNLJoin::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     return m_pdrgpcrOuterRefs->Equals(CPhysicalLeftOuterIndexNLJoin::PopConvert(pop)->PdrgPcrOuterRefs());
   }

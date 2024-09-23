@@ -42,34 +42,34 @@ class CPredicateUtils {
   static void CollectDisjuncts(CExpression *pexpr, CExpressionArray *pdrgpexpr);
 
   // check if a conjunct/disjunct can be skipped
-  static BOOL FSkippable(CExpression *pexpr, BOOL fConjunction);
+  static bool FSkippable(CExpression *pexpr, bool fConjunction);
 
   // check if a conjunction/disjunction can be reduced to a constant True/False
-  static BOOL FReducible(CExpression *pexpr, BOOL fConjunction);
+  static bool FReducible(CExpression *pexpr, bool fConjunction);
 
   // check if given expression is a comparison over the given column
-  static BOOL FComparison(CExpression *pexpr, CColRef *colref, CColRefSet *pcrsAllowedRefs);
+  static bool FComparison(CExpression *pexpr, CColRef *colref, CColRefSet *pcrsAllowedRefs);
 
   // check whether the given expression contains references to only the given
   // columns. If pcrsAllowedRefs is NULL, then check whether the expression has
   // no column references and no volatile functions
-  static BOOL FValidRefsOnly(CExpression *pexprScalar, CColRefSet *pcrsAllowedRefs);
+  static bool FValidRefsOnly(CExpression *pexprScalar, CColRefSet *pcrsAllowedRefs);
 
   // determine which predicates we should test implication for
-  static BOOL FCheckPredicateImplication(CExpression *pexprPred);
+  static bool FCheckPredicateImplication(CExpression *pexprPred);
 
   // check if predicate is implied by given equivalence classes
-  static BOOL FImpliedPredicate(CExpression *pexprPred, CColRefSetArray *pdrgpcrsEquivClasses);
+  static bool FImpliedPredicate(CExpression *pexprPred, CColRefSetArray *pdrgpcrsEquivClasses);
 
   // helper to create index lookup comparison predicate with index key on left side
   static CExpression *PexprIndexLookupKeyOnLeft(CMemoryPool *mp, CMDAccessor *md_accessor, CExpression *pexprScalar,
                                                 const IMDIndex *pmdindex, CColRefArray *pdrgpcrIndex,
-                                                CColRefSet *outer_refs, BOOL allowArrayCmpIndexQual);
+                                                CColRefSet *outer_refs, bool allowArrayCmpIndexQual);
 
   // helper to create index lookup comparison predicate with index key on right side
   static CExpression *PexprIndexLookupKeyOnRight(CMemoryPool *mp, CMDAccessor *md_accessor, CExpression *pexprScalar,
                                                  const IMDIndex *pmdindex, CColRefArray *pdrgpcrIndex,
-                                                 CColRefSet *outer_refs, BOOL allowArrayCmpIndexQual);
+                                                 CColRefSet *outer_refs, bool allowArrayCmpIndexQual);
 
   // for all columns that appear in the given expression and are members
   // of the given set, replace these columns with NULL constants
@@ -88,143 +88,143 @@ class CPredicateUtils {
   static IMDType::ECmpType EcmptReverse(IMDType::ECmpType cmp_type);
 
   // check if the expression is a boolean scalar identifier
-  static BOOL FBooleanScalarIdent(CExpression *pexprPred);
+  static bool FBooleanScalarIdent(CExpression *pexprPred);
 
   // check if the expression is a negated boolean scalar identifier
-  static BOOL FNegatedBooleanScalarIdent(CExpression *pexprPred);
+  static bool FNegatedBooleanScalarIdent(CExpression *pexprPred);
 
   // is the given expression an equality comparison
-  static BOOL IsEqualityOp(CExpression *pexpr);
+  static bool IsEqualityOp(CExpression *pexpr);
 
   // is the given expression a scalar comparison
-  static BOOL FComparison(CExpression *pexpr);
+  static bool FComparison(CExpression *pexpr);
 
   // is the given expression a conjunction of equality comparisons
-  static BOOL FConjunctionOfEqComparisons(CMemoryPool *mp, CExpression *pexpr);
+  static bool FConjunctionOfEqComparisons(CMemoryPool *mp, CExpression *pexpr);
 
   // is the given expression a comparison of the given type
-  static BOOL FComparison(CExpression *pexpr, IMDType::ECmpType cmp_type);
+  static bool FComparison(CExpression *pexpr, IMDType::ECmpType cmp_type);
 
   // is the given array of expressions contain a volatile function like random()
-  static BOOL FContainsVolatileFunction(CExpressionArray *pdrgpexpr);
+  static bool FContainsVolatileFunction(CExpressionArray *pdrgpexpr);
 
   // is the given expressions contain a volatile function like random()
-  static BOOL FContainsVolatileFunction(CExpression *pexpr);
+  static bool FContainsVolatileFunction(CExpression *pexpr);
 
   // is the given expression an equality comparison over two scalar identifiers
-  static BOOL FPlainEquality(CExpression *pexpr);
+  static bool FPlainEquality(CExpression *pexpr);
 
   // is the given expression a self comparison on some column
-  static BOOL FSelfComparison(CExpression *pexpr, IMDType::ECmpType *pecmpt, CColRefSet *pcrsNotNull);
+  static bool FSelfComparison(CExpression *pexpr, IMDType::ECmpType *pecmpt, CColRefSet *pcrsNotNull);
 
   // eliminate self comparison if possible
   static CExpression *PexprEliminateSelfComparison(CMemoryPool *mp, CExpression *pexpr, CColRefSet *pcrsNotNull);
 
   // is the given expression in the form (col1 Is NOT DISTINCT FROM col2)
-  static BOOL FINDFScalarIdents(CExpression *pexpr);
+  static bool FINDFScalarIdents(CExpression *pexpr);
 
   // is the given expression in the form (col1 IS DISTINCT FROM col2)
-  static BOOL FIDFScalarIdents(CExpression *pexpr);
+  static bool FIDFScalarIdents(CExpression *pexpr);
 
   // check if expression is an Is DISTINCT FROM FALSE expression
-  static BOOL FIDFFalse(CExpression *pexpr);
+  static bool FIDFFalse(CExpression *pexpr);
 
-  static BOOL FCompareScalarIdentToConstAndScalarIdentArray(CExpression *pexpr);
+  static bool FCompareScalarIdentToConstAndScalarIdentArray(CExpression *pexpr);
 
   // is the given expression in the form (expr IS DISTINCT FROM expr)
-  static BOOL FIDF(CExpression *pexpr);
+  static bool FIDF(CExpression *pexpr);
 
   // is the given expression in the form (expr IS NOT DISTINCT FROM expr)
-  static BOOL FINDF(CExpression *pexpr);
+  static bool FINDF(CExpression *pexpr);
 
   // generate a conjunction of INDF expressions between corresponding columns in the given arrays
   static CExpression *PexprINDFConjunction(CMemoryPool *mp, CColRefArray *pdrgpcrFirst, CColRefArray *pdrgpcrSecond);
 
   // is the given expression of the form (col CMP/IS DISTINCT/IS NOT DISTINCT FROM constant)
   // either the constant or the column can be casted
-  static BOOL FIdentCompareConstIgnoreCast(CExpression *pexpr, COperator::EOperatorId);
+  static bool FIdentCompareConstIgnoreCast(CExpression *pexpr, COperator::EOperatorId);
 
   // check if a given expression is a comparison between a column and an expression
   // using only constants and one or more outer references from a given ColRefSet,
   // it optionally returns the colref of the local table
-  static BOOL FIdentCompareOuterRefExprIgnoreCast(CExpression *pexpr, CColRefSet *pcrsOuterRefs,
+  static bool FIdentCompareOuterRefExprIgnoreCast(CExpression *pexpr, CColRefSet *pcrsOuterRefs,
                                                   CColRef **localColRef = nullptr);
 
   // is the given expression a comparison between scalar ident and a const array
   // either the ident or constant array can be casted
-  static BOOL FArrayCompareIdentToConstIgnoreCast(CExpression *pexpr);
+  static bool FArrayCompareIdentToConstIgnoreCast(CExpression *pexpr);
 
   // is the given expression of the form (col IS DISTINCT FROM constant)
   // either the constant or the column can be casted
-  static BOOL FIdentIDFConstIgnoreCast(CExpression *pexpr);
+  static bool FIdentIDFConstIgnoreCast(CExpression *pexpr);
 
   // is the given expression of the form NOT (col IS DISTINCT FROM constant)
   // either the constant or the column can be casted
-  static BOOL FIdentINDFConstIgnoreCast(CExpression *pexpr);
+  static bool FIdentINDFConstIgnoreCast(CExpression *pexpr);
 
   // is the given expression a comparison between a scalar ident and a constant
-  static BOOL FCompareIdentToConst(CExpression *pexpr);
+  static bool FCompareIdentToConst(CExpression *pexpr);
 
   // is the given expression an equality between ident/const without cast
-  static BOOL FPlainEqualityIdentConstWithoutCast(CExpression *pexpr);
+  static bool FPlainEqualityIdentConstWithoutCast(CExpression *pexpr);
 
   // is the given expression a comparison between a const and a const
-  static BOOL FCompareConstToConstIgnoreCast(CExpression *pexpr);
+  static bool FCompareConstToConstIgnoreCast(CExpression *pexpr);
 
   // is the given expression of the form (col IS DISTINCT FROM const)
-  static BOOL FIdentIDFConst(CExpression *pexpr);
+  static bool FIdentIDFConst(CExpression *pexpr);
 
-  static BOOL FEqIdentsOfSameType(CExpression *pexpr);
+  static bool FEqIdentsOfSameType(CExpression *pexpr);
 
   // checks if comparison is between two columns, or a column and a const
-  static BOOL FCompareColToConstOrCol(CExpression *pexprScalar);
+  static bool FCompareColToConstOrCol(CExpression *pexprScalar);
 
   // is the given expression a comparison between a scalar ident under a scalar cast and a constant array
-  static BOOL FCompareCastIdentToConstArray(CExpression *pexpr);
+  static bool FCompareCastIdentToConstArray(CExpression *pexpr);
 
   // is the given expression a comparison between a scalar ident and a constant array
-  static BOOL FCompareIdentToConstArray(CExpression *pexpr);
+  static bool FCompareIdentToConstArray(CExpression *pexpr);
 
   // is the given ScalarArrayCmp a valid index qual
-  static BOOL IsScalarArrayCmpValidIndexQual(CExpression *pexpr, CColRefArray *pdrgpcrIndex);
+  static bool IsScalarArrayCmpValidIndexQual(CExpression *pexpr, CColRefArray *pdrgpcrIndex);
 
   // is the given expression an AND
-  static BOOL FAnd(CExpression *pexpr) { return CUtils::FScalarBoolOp(pexpr, CScalarBoolOp::EboolopAnd); }
+  static bool FAnd(CExpression *pexpr) { return CUtils::FScalarBoolOp(pexpr, CScalarBoolOp::EboolopAnd); }
 
   // is the given expression an OR
-  static BOOL FOr(CExpression *pexpr) { return CUtils::FScalarBoolOp(pexpr, CScalarBoolOp::EboolopOr); }
+  static bool FOr(CExpression *pexpr) { return CUtils::FScalarBoolOp(pexpr, CScalarBoolOp::EboolopOr); }
 
   // does the given expression have any NOT children?
   // is the given expression a NOT
-  static BOOL FNot(CExpression *pexpr) { return CUtils::FScalarBoolOp(pexpr, CScalarBoolOp::EboolopNot); }
+  static bool FNot(CExpression *pexpr) { return CUtils::FScalarBoolOp(pexpr, CScalarBoolOp::EboolopNot); }
 
   // returns true iff the given expression is a Not operator whose child is a
   // scalar identifier
-  static BOOL FNotIdent(CExpression *pexpr);
+  static bool FNotIdent(CExpression *pexpr);
 
   // does the given expression have any NOT children?
-  static BOOL FHasNegatedChild(CExpression *pexpr);
+  static bool FHasNegatedChild(CExpression *pexpr);
 
   // is the given expression an inner join or NAry join
-  static BOOL FInnerOrNAryJoin(CExpression *pexpr) {
+  static bool FInnerOrNAryJoin(CExpression *pexpr) {
     return COperator::EopLogicalInnerJoin == pexpr->Pop()->Eopid() ||
            COperator::EopLogicalNAryJoin == pexpr->Pop()->Eopid();
   }
 
-  static BOOL FLeftOuterJoin(CExpression *pexpr) { return COperator::EopLogicalLeftOuterJoin == pexpr->Pop()->Eopid(); }
+  static bool FLeftOuterJoin(CExpression *pexpr) { return COperator::EopLogicalLeftOuterJoin == pexpr->Pop()->Eopid(); }
 
   // is the given expression either a union or union all operator
-  static BOOL FUnionOrUnionAll(CExpression *pexpr) {
+  static bool FUnionOrUnionAll(CExpression *pexpr) {
     return COperator::EopLogicalUnion == pexpr->Pop()->Eopid() ||
            COperator::EopLogicalUnionAll == pexpr->Pop()->Eopid();
   }
 
   // check if we can collapse the nth child of the given union / union all operator
-  static BOOL FCollapsibleChildUnionUnionAll(CExpression *pexprParent, ULONG child_index);
+  static bool FCollapsibleChildUnionUnionAll(CExpression *pexprParent, uint32_t child_index);
 
   // if the nth child of the given union/union all expression is also an union / union all expression,
   // then collect the later's children and set the input columns of the new n-ary union/unionall operator
-  static void CollectGrandChildrenUnionUnionAll(CMemoryPool *mp, CExpression *pexpr, ULONG child_index,
+  static void CollectGrandChildrenUnionUnionAll(CMemoryPool *mp, CExpression *pexpr, uint32_t child_index,
                                                 CExpressionArray *pdrgpexprResult, CColRef2dArray *pdrgdrgpcrResult);
 
   // extract conjuncts from a scalar tree
@@ -237,10 +237,10 @@ class CPredicateUtils {
   static CExpressionArray *PdrgpexprPlainEqualities(CMemoryPool *mp, CExpressionArray *pdrgpexpr);
 
   // create conjunction/disjunction
-  static CExpression *PexprConjDisj(CMemoryPool *mp, CExpressionArray *Pdrgpexpr, BOOL fConjunction);
+  static CExpression *PexprConjDisj(CMemoryPool *mp, CExpressionArray *Pdrgpexpr, bool fConjunction);
 
   // create conjunction/disjunction of two expressions
-  static CExpression *PexprConjDisj(CMemoryPool *mp, CExpression *pexprOne, CExpression *pexprTwo, BOOL fConjunction);
+  static CExpression *PexprConjDisj(CMemoryPool *mp, CExpression *pexprOne, CExpression *pexprTwo, bool fConjunction);
 
   // create conjunction
   static CExpression *PexprConjunction(CMemoryPool *mp, CExpressionArray *pdrgpexpr);
@@ -262,29 +262,29 @@ class CPredicateUtils {
   // check if the given expression is a boolean expression on the
   // given column, e.g. if its of the form "ScalarIdent(colref)" or
   // "Not(ScalarIdent(colref))"
-  static BOOL FBoolPredicateOnColumn(CExpression *pexpr, CColRef *colref);
+  static bool FBoolPredicateOnColumn(CExpression *pexpr, CColRef *colref);
 
   // check if the given expression is a scalar array cmp expression on the
   // given column
-  static BOOL FScArrayCmpOnColumn(CExpression *pexpr, CColRef *colref, BOOL fConstOnly);
+  static bool FScArrayCmpOnColumn(CExpression *pexpr, CColRef *colref, bool fConstOnly);
 
   // check if the given expression is a null check on the given column
   // i.e. "is null" or "is not null"
-  static BOOL FNullCheckOnColumn(CExpression *pexpr, CColRef *colref);
+  static bool FNullCheckOnColumn(CExpression *pexpr, CColRef *colref);
 
   // check if the given expression of the form "col is not null"
-  static BOOL FNotNullCheckOnColumn(CExpression *pexpr, CColRef *colref);
+  static bool FNotNullCheckOnColumn(CExpression *pexpr, CColRef *colref);
 
   // create disjunction
   static CExpression *PexprDisjunction(CMemoryPool *mp, CExpressionArray *Pdrgpexpr);
 
   static CExpression *ValidatePartPruningExpr(CMemoryPool *mp, CExpression *expr, CColRef *pcrPartKey,
-                                              CColRefSet *pcrsAllowedRefs, BOOL allow_not_equals_preds);
+                                              CColRefSet *pcrsAllowedRefs, bool allow_not_equals_preds);
 
   // find a predicate that can be used for partition pruning with the given part key
   static CExpression *PexprPartPruningPredicate(CMemoryPool *mp, const CExpressionArray *pdrgpexpr, CColRef *pcrPartKey,
                                                 CExpression *pexprCol, CColRefSet *pcrsAllowedRefs,
-                                                BOOL allowNotEqualPreds);
+                                                bool allowNotEqualPreds);
 
   // append the conjuncts from the given expression to the given array, removing
   // any duplicates, and return the resulting array
@@ -294,44 +294,44 @@ class CPredicateUtils {
   // extract interesting conditions involving the partitioning keys
   static CExpression *PexprExtractPredicatesOnPartKeys(CMemoryPool *mp, CExpression *pexprScalar,
                                                        CColRef2dArray *pdrgpdrgpcrPartKeys, CColRefSet *pcrsAllowedRefs,
-                                                       BOOL fUseConstraints, const IMDRelation *pmdrel = nullptr);
+                                                       bool fUseConstraints, const IMDRelation *pmdrel = nullptr);
 
   // checks if the operator belongs to the column's opfamily
-  static BOOL FOpInOpfamily(CColRef *colref, CExpression *pexpr, IMDIndex::EmdindexType access_method);
+  static bool FOpInOpfamily(CColRef *colref, CExpression *pexpr, IMDIndex::EmdindexType access_method);
 
   // checks if the operator belongs to the scalar expression's opfamily
-  static BOOL FOpInOpfamily(CExpression *pexprScalar, CExpression *pexpr, IMDIndex::EmdindexType access_method);
+  static bool FOpInOpfamily(CExpression *pexprScalar, CExpression *pexpr, IMDIndex::EmdindexType access_method);
 
   // checks if the operator belongs to the column's opfamily
-  static BOOL FOpInOpfamily(IMDId *col_mdid, CExpression *pexpr, IMDIndex::EmdindexType access_method);
+  static bool FOpInOpfamily(IMDId *col_mdid, CExpression *pexpr, IMDIndex::EmdindexType access_method);
 
   // extract the constraint on the given column and return the corresponding
   // scalar expression
-  static CExpression *PexprPredicateCol(CMemoryPool *mp, CConstraint *pcnstr, CColRef *colref, BOOL fUseConstraints);
+  static CExpression *PexprPredicateCol(CMemoryPool *mp, CConstraint *pcnstr, CColRef *colref, bool fUseConstraints);
 
   // extract components of a comparison expression on the given key
   static void ExtractComponents(CExpression *pexprScCmp, CColRef *pcrKey, CExpression **ppexprKey,
                                 CExpression **ppexprOther, IMDType::ECmpType *pecmpt);
 
   // Expression is a comparison with a simple identifer on at least one side
-  static BOOL FIdentCompare(CExpression *pexpr, IMDType::ECmpType pecmpt, CColRef *colref);
+  static bool FIdentCompare(CExpression *pexpr, IMDType::ECmpType pecmpt, CColRef *colref);
 
   // check if given column is a constant
-  static BOOL FConstColumn(CConstraint *pcnstr, const CColRef *colref);
+  static bool FConstColumn(CConstraint *pcnstr, const CColRef *colref);
 
   // check if given column is a disjunction of constants
-  static BOOL FColumnDisjunctionOfConst(CConstraint *pcnstr, const CColRef *colref);
+  static bool FColumnDisjunctionOfConst(CConstraint *pcnstr, const CColRef *colref);
 
   // check if given column is a disjunction of constants
-  static BOOL FColumnDisjunctionOfConst(CConstraintInterval *pcnstr, const CColRef *colref);
+  static bool FColumnDisjunctionOfConst(CConstraintInterval *pcnstr, const CColRef *colref);
 
   // split predicates into those that refer to an index key, and those that don't
   static void ExtractIndexPredicates(
       CMemoryPool *mp, CMDAccessor *md_accessor, CExpressionArray *pdrgpexprPredicate, const IMDIndex *pmdindex,
       CColRefArray *pdrgpcrIndex, CExpressionArray *pdrgpexprIndex, CExpressionArray *pdrgpexprResidual,
-      ULONG &ulUnindexedPredColCount,
+      uint32_t &ulUnindexedPredColCount,
       CColRefSet *pcrsAcceptedOuterRefs = nullptr,  // outer refs that are acceptable in an index predicate
-      BOOL allowArrayCmpIndexQual = false);
+      bool allowArrayCmpIndexQual = false);
 
   // return the inverse of given comparison expression
   static CExpression *PexprInverseComparison(CMemoryPool *mp, CExpression *pexprCmp);
@@ -344,62 +344,62 @@ class CPredicateUtils {
                                                   CExpressionHandle &exprhdl);
 
   //	check if given correlations are valid for semi join operator;
-  static BOOL FValidSemiJoinCorrelations(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner,
+  static bool FValidSemiJoinCorrelations(CMemoryPool *mp, CExpression *pexprOuter, CExpression *pexprInner,
                                          CExpressionArray *pdrgpexprCorrelations);
 
   // check if given expression is composed of simple column equalities that use columns from given column set
-  static BOOL FSimpleEqualityUsingCols(CMemoryPool *mp, CExpression *pexprScalar, CColRefSet *pcrs);
+  static bool FSimpleEqualityUsingCols(CMemoryPool *mp, CExpression *pexprScalar, CColRefSet *pcrs);
 
   // check if given expression is a valid index lookup predicate
   // return (modified) predicate suited for index lookup
   static CExpression *PexprIndexLookup(CMemoryPool *mp, CMDAccessor *md_accessor, CExpression *pexpPred,
                                        const IMDIndex *pmdindex, CColRefArray *pdrgpcrIndex, CColRefSet *outer_refs,
-                                       BOOL allowArrayCmpIndexQual);
+                                       bool allowArrayCmpIndexQual);
 
   // split given scalar expression into two conjunctions; without and with outer references
   static void SeparateOuterRefs(CMemoryPool *mp, CExpression *pexprScalar, CColRefSet *outer_refs,
                                 CExpression **ppexprLocal, CExpression **ppexprOuterRef);
 
   // is the condition a LIKE predicate
-  static BOOL FLikePredicate(IMDId *mdid);
+  static bool FLikePredicate(IMDId *mdid);
 
   // is the condition a LIKE predicate
-  static BOOL FLikePredicate(CExpression *pexprPred);
+  static bool FLikePredicate(CExpression *pexprPred);
 
   // extract the components of a LIKE predicate
   static void ExtractLikePredComponents(CExpression *pexprPred, CExpression **ppexprScIdent, CExpression **ppexprConst);
 
   // check if scalar expression is null-rejecting and uses columns from given column set
-  static BOOL FNullRejecting(CMemoryPool *mp, CExpression *pexprScalar, CColRefSet *pcrs);
+  static bool FNullRejecting(CMemoryPool *mp, CExpression *pexprScalar, CColRefSet *pcrs);
 
   // returns true iff the given predicate pexprPred is compatible with the given index pmdindex
-  static BOOL FCompatibleIndexPredicate(CExpression *pexprPred, const IMDIndex *pmdindex, CColRefArray *pdrgpcrIndex,
+  static bool FCompatibleIndexPredicate(CExpression *pexprPred, const IMDIndex *pmdindex, CColRefArray *pdrgpcrIndex,
                                         CMDAccessor *md_accessor);
 
   // returns true iff all predicates in the given array are compatible with the given index
-  static BOOL FCompatiblePredicates(CExpressionArray *pdrgpexprPred, const IMDIndex *pmdindex,
+  static bool FCompatiblePredicates(CExpressionArray *pdrgpexprPred, const IMDIndex *pmdindex,
                                     CColRefArray *pdrgpcrIndex, CMDAccessor *md_accessor);
 
   // check if the expensive CNF conversion is beneficial in finding predicate for hash join
-  static BOOL FConvertToCNF(CExpression *pexpr, CExpression *pexprOuter, CExpression *pexprInner);
+  static bool FConvertToCNF(CExpression *pexpr, CExpression *pexprOuter, CExpression *pexprInner);
 
   // check if the predicate is a simple scalar cmp or a simple conjuct that can be used directly
   // for bitmap index looup without breaking it down.
-  static BOOL FBitmapLookupSupportedPredicateOrConjunct(CExpression *pexpr, CColRefSet *outer_refs);
+  static bool FBitmapLookupSupportedPredicateOrConjunct(CExpression *pexpr, CColRefSet *outer_refs);
 
   // Check if a given comparison operator is "very strict", meaning that it is strict
   // (NULL operands result in NULL result) and that it never produces a NULL result on
   // non-null operands. Note that this check may return false negatives (some operators
   // may have very strict behavior, yet this method returns false).
-  static BOOL FBuiltInComparisonIsVeryStrict(IMDId *mdid);
+  static bool FBuiltInComparisonIsVeryStrict(IMDId *mdid);
 
   // Check if the given expr only contains conjuncts of strict comparison operators
   // NB: This does NOT recurse into Boolean AND/OR operations
-  static BOOL ExprContainsOnlyStrictComparisons(CMemoryPool *mp, CExpression *expr);
+  static bool ExprContainsOnlyStrictComparisons(CMemoryPool *mp, CExpression *expr);
 
   // Check if the given exprs only contains conjuncts of strict comparison operators
   // NB: This does NOT recurse into Boolean AND/OR operations
-  static BOOL ExprsContainsOnlyStrictComparisons(CExpressionArray *conjuncts);
+  static bool ExprsContainsOnlyStrictComparisons(CExpressionArray *conjuncts);
 
 };  // class CPredicateUtils
 }  // namespace gpopt

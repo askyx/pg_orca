@@ -57,7 +57,7 @@ class CDXLPhysicalAbstractBitmapScan : public CDXLPhysical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *node, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };  // class CDXLPhysicalAbstractBitmapScan
 }  // namespace gpdxl

@@ -41,11 +41,11 @@ class CDXLPhysicalAgg : public CDXLPhysical {
   EdxlAggStrategy m_dxl_agg_strategy;
 
   // is it safe to stream the local hash aggregate
-  BOOL m_stream_safe;
+  bool m_stream_safe;
 
  public:
   // ctor
-  CDXLPhysicalAgg(CMemoryPool *mp, EdxlAggStrategy dxl_agg_strategy, BOOL stream_safe);
+  CDXLPhysicalAgg(CMemoryPool *mp, EdxlAggStrategy dxl_agg_strategy, bool stream_safe);
 
   // dtor
   ~CDXLPhysicalAgg() override;
@@ -63,7 +63,7 @@ class CDXLPhysicalAgg : public CDXLPhysical {
   void SetGroupingCols(ULongPtrArray *);
 
   // is aggregate a hash aggregate that it safe to stream
-  BOOL IsStreamSafe() const { return (EdxlaggstrategyHashed == m_dxl_agg_strategy) && m_stream_safe; }
+  bool IsStreamSafe() const { return (EdxlaggstrategyHashed == m_dxl_agg_strategy) && m_stream_safe; }
 
   // serialize operator in DXL format
 
@@ -78,7 +78,7 @@ class CDXLPhysicalAgg : public CDXLPhysical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

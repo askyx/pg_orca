@@ -22,7 +22,7 @@ using namespace gpopt;
 // transform to outer index apply, but random table is not.
 // Because if the inner is random distributed, there is no way
 // to redistribute outer child to match inner on the join keys.
-BOOL CXformJoin2IndexApplyGeneric::FCanLeftOuterIndexApply(CMemoryPool *mp, CExpression *pexprInner,
+bool CXformJoin2IndexApplyGeneric::FCanLeftOuterIndexApply(CMemoryPool *mp, CExpression *pexprInner,
                                                            CExpression *pexprScalar, CTableDescriptor *ptabDesc,
                                                            const CColRefSet *pcrsDist) {
   // now consider hash distributed table
@@ -33,13 +33,13 @@ BOOL CXformJoin2IndexApplyGeneric::FCanLeftOuterIndexApply(CMemoryPool *mp, CExp
 
   // Distribution key set of inner GET must be subset of inner columns used in
   // the left outer join condition, but doesn't need to be equal.
-  BOOL fCanOuterIndexApply = pcrsInnerRefs->ContainsAll(pcrsDist);
+  bool fCanOuterIndexApply = pcrsInnerRefs->ContainsAll(pcrsDist);
   pcrsInnerRefs->Release();
   if (fCanOuterIndexApply) {
     CColRefSet *pcrsEquivPredInner = GPOS_NEW(mp) CColRefSet(mp);
     // extract array of join predicates from join condition expression
     CExpressionArray *pdrgpexpr = CPredicateUtils::PdrgpexprConjuncts(mp, pexprScalar);
-    for (ULONG ul = 0; ul < pdrgpexpr->Size(); ul++) {
+    for (uint32_t ul = 0; ul < pdrgpexpr->Size(); ul++) {
       CExpression *pexprPred = (*pdrgpexpr)[ul];
       CColRefSet *pcrsPred = pexprPred->DeriveUsedColumns();
 
@@ -165,7 +165,7 @@ void CXformJoin2IndexApplyGeneric::Transform(CXformContext *pxfctxt, CXformResul
 
           joinPredUsedCols->Exclude(pexprOuter->DeriveOutputColumns());
           joinPredUsedCols->Exclude((*pexprCurrInnerChild)[0]->DeriveOutputColumns());
-          BOOL joinPredUsesProjectedColumns = (0 < joinPredUsedCols->Size());
+          bool joinPredUsesProjectedColumns = (0 < joinPredUsedCols->Size());
           joinPredUsedCols->Release();
 
           if (joinPredUsesProjectedColumns) {

@@ -45,7 +45,7 @@ class CXformDifferenceAll2LeftAntiSemiJoin : public CXformExploration {
   // ident accessors
   EXformId Exfid() const override { return ExfDifferenceAll2LeftAntiSemiJoin; }
 
-  const CHAR *SzId() const override { return "CXformDifferenceAll2LeftAntiSemiJoin"; }
+  const char *SzId() const override { return "CXformDifferenceAll2LeftAntiSemiJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &  // exprhdl

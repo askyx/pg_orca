@@ -35,17 +35,17 @@ class CWStringDynamic : public CWString {
   CMemoryPool *m_mp;
 
   // string capacity
-  ULONG m_capacity;
+  uint32_t m_capacity;
 
   // increase string capacity
-  void IncreaseCapacity(ULONG requested);
+  void IncreaseCapacity(uint32_t requested);
 
   // find capacity that fits requested string size
-  static ULONG Capacity(ULONG requested);
+  static uint32_t Capacity(uint32_t requested);
 
  protected:
   // appends the contents of a buffer to the current string
-  void AppendBuffer(const WCHAR *w_str_buffer) override;
+  void AppendBuffer(const wchar_t *w_str_buffer) override;
 
  public:
   CWStringDynamic(const CWStringDynamic &) = delete;
@@ -54,19 +54,19 @@ class CWStringDynamic : public CWString {
   CWStringDynamic(CMemoryPool *mp);
 
   // ctor - copies passed string
-  CWStringDynamic(CMemoryPool *mp, const WCHAR *w_str_buffer);
+  CWStringDynamic(CMemoryPool *mp, const wchar_t *w_str_buffer);
 
   // appends a string and replaces character with string
-  void AppendEscape(const CWStringBase *str, WCHAR wc, const WCHAR *w_str_replace) override;
+  void AppendEscape(const CWStringBase *str, wchar_t wc, const wchar_t *w_str_replace) override;
 
   // appends a formatted string
-  void AppendFormat(const WCHAR *format, ...) override;
+  void AppendFormat(const wchar_t *format, ...) override;
 
   // appends a null terminated character array
-  void AppendCharArray(const CHAR *sz) override;
+  void AppendCharArray(const char *sz) override;
 
   // appends a null terminated wide character array
-  void AppendWideCharArray(const WCHAR *w_str) override;
+  void AppendWideCharArray(const wchar_t *w_str) override;
 
   // dtor
   ~CWStringDynamic() override;

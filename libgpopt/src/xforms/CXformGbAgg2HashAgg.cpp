@@ -131,12 +131,12 @@ void CXformGbAgg2HashAgg::Transform(CXformContext *pxfctxt, CXformResult *pxfres
 //		Check if the transformation is applicable
 //
 //---------------------------------------------------------------------------
-BOOL CXformGbAgg2HashAgg::FApplicable(CExpression *pexpr) {
+bool CXformGbAgg2HashAgg::FApplicable(CExpression *pexpr) {
   CExpression *pexprPrjList = (*pexpr)[1];
-  ULONG arity = pexprPrjList->Arity();
+  uint32_t arity = pexprPrjList->Arity();
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
 
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrjEl = (*pexprPrjList)[ul];
     CExpression *pexprAggFunc = (*pexprPrjEl)[0];
     CScalarAggFunc *popScAggFunc = CScalarAggFunc::PopConvert(pexprAggFunc->Pop());

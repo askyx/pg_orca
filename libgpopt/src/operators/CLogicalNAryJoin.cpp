@@ -46,10 +46,10 @@ CLogicalNAryJoin::CLogicalNAryJoin(CMemoryPool *mp, ULongPtrArray *lojChildIndex
 //---------------------------------------------------------------------------
 CMaxCard CLogicalNAryJoin::DeriveMaxCard(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
   CMaxCard maxCard(1);
-  const ULONG arity = exprhdl.Arity();
+  const uint32_t arity = exprhdl.Arity();
 
   // multiply the max cards of the children (use at least 1 for LOJ children)
-  for (ULONG ul = 0; ul < arity - 1; ul++) {
+  for (uint32_t ul = 0; ul < arity - 1; ul++) {
     CMaxCard childMaxCard = exprhdl.DeriveMaxCard(ul);
 
     if (IsInnerJoinChild(ul) || 1 <= childMaxCard.Ull()) {
@@ -86,8 +86,8 @@ CColRefSet *CLogicalNAryJoin::DeriveNotNullColumns(CMemoryPool *mp, CExpressionH
   CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
 
   // union not nullable columns from the first N-1 children that are not right children of LOJs
-  ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 0; ul < arity - 1; ul++) {
+  uint32_t arity = exprhdl.Arity();
+  for (uint32_t ul = 0; ul < arity - 1; ul++) {
     if (IsInnerJoinChild(ul)) {
       CColRefSet *pcrsChild = exprhdl.DeriveNotNullColumns(ul);
       GPOS_ASSERT(pcrs->IsDisjoint(pcrsChild) && "Input columns are not disjoint");
@@ -111,8 +111,8 @@ CPropConstraint *CLogicalNAryJoin::DerivePropertyConstraint(CMemoryPool *mp, CEx
   CConstraintArray *constraints = GPOS_NEW(mp) CConstraintArray(mp);
 
   // collect constraint properties from inner join children
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 0; ul < arity - 1; ul++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t ul = 0; ul < arity - 1; ul++) {
     if (IsInnerJoinChild(ul)) {
       CPropConstraint *ppc = exprhdl.DerivePropertyConstraint(ul);
 
@@ -199,7 +199,7 @@ CExpression *CLogicalNAryJoin::GetTrueInnerJoinPreds(CMemoryPool *mp, CExpressio
   // on column bar.c, which comes from an LOJ and therefore may be NULL, even though
   // bar.c might have been created with a NOT NULL constraint. We don't want to use
   // such predicates in constraint derivation.
-  ULONG arity = exprhdl.Arity();
+  uint32_t arity = exprhdl.Arity();
   CExpression *pexprScalar = exprhdl.PexprScalarExactChild(arity - 1);
 
   if (nullptr == pexprScalar) {
@@ -217,20 +217,20 @@ CExpression *CLogicalNAryJoin::GetTrueInnerJoinPreds(CMemoryPool *mp, CExpressio
   CExpressionArray *predArray = nullptr;
   CExpressionArray *trueInnerJoinPredArray = GPOS_NEW(mp) CExpressionArray(mp);
   CExpression *innerJoinPreds = (*pexprScalar)[0];
-  BOOL isAConjunction = CPredicateUtils::FAnd(innerJoinPreds);
+  bool isAConjunction = CPredicateUtils::FAnd(innerJoinPreds);
 
   GPOS_ASSERT(COperator::EopScalarNAryJoinPredList == pexprScalar->Pop()->Eopid());
 
   // split the predicate into conjuncts and inspect those individually
   predArray = CPredicateUtils::PdrgpexprConjuncts(mp, innerJoinPreds);
 
-  for (ULONG ul = 0; ul < predArray->Size(); ul++) {
+  for (uint32_t ul = 0; ul < predArray->Size(); ul++) {
     CExpression *pred = (*predArray)[ul];
     CColRefSet *predCols = pred->DeriveUsedColumns();
-    BOOL addToPredArray = true;
+    bool addToPredArray = true;
 
     // check whether the predicate uses any ColRefs that come from a non-inner join child
-    for (ULONG c = 0; c < exprhdl.Arity() - 1; c++) {
+    for (uint32_t c = 0; c < exprhdl.Arity() - 1; c++) {
       if (0 < *(*m_lojChildPred)[c]) {
         // this is a right child of a non-inner join
         CColRefSet *nijOutputCols = exprhdl.DeriveOutputColumns(c);
@@ -277,7 +277,7 @@ CExpression *CLogicalNAryJoin::ReplaceInnerJoinPredicates(CMemoryPool *mp, CExpr
 
     new_children->Append(new_inner_join_preds);
 
-    for (ULONG ul = 1; ul < old_nary_join_scalar_expr->Arity(); ul++) {
+    for (uint32_t ul = 1; ul < old_nary_join_scalar_expr->Arity(); ul++) {
       CExpression *existing_child = (*old_nary_join_scalar_expr)[ul];
 
       existing_child->AddRef();
@@ -311,8 +311,8 @@ IOstream &CLogicalNAryJoin::OsPrint(IOstream &os) const {
     // print out the indexes of the logical children that correspond to
     // the scalar child entries below the CScalarNAryJoinPredList
     os << " [";
-    ULONG size = m_lojChildPred->Size();
-    for (ULONG ul = 0; ul < size; ul++) {
+    uint32_t size = m_lojChildPred->Size();
+    for (uint32_t ul = 0; ul < size; ul++) {
       if (0 < ul) {
         os << ", ";
       }

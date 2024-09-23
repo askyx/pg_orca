@@ -24,7 +24,7 @@ using namespace gpdxl;
 //		Construct a non-spooling materialize
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalMaterialize::CDXLPhysicalMaterialize(CMemoryPool *mp, BOOL is_eager)
+CDXLPhysicalMaterialize::CDXLPhysicalMaterialize(CMemoryPool *mp, bool is_eager)
     : CDXLPhysical(mp),
       m_is_eager(is_eager),
       m_spooling_op_id(0),
@@ -40,8 +40,8 @@ CDXLPhysicalMaterialize::CDXLPhysicalMaterialize(CMemoryPool *mp, BOOL is_eager)
 //		Construct a spooling materialize
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalMaterialize::CDXLPhysicalMaterialize(CMemoryPool *mp, BOOL is_eager, ULONG spooling_op_id,
-                                                 INT executor_slice, ULONG num_consumer_slices)
+CDXLPhysicalMaterialize::CDXLPhysicalMaterialize(CMemoryPool *mp, bool is_eager, uint32_t spooling_op_id,
+                                                 int32_t executor_slice, uint32_t num_consumer_slices)
     : CDXLPhysical(mp),
       m_is_eager(is_eager),
       m_spooling_op_id(spooling_op_id),
@@ -74,29 +74,27 @@ const CWStringConst *CDXLPhysicalMaterialize::GetOpNameStr() const {
 }
 
 //		Is this a spooling materialize operator
-BOOL CDXLPhysicalMaterialize::IsSpooling() const {
+bool CDXLPhysicalMaterialize::IsSpooling() const {
   return (EdxlspoolNone != m_spool_type);
 }
 
 //		Id of the spool if the materialize node is spooling
-ULONG
-CDXLPhysicalMaterialize::GetSpoolingOpId() const {
+uint32_t CDXLPhysicalMaterialize::GetSpoolingOpId() const {
   return m_spooling_op_id;
 }
 
 //		Id of the slice executing the spool
-INT CDXLPhysicalMaterialize::GetExecutorSlice() const {
+int32_t CDXLPhysicalMaterialize::GetExecutorSlice() const {
   return m_executor_slice;
 }
 
 //		Number of slices consuming the spool
-ULONG
-CDXLPhysicalMaterialize::GetNumConsumerSlices() const {
+uint32_t CDXLPhysicalMaterialize::GetNumConsumerSlices() const {
   return m_num_consumer_slices;
 }
 
 //		Does the materialize node do eager materialization
-BOOL CDXLPhysicalMaterialize::IsEager() const {
+bool CDXLPhysicalMaterialize::IsEager() const {
   return m_is_eager;
 }
 
@@ -109,7 +107,7 @@ BOOL CDXLPhysicalMaterialize::IsEager() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalMaterialize::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLPhysicalMaterialize::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(EdxlspoolNone == m_spool_type || EdxlspoolMaterialize == m_spool_type);
   GPOS_ASSERT(EdxlmatIndexSentinel == node->Arity());
 

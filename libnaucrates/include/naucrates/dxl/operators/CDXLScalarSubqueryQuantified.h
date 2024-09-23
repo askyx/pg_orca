@@ -42,13 +42,13 @@ class CDXLScalarSubqueryQuantified : public CDXLScalar {
   CMDName *m_scalar_op_mdname;
 
   // colid produced by the relational child of the AnySubquery operator
-  ULONG m_colid;
+  uint32_t m_colid;
 
  public:
   CDXLScalarSubqueryQuantified(CDXLScalarSubqueryQuantified &) = delete;
 
   // ctor
-  CDXLScalarSubqueryQuantified(CMemoryPool *mp, IMDId *scalar_op_mdid, CMDName *mdname, ULONG colid);
+  CDXLScalarSubqueryQuantified(CMemoryPool *mp, IMDId *scalar_op_mdid, CMDName *mdname, uint32_t colid);
 
   // dtor
   ~CDXLScalarSubqueryQuantified() override;
@@ -60,8 +60,7 @@ class CDXLScalarSubqueryQuantified : public CDXLScalar {
   const CMDName *GetScalarOpMdName() const { return m_scalar_op_mdname; }
 
   // subquery colid
-  ULONG
-  GetColId() const { return m_colid; }
+  uint32_t GetColId() const { return m_colid; }
 
   // serialize operator in DXL format
 
@@ -75,7 +74,7 @@ class CDXLScalarSubqueryQuantified : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     return true;
   }
@@ -83,7 +82,7 @@ class CDXLScalarSubqueryQuantified : public CDXLScalar {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

@@ -19,7 +19,7 @@
 #include "gpos/base.h"
 #include "gpos/common/CRefCount.h"
 
-#define GPOPT_INVALID_GEXPR_ID gpos::ulong_max
+#define GPOPT_INVALID_GEXPR_ID UINT32_MAX
 
 namespace gpopt {
 using namespace gpos;
@@ -78,7 +78,7 @@ class CGroupExpression : public CRefCount {
                                         CleanupRelease<CPartialPlan>, CleanupDelete<CCost>>;
 
   // expression id
-  ULONG m_id{GPOPT_INVALID_GEXPR_ID};
+  uint32_t m_id{GPOPT_INVALID_GEXPR_ID};
 
   // duplicate group expression
   CGroupExpression *m_pgexprDuplicate;
@@ -104,7 +104,7 @@ class CGroupExpression : public CRefCount {
 
   // flag to indicate if group expression was created as a node at some
   // intermediate level when origin expression was inserted to memo
-  BOOL m_fIntermediate{false};
+  bool m_fIntermediate{false};
 
   // state of group expression
   EState m_estate{estUnexplored};
@@ -125,10 +125,11 @@ class CGroupExpression : public CRefCount {
   void SetGroup(CGroup *pgroup);
 
   // set group expression id
-  void SetId(ULONG id);
+  void SetId(uint32_t id);
 
   // print transformation
-  static void PrintXform(CMemoryPool *mp, CXform *pxform, CExpression *pexpr, CXformResult *pxfres, ULONG ulNumResults);
+  static void PrintXform(CMemoryPool *mp, CXform *pxform, CExpression *pexpr, CXformResult *pxfres,
+                         uint32_t ulNumResults);
 
   // preprocessing before applying transformation
   void PreprocessTransform(CMemoryPool *pmpLocal, CMemoryPool *pmpGlobal, CXform *pxform);
@@ -143,17 +144,17 @@ class CGroupExpression : public CRefCount {
   void SetOptimizationLevel();
 
   // check validity of group expression
-  BOOL FValidContext(CMemoryPool *mp, COptimizationContext *poc, COptimizationContextArray *pdrgpocChild);
+  bool FValidContext(CMemoryPool *mp, COptimizationContext *poc, COptimizationContextArray *pdrgpocChild);
 
   // remove cost context in hash table
-  CCostContext *PccRemove(COptimizationContext *poc, ULONG ulOptReq);
+  CCostContext *PccRemove(COptimizationContext *poc, uint32_t ulOptReq);
 
   // insert given context in hash table only if a better context does not exist, return the context that is kept it in
   // hash table
   CCostContext *PccInsertBest(CCostContext *pcc);
 
   // print group expression cost contexts
-  IOstream &OsPrintCostContexts(IOstream &os, const CHAR *szPrefix) const;
+  IOstream &OsPrintCostContexts(IOstream &os, const char *szPrefix) const;
 
   // private dummy ctor; used for creating invalid gexpr
   CGroupExpression() = default;
@@ -163,7 +164,7 @@ class CGroupExpression : public CRefCount {
 
   // ctor
   CGroupExpression(CMemoryPool *mp, COperator *pop, CGroupArray *pdrgpgroup, CXform::EXformId exfid,
-                   CGroupExpression *pgexprOrigin, BOOL fIntermediate);
+                   CGroupExpression *pgexprOrigin, bool fIntermediate);
 
   // dtor
   ~CGroupExpression() override;
@@ -182,21 +183,21 @@ class CGroupExpression : public CRefCount {
   void CleanupContexts();
 
   // check if cost context already exists in group expression hash table
-  BOOL FCostContextExists(COptimizationContext *poc, COptimizationContextArray *pdrgpoc);
+  bool FCostContextExists(COptimizationContext *poc, COptimizationContextArray *pdrgpoc);
 
   // compute and store expression's cost under a given context
-  CCostContext *PccComputeCost(CMemoryPool *mp, COptimizationContext *poc, ULONG ulOptReq,
-                               COptimizationContextArray *pdrgpoc, BOOL fPruned, CCost costLowerBound);
+  CCostContext *PccComputeCost(CMemoryPool *mp, COptimizationContext *poc, uint32_t ulOptReq,
+                               COptimizationContextArray *pdrgpoc, bool fPruned, CCost costLowerBound);
 
   // compute a cost lower bound for plans, rooted by current group expression, and satisfying the given required
   // properties
-  CCost CostLowerBound(CMemoryPool *mp, CReqdPropPlan *prppInput, CCostContext *pccChild, ULONG child_index);
+  CCost CostLowerBound(CMemoryPool *mp, CReqdPropPlan *prppInput, CCostContext *pccChild, uint32_t child_index);
 
   // initialize group expression
-  void Init(CGroup *pgroup, ULONG id);
+  void Init(CGroup *pgroup, uint32_t id);
 
   // reset group expression
-  void Reset(CGroup *pgroup, ULONG id) {
+  void Reset(CGroup *pgroup, uint32_t id) {
     m_pgroup = pgroup;
     m_id = id;
   }
@@ -205,7 +206,7 @@ class CGroupExpression : public CRefCount {
   EOptimizationLevel Eol() const { return m_eol; }
 
   // shorthand to access children
-  CGroup *operator[](ULONG ulPos) const {
+  CGroup *operator[](uint32_t ulPos) const {
     GPOS_ASSERT(nullptr != m_pdrgpgroup);
 
     CGroup *pgroup = (*m_pdrgpgroup)[ulPos];
@@ -221,15 +222,13 @@ class CGroupExpression : public CRefCount {
   };
 
   // arity function
-  ULONG
-  Arity() const { return m_pdrgpgroup->Size(); }
+  uint32_t Arity() const { return m_pdrgpgroup->Size(); }
 
   // accessor for operator
   COperator *Pop() const { return m_pop; }
 
   // accessor for id
-  ULONG
-  Id() const { return m_id; }
+  uint32_t Id() const { return m_id; }
 
   // accessor for containing group
   CGroup *Pgroup() const { return m_pgroup; }
@@ -244,32 +243,31 @@ class CGroupExpression : public CRefCount {
   ShtCC &Sht() { return m_sht; }
 
   // comparison operator for hashtables
-  BOOL operator==(const CGroupExpression &gexpr) const { return gexpr.Matches(this); }
+  bool operator==(const CGroupExpression &gexpr) const { return gexpr.Matches(this); }
 
   // equality function for hash table
-  static BOOL Equals(const CGroupExpression &gexprLeft, const CGroupExpression &gexprRight) {
+  static bool Equals(const CGroupExpression &gexprLeft, const CGroupExpression &gexprRight) {
     return gexprLeft == gexprRight;
   }
 
   // match group expression against given operator and its children
-  BOOL Matches(const CGroupExpression *) const;
+  bool Matches(const CGroupExpression *) const;
 
   // match non-scalar children of group expression against given children of passed expression
-  BOOL FMatchNonScalarChildren(const CGroupExpression *pgexpr) const;
+  bool FMatchNonScalarChildren(const CGroupExpression *pgexpr) const;
 
   // hash function
-  ULONG
-  HashValue() const { return HashValue(m_pop, m_pdrgpgroup); }
+  uint32_t HashValue() const { return HashValue(m_pop, m_pdrgpgroup); }
 
   // static hash function for operator and group references
-  static ULONG HashValue(COperator *pop, CGroupArray *drgpgroup);
+  static uint32_t HashValue(COperator *pop, CGroupArray *drgpgroup);
 
   // static hash function for group expression
-  static ULONG HashValue(const CGroupExpression &);
+  static uint32_t HashValue(const CGroupExpression &);
 
   // transform group expression
-  void Transform(CMemoryPool *mp, CMemoryPool *pmpLocal, CXform *pxform, CXformResult *pxfres, ULONG *pulElapsedTime,
-                 ULONG *pulNumberOfBindings);
+  void Transform(CMemoryPool *mp, CMemoryPool *pmpLocal, CXform *pxform, CXformResult *pxfres, uint32_t *pulElapsedTime,
+                 uint32_t *pulNumberOfBindings);
 
   // set group expression state
   void SetState(EState estNewState);
@@ -278,18 +276,18 @@ class CGroupExpression : public CRefCount {
   void ResetState();
 
   // check if group expression has been explored
-  BOOL FExplored() const { return (estExplored <= m_estate); }
+  bool FExplored() const { return (estExplored <= m_estate); }
 
   // check if group expression has been implemented
-  BOOL FImplemented() const { return (estImplemented == m_estate); }
+  bool FImplemented() const { return (estImplemented == m_estate); }
 
   // check if transition to the given state is completed
-  BOOL FTransitioned(EState estate) const;
+  bool FTransitioned(EState estate) const;
 
   CGroupArray *Pdrgpgroup() const { return m_pdrgpgroup; }
 
   // lookup cost context in hash table
-  CCostContext *PccLookup(COptimizationContext *poc, ULONG ulOptReq);
+  CCostContext *PccLookup(COptimizationContext *poc, uint32_t ulOptReq);
 
   // lookup all cost contexts matching given optimization context
   CCostContextArray *PdrgpccLookupAll(CMemoryPool *mp, COptimizationContext *poc);
@@ -299,11 +297,11 @@ class CGroupExpression : public CRefCount {
 
   // derive statistics recursively on a given group expression
   IStatistics *PstatsRecursiveDerive(CMemoryPool *pmpLocal, CMemoryPool *pmpGlobal, CReqdPropRelational *prprel,
-                                     IStatisticsArray *stats_ctxt, BOOL fComputeRootStats = true);
+                                     IStatisticsArray *stats_ctxt, bool fComputeRootStats = true);
 
   // print driver
   IOstream &OsPrint(IOstream &os) const;
-  IOstream &OsPrintWithPrefix(IOstream &os, const CHAR *prefix) const;
+  IOstream &OsPrintWithPrefix(IOstream &os, const char *prefix) const;
 
   // link for list in Group
   SLink m_linkGroup;
@@ -314,7 +312,7 @@ class CGroupExpression : public CRefCount {
   // invalid group expression
   static const CGroupExpression m_gexprInvalid;
 
-  virtual BOOL ContainsCircularDependencies();
+  virtual bool ContainsCircularDependencies();
 };  // class CGroupExpression
 
 }  // namespace gpopt

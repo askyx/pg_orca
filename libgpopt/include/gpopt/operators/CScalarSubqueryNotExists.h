@@ -40,7 +40,7 @@ class CScalarSubqueryNotExists : public CScalarSubqueryExistential {
   EOperatorId Eopid() const override { return EopScalarSubqueryNotExists; }
 
   // return a string for scalar subquery
-  const CHAR *SzId() const override { return "CScalarSubqueryNotExists"; }
+  const char *SzId() const override { return "CScalarSubqueryNotExists"; }
 
   // conversion function
   static CScalarSubqueryNotExists *PopConvert(COperator *pop) {

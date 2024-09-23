@@ -33,10 +33,10 @@ class CGroupExpression;
 class CJobGroupExpression : public CJob {
  private:
   // true if job has scheduled child group jobs
-  BOOL m_fChildrenScheduled;
+  bool m_fChildrenScheduled;
 
   // true if job has scheduled transformation jobs
-  BOOL m_fXformsScheduled;
+  bool m_fXformsScheduled;
 
  protected:
   // target group expression
@@ -49,13 +49,13 @@ class CJobGroupExpression : public CJob {
   ~CJobGroupExpression() override = default;
 
   // has job scheduled child groups ?
-  BOOL FChildrenScheduled() const { return m_fChildrenScheduled; }
+  bool FChildrenScheduled() const { return m_fChildrenScheduled; }
 
   // set children scheduled
   void SetChildrenScheduled() { m_fChildrenScheduled = true; }
 
   // has job scheduled xform groups ?
-  BOOL FXformsScheduled() const { return m_fXformsScheduled; }
+  bool FXformsScheduled() const { return m_fXformsScheduled; }
 
   // set xforms scheduled
   void SetXformsScheduled() { m_fXformsScheduled = true; }
@@ -73,7 +73,7 @@ class CJobGroupExpression : public CJob {
   void ScheduleTransformations(CSchedulerContext *psc, CXformSet *xform_set);
 
   // job's function
-  BOOL FExecute(CSchedulerContext *psc) override = 0;
+  bool FExecute(CSchedulerContext *psc) override = 0;
 
 #ifdef GPOS_DEBUG
 

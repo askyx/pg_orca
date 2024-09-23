@@ -59,13 +59,13 @@ class CDrvdPropCtxt : public CRefCount {
 #ifdef GPOS_DEBUG
 
   // is it a relational property context?
-  virtual BOOL FRelational() const { return false; }
+  virtual bool FRelational() const { return false; }
 
   // is it a plan property context?
-  virtual BOOL FPlan() const { return false; }
+  virtual bool FPlan() const { return false; }
 
   // is it a scalar property context?
-  virtual BOOL FScalar() const { return false; }
+  virtual bool FScalar() const { return false; }
 
 #endif  // GPOS_DEBUG
 

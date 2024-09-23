@@ -32,10 +32,10 @@ class CPhysicalLeftOuterIndexNLJoin : public CPhysicalLeftOuterNLJoin {
   EOperatorId Eopid() const override { return EopPhysicalLeftOuterIndexNLJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalLeftOuterIndexNLJoin"; }
+  const char *SzId() const override { return "CPhysicalLeftOuterIndexNLJoin"; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // outer column references accessor
   CColRefArray *PdrgPcrOuterRefs() const { return m_pdrgpcrOuterRefs; }

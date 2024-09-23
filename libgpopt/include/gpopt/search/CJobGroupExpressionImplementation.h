@@ -92,7 +92,7 @@ class CJobGroupExpressionImplementation : public CJobGroupExpression {
   static void ScheduleJob(CSchedulerContext *psc, CGroupExpression *pgexpr, CJob *pjParent);
 
   // job's function
-  BOOL FExecute(CSchedulerContext *psc) override;
+  bool FExecute(CSchedulerContext *psc) override;
 
 #ifdef GPOS_DEBUG
 
@@ -100,14 +100,14 @@ class CJobGroupExpressionImplementation : public CJobGroupExpression {
   IOstream &OsPrint(IOstream &os) const override;
 
   // dump state machine diagram in graphviz format
-  virtual IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const WCHAR *wszTitle) const {
+  virtual IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const wchar_t *wszTitle) const {
     (void)m_jsm.OsDiagramToGraphviz(mp, os, wszTitle);
 
     return os;
   }
 
   // compute unreachable states
-  void Unreachable(CMemoryPool *mp, EState **ppestate, ULONG *pulSize) const {
+  void Unreachable(CMemoryPool *mp, EState **ppestate, uint32_t *pulSize) const {
     m_jsm.Unreachable(mp, ppestate, pulSize);
   }
 

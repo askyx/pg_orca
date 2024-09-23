@@ -40,7 +40,7 @@ class CXformFullOuterJoin2HashJoin : public CXformImplementation {
   EXformId Exfid() const override { return ExfFullOuterJoin2HashJoin; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformFullOuterJoin2HashJoin"; }
+  const char *SzId() const override { return "CXformFullOuterJoin2HashJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

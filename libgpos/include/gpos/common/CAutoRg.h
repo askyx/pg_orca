@@ -50,7 +50,7 @@ class CAutoRg : public CStackObject {
   }
 
   // indexed access
-  inline T &operator[](ULONG ulPos) { return m_object_array[ulPos]; }
+  inline T &operator[](uint32_t ulPos) { return m_object_array[ulPos]; }
 
   // return basic pointer
   T *Rgt() { return m_object_array; }

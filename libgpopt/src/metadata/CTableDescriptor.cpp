@@ -29,9 +29,9 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CTableDescriptor::CTableDescriptor(CMemoryPool *mp, IMDId *mdid, const CName &name, BOOL convert_hash_to_random,
-                                   IMDRelation::Erelstoragetype erelstoragetype, ULONG ulExecuteAsUser, INT lockmode,
-                                   ULONG acl_mode, ULONG assigned_query_id_for_target_rel)
+CTableDescriptor::CTableDescriptor(CMemoryPool *mp, IMDId *mdid, const CName &name, bool convert_hash_to_random,
+                                   IMDRelation::Erelstoragetype erelstoragetype, uint32_t ulExecuteAsUser,
+                                   int32_t lockmode, uint32_t acl_mode, uint32_t assigned_query_id_for_target_rel)
     : m_mp(mp),
       m_mdid(mdid),
       m_name(mp, name),
@@ -79,8 +79,7 @@ CTableDescriptor::~CTableDescriptor() {
 //		number of columns
 //
 //---------------------------------------------------------------------------
-ULONG
-CTableDescriptor::ColumnCount() const {
+uint32_t CTableDescriptor::ColumnCount() const {
   // array allocated in ctor
   GPOS_ASSERT(nullptr != m_pdrgpcoldesc);
 
@@ -96,13 +95,12 @@ CTableDescriptor::ColumnCount() const {
 //		If not found, return the size of the array
 //
 //---------------------------------------------------------------------------
-ULONG
-CTableDescriptor::UlPos(const CColumnDescriptor *pcoldesc, const CColumnDescriptorArray *pdrgpcoldesc) {
+uint32_t CTableDescriptor::UlPos(const CColumnDescriptor *pcoldesc, const CColumnDescriptorArray *pdrgpcoldesc) {
   GPOS_ASSERT(nullptr != pcoldesc);
   GPOS_ASSERT(nullptr != pdrgpcoldesc);
 
-  ULONG arity = pdrgpcoldesc->Size();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  uint32_t arity = pdrgpcoldesc->Size();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     if (pcoldesc == (*pdrgpcoldesc)[ul]) {
       return ul;
     }
@@ -119,19 +117,18 @@ CTableDescriptor::UlPos(const CColumnDescriptor *pcoldesc, const CColumnDescript
 //		Find the position of the attribute in the array of column descriptors
 //
 //---------------------------------------------------------------------------
-ULONG
-CTableDescriptor::GetAttributePosition(INT attno) const {
+uint32_t CTableDescriptor::GetAttributePosition(int32_t attno) const {
   GPOS_ASSERT(nullptr != m_pdrgpcoldesc);
-  ULONG ulPos = gpos::ulong_max;
-  ULONG arity = m_pdrgpcoldesc->Size();
+  uint32_t ulPos = UINT32_MAX;
+  uint32_t arity = m_pdrgpcoldesc->Size();
 
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CColumnDescriptor *pcoldesc = (*m_pdrgpcoldesc)[ul];
     if (pcoldesc->AttrNum() == attno) {
       ulPos = ul;
     }
   }
-  GPOS_ASSERT(gpos::ulong_max != ulPos);
+  GPOS_ASSERT(UINT32_MAX != ulPos);
 
   return ulPos;
 }
@@ -159,7 +156,7 @@ void CTableDescriptor::AddColumn(CColumnDescriptor *pcoldesc) {
 //		descriptors defining a hash distribution
 //
 //---------------------------------------------------------------------------
-void CTableDescriptor::AddDistributionColumn(ULONG ulPos, IMDId *opfamily) {
+void CTableDescriptor::AddDistributionColumn(uint32_t ulPos, IMDId *opfamily) {
   CColumnDescriptor *pcoldesc = (*m_pdrgpcoldesc)[ulPos];
   pcoldesc->AddRef();
   m_pdrgpcoldescDist->Append(pcoldesc);
@@ -174,10 +171,10 @@ void CTableDescriptor::AddDistributionColumn(ULONG ulPos, IMDId *opfamily) {
 //		Add the column's position to the array of partition columns
 //
 //---------------------------------------------------------------------------
-void CTableDescriptor::AddPartitionColumn(ULONG ulPos) {
+void CTableDescriptor::AddPartitionColumn(uint32_t ulPos) {
   CColumnDescriptor *pcoldesc = (*m_pdrgpcoldesc)[ulPos];
   pcoldesc->SetAsPartCol();
-  m_pdrgpulPart->Append(GPOS_NEW(m_mp) ULONG(ulPos));
+  m_pdrgpulPart->Append(GPOS_NEW(m_mp) uint32_t(ulPos));
 }
 
 //---------------------------------------------------------------------------
@@ -188,13 +185,13 @@ void CTableDescriptor::AddPartitionColumn(ULONG ulPos) {
 //		Add a keyset, returns true if key set is successfully added
 //
 //---------------------------------------------------------------------------
-BOOL CTableDescriptor::FAddKeySet(CBitSet *pbs) {
+bool CTableDescriptor::FAddKeySet(CBitSet *pbs) {
   GPOS_ASSERT(nullptr != pbs);
   GPOS_ASSERT(pbs->Size() <= m_pdrgpcoldesc->Size());
 
-  const ULONG size = m_pdrgpbsKeys->Size();
-  BOOL fFound = false;
-  for (ULONG ul = 0; !fFound && ul < size; ul++) {
+  const uint32_t size = m_pdrgpbsKeys->Size();
+  bool fFound = false;
+  for (uint32_t ul = 0; !fFound && ul < size; ul++) {
     CBitSet *pbsCurrent = (*m_pdrgpbsKeys)[ul];
     fFound = pbsCurrent->Equals(pbs);
   }
@@ -214,7 +211,7 @@ BOOL CTableDescriptor::FAddKeySet(CBitSet *pbs) {
 //		Get n-th column descriptor
 //
 //---------------------------------------------------------------------------
-const CColumnDescriptor *CTableDescriptor::Pcoldesc(ULONG ulCol) const {
+const CColumnDescriptor *CTableDescriptor::Pcoldesc(uint32_t ulCol) const {
   GPOS_ASSERT(ulCol < ColumnCount());
 
   return (*m_pdrgpcoldesc)[ulCol];
@@ -245,13 +242,12 @@ IOstream &CTableDescriptor::OsPrint(IOstream &os) const {
 //
 //
 //---------------------------------------------------------------------------
-ULONG
-CTableDescriptor::IndexCount() {
+uint32_t CTableDescriptor::IndexCount() {
   GPOS_ASSERT(nullptr != m_mdid);
 
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
   const IMDRelation *pmdrel = md_accessor->RetrieveRel(m_mdid);
-  const ULONG ulIndices = pmdrel->IndexCount();
+  const uint32_t ulIndices = pmdrel->IndexCount();
 
   return ulIndices;
 }
@@ -266,14 +262,14 @@ CTableDescriptor::IndexCount() {
 //
 //
 //---------------------------------------------------------------------------
-ULONG
-CTableDescriptor::HashValue(const CTableDescriptor *ptabdesc) {
-  ULONG ulHash = gpos::CombineHashes(ptabdesc->MDId()->HashValue(), CWStringConst::HashValue(ptabdesc->Name().Pstr()));
+uint32_t CTableDescriptor::HashValue(const CTableDescriptor *ptabdesc) {
+  uint32_t ulHash =
+      gpos::CombineHashes(ptabdesc->MDId()->HashValue(), CWStringConst::HashValue(ptabdesc->Name().Pstr()));
 
   return ulHash;
 }
 
-BOOL CTableDescriptor::Equals(const CTableDescriptor *ptabdescLeft, const CTableDescriptor *ptabdescRight) {
+bool CTableDescriptor::Equals(const CTableDescriptor *ptabdescLeft, const CTableDescriptor *ptabdescRight) {
   return ptabdescLeft->MDId()->Equals(ptabdescRight->MDId()) && ptabdescLeft->Name().Equals(ptabdescRight->Name());
 }
 

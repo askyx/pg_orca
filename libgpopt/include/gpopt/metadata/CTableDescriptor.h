@@ -63,7 +63,7 @@ class CTableDescriptor : public CRefCount {
   // 1. in hawq 2.0, some hash distributed tables need to be considered as random,
   //	  depending on its bucket number
   // 2. for a partitioned table, it may contain a part with a different distribution
-  BOOL m_convert_hash_to_random;
+  bool m_convert_hash_to_random;
 
   // indexes of partition columns for partitioned tables
   ULongPtrArray *m_pdrgpulPart;
@@ -75,7 +75,7 @@ class CTableDescriptor : public CRefCount {
   uint32_t m_execute_as_user_id;
 
   // lockmode from the parser
-  INT m_lockmode;
+  int32_t m_lockmode;
 
   // acl mode from the parser
   uint32_t m_acl_mode;
@@ -90,8 +90,8 @@ class CTableDescriptor : public CRefCount {
   CTableDescriptor(const CTableDescriptor &) = delete;
 
   // ctor
-  CTableDescriptor(CMemoryPool *, IMDId *mdid, const CName &, BOOL convert_hash_to_random,
-                   IMDRelation::Erelstoragetype erelstoragetype, uint32_t ulExecuteAsUser, INT lockmode,
+  CTableDescriptor(CMemoryPool *, IMDId *mdid, const CName &, bool convert_hash_to_random,
+                   IMDRelation::Erelstoragetype erelstoragetype, uint32_t ulExecuteAsUser, int32_t lockmode,
                    uint32_t acl_mode, uint32_t assigned_query_id_for_target_rel);
 
   // dtor
@@ -107,7 +107,7 @@ class CTableDescriptor : public CRefCount {
   void AddPartitionColumn(uint32_t ulPos);
 
   // add a keyset
-  BOOL FAddKeySet(CBitSet *pbs);
+  bool FAddKeySet(CBitSet *pbs);
 
   // accessors
   uint32_t ColumnCount() const;
@@ -122,12 +122,12 @@ class CTableDescriptor : public CRefCount {
   // execute as user accessor
   uint32_t GetExecuteAsUserId() const { return m_execute_as_user_id; }
 
-  INT LockMode() const { return m_lockmode; }
+  int32_t LockMode() const { return m_lockmode; }
 
   uint32_t GetAclMode() const { return m_acl_mode; }
 
   // return the position of a particular attribute (identified by attno)
-  uint32_t GetAttributePosition(INT attno) const;
+  uint32_t GetAttributePosition(int32_t attno) const;
 
   // column descriptor accessor
   CColumnDescriptorArray *Pdrgpcoldesc() const { return m_pdrgpcoldesc; }
@@ -144,12 +144,12 @@ class CTableDescriptor : public CRefCount {
   // storage type
   IMDRelation::Erelstoragetype RetrieveRelStorageType() const { return m_erelstoragetype; }
 
-  BOOL IsPartitioned() const { return 0 < m_pdrgpulPart->Size(); }
+  bool IsPartitioned() const { return 0 < m_pdrgpulPart->Size(); }
 
   // true iff a hash distributed table needs to be considered as random;
   // this happens for when we are in phase 1 of a gpexpand or (for GPDB 5X)
   // when we have a mix of hash-distributed and random distributed partitions
-  BOOL ConvertHashToRandom() const { return m_convert_hash_to_random; }
+  bool ConvertHashToRandom() const { return m_convert_hash_to_random; }
 
   // helper function for finding the index of a column descriptor in
   // an array of column descriptors
@@ -160,7 +160,7 @@ class CTableDescriptor : public CRefCount {
   // returns number of indices
   uint32_t IndexCount();
 
-  BOOL IsAORowOrColTable() const {
+  bool IsAORowOrColTable() const {
     return m_erelstoragetype == IMDRelation::ErelstorageAppendOnlyCols ||
            m_erelstoragetype == IMDRelation::ErelstorageAppendOnlyRows;
   }
@@ -169,7 +169,7 @@ class CTableDescriptor : public CRefCount {
 
   static uint32_t HashValue(const CTableDescriptor *ptabdesc);
 
-  static BOOL Equals(const CTableDescriptor *ptabdescLeft, const CTableDescriptor *ptabdescRight);
+  static bool Equals(const CTableDescriptor *ptabdescLeft, const CTableDescriptor *ptabdescRight);
 
 };  // class CTableDescriptor
 

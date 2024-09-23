@@ -53,16 +53,16 @@ CMappingVarColId::CMappingVarColId(CMemoryPool *mp) : m_mp(mp) {
 //		Given a gpdb attribute, return the mapping info to opt col
 //
 //---------------------------------------------------------------------------
-const CGPDBAttOptCol *CMappingVarColId::GetGPDBAttOptColMapping(ULONG current_query_level, const Var *var,
+const CGPDBAttOptCol *CMappingVarColId::GetGPDBAttOptColMapping(uint32_t current_query_level, const Var *var,
                                                                 EPlStmtPhysicalOpType plstmt_physical_op_type) const {
   GPOS_ASSERT(nullptr != var);
   GPOS_ASSERT(current_query_level >= var->varlevelsup);
 
   // absolute query level of var
-  ULONG abs_query_level = current_query_level - var->varlevelsup;
+  uint32_t abs_query_level = current_query_level - var->varlevelsup;
 
   // extract varno
-  ULONG var_no = var->varno;
+  uint32_t var_no = var->varno;
   if (EpspotWindow == plstmt_physical_op_type || EpspotAgg == plstmt_physical_op_type ||
       EpspotMaterialize == plstmt_physical_op_type) {
     // Agg and Materialize need to employ OUTER, since they have other
@@ -90,7 +90,7 @@ const CGPDBAttOptCol *CMappingVarColId::GetGPDBAttOptColMapping(ULONG current_qu
 //		Given a gpdb attribute, return a column name in optimizer world
 //
 //---------------------------------------------------------------------------
-const CWStringBase *CMappingVarColId::GetOptColName(ULONG current_query_level, const Var *var,
+const CWStringBase *CMappingVarColId::GetOptColName(uint32_t current_query_level, const Var *var,
                                                     EPlStmtPhysicalOpType plstmt_physical_op_type) const {
   return GetGPDBAttOptColMapping(current_query_level, var, plstmt_physical_op_type)->GetOptColInfo()->GetOptColName();
 }
@@ -103,9 +103,8 @@ const CWStringBase *CMappingVarColId::GetOptColName(ULONG current_query_level, c
 //		given a gpdb attribute, return a column id in optimizer world
 //
 //---------------------------------------------------------------------------
-ULONG
-CMappingVarColId::GetColId(ULONG current_query_level, const Var *var,
-                           EPlStmtPhysicalOpType plstmt_physical_op_type) const {
+uint32_t CMappingVarColId::GetColId(uint32_t current_query_level, const Var *var,
+                                    EPlStmtPhysicalOpType plstmt_physical_op_type) const {
   return GetGPDBAttOptColMapping(current_query_level, var, plstmt_physical_op_type)->GetOptColInfo()->GetColId();
 }
 
@@ -117,7 +116,8 @@ CMappingVarColId::GetColId(ULONG current_query_level, const Var *var,
 //		Insert a single entry into the hash map
 //
 //---------------------------------------------------------------------------
-void CMappingVarColId::Insert(ULONG query_level, ULONG var_no, INT attrnum, ULONG colid, CWStringBase *column_name) {
+void CMappingVarColId::Insert(uint32_t query_level, uint32_t var_no, int32_t attrnum, uint32_t colid,
+                              CWStringBase *column_name) {
   // GPDB agg node uses 0 in Var, but that should've been taken care of
   // by translator
   GPOS_ASSERT(var_no > 0);
@@ -132,7 +132,7 @@ void CMappingVarColId::Insert(ULONG query_level, ULONG var_no, INT attrnum, ULON
   gpdb_att_info->AddRef();
   CGPDBAttOptCol *gpdb_att_opt_col_info = GPOS_NEW(m_mp) CGPDBAttOptCol(gpdb_att_info, opt_col_info);
 
-  BOOL result GPOS_ASSERTS_ONLY = m_gpdb_att_opt_col_mapping->Insert(gpdb_att_info, gpdb_att_opt_col_info);
+  bool result GPOS_ASSERTS_ONLY = m_gpdb_att_opt_col_mapping->Insert(gpdb_att_info, gpdb_att_opt_col_info);
 
   GPOS_ASSERT(result);
 }
@@ -146,12 +146,12 @@ void CMappingVarColId::Insert(ULONG query_level, ULONG var_no, INT attrnum, ULON
 //		optimizer table descriptor
 //
 //---------------------------------------------------------------------------
-void CMappingVarColId::LoadTblColumns(ULONG query_level, ULONG RTE_index, const CDXLTableDescr *table_descr) {
+void CMappingVarColId::LoadTblColumns(uint32_t query_level, uint32_t RTE_index, const CDXLTableDescr *table_descr) {
   GPOS_ASSERT(nullptr != table_descr);
-  const ULONG size = table_descr->Arity();
+  const uint32_t size = table_descr->Arity();
 
   // add mapping information for columns
-  for (ULONG i = 0; i < size; i++) {
+  for (uint32_t i = 0; i < size; i++) {
     const CDXLColDescr *dxl_col_descr = table_descr->GetColumnDescrAt(i);
     this->Insert(query_level, RTE_index, dxl_col_descr->AttrNum(), dxl_col_descr->Id(),
                  dxl_col_descr->MdName()->GetMDName()->Copy(m_mp));
@@ -167,17 +167,17 @@ void CMappingVarColId::LoadTblColumns(ULONG query_level, ULONG RTE_index, const 
 //		optimizer table descriptor
 //
 //---------------------------------------------------------------------------
-void CMappingVarColId::LoadIndexColumns(ULONG query_level, ULONG RTE_index, const IMDIndex *index,
+void CMappingVarColId::LoadIndexColumns(uint32_t query_level, uint32_t RTE_index, const IMDIndex *index,
                                         const CDXLTableDescr *table_descr) {
   GPOS_ASSERT(nullptr != table_descr);
 
-  const ULONG size = index->Keys();
+  const uint32_t size = index->Keys();
 
   // add mapping information for columns
-  for (ULONG i = 0; i < size; i++) {
-    ULONG pos = index->KeyAt(i);
+  for (uint32_t i = 0; i < size; i++) {
+    uint32_t pos = index->KeyAt(i);
     const CDXLColDescr *dxl_col_descr = table_descr->GetColumnDescrAt(pos);
-    this->Insert(query_level, RTE_index, INT(i + 1), dxl_col_descr->Id(),
+    this->Insert(query_level, RTE_index, int32_t(i + 1), dxl_col_descr->Id(),
                  dxl_col_descr->MdName()->GetMDName()->Copy(m_mp));
   }
 }
@@ -190,18 +190,18 @@ void CMappingVarColId::LoadIndexColumns(ULONG query_level, ULONG RTE_index, cons
 //		Load column mapping information from list of column names
 //
 //---------------------------------------------------------------------------
-void CMappingVarColId::Load(ULONG query_level, ULONG RTE_index, CIdGenerator *id_generator, List *col_names) {
+void CMappingVarColId::Load(uint32_t query_level, uint32_t RTE_index, CIdGenerator *id_generator, List *col_names) {
   ListCell *col_name = nullptr;
-  ULONG i = 0;
+  uint32_t i = 0;
 
   // add mapping information for columns
   foreach (col_name, col_names) {
     Value *value = (Value *)lfirst(col_name);
-    CHAR *col_name_char_array = strVal(value);
+    char *col_name_char_array = strVal(value);
 
     CWStringDynamic *column_name = CDXLUtils::CreateDynamicStringFromCharArray(m_mp, col_name_char_array);
 
-    this->Insert(query_level, RTE_index, INT(i + 1), id_generator->next_id(), column_name->Copy(m_mp));
+    this->Insert(query_level, RTE_index, int32_t(i + 1), id_generator->next_id(), column_name->Copy(m_mp));
 
     i++;
     GPOS_DELETE(column_name);
@@ -216,12 +216,12 @@ void CMappingVarColId::Load(ULONG query_level, ULONG RTE_index, CIdGenerator *id
 //		Load up columns information from the array of column descriptors
 //
 //---------------------------------------------------------------------------
-void CMappingVarColId::LoadColumns(ULONG query_level, ULONG RTE_index, const CDXLColDescrArray *column_descrs) {
+void CMappingVarColId::LoadColumns(uint32_t query_level, uint32_t RTE_index, const CDXLColDescrArray *column_descrs) {
   GPOS_ASSERT(nullptr != column_descrs);
-  const ULONG size = column_descrs->Size();
+  const uint32_t size = column_descrs->Size();
 
   // add mapping information for columns
-  for (ULONG i = 0; i < size; i++) {
+  for (uint32_t i = 0; i < size; i++) {
     const CDXLColDescr *dxl_col_descr = (*column_descrs)[i];
     this->Insert(query_level, RTE_index, dxl_col_descr->AttrNum(), dxl_col_descr->Id(),
                  dxl_col_descr->MdName()->GetMDName()->Copy(m_mp));
@@ -236,12 +236,12 @@ void CMappingVarColId::LoadColumns(ULONG query_level, ULONG RTE_index, const CDX
 //		Load up information from column information in derived tables
 //
 //---------------------------------------------------------------------------
-void CMappingVarColId::LoadDerivedTblColumns(ULONG query_level, ULONG RTE_index,
+void CMappingVarColId::LoadDerivedTblColumns(uint32_t query_level, uint32_t RTE_index,
                                              const CDXLNodeArray *derived_columns_dxl, List *target_list) {
   GPOS_ASSERT(nullptr != derived_columns_dxl);
-  GPOS_ASSERT((ULONG)gpdb::ListLength(target_list) >= derived_columns_dxl->Size());
+  GPOS_ASSERT((uint32_t)gpdb::ListLength(target_list) >= derived_columns_dxl->Size());
 
-  ULONG drvd_tbl_col_counter = 0;  // counter for the dynamic array of DXL nodes
+  uint32_t drvd_tbl_col_counter = 0;  // counter for the dynamic array of DXL nodes
   ListCell *lc = nullptr;
   foreach (lc, target_list) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
@@ -251,7 +251,7 @@ void CMappingVarColId::LoadDerivedTblColumns(ULONG query_level, ULONG RTE_index,
       GPOS_ASSERT(nullptr != dxlnode);
       CDXLScalarIdent *dxl_sc_ident = CDXLScalarIdent::Cast(dxlnode->GetOperator());
       const CDXLColRef *dxl_colref = dxl_sc_ident->GetDXLColRef();
-      this->Insert(query_level, RTE_index, INT(target_entry->resno), dxl_colref->Id(),
+      this->Insert(query_level, RTE_index, int32_t(target_entry->resno), dxl_colref->Id(),
                    dxl_colref->MdName()->GetMDName()->Copy(m_mp));
       drvd_tbl_col_counter++;
     }
@@ -266,21 +266,21 @@ void CMappingVarColId::LoadDerivedTblColumns(ULONG query_level, ULONG RTE_index,
 //		Load CTE column mappings
 //
 //---------------------------------------------------------------------------
-void CMappingVarColId::LoadCTEColumns(ULONG query_level, ULONG RTE_index, const ULongPtrArray *CTE_columns,
+void CMappingVarColId::LoadCTEColumns(uint32_t query_level, uint32_t RTE_index, const ULongPtrArray *CTE_columns,
                                       List *target_list) {
   GPOS_ASSERT(nullptr != CTE_columns);
-  GPOS_ASSERT((ULONG)gpdb::ListLength(target_list) >= CTE_columns->Size());
+  GPOS_ASSERT((uint32_t)gpdb::ListLength(target_list) >= CTE_columns->Size());
 
-  ULONG idx = 0;
+  uint32_t idx = 0;
   ListCell *lc = nullptr;
   foreach (lc, target_list) {
     TargetEntry *target_entry = (TargetEntry *)lfirst(lc);
     if (!target_entry->resjunk) {
       GPOS_ASSERT(0 < target_entry->resno);
-      ULONG CTE_colid = *((*CTE_columns)[idx]);
+      uint32_t CTE_colid = *((*CTE_columns)[idx]);
 
       CWStringDynamic *column_name = CDXLUtils::CreateDynamicStringFromCharArray(m_mp, target_entry->resname);
-      this->Insert(query_level, RTE_index, INT(target_entry->resno), CTE_colid, column_name);
+      this->Insert(query_level, RTE_index, int32_t(target_entry->resno), CTE_colid, column_name);
       idx++;
     }
   }
@@ -294,14 +294,15 @@ void CMappingVarColId::LoadCTEColumns(ULONG query_level, ULONG RTE_index, const 
 //		Load up information from projection list created from GPDB join expression
 //
 //---------------------------------------------------------------------------
-void CMappingVarColId::LoadProjectElements(ULONG query_level, ULONG RTE_index, const CDXLNode *project_list_dxlnode) {
+void CMappingVarColId::LoadProjectElements(uint32_t query_level, uint32_t RTE_index,
+                                           const CDXLNode *project_list_dxlnode) {
   GPOS_ASSERT(nullptr != project_list_dxlnode);
-  const ULONG size = project_list_dxlnode->Arity();
+  const uint32_t size = project_list_dxlnode->Arity();
   // add mapping information for columns
-  for (ULONG i = 0; i < size; i++) {
+  for (uint32_t i = 0; i < size; i++) {
     CDXLNode *dxlnode = (*project_list_dxlnode)[i];
     CDXLScalarProjElem *dxl_proj_elem = CDXLScalarProjElem::Cast(dxlnode->GetOperator());
-    this->Insert(query_level, RTE_index, INT(i + 1), dxl_proj_elem->Id(),
+    this->Insert(query_level, RTE_index, int32_t(i + 1), dxl_proj_elem->Id(),
                  dxl_proj_elem->GetMdNameAlias()->GetMDName()->Copy(m_mp));
   }
 }
@@ -314,7 +315,7 @@ void CMappingVarColId::LoadProjectElements(ULONG query_level, ULONG RTE_index, c
 //		Create a deep copy
 //
 //---------------------------------------------------------------------------
-CMappingVarColId *CMappingVarColId::CopyMapColId(ULONG query_level) const {
+CMappingVarColId *CMappingVarColId::CopyMapColId(uint32_t query_level) const {
   CMappingVarColId *var_colid_mapping = GPOS_NEW(m_mp) CMappingVarColId(m_mp);
 
   // iterate over full map
@@ -334,7 +335,7 @@ CMappingVarColId *CMappingVarColId::CopyMapColId(ULONG query_level) const {
       CGPDBAttOptCol *gpdb_att_opt_col_new = GPOS_NEW(m_mp) CGPDBAttOptCol(gpdb_att_info_new, opt_col_info_new);
 
       // insert into hashmap
-      BOOL result GPOS_ASSERTS_ONLY =
+      bool result GPOS_ASSERTS_ONLY =
           var_colid_mapping->m_gpdb_att_opt_col_mapping->Insert(gpdb_att_info_new, gpdb_att_opt_col_new);
       GPOS_ASSERT(result);
     }
@@ -369,7 +370,7 @@ CMappingVarColId *CMappingVarColId::CopyMapColId(CMemoryPool *mp) const {
     CGPDBAttOptCol *gpdb_att_opt_col_new = GPOS_NEW(mp) CGPDBAttOptCol(gpdb_att_info_new, opt_col_info_new);
 
     // insert into hashmap
-    BOOL result GPOS_ASSERTS_ONLY =
+    bool result GPOS_ASSERTS_ONLY =
         var_colid_mapping->m_gpdb_att_opt_col_mapping->Insert(gpdb_att_info_new, gpdb_att_opt_col_new);
     GPOS_ASSERT(result);
   }
@@ -404,8 +405,8 @@ CMappingVarColId *CMappingVarColId::CopyRemapColId(CMemoryPool *mp, ULongPtrArra
 
     CGPDBAttInfo *gpdb_att_info_new =
         GPOS_NEW(mp) CGPDBAttInfo(gpdb_att_info->GetQueryLevel(), gpdb_att_info->GetVarNo(), gpdb_att_info->GetAttNo());
-    ULONG colid = opt_col_info->GetColId();
-    ULONG *new_colid = old_new_col_mapping->Find(&colid);
+    uint32_t colid = opt_col_info->GetColId();
+    uint32_t *new_colid = old_new_col_mapping->Find(&colid);
     if (nullptr != new_colid) {
       colid = *new_colid;
     }
@@ -415,7 +416,7 @@ CMappingVarColId *CMappingVarColId::CopyRemapColId(CMemoryPool *mp, ULongPtrArra
     gpdb_att_info_new->AddRef();
     CGPDBAttOptCol *gpdb_att_opt_col_new = GPOS_NEW(mp) CGPDBAttOptCol(gpdb_att_info_new, opt_col_info_new);
 
-    BOOL result GPOS_ASSERTS_ONLY =
+    bool result GPOS_ASSERTS_ONLY =
         var_colid_mapping->m_gpdb_att_opt_col_mapping->Insert(gpdb_att_info_new, gpdb_att_opt_col_new);
     GPOS_ASSERT(result);
   }

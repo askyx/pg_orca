@@ -43,7 +43,7 @@ class CXformInnerApply2InnerJoinNoCorrelations : public CXformApply2Join<CLogica
   // ident accessors
   EXformId Exfid() const override { return ExfInnerApply2InnerJoinNoCorrelations; }
 
-  const CHAR *SzId() const override { return "CXformInnerApply2InnerJoinNoCorrelations"; }
+  const char *SzId() const override { return "CXformInnerApply2InnerJoinNoCorrelations"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

@@ -42,13 +42,13 @@ class CMDIndexGPDB : public IMDIndex {
   CMDName *m_mdname;
 
   // is the index clustered
-  BOOL m_clustered;
+  bool m_clustered;
 
   // is the index partitioned
-  BOOL m_partitioned;
+  bool m_partitioned;
 
   // Can index AM order
-  BOOL m_amcanorder;
+  bool m_amcanorder;
 
   // index type
   EmdindexType m_index_type;
@@ -84,7 +84,7 @@ class CMDIndexGPDB : public IMDIndex {
   CMDIndexGPDB(const CMDIndexGPDB &) = delete;
 
   // ctor
-  CMDIndexGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, BOOL is_clustered, BOOL is_partitioned, BOOL amcanorder,
+  CMDIndexGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, bool is_clustered, bool is_partitioned, bool amcanorder,
                EmdindexType index_type, IMDId *mdid_item_type, ULongPtrArray *index_key_cols_array,
                ULongPtrArray *included_cols_array, ULongPtrArray *returnable_cols_array,
                IMdIdArray *mdid_opfamilies_array, IMdIdArray *child_index_oids, ULongPtrArray *sort_direction,
@@ -100,46 +100,46 @@ class CMDIndexGPDB : public IMDIndex {
   CMDName Mdname() const override;
 
   // is the index clustered
-  BOOL IsClustered() const override;
+  bool IsClustered() const override;
 
   // is the index partitioned
-  BOOL IsPartitioned() const override;
+  bool IsPartitioned() const override;
 
   // Does index AM support ordering
-  BOOL CanOrder() const override;
+  bool CanOrder() const override;
 
   // index type
   EmdindexType IndexType() const override;
 
   // number of keys
-  ULONG Keys() const override;
+  uint32_t Keys() const override;
 
   // return the n-th key column
-  ULONG KeyAt(ULONG pos) const override;
+  uint32_t KeyAt(uint32_t pos) const override;
 
   // return the position of the key column
-  ULONG GetKeyPos(ULONG column) const override;
+  uint32_t GetKeyPos(uint32_t column) const override;
 
   // number of included columns
-  ULONG IncludedCols() const override;
+  uint32_t IncludedCols() const override;
 
   // return the n-th included column
-  ULONG IncludedColAt(ULONG pos) const override;
+  uint32_t IncludedColAt(uint32_t pos) const override;
 
   // number of returnable columns
-  ULONG ReturnableCols() const override;
+  uint32_t ReturnableCols() const override;
 
   // return the n-th returnable column
-  ULONG ReturnableColAt(ULONG pos) const override;
+  uint32_t ReturnableColAt(uint32_t pos) const override;
 
   // return the n-th column sort direction
-  ULONG KeySortDirectionAt(ULONG pos) const override;
+  uint32_t KeySortDirectionAt(uint32_t pos) const override;
 
   // return the n-th column nulls direction
-  ULONG KeyNullsDirectionAt(ULONG pos) const override;
+  uint32_t KeyNullsDirectionAt(uint32_t pos) const override;
 
   // return the position of the included column
-  ULONG GetIncludedColPos(ULONG column) const override;
+  uint32_t GetIncludedColPos(uint32_t column) const override;
 
   // DXL string for index
 
@@ -150,7 +150,7 @@ class CMDIndexGPDB : public IMDIndex {
 
   // check if given scalar comparison can be used with the index key
   // at the specified position
-  BOOL IsCompatible(const IMDScalarOp *md_scalar_op, ULONG key_pos) const override;
+  bool IsCompatible(const IMDScalarOp *md_scalar_op, uint32_t key_pos) const override;
 
   // child index oids
   IMdIdArray *ChildIndexMdids() const override;

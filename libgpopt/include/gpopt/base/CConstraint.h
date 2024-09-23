@@ -34,15 +34,15 @@ using CConstraintArray = CDynamicPtrArray<CConstraint, CleanupRelease>;
 using ColRefToConstraintArrayMap = CHashMap<CColRef, CConstraintArray, CColRef::HashValue, CColRef::Equals,
                                             CleanupNULL<CColRef>, CleanupRelease<CConstraintArray>>;
 
-// mapping CConstraint -> BOOL to cache previous containment queries,
+// mapping CConstraint -> bool to cache previous containment queries,
 // we use pointer equality here for fast map lookup -- since we do shallow comparison, we do not take ownership
 // of pointer values
-using ConstraintContainmentMap = CHashMap<CConstraint, BOOL, gpos::HashPtr<CConstraint>, gpos::EqualPtr<CConstraint>,
-                                          CleanupNULL<CConstraint>, CleanupNULL<BOOL>>;
+using ConstraintContainmentMap = CHashMap<CConstraint, bool, gpos::HashPtr<CConstraint>, gpos::EqualPtr<CConstraint>,
+                                          CleanupNULL<CConstraint>, CleanupNULL<bool>>;
 
-// hash map mapping ULONG -> CConstraint
-using UlongToConstraintMap = CHashMap<ULONG, CConstraint, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                      CleanupDelete<ULONG>, CleanupRelease<CConstraint>>;
+// hash map mapping uint32_t -> CConstraint
+using UlongToConstraintMap = CHashMap<uint32_t, CConstraint, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                      CleanupDelete<uint32_t>, CleanupRelease<CConstraint>>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -66,13 +66,13 @@ class CConstraint : public CRefCount {
   ConstraintContainmentMap *m_phmcontain;
 
   // constant true
-  static BOOL m_fTrue;
+  static bool m_fTrue;
 
   // constant false
-  static BOOL m_fFalse;
+  static bool m_fFalse;
 
-  // return address of static BOOL constant based on passed BOOL value
-  static BOOL *PfVal(BOOL value) {
+  // return address of static bool constant based on passed bool value
+  static bool *PfVal(bool value) {
     if (value) {
       return &m_fTrue;
     }
@@ -86,15 +86,15 @@ class CConstraint : public CRefCount {
 
   // create constraint from scalar comparison
   static CConstraint *PcnstrFromScalarCmp(CMemoryPool *mp, CExpression *pexpr, CColRefSetArray **ppdrgpcrs,
-                                          BOOL infer_nulls_as = false);
+                                          bool infer_nulls_as = false);
 
   // create constraint from scalar boolean expression
   static CConstraint *PcnstrFromScalarBoolOp(CMemoryPool *mp, CExpression *pexpr, CColRefSetArray **ppdrgpcrs,
-                                             BOOL infer_nulls_as = false,
+                                             bool infer_nulls_as = false,
                                              IMDIndex::EmdindexType access_method = IMDIndex::EmdindSentinel);
 
   // create conjunction/disjunction from array of constraints
-  static CConstraint *PcnstrConjDisj(CMemoryPool *mp, CConstraintArray *pdrgpcnstr, BOOL fConj);
+  static CConstraint *PcnstrConjDisj(CMemoryPool *mp, CConstraintArray *pdrgpcnstr, bool fConj);
 
  protected:
   // memory pool -- used for local computations
@@ -111,7 +111,7 @@ class CConstraint : public CRefCount {
 
   // construct a conjunction or disjunction scalar expression from an
   // array of constraints
-  static CExpression *PexprScalarConjDisj(CMemoryPool *mp, CConstraintArray *pdrgpcnstr, BOOL fConj);
+  static CExpression *PexprScalarConjDisj(CMemoryPool *mp, CConstraintArray *pdrgpcnstr, bool fConj);
 
   // flatten an array of constraints to be used as constraint children
   static CConstraintArray *PdrgpcnstrFlatten(CMemoryPool *mp, CConstraintArray *pdrgpcnstr, EConstraintType ect);
@@ -124,12 +124,12 @@ class CConstraint : public CRefCount {
 
   // return a copy of the conjunction/disjunction constraint for a different column
   static CConstraint *PcnstrConjDisjRemapForColumn(CMemoryPool *mp, CColRef *colref, CConstraintArray *pdrgpcnstr,
-                                                   BOOL fConj);
+                                                   bool fConj);
 
   // create constraint from scalar array comparison expression originally generated for
   // "scalar op ANY/ALL (array)" construct
   static CConstraint *PcnstrFromScalarArrayCmp(CMemoryPool *mp, CExpression *pexpr, CColRef *colref,
-                                               BOOL infer_nulls_as = false);
+                                               bool infer_nulls_as = false);
 
   static CColRefSet *PcrsFromConstraints(CMemoryPool *mp, CConstraintArray *pdrgpcnstr);
 
@@ -146,16 +146,16 @@ class CConstraint : public CRefCount {
   virtual EConstraintType Ect() const = 0;
 
   // is this constraint a contradiction
-  virtual BOOL FContradiction() const = 0;
+  virtual bool FContradiction() const = 0;
 
   // is this constraint unbounded
-  virtual BOOL IsConstraintUnbounded() const { return false; }
+  virtual bool IsConstraintUnbounded() const { return false; }
 
   // does the current constraint contain the given one
-  virtual BOOL Contains(CConstraint *pcnstr);
+  virtual bool Contains(CConstraint *pcnstr);
 
   // equality function
-  virtual BOOL Equals(CConstraint *pcnstr);
+  virtual bool Equals(CConstraint *pcnstr);
 
   // columns in this constraint
   virtual CColRefSet *PcrsUsed() const { return m_pcrsUsed; }
@@ -164,15 +164,15 @@ class CConstraint : public CRefCount {
   virtual CExpression *PexprScalar(CMemoryPool *mp) = 0;
 
   // check if there is a constraint on the given column
-  virtual BOOL FConstraint(const CColRef *colref) const = 0;
+  virtual bool FConstraint(const CColRef *colref) const = 0;
 
-  virtual BOOL FConstraintOnSegmentId() const { return false; }
+  virtual bool FConstraintOnSegmentId() const { return false; }
 
   virtual CConstraint *GetConstraintOnSegmentId() const { return nullptr; }
 
   // return a copy of the constraint with remapped columns
   virtual CConstraint *PcnstrCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                     BOOL must_exist) = 0;
+                                                     bool must_exist) = 0;
 
   // return constraint on a given column
   virtual CConstraint *Pcnstr(CMemoryPool *,   // mp,
@@ -194,7 +194,7 @@ class CConstraint : public CRefCount {
   // create constraint from scalar expression and pass back any discovered
   // equivalence classes
   static CConstraint *PcnstrFromScalarExpr(CMemoryPool *mp, CExpression *pexpr, CColRefSetArray **ppdrgpcrs,
-                                           BOOL infer_nulls_as = false,
+                                           bool infer_nulls_as = false,
                                            IMDIndex::EmdindexType access_method = IMDIndex::EmdindSentinel);
 
   // create constraint from EXISTS/ANY scalar subquery
@@ -212,7 +212,7 @@ class CConstraint : public CRefCount {
 
   // subset of the given constraints, which reference the given column
   static CConstraintArray *PdrgpcnstrOnColumn(CMemoryPool *mp, CConstraintArray *pdrgpcnstr, CColRef *colref,
-                                              BOOL fExclusive);
+                                              bool fExclusive);
   virtual gpos::IOstream &OsPrint(gpos::IOstream &os) const = 0;
 
 };  // class CConstraint

@@ -25,94 +25,94 @@
 
 namespace gpos {
 namespace clib {
-using Comparator = INT (*)(const void *, const void *);
+using Comparator = int32_t (*)(const void *, const void *);
 
 // compare a specified number of bytes of two regions of memory
-INT Memcmp(const void *left, const void *right, SIZE_T num_bytes);
+int32_t Memcmp(const void *left, const void *right, size_t num_bytes);
 
 // sleep given number of microseconds
-void USleep(ULONG usecs);
+void USleep(uint32_t usecs);
 
 // compare two strings
-INT Strcmp(const CHAR *left, const CHAR *right);
+int32_t Strcmp(const char *left, const char *right);
 
 // compare two strings up to a specified number of characters
-INT Strncmp(const CHAR *left, const CHAR *right, SIZE_T num_bytes);
+int32_t Strncmp(const char *left, const char *right, size_t num_bytes);
 
 // compare two strings up to a specified number of wide characters
-INT Wcsncmp(const WCHAR *left, const WCHAR *right, SIZE_T num_bytes);
+int32_t Wcsncmp(const wchar_t *left, const wchar_t *right, size_t num_bytes);
 
 // copy two strings up to a specified number of wide characters
-WCHAR *WcStrNCpy(WCHAR *dest, const WCHAR *src, SIZE_T num_bytes);
+wchar_t *WcStrNCpy(wchar_t *dest, const wchar_t *src, size_t num_bytes);
 
 // copy a specified number of bytes between two memory areas
-void *Memcpy(void *dest, const void *src, SIZE_T num_bytes);
+void *Memcpy(void *dest, const void *src, size_t num_bytes);
 
 // copy a specified number of wide characters
-WCHAR *Wmemcpy(WCHAR *dest, const WCHAR *src, SIZE_T num_bytes);
+wchar_t *Wmemcpy(wchar_t *dest, const wchar_t *src, size_t num_bytes);
 
 // copy a specified number of characters
-CHAR *Strncpy(CHAR *dest, const CHAR *src, SIZE_T num_bytes);
+char *Strncpy(char *dest, const char *src, size_t num_bytes);
 
 // find the first occurrence of the character c in src
-CHAR *Strchr(const CHAR *src, INT c);
+char *Strchr(const char *src, int32_t c);
 
 // set a specified number of bytes to a specified m_bytearray_value
-void *Memset(void *dest, INT value, SIZE_T num_bytes);
+void *Memset(void *dest, int32_t value, size_t num_bytes);
 
 // calculate the length of a wide-character string
-ULONG Wcslen(const WCHAR *dest);
+uint32_t Wcslen(const wchar_t *dest);
 
 // calculate the length of a string
-ULONG Strlen(const CHAR *buf);
+uint32_t Strlen(const char *buf);
 
 // sort a specified number of elements
-void Qsort(void *dest, SIZE_T num_bytes, SIZE_T size, Comparator fnComparator);
+void Qsort(void *dest, size_t num_bytes, size_t size, Comparator fnComparator);
 
 // parse command-line options
-INT Getopt(INT argc, CHAR *const argv[], const CHAR *opt_string);
+int32_t Getopt(int32_t argc, char *const argv[], const char *opt_string);
 
 // convert string to long integer
-LINT Strtol(const CHAR *val, CHAR **end, ULONG base);
+int64_t Strtol(const char *val, char **end, uint32_t base);
 
 // convert string to long long integer
-LINT Strtoll(const CHAR *val, CHAR **end, ULONG base);
+int64_t Strtoll(const char *val, char **end, uint32_t base);
 
 // convert string to double
-DOUBLE Strtod(const CHAR *str);
+double Strtod(const char *str);
 
 // return a pseudo-random integer between 0 and RAND_MAX
-ULONG Rand(ULONG *seed);
+uint32_t Rand(uint32_t *seed);
 
 // format wide character output conversion
-INT Vswprintf(WCHAR *wcstr, SIZE_T max_len, const WCHAR *format, VA_LIST vaArgs);
+int32_t Vswprintf(wchar_t *wcstr, size_t max_len, const wchar_t *format, VA_LIST vaArgs);
 
 // format string
-INT Vsnprintf(CHAR *src, SIZE_T size, const CHAR *format, VA_LIST vaArgs) GPOS_ATTRIBUTE_PRINTF(3, 0);
+int32_t Vsnprintf(char *src, size_t size, const char *format, VA_LIST vaArgs) GPOS_ATTRIBUTE_PRINTF(3, 0);
 
 // return string describing error number
-void Strerror_r(INT errnum, CHAR *buf, SIZE_T buf_len);
+void Strerror_r(int32_t errnum, char *buf, size_t buf_len);
 
 // convert the calendar time time to broken-time representation
 TIME *Localtime_r(const TIME_T *time, TIME *result);
 
 // allocate dynamic memory
-void *Malloc(SIZE_T size);
+void *Malloc(size_t size);
 
 // free dynamic memory
 void Free(void *src);
 
 // convert a wide character to a multibyte sequence
-INT Wctomb(CHAR *dest, WCHAR src);
+int32_t Wctomb(char *dest, wchar_t src);
 
 // convert a wide-character string to a multi-byte string
-LINT Wcstombs(CHAR *dest, WCHAR *src, ULONG_PTR dest_size);
+int64_t Wcstombs(char *dest, wchar_t *src, uintptr_t dest_size);
 
 // convert a multibyte sequence to wide character array
-ULONG Mbstowcs(WCHAR *dest, const CHAR *src, SIZE_T len);
+uint32_t Mbstowcs(wchar_t *dest, const char *src, size_t len);
 
 // return a pointer to the start of the NULL-terminated symbol
-CHAR *Demangle(const CHAR *symbol, CHAR *buf, SIZE_T *len, INT *status);
+char *Demangle(const char *symbol, char *buf, size_t *len, int32_t *status);
 
 // resolve symbol information from its address
 void Dladdr(void *addr, DL_INFO *info);

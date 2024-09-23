@@ -82,7 +82,7 @@ const CWStringConst *CDXLLogicalWindow::GetOpNameStr() const {
 //		Return the window specification at a given position
 //
 //---------------------------------------------------------------------------
-CDXLWindowSpec *CDXLLogicalWindow::GetWindowKeyAt(ULONG idx) const {
+CDXLWindowSpec *CDXLLogicalWindow::GetWindowKeyAt(uint32_t idx) const {
   GPOS_ASSERT(idx <= m_window_spec_array->Size());
   return (*m_window_spec_array)[idx];
 }
@@ -96,7 +96,7 @@ CDXLWindowSpec *CDXLLogicalWindow::GetWindowKeyAt(ULONG idx) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalWindow::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLLogicalWindow::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(2 == node->Arity());
 
   CDXLNode *proj_list_dxlnode = (*node)[0];
@@ -110,8 +110,8 @@ void CDXLLogicalWindow::AssertValid(const CDXLNode *node, BOOL validate_children
     child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
   }
 
-  const ULONG arity = proj_list_dxlnode->Arity();
-  for (ULONG idx = 0; idx < arity; ++idx) {
+  const uint32_t arity = proj_list_dxlnode->Arity();
+  for (uint32_t idx = 0; idx < arity; ++idx) {
     CDXLNode *proj_elem = (*proj_list_dxlnode)[idx];
     GPOS_ASSERT(EdxlopScalarIdent != proj_elem->GetOperator()->GetDXLOperator());
   }

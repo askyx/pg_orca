@@ -46,13 +46,13 @@ class CCTEReq : public CRefCount {
   class CCTEReqEntry : public CRefCount {
    private:
     // cte id
-    ULONG m_id;
+    uint32_t m_id;
 
     // cte type
     CCTEMap::ECteType m_ect;
 
     // is it required or optional
-    BOOL m_fRequired;
+    bool m_fRequired;
 
     // plan properties of corresponding producer
     CDrvdPropPlan *m_pdpplan;
@@ -61,29 +61,28 @@ class CCTEReq : public CRefCount {
     CCTEReqEntry(const CCTEReqEntry &) = delete;
 
     // ctor
-    CCTEReqEntry(ULONG id, CCTEMap::ECteType ect, BOOL fRequired, CDrvdPropPlan *pdpplan);
+    CCTEReqEntry(uint32_t id, CCTEMap::ECteType ect, bool fRequired, CDrvdPropPlan *pdpplan);
 
     // dtor
     ~CCTEReqEntry() override;
 
     // cte id
-    ULONG
-    Id() const { return m_id; }
+    uint32_t Id() const { return m_id; }
 
     // cte type
     CCTEMap::ECteType Ect() const { return m_ect; }
 
     // required flag
-    BOOL FRequired() const { return m_fRequired; }
+    bool FRequired() const { return m_fRequired; }
 
     // plan properties
     CDrvdPropPlan *PdpplanProducer() const { return m_pdpplan; }
 
     // hash function
-    ULONG HashValue() const;
+    uint32_t HashValue() const;
 
     // equality function
-    BOOL Equals(CCTEReqEntry *pcre) const;
+    bool Equals(CCTEReqEntry *pcre) const;
 
     // print function
     IOstream &OsPrint(IOstream &os) const;
@@ -91,12 +90,13 @@ class CCTEReq : public CRefCount {
   };  // class CCTEReqEntry
 
   // map CTE id to CTE Req entry
-  using UlongToCTEReqEntryMap = CHashMap<ULONG, CCTEReqEntry, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                         CleanupDelete<ULONG>, CleanupRelease<CCTEReqEntry>>;
+  using UlongToCTEReqEntryMap = CHashMap<uint32_t, CCTEReqEntry, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                         CleanupDelete<uint32_t>, CleanupRelease<CCTEReqEntry>>;
 
   // map iterator
-  using UlongToCTEReqEntryMapIter = CHashMapIter<ULONG, CCTEReqEntry, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                                 CleanupDelete<ULONG>, CleanupRelease<CCTEReqEntry>>;
+  using UlongToCTEReqEntryMapIter =
+      CHashMapIter<uint32_t, CCTEReqEntry, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>, CleanupDelete<uint32_t>,
+                   CleanupRelease<CCTEReqEntry>>;
 
   // memory pool
   CMemoryPool *m_mp;
@@ -108,7 +108,7 @@ class CCTEReq : public CRefCount {
   ULongPtrArray *m_pdrgpulRequired;
 
   // lookup info for given cte id
-  CCTEReqEntry *PcreLookup(ULONG ulCteId) const;
+  CCTEReqEntry *PcreLookup(uint32_t ulCteId) const;
 
  public:
   CCTEReq(const CCTEReq &) = delete;
@@ -123,29 +123,29 @@ class CCTEReq : public CRefCount {
   ULongPtrArray *PdrgpulRequired() const { return m_pdrgpulRequired; }
 
   // return the CTE type associated with the given ID in the requirements
-  CCTEMap::ECteType Ect(const ULONG id) const;
+  CCTEMap::ECteType Ect(const uint32_t id) const;
 
   // insert a new entry, no entry with the same id can already exist
-  void Insert(ULONG ulCteId, CCTEMap::ECteType ect, BOOL fRequired, CDrvdPropPlan *pdpplan);
+  void Insert(uint32_t ulCteId, CCTEMap::ECteType ect, bool fRequired, CDrvdPropPlan *pdpplan);
 
   // insert a new consumer entry with the given id. The plan properties are
   // taken from the given context
-  void InsertConsumer(ULONG id, CDrvdPropArray *pdrgpdpCtxt);
+  void InsertConsumer(uint32_t id, CDrvdPropArray *pdrgpdpCtxt);
 
   // check if two cte requirements are equal
-  BOOL Equals(const CCTEReq *pcter) const {
+  bool Equals(const CCTEReq *pcter) const {
     GPOS_ASSERT(nullptr != pcter);
     return (m_phmcter->Size() == pcter->m_phmcter->Size()) && this->FSubset(pcter);
   }
 
   // check if current requirement is a subset of the given one
-  BOOL FSubset(const CCTEReq *pcter) const;
+  bool FSubset(const CCTEReq *pcter) const;
 
   // check if the given CTE is in the requirements
-  BOOL FContainsRequirement(const ULONG id, const CCTEMap::ECteType ect) const;
+  bool FContainsRequirement(const uint32_t id, const CCTEMap::ECteType ect) const;
 
   // hash function
-  ULONG HashValue() const;
+  uint32_t HashValue() const;
 
   // returns a new requirement containing unresolved CTE requirements given a derived CTE map
   CCTEReq *PcterUnresolved(CMemoryPool *mp, CCTEMap *pcm);
@@ -158,7 +158,7 @@ class CCTEReq : public CRefCount {
   CCTEReq *PcterAllOptional(CMemoryPool *mp);
 
   // lookup plan properties for given cte id
-  CDrvdPropPlan *Pdpplan(ULONG ulCteId) const;
+  CDrvdPropPlan *Pdpplan(uint32_t ulCteId) const;
 
   // print function
   IOstream &OsPrint(IOstream &os) const;

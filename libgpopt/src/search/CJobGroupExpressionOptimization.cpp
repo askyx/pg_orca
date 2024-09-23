@@ -107,13 +107,13 @@ const CJobGroupExpressionOptimization::EEvent
 #ifdef GPOS_DEBUG
 
 // names for states
-const WCHAR rgwszStates[CJobGroupExpressionOptimization::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
+const wchar_t rgwszStates[CJobGroupExpressionOptimization::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
     GPOS_WSZ_LIT("initialized"),        GPOS_WSZ_LIT("optimizing children"),
     GPOS_WSZ_LIT("children optimized"), GPOS_WSZ_LIT("enforceable properties checked"),
     GPOS_WSZ_LIT("self optimized"),     GPOS_WSZ_LIT("completed")};
 
 // names for events
-const WCHAR rgwszEvents[CJobGroupExpressionOptimization::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
+const wchar_t rgwszEvents[CJobGroupExpressionOptimization::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
     GPOS_WSZ_LIT("optimizing child groups"),         GPOS_WSZ_LIT("optimized child groups"),
     GPOS_WSZ_LIT("checking enforceable properties"), GPOS_WSZ_LIT("computing group expression cost"),
     GPOS_WSZ_LIT("computed group expression cost"),  GPOS_WSZ_LIT("finalized")};
@@ -148,7 +148,7 @@ CJobGroupExpressionOptimization::~CJobGroupExpressionOptimization() = default;
 //		Initialize job
 //
 //---------------------------------------------------------------------------
-void CJobGroupExpressionOptimization::Init(CGroupExpression *pgexpr, COptimizationContext *poc, ULONG ulOptReq,
+void CJobGroupExpressionOptimization::Init(CGroupExpression *pgexpr, COptimizationContext *poc, uint32_t ulOptReq,
                                            CReqdPropPlan *prppCTEProducer) {
   GPOS_ASSERT(nullptr != poc);
 
@@ -178,7 +178,7 @@ void CJobGroupExpressionOptimization::Init(CGroupExpression *pgexpr, COptimizati
   m_pexprhdlRel = nullptr;
   m_eceo = CPhysical::PopConvert(pgexpr->Pop())->Eceo();
   m_ulArity = pgexpr->Arity();
-  m_ulChildIndex = gpos::ulong_max;
+  m_ulChildIndex = UINT32_MAX;
 
   m_poc = poc;
   m_ulOptReq = ulOptReq;
@@ -271,8 +271,8 @@ CJobGroupExpressionOptimization::EEvent CJobGroupExpressionOptimization::EevtIni
 
   // check if job can be early terminated without optimizing any child
   CCost costLowerBound(GPOPT_INVALID_COST);
-  if (psc->Peng()->FSafeToPrune(pjgeo->m_pgexpr, pjgeo->m_poc->Prpp(), nullptr /*pccChild*/,
-                                gpos::ulong_max /*child_index*/, &costLowerBound)) {
+  if (psc->Peng()->FSafeToPrune(pjgeo->m_pgexpr, pjgeo->m_poc->Prpp(), nullptr /*pccChild*/, UINT32_MAX /*child_index*/,
+                                &costLowerBound)) {
     (void)pjgeo->m_pgexpr->PccComputeCost(psc->GetGlobalMemoryPool(), pjgeo->m_poc, pjgeo->m_ulOptReq,
                                           nullptr /*pdrgpoc*/, true /*fPruned*/, costLowerBound);
     return eevFinalized;
@@ -293,7 +293,7 @@ CJobGroupExpressionOptimization::EEvent CJobGroupExpressionOptimization::EevtIni
 //
 //---------------------------------------------------------------------------
 void CJobGroupExpressionOptimization::DerivePrevChildProps(CSchedulerContext *psc) {
-  ULONG ulPrevChildIndex = m_pexprhdlPlan->UlPreviousOptimizedChildIndex(m_ulChildIndex);
+  uint32_t ulPrevChildIndex = m_pexprhdlPlan->UlPreviousOptimizedChildIndex(m_ulChildIndex);
 
   // retrieve plan properties of the optimal implementation of previous child group
   CGroup *pgroupChild = (*m_pgexpr)[ulPrevChildIndex];
@@ -475,7 +475,7 @@ CJobGroupExpressionOptimization::EEvent CJobGroupExpressionOptimization::EevtAdd
   pjgeo->m_pdrgpoc = psc->Peng()->PdrgpocChildren(psc->GetGlobalMemoryPool(), *pjgeo->m_pexprhdlPlan);
 
   // enforce physical properties
-  BOOL fCheckEnfdProps = psc->Peng()->FCheckEnfdProps(psc->GetGlobalMemoryPool(), pjgeo->m_pgexpr, pjgeo->m_poc,
+  bool fCheckEnfdProps = psc->Peng()->FCheckEnfdProps(psc->GetGlobalMemoryPool(), pjgeo->m_pgexpr, pjgeo->m_poc,
                                                       pjgeo->m_ulOptReq, pjgeo->m_pdrgpoc);
   if (fCheckEnfdProps) {
     // No new enforcers group expressions were added because they were either
@@ -517,7 +517,7 @@ CJobGroupExpressionOptimization::EEvent CJobGroupExpressionOptimization::EevtOpt
   COptimizationContext *poc = pjgeo->m_poc;
   CGroupExpression *pgexpr = pjgeo->m_pgexpr;
   COptimizationContextArray *pdrgpoc = pjgeo->m_pdrgpoc;
-  ULONG ulOptReq = pjgeo->m_ulOptReq;
+  uint32_t ulOptReq = pjgeo->m_ulOptReq;
 
   CCostContext *pcc =
       pgexpr->PccComputeCost(psc->GetGlobalMemoryPool(), poc, ulOptReq, pdrgpoc, false /*fPruned*/, CCost(0.0));
@@ -576,7 +576,7 @@ CJobGroupExpressionOptimization::EEvent CJobGroupExpressionOptimization::EevtFin
 //		Main job function
 //
 //---------------------------------------------------------------------------
-BOOL CJobGroupExpressionOptimization::FExecute(CSchedulerContext *psc) {
+bool CJobGroupExpressionOptimization::FExecute(CSchedulerContext *psc) {
   GPOS_ASSERT(FInit());
 
   return m_jsm.FRun(psc, this);
@@ -591,7 +591,7 @@ BOOL CJobGroupExpressionOptimization::FExecute(CSchedulerContext *psc) {
 //
 //---------------------------------------------------------------------------
 void CJobGroupExpressionOptimization::ScheduleJob(CSchedulerContext *psc, CGroupExpression *pgexpr,
-                                                  COptimizationContext *poc, ULONG ulOptReq, CJob *pjParent) {
+                                                  COptimizationContext *poc, uint32_t ulOptReq, CJob *pjParent) {
   CJob *pj = psc->Pjf()->PjCreate(CJob::EjtGroupExpressionOptimization);
 
   // initialize job
@@ -608,8 +608,8 @@ void CJobGroupExpressionOptimization::ScheduleJob(CSchedulerContext *psc, CGroup
 //		Schedule a new job for CTE optimization
 //
 //---------------------------------------------------------------------------
-BOOL CJobGroupExpressionOptimization::FScheduleCTEOptimization(CSchedulerContext *psc, CGroupExpression *pgexpr,
-                                                               COptimizationContext *poc, ULONG ulOptReq,
+bool CJobGroupExpressionOptimization::FScheduleCTEOptimization(CSchedulerContext *psc, CGroupExpression *pgexpr,
+                                                               COptimizationContext *poc, uint32_t ulOptReq,
                                                                CJob *pjParent) {
   GPOS_ASSERT(nullptr != psc);
 

@@ -53,7 +53,7 @@ CLogicalGet::CLogicalGet(CMemoryPool *mp)
 //		ctor
 //
 //---------------------------------------------------------------------------
-CLogicalGet::CLogicalGet(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc, BOOL hasSecurityQuals)
+CLogicalGet::CLogicalGet(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc, bool hasSecurityQuals)
     : CLogicalGet(mp, pnameAlias, ptabdesc,
                   PdrgpcrCreateMapping(mp, ptabdesc->Pdrgpcoldesc(),
                                        // XXX: UlOpId() isn't valid yet..
@@ -69,7 +69,7 @@ CLogicalGet::CLogicalGet(CMemoryPool *mp, const CName *pnameAlias, CTableDescrip
 //
 //---------------------------------------------------------------------------
 CLogicalGet::CLogicalGet(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc,
-                         CColRefArray *pdrgpcrOutput, BOOL hasSecurityQuals)
+                         CColRefArray *pdrgpcrOutput, bool hasSecurityQuals)
     : CLogical(mp),
       m_pnameAlias(pnameAlias),
       m_ptabdesc(GPOS_NEW(mp) CTableDescriptorHashSet(mp)),
@@ -113,12 +113,11 @@ CLogicalGet::~CLogicalGet() {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalGet::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), Ptabdesc()->MDId()->HashValue());
+uint32_t CLogicalGet::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), Ptabdesc()->MDId()->HashValue());
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
 
-  ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<BOOL>(&m_has_security_quals));
+  ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<bool>(&m_has_security_quals));
 
   return ulHash;
 }
@@ -131,7 +130,7 @@ CLogicalGet::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalGet::Matches(COperator *pop) const {
+bool CLogicalGet::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -149,7 +148,7 @@ BOOL CLogicalGet::Matches(COperator *pop) const {
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *CLogicalGet::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) {
+COperator *CLogicalGet::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) {
   CColRefArray *pdrgpcrOutput = nullptr;
   if (must_exist) {
     pdrgpcrOutput = CUtils::PdrgpcrRemapAndCreate(mp, m_pdrgpcrOutput, colref_mapping);
@@ -174,7 +173,7 @@ CColRefSet *CLogicalGet::DeriveOutputColumns(CMemoryPool *mp,
                                              CExpressionHandle &  // exprhdl
 ) {
   CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
-  for (ULONG i = 0; i < m_pdrgpcrOutput->Size(); i++) {
+  for (uint32_t i = 0; i < m_pdrgpcrOutput->Size(); i++) {
     // We want to limit the output columns to only those which are referenced in the query
     // We will know the entire list of columns which are referenced in the query only after
     // translating the entire DXL to an expression. Hence we should not limit the output columns
@@ -220,7 +219,7 @@ CColRefSet *CLogicalGet::DeriveNotNullColumns(CMemoryPool *mp, CExpressionHandle
 //		Not called for leaf operators
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalGet::FInputOrderSensitive() const {
+bool CLogicalGet::FInputOrderSensitive() const {
   GPOS_ASSERT(!"Unexpected function call of FInputOrderSensitive");
   return false;
 }
@@ -301,16 +300,16 @@ IOstream &CLogicalGet::OsPrint(IOstream &os) const {
     CUtils::OsPrintDrgPcr(os, m_pdrgpcrOutput);
     os << "] Key sets: {";
 
-    const ULONG ulColumns = m_pdrgpcrOutput->Size();
+    const uint32_t ulColumns = m_pdrgpcrOutput->Size();
     const CBitSetArray *pdrgpbsKeys = Ptabdesc()->PdrgpbsKeys();
-    for (ULONG ul = 0; ul < pdrgpbsKeys->Size(); ul++) {
+    for (uint32_t ul = 0; ul < pdrgpbsKeys->Size(); ul++) {
       CBitSet *pbs = (*pdrgpbsKeys)[ul];
       if (0 < ul) {
         os << ", ";
       }
       os << "[";
-      ULONG ulPrintedKeys = 0;
-      for (ULONG ulKey = 0; ulKey < ulColumns; ulKey++) {
+      uint32_t ulPrintedKeys = 0;
+      for (uint32_t ulKey = 0; ulKey < ulColumns; ulKey++) {
         if (pbs->Get(ulKey)) {
           if (0 < ulPrintedKeys) {
             os << ",";

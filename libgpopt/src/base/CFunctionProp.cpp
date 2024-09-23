@@ -23,7 +23,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CFunctionProp::CFunctionProp(IMDFunction::EFuncStbl func_stability, BOOL fHasVolatileFunctionScan, BOOL fScan)
+CFunctionProp::CFunctionProp(IMDFunction::EFuncStbl func_stability, bool fHasVolatileFunctionScan, bool fScan)
     : m_efs(func_stability), m_fHasVolatileFunctionScan(fHasVolatileFunctionScan), m_fScan(fScan) {
   GPOS_ASSERT(IMDFunction::EfsSentinel > func_stability);
   GPOS_ASSERT_IMP(fScan && IMDFunction::EfsVolatile == func_stability, fHasVolatileFunctionScan);
@@ -47,7 +47,7 @@ CFunctionProp::~CFunctionProp() = default;
 //		Check if must execute on a single host based on function properties
 //
 //---------------------------------------------------------------------------
-BOOL CFunctionProp::NeedsSingletonExecution() const {
+bool CFunctionProp::NeedsSingletonExecution() const {
   // a function needs to execute on a single host if any of the following holds:
   // a) it reads or modifies SQL data
   // b) it is volatile and used as a scan operator (i.e. in the from clause)
@@ -68,7 +68,7 @@ BOOL CFunctionProp::NeedsSingletonExecution() const {
 //
 //---------------------------------------------------------------------------
 IOstream &CFunctionProp::OsPrint(IOstream &os) const {
-  const CHAR *rgszStability[] = {"Immutable", "Stable", "Volatile"};
+  const char *rgszStability[] = {"Immutable", "Stable", "Volatile"};
 
   os << rgszStability[m_efs];
   return os;

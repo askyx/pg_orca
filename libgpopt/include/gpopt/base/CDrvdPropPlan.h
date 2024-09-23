@@ -79,13 +79,13 @@ class CDrvdPropPlan : public CDrvdProp {
   CCTEMap *GetCostModel() const { return m_pcm; }
 
   // hash function
-  virtual ULONG HashValue() const;
+  virtual uint32_t HashValue() const;
 
   // equality function
-  virtual ULONG Equals(const CDrvdPropPlan *pdpplan) const;
+  virtual uint32_t Equals(const CDrvdPropPlan *pdpplan) const;
 
   // check for satisfying required plan properties
-  BOOL FSatisfies(const CReqdPropPlan *prpp) const override;
+  bool FSatisfies(const CReqdPropPlan *prpp) const override;
 
   // print function
   IOstream &OsPrint(IOstream &os) const override;

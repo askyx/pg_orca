@@ -35,14 +35,14 @@ using namespace gpos;
 class CScalarCoerceToDomain : public CScalarCoerceBase {
  private:
   // does operator return NULL on NULL input?
-  BOOL m_returns_null_on_null_input;
+  bool m_returns_null_on_null_input;
 
  public:
   CScalarCoerceToDomain(const CScalarCoerceToDomain &) = delete;
 
   // ctor
-  CScalarCoerceToDomain(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, ECoercionForm dxl_coerce_format,
-                        INT location);
+  CScalarCoerceToDomain(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, ECoercionForm dxl_coerce_format,
+                        int32_t location);
 
   // dtor
   ~CScalarCoerceToDomain() override = default;
@@ -50,13 +50,13 @@ class CScalarCoerceToDomain : public CScalarCoerceBase {
   EOperatorId Eopid() const override { return EopScalarCoerceToDomain; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarCoerceToDomain"; }
+  const char *SzId() const override { return "CScalarCoerceToDomain"; }
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // boolean expression evaluation
   EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const override;

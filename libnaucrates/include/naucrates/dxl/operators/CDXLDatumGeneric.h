@@ -39,19 +39,20 @@ class CDXLDatumGeneric : public CDXLDatum {
  private:
  protected:
   // datum byte array
-  BYTE *m_byte_array;
+  uint8_t *m_byte_array;
 
  public:
   CDXLDatumGeneric(const CDXLDatumGeneric &) = delete;
 
   // ctor
-  CDXLDatumGeneric(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, BOOL is_null, BYTE *data, ULONG length);
+  CDXLDatumGeneric(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, bool is_null, uint8_t *data,
+                   uint32_t length);
 
   // dtor
   ~CDXLDatumGeneric() override;
 
   // byte array
-  const BYTE *GetByteArray() const;
+  const uint8_t *GetByteArray() const;
 
   // serialize the datum as the given element
 
@@ -70,18 +71,18 @@ class CDXLDatumGeneric : public CDXLDatum {
 
   // statistics related APIs
 
-  // can datum be mapped to LINT
-  virtual BOOL IsDatumMappableToLINT() const { return false; }
+  // can datum be mapped to int64_t
+  virtual bool IsDatumMappableToLINT() const { return false; }
 
   // return the lint mapping needed for statistics computation
-  virtual LINT GetLINTMapping() const {
+  virtual int64_t GetLINTMapping() const {
     GPOS_ASSERT(IsDatumMappableToLINT());
 
     return 0;
   }
 
   // can datum be mapped to a double
-  virtual BOOL IsDatumMappableToDouble() const { return false; }
+  virtual bool IsDatumMappableToDouble() const { return false; }
 
   // return the double mapping needed for statistics computation
   virtual CDouble GetDoubleMapping() const {

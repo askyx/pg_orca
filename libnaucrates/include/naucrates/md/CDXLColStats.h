@@ -61,7 +61,7 @@ class CDXLColStats : public IMDColStats {
   CDXLBucketArray *m_dxl_stats_bucket_array;
 
   // is column statistics missing in the database
-  BOOL m_is_col_stats_missing;
+  bool m_is_col_stats_missing;
 
   // DXL string for object
   CWStringDynamic *m_dxl_str = nullptr;
@@ -72,7 +72,7 @@ class CDXLColStats : public IMDColStats {
   // ctor
   CDXLColStats(CMemoryPool *mp, CMDIdColStats *mdid_col_stats, CMDName *mdname, CDouble width, CDouble null_freq,
                CDouble distinct_remaining, CDouble freq_remaining, CDXLBucketArray *dxl_stats_bucket_array,
-               BOOL is_col_stats_missing);
+               bool is_col_stats_missing);
 
   // dtor
   ~CDXLColStats() override;
@@ -86,7 +86,7 @@ class CDXLColStats : public IMDColStats {
   // DXL string representation of cache object
 
   // number of buckets
-  ULONG Buckets() const override;
+  uint32_t Buckets() const override;
 
   // width
   CDouble Width() const override { return m_width; }
@@ -101,10 +101,10 @@ class CDXLColStats : public IMDColStats {
   CDouble GetFreqRemain() const override { return m_freq_remaining; }
 
   // is the column statistics missing in the database
-  BOOL IsColStatsMissing() const override { return m_is_col_stats_missing; }
+  bool IsColStatsMissing() const override { return m_is_col_stats_missing; }
 
   // get the bucket at the given position
-  const CDXLBucket *GetDXLBucketAt(ULONG ul) const override;
+  const CDXLBucket *GetDXLBucketAt(uint32_t ul) const override;
 
   // serialize column stats in DXL format
 

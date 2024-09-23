@@ -38,13 +38,13 @@ class CDXLDatum : public CRefCount {
   // mdid of the datum's type
   IMDId *m_mdid_type;
 
-  const INT m_type_modifier;
+  const int32_t m_type_modifier;
 
   // is the datum NULL
-  BOOL m_is_null;
+  bool m_is_null;
 
   // length
-  const ULONG m_length;
+  const uint32_t m_length;
 
  public:
   CDXLDatum(const CDXLDatum &) = delete;
@@ -62,7 +62,7 @@ class CDXLDatum : public CRefCount {
     EdxldatumSentinel
   };
   // ctor
-  CDXLDatum(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, BOOL is_null, ULONG length);
+  CDXLDatum(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, bool is_null, uint32_t length);
 
   // dtor
   ~CDXLDatum() override { m_mdid_type->Release(); }
@@ -70,13 +70,13 @@ class CDXLDatum : public CRefCount {
   // mdid type of the datum
   virtual IMDId *MDId() const { return m_mdid_type; }
 
-  INT TypeModifier() const;
+  int32_t TypeModifier() const;
 
   // is datum NULL
-  virtual BOOL IsNull() const;
+  virtual bool IsNull() const;
 
   // byte array length
-  virtual ULONG Length() const;
+  virtual uint32_t Length() const;
 
   // ident accessors
   virtual EdxldatumType GetDatumType() const = 0;

@@ -27,8 +27,8 @@ using namespace gpmd;
 //		Constructs a metadata relation
 //
 //---------------------------------------------------------------------------
-CDXLRelStats::CDXLRelStats(CMemoryPool *mp, CMDIdRelStats *rel_stats_mdid, CMDName *mdname, CDouble rows, BOOL is_empty,
-                           ULONG relpages, ULONG relallvisible)
+CDXLRelStats::CDXLRelStats(CMemoryPool *mp, CMDIdRelStats *rel_stats_mdid, CMDName *mdname, CDouble rows, bool is_empty,
+                           uint32_t relpages, uint32_t relallvisible)
     : m_mp(mp),
       m_rel_stats_mdid(rel_stats_mdid),
       m_mdname(mdname),

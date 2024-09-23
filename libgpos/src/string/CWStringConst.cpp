@@ -26,7 +26,7 @@ using namespace gpos;
 //		does not own the memory
 //
 //---------------------------------------------------------------------------
-CWStringConst::CWStringConst(const WCHAR *w_str_buffer)
+CWStringConst::CWStringConst(const wchar_t *w_str_buffer)
     : CWStringBase(GPOS_WSZ_LENGTH(w_str_buffer),
                    false  // owns_memory
                    ),
@@ -44,7 +44,7 @@ CWStringConst::CWStringConst(const WCHAR *w_str_buffer)
 //		The string owns the memory.
 //
 //---------------------------------------------------------------------------
-CWStringConst::CWStringConst(CMemoryPool *mp, const WCHAR *w_str_buffer)
+CWStringConst::CWStringConst(CMemoryPool *mp, const wchar_t *w_str_buffer)
     : CWStringBase(GPOS_WSZ_LENGTH(w_str_buffer),
                    true  // owns_memory
                    ),
@@ -57,7 +57,7 @@ CWStringConst::CWStringConst(CMemoryPool *mp, const WCHAR *w_str_buffer)
     m_w_str_buffer = &m_empty_wcstr;
   } else {
     // make a copy of the string
-    WCHAR *w_str_temp_buffer = GPOS_NEW_ARRAY(mp, WCHAR, m_length + 1);
+    wchar_t *w_str_temp_buffer = GPOS_NEW_ARRAY(mp, wchar_t, m_length + 1);
     clib::WcStrNCpy(w_str_temp_buffer, w_str_buffer, m_length + 1);
     m_w_str_buffer = w_str_temp_buffer;
   }
@@ -74,7 +74,7 @@ CWStringConst::CWStringConst(CMemoryPool *mp, const WCHAR *w_str_buffer)
 //		The string owns the memory.
 //
 //---------------------------------------------------------------------------
-CWStringConst::CWStringConst(CMemoryPool *mp, const CHAR *str_buffer)
+CWStringConst::CWStringConst(CMemoryPool *mp, const char *str_buffer)
     : CWStringBase(GPOS_SZ_LENGTH(str_buffer),
                    true  // owns_memory
                    ),
@@ -86,7 +86,7 @@ CWStringConst::CWStringConst(CMemoryPool *mp, const CHAR *str_buffer)
     // string is empty
     m_w_str_buffer = &m_empty_wcstr;
   } else {
-    WCHAR *w_str_buffer = GPOS_NEW_ARRAY(mp, WCHAR, m_length + 1);
+    wchar_t *w_str_buffer = GPOS_NEW_ARRAY(mp, wchar_t, m_length + 1);
     clib::Mbstowcs(w_str_buffer, str_buffer, m_length + 1);
     m_w_str_buffer = w_str_buffer;
     m_length = GPOS_WSZ_LENGTH(w_str_buffer);
@@ -134,24 +134,23 @@ CWStringConst::~CWStringConst() {
 //		Returns the wide character buffer
 //
 //---------------------------------------------------------------------------
-const WCHAR *CWStringConst::GetBuffer() const {
+const wchar_t *CWStringConst::GetBuffer() const {
   return m_w_str_buffer;
 }
 
 // equality
-BOOL CWStringConst::Equals(const CWStringConst *string1, const CWStringConst *string2) {
-  ULONG length = string1->Length();
+bool CWStringConst::Equals(const CWStringConst *string1, const CWStringConst *string2) {
+  uint32_t length = string1->Length();
   return length == string2->Length() && 0 == clib::Wcsncmp(string1->GetBuffer(), string2->GetBuffer(), length);
 }
 
 // hash function
-ULONG
-CWStringConst::HashValue(const CWStringConst *string) {
-  return gpos::HashByteArray((BYTE *)string->GetBuffer(), string->Length() * GPOS_SIZEOF(WCHAR));
+uint32_t CWStringConst::HashValue(const CWStringConst *string) {
+  return gpos::HashByteArray((uint8_t *)string->GetBuffer(), string->Length() * GPOS_SIZEOF(wchar_t));
 }
 
 // checks whether the string is byte-wise equal to another string
-BOOL CWStringConst::Equals(const CWStringBase *str) const {
+bool CWStringConst::Equals(const CWStringBase *str) const {
   GPOS_ASSERT(nullptr != str);
   return Length() == str->Length() && 0 == clib::Wcsncmp(GetBuffer(), str->GetBuffer(), Length());
 }

@@ -71,8 +71,8 @@ class CCache {
 
  public:
   // type definition of key hashing and equality functions
-  using HashFuncPtr = ULONG (*)(const K &);
-  using EqualFuncPtr = BOOL (*)(const K &, const K &);
+  using HashFuncPtr = uint32_t (*)(const K &);
+  using EqualFuncPtr = bool (*)(const K &, const K &);
 
  private:
   using CCacheHashTableEntry = CCacheEntry<T, K>;
@@ -87,25 +87,25 @@ class CCache {
   CMemoryPool *m_mp;
 
   // true if cache does not allow multiple objects with the same key
-  BOOL m_unique;
+  bool m_unique;
 
   // total size of the cache in bytes
-  ULLONG m_cache_size;
+  uint64_t m_cache_size;
 
   // quota of the cache in bytes; 0 means unlimited quota
-  ULLONG m_cache_quota;
+  uint64_t m_cache_quota;
 
   // initial value of gclock counter for new entries
-  ULONG m_gclock_init_counter;
+  uint32_t m_gclock_init_counter;
 
   // what percent of the cache size to evict
   float m_eviction_factor;
 
   // number of times cache entries were evicted
-  ULLONG m_eviction_counter;
+  uint64_t m_eviction_counter;
 
   // if the gclock hand was already advanced and therefore can serve the next entry
-  BOOL m_clock_hand_advanced;
+  bool m_clock_hand_advanced;
 
   // a pointer to key hashing function
   HashFuncPtr m_hash_func;
@@ -219,7 +219,7 @@ class CCache {
     GPOS_ASSERT(EXPECTED_REF_COUNT_FOR_DELETE < entry->RefCount() &&
                 "Releasing entry for which CCacheEntry has the ownership");
 
-    BOOL deleted = false;
+    bool deleted = false;
 
     // scope for hashtable accessor
     {
@@ -274,13 +274,13 @@ class CCache {
                                            static_cast<double>(m_cache_quota) * (1.0 - m_eviction_factor));
       GPOS_ASSERT(0 < to_free);
 
-      ULLONG num_to_free = static_cast<ULLONG>(to_free);
-      ULLONG total_freed = 0;
+      uint64_t num_to_free = static_cast<uint64_t>(to_free);
+      uint64_t total_freed = 0;
 
       // retryCount indicates the number of times we want to circle around the buckets.
       // depending on our previous cursor position (e.g., may be at the very last bucket)
       // we may end up circling 1 less time than the retry count
-      for (ULONG retry_count = 0; retry_count < m_gclock_init_counter + 1; retry_count++) {
+      for (uint32_t retry_count = 0; retry_count < m_gclock_init_counter + 1; retry_count++) {
         total_freed = EvictEntriesOnePass(total_freed, num_to_free);
 
         if (total_freed >= num_to_free) {
@@ -330,12 +330,11 @@ class CCache {
   }
 
   // evict entries by making one pass through the hash table buckets
-  ULLONG
-  EvictEntriesOnePass(ULLONG total_freed, ULLONG num_to_free) {
+  uint64_t EvictEntriesOnePass(uint64_t total_freed, uint64_t num_to_free) {
     while ((total_freed < num_to_free) && (m_clock_hand_advanced || m_clock_hand->Advance())) {
       m_clock_hand_advanced = false;
       CCacheHashTableEntry *entry = nullptr;
-      BOOL deleted = false;
+      bool deleted = false;
       // Scope for CCacheHashtableIterAccessor
       {
         CCacheHashtableIterAccessor acc(*m_clock_hand);
@@ -355,7 +354,7 @@ class CCache {
               // successfully removing an entry automatically advances the iterator, so don't call Advance()
               m_clock_hand_advanced = true;
 
-              ULLONG num_freed = entry->Pmp()->TotalAllocatedSize();
+              uint64_t num_freed = entry->Pmp()->TotalAllocatedSize();
               m_cache_size -= num_freed;
               total_freed += num_freed;
             }
@@ -376,7 +375,7 @@ class CCache {
 
  public:
   // ctor
-  CCache(CMemoryPool *mp, BOOL unique, ULLONG cache_quota, ULONG g_clock_init_counter, HashFuncPtr hash_func,
+  CCache(CMemoryPool *mp, bool unique, uint64_t cache_quota, uint32_t g_clock_init_counter, HashFuncPtr hash_func,
          EqualFuncPtr equal_func)
       : m_mp(mp),
         m_unique(unique),
@@ -404,26 +403,22 @@ class CCache {
   ~CCache() { Cleanup(); }
 
   // does cache allow duplicate keys?
-  BOOL AllowsDuplicateKeys() const { return m_unique; }
+  bool AllowsDuplicateKeys() const { return m_unique; }
 
   // return number of cache entries
-  ULONG_PTR
-  Size() const { return m_hash_table.Size(); }
+  uintptr_t Size() const { return m_hash_table.Size(); }
 
   // return total allocated size in bytes
-  ULLONG
-  TotalAllocatedSize() { return m_cache_size; }
+  uint64_t TotalAllocatedSize() { return m_cache_size; }
 
   // return memory quota of the cache
-  ULLONG
-  GetCacheQuota() { return m_cache_quota; }
+  uint64_t GetCacheQuota() { return m_cache_quota; }
 
   // return number of times this cache underwent eviction
-  ULLONG
-  GetEvictionCounter() { return m_eviction_counter; }
+  uint64_t GetEvictionCounter() { return m_eviction_counter; }
 
   // sets the cache quota
-  void SetCacheQuota(ULLONG new_quota) {
+  void SetCacheQuota(uint64_t new_quota) {
     m_cache_quota = new_quota;
 
     if (0 != m_cache_quota && m_cache_size > m_cache_quota) {

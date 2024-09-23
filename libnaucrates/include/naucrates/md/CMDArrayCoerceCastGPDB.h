@@ -26,16 +26,16 @@ class CMDArrayCoerceCastGPDB : public CMDCastGPDB {
   const CWStringDynamic *m_dxl_str = nullptr;
 
   // type mod
-  INT m_type_modifier;
+  int32_t m_type_modifier;
 
   // is explicit
-  BOOL m_is_explicit;
+  bool m_is_explicit;
 
   // CoercionForm
   EdxlCoercionForm m_dxl_coerce_format;
 
   // location
-  INT m_location;
+  int32_t m_location;
 
   // Src element MDId
   IMDId *m_mdid_src_elemtype;
@@ -45,23 +45,23 @@ class CMDArrayCoerceCastGPDB : public CMDCastGPDB {
 
   // ctor
   CMDArrayCoerceCastGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *mdid_src, IMDId *mdid_dest,
-                         BOOL is_binary_coercible, IMDId *mdid_cast_func, EmdCoercepathType path_type,
-                         INT type_modifier, BOOL is_explicit, EdxlCoercionForm dxl_coerce_format, INT location,
+                         bool is_binary_coercible, IMDId *mdid_cast_func, EmdCoercepathType path_type,
+                         int32_t type_modifier, bool is_explicit, EdxlCoercionForm dxl_coerce_format, int32_t location,
                          IMDId *mdid_src_elemtype);
 
   // dtor
   ~CMDArrayCoerceCastGPDB() override;
 
   // return type modifier
-  virtual INT TypeModifier() const;
+  virtual int32_t TypeModifier() const;
 
-  virtual BOOL IsExplicit() const;
+  virtual bool IsExplicit() const;
 
   // return coercion form
   virtual EdxlCoercionForm GetCoercionForm() const;
 
   // return token location
-  virtual INT Location() const;
+  virtual int32_t Location() const;
 
   // return src element type
   virtual IMDId *GetSrcElemTypeMdId() const;

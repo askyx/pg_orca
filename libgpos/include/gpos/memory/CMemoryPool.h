@@ -43,8 +43,8 @@
 #define GPOS_MEM_ALIGNED_STRUCT_SIZE(x) GPOS_MEM_ALIGNED_SIZE(GPOS_SIZEOF(x))
 
 // sanity check: char and ulong always fits into the basic unit of alignment
-GPOS_CPL_ASSERT(GPOS_MEM_ALIGNED_STRUCT_SIZE(gpos::CHAR) == GPOS_MEM_ARCH, "");
-GPOS_CPL_ASSERT(GPOS_MEM_ALIGNED_STRUCT_SIZE(gpos::ULONG) == GPOS_MEM_ARCH, "");
+GPOS_CPL_ASSERT(GPOS_MEM_ALIGNED_STRUCT_SIZE(char) == GPOS_MEM_ARCH, "");
+GPOS_CPL_ASSERT(GPOS_MEM_ALIGNED_STRUCT_SIZE(uint32_t) == GPOS_MEM_ARCH, "");
 
 // static pattern to init memory
 #define GPOS_MEM_INIT_PATTERN_CHAR (0xCC)
@@ -55,7 +55,7 @@ GPOS_CPL_ASSERT(GPOS_MEM_ALIGNED_STRUCT_SIZE(gpos::ULONG) == GPOS_MEM_ARCH, "");
 // max allocation per request: 1GB
 #define GPOS_MEM_ALLOC_MAX (0x40000000)
 
-#define GPOS_MEM_OFFSET_POS(p, ullOffset) ((void *)((BYTE *)(p) + ullOffset))
+#define GPOS_MEM_OFFSET_POS(p, ullOffset) ((void *)((uint8_t *)(p) + ullOffset))
 
 namespace gpos {
 // prototypes
@@ -75,10 +75,10 @@ class CMemoryPool {
  private:
   // psudo random hash key generator
   std::mt19937 m_generator;
-  std::uniform_int_distribution<ULONG> m_distribution;
+  std::uniform_int_distribution<uint32_t> m_distribution;
 
   // hash key for this memory pool
-  ULONG_PTR m_hash_key;
+  uintptr_t m_hash_key;
 
 #ifdef GPOS_DEBUG
   // stack where pool is created
@@ -90,14 +90,14 @@ class CMemoryPool {
 
  protected:
   // invalid memory pool key
-  static const ULONG_PTR m_invalid;
+  static const uintptr_t m_invalid;
 
  public:
   enum EAllocationType { EatUnknown = 0x00, EatSingleton = 0x7f, EatArray = 0x7e };
 
   CMemoryPool()
       // MAX LONG is invalid hash key, so skip that hash value.
-      : m_distribution(0, std::numeric_limits<ULONG>::max() - 1), m_hash_key(m_distribution(m_generator)) {}
+      : m_distribution(0, std::numeric_limits<uint32_t>::max() - 1), m_hash_key(m_distribution(m_generator)) {}
 
   // dtor
   virtual ~CMemoryPool() = default;
@@ -106,22 +106,23 @@ class CMemoryPool {
   virtual void TearDown() = 0;
 
   // hash key accessor
-  virtual ULONG_PTR GetHashKey() const { return m_hash_key; }
+  virtual uintptr_t GetHashKey() const { return m_hash_key; }
 
   // implementation of placement new with memory pool
-  virtual void *NewImpl(const ULONG bytes, const CHAR *file, const ULONG line, CMemoryPool::EAllocationType eat) = 0;
+  virtual void *NewImpl(const uint32_t bytes, const char *file, const uint32_t line,
+                        CMemoryPool::EAllocationType eat) = 0;
 
   // implementation of array-new with memory pool
   template <typename T>
-  T *NewArrayImpl(SIZE_T num_elements, const CHAR *filename, ULONG line) {
+  T *NewArrayImpl(size_t num_elements, const char *filename, uint32_t line) {
     T *array = static_cast<T *>(NewImpl(sizeof(T) * num_elements, filename, line, EatArray));
-    for (SIZE_T idx = 0; idx < num_elements; ++idx) {
+    for (size_t idx = 0; idx < num_elements; ++idx) {
       try {
         new (array + idx) T();
       } catch (...) {
         // If any element's constructor throws, deconstruct
         // previous objects and reclaim memory before rethrowing.
-        for (SIZE_T destroy_idx = idx - 1; destroy_idx < idx; --destroy_idx) {
+        for (size_t destroy_idx = idx - 1; destroy_idx < idx; --destroy_idx) {
           array[destroy_idx].~T();
         }
         DeleteImpl(array, EatArray);
@@ -132,13 +133,13 @@ class CMemoryPool {
   }
 
   // return total allocated size
-  virtual ULLONG TotalAllocatedSize() const {
+  virtual uint64_t TotalAllocatedSize() const {
     GPOS_ASSERT(!"not supported");
     return 0;
   }
 
   // requested size of allocation
-  static ULONG UserSizeOfAlloc(const void *ptr);
+  static uint32_t UserSizeOfAlloc(const void *ptr);
 
   // free allocation
   static void DeleteImpl(void *ptr, EAllocationType eat);
@@ -146,7 +147,7 @@ class CMemoryPool {
 #ifdef GPOS_DEBUG
 
   // check if the memory pool keeps track of live objects
-  virtual BOOL SupportsLiveObjectWalk() const { return false; }
+  virtual bool SupportsLiveObjectWalk() const { return false; }
 
   // walk the live objects, calling pVisitor.visit() for each one
   virtual void WalkLiveObjects(IMemoryVisitor *) { GPOS_ASSERT(!"not supported"); }
@@ -202,8 +203,8 @@ class CDeleter {
 
     // Invoke destructor on each array element in reverse
     // order from construction.
-    const SIZE_T num_elements = CMemoryPool::UserSizeOfAlloc(object_array) / sizeof(T);
-    for (SIZE_T idx = num_elements - 1; idx < num_elements; --idx) {
+    const size_t num_elements = CMemoryPool::UserSizeOfAlloc(object_array) / sizeof(T);
+    for (size_t idx = num_elements - 1; idx < num_elements; --idx) {
       object_array[idx].~T();
     }
 
@@ -227,7 +228,7 @@ class CDeleter<const T> {
 // arbitrary objects from an CMemoryPool. This does not affect the ordinary
 // built-in 'new', and is used only when placement-new is invoked with the
 // specific type signature defined below.
-inline void *operator new(gpos::SIZE_T size, gpos::CMemoryPool *mp, const gpos::CHAR *filename, gpos::ULONG line) {
+inline void *operator new(size_t size, gpos::CMemoryPool *mp, const char *filename, uint32_t line) {
   return mp->NewImpl(size, filename, line, gpos::CMemoryPool::EatSingleton);
 }
 
@@ -237,7 +238,7 @@ inline void *operator new(gpos::SIZE_T size, gpos::CMemoryPool *mp, const gpos::
 // non-placement version is used. This placement version of 'delete' is used
 // *only* when a constructor throws an exception, and the version of 'new' is
 // known to be the one declared above.
-inline void operator delete(void *ptr, gpos::CMemoryPool *, const gpos::CHAR *, gpos::ULONG) {
+inline void operator delete(void *ptr, gpos::CMemoryPool *, const char *, uint32_t) {
   // Reclaim memory after constructor throws exception.
   gpos::CMemoryPool::DeleteImpl(ptr, gpos::CMemoryPool::EatSingleton);
 }

@@ -26,7 +26,7 @@ namespace gpopt {
 class CPhysicalCTEProducer : public CPhysical {
  private:
   // cte identifier
-  ULONG m_id;
+  uint32_t m_id;
 
   // cte columns
   CColRefArray *m_pdrgpcr;
@@ -38,7 +38,7 @@ class CPhysicalCTEProducer : public CPhysical {
   CPhysicalCTEProducer(const CPhysicalCTEProducer &) = delete;
 
   // ctor
-  CPhysicalCTEProducer(CMemoryPool *mp, ULONG id, CColRefArray *colref_array);
+  CPhysicalCTEProducer(CMemoryPool *mp, uint32_t id, CColRefArray *colref_array);
 
   // dtor
   ~CPhysicalCTEProducer() override;
@@ -46,42 +46,41 @@ class CPhysicalCTEProducer : public CPhysical {
   // ident accessors
   EOperatorId Eopid() const override { return EopPhysicalCTEProducer; }
 
-  const CHAR *SzId() const override { return "CPhysicalCTEProducer"; }
+  const char *SzId() const override { return "CPhysicalCTEProducer"; }
 
   // cte identifier
-  ULONG
-  UlCTEId() const { return m_id; }
+  uint32_t UlCTEId() const { return m_id; }
 
   // cte columns
   CColRefArray *Pdrgpcr() const { return m_pdrgpcr; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   //-------------------------------------------------------------------------------------
   // Required Plan Properties
   //-------------------------------------------------------------------------------------
 
   // compute required output columns of the n-th child
-  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG child_index,
-                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t child_index,
+                           CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) override;
 
   // compute required ctes of the n-th child
-  CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
-                        CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, uint32_t child_index,
+                        CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // compute required sort order of the n-th child
-  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
-                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, uint32_t child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // check if required columns are included in output columns
-  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
+  bool FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t ulOptReq) const override;
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties
@@ -102,7 +101,7 @@ class CPhysicalCTEProducer : public CPhysical {
 
   // return true if operator passes through stats obtained from children,
   // this is used when computing stats during costing
-  BOOL FPassThruStats() const override { return false; }
+  bool FPassThruStats() const override { return false; }
 
   //-------------------------------------------------------------------------------------
   //-------------------------------------------------------------------------------------

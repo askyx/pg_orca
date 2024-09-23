@@ -51,7 +51,7 @@ class CXformGbAggWithMDQA2Join : public CXformExploration {
   EXformId Exfid() const override { return ExfGbAggWithMDQA2Join; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformGbAggWithMDQA2Join"; }
+  const char *SzId() const override { return "CXformGbAggWithMDQA2Join"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
@@ -60,7 +60,7 @@ class CXformGbAggWithMDQA2Join : public CXformExploration {
   void Transform(CXformContext *, CXformResult *, CExpression *) const override;
 
   // return true if xform should be applied only once
-  BOOL IsApplyOnce() override;
+  bool IsApplyOnce() override;
 
 };  // class CXformGbAggWithMDQA2Join
 

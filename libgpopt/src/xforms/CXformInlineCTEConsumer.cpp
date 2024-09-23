@@ -40,7 +40,7 @@ CXformInlineCTEConsumer::CXformInlineCTEConsumer(CMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise CXformInlineCTEConsumer::Exfp(CExpressionHandle &exprhdl) const {
-  const ULONG id = CLogicalCTEConsumer::PopConvert(exprhdl.Pop())->UlCTEId();
+  const uint32_t id = CLogicalCTEConsumer::PopConvert(exprhdl.Pop())->UlCTEId();
   CCTEInfo *pcteinfo = COptCtxt::PoctxtFromTLS()->Pcteinfo();
 
   // Also inline if subtree of CTE contains outer reference since we disable CXformCTEAnchor2Sequence if cte contains

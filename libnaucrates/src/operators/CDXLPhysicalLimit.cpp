@@ -59,7 +59,7 @@ const CWStringConst *CDXLPhysicalLimit::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalLimit::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLPhysicalLimit::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(4 == node->Arity());
 
   // Assert proj list is valid

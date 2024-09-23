@@ -74,7 +74,7 @@ void CMDIdScCmp::Serialize() const {
 //		Returns the string representation of the mdid
 //
 //---------------------------------------------------------------------------
-const WCHAR *CMDIdScCmp::GetBuffer() const {
+const wchar_t *CMDIdScCmp::GetBuffer() const {
   return m_str.GetBuffer();
 }
 
@@ -110,8 +110,7 @@ IMDId *CMDIdScCmp::GetRightMdid() const {
 //		Computes the hash value for the metadata id
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDIdScCmp::HashValue() const {
+uint32_t CMDIdScCmp::HashValue() const {
   return gpos::CombineHashes(MdidType(), gpos::CombineHashes(m_mdid_left->HashValue(), m_mdid_right->HashValue()));
 }
 
@@ -123,7 +122,7 @@ CMDIdScCmp::HashValue() const {
 //		Checks if the mdids are equal
 //
 //---------------------------------------------------------------------------
-BOOL CMDIdScCmp::Equals(const IMDId *mdid) const {
+bool CMDIdScCmp::Equals(const IMDId *mdid) const {
   if (nullptr == mdid || EmdidScCmp != mdid->MdidType()) {
     return false;
   }

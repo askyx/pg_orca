@@ -17,7 +17,7 @@ class CPhysicalParallelUnionAll : public CPhysicalUnionAll {
 
   EOperatorId Eopid() const override;
 
-  const CHAR *SzId() const override;
+  const char *SzId() const override;
 
   ~CPhysicalParallelUnionAll() override;
 };

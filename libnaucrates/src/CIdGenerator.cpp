@@ -6,7 +6,7 @@
 //		CIdGenerator.cpp
 //
 //	@doc:
-//		Implementing the ULONG Counter
+//		Implementing the uint32_t Counter
 //---------------------------------------------------------------------------
 
 #include "naucrates/dxl/CIdGenerator.h"
@@ -16,7 +16,7 @@
 using namespace gpdxl;
 using namespace gpos;
 
-CIdGenerator::CIdGenerator(ULONG start_id) : id(start_id) {}
+CIdGenerator::CIdGenerator(uint32_t start_id) : id(start_id) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -26,8 +26,7 @@ CIdGenerator::CIdGenerator(ULONG start_id) : id(start_id) {}
 //		Returns the next unique id
 //
 //---------------------------------------------------------------------------
-ULONG
-CIdGenerator::next_id() {
+uint32_t CIdGenerator::next_id() {
   return id++;
 }
 
@@ -39,8 +38,7 @@ CIdGenerator::next_id() {
 //		Returns the current unique id used
 //
 //---------------------------------------------------------------------------
-ULONG
-CIdGenerator::current_id() const {
+uint32_t CIdGenerator::current_id() const {
   return id;
 }
 

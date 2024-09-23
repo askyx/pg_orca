@@ -57,7 +57,7 @@ class CDXLScalarAggref : public CDXLScalar {
   IMDId *m_resolved_rettype_mdid;
 
   // Denotes whether it's agg(DISTINCT ...)
-  BOOL m_is_distinct;
+  bool m_is_distinct;
 
   // Denotes the MPP Stage
   EdxlAggrefStage m_agg_stage;
@@ -70,7 +70,7 @@ class CDXLScalarAggref : public CDXLScalar {
   CDXLScalarAggref(const CDXLScalarAggref &) = delete;
 
   // ctor/dtor
-  CDXLScalarAggref(CMemoryPool *mp, IMDId *agg_mdid, IMDId *resolved_rettype, BOOL is_distinct,
+  CDXLScalarAggref(CMemoryPool *mp, IMDId *agg_mdid, IMDId *resolved_rettype, bool is_distinct,
                    EdxlAggrefStage agg_stage, EdxlAggrefKind aggkind, ULongPtrArray *argtypes);
 
   ~CDXLScalarAggref() override;
@@ -90,7 +90,7 @@ class CDXLScalarAggref : public CDXLScalar {
 
   const CWStringConst *GetDXLStrAggKind() const;
 
-  BOOL IsDistinct() const;
+  bool IsDistinct() const;
 
   EdxlAggrefKind GetAggKind() const { return m_aggkind; }
 
@@ -105,12 +105,12 @@ class CDXLScalarAggref : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
+  bool HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

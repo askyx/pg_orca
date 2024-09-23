@@ -36,10 +36,10 @@ class CMDIdColStats : public IMDId {
   CMDIdGPDB *m_rel_mdid;
 
   // position of the attribute in the base relation
-  ULONG m_attr_pos;
+  uint32_t m_attr_pos;
 
   // buffer for the serialized mdid
-  WCHAR m_mdid_buffer[GPDXL_MDID_LENGTH];
+  wchar_t m_mdid_buffer[GPDXL_MDID_LENGTH];
 
   // string representation of the mdid
   mutable CWStringStatic m_str;
@@ -51,7 +51,7 @@ class CMDIdColStats : public IMDId {
   CMDIdColStats(const CMDIdColStats &) = delete;
 
   // ctor
-  CMDIdColStats(CMDIdGPDB *rel_mdid, ULONG attno);
+  CMDIdColStats(CMDIdGPDB *rel_mdid, uint32_t attno);
 
   // dtor
   ~CMDIdColStats() override;
@@ -59,24 +59,25 @@ class CMDIdColStats : public IMDId {
   EMDIdType MdidType() const override { return EmdidColStats; }
 
   // string representation of mdid
-  const WCHAR *GetBuffer() const override;
+  const wchar_t *GetBuffer() const override;
 
   // source system id
   CSystemId Sysid() const override { return m_rel_mdid->Sysid(); }
 
   // accessors
   IMDId *GetRelMdId() const;
-  ULONG Position() const;
+  uint32_t Position() const;
 
   // equality check
-  BOOL Equals(const IMDId *mdid) const override;
+  bool Equals(const IMDId *mdid) const override;
 
   // computes the hash value for the metadata id
-  ULONG
-  HashValue() const override { return gpos::CombineHashes(m_rel_mdid->HashValue(), gpos::HashValue(&m_attr_pos)); }
+  uint32_t HashValue() const override {
+    return gpos::CombineHashes(m_rel_mdid->HashValue(), gpos::HashValue(&m_attr_pos));
+  }
 
   // is the mdid valid
-  BOOL IsValid() const override { return IMDId::IsValid(m_rel_mdid); }
+  bool IsValid() const override { return IMDId::IsValid(m_rel_mdid); }
 
   // debug print of the metadata id
   IOstream &OsPrint(IOstream &os) const override;

@@ -43,7 +43,7 @@ class CSyncHashtableAccessorBase : public CStackObject {
 
  protected:
   // ctor - protected to restrict instantiation to children
-  CSyncHashtableAccessorBase(CSyncHashtable<T, K> &ht, ULONG bucket_idx)
+  CSyncHashtableAccessorBase(CSyncHashtable<T, K> &ht, uint32_t bucket_idx)
       : m_ht(ht), m_bucket(m_ht.GetBucket(bucket_idx)) {}
 
   // dtor

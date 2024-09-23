@@ -29,8 +29,8 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarSortGroupClause::CScalarSortGroupClause(CMemoryPool *mp, INT tle_sort_group_ref, INT eqop, INT sortop,
-                                               BOOL nulls_first, BOOL hashable)
+CScalarSortGroupClause::CScalarSortGroupClause(CMemoryPool *mp, int32_t tle_sort_group_ref, int32_t eqop,
+                                               int32_t sortop, bool nulls_first, bool hashable)
     : CScalar(mp),
       m_tle_sort_group_ref(tle_sort_group_ref),
       m_eqop(eqop),
@@ -46,7 +46,7 @@ CScalarSortGroupClause::CScalarSortGroupClause(CMemoryPool *mp, INT tle_sort_gro
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarSortGroupClause::Matches(COperator *other) const {
+bool CScalarSortGroupClause::Matches(COperator *other) const {
   if (Eopid() != other->Eopid()) {
     return false;
   }
@@ -88,7 +88,7 @@ CScalar::EBoolEvalResult CScalarSortGroupClause::Eber(ULongPtrArray *  // pdrgpu
   return EberAny;
 }
 
-INT CScalarSortGroupClause::TypeModifier() const {
+int32_t CScalarSortGroupClause::TypeModifier() const {
   return 0;
 }
 

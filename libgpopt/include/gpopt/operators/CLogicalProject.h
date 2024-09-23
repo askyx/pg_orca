@@ -49,7 +49,7 @@ class CLogicalProject : public CLogicalUnary {
   // ident accessors
   EOperatorId Eopid() const override { return EopLogicalProject; }
 
-  const CHAR *SzId() const override { return "CLogicalProject"; }
+  const char *SzId() const override { return "CLogicalProject"; }
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties

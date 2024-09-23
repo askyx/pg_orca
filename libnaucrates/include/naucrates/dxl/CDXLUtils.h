@@ -65,18 +65,18 @@ class CDXLUtils {
                                               CDXLStatsDerivedColumn *dxl_derived_col_stats);
 
   // create a GPOS dynamic string from a regular character array
-  static CWStringDynamic *CreateDynamicStringFromCharArray(CMemoryPool *mp, const CHAR *c);
+  static CWStringDynamic *CreateDynamicStringFromCharArray(CMemoryPool *mp, const char *c);
 
   // create an MD name from a character array
-  static CMDName *CreateMDNameFromCharArray(CMemoryPool *mp, const CHAR *c);
+  static CMDName *CreateMDNameFromCharArray(CMemoryPool *mp, const char *c);
 
   // serialize a list of integers into a comma-separate string
   template <typename T, void (*CleanupFn)(T *)>
   static CWStringDynamic *Serialize(CMemoryPool *mp, const CDynamicPtrArray<T, CleanupFn> *arr);
 
-  template <typename T, ULONG sentinel_index>
+  template <typename T, uint32_t sentinel_index>
   static CWStringDynamic *Serialize(CMemoryPool *mp, const CEnumSet<T, sentinel_index> *dynamic_set,
-                                    const WCHAR *(*func)(T));
+                                    const wchar_t *(*func)(T));
 
   // serialize a list of lists of integers into a comma-separate string
   static CWStringDynamic *Serialize(CMemoryPool *mp, const ULongPtr2dArray *pdrgpul);
@@ -87,10 +87,10 @@ class CDXLUtils {
   // serialize a list of strings into a comma-separate string
   static CWStringDynamic *SerializeToCommaSeparatedString(CMemoryPool *mp, const StringPtrArray *pdrgpsz);
 
-  static CHAR *Read(CMemoryPool *mp, const CHAR *filename);
+  static char *Read(CMemoryPool *mp, const char *filename);
 
   // create a multi-byte character string from a wide character string
-  static CHAR *CreateMultiByteCharStringFromWCString(CMemoryPool *mp, const WCHAR *wc_string);
+  static char *CreateMultiByteCharStringFromWCString(CMemoryPool *mp, const wchar_t *wc_string);
 
   // translate the optimizer datum from dxl datum object
   static IDatum *GetDatum(CMemoryPool *mp, CMDAccessor *md_accessor, const CDXLDatum *dxl_datum);
@@ -113,8 +113,8 @@ CWStringDynamic *CDXLUtils::Serialize(CMemoryPool *mp, const CDynamicPtrArray<T,
     return string_var.Reset();
   }
 
-  ULONG length = dynamic_ptr_array->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
+  uint32_t length = dynamic_ptr_array->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
     T value = *((*dynamic_ptr_array)[ul]);
     if (ul == length - 1) {
       // last element: do not print a comma
@@ -127,15 +127,15 @@ CWStringDynamic *CDXLUtils::Serialize(CMemoryPool *mp, const CDynamicPtrArray<T,
   return string_var.Reset();
 }
 
-template <typename T, ULONG sentinel_index>
+template <typename T, uint32_t sentinel_index>
 CWStringDynamic *CDXLUtils::Serialize(CMemoryPool *mp, const CEnumSet<T, sentinel_index> *dynamic_set,
-                                      const WCHAR *(*func)(T)) {
+                                      const wchar_t *(*func)(T)) {
   CAutoP<CWStringDynamic> str(GPOS_NEW(mp) CWStringDynamic(mp));
 
   CEnumSetIter<T, sentinel_index> iter(*dynamic_set);
-  ULONG idx = 0;
+  uint32_t idx = 0;
   while (iter.Advance()) {
-    const WCHAR *index = func(iter.TBit());
+    const wchar_t *index = func(iter.TBit());
     str->AppendWideCharArray(index);
     if (idx != dynamic_set->Size() - 1) {
       str->AppendFormat(GPOS_WSZ_LIT("%ls"), CDXLTokens::GetDXLTokenStr(EdxltokenComma)->GetBuffer());

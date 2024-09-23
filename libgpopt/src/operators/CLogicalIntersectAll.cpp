@@ -88,7 +88,7 @@ CMaxCard CLogicalIntersectAll::DeriveMaxCard(CMemoryPool *,  // mp
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalIntersectAll::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                            BOOL must_exist) {
+                                                            bool must_exist) {
   CColRefArray *pdrgpcrOutput = CUtils::PdrgpcrRemap(mp, m_pdrgpcrOutput, colref_mapping, must_exist);
   CColRef2dArray *pdrgpdrgpcrInput = CUtils::PdrgpdrgpcrRemap(mp, m_pdrgpdrgpcrInput, colref_mapping, must_exist);
 
@@ -175,8 +175,8 @@ IStatistics *CLogicalIntersectAll::PstatsDerive(CMemoryPool *mp, CExpressionHand
   GPOS_ASSERT(Esp(exprhdl) > EspNone);
 
   CColRefSetArray *output_colrefsets = GPOS_NEW(mp) CColRefSetArray(mp);
-  const ULONG size = m_pdrgpdrgpcrInput->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = m_pdrgpdrgpcrInput->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, (*m_pdrgpdrgpcrInput)[ul]);
     output_colrefsets->Append(pcrs);
   }

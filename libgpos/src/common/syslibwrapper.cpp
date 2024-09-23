@@ -33,7 +33,7 @@ using namespace gpos;
 void gpos::syslib::GetTimeOfDay(TIMEVAL *tv, TIMEZONE *tz) {
   GPOS_ASSERT(nullptr != tv);
 
-  INT res GPOS_ASSERTS_ONLY = gettimeofday(tv, tz);
+  int32_t res GPOS_ASSERTS_ONLY = gettimeofday(tv, tz);
 
   GPOS_ASSERT(0 == res);
 }
@@ -49,7 +49,7 @@ void gpos::syslib::GetTimeOfDay(TIMEVAL *tv, TIMEZONE *tz) {
 void gpos::syslib::GetRusage(RUSAGE *usage) {
   GPOS_ASSERT(nullptr != usage);
 
-  INT res GPOS_ASSERTS_ONLY = getrusage(RUSAGE_SELF, usage);
+  int32_t res GPOS_ASSERTS_ONLY = getrusage(RUSAGE_SELF, usage);
 
   GPOS_ASSERT(0 == res);
 }
@@ -62,7 +62,7 @@ void gpos::syslib::GetRusage(RUSAGE *usage) {
 //		Open a connection to the system logger for a program
 //
 //---------------------------------------------------------------------------
-void gpos::syslib::OpenLog(const CHAR *ident, INT option, INT facility) {
+void gpos::syslib::OpenLog(const char *ident, int32_t option, int32_t facility) {
   openlog(ident, option, facility);
 }
 
@@ -74,7 +74,7 @@ void gpos::syslib::OpenLog(const CHAR *ident, INT option, INT facility) {
 //		Generate a log message
 //
 //---------------------------------------------------------------------------
-void gpos::syslib::SysLog(INT priority, const CHAR *format) {
+void gpos::syslib::SysLog(int32_t priority, const char *format) {
   syslog(priority, "%s", format);
 }
 

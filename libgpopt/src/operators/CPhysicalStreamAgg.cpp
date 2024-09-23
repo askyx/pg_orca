@@ -28,9 +28,9 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CPhysicalStreamAgg::CPhysicalStreamAgg(CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal,
-                                       COperator::EGbAggType egbaggtype, BOOL fGeneratesDuplicates,
-                                       CColRefArray *pdrgpcrArgDQA, BOOL fMultiStage, BOOL isAggFromSplitDQA,
-                                       CLogicalGbAgg::EAggStage aggStage, BOOL should_enforce_distribution)
+                                       COperator::EGbAggType egbaggtype, bool fGeneratesDuplicates,
+                                       CColRefArray *pdrgpcrArgDQA, bool fMultiStage, bool isAggFromSplitDQA,
+                                       CLogicalGbAgg::EAggStage aggStage, bool should_enforce_distribution)
     : CPhysicalAgg(mp, colref_array, pdrgpcrMinimal, egbaggtype, fGeneratesDuplicates, pdrgpcrArgDQA, fMultiStage,
                    isAggFromSplitDQA, aggStage, should_enforce_distribution),
       m_pos(nullptr) {
@@ -52,8 +52,8 @@ void CPhysicalStreamAgg::InitOrderSpec(CMemoryPool *mp, CColRefArray *pdrgpcrOrd
 
   CRefCount::SafeRelease(m_pos);
   m_pos = GPOS_NEW(mp) COrderSpec(mp);
-  const ULONG size = pdrgpcrOrder->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = pdrgpcrOrder->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     CColRef *colref = (*pdrgpcrOrder)[ul];
 
     // TODO: 12/21/2011 - ; this seems broken: a colref must not embed
@@ -108,8 +108,8 @@ COrderSpec *CPhysicalStreamAgg::PosCovering(CMemoryPool *mp, COrderSpec *posRequ
     pos = GPOS_NEW(mp) COrderSpec(mp);
 
     // extract order expressions from required order
-    const ULONG ulReqdSortCols = posRequired->UlSortColumns();
-    for (ULONG ul = 0; ul < ulReqdSortCols; ul++) {
+    const uint32_t ulReqdSortCols = posRequired->UlSortColumns();
+    for (uint32_t ul = 0; ul < ulReqdSortCols; ul++) {
       CColRef *colref = const_cast<CColRef *>(posRequired->Pcr(ul));
       IMDId *mdid = posRequired->GetMdIdSortOp(ul);
       COrderSpec::ENullTreatment ent = posRequired->Ent(ul);
@@ -118,8 +118,8 @@ COrderSpec *CPhysicalStreamAgg::PosCovering(CMemoryPool *mp, COrderSpec *posRequ
     }
 
     // augment order with remaining grouping columns
-    const ULONG size = pdrgpcrGrp->Size();
-    for (ULONG ul = 0; ul < size; ul++) {
+    const uint32_t size = pdrgpcrGrp->Size();
+    for (uint32_t ul = 0; ul < size; ul++) {
       CColRef *colref = (*pdrgpcrGrp)[ul];
       if (!pcrsReqd->FMember(colref)) {
         IMDId *mdid = colref->RetrieveType()->GetMdidForCmpType(IMDType::EcmptL);
@@ -144,7 +144,7 @@ COrderSpec *CPhysicalStreamAgg::PosCovering(CMemoryPool *mp, COrderSpec *posRequ
 //---------------------------------------------------------------------------
 COrderSpec *CPhysicalStreamAgg::PosRequiredStreamAgg(CMemoryPool *mp, CExpressionHandle &exprhdl,
                                                      COrderSpec *posRequired,
-                                                     ULONG
+                                                     uint32_t
 #ifdef GPOS_DEBUG
                                                          child_index
 #endif  // GPOS_DEBUG
@@ -167,7 +167,7 @@ COrderSpec *CPhysicalStreamAgg::PosRequiredStreamAgg(CMemoryPool *mp, CExpressio
 
   if (nullptr != pkc && pkc->FKey(pcrs, false /*fExactMatch*/)) {
     CColRefSet *pcrsReqd = posRequired->PcrsUsed(m_mp);
-    BOOL fUsesDefinedCols = FUnaryUsesDefinedColumns(pcrsReqd, exprhdl);
+    bool fUsesDefinedCols = FUnaryUsesDefinedColumns(pcrsReqd, exprhdl);
     pcrsReqd->Release();
 
     if (!fUsesDefinedCols) {

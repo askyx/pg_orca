@@ -39,7 +39,7 @@ class CXformPushGbWithHavingBelowJoin : public CXformExploration {
   // ident accessors
   EXformId Exfid() const override { return ExfPushGbWithHavingBelowJoin; }
 
-  const CHAR *SzId() const override { return "CXformPushGbWithHavingBelowJoin"; }
+  const char *SzId() const override { return "CXformPushGbWithHavingBelowJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

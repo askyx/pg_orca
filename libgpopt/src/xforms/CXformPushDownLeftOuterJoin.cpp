@@ -102,9 +102,9 @@ void CXformPushDownLeftOuterJoin::Transform(CXformContext *pxfctxt, CXformResult
   CExpressionArray *pdrgpexprLOJChildren = GPOS_NEW(mp) CExpressionArray(mp);
   CExpressionArray *pdrgpexprNAryJoinChildren = GPOS_NEW(mp) CExpressionArray(mp);
 
-  const ULONG arity = pexprNAryJoin->Arity();
+  const uint32_t arity = pexprNAryJoin->Arity();
   CExpression *pexprNAryJoinScalarChild = (*pexprNAryJoin)[arity - 1];
-  for (ULONG ul = 0; ul < arity - 1; ul++) {
+  for (uint32_t ul = 0; ul < arity - 1; ul++) {
     CExpression *pexprChild = (*pexprNAryJoin)[ul];
     CColRefSet *pcrsOutput = pexprChild->DeriveOutputColumns();
     pexprChild->AddRef();

@@ -43,7 +43,7 @@ CMemoryPoolManager::CMemoryPoolManager(CMemoryPool *internal, EMemoryPoolType me
 // constructor, or else it will use the base class allocator instead of the one
 // defined in derived-class virtual function.
 void CMemoryPoolManager::Setup() {
-  m_ht_all_pools = GPOS_NEW(m_internal_memory_pool) CSyncHashtable<CMemoryPool, ULONG_PTR>();
+  m_ht_all_pools = GPOS_NEW(m_internal_memory_pool) CSyncHashtable<CMemoryPool, uintptr_t>();
   m_ht_all_pools->Init(m_internal_memory_pool, GPOS_MEMORY_POOL_HT_SIZE, GPOS_OFFSET(CMemoryPool, m_link),
                        GPOS_OFFSET(CMemoryPool, m_hash_key), &(CMemoryPool::m_invalid), HashULongPtr, EqualULongPtr);
 
@@ -66,7 +66,7 @@ CMemoryPool *CMemoryPoolManager::CreateMemoryPool() {
   {
     // HERE BE DRAGONS
     // See comment in CCache::InsertEntry
-    const ULONG_PTR hashKey = mp->GetHashKey();
+    const uintptr_t hashKey = mp->GetHashKey();
     MemoryPoolKeyAccessor acc(*m_memory_pool_mgr->m_ht_all_pools, hashKey);
     acc.Insert(mp);
   }
@@ -88,7 +88,7 @@ void CMemoryPoolManager::Destroy(CMemoryPool *mp) {
   {
     // HERE BE DRAGONS
     // See comment in CCache::InsertEntry
-    const ULONG_PTR hashKey = mp->GetHashKey();
+    const uintptr_t hashKey = mp->GetHashKey();
     MemoryPoolKeyAccessor acc(*m_memory_pool_mgr->m_ht_all_pools, hashKey);
     acc.Remove(mp);
   }
@@ -99,9 +99,8 @@ void CMemoryPoolManager::Destroy(CMemoryPool *mp) {
 }
 
 // Return total allocated size in bytes
-ULLONG
-CMemoryPoolManager::TotalAllocatedSize() {
-  ULLONG total_size = 0;
+uint64_t CMemoryPoolManager::TotalAllocatedSize() {
+  uint64_t total_size = 0;
   MemoryPoolIter iter(*m_ht_all_pools);
   while (iter.Advance()) {
     MemoryPoolIterAccessor acc(iter);
@@ -120,8 +119,7 @@ void CMemoryPoolManager::DeleteImpl(void *ptr, CMemoryPool::EAllocationType eat)
 }
 
 // get user requested size of allocation
-ULONG
-CMemoryPoolManager::UserSizeOfAlloc(const void *ptr) {
+uint32_t CMemoryPoolManager::UserSizeOfAlloc(const void *ptr) {
   return CMemoryPoolTracker::UserSizeOfAlloc(ptr);
 }
 
@@ -149,7 +147,7 @@ IOstream &CMemoryPoolManager::OsPrint(IOstream &os) {
 
 // Print memory pools with total allocated size above given threshold
 void CMemoryPoolManager::PrintOverSizedPools(CMemoryPool *trace,
-                                             ULLONG size_threshold  // size threshold in bytes
+                                             uint64_t size_threshold  // size threshold in bytes
 ) {
   MemoryPoolIter iter(*m_ht_all_pools);
   while (iter.Advance()) {
@@ -157,7 +155,7 @@ void CMemoryPoolManager::PrintOverSizedPools(CMemoryPool *trace,
     CMemoryPool *mp = acc.Value();
 
     if (nullptr != mp) {
-      ULLONG size = mp->TotalAllocatedSize();
+      uint64_t size = mp->TotalAllocatedSize();
       if (size > size_threshold) {
         CAutoTrace at(trace);
         at.Os() << std::endl << "OVERSIZED MEMORY POOL: " << size << " bytes " << std::endl;

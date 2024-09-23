@@ -41,7 +41,7 @@ class CXformSemiJoinInnerJoinSwap : public CXformJoinSwap<CLogicalLeftSemiJoin, 
   // ident accessors
   EXformId Exfid() const override { return ExfSemiJoinInnerJoinSwap; }
 
-  const CHAR *SzId() const override { return "CXformSemiJoinInnerJoinSwap"; }
+  const char *SzId() const override { return "CXformSemiJoinInnerJoinSwap"; }
 
 };  // class CXformSemiJoinInnerJoinSwap
 

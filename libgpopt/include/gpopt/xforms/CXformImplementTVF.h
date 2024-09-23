@@ -43,7 +43,7 @@ class CXformImplementTVF : public CXformImplementation {
   EXformId Exfid() const override { return ExfImplementTVF; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformImplementTVF"; }
+  const char *SzId() const override { return "CXformImplementTVF"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

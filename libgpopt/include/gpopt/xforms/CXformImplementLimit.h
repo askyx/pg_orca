@@ -39,7 +39,7 @@ class CXformImplementLimit : public CXformImplementation {
   // ident accessors
   EXformId Exfid() const override { return ExfImplementLimit; }
 
-  const CHAR *SzId() const override { return "CXformImplementLimit"; }
+  const char *SzId() const override { return "CXformImplementLimit"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

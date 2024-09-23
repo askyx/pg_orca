@@ -40,7 +40,7 @@ class CXformLeftAntiSemiJoinNotIn2HashJoinNotIn : public CXformImplementation {
   EXformId Exfid() const override { return ExfLeftAntiSemiJoinNotIn2HashJoinNotIn; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformLeftAntiSemiJoinNotIn2HashJoinNotIn"; }
+  const char *SzId() const override { return "CXformLeftAntiSemiJoinNotIn2HashJoinNotIn"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

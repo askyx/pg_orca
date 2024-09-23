@@ -31,42 +31,42 @@ enum Edxlmaterialize { EdxlmatIndexProjList = 0, EdxlmatIndexFilter, EdxlmatInde
 class CDXLPhysicalMaterialize : public CDXLPhysical {
  private:
   // eager materialization
-  BOOL m_is_eager;
+  bool m_is_eager;
 
   // spool info
   // id of the spooling operator
-  ULONG m_spooling_op_id;
+  uint32_t m_spooling_op_id;
 
   // type of the underlying spool
   Edxlspooltype m_spool_type;
 
   // slice executing the underlying sort or materialize
-  INT m_executor_slice;
+  int32_t m_executor_slice;
 
   // number of consumers in case the materialize is a spooling operator
-  ULONG m_num_consumer_slices;
+  uint32_t m_num_consumer_slices;
 
  public:
   CDXLPhysicalMaterialize(CDXLPhysicalMaterialize &) = delete;
 
   // ctor/dtor
-  CDXLPhysicalMaterialize(CMemoryPool *mp, BOOL is_eager);
+  CDXLPhysicalMaterialize(CMemoryPool *mp, bool is_eager);
 
-  CDXLPhysicalMaterialize(CMemoryPool *mp, BOOL is_eager, ULONG spooling_op_id, INT executor_slice,
-                          ULONG num_consumer_slices);
+  CDXLPhysicalMaterialize(CMemoryPool *mp, bool is_eager, uint32_t spooling_op_id, int32_t executor_slice,
+                          uint32_t num_consumer_slices);
 
   // accessors
   Edxlopid GetDXLOperator() const override;
   const CWStringConst *GetOpNameStr() const override;
-  ULONG GetSpoolingOpId() const;
-  INT GetExecutorSlice() const;
-  ULONG GetNumConsumerSlices() const;
+  uint32_t GetSpoolingOpId() const;
+  int32_t GetExecutorSlice() const;
+  uint32_t GetNumConsumerSlices() const;
 
   // is the operator spooling to other operators
-  BOOL IsSpooling() const;
+  bool IsSpooling() const;
 
   // does the operator do eager materialization
-  BOOL IsEager() const;
+  bool IsEager() const;
 
   // serialize operator in DXL format
 
@@ -81,7 +81,7 @@ class CDXLPhysicalMaterialize : public CDXLPhysical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

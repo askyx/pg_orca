@@ -38,7 +38,7 @@ class CScalarBoolOp : public CScalar {
   };
 
  private:
-  static const WCHAR m_rgwszBool[EboolopSentinel][30];
+  static const wchar_t m_rgwszBool[EboolopSentinel][30];
 
   // boolean operator
   EBoolOperator m_eboolop;
@@ -58,24 +58,24 @@ class CScalarBoolOp : public CScalar {
   EOperatorId Eopid() const override { return EopScalarBoolOp; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarBoolOp"; }
+  const char *SzId() const override { return "CScalarBoolOp"; }
 
   // accessor
   EBoolOperator Eboolop() const { return m_eboolop; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return !FCommutative(Eboolop()); }
+  bool FInputOrderSensitive() const override { return !FCommutative(Eboolop()); }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
@@ -92,7 +92,7 @@ class CScalarBoolOp : public CScalar {
   EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const override;
 
   // decide boolean operator commutativity
-  static BOOL FCommutative(EBoolOperator eboolop);
+  static bool FCommutative(EBoolOperator eboolop);
 
   // the type of the scalar expression
   IMDId *MdidType() const override;

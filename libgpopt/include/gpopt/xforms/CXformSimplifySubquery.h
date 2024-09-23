@@ -30,19 +30,19 @@ using namespace gpos;
 class CXformSimplifySubquery : public CXformExploration {
  private:
   // definition of simplification function
-  using FnSimplify = BOOL(CMemoryPool *, CExpression *, CExpression **);
+  using FnSimplify = bool(CMemoryPool *, CExpression *, CExpression **);
 
   // definition of matching function
-  using FnMatch = BOOL(COperator *);
+  using FnMatch = bool(COperator *);
 
   // transform existential subqueries to count(*) subqueries
-  static BOOL FSimplifyExistential(CMemoryPool *mp, CExpression *pexprScalar, CExpression **ppexprNewScalar);
+  static bool FSimplifyExistential(CMemoryPool *mp, CExpression *pexprScalar, CExpression **ppexprNewScalar);
 
   // transform quantified subqueries to count(*) subqueries
-  static BOOL FSimplifyQuantified(CMemoryPool *mp, CExpression *pexprScalar, CExpression **ppexprNewScalar);
+  static bool FSimplifyQuantified(CMemoryPool *mp, CExpression *pexprScalar, CExpression **ppexprNewScalar);
 
   // main driver, transform existential/quantified subqueries to count(*) subqueries
-  static BOOL FSimplifySubqueryRecursive(CMemoryPool *mp, CExpression *pexprScalar, CExpression **ppexprNewScalar,
+  static bool FSimplifySubqueryRecursive(CMemoryPool *mp, CExpression *pexprScalar, CExpression **ppexprNewScalar,
                                          FnSimplify *pfnsimplify, FnMatch *pfnmatch);
 
   static CExpression *FSimplifySubquery(CMemoryPool *mp, CExpression *pexprInput, FnSimplify *pfnsimplify,

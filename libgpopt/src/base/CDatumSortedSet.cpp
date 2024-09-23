@@ -14,11 +14,11 @@ CDatumSortedSet::CDatumSortedSet(CMemoryPool *mp, CExpression *pexprArray, const
     : IDatumArray(mp), m_fIncludesNull(false) {
   GPOS_ASSERT(COperator::EopScalarArray == pexprArray->Pop()->Eopid());
 
-  const ULONG ulArrayExprArity = CUtils::UlScalarArrayArity(pexprArray);
+  const uint32_t ulArrayExprArity = CUtils::UlScalarArrayArity(pexprArray);
   GPOS_ASSERT(0 < ulArrayExprArity);
 
   gpos::CAutoRef<IDatumArray> aprngdatum(GPOS_NEW(mp) IDatumArray(mp));
-  for (ULONG ul = 0; ul < ulArrayExprArity; ul++) {
+  for (uint32_t ul = 0; ul < ulArrayExprArity; ul++) {
     CScalarConst *popScConst = CUtils::PScalarArrayConstChildAt(pexprArray, ul);
     IDatum *datum = popScConst->GetDatum();
     if (datum->IsNull()) {
@@ -36,11 +36,11 @@ CDatumSortedSet::CDatumSortedSet(CMemoryPool *mp, CExpression *pexprArray, const
   aprngdatum->Sort(&CUtils::IDatumCmp);
 
   // de-duplicate
-  const ULONG ulRangeArrayArity = aprngdatum->Size();
+  const uint32_t ulRangeArrayArity = aprngdatum->Size();
   IDatum *pdatumPrev = (*aprngdatum)[0];
   pdatumPrev->AddRef();
   Append(pdatumPrev);
-  for (ULONG ul = 1; ul < ulRangeArrayArity; ul++) {
+  for (uint32_t ul = 1; ul < ulRangeArrayArity; ul++) {
     if (!pcomp->Equals((*aprngdatum)[ul], pdatumPrev)) {
       pdatumPrev = (*aprngdatum)[ul];
       pdatumPrev->AddRef();
@@ -49,6 +49,6 @@ CDatumSortedSet::CDatumSortedSet(CMemoryPool *mp, CExpression *pexprArray, const
   }
 }
 
-BOOL CDatumSortedSet::FIncludesNull() const {
+bool CDatumSortedSet::FIncludesNull() const {
   return m_fIncludesNull;
 }

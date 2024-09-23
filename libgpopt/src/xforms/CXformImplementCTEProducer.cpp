@@ -62,7 +62,7 @@ void CXformImplementCTEProducer::Transform(CXformContext *pxfctxt, CXformResult 
   CMemoryPool *mp = pxfctxt->Pmp();
 
   // extract components for alternative
-  ULONG id = popCTEProducer->UlCTEId();
+  uint32_t id = popCTEProducer->UlCTEId();
 
   CColRefArray *colref_array = popCTEProducer->Pdrgpcr();
   colref_array->AddRef();

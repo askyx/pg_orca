@@ -25,8 +25,8 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CColumnDescriptor::CColumnDescriptor(CMemoryPool *mp, const IMDType *pmdtype, INT type_modifier, const CName &name,
-                                     INT attno, BOOL is_nullable, ULONG ulWidth)
+CColumnDescriptor::CColumnDescriptor(CMemoryPool *mp, const IMDType *pmdtype, int32_t type_modifier, const CName &name,
+                                     int32_t attno, bool is_nullable, uint32_t ulWidth)
     : m_pmdtype(pmdtype),
       m_type_modifier(type_modifier),
       m_name(mp, name),

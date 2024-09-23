@@ -35,13 +35,13 @@ enum EdxlLogicalLimit {
 //---------------------------------------------------------------------------
 class CDXLLogicalLimit : public CDXLLogical {
  private:
-  BOOL m_top_limit_under_dml;
+  bool m_top_limit_under_dml;
 
  public:
   CDXLLogicalLimit(CDXLLogicalLimit &) = delete;
 
   // ctor/dtor
-  CDXLLogicalLimit(CMemoryPool *mp, BOOL fNonRemovableLimit);
+  CDXLLogicalLimit(CMemoryPool *mp, bool fNonRemovableLimit);
 
   ~CDXLLogicalLimit() override;
 
@@ -51,7 +51,7 @@ class CDXLLogicalLimit : public CDXLLogical {
   const CWStringConst *GetOpNameStr() const override;
 
   // the limit is right under a DML or CTAS
-  BOOL IsTopLimitUnderDMLorCTAS() const { return m_top_limit_under_dml; }
+  bool IsTopLimitUnderDMLorCTAS() const { return m_top_limit_under_dml; }
 
   // serialize operator in DXL format
 
@@ -66,7 +66,7 @@ class CDXLLogicalLimit : public CDXLLogical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

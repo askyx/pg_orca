@@ -35,7 +35,7 @@ class CDXLScalarSubqueryAny : public CDXLScalarSubqueryQuantified {
   CDXLScalarSubqueryAny(CDXLScalarSubqueryAny &) = delete;
 
   // ctor
-  CDXLScalarSubqueryAny(CMemoryPool *mp, IMDId *scalar_op_mdid, CMDName *mdname, ULONG colid);
+  CDXLScalarSubqueryAny(CMemoryPool *mp, IMDId *scalar_op_mdid, CMDName *mdname, uint32_t colid);
 
   // ident accessors
   Edxlopid GetDXLOperator() const override;
@@ -52,7 +52,7 @@ class CDXLScalarSubqueryAny : public CDXLScalarSubqueryQuantified {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     return true;
   }

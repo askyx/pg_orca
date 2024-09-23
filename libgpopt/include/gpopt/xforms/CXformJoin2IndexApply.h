@@ -23,7 +23,7 @@ class CXformJoin2IndexApply : public CXformExploration {
   static void CreateHomogeneousBtreeIndexApplyAlternatives(
       CMemoryPool *mp, COperator *joinOp, CExpression *pexprOuter, CExpression *pexprInner, CExpression *pexprScalar,
       CExpression *origJoinPred, CExpression *nodesToInsertAboveIndexGet, CExpression *endOfNodesToInsertAboveIndexGet,
-      CTableDescriptor *ptabdescInner, CColRefSet *pcrsScalarExpr, CColRefSet *outer_refs, ULONG ulIndices,
+      CTableDescriptor *ptabdescInner, CColRefSet *pcrsScalarExpr, CColRefSet *outer_refs, uint32_t ulIndices,
       CXformResult *pxfres);
 
   // helper to add IndexApply expression to given xform results container
@@ -48,7 +48,7 @@ class CXformJoin2IndexApply : public CXformExploration {
 
  protected:
   // is the logical join that is being transformed an outer join?
-  BOOL m_fOuterJoin;
+  bool m_fOuterJoin;
 
   // helper to add IndexApply expression to given xform results container
   // for homogeneous indexes

@@ -24,7 +24,7 @@ using namespace gpnaucrates;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CStatsPredUnsupported::CStatsPredUnsupported(ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type)
+CStatsPredUnsupported::CStatsPredUnsupported(uint32_t colid, CStatsPred::EStatsCmpType stats_cmp_type)
     : CStatsPred(colid), m_stats_cmp_type(stats_cmp_type), m_default_scale_factor(0.0) {
   m_default_scale_factor = InitScaleFactor();
 }
@@ -37,7 +37,7 @@ CStatsPredUnsupported::CStatsPredUnsupported(ULONG colid, CStatsPred::EStatsCmpT
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CStatsPredUnsupported::CStatsPredUnsupported(ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type,
+CStatsPredUnsupported::CStatsPredUnsupported(uint32_t colid, CStatsPred::EStatsCmpType stats_cmp_type,
                                              CDouble default_scale_factor)
     : CStatsPred(colid), m_stats_cmp_type(stats_cmp_type), m_default_scale_factor(default_scale_factor) {
   GPOS_ASSERT(CStatistics::Epsilon < default_scale_factor);

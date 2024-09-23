@@ -6,7 +6,7 @@
 //		IMDTypeBool.h
 //
 //	@doc:
-//		Interface for BOOL types in the metadata cache
+//		Interface for bool types in the metadata cache
 //---------------------------------------------------------------------------
 
 #ifndef GPMD_IMDTypeBool_H
@@ -29,7 +29,7 @@ using namespace gpos;
 //		IMDTypeBool
 //
 //	@doc:
-//		Interface for BOOL types in the metadata cache
+//		Interface for bool types in the metadata cache
 //
 //---------------------------------------------------------------------------
 class IMDTypeBool : public IMDType {
@@ -39,8 +39,8 @@ class IMDTypeBool : public IMDType {
 
   ETypeInfo GetDatumType() const override { return IMDTypeBool::GetTypeInfo(); }
 
-  // factory function for BOOL datums
-  virtual IDatumBool *CreateBoolDatum(CMemoryPool *mp, BOOL value, BOOL is_null) const = 0;
+  // factory function for bool datums
+  virtual IDatumBool *CreateBoolDatum(CMemoryPool *mp, bool value, bool is_null) const = 0;
 };
 
 }  // namespace gpmd

@@ -38,12 +38,12 @@ class CXformPushGbBelowUnionAll : public CXformPushGbBelowSetOp<CLogicalUnionAll
   ~CXformPushGbBelowUnionAll() override = default;
 
   // Compatibility function
-  BOOL FCompatible(CXform::EXformId exfid) override { return ExfPushGbBelowUnionAll != exfid; }
+  bool FCompatible(CXform::EXformId exfid) override { return ExfPushGbBelowUnionAll != exfid; }
 
   // ident accessors
   EXformId Exfid() const override { return ExfPushGbBelowUnionAll; }
 
-  const CHAR *SzId() const override { return "CXformPushGbBelowUnionAll"; }
+  const char *SzId() const override { return "CXformPushGbBelowUnionAll"; }
 
 };  // class CXformPushGbBelowUnionAll
 

@@ -94,17 +94,17 @@ class CEnfdProp : public CRefCount {
   virtual CPropSpec *Pps() const = 0;
 
   // hash function
-  virtual ULONG HashValue() const = 0;
+  virtual uint32_t HashValue() const = 0;
 
   // check if operator requires an enforcer under given enforceable property
   // based on the derived enforcing type
-  static BOOL FEnforce(EPropEnforcingType epet) {
+  static bool FEnforce(EPropEnforcingType epet) {
     return CEnfdProp::EpetOptional == epet || CEnfdProp::EpetRequired == epet;
   }
 
   // check if operator requires optimization under given enforceable property
   // based on the derived enforcing type
-  static BOOL FOptimize(EPropEnforcingType epet) {
+  static bool FOptimize(EPropEnforcingType epet) {
     return CEnfdProp::EpetOptional == epet || CEnfdProp::EpetUnnecessary == epet;
   }
 

@@ -76,7 +76,7 @@ void CXformPushJoinBelowUnionAll::Transform(CXformContext *pxfctxt, CXformResult
 
   // This is used to preserve the join order, which we leave
   // for other xforms to optimize
-  BOOL isLeftChildUnion;
+  bool isLeftChildUnion;
 
   if (COperator::EopLogicalUnionAll == pexprLeft->Pop()->Eopid()) {
     pexprUnionAll = pexprLeft;
@@ -99,8 +99,8 @@ void CXformPushJoinBelowUnionAll::Transform(CXformContext *pxfctxt, CXformResult
   CColRefArray *colref_array_from = GPOS_NEW(mp) CColRefArray(mp);
 
   // Iterate through all union all children
-  const ULONG arity = pexprUnionAll->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = pexprUnionAll->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprChild = (*pexprUnionAll)[ul];
     CColRefArray *child_colref_array = (*union_input_columns)[ul];
 
@@ -153,7 +153,7 @@ void CXformPushJoinBelowUnionAll::Transform(CXformContext *pxfctxt, CXformResult
       pexprRightChild->AddRef();
     }
 
-    BOOL isOuterJoin = pexpr->Pop()->Eopid() == COperator::EopLogicalLeftOuterJoin;
+    bool isOuterJoin = pexpr->Pop()->Eopid() == COperator::EopLogicalLeftOuterJoin;
     if (isOuterJoin) {
       join_expr =
           CUtils::PexprLogicalJoin<CLogicalLeftOuterJoin>(mp, pexprLeftChild, pexprRightChild, pexprRemappedScalar);

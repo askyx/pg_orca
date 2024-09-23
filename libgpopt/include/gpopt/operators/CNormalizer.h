@@ -29,26 +29,26 @@ using namespace gpos;
 class CNormalizer {
  private:
   //  return true if second expression is a child of first expression
-  static BOOL FChild(CExpression *pexpr, CExpression *pexprChild);
+  static bool FChild(CExpression *pexpr, CExpression *pexprChild);
 
   // simplify outer joins
-  static BOOL FSimplifySelectOnOuterJoin(CMemoryPool *mp, CExpression *pexprOuterJoin, CExpression *pexprPred,
+  static bool FSimplifySelectOnOuterJoin(CMemoryPool *mp, CExpression *pexprOuterJoin, CExpression *pexprPred,
                                          CExpression **ppexprResult);
 
-  static BOOL FSimplifySelectOnFullJoin(CMemoryPool *mp, CExpression *pexprFullJoin, CExpression *pexprPred,
+  static bool FSimplifySelectOnFullJoin(CMemoryPool *mp, CExpression *pexprFullJoin, CExpression *pexprPred,
                                         CExpression **ppexprResult);
 
   // call normalizer recursively on expression children
   static CExpression *PexprRecursiveNormalize(CMemoryPool *mp, CExpression *pexpr);
 
   // check if a scalar predicate can be pushed through a logical expression
-  static BOOL FPushable(CExpression *pexprLogical, CExpression *pexprPred);
+  static bool FPushable(CExpression *pexprLogical, CExpression *pexprPred);
 
   // check if a scalar predicate can be pushed through the child of a sequence project expression
-  static BOOL FPushableThruSeqPrjChild(CExpression *pexprSeqPrj, CExpression *pexprPred);
+  static bool FPushableThruSeqPrjChild(CExpression *pexprSeqPrj, CExpression *pexprPred);
 
   // check if a conjunct should be pushed through expression's outer child
-  static BOOL FPushThruOuterChild(CExpression *pexprLogical);
+  static bool FPushThruOuterChild(CExpression *pexprLogical);
 
   // return a Select expression, if needed, with a scalar condition made of given array of conjuncts
   static CExpression *PexprSelect(CMemoryPool *mp, CExpression *pexpr, CExpressionArray *pdrgpexpr);
@@ -100,7 +100,7 @@ class CNormalizer {
 
   // pull logical projects as far up the logical tree as possible, and
   // combine consecutive projects if possible
-  static CExpression *PexprPullUpAndCombineProjects(CMemoryPool *mp, CExpression *pexpr, BOOL *pfSuccess);
+  static CExpression *PexprPullUpAndCombineProjects(CMemoryPool *mp, CExpression *pexpr, bool *pfSuccess);
 
   // pull up project elements from the given projection expression that do not
   // exist in the given used columns set
@@ -109,7 +109,7 @@ class CNormalizer {
 
 #ifdef GPOS_DEBUG
   // check if the columns used by the operator are a subset of its input columns
-  static BOOL FLocalColsSubsetOfInputCols(CMemoryPool *mp, CExpression *pexpr);
+  static bool FLocalColsSubsetOfInputCols(CMemoryPool *mp, CExpression *pexpr);
 #endif  // GPOS_DEBUG
 
  public:

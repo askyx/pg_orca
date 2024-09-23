@@ -36,10 +36,10 @@ class CLogicalSequenceProject : public CLogicalUnary {
   CWindowFrameArray *m_pdrgpwf;
 
   // flag indicating if current operator has any non-empty order specs
-  BOOL m_fHasOrderSpecs;
+  bool m_fHasOrderSpecs;
 
   // flag indicating if current operator has any non-empty frame specs
-  BOOL m_fHasFrameSpecs;
+  bool m_fHasFrameSpecs;
 
   // set the flag indicating that SeqPrj has specified order specs
   void SetHasOrderSpecs(CMemoryPool *mp);
@@ -63,7 +63,7 @@ class CLogicalSequenceProject : public CLogicalUnary {
   EOperatorId Eopid() const override { return EopLogicalSequenceProject; }
 
   // operator name
-  const CHAR *SzId() const override { return "CLogicalSequenceProject"; }
+  const char *SzId() const override { return "CLogicalSequenceProject"; }
 
   // order by keys
   COrderSpecArray *Pdrgpos() const { return m_pdrgpos; }
@@ -72,16 +72,16 @@ class CLogicalSequenceProject : public CLogicalUnary {
   CWindowFrameArray *Pdrgpwf() const { return m_pdrgpwf; }
 
   // return true if non-empty order specs are used by current operator
-  BOOL FHasOrderSpecs() const { return m_fHasOrderSpecs; }
+  bool FHasOrderSpecs() const { return m_fHasOrderSpecs; }
 
   // return true if non-empty frame specs are used by current operator
-  BOOL FHasFrameSpecs() const { return m_fHasFrameSpecs; }
+  bool FHasFrameSpecs() const { return m_fHasFrameSpecs; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // return true if we can pull projections up past this operator from its given child
-  BOOL FCanPullProjectionsUp(ULONG  // child_index
+  bool FCanPullProjectionsUp(uint32_t  // child_index
   ) const override {
     return false;
   }
@@ -123,9 +123,9 @@ class CLogicalSequenceProject : public CLogicalUnary {
   IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // print
   IOstream &OsPrint(IOstream &os) const override;
@@ -134,7 +134,7 @@ class CLogicalSequenceProject : public CLogicalUnary {
   CLogicalSequenceProject *PopRemoveLocalOuterRefs(CMemoryPool *mp, CExpressionHandle &exprhdl);
 
   // check for outer references in Partition/Order, or window frame edges
-  BOOL FHasLocalReferencesTo(const CColRefSet *outerRefsToCheck) const;
+  bool FHasLocalReferencesTo(const CColRefSet *outerRefsToCheck) const;
 
   // conversion function
   static CLogicalSequenceProject *PopConvert(COperator *pop) {

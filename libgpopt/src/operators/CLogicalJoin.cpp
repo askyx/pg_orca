@@ -43,7 +43,7 @@ CLogicalJoin::CLogicalJoin(CMemoryPool *mp, CXform::EXformId origin_xform)
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalJoin::Matches(COperator *pop) const {
+bool CLogicalJoin::Matches(COperator *pop) const {
   return (pop->Eopid() == Eopid());
 }
 

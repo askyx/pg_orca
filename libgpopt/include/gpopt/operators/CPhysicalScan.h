@@ -71,7 +71,7 @@ class CPhysicalScan : public CPhysical {
   virtual CColRefArray *PdrgpcrOutput() const { return m_pdrgpcrOutput; }
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   //-------------------------------------------------------------------------------------
   // Required Plan Properties
@@ -81,9 +81,9 @@ class CPhysicalScan : public CPhysical {
   CColRefSet *PcrsRequired(CMemoryPool *,        // mp
                            CExpressionHandle &,  // exprhdl
                            CColRefSet *,         // pcrsRequired
-                           ULONG,                // child_index
+                           uint32_t,             // child_index
                            CDrvdPropArray *,     // pdrgpdpCtxt
-                           ULONG                 // ulOptReq
+                           uint32_t              // ulOptReq
                            ) override {
     GPOS_ASSERT(!"CPhysicalScan has no children");
     return nullptr;
@@ -93,9 +93,9 @@ class CPhysicalScan : public CPhysical {
   CCTEReq *PcteRequired(CMemoryPool *,        // mp,
                         CExpressionHandle &,  // exprhdl,
                         CCTEReq *,            // pcter,
-                        ULONG,                // child_index,
+                        uint32_t,             // child_index,
                         CDrvdPropArray *,     // pdrgpdpCtxt,
-                        ULONG                 // ulOptReq
+                        uint32_t              // ulOptReq
   ) const override {
     GPOS_ASSERT(!"CPhysicalScan has no children");
     return nullptr;
@@ -105,16 +105,16 @@ class CPhysicalScan : public CPhysical {
   COrderSpec *PosRequired(CMemoryPool *,        // mp
                           CExpressionHandle &,  // exprhdl
                           COrderSpec *,         // posRequired
-                          ULONG,                // child_index
+                          uint32_t,             // child_index
                           CDrvdPropArray *,     // pdrgpdpCtxt
-                          ULONG                 // ulOptReq
+                          uint32_t              // ulOptReq
   ) const override {
     GPOS_ASSERT(!"CPhysicalScan has no children");
     return nullptr;
   }
 
   // check if required columns are included in output columns
-  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
+  bool FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t ulOptReq) const override;
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties
@@ -144,10 +144,10 @@ class CPhysicalScan : public CPhysical {
 
   // return true if operator passes through stats obtained from children,
   // this is used when computing stats during costing
-  BOOL FPassThruStats() const override { return false; }
+  bool FPassThruStats() const override { return false; }
 
   // return true if operator is dynamic scan
-  virtual BOOL FDynamicScan() const { return false; }
+  virtual bool FDynamicScan() const { return false; }
 
   // stats of underlying table
   IStatistics *PstatsBaseTable() const { return m_pstatsBaseTable; }

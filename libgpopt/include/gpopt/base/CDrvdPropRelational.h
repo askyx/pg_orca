@@ -94,7 +94,7 @@ class CDrvdPropRelational : public CDrvdProp {
   CMaxCard m_maxcard;
 
   // join depth (number of relations in underlying tree)
-  ULONG m_ulJoinDepth;
+  uint32_t m_ulJoinDepth;
 
   // partition table consumers
   CPartInfo *m_ppartinfo;
@@ -111,7 +111,7 @@ class CDrvdPropRelational : public CDrvdProp {
   StringPtrArray *m_table_aliases;
 
   // helper for getting applicable FDs from child
-  static CFunctionalDependencyArray *DeriveChildFunctionalDependencies(CMemoryPool *mp, ULONG child_index,
+  static CFunctionalDependencyArray *DeriveChildFunctionalDependencies(CMemoryPool *mp, uint32_t child_index,
                                                                        CExpressionHandle &exprhdl);
 
   // helper for creating local FDs
@@ -128,7 +128,7 @@ class CDrvdPropRelational : public CDrvdProp {
   // corresponding expression used to derive it, this MUST be set to true,
   // since after the detachment, there will be no way to derive the
   // properties once again.
-  BOOL m_is_complete;
+  bool m_is_complete;
 
  protected:
   // output columns
@@ -153,7 +153,7 @@ class CDrvdPropRelational : public CDrvdProp {
   CMaxCard DeriveMaxCard(CExpressionHandle &);
 
   // join depth
-  ULONG DeriveJoinDepth(CExpressionHandle &);
+  uint32_t DeriveJoinDepth(CExpressionHandle &);
 
   // partition consumers
   CPartInfo *DerivePartitionInfo(CExpressionHandle &);
@@ -178,7 +178,7 @@ class CDrvdPropRelational : public CDrvdProp {
   // type of properties
   EPropType Ept() override { return EptRelational; }
 
-  BOOL IsComplete() const override { return m_is_complete; }
+  bool IsComplete() const override { return m_is_complete; }
 
   // derivation function
   void Derive(CMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdpctxt) override;
@@ -205,7 +205,7 @@ class CDrvdPropRelational : public CDrvdProp {
   CMaxCard GetMaxCard() const;
 
   // join depth
-  ULONG GetJoinDepth() const;
+  uint32_t GetJoinDepth() const;
 
   // partition consumers
   CPartInfo *GetPartitionInfo() const;
@@ -222,7 +222,7 @@ class CDrvdPropRelational : public CDrvdProp {
   static CDrvdPropRelational *GetRelationalProperties(CDrvdProp *pdp);
 
   // check for satisfying required plan properties
-  BOOL FSatisfies(const CReqdPropPlan *prpp) const override;
+  bool FSatisfies(const CReqdPropPlan *prpp) const override;
 
   // print function
   IOstream &OsPrint(IOstream &os) const override;

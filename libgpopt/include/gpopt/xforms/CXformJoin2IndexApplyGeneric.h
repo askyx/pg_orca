@@ -21,10 +21,10 @@ using namespace gpos;
 class CXformJoin2IndexApplyGeneric : public CXformJoin2IndexApply {
  private:
   // this decides which types of plans are produced, index gets or bitmap gets
-  BOOL m_generateBitmapPlans;
+  bool m_generateBitmapPlans;
 
   // Can we transform left outer join to left outer index apply?
-  static BOOL FCanLeftOuterIndexApply(CMemoryPool *mp, CExpression *pexprInner, CExpression *pexprScalar,
+  static bool FCanLeftOuterIndexApply(CMemoryPool *mp, CExpression *pexprInner, CExpression *pexprScalar,
                                       CTableDescriptor *ptabDesc, const CColRefSet *pcrsDist);
 
  public:
@@ -32,7 +32,7 @@ class CXformJoin2IndexApplyGeneric : public CXformJoin2IndexApply {
 
   // ctor
   explicit CXformJoin2IndexApplyGeneric(CMemoryPool *mp,
-                                        BOOL generateBitmapPlans)
+                                        bool generateBitmapPlans)
       :  // pattern
         CXformJoin2IndexApply(GPOS_NEW(mp) CExpression(
             mp, GPOS_NEW(mp) CPatternNode(mp, CPatternNode::EmtMatchInnerOrLeftOuterJoin),
@@ -54,7 +54,7 @@ class CXformJoin2IndexApplyGeneric : public CXformJoin2IndexApply {
   // For now return true. We may need to revisit this if we find that
   // there are multiple bindings and we miss interesting bindings because
   // we extract only one of them.
-  BOOL IsApplyOnce() override { return true; }
+  bool IsApplyOnce() override { return true; }
 
 };  // class CXformJoin2IndexApplyGeneric
 

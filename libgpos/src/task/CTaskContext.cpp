@@ -75,7 +75,7 @@ CTaskContext::~CTaskContext() {
 //		Set trace flag; return original setting
 //
 //---------------------------------------------------------------------------
-BOOL CTaskContext::SetTrace(ULONG trace, BOOL val) {
+bool CTaskContext::SetTrace(uint32_t trace, bool val) {
   if (val) {
     return m_bitset->ExchangeSet(trace);
   } else {

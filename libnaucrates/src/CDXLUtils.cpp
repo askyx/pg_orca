@@ -48,8 +48,8 @@ CStatisticsArray *CDXLUtils::ParseDXLToOptimizerStatisticObjArray(
   GPOS_ASSERT(nullptr != dxl_derived_rel_stats_array);
 
   CStatisticsArray *statistics_array = GPOS_NEW(mp) CStatisticsArray(mp);
-  const ULONG ulRelStat = dxl_derived_rel_stats_array->Size();
-  for (ULONG ulIdxRelStat = 0; ulIdxRelStat < ulRelStat; ulIdxRelStat++) {
+  const uint32_t ulRelStat = dxl_derived_rel_stats_array->Size();
+  for (uint32_t ulIdxRelStat = 0; ulIdxRelStat < ulRelStat; ulIdxRelStat++) {
     // create hash map from colid -> histogram
     UlongToHistogramMap *column_id_histogram_map = GPOS_NEW(mp) UlongToHistogramMap(mp);
 
@@ -60,11 +60,11 @@ CStatisticsArray *CDXLUtils::ParseDXLToOptimizerStatisticObjArray(
     const CDXLStatsDerivedColumnArray *derived_column_stats_array =
         stats_derived_relation_dxl->GetDXLStatsDerivedColArray();
 
-    const ULONG num_of_columns = derived_column_stats_array->Size();
-    for (ULONG column_id_idx = 0; column_id_idx < num_of_columns; column_id_idx++) {
+    const uint32_t num_of_columns = derived_column_stats_array->Size();
+    for (uint32_t column_id_idx = 0; column_id_idx < num_of_columns; column_id_idx++) {
       CDXLStatsDerivedColumn *dxl_derived_col_stats = (*derived_column_stats_array)[column_id_idx];
 
-      ULONG column_id = dxl_derived_col_stats->GetColId();
+      uint32_t column_id = dxl_derived_col_stats->GetColId();
       CDouble width = dxl_derived_col_stats->Width();
       CDouble null_freq = dxl_derived_col_stats->GetNullFreq();
       CDouble distinct_remaining = dxl_derived_col_stats->GetDistinctRemain();
@@ -74,8 +74,8 @@ CStatisticsArray *CDXLUtils::ParseDXLToOptimizerStatisticObjArray(
       CHistogram *histogram = GPOS_NEW(mp)
           CHistogram(mp, stats_buckets_array, true /*is_well_defined*/, null_freq, distinct_remaining, freq_remaining);
 
-      column_id_histogram_map->Insert(GPOS_NEW(mp) ULONG(column_id), histogram);
-      column_id_width_map->Insert(GPOS_NEW(mp) ULONG(column_id), GPOS_NEW(mp) CDouble(width));
+      column_id_histogram_map->Insert(GPOS_NEW(mp) uint32_t(column_id), histogram);
+      column_id_width_map->Insert(GPOS_NEW(mp) uint32_t(column_id), GPOS_NEW(mp) CDouble(width));
     }
 
     CDouble rows = stats_derived_relation_dxl->Rows();
@@ -103,8 +103,8 @@ CBucketArray *CDXLUtils::ParseDXLToBucketsArray(CMemoryPool *mp, CMDAccessor *md
   CBucketArray *stats_buckets_array = GPOS_NEW(mp) CBucketArray(mp);
 
   const CDXLBucketArray *dxl_bucket_array = dxl_derived_col_stats->TransformHistogramToDXLBucketArray();
-  const ULONG num_of_buckets = dxl_bucket_array->Size();
-  for (ULONG ul = 0; ul < num_of_buckets; ul++) {
+  const uint32_t num_of_buckets = dxl_bucket_array->Size();
+  for (uint32_t ul = 0; ul < num_of_buckets; ul++) {
     CDXLBucket *dxl_bucket = (*dxl_bucket_array)[ul];
 
     // translate the lower and upper bounds of the bucket
@@ -147,7 +147,7 @@ IDatum *CDXLUtils::GetDatum(CMemoryPool *mp, CMDAccessor *md_accessor, const CDX
 //		and it is the responsibility of the caller to release it.
 //
 //---------------------------------------------------------------------------
-CWStringDynamic *CDXLUtils::CreateDynamicStringFromCharArray(CMemoryPool *mp, const CHAR *c) {
+CWStringDynamic *CDXLUtils::CreateDynamicStringFromCharArray(CMemoryPool *mp, const char *c) {
   GPOS_ASSERT(nullptr != c);
 
   CAutoP<CWStringDynamic> string_var(GPOS_NEW(mp) CWStringDynamic(mp));
@@ -165,7 +165,7 @@ CWStringDynamic *CDXLUtils::CreateDynamicStringFromCharArray(CMemoryPool *mp, co
 //		and it is the responsibility of the caller to release it.
 //
 //---------------------------------------------------------------------------
-CMDName *CDXLUtils::CreateMDNameFromCharArray(CMemoryPool *mp, const CHAR *c) {
+CMDName *CDXLUtils::CreateMDNameFromCharArray(CMemoryPool *mp, const char *c) {
   GPOS_ASSERT(nullptr != c);
 
   // The CMDName will take ownership of the buffer. This ensures we minimize allocations
@@ -186,9 +186,9 @@ CMDName *CDXLUtils::CreateMDNameFromCharArray(CMemoryPool *mp, const CHAR *c) {
 //
 //---------------------------------------------------------------------------
 CWStringDynamic *CDXLUtils::Serialize(CMemoryPool *mp, const ULongPtr2dArray *array_2D) {
-  const ULONG len = array_2D->Size();
+  const uint32_t len = array_2D->Size();
   CWStringDynamic *keys_buffer = GPOS_NEW(mp) CWStringDynamic(mp);
-  for (ULONG ul = 0; ul < len; ul++) {
+  for (uint32_t ul = 0; ul < len; ul++) {
     ULongPtrArray *pdrgpul = (*array_2D)[ul];
     CWStringDynamic *key_set_string = CDXLUtils::Serialize(mp, pdrgpul);
 
@@ -208,9 +208,9 @@ CWStringDynamic *CDXLUtils::Serialize(CMemoryPool *mp, const ULongPtr2dArray *ar
 CWStringDynamic *CDXLUtils::SerializeToCommaSeparatedString(CMemoryPool *mp, const CharPtrArray *char_ptr_array) {
   CWStringDynamic *dxl_string = GPOS_NEW(mp) CWStringDynamic(mp);
 
-  ULONG length = char_ptr_array->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
-    CHAR value = *((*char_ptr_array)[ul]);
+  uint32_t length = char_ptr_array->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
+    char value = *((*char_ptr_array)[ul]);
     if (ul == length - 1) {
       // last element: do not print a comma
       dxl_string->AppendFormat(GPOS_WSZ_LIT("%c"), value);
@@ -226,8 +226,8 @@ CWStringDynamic *CDXLUtils::SerializeToCommaSeparatedString(CMemoryPool *mp, con
 CWStringDynamic *CDXLUtils::SerializeToCommaSeparatedString(CMemoryPool *mp, const StringPtrArray *str_ptr_array) {
   CWStringDynamic *dxl_string = GPOS_NEW(mp) CWStringDynamic(mp);
 
-  ULONG length = str_ptr_array->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
+  uint32_t length = str_ptr_array->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
     CWStringBase *value = (*str_ptr_array)[ul];
     if (ul == length - 1) {
       // last element: do not print a comma
@@ -249,15 +249,15 @@ CWStringDynamic *CDXLUtils::SerializeToCommaSeparatedString(CMemoryPool *mp, con
 //		Converts a wide character string into a character array in the provided memory pool
 //
 //---------------------------------------------------------------------------
-CHAR *CDXLUtils::CreateMultiByteCharStringFromWCString(CMemoryPool *mp, const WCHAR *wc) {
+char *CDXLUtils::CreateMultiByteCharStringFromWCString(CMemoryPool *mp, const wchar_t *wc) {
   GPOS_ASSERT(nullptr != wc);
 
-  ULONG max_length = GPOS_WSZ_LENGTH(wc) * GPOS_SIZEOF(WCHAR) + 1;
-  CHAR *c = GPOS_NEW_ARRAY(mp, CHAR, max_length);
-  CAutoRg<CHAR> char_wrapper(c);
+  uint32_t max_length = GPOS_WSZ_LENGTH(wc) * GPOS_SIZEOF(wchar_t) + 1;
+  char *c = GPOS_NEW_ARRAY(mp, char, max_length);
+  CAutoRg<char> char_wrapper(c);
 
 #ifdef GPOS_DEBUG
-  INT i = (INT)
+  int32_t i = (int32_t)
 #endif
       wcstombs(c, wc, max_length);
   GPOS_ASSERT(0 <= i);
@@ -276,16 +276,16 @@ CHAR *CDXLUtils::CreateMultiByteCharStringFromWCString(CMemoryPool *mp, const WC
 //		the responsibility of the caller to deallocate it.
 //
 //---------------------------------------------------------------------------
-CHAR *CDXLUtils::Read(CMemoryPool *mp, const CHAR *filename) {
+char *CDXLUtils::Read(CMemoryPool *mp, const char *filename) {
   GPOS_TRACE_FORMAT("opening file %s", filename);
 
   CFileReader fr;
   fr.Open(filename);
 
-  ULONG_PTR file_size = (ULONG_PTR)fr.FileSize();
-  CAutoRg<CHAR> read_buffer(GPOS_NEW_ARRAY(mp, CHAR, file_size + 1));
+  uintptr_t file_size = (uintptr_t)fr.FileSize();
+  CAutoRg<char> read_buffer(GPOS_NEW_ARRAY(mp, char, file_size + 1));
 
-  ULONG_PTR read_bytes = fr.ReadBytesToBuffer((BYTE *)read_buffer.Rgt(), file_size);
+  uintptr_t read_bytes = fr.ReadBytesToBuffer((uint8_t *)read_buffer.Rgt(), file_size);
   fr.Close();
 
   GPOS_ASSERT(read_bytes == file_size);
@@ -312,9 +312,9 @@ CWStringDynamic *CDXLUtils::SerializeBooleanArray(CMemoryPool *mp, ULongPtrArray
     return string_var.Reset();
   }
 
-  ULONG length = dynamic_ptr_array->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
-    ULONG value = *((*dynamic_ptr_array)[ul]);
+  uint32_t length = dynamic_ptr_array->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
+    uint32_t value = *((*dynamic_ptr_array)[ul]);
     GPOS_ASSERT(value == 0 || value == 1);
     const CWStringConst *string_repr;
     string_repr = (value == 1) ? true_value : false_value;
@@ -341,8 +341,8 @@ CWStringDynamic *CDXLUtils::SerializeBooleanArray(CMemoryPool *mp, ULongPtrArray
 //
 //---------------------------------------------------------------------------
 void CDXLUtils::DebugPrintMDIdArray(IOstream &os, IMdIdArray *mdid_array) {
-  ULONG len = mdid_array->Size();
-  for (ULONG ul = 0; ul < len; ul++) {
+  uint32_t len = mdid_array->Size();
+  for (uint32_t ul = 0; ul < len; ul++) {
     const IMDId *mdid = (*mdid_array)[ul];
     mdid->OsPrint(os);
     os << " ";

@@ -81,7 +81,7 @@ CLogicalGbAggDeduplicate::~CLogicalGbAggDeduplicate() {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalGbAggDeduplicate::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                                BOOL must_exist) {
+                                                                bool must_exist) {
   CColRefArray *colref_array = CUtils::PdrgpcrRemap(mp, Pdrgpcr(), colref_mapping, must_exist);
 
   CColRefArray *pdrgpcrMinimal = PdrgpcrMinimal();
@@ -103,7 +103,7 @@ COperator *CLogicalGbAggDeduplicate::PopCopyWithRemappedColumns(CMemoryPool *mp,
 //
 //---------------------------------------------------------------------------
 CColRefSet *CLogicalGbAggDeduplicate::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                                               ULONG child_index) const {
+                                               uint32_t child_index) const {
   return PcrsStatGbAgg(mp, exprhdl, pcrsInput, child_index, m_pdrgpcrKeys);
 }
 
@@ -115,16 +115,15 @@ CColRefSet *CLogicalGbAggDeduplicate::PcrsStat(CMemoryPool *mp, CExpressionHandl
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalGbAggDeduplicate::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), CUtils::UlHashColArray(Pdrgpcr()));
+uint32_t CLogicalGbAggDeduplicate::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), CUtils::UlHashColArray(Pdrgpcr()));
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrKeys));
 
-  ULONG ulGbaggtype = (ULONG)Egbaggtype();
+  uint32_t ulGbaggtype = (uint32_t)Egbaggtype();
 
-  ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<ULONG>(&ulGbaggtype));
+  ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<uint32_t>(&ulGbaggtype));
 
-  return gpos::CombineHashes(ulHash, gpos::HashValue<BOOL>(&m_fGeneratesDuplicates));
+  return gpos::CombineHashes(ulHash, gpos::HashValue<bool>(&m_fGeneratesDuplicates));
 }
 
 //---------------------------------------------------------------------------
@@ -158,7 +157,7 @@ CKeyCollection *CLogicalGbAggDeduplicate::DeriveKeyCollection(CMemoryPool *mp,
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalGbAggDeduplicate::Matches(COperator *pop) const {
+bool CLogicalGbAggDeduplicate::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -208,8 +207,8 @@ IStatistics *CLogicalGbAggDeduplicate::PstatsDerive(CMemoryPool *mp, CExpression
 
   // construct bitset with keys of join child
   CBitSet *keys = GPOS_NEW(mp) CBitSet(mp);
-  const ULONG ulKeys = m_pdrgpcrKeys->Size();
-  for (ULONG ul = 0; ul < ulKeys; ul++) {
+  const uint32_t ulKeys = m_pdrgpcrKeys->Size();
+  for (uint32_t ul = 0; ul < ulKeys; ul++) {
     CColRef *colref = (*m_pdrgpcrKeys)[ul];
     keys->ExchangeSet(colref->Id());
   }

@@ -291,23 +291,23 @@ class CCostModelParamsGPDB : public ICostModelParams {
   ~CCostModelParamsGPDB() override;
 
   // lookup param by id
-  SCostParam *PcpLookup(ULONG id) const override;
+  SCostParam *PcpLookup(uint32_t id) const override;
 
   // lookup param by name
-  SCostParam *PcpLookup(const CHAR *szName) const override;
+  SCostParam *PcpLookup(const char *szName) const override;
 
   // set param by id
-  void SetParam(ULONG id, CDouble dVal, CDouble dLowerBound, CDouble dUpperBound) override;
+  void SetParam(uint32_t id, CDouble dVal, CDouble dLowerBound, CDouble dUpperBound) override;
 
   // set param by name
-  void SetParam(const CHAR *szName, CDouble dVal, CDouble dLowerBound, CDouble dUpperBound) override;
+  void SetParam(const char *szName, CDouble dVal, CDouble dLowerBound, CDouble dUpperBound) override;
 
   // print function
   IOstream &OsPrint(IOstream &os) const override;
 
-  BOOL Equals(ICostModelParams *pcm) const override;
+  bool Equals(ICostModelParams *pcm) const override;
 
-  const CHAR *SzNameLookup(ULONG id) const override;
+  const char *SzNameLookup(uint32_t id) const override;
 
 };  // class CCostModelParamsGPDB
 

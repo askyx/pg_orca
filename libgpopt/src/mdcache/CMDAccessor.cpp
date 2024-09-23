@@ -109,7 +109,7 @@ IMDId *CMDAccessor::SMDAccessorElem::MDId() const {
 //		Equality function for cache accessors hash table
 //
 //---------------------------------------------------------------------------
-BOOL CMDAccessor::SMDAccessorElem::Equals(const MdidPtr &left_mdid, const MdidPtr &right_mdid) {
+bool CMDAccessor::SMDAccessorElem::Equals(const MdidPtr &left_mdid, const MdidPtr &right_mdid) {
   if (left_mdid == m_pmdidInvalid || right_mdid == m_pmdidInvalid) {
     return left_mdid == m_pmdidInvalid && right_mdid == m_pmdidInvalid;
   }
@@ -125,8 +125,7 @@ BOOL CMDAccessor::SMDAccessorElem::Equals(const MdidPtr &left_mdid, const MdidPt
 //		Hash function for cache accessors hash table
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDAccessor::SMDAccessorElem::HashValue(const MdidPtr &mdid) {
+uint32_t CMDAccessor::SMDAccessorElem::HashValue(const MdidPtr &mdid) {
   GPOS_ASSERT(m_pmdidInvalid != mdid);
 
   return mdid->HashValue();
@@ -186,7 +185,7 @@ CSystemId CMDAccessor::SMDProviderElem::Sysid() const {
 //		Equality function for hash tables
 //
 //---------------------------------------------------------------------------
-BOOL CMDAccessor::SMDProviderElem::Equals(const SMDProviderElem &mdpelemLeft, const SMDProviderElem &mdpelemRight) {
+bool CMDAccessor::SMDProviderElem::Equals(const SMDProviderElem &mdpelemLeft, const SMDProviderElem &mdpelemRight) {
   return mdpelemLeft.m_sysid.Equals(mdpelemRight.m_sysid);
 }
 
@@ -198,8 +197,7 @@ BOOL CMDAccessor::SMDProviderElem::Equals(const SMDProviderElem &mdpelemLeft, co
 //		Hash function for cost contexts hash table
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDAccessor::SMDProviderElem::HashValue(const SMDProviderElem &mdpelem) {
+uint32_t CMDAccessor::SMDProviderElem::HashValue(const SMDProviderElem &mdpelem) {
   GPOS_ASSERT(!Equals(mdpelem, m_mdpelemInvalid));
 
   return mdpelem.m_sysid.HashValue();
@@ -371,8 +369,8 @@ void CMDAccessor::RegisterProviders(const CSystemIdArray *pdrgpsysid, const CMDP
   GPOS_ASSERT(pdrgpmdp->Size() == pdrgpsysid->Size());
   GPOS_ASSERT(0 < pdrgpmdp->Size());
 
-  const ULONG ulProviders = pdrgpmdp->Size();
-  for (ULONG ul = 0; ul < ulProviders; ul++) {
+  const uint32_t ulProviders = pdrgpmdp->Size();
+  for (uint32_t ul = 0; ul < ulProviders; ul++) {
     IMDProvider *pmdp = (*pdrgpmdp)[ul];
     pmdp->AddRef();
     RegisterProvider(*((*pdrgpsysid)[ul]), pmdp);
@@ -415,7 +413,7 @@ IMDProvider *CMDAccessor::Pmdp(CSystemId sysid) {
 //
 //---------------------------------------------------------------------------
 const IMDCacheObject *CMDAccessor::GetImdObj(IMDId *mdid, IMDCacheObject::Emdtype mdtype) {
-  BOOL fPrintOptStats = GPOS_FTRACE(EopttracePrintOptimizationStatistics);
+  bool fPrintOptStats = GPOS_FTRACE(EopttracePrintOptimizationStatistics);
   CTimerUser timerLookup;  // timer to measure lookup time
   if (fPrintOptStats) {
     timerLookup.Restart();
@@ -687,7 +685,7 @@ const IMDFunction *CMDAccessor::RetrieveFunc(IMDId *mdid) {
 //		it in the cache.
 //
 //---------------------------------------------------------------------------
-BOOL CMDAccessor::FAggWindowFunc(IMDId *mdid) {
+bool CMDAccessor::FAggWindowFunc(IMDId *mdid) {
   const IMDCacheObject *pmdobj = GetImdObj(mdid, IMDCacheObject::EmdtSentinel);
 
   return IMDCacheObject::EmdtAgg == pmdobj->MDType();
@@ -851,8 +849,8 @@ const IMDScCmp *CMDAccessor::Pmdsccmp(IMDId *left_mdid, IMDId *right_mdid, IMDTy
 //		Record histogram and width information for a given column of a table
 //
 //---------------------------------------------------------------------------
-void CMDAccessor::RecordColumnStats(CMemoryPool *mp, IMDId *rel_mdid, ULONG colid, ULONG ulPos, BOOL isSystemCol,
-                                    BOOL isEmptyTable, UlongToHistogramMap *col_histogram_mapping,
+void CMDAccessor::RecordColumnStats(CMemoryPool *mp, IMDId *rel_mdid, uint32_t colid, uint32_t ulPos, bool isSystemCol,
+                                    bool isEmptyTable, UlongToHistogramMap *col_histogram_mapping,
                                     UlongToDoubleMap *colid_width_mapping, CStatisticsConfig *stats_config) {
   GPOS_ASSERT(nullptr != rel_mdid);
   GPOS_ASSERT(nullptr != col_histogram_mapping);
@@ -864,17 +862,17 @@ void CMDAccessor::RecordColumnStats(CMemoryPool *mp, IMDId *rel_mdid, ULONG coli
 
   // fetch the column width and insert it into the hashmap
   CDouble *width = GPOS_NEW(mp) CDouble(pmdcolstats->Width());
-  colid_width_mapping->Insert(GPOS_NEW(mp) ULONG(colid), width);
+  colid_width_mapping->Insert(GPOS_NEW(mp) uint32_t(colid), width);
 
   // extract the the histogram and insert it into the hashmap
   const IMDRelation *pmdrel = RetrieveRel(rel_mdid);
   IMDId *mdid_type = pmdrel->GetMdCol(ulPos)->MdidType();
   CHistogram *histogram = GetHistogram(mp, mdid_type, pmdcolstats);
   GPOS_ASSERT(nullptr != histogram);
-  col_histogram_mapping->Insert(GPOS_NEW(mp) ULONG(colid), histogram);
+  col_histogram_mapping->Insert(GPOS_NEW(mp) uint32_t(colid), histogram);
 
-  BOOL fGuc = GPOS_FTRACE(EopttracePrintColsWithMissingStats);
-  BOOL fRecordMissingStats =
+  bool fGuc = GPOS_FTRACE(EopttracePrintColsWithMissingStats);
+  bool fRecordMissingStats =
       !isEmptyTable && fGuc && !isSystemCol && (nullptr != stats_config) && histogram->IsColStatsMissing();
   if (fRecordMissingStats) {
     // record the columns with missing (dummy) statistics information
@@ -886,7 +884,7 @@ void CMDAccessor::RecordColumnStats(CMemoryPool *mp, IMDId *rel_mdid, ULONG coli
 }
 
 // Return the column statistics meta data object for a given column of a table
-const IMDColStats *CMDAccessor::Pmdcolstats(CMemoryPool *mp, IMDId *rel_mdid, ULONG ulPos) {
+const IMDColStats *CMDAccessor::Pmdcolstats(CMemoryPool *mp, IMDId *rel_mdid, uint32_t ulPos) {
   rel_mdid->AddRef();
   CMDIdColStats *mdid_col_stats = GPOS_NEW(mp) CMDIdColStats(CMDIdGPDB::CastMdid(rel_mdid), ulPos);
   const IMDColStats *pmdcolstats = Pmdcolstats(mdid_col_stats);
@@ -915,7 +913,7 @@ IStatistics *CMDAccessor::Pstats(CMemoryPool *mp, IMDId *rel_mdid, CColRefSet *p
   const IMDRelStats *pmdRelStats = Pmdrelstats(rel_stats_mdid);
   rel_stats_mdid->Release();
 
-  BOOL fEmptyTable = pmdRelStats->IsEmpty();
+  bool fEmptyTable = pmdRelStats->IsEmpty();
   const IMDRelation *pmdrel = RetrieveRel(rel_mdid);
 
   UlongToHistogramMap *col_histogram_mapping = GPOS_NEW(mp) UlongToHistogramMap(mp);
@@ -930,13 +928,13 @@ IStatistics *CMDAccessor::Pstats(CMemoryPool *mp, IMDId *rel_mdid, CColRefSet *p
     CColRefTable *pcrtable = CColRefTable::PcrConvert(pcrHist);
 
     // extract the column identifier, position of the attribute in the system catalog
-    ULONG colid = pcrtable->Id();
-    INT attno = pcrtable->AttrNum();
-    ULONG ulPos = pmdrel->GetPosFromAttno(attno);
+    uint32_t colid = pcrtable->Id();
+    int32_t attno = pcrtable->AttrNum();
+    uint32_t ulPos = pmdrel->GetPosFromAttno(attno);
 
     RecordColumnStats(mp, rel_mdid, colid, ulPos, pcrtable->IsSystemCol(), fEmptyTable, col_histogram_mapping,
                       colid_width_mapping, stats_config);
-    colid_to_attno_mapping->Insert(GPOS_NEW(m_mp) ULONG(colid), GPOS_NEW(m_mp) INT(attno));
+    colid_to_attno_mapping->Insert(GPOS_NEW(m_mp) uint32_t(colid), GPOS_NEW(m_mp) int32_t(attno));
   }
 
   CMDIdGPDB *pmdid = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidExtStatsInfo, CMDIdGPDB::CastMdid(rel_mdid)->Oid());
@@ -956,22 +954,22 @@ IStatistics *CMDAccessor::Pstats(CMemoryPool *mp, IMDId *rel_mdid, CColRefSet *p
     CColRefTable *pcrtable = CColRefTable::PcrConvert(pcrWidth);
 
     // extract the column identifier, position of the attribute in the system catalog
-    ULONG colid = pcrtable->Id();
-    INT attno = pcrtable->AttrNum();
-    ULONG ulPos = pmdrel->GetPosFromAttno(attno);
+    uint32_t colid = pcrtable->Id();
+    int32_t attno = pcrtable->AttrNum();
+    uint32_t ulPos = pmdrel->GetPosFromAttno(attno);
 
     // If data is not inserted in MAP, then releasing the allocated memory
     // for key, value pair.
     CDouble *valueWidth = GPOS_NEW(mp) CDouble(pmdrel->ColWidth(ulPos));
-    ULONG *keyColid = GPOS_NEW(mp) ULONG(colid);
-    BOOL isInserted = colid_width_mapping->Insert(keyColid, valueWidth);
+    uint32_t *keyColid = GPOS_NEW(mp) uint32_t(colid);
+    bool isInserted = colid_width_mapping->Insert(keyColid, valueWidth);
     if (!isInserted) {
       GPOS_DELETE(keyColid);
       GPOS_DELETE(valueWidth);
     }
   }
 
-  CDouble rows = std::max(DOUBLE(1.0), pmdRelStats->Rows().Get());
+  CDouble rows = std::max(double(1.0), pmdRelStats->Rows().Get());
 
   return GPOS_NEW(mp) CStatistics(mp, col_histogram_mapping, colid_width_mapping, rows, fEmptyTable,
                                   pmdRelStats->RelPages(), pmdRelStats->RelAllVisible(), 1.0 /* default rebinds */,
@@ -990,9 +988,9 @@ CHistogram *CMDAccessor::GetHistogram(CMemoryPool *mp, IMDId *mdid_type, const I
   GPOS_ASSERT(nullptr != mdid_type);
   GPOS_ASSERT(nullptr != pmdcolstats);
 
-  BOOL is_col_stats_missing = pmdcolstats->IsColStatsMissing();
-  const ULONG num_of_buckets = pmdcolstats->Buckets();
-  BOOL fBoolType = CMDAccessorUtils::FBoolType(this, mdid_type);
+  bool is_col_stats_missing = pmdcolstats->IsColStatsMissing();
+  const uint32_t num_of_buckets = pmdcolstats->Buckets();
+  bool fBoolType = CMDAccessorUtils::FBoolType(this, mdid_type);
   if (is_col_stats_missing && fBoolType) {
     GPOS_ASSERT(0 == num_of_buckets);
 
@@ -1000,7 +998,7 @@ CHistogram *CMDAccessor::GetHistogram(CMemoryPool *mp, IMDId *mdid_type, const I
   }
 
   CBucketArray *buckets = GPOS_NEW(mp) CBucketArray(mp);
-  for (ULONG ul = 0; ul < num_of_buckets; ul++) {
+  for (uint32_t ul = 0; ul < num_of_buckets; ul++) {
     const CDXLBucket *dxl_bucket = pmdcolstats->GetDXLBucketAt(ul);
     CBucket *bucket = Pbucket(mp, mdid_type, dxl_bucket);
     buckets->Append(bucket);
@@ -1059,7 +1057,7 @@ IDatum *CMDAccessor::GetDatum(CMemoryPool *mp, IMDId *mdid_type, const CDXLDatum
 //
 //---------------------------------------------------------------------------
 void CMDAccessor::SerializeSysid(COstream &oos) {
-  ULONG ul = 0;
+  uint32_t ul = 0;
   MDPHTIter mdhtit(m_shtProviders);
 
   while (mdhtit.Advance()) {
@@ -1067,7 +1065,7 @@ void CMDAccessor::SerializeSysid(COstream &oos) {
     SMDProviderElem *pmdpelem = mdhtitacc.Value();
     CSystemId sysid = pmdpelem->Sysid();
 
-    WCHAR wszSysId[GPDXL_MDID_LENGTH];
+    wchar_t wszSysId[GPDXL_MDID_LENGTH];
     CWStringStatic str(wszSysId, GPOS_ARRAY_SIZE(wszSysId));
 
     if (0 < ul) {

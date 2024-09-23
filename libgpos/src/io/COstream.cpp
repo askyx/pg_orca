@@ -28,7 +28,7 @@ COstream::COstream()
 
 {}
 
-IOstream &COstream::AppendFormat(const WCHAR *format, ...) {
+IOstream &COstream::AppendFormat(const wchar_t *format, ...) {
   VA_LIST vl;
 
   VA_START(vl, format);
@@ -47,10 +47,10 @@ IOstream &COstream::AppendFormat(const WCHAR *format, ...) {
 //		COstream::operator<<
 //
 //	@doc:
-//		write of CHAR with conversion
+//		write of char with conversion
 //
 //---------------------------------------------------------------------------
-IOstream &COstream::operator<<(const CHAR *input_char) {
+IOstream &COstream::operator<<(const char *input_char) {
   return AppendFormat(GPOS_WSZ_LIT("%s"), input_char);
 }
 
@@ -59,10 +59,10 @@ IOstream &COstream::operator<<(const CHAR *input_char) {
 //		COstream::operator<<
 //
 //	@doc:
-//		write a single WCHAR with conversion
+//		write a single wchar_t with conversion
 //
 //---------------------------------------------------------------------------
-IOstream &COstream::operator<<(const WCHAR input_char) {
+IOstream &COstream::operator<<(const wchar_t input_char) {
   return AppendFormat(GPOS_WSZ_LIT("%lc"), input_char);
 }
 
@@ -71,10 +71,10 @@ IOstream &COstream::operator<<(const WCHAR input_char) {
 //		COstream::operator<<
 //
 //	@doc:
-//		write a single CHAR with conversion
+//		write a single char with conversion
 //
 //---------------------------------------------------------------------------
-IOstream &COstream::operator<<(const CHAR input_char) {
+IOstream &COstream::operator<<(const char input_char) {
   return AppendFormat(GPOS_WSZ_LIT("%c"), input_char);
 }
 
@@ -83,10 +83,10 @@ IOstream &COstream::operator<<(const CHAR input_char) {
 //		COstream::operator<<
 //
 //	@doc:
-//		write a ULONG with conversion
+//		write a uint32_t with conversion
 //
 //---------------------------------------------------------------------------
-IOstream &COstream::operator<<(ULONG input_ulong) {
+IOstream &COstream::operator<<(uint32_t input_ulong) {
   switch (GetStreamManipulator()) {
     case EsmDec:
       return AppendFormat(GPOS_WSZ_LIT("%u"), input_ulong);
@@ -106,10 +106,10 @@ IOstream &COstream::operator<<(ULONG input_ulong) {
 //		COstream::operator<<
 //
 //	@doc:
-//		write a ULLONG with conversion
+//		write a uint64_t with conversion
 //
 //---------------------------------------------------------------------------
-IOstream &COstream::operator<<(ULLONG input_ullong) {
+IOstream &COstream::operator<<(uint64_t input_ullong) {
   switch (GetStreamManipulator()) {
     case EsmDec:
       return AppendFormat(GPOS_WSZ_LIT("%llu"), input_ullong);
@@ -129,10 +129,10 @@ IOstream &COstream::operator<<(ULLONG input_ullong) {
 //		COstream::operator<<
 //
 //	@doc:
-//		write an INT with conversion
+//		write an int32_t with conversion
 //
 //---------------------------------------------------------------------------
-IOstream &COstream::operator<<(INT input_int) {
+IOstream &COstream::operator<<(int32_t input_int) {
   switch (GetStreamManipulator()) {
     case EsmDec:
       return AppendFormat(GPOS_WSZ_LIT("%d"), input_int);
@@ -152,10 +152,10 @@ IOstream &COstream::operator<<(INT input_int) {
 //		COstream::operator<<
 //
 //	@doc:
-//		write a LINT with conversion
+//		write a int64_t with conversion
 //
 //---------------------------------------------------------------------------
-IOstream &COstream::operator<<(LINT input_long_int) {
+IOstream &COstream::operator<<(int64_t input_long_int) {
   switch (GetStreamManipulator()) {
     case EsmDec:
       return AppendFormat(GPOS_WSZ_LIT("%lld"), input_long_int);
@@ -178,7 +178,7 @@ IOstream &COstream::operator<<(LINT input_long_int) {
 //		write a double-precision floating point number
 //
 //---------------------------------------------------------------------------
-IOstream &COstream::operator<<(const DOUBLE input_double) {
+IOstream &COstream::operator<<(const double input_double) {
   if (m_fullPrecision) {
     return AppendFormat(GPOS_WSZ_LIT("%.17f"), input_double);
   }

@@ -65,21 +65,21 @@ class CReqdPropPlan : public CReqdProp {
   ~CReqdPropPlan() override;
 
   // type of properties
-  BOOL FPlan() const override {
+  bool FPlan() const override {
     GPOS_ASSERT(!FRelational());
     return true;
   }
 
   // required properties computation function
-  void Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, ULONG child_index,
-               CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
+  void Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, uint32_t child_index,
+               CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) override;
 
   // required columns computation function
-  void ComputeReqdCols(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, ULONG child_index,
+  void ComputeReqdCols(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, uint32_t child_index,
                        CDrvdPropArray *pdrgpdpCtxt);
 
   // required ctes computation function
-  void ComputeReqdCTEs(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, ULONG child_index,
+  void ComputeReqdCTEs(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, uint32_t child_index,
                        CDrvdPropArray *pdrgpdpCtxt);
 
   // required columns accessor
@@ -95,23 +95,23 @@ class CReqdPropPlan : public CReqdProp {
   CCTEReq *Pcter() const { return m_pcter; }
 
   // given a property spec type, return the corresponding property spec member
-  CPropSpec *Pps(ULONG ul) const;
+  CPropSpec *Pps(uint32_t ul) const;
 
   // equality function
-  BOOL Equals(const CReqdPropPlan *prpp) const;
+  bool Equals(const CReqdPropPlan *prpp) const;
 
   // hash function
-  ULONG HashValue() const;
+  uint32_t HashValue() const;
 
   // check if plan properties are satisfied by the given derived properties
-  BOOL FSatisfied(const CDrvdPropRelational *pdprel, const CDrvdPropPlan *pdpplan) const;
+  bool FSatisfied(const CDrvdPropRelational *pdprel, const CDrvdPropPlan *pdpplan) const;
 
   // check if plan properties are compatible with the given derived properties
-  BOOL FCompatible(CExpressionHandle &exprhdl, CPhysical *popPhysical, const CDrvdPropRelational *pdprel,
+  bool FCompatible(CExpressionHandle &exprhdl, CPhysical *popPhysical, const CDrvdPropRelational *pdprel,
                    const CDrvdPropPlan *pdpplan) const;
 
   // check if expression attached to handle provides required columns by all plan properties
-  BOOL FProvidesReqdCols(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulOptReq) const;
+  bool FProvidesReqdCols(CMemoryPool *mp, CExpressionHandle &exprhdl, uint32_t ulOptReq) const;
 
   // shorthand for conversion
   static CReqdPropPlan *Prpp(CReqdProp *prp) {
@@ -124,10 +124,10 @@ class CReqdPropPlan : public CReqdProp {
   static CReqdPropPlan *PrppEmpty(CMemoryPool *mp);
 
   // hash function used for cost bounding
-  static ULONG UlHashForCostBounding(const CReqdPropPlan *prpp);
+  static uint32_t UlHashForCostBounding(const CReqdPropPlan *prpp);
 
   // equality function used for cost bounding
-  static BOOL FEqualForCostBounding(const CReqdPropPlan *prppFst, const CReqdPropPlan *prppSnd);
+  static bool FEqualForCostBounding(const CReqdPropPlan *prppFst, const CReqdPropPlan *prppSnd);
 
   // map input required and derived plan properties into new required plan properties
   static CReqdPropPlan *PrppRemapForCTE(CMemoryPool *mp, CReqdPropPlan *prppProducer, CDrvdPropPlan *pdpplanProducer,

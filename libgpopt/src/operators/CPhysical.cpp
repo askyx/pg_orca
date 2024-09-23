@@ -40,7 +40,7 @@ CPhysical::CPhysical(CMemoryPool *mp)
 {
   GPOS_ASSERT(nullptr != mp);
 
-  for (ULONG ul = 0; ul < GPOPT_PLAN_PROPS; ul++) {
+  for (uint32_t ul = 0; ul < GPOPT_PLAN_PROPS; ul++) {
     // by default, an operator creates a single request for each property
     m_rgulOptReqs[ul] = 1;
   }
@@ -59,15 +59,15 @@ CPhysical::CPhysical(CMemoryPool *mp)
 //		of all properties requests
 //
 //---------------------------------------------------------------------------
-void CPhysical::UpdateOptRequests(ULONG ulPropIndex, ULONG ulRequests) {
+void CPhysical::UpdateOptRequests(uint32_t ulPropIndex, uint32_t ulRequests) {
   GPOS_ASSERT(ulPropIndex < GPOPT_PLAN_PROPS);
 
   // update property requests
   m_rgulOptReqs[ulPropIndex] = ulRequests;
 
   // compute new value of total requests
-  ULONG ulOptReqs = 1;
-  for (ULONG ul = 0; ul < GPOPT_PLAN_PROPS; ul++) {
+  uint32_t ulOptReqs = 1;
+  for (uint32_t ul = 0; ul < GPOPT_PLAN_PROPS; ul++) {
     ulOptReqs = ulOptReqs * m_rgulOptReqs[ul];
   }
 
@@ -75,19 +75,19 @@ void CPhysical::UpdateOptRequests(ULONG ulPropIndex, ULONG ulRequests) {
   m_ulTotalOptRequests = ulOptReqs;
 
   // update expanded requests
-  const ULONG ulOrderRequests = UlOrderRequests();
-  const ULONG ulDistrRequests = UlDistrRequests();
-  const ULONG ulRewindRequests = UlRewindRequests();
-  const ULONG ulPartPropagateRequests = UlPartPropagateRequests();
+  const uint32_t ulOrderRequests = UlOrderRequests();
+  const uint32_t ulDistrRequests = UlDistrRequests();
+  const uint32_t ulRewindRequests = UlRewindRequests();
+  const uint32_t ulPartPropagateRequests = UlPartPropagateRequests();
 
   CRefCount::SafeRelease(m_pdrgpulpOptReqsExpanded);
   m_pdrgpulpOptReqsExpanded = nullptr;
   m_pdrgpulpOptReqsExpanded = GPOS_NEW(m_mp) UlongPtrArray(m_mp);
-  for (ULONG ulOrder = 0; ulOrder < ulOrderRequests; ulOrder++) {
-    for (ULONG ulDistr = 0; ulDistr < ulDistrRequests; ulDistr++) {
-      for (ULONG ulRewind = 0; ulRewind < ulRewindRequests; ulRewind++) {
-        for (ULONG ulPartPropagate = 0; ulPartPropagate < ulPartPropagateRequests; ulPartPropagate++) {
-          ULONG_PTR *pulpRequest = GPOS_NEW_ARRAY(m_mp, ULONG_PTR, GPOPT_PLAN_PROPS);
+  for (uint32_t ulOrder = 0; ulOrder < ulOrderRequests; ulOrder++) {
+    for (uint32_t ulDistr = 0; ulDistr < ulDistrRequests; ulDistr++) {
+      for (uint32_t ulRewind = 0; ulRewind < ulRewindRequests; ulRewind++) {
+        for (uint32_t ulPartPropagate = 0; ulPartPropagate < ulPartPropagateRequests; ulPartPropagate++) {
+          uintptr_t *pulpRequest = GPOS_NEW_ARRAY(m_mp, uintptr_t, GPOPT_PLAN_PROPS);
 
           pulpRequest[0] = ulOrder;
           pulpRequest[1] = ulDistr;
@@ -110,11 +110,11 @@ void CPhysical::UpdateOptRequests(ULONG ulPropIndex, ULONG ulRequests) {
 //		partition propagation requests
 //
 //---------------------------------------------------------------------------
-void CPhysical::LookupRequest(ULONG ulReqNo,              // input: request number
-                              ULONG *pulOrderReq,         // output: order request number
-                              ULONG *pulDistrReq,         // output: distribution request number
-                              ULONG *pulRewindReq,        // output: rewindability request number
-                              ULONG *pulPartPropagateReq  // output: partition propagation request number
+void CPhysical::LookupRequest(uint32_t ulReqNo,              // input: request number
+                              uint32_t *pulOrderReq,         // output: order request number
+                              uint32_t *pulDistrReq,         // output: distribution request number
+                              uint32_t *pulRewindReq,        // output: rewindability request number
+                              uint32_t *pulPartPropagateReq  // output: partition propagation request number
 ) {
   GPOS_ASSERT(nullptr != m_pdrgpulpOptReqsExpanded);
   GPOS_ASSERT(ulReqNo < m_pdrgpulpOptReqsExpanded->Size());
@@ -123,11 +123,11 @@ void CPhysical::LookupRequest(ULONG ulReqNo,              // input: request numb
   GPOS_ASSERT(nullptr != pulRewindReq);
   GPOS_ASSERT(nullptr != pulPartPropagateReq);
 
-  ULONG_PTR *pulpRequest = (*m_pdrgpulpOptReqsExpanded)[ulReqNo];
-  *pulOrderReq = (ULONG)pulpRequest[0];
-  *pulDistrReq = (ULONG)pulpRequest[1];
-  *pulRewindReq = (ULONG)pulpRequest[2];
-  *pulPartPropagateReq = (ULONG)pulpRequest[3];
+  uintptr_t *pulpRequest = (*m_pdrgpulpOptReqsExpanded)[ulReqNo];
+  *pulOrderReq = (uint32_t)pulpRequest[0];
+  *pulDistrReq = (uint32_t)pulpRequest[1];
+  *pulRewindReq = (uint32_t)pulpRequest[2];
+  *pulPartPropagateReq = (uint32_t)pulpRequest[3];
 }
 
 //---------------------------------------------------------------------------
@@ -152,7 +152,7 @@ CDrvdProp *CPhysical::PdpCreate(CMemoryPool *mp) const {
 //---------------------------------------------------------------------------
 COperator *CPhysical::PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                                  UlongToColRefMap *,  // colref_mapping,
-                                                 BOOL                 // must_exist
+                                                 bool                 // must_exist
 ) {
   GPOS_ASSERT(!"Invalid call of CPhysical::PopCopyWithRemappedColumns");
   return nullptr;
@@ -178,11 +178,10 @@ CReqdProp *CPhysical::PrpCreate(CMemoryPool *mp) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysical::CReqdColsRequest::HashValue(const CReqdColsRequest *prcr) {
+uint32_t CPhysical::CReqdColsRequest::HashValue(const CReqdColsRequest *prcr) {
   GPOS_ASSERT(nullptr != prcr);
 
-  ULONG ulHash = prcr->GetColRefSet()->HashValue();
+  uint32_t ulHash = prcr->GetColRefSet()->HashValue();
   ulHash = CombineHashes(ulHash, prcr->UlChildIndex());
   ;
 
@@ -197,7 +196,7 @@ CPhysical::CReqdColsRequest::HashValue(const CReqdColsRequest *prcr) {
 //		Equality function
 //
 //---------------------------------------------------------------------------
-BOOL CPhysical::CReqdColsRequest::Equals(const CReqdColsRequest *prcrFst, const CReqdColsRequest *prcrSnd) {
+bool CPhysical::CReqdColsRequest::Equals(const CReqdColsRequest *prcrFst, const CReqdColsRequest *prcrSnd) {
   GPOS_ASSERT(nullptr != prcrFst);
   GPOS_ASSERT(nullptr != prcrSnd);
 
@@ -217,7 +216,7 @@ BOOL CPhysical::CReqdColsRequest::Equals(const CReqdColsRequest *prcrFst, const 
 COrderSpec *CPhysical::PosPassThru(CMemoryPool *,        // mp
                                    CExpressionHandle &,  // exprhdl
                                    COrderSpec *posRequired,
-                                   ULONG  // child_index
+                                   uint32_t  // child_index
 ) {
   posRequired->AddRef();
 
@@ -250,7 +249,7 @@ COrderSpec *CPhysical::PosDerivePassThruOuter(CExpressionHandle &exprhdl) {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysical::PcrsChildReqd(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                     ULONG child_index, ULONG ulScalarIndex) {
+                                     uint32_t child_index, uint32_t ulScalarIndex) {
   pcrsRequired->AddRef();
   CReqdColsRequest *prcr = GPOS_NEW(mp) CReqdColsRequest(pcrsRequired, child_index, ulScalarIndex);
   CColRefSet *pcrs = nullptr;
@@ -265,7 +264,7 @@ CColRefSet *CPhysical::PcrsChildReqd(CMemoryPool *mp, CExpressionHandle &exprhdl
 
   // request was not found in map -- we need to compute it
   pcrs = GPOS_NEW(mp) CColRefSet(mp, *pcrsRequired);
-  if (gpos::ulong_max != ulScalarIndex) {
+  if (UINT32_MAX != ulScalarIndex) {
     // include used columns and exclude defined columns of scalar child
     pcrs->Union(exprhdl.DeriveUsedColumns(ulScalarIndex));
     pcrs->Exclude(exprhdl.DeriveDefinedColumns(ulScalarIndex));
@@ -276,7 +275,7 @@ CColRefSet *CPhysical::PcrsChildReqd(CMemoryPool *mp, CExpressionHandle &exprhdl
 
   // insert request in map
   pcrs->AddRef();
-  BOOL fSuccess GPOS_ASSERTS_ONLY = m_phmrcr->Insert(prcr, pcrs);
+  bool fSuccess GPOS_ASSERTS_ONLY = m_phmrcr->Insert(prcr, pcrs);
   GPOS_ASSERT(fSuccess);
 
   return pcrs;
@@ -291,7 +290,7 @@ CColRefSet *CPhysical::PcrsChildReqd(CMemoryPool *mp, CExpressionHandle &exprhdl
 //		no new columns include the required columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysical::FUnaryProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired) {
+bool CPhysical::FUnaryProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired) {
   GPOS_ASSERT(nullptr != pcrsRequired);
 
   CColRefSet *pcrsOutput = exprhdl.DeriveOutputColumns(0 /*child_index*/);
@@ -325,9 +324,9 @@ CCTEReq *CPhysical::PcterPushThru(CCTEReq *pcter) {
 CCTEMap *CPhysical::PcmCombine(CMemoryPool *mp, CDrvdPropArray *pdrgpdpCtxt) {
   GPOS_ASSERT(nullptr != pdrgpdpCtxt);
 
-  const ULONG size = pdrgpdpCtxt->Size();
+  const uint32_t size = pdrgpdpCtxt->Size();
   CCTEMap *pcmCombined = GPOS_NEW(mp) CCTEMap(mp);
-  for (ULONG ul = 0; ul < size; ul++) {
+  for (uint32_t ul = 0; ul < size; ul++) {
     CCTEMap *pcmChild = CDrvdPropPlan::Pdpplan((*pdrgpdpCtxt)[ul])->GetCostModel();
 
     // get the remaining requirements that have not been met by child
@@ -347,20 +346,20 @@ CCTEMap *CPhysical::PcmCombine(CMemoryPool *mp, CDrvdPropArray *pdrgpdpCtxt) {
 //		Helper for computing cte requirement for the n-th child
 //
 //---------------------------------------------------------------------------
-CCTEReq *CPhysical::PcterNAry(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
+CCTEReq *CPhysical::PcterNAry(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, uint32_t child_index,
                               CDrvdPropArray *pdrgpdpCtxt) const {
   GPOS_ASSERT(nullptr != pcter);
 
   if (EceoLeftToRight == Eceo()) {
-    ULONG ulLastNonScalarChild = exprhdl.UlLastNonScalarChild();
-    if (gpos::ulong_max != ulLastNonScalarChild && child_index < ulLastNonScalarChild) {
+    uint32_t ulLastNonScalarChild = exprhdl.UlLastNonScalarChild();
+    if (UINT32_MAX != ulLastNonScalarChild && child_index < ulLastNonScalarChild) {
       return pcter->PcterAllOptional(mp);
     }
   } else {
     GPOS_ASSERT(EceoRightToLeft == Eceo());
 
-    ULONG ulFirstNonScalarChild = exprhdl.UlFirstNonScalarChild();
-    if (gpos::ulong_max != ulFirstNonScalarChild && child_index > ulFirstNonScalarChild) {
+    uint32_t ulFirstNonScalarChild = exprhdl.UlFirstNonScalarChild();
+    if (UINT32_MAX != ulFirstNonScalarChild && child_index > ulFirstNonScalarChild) {
       return pcter->PcterAllOptional(mp);
     }
   }
@@ -383,7 +382,7 @@ CCTEReq *CPhysical::PcterNAry(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTER
 // 		the knowledge of where the part index id is defined
 //
 //---------------------------------------------------------------------------
-BOOL CPhysical::FCanPushPartReqToChild(CBitSet *pbsPartConsumer, ULONG child_index) {
+bool CPhysical::FCanPushPartReqToChild(CBitSet *pbsPartConsumer, uint32_t child_index) {
   GPOS_ASSERT(nullptr != pbsPartConsumer);
 
   // if part index id comes from more that one child, we cannot push request to just one child
@@ -407,8 +406,8 @@ CCTEMap *CPhysical::PcmDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const
   GPOS_ASSERT(0 < exprhdl.Arity());
 
   CCTEMap *pcm = GPOS_NEW(mp) CCTEMap(mp);
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     if (!exprhdl.FScalarChild(ul)) {
       CCTEMap *pcmChild = exprhdl.Pdpplan(ul)->GetCostModel();
       GPOS_ASSERT(nullptr != pcmChild);
@@ -430,7 +429,7 @@ CCTEMap *CPhysical::PcmDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const
 //		Check if required CTEs are included in derived CTE map
 //
 //---------------------------------------------------------------------------
-BOOL CPhysical::FProvidesReqdCTEs(CExpressionHandle &exprhdl, const CCTEReq *pcter) const {
+bool CPhysical::FProvidesReqdCTEs(CExpressionHandle &exprhdl, const CCTEReq *pcter) const {
   CCTEMap *pcmDrvd = CDrvdPropPlan::Pdpplan(exprhdl.Pdp())->GetCostModel();
   GPOS_ASSERT(nullptr != pcmDrvd);
   return pcmDrvd->FSatisfies(pcter);
@@ -461,7 +460,7 @@ CDouble CPhysical::GetSkew(IStatistics *stats) {
 //		by the unary node, as given by the handle
 //
 //---------------------------------------------------------------------------
-BOOL CPhysical::FUnaryUsesDefinedColumns(CColRefSet *pcrs, CExpressionHandle &exprhdl) {
+bool CPhysical::FUnaryUsesDefinedColumns(CColRefSet *pcrs, CExpressionHandle &exprhdl) {
   GPOS_ASSERT(nullptr != pcrs);
   GPOS_ASSERT(2 == exprhdl.Arity() && "Not a unary operator");
 
@@ -472,22 +471,22 @@ BOOL CPhysical::FUnaryUsesDefinedColumns(CColRefSet *pcrs, CExpressionHandle &ex
   return !pcrs->IsDisjoint(exprhdl.DeriveDefinedColumns(1));
 }
 
-CEnfdOrder::EOrderMatching CPhysical::Eom(CReqdPropPlan *, ULONG, CDrvdPropArray *, ULONG) {
+CEnfdOrder::EOrderMatching CPhysical::Eom(CReqdPropPlan *, uint32_t, CDrvdPropArray *, uint32_t) {
   // request satisfaction by default
   return CEnfdOrder::EomSatisfy;
 }
 
 CPartitionPropagationSpec *CPhysical::PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                   CPartitionPropagationSpec *pppsRequired, ULONG child_index,
-                                                   CDrvdPropArray *, ULONG) const {
+                                                   CPartitionPropagationSpec *pppsRequired, uint32_t child_index,
+                                                   CDrvdPropArray *, uint32_t) const {
   // pass through consumer<x> requests to the appropriate child.
   // do not pass through any propagator<x> requests
   CPartitionPropagationSpec *pps_result = GPOS_NEW(mp) CPartitionPropagationSpec(mp);
 
   CBitSet *allowed_scan_ids = GPOS_NEW(mp) CBitSet(mp);
   CPartInfo *part_info = exprhdl.DerivePartitionInfo(child_index);
-  for (ULONG ul = 0; ul < part_info->UlConsumers(); ++ul) {
-    ULONG scan_id = part_info->ScanId(ul);
+  for (uint32_t ul = 0; ul < part_info->UlConsumers(); ++ul) {
+    uint32_t scan_id = part_info->ScanId(ul);
     allowed_scan_ids->ExchangeSet(scan_id);
   }
 
@@ -513,7 +512,7 @@ CEnfdProp::EPropEnforcingType CPhysical::EpetPartitionPropagation(CExpressionHan
 CPartitionPropagationSpec *CPhysical::PppsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
   CPartitionPropagationSpec *pps_result = GPOS_NEW(mp) CPartitionPropagationSpec(mp);
 
-  for (ULONG ul = 0; ul < exprhdl.Arity(); ++ul) {
+  for (uint32_t ul = 0; ul < exprhdl.Arity(); ++ul) {
     if (exprhdl.FScalarChild(ul)) {
       continue;
     }

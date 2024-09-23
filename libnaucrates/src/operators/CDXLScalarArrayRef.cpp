@@ -25,7 +25,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarArrayRef::CDXLScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid, INT type_modifier,
+CDXLScalarArrayRef::CDXLScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid, int32_t type_modifier,
                                        IMDId *array_type_mdid, IMDId *return_type_mdid)
     : CDXLScalar(mp),
       m_elem_type_mdid(elem_type_mdid),
@@ -76,7 +76,7 @@ const CWStringConst *CDXLScalarArrayRef::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarArrayRef);
 }
 
-INT CDXLScalarArrayRef::TypeModifier() const {
+int32_t CDXLScalarArrayRef::TypeModifier() const {
   return m_type_modifier;
 }
 
@@ -88,7 +88,7 @@ INT CDXLScalarArrayRef::TypeModifier() const {
 //		Does the operator return boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarArrayRef::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarArrayRef::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_return_type_mdid)->GetDatumType());
 }
 
@@ -101,9 +101,9 @@ BOOL CDXLScalarArrayRef::HasBoolResult(CMDAccessor *md_accessor) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarArrayRef::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
-  const ULONG arity = dxlnode->Arity();
-  for (ULONG ul = 0; ul < arity; ++ul) {
+void CDXLScalarArrayRef::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
+  const uint32_t arity = dxlnode->Arity();
+  for (uint32_t ul = 0; ul < arity; ++ul) {
     CDXLNode *child_dxlnode = (*dxlnode)[ul];
     GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
 

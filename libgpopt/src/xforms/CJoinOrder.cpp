@@ -26,7 +26,7 @@
 using namespace gpopt;
 
 // ctor
-CJoinOrder::SComponent::SComponent(CMemoryPool *mp, CExpression *pexpr, INT parent_loj_id, EPosition position)
+CJoinOrder::SComponent::SComponent(CMemoryPool *mp, CExpression *pexpr, int32_t parent_loj_id, EPosition position)
     : m_pbs(nullptr),
       m_edge_set(nullptr),
       m_pexpr(pexpr),
@@ -39,7 +39,7 @@ CJoinOrder::SComponent::SComponent(CMemoryPool *mp, CExpression *pexpr, INT pare
 }
 
 // ctor
-CJoinOrder::SComponent::SComponent(CExpression *pexpr, CBitSet *pbs, CBitSet *edge_set, INT parent_loj_id,
+CJoinOrder::SComponent::SComponent(CExpression *pexpr, CBitSet *pbs, CBitSet *edge_set, int32_t parent_loj_id,
                                    EPosition position)
     : m_pbs(pbs),
       m_edge_set(edge_set),
@@ -98,7 +98,7 @@ IOstream &CJoinOrder::SComponent::OsPrint(IOstream &os) const {
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CJoinOrder::SEdge::SEdge(CMemoryPool *mp, CExpression *pexpr, ULONG loj_num)
+CJoinOrder::SEdge::SEdge(CMemoryPool *mp, CExpression *pexpr, uint32_t loj_num)
     : m_pbs(nullptr), m_pexpr(pexpr), m_loj_num(loj_num), m_fUsed(false) {
   m_pbs = GPOS_NEW(mp) CBitSet(mp);
 }
@@ -137,7 +137,7 @@ IOstream &CJoinOrder::SEdge::OsPrint(IOstream &os) const {
 //
 //---------------------------------------------------------------------------
 CJoinOrder::CJoinOrder(CMemoryPool *mp, CExpressionArray *all_components, CExpressionArray *inner_join_conjuncts,
-                       BOOL include_loj_childs)
+                       bool include_loj_childs)
     : m_mp(mp),
       m_rgpedge(nullptr),
       m_ulEdges(0),
@@ -147,8 +147,8 @@ CJoinOrder::CJoinOrder(CMemoryPool *mp, CExpressionArray *all_components, CExpre
   using Pcomp = SComponent *;
   using Pedge = SEdge *;
 
-  const ULONG num_of_nary_children = all_components->Size();
-  INT num_of_lojs = 0;
+  const uint32_t num_of_nary_children = all_components->Size();
+  int32_t num_of_lojs = 0;
 
   // Since we are using a static array, we need to know size of the array before hand
   // e.g.
@@ -167,7 +167,7 @@ CJoinOrder::CJoinOrder(CMemoryPool *mp, CExpressionArray *all_components, CExpre
   // in m_rgcomp.
 
   if (m_include_loj_childs) {
-    for (ULONG ul = 0; ul < num_of_nary_children; ul++) {
+    for (uint32_t ul = 0; ul < num_of_nary_children; ul++) {
       CExpression *pexpr = (*all_components)[ul];
       if (COperator::EopLogicalLeftOuterJoin == pexpr->Pop()->Eopid()) {
         num_of_lojs++;
@@ -183,18 +183,18 @@ CJoinOrder::CJoinOrder(CMemoryPool *mp, CExpressionArray *all_components, CExpre
   m_ulEdges = inner_join_conjuncts->Size() + num_of_lojs;
   m_rgpedge = GPOS_NEW_ARRAY(mp, Pedge, m_ulEdges);
 
-  INT loj_id = 0;
-  INT comp_num = 0;
+  int32_t loj_id = 0;
+  int32_t comp_num = 0;
 
   // add the inner join edges first
-  for (ULONG ul = 0; ul < inner_join_conjuncts->Size(); ul++) {
+  for (uint32_t ul = 0; ul < inner_join_conjuncts->Size(); ul++) {
     CExpression *pexprEdge = (*inner_join_conjuncts)[ul];
     pexprEdge->AddRef();
     m_rgpedge[ul] = GPOS_NEW(mp) SEdge(mp, pexprEdge, 0 /* not an LOJ */);
   }
 
   // process LOJs & add components & LOJ edges
-  for (ULONG ul = 0; ul < num_of_nary_children; ul++) {
+  for (uint32_t ul = 0; ul < num_of_nary_children; ul++) {
     CExpression *expr = (*all_components)[ul];
     if (m_include_loj_childs && COperator::EopLogicalLeftOuterJoin == expr->Pop()->Eopid()) {
       // counter for number of loj available in tree
@@ -213,7 +213,7 @@ CJoinOrder::CJoinOrder(CMemoryPool *mp, CExpressionArray *all_components, CExpre
       // from both left & right components
       CExpression *scalar_expr = (*expr)[2];
       scalar_expr->AddRef();
-      ULONG edge_idx = inner_join_conjuncts->Size() + loj_id - 1;
+      uint32_t edge_idx = inner_join_conjuncts->Size() + loj_id - 1;
       m_rgpedge[edge_idx] = GPOS_NEW(mp) SEdge(mp, scalar_expr, 1 /* is an LOJ */);
 
       m_rgpcomp[comp_num]->m_edge_set->ExchangeSet(edge_idx);
@@ -255,34 +255,34 @@ CJoinOrder::CJoinOrder(CMemoryPool *mp, CExpressionArray *all_components, CExpre
   using Pcomp = SComponent *;
   using Pedge = SEdge *;
 
-  const ULONG num_of_nary_children = all_components->Size();
+  const uint32_t num_of_nary_children = all_components->Size();
 
   m_ulComps = all_components->Size();
   m_rgpcomp = GPOS_NEW_ARRAY(mp, Pcomp, m_ulComps);
 
   m_ulEdges = innerJoinPredConjuncts->Size() + onPreds->Size();
   m_rgpedge = GPOS_NEW_ARRAY(mp, Pedge, m_ulEdges);
-  ULONG innerJoinEdges = innerJoinPredConjuncts->Size();
+  uint32_t innerJoinEdges = innerJoinPredConjuncts->Size();
 
   // add the inner join edges first
-  for (ULONG ul = 0; ul < innerJoinEdges; ul++) {
+  for (uint32_t ul = 0; ul < innerJoinEdges; ul++) {
     CExpression *pexprEdge = (*innerJoinPredConjuncts)[ul];
     pexprEdge->AddRef();
     m_rgpedge[ul] = GPOS_NEW(mp) SEdge(mp, pexprEdge, 0 /* not an LOJ */);
   }
 
   // add the left outer join edges
-  for (ULONG ul2 = 0; ul2 < onPreds->Size(); ul2++) {
+  for (uint32_t ul2 = 0; ul2 < onPreds->Size(); ul2++) {
     CExpression *pexprEdge = (*onPreds)[ul2];
     // a 1-based id of the LOJ in this NAry join
-    ULONG lojId = ul2 + 1;
+    uint32_t lojId = ul2 + 1;
     // the logical child index (right LOJ child) that belongs to our current predicate pexprEdge
-    ULONG logicalChildIndex = 0;
+    uint32_t logicalChildIndex = 0;
 
     // search for number lojId in the childPredIndexes array, the
     // entry that contains this number will be the logical child that
     // is associated with our ON predicate pexprEdge
-    for (ULONG ci = 0; ci < childPredIndexes->Size(); ci++) {
+    for (uint32_t ci = 0; ci < childPredIndexes->Size(); ci++) {
       if (*(*childPredIndexes)[ci] == lojId) {
         logicalChildIndex = ci;
         break;
@@ -301,9 +301,9 @@ CJoinOrder::CJoinOrder(CMemoryPool *mp, CExpressionArray *all_components, CExpre
   }
 
   // create the components (both inner and LOJs)
-  for (ULONG ul = 0; ul < num_of_nary_children; ul++) {
+  for (uint32_t ul = 0; ul < num_of_nary_children; ul++) {
     CExpression *expr = (*all_components)[ul];
-    INT lojId = (nullptr != childPredIndexes) ? *((*childPredIndexes)[ul]) : 0;
+    int32_t lojId = (nullptr != childPredIndexes) ? *((*childPredIndexes)[ul]) : 0;
 
     AddComponent(mp, expr, lojId, EpSentinel /*position not used in DPv2*/, ul);
   }
@@ -323,12 +323,12 @@ CJoinOrder::CJoinOrder(CMemoryPool *mp, CExpressionArray *all_components, CExpre
 //
 //---------------------------------------------------------------------------
 CJoinOrder::~CJoinOrder() {
-  for (ULONG ul = 0; ul < m_ulComps; ul++) {
+  for (uint32_t ul = 0; ul < m_ulComps; ul++) {
     m_rgpcomp[ul]->Release();
   }
   GPOS_DELETE_ARRAY(m_rgpcomp);
 
-  for (ULONG ul = 0; ul < m_ulEdges; ul++) {
+  for (uint32_t ul = 0; ul < m_ulEdges; ul++) {
     m_rgpedge[ul]->Release();
   }
   GPOS_DELETE_ARRAY(m_rgpedge);
@@ -344,11 +344,11 @@ CJoinOrder::~CJoinOrder() {
 //
 //---------------------------------------------------------------------------
 void CJoinOrder::ComputeEdgeCover() {
-  for (ULONG ulEdge = 0; ulEdge < m_ulEdges; ulEdge++) {
+  for (uint32_t ulEdge = 0; ulEdge < m_ulEdges; ulEdge++) {
     CExpression *pexpr = m_rgpedge[ulEdge]->m_pexpr;
     CColRefSet *pcrsUsed = pexpr->DeriveUsedColumns();
 
-    for (ULONG ulComp = 0; ulComp < m_ulComps; ulComp++) {
+    for (uint32_t ulComp = 0; ulComp < m_ulComps; ulComp++) {
       CExpression *pexprComp = m_rgpcomp[ulComp]->m_pexpr;
       CColRefSet *pcrsOutput = pexprComp->DeriveOutputColumns();
 
@@ -386,7 +386,7 @@ CJoinOrder::SComponent *CJoinOrder::PcompCombine(SComponent *comp1, SComponent *
   CExpressionArray *loj_conjuncts = GPOS_NEW(m_mp) CExpressionArray(m_mp);
   CExpressionArray *other_conjuncts = GPOS_NEW(m_mp) CExpressionArray(m_mp);
 
-  for (ULONG ul = 0; ul < m_ulEdges; ul++) {
+  for (uint32_t ul = 0; ul < m_ulEdges; ul++) {
     SEdge *pedge = m_rgpedge[ul];
     if (pedge->m_fUsed) {
       // edge is already used in result component
@@ -409,7 +409,7 @@ CJoinOrder::SComponent *CJoinOrder::PcompCombine(SComponent *comp1, SComponent *
   CExpression *pexprChild2 = comp2->m_pexpr;
 
   CExpression *pexpr = nullptr;
-  INT parent_loj_id = NON_LOJ_DEFAULT_ID;
+  int32_t parent_loj_id = NON_LOJ_DEFAULT_ID;
   EPosition position = EpSentinel;
 
   if (nullptr == pexprChild1) {
@@ -521,13 +521,13 @@ void CJoinOrder::DeriveStats(CExpression *pexpr) {
 IOstream &CJoinOrder::OsPrint(IOstream &os) const {
   os << "Join Order: " << std::endl << "Edges: " << m_ulEdges << std::endl;
 
-  for (ULONG ul = 0; ul < m_ulEdges; ul++) {
+  for (uint32_t ul = 0; ul < m_ulEdges; ul++) {
     m_rgpedge[ul]->OsPrint(os);
     os << std::endl;
   }
 
   os << "Components: " << m_ulComps << std::endl;
-  for (ULONG ul = 0; ul < m_ulComps; ul++) {
+  for (uint32_t ul = 0; ul < m_ulComps; ul++) {
     os << (void *)m_rgpcomp[ul] << " - " << std::endl;
     m_rgpcomp[ul]->OsPrint(os);
   }
@@ -535,9 +535,9 @@ IOstream &CJoinOrder::OsPrint(IOstream &os) const {
   return os;
 }
 
-BOOL CJoinOrder::IsValidJoinCombination(SComponent *comp1, SComponent *comp2) {
-  INT comp1_parent_loj_id = comp1->ParentLojId();
-  INT comp2_parent_loj_id = comp2->ParentLojId();
+bool CJoinOrder::IsValidJoinCombination(SComponent *comp1, SComponent *comp2) {
+  int32_t comp1_parent_loj_id = comp1->ParentLojId();
+  int32_t comp2_parent_loj_id = comp2->ParentLojId();
   EPosition comp1_position = comp1->Position();
   EPosition comp2_position = comp2->Position();
 
@@ -586,9 +586,9 @@ BOOL CJoinOrder::IsValidJoinCombination(SComponent *comp1, SComponent *comp2) {
   return comp1_position != EpRight && comp2_position != EpRight;
 }
 
-BOOL CJoinOrder::IsChildOfSameLOJ(SComponent *comp1, SComponent *comp2) {
+bool CJoinOrder::IsChildOfSameLOJ(SComponent *comp1, SComponent *comp2) {
   // check if these components are inner and outer children of a same join
-  BOOL child_of_same_loj = comp1->ParentLojId() == comp2->ParentLojId() && comp1->ParentLojId() != NON_LOJ_DEFAULT_ID &&
+  bool child_of_same_loj = comp1->ParentLojId() == comp2->ParentLojId() && comp1->ParentLojId() != NON_LOJ_DEFAULT_ID &&
                            ((comp1->Position() == CJoinOrder::EpLeft && comp2->Position() == CJoinOrder::EpRight) ||
                             (comp1->Position() == CJoinOrder::EpRight && comp2->Position() == CJoinOrder::EpLeft));
 
@@ -629,7 +629,8 @@ void CJoinOrder::MarkUsedEdges(SComponent *pcomponent) {
   }
 }
 
-void CJoinOrder::AddComponent(CMemoryPool *mp, CExpression *expr, INT loj_id, EPosition position, INT comp_num) {
+void CJoinOrder::AddComponent(CMemoryPool *mp, CExpression *expr, int32_t loj_id, EPosition position,
+                              int32_t comp_num) {
   expr->AddRef();
   SComponent *comp = GPOS_NEW(mp) SComponent(mp, expr, loj_id, position);
   m_rgpcomp[comp_num] = comp;

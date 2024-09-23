@@ -44,10 +44,10 @@ using namespace gpopt;
 //---------------------------------------------------------------------------
 void CExpressionUtils::UnnestChild(CMemoryPool *mp,
                                    CExpression *pexpr,          // parent node
-                                   ULONG child_index,           // child index
-                                   BOOL fAnd,                   // is expression an AND node?
-                                   BOOL fOr,                    // is expression an OR node?
-                                   BOOL fHasNegatedChild,       // does expression have NOT child nodes?
+                                   uint32_t child_index,        // child index
+                                   bool fAnd,                   // is expression an AND node?
+                                   bool fOr,                    // is expression an OR node?
+                                   bool fHasNegatedChild,       // does expression have NOT child nodes?
                                    CExpressionArray *pdrgpexpr  // array to append results to
 ) {
   GPOS_ASSERT(nullptr != mp);
@@ -108,13 +108,13 @@ CExpressionArray *CExpressionUtils::PdrgpexprUnnestChildren(CMemoryPool *mp, CEx
   GPOS_ASSERT(nullptr != pexpr);
 
   // compute flags for cases where we may have nested predicates
-  BOOL fAnd = CPredicateUtils::FAnd(pexpr);
-  BOOL fOr = CPredicateUtils::FOr(pexpr);
-  BOOL fHasNegatedChild = CPredicateUtils::FHasNegatedChild(pexpr);
+  bool fAnd = CPredicateUtils::FAnd(pexpr);
+  bool fOr = CPredicateUtils::FOr(pexpr);
+  bool fHasNegatedChild = CPredicateUtils::FHasNegatedChild(pexpr);
 
   CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
-  const ULONG arity = pexpr->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = pexpr->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     UnnestChild(mp, pexpr, ul, fAnd, fOr, fHasNegatedChild, pdrgpexpr);
   }
 
@@ -170,8 +170,8 @@ CExpression *CExpressionUtils::PexprUnnest(CMemoryPool *mp, CExpression *pexpr) 
 CExpression *CExpressionUtils::PexprPushNotOneLevel(CMemoryPool *mp, CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
 
-  BOOL fAnd = CPredicateUtils::FAnd(pexpr);
-  BOOL fOr = CPredicateUtils::FOr(pexpr);
+  bool fAnd = CPredicateUtils::FAnd(pexpr);
+  bool fOr = CPredicateUtils::FOr(pexpr);
 
   if (fAnd || fOr) {
     COperator *popNew = nullptr;
@@ -183,8 +183,8 @@ CExpression *CExpressionUtils::PexprPushNotOneLevel(CMemoryPool *mp, CExpression
     }
 
     CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
-    const ULONG arity = pexpr->Arity();
-    for (ULONG ul = 0; ul < arity; ul++) {
+    const uint32_t arity = pexpr->Arity();
+    for (uint32_t ul = 0; ul < arity; ul++) {
       CExpression *pexprChild = (*pexpr)[ul];
       pexprChild->AddRef();
       pdrgpexpr->Append(CUtils::PexprNegate(mp, pexprChild));
@@ -224,9 +224,9 @@ CExpression *CExpressionUtils::PexprDedupChildren(CMemoryPool *mp, CExpression *
   GPOS_ASSERT(nullptr != pexpr);
 
   // recursively process children
-  const ULONG arity = pexpr->Arity();
+  const uint32_t arity = pexpr->Arity();
   CExpressionArray *pdrgpexprChildren = GPOS_NEW(mp) CExpressionArray(mp);
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprChild = PexprDedupChildren(mp, (*pexpr)[ul]);
     pdrgpexprChildren->Append(pexprChild);
   }
@@ -269,8 +269,8 @@ CPropConstraint *CExpressionUtils::GetPropConstraintFromSubquery(CMemoryPool *mp
     filter->AddRef();
     subqueries->Append(filter);
   } else if (CPredicateUtils::FAnd(filter)) {
-    const ULONG arity = filter->Arity();
-    for (ULONG ul = 0; ul < arity; ul++) {
+    const uint32_t arity = filter->Arity();
+    for (uint32_t ul = 0; ul < arity; ul++) {
       CExpression *childFilter = (*filter)[ul];
       if (CUtils::FCorrelatedExistsAnySubquery(childFilter)) {
         childFilter->AddRef();

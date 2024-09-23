@@ -42,7 +42,7 @@ class ICostModelParams : public CRefCount {
   struct SCostParam {
    private:
     // param identifier
-    ULONG m_id;
+    uint32_t m_id;
 
     // param value
     CDouble m_value;
@@ -55,7 +55,7 @@ class ICostModelParams : public CRefCount {
 
    public:
     // ctor
-    SCostParam(ULONG id, CDouble dVal, CDouble dLowerBound, CDouble dUpperBound)
+    SCostParam(uint32_t id, CDouble dVal, CDouble dLowerBound, CDouble dUpperBound)
         : m_id(id), m_value(dVal), m_lower_bound_val(dLowerBound), m_upper_bound_val(dUpperBound) {
       GPOS_ASSERT(dVal >= dLowerBound);
       GPOS_ASSERT(dVal <= dUpperBound);
@@ -65,8 +65,7 @@ class ICostModelParams : public CRefCount {
     virtual ~SCostParam() = default;
 
     // return param identifier
-    ULONG
-    Id() const { return m_id; }
+    uint32_t Id() const { return m_id; }
 
     // return value
     CDouble Get() const { return m_value; }
@@ -77,7 +76,7 @@ class ICostModelParams : public CRefCount {
     // return upper bound value
     CDouble GetUpperBoundVal() const { return m_upper_bound_val; }
 
-    BOOL Equals(SCostParam *pcm) const {
+    bool Equals(SCostParam *pcm) const {
       return Id() == pcm->Id() && Get() == pcm->Get() && GetLowerBoundVal() == pcm->GetLowerBoundVal() &&
              GetUpperBoundVal() == pcm->GetUpperBoundVal();
     }
@@ -85,20 +84,20 @@ class ICostModelParams : public CRefCount {
   };  // struct SCostParam
 
   // lookup param by id
-  virtual SCostParam *PcpLookup(ULONG id) const = 0;
+  virtual SCostParam *PcpLookup(uint32_t id) const = 0;
 
   // lookup param by name
-  virtual SCostParam *PcpLookup(const CHAR *szName) const = 0;
+  virtual SCostParam *PcpLookup(const char *szName) const = 0;
 
   // set param by id
-  virtual void SetParam(ULONG id, CDouble dVal, CDouble dLowerBound, CDouble dUpperBound) = 0;
+  virtual void SetParam(uint32_t id, CDouble dVal, CDouble dLowerBound, CDouble dUpperBound) = 0;
 
   // set param by name
-  virtual void SetParam(const CHAR *szName, CDouble dVal, CDouble dLowerBound, CDouble dUpperBound) = 0;
+  virtual void SetParam(const char *szName, CDouble dVal, CDouble dLowerBound, CDouble dUpperBound) = 0;
 
-  virtual BOOL Equals(ICostModelParams *pcm) const = 0;
+  virtual bool Equals(ICostModelParams *pcm) const = 0;
 
-  virtual const CHAR *SzNameLookup(ULONG id) const = 0;
+  virtual const char *SzNameLookup(uint32_t id) const = 0;
 
   virtual gpos::IOstream &OsPrint(gpos::IOstream &os) const = 0;
 };

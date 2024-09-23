@@ -37,19 +37,19 @@ class CXformExploration : public CXform {
   ~CXformExploration() override;
 
   // type of operator
-  BOOL FExploration() const override {
+  bool FExploration() const override {
     GPOS_ASSERT(!FSubstitution() && !FImplementation());
     return true;
   }
 
   // is transformation a subquery unnesting (Subquery To Apply) xform?
-  virtual BOOL FSubqueryUnnesting() const { return false; }
+  virtual bool FSubqueryUnnesting() const { return false; }
 
   // is transformation an Apply decorrelation (Apply To Join) xform?
-  virtual BOOL FApplyDecorrelating() const { return false; }
+  virtual bool FApplyDecorrelating() const { return false; }
 
   // do stats need to be computed before applying xform?
-  virtual BOOL FNeedsStats() const { return false; }
+  virtual bool FNeedsStats() const { return false; }
 
   // conversion function
   static CXformExploration *Pxformexp(CXform *pxform) {

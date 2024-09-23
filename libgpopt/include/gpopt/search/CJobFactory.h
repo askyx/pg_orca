@@ -54,7 +54,7 @@ class CJobFactory {
   CMemoryPool *m_mp;
 
   // number of jobs in each pool
-  const ULONG m_ulJobs;
+  const uint32_t m_ulJobs;
 
   // container for testing jobs
   CSyncPool<CJobTest> *m_pspjTest;
@@ -111,7 +111,7 @@ class CJobFactory {
   CJobFactory(const CJobFactory &) = delete;
 
   // ctor
-  CJobFactory(CMemoryPool *mp, ULONG ulJobs);
+  CJobFactory(CMemoryPool *mp, uint32_t ulJobs);
 
   // dtor
   ~CJobFactory();

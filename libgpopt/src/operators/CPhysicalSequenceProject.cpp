@@ -59,8 +59,8 @@ void CPhysicalSequenceProject::CreateOrderSpec(CMemoryPool *mp) {
 
   COrderSpec *posFirst = (*m_pdrgpos)[0];
 #ifdef GPOS_DEBUG
-  const ULONG length = m_pdrgpos->Size();
-  for (ULONG ul = 1; ul < length; ul++) {
+  const uint32_t length = m_pdrgpos->Size();
+  for (uint32_t ul = 1; ul < length; ul++) {
     COrderSpec *posCurrent = (*m_pdrgpos)[ul];
     GPOS_ASSERT(posFirst->FSatisfies(posCurrent) && "first order spec must satisfy all other order specs");
   }
@@ -69,8 +69,8 @@ void CPhysicalSequenceProject::CreateOrderSpec(CMemoryPool *mp) {
   // we assume here that the first order spec in the children array satisfies all other
   // order specs in the array, this happens as part of the initial normalization
   // so we need to add columns only from the first order spec
-  const ULONG size = posFirst->UlSortColumns();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = posFirst->UlSortColumns();
+  for (uint32_t ul = 0; ul < size; ul++) {
     const CColRef *colref = posFirst->Pcr(ul);
     gpmd::IMDId *mdid = posFirst->GetMdIdSortOp(ul);
     mdid->AddRef();
@@ -96,8 +96,8 @@ void CPhysicalSequenceProject::ComputeRequiredLocalColumns(CMemoryPool *mp) {
   m_pcrsRequiredLocal = m_pos->PcrsUsed(mp);
 
   // add the columns used in the window frames
-  const ULONG size = m_pdrgpwf->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = m_pdrgpwf->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     CWindowFrame *pwf = (*m_pdrgpwf)[ul];
     if (nullptr != pwf->PexprLeading()) {
       m_pcrsRequiredLocal->Union(pwf->PexprLeading()->DeriveUsedColumns());
@@ -131,7 +131,7 @@ CPhysicalSequenceProject::~CPhysicalSequenceProject() {
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalSequenceProject::Matches(COperator *pop) const {
+bool CPhysicalSequenceProject::Matches(COperator *pop) const {
   GPOS_ASSERT(nullptr != pop);
   if (Eopid() == pop->Eopid()) {
     CPhysicalSequenceProject *popPhysicalSequenceProject = CPhysicalSequenceProject::PopConvert(pop);
@@ -150,9 +150,8 @@ BOOL CPhysicalSequenceProject::Matches(COperator *pop) const {
 //		Hashing function
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysicalSequenceProject::HashValue() const {
-  ULONG ulHash = 0;
+uint32_t CPhysicalSequenceProject::HashValue() const {
+  uint32_t ulHash = 0;
   ulHash = gpos::CombineHashes(ulHash, CWindowFrame::HashValue(m_pdrgpwf, 3 /*ulMaxSize*/));
   ulHash = gpos::CombineHashes(ulHash, COrderSpec::HashValue(m_pdrgpos, 3 /*ulMaxSize*/));
 
@@ -169,9 +168,9 @@ CPhysicalSequenceProject::HashValue() const {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalSequenceProject::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                   CColRefSet *pcrsRequired, ULONG child_index,
+                                                   CColRefSet *pcrsRequired, uint32_t child_index,
                                                    CDrvdPropArray *,  // pdrgpdpCtxt
-                                                   ULONG              // ulOptReq
+                                                   uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(0 == child_index && "Required properties can only be computed on the relational child");
 
@@ -195,13 +194,13 @@ CColRefSet *CPhysicalSequenceProject::PcrsRequired(CMemoryPool *mp, CExpressionH
 COrderSpec *CPhysicalSequenceProject::PosRequired(CMemoryPool *,        // mp
                                                   CExpressionHandle &,  // exprhdl
                                                   COrderSpec *,         // posRequired
-                                                  ULONG
+                                                  uint32_t
 #ifdef GPOS_DEBUG
                                                       child_index
 #endif  // GPOS_DEBUG
                                                   ,
                                                   CDrvdPropArray *,  // pdrgpdpCtxt
-                                                  ULONG              // ulOptReq
+                                                  uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
 
@@ -221,13 +220,13 @@ COrderSpec *CPhysicalSequenceProject::PosRequired(CMemoryPool *,        // mp
 CCTEReq *CPhysicalSequenceProject::PcteRequired(CMemoryPool *,        // mp,
                                                 CExpressionHandle &,  // exprhdl,
                                                 CCTEReq *pcter,
-                                                ULONG
+                                                uint32_t
 #ifdef GPOS_DEBUG
                                                     child_index
 #endif
                                                 ,
                                                 CDrvdPropArray *,  // pdrgpdpCtxt,
-                                                ULONG              // ulOptReq
+                                                uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -241,8 +240,8 @@ CCTEReq *CPhysicalSequenceProject::PcteRequired(CMemoryPool *,        // mp,
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalSequenceProject::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                                 ULONG  // ulOptReq
+bool CPhysicalSequenceProject::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                                 uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcrsRequired);
   GPOS_ASSERT(2 == exprhdl.Arity());
@@ -254,7 +253,7 @@ BOOL CPhysicalSequenceProject::FProvidesReqdCols(CExpressionHandle &exprhdl, CCo
   // include output columns of the relational child
   pcrs->Union(exprhdl.DeriveOutputColumns(0 /*child_index*/));
 
-  BOOL fProvidesCols = pcrs->ContainsAll(pcrsRequired);
+  bool fProvidesCols = pcrs->ContainsAll(pcrsRequired);
   pcrs->Release();
 
   return fProvidesCols;

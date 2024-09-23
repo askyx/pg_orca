@@ -60,7 +60,7 @@ CXform::EXformPromise CXformSimplifySubquery::Exfp(CExpressionHandle &exprhdl) c
 //		the function returns true if transformation succeeded
 //
 //---------------------------------------------------------------------------
-BOOL CXformSimplifySubquery::FSimplifyQuantified(CMemoryPool *mp, CExpression *pexprScalar,
+bool CXformSimplifySubquery::FSimplifyQuantified(CMemoryPool *mp, CExpression *pexprScalar,
                                                  CExpression **ppexprNewScalar) {
   GPOS_ASSERT(CUtils::FQuantifiedSubquery(pexprScalar->Pop()));
 
@@ -90,7 +90,7 @@ BOOL CXformSimplifySubquery::FSimplifyQuantified(CMemoryPool *mp, CExpression *p
 //		the function returns true if transformation succeeded
 //
 //---------------------------------------------------------------------------
-BOOL CXformSimplifySubquery::FSimplifyExistential(CMemoryPool *mp, CExpression *pexprScalar,
+bool CXformSimplifySubquery::FSimplifyExistential(CMemoryPool *mp, CExpression *pexprScalar,
                                                   CExpression **ppexprNewScalar) {
   GPOS_ASSERT(CUtils::FExistentialSubquery(pexprScalar->Pop()));
 
@@ -120,7 +120,7 @@ BOOL CXformSimplifySubquery::FSimplifyExistential(CMemoryPool *mp, CExpression *
 //		the function returns true if transformation succeeded
 //
 //---------------------------------------------------------------------------
-BOOL CXformSimplifySubquery::FSimplifySubqueryRecursive(CMemoryPool *mp, CExpression *pexprScalar,
+bool CXformSimplifySubquery::FSimplifySubqueryRecursive(CMemoryPool *mp, CExpression *pexprScalar,
                                                         CExpression **ppexprNewScalar, FnSimplify *pfnsimplify,
                                                         FnMatch *pfnmatch) {
   // protect against stack overflow during recursion
@@ -142,10 +142,10 @@ BOOL CXformSimplifySubquery::FSimplifySubqueryRecursive(CMemoryPool *mp, CExpres
   }
 
   // otherwise, recursively process children
-  const ULONG arity = pexprScalar->Arity();
+  const uint32_t arity = pexprScalar->Arity();
   CExpressionArray *pdrgpexprChildren = GPOS_NEW(mp) CExpressionArray(mp);
-  BOOL fSuccess = true;
-  for (ULONG ul = 0; fSuccess && ul < arity; ul++) {
+  bool fSuccess = true;
+  for (uint32_t ul = 0; fSuccess && ul < arity; ul++) {
     CExpression *pexprChild = nullptr;
     fSuccess = FSimplifySubqueryRecursive(mp, (*pexprScalar)[ul], &pexprChild, pfnsimplify, pfnmatch);
     if (fSuccess) {

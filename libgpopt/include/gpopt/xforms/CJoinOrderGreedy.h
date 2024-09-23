@@ -44,8 +44,7 @@ class CJoinOrderGreedy : public CJoinOrder {
   // main handler
   virtual CExpression *PexprExpand();
 
-  ULONG
-  PickBestJoin(CBitSet *candidate_nodes);
+  uint32_t PickBestJoin(CBitSet *candidate_nodes);
 
   CBitSet *GetAdjacentComponentsToJoinCandidate();
 

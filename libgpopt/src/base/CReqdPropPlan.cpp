@@ -67,8 +67,8 @@ CReqdPropPlan::~CReqdPropPlan() {
 //		Compute required columns
 //
 //---------------------------------------------------------------------------
-void CReqdPropPlan::ComputeReqdCols(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, ULONG child_index,
-                                    CDrvdPropArray *pdrgpdpCtxt) {
+void CReqdPropPlan::ComputeReqdCols(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput,
+                                    uint32_t child_index, CDrvdPropArray *pdrgpdpCtxt) {
   GPOS_ASSERT(nullptr == m_pcrs);
 
   CReqdPropPlan *prppInput = CReqdPropPlan::Prpp(prpInput);
@@ -84,8 +84,8 @@ void CReqdPropPlan::ComputeReqdCols(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Compute required CTEs
 //
 //---------------------------------------------------------------------------
-void CReqdPropPlan::ComputeReqdCTEs(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, ULONG child_index,
-                                    CDrvdPropArray *pdrgpdpCtxt) {
+void CReqdPropPlan::ComputeReqdCTEs(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput,
+                                    uint32_t child_index, CDrvdPropArray *pdrgpdpCtxt) {
   GPOS_ASSERT(nullptr == m_pcter);
 
   CReqdPropPlan *prppInput = CReqdPropPlan::Prpp(prpInput);
@@ -101,8 +101,8 @@ void CReqdPropPlan::ComputeReqdCTEs(CMemoryPool *mp, CExpressionHandle &exprhdl,
 //		Compute required props
 //
 //---------------------------------------------------------------------------
-void CReqdPropPlan::Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, ULONG child_index,
-                            CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) {
+void CReqdPropPlan::Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, uint32_t child_index,
+                            CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) {
   GPOS_CHECK_ABORT;
 
   CReqdPropPlan *prppInput = CReqdPropPlan::Prpp(prpInput);
@@ -110,10 +110,10 @@ void CReqdPropPlan::Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPr
   ComputeReqdCols(mp, exprhdl, prpInput, child_index, pdrgpdpCtxt);
   ComputeReqdCTEs(mp, exprhdl, prpInput, child_index, pdrgpdpCtxt);
 
-  ULONG ulOrderReq = 0;
-  ULONG ulDistrReq = 0;
-  ULONG ulRewindReq = 0;
-  ULONG ulPartPropagateReq = 0;
+  uint32_t ulOrderReq = 0;
+  uint32_t ulDistrReq = 0;
+  uint32_t ulRewindReq = 0;
+  uint32_t ulPartPropagateReq = 0;
   popPhysical->LookupRequest(ulOptReq, &ulOrderReq, &ulDistrReq, &ulRewindReq, &ulPartPropagateReq);
 
   m_peo = GPOS_NEW(mp) CEnfdOrder(
@@ -135,7 +135,7 @@ void CReqdPropPlan::Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdPr
 //		member
 //
 //---------------------------------------------------------------------------
-CPropSpec *CReqdPropPlan::Pps(ULONG ul) const {
+CPropSpec *CReqdPropPlan::Pps(uint32_t ul) const {
   CPropSpec::EPropSpecType epst = (CPropSpec::EPropSpecType)ul;
   switch (epst) {
     case CPropSpec::EpstOrder:
@@ -160,7 +160,7 @@ CPropSpec *CReqdPropPlan::Pps(ULONG ul) const {
 //		by all plan properties
 //
 //---------------------------------------------------------------------------
-BOOL CReqdPropPlan::FProvidesReqdCols(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulOptReq) const {
+bool CReqdPropPlan::FProvidesReqdCols(CMemoryPool *mp, CExpressionHandle &exprhdl, uint32_t ulOptReq) const {
   CPhysical *popPhysical = CPhysical::PopConvert(exprhdl.Pop());
 
   // check if operator provides required columns
@@ -171,8 +171,8 @@ BOOL CReqdPropPlan::FProvidesReqdCols(CMemoryPool *mp, CExpressionHandle &exprhd
   CColRefSet *pcrsOutput = exprhdl.DeriveOutputColumns();
 
   // check if property spec members use columns from operator output
-  BOOL fProvidesReqdCols = true;
-  for (ULONG ul = 0; fProvidesReqdCols && ul < CPropSpec::EpstSentinel; ul++) {
+  bool fProvidesReqdCols = true;
+  for (uint32_t ul = 0; fProvidesReqdCols && ul < CPropSpec::EpstSentinel; ul++) {
     CPropSpec *pps = Pps(ul);
     if (nullptr == pps) {
       continue;
@@ -194,10 +194,10 @@ BOOL CReqdPropPlan::FProvidesReqdCols(CMemoryPool *mp, CExpressionHandle &exprhd
 //		Equality function
 //
 //---------------------------------------------------------------------------
-BOOL CReqdPropPlan::Equals(const CReqdPropPlan *prpp) const {
+bool CReqdPropPlan::Equals(const CReqdPropPlan *prpp) const {
   GPOS_ASSERT(nullptr != prpp);
 
-  BOOL result =
+  bool result =
       PcrsRequired()->Equals(prpp->PcrsRequired()) && Pcter()->Equals(prpp->Pcter()) && Peo()->Matches(prpp->Peo());
 
   if (result) {
@@ -219,13 +219,12 @@ BOOL CReqdPropPlan::Equals(const CReqdPropPlan *prpp) const {
 //		Compute hash value using required columns and required sort order
 //
 //---------------------------------------------------------------------------
-ULONG
-CReqdPropPlan::HashValue() const {
+uint32_t CReqdPropPlan::HashValue() const {
   GPOS_ASSERT(nullptr != m_pcrs);
   GPOS_ASSERT(nullptr != m_peo);
   GPOS_ASSERT(nullptr != m_pcter);
 
-  ULONG ulHash = m_pcrs->HashValue();
+  uint32_t ulHash = m_pcrs->HashValue();
   ulHash = gpos::CombineHashes(ulHash, m_peo->HashValue());
   ulHash = gpos::CombineHashes(ulHash, m_pcter->HashValue());
 
@@ -240,7 +239,7 @@ CReqdPropPlan::HashValue() const {
 //		Check if plan properties are satisfied by the given derived properties
 //
 //---------------------------------------------------------------------------
-BOOL CReqdPropPlan::FSatisfied(const CDrvdPropRelational *pdprel, const CDrvdPropPlan *pdpplan) const {
+bool CReqdPropPlan::FSatisfied(const CDrvdPropRelational *pdprel, const CDrvdPropPlan *pdpplan) const {
   GPOS_ASSERT(nullptr != pdprel);
   GPOS_ASSERT(nullptr != pdpplan);
   GPOS_ASSERT(pdprel->IsComplete());
@@ -272,7 +271,7 @@ BOOL CReqdPropPlan::FSatisfied(const CDrvdPropRelational *pdprel, const CDrvdPro
 //		Check if plan properties are compatible with the given derived properties
 //
 //---------------------------------------------------------------------------
-BOOL CReqdPropPlan::FCompatible(CExpressionHandle &exprhdl, CPhysical *popPhysical, const CDrvdPropRelational *pdprel,
+bool CReqdPropPlan::FCompatible(CExpressionHandle &exprhdl, CPhysical *popPhysical, const CDrvdPropRelational *pdprel,
                                 const CDrvdPropPlan *pdpplan) const {
   GPOS_ASSERT(nullptr != pdpplan);
   GPOS_ASSERT(nullptr != pdprel);
@@ -349,11 +348,10 @@ IOstream &CReqdPropPlan::OsPrint(IOstream &os) const {
 //		Hash function used for cost bounding
 //
 //---------------------------------------------------------------------------
-ULONG
-CReqdPropPlan::UlHashForCostBounding(const CReqdPropPlan *prpp) {
+uint32_t CReqdPropPlan::UlHashForCostBounding(const CReqdPropPlan *prpp) {
   GPOS_ASSERT(nullptr != prpp);
 
-  ULONG ulHash = prpp->PcrsRequired()->HashValue();
+  uint32_t ulHash = prpp->PcrsRequired()->HashValue();
 
   return ulHash;
 }
@@ -366,7 +364,7 @@ CReqdPropPlan::UlHashForCostBounding(const CReqdPropPlan *prpp) {
 //		Equality function used for cost bounding
 //
 //---------------------------------------------------------------------------
-BOOL CReqdPropPlan::FEqualForCostBounding(const CReqdPropPlan *prppFst, const CReqdPropPlan *prppSnd) {
+bool CReqdPropPlan::FEqualForCostBounding(const CReqdPropPlan *prppFst, const CReqdPropPlan *prppSnd) {
   GPOS_ASSERT(nullptr != prppFst);
   GPOS_ASSERT(nullptr != prppSnd);
 

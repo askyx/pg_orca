@@ -91,7 +91,7 @@ CXformSet *CLogicalLeftOuterApply::PxfsCandidates(CMemoryPool *mp) const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalLeftOuterApply::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                              BOOL must_exist) {
+                                                              bool must_exist) {
   CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
   return GPOS_NEW(mp) CLogicalLeftOuterApply(mp, pdrgpcrInner, m_eopidOriginSubq);

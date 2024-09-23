@@ -26,7 +26,7 @@ using namespace gpdxl;
 //		Construct a DXL Logical limit node
 //
 //---------------------------------------------------------------------------
-CDXLLogicalLimit::CDXLLogicalLimit(CMemoryPool *mp, BOOL top_limit_under_dml)
+CDXLLogicalLimit::CDXLLogicalLimit(CMemoryPool *mp, bool top_limit_under_dml)
     : CDXLLogical(mp), m_top_limit_under_dml(top_limit_under_dml) {}
 
 //---------------------------------------------------------------------------
@@ -72,7 +72,7 @@ const CWStringConst *CDXLLogicalLimit::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalLimit::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLLogicalLimit::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(4 == node->Arity());
 
   // Assert the validity of sort column list

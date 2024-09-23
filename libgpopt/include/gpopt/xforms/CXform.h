@@ -232,18 +232,18 @@ class CXform : public CRefCount {
   virtual EXformId Exfid() const = 0;
 
   // return a string for xform name
-  virtual const CHAR *SzId() const = 0;
+  virtual const char *SzId() const = 0;
 
   // the following functions check xform type
 
   // is xform substitution?
-  virtual BOOL FSubstitution() const { return false; }
+  virtual bool FSubstitution() const { return false; }
 
   // is xform exploration?
-  virtual BOOL FExploration() const { return false; }
+  virtual bool FExploration() const { return false; }
 
   // is xform implementation?
-  virtual BOOL FImplementation() const { return false; }
+  virtual bool FImplementation() const { return false; }
 
   // actual transformation
   virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const = 0;
@@ -252,7 +252,7 @@ class CXform : public CRefCount {
   CExpression *PexprPattern() const { return m_pexpr; }
 
   // check compatibility with another xform
-  virtual BOOL FCompatible(CXform::EXformId) { return true; }
+  virtual bool FCompatible(CXform::EXformId) { return true; }
 
   // compute xform promise for a given expression handle
   virtual EXformPromise Exfp(CExpressionHandle &exprhdl) const = 0;
@@ -263,15 +263,15 @@ class CXform : public CRefCount {
 #ifdef GPOS_DEBUG
 
   // verify pattern against given expression
-  BOOL FCheckPattern(CExpression *pexpr) const;
+  bool FCheckPattern(CExpression *pexpr) const;
 
   // verify xform promise on the given expression
-  static BOOL FPromising(CMemoryPool *mp, const CXform *pxform, CExpression *pexpr);
+  static bool FPromising(CMemoryPool *mp, const CXform *pxform, CExpression *pexpr);
 
 #endif  // GPOS_DEBUG
 
   // equality function over xform ids
-  static BOOL FEqualIds(const CHAR *szIdOne, const CHAR *szIdTwo);
+  static bool FEqualIds(const char *szIdOne, const char *szIdTwo);
 
   // returns a set containing all xforms related to nl join
   // caller takes ownership of the returned set
@@ -308,7 +308,7 @@ class CXform : public CRefCount {
   // of expressions generated for group expression can be significantly
   // large causing the Xform to be applied many times. This can lead to
   // significantly long planning time, so such Xform should only be applied once
-  virtual BOOL IsApplyOnce();
+  virtual bool IsApplyOnce();
 
 };  // class CXform
 

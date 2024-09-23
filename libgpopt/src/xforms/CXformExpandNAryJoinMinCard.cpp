@@ -67,11 +67,11 @@ void CXformExpandNAryJoinMinCard::Transform(CXformContext *pxfctxt, CXformResult
 
   CMemoryPool *mp = pxfctxt->Pmp();
 
-  const ULONG arity = pexpr->Arity();
+  const uint32_t arity = pexpr->Arity();
   GPOS_ASSERT(arity >= 3);
 
   CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
-  for (ULONG ul = 0; ul < arity - 1; ul++) {
+  for (uint32_t ul = 0; ul < arity - 1; ul++) {
     CExpression *pexprChild = (*pexpr)[ul];
     pexprChild->AddRef();
     pdrgpexpr->Append(pexprChild);

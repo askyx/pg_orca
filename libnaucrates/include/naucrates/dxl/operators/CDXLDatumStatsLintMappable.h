@@ -6,7 +6,7 @@
 //		CDXLDatumStatsLintMappable.h
 //
 //	@doc:
-//		Class for representing DXL datum of types having LINT mapping
+//		Class for representing DXL datum of types having int64_t mapping
 //
 //	@owner:
 //
@@ -32,20 +32,20 @@ using namespace gpos;
 //		CDXLDatumStatsLintMappable
 //
 //	@doc:
-//		Class for representing DXL datum of types having LINT mapping
+//		Class for representing DXL datum of types having int64_t mapping
 //
 //---------------------------------------------------------------------------
 class CDXLDatumStatsLintMappable : public CDXLDatumGeneric {
  private:
-  // for statistics computation, map to LINT
-  LINT m_val;
+  // for statistics computation, map to int64_t
+  int64_t m_val;
 
  public:
   CDXLDatumStatsLintMappable(const CDXLDatumStatsLintMappable &) = delete;
 
   // ctor
-  CDXLDatumStatsLintMappable(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, BOOL is_null, BYTE *byte_array,
-                             ULONG length, LINT value);
+  CDXLDatumStatsLintMappable(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, bool is_null,
+                             uint8_t *byte_array, uint32_t length, int64_t value);
 
   // dtor
   ~CDXLDatumStatsLintMappable() override = default;
@@ -65,11 +65,11 @@ class CDXLDatumStatsLintMappable : public CDXLDatumGeneric {
 
   // statistics related APIs
 
-  // can datum be mapped to LINT
-  BOOL IsDatumMappableToLINT() const override { return true; }
+  // can datum be mapped to int64_t
+  bool IsDatumMappableToLINT() const override { return true; }
 
-  // return the LINT mapping needed for statistics computation
-  LINT GetLINTMapping() const override { return m_val; }
+  // return the int64_t mapping needed for statistics computation
+  int64_t GetLINTMapping() const override { return m_val; }
 };
 }  // namespace gpdxl
 

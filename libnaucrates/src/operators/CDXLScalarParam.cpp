@@ -26,7 +26,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarParam::CDXLScalarParam(CMemoryPool *mp, ULONG id, IMDId *mdid_type, INT type_modifer)
+CDXLScalarParam::CDXLScalarParam(CMemoryPool *mp, uint32_t id, IMDId *mdid_type, int32_t type_modifer)
     : CDXLScalar(mp), m_id(id), m_mdid_type(mdid_type), m_type_modifer(type_modifer) {}
 
 //---------------------------------------------------------------------------
@@ -65,8 +65,7 @@ const CWStringConst *CDXLScalarParam::GetOpNameStr() const {
   return CDXLTokens::GetDXLTokenStr(EdxltokenScalarParam);
 }
 
-ULONG
-CDXLScalarParam::GetId() const {
+uint32_t CDXLScalarParam::GetId() const {
   return m_id;
 }
 
@@ -74,7 +73,7 @@ IMDId *CDXLScalarParam::GetMDIdType() const {
   return m_mdid_type;
 }
 
-INT CDXLScalarParam::GetTypeModifier() const {
+int32_t CDXLScalarParam::GetTypeModifier() const {
   return m_type_modifer;
 }
 //---------------------------------------------------------------------------
@@ -85,7 +84,7 @@ INT CDXLScalarParam::GetTypeModifier() const {
 //		Does the operator return boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarParam::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarParam::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
 }
 
@@ -99,7 +98,7 @@ BOOL CDXLScalarParam::HasBoolResult(CMDAccessor *md_accessor) const {
 //
 //---------------------------------------------------------------------------
 void CDXLScalarParam::AssertValid(const CDXLNode *node,
-                                  BOOL  // validate_children
+                                  bool  // validate_children
 ) const {
   GPOS_ASSERT(0 == node->Arity());
   GPOS_ASSERT(nullptr != m_mdid_type);

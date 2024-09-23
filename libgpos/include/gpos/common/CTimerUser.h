@@ -32,7 +32,7 @@ class CTimerUser : public ITimer {
   CTimerUser() = default;
 
   // retrieve elapsed user time in micro-seconds
-  ULONG ElapsedUS() const override;
+  uint32_t ElapsedUS() const override;
 
   // restart timer
   void Restart() override;

@@ -40,7 +40,7 @@ class CXformCTEAnchor2TrivialSelect : public CXformExploration {
   EXformId Exfid() const override { return ExfCTEAnchor2TrivialSelect; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformCTEAnchor2TrivialSelect"; }
+  const char *SzId() const override { return "CXformCTEAnchor2TrivialSelect"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

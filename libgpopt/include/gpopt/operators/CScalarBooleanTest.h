@@ -39,10 +39,10 @@ class CScalarBooleanTest : public CScalar {
     EbtSentinel
   };
 
-  static const WCHAR m_rgwszBoolTest[EbtSentinel][30];
+  static const wchar_t m_rgwszBoolTest[EbtSentinel][30];
 
   // mapping operator type and child value into the corresponding result value
-  static const BYTE m_rgBoolEvalMap[][3];
+  static const uint8_t m_rgBoolEvalMap[][3];
 
  private:
   // boolean test
@@ -63,21 +63,21 @@ class CScalarBooleanTest : public CScalar {
   EOperatorId Eopid() const override { return EopScalarBooleanTest; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarBooleanTest"; }
+  const char *SzId() const override { return "CScalarBooleanTest"; }
 
   // accessor of boolean test type
   EBoolTest Ebt() const { return m_ebt; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

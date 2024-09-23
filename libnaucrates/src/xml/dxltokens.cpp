@@ -750,7 +750,7 @@ void CDXLTokens::Init(CMemoryPool *mp) {
 
   m_pstrmap = GPOS_NEW_ARRAY(m_mp, SStrMapElem, EdxltokenSentinel);
 
-  for (ULONG ul = 0; ul < GPOS_ARRAY_SIZE(rgStrMap); ul++) {
+  for (uint32_t ul = 0; ul < GPOS_ARRAY_SIZE(rgStrMap); ul++) {
     SWszMapElem mapelem = rgStrMap[ul];
 
     m_pstrmap[mapelem.m_edxlt].m_pstr = GPOS_NEW(m_mp) CWStringConst(m_mp, mapelem.m_wsz);

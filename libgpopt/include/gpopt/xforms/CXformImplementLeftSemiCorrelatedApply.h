@@ -45,7 +45,7 @@ class CXformImplementLeftSemiCorrelatedApply
   // ident accessors
   EXformId Exfid() const override { return ExfImplementLeftSemiCorrelatedApply; }
 
-  const CHAR *SzId() const override { return "CXformImplementLeftSemiCorrelatedApply"; }
+  const char *SzId() const override { return "CXformImplementLeftSemiCorrelatedApply"; }
 
 };  // class CXformImplementLeftSemiCorrelatedApply
 

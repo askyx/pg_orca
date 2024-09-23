@@ -15,7 +15,7 @@ using namespace gpdxl;
 using namespace gpmd;
 
 // ctor
-CMDIndexInfo::CMDIndexInfo(IMDId *mdid, BOOL is_partial) : m_mdid(mdid), m_is_partial(is_partial) {
+CMDIndexInfo::CMDIndexInfo(IMDId *mdid, bool is_partial) : m_mdid(mdid), m_is_partial(is_partial) {
   GPOS_ASSERT(mdid->IsValid());
 }
 
@@ -30,7 +30,7 @@ IMDId *CMDIndexInfo::MDId() const {
 }
 
 // is the index partial
-BOOL CMDIndexInfo::IsPartial() const {
+bool CMDIndexInfo::IsPartial() const {
   return m_is_partial;
 }
 

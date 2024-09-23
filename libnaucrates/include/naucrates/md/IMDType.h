@@ -84,10 +84,10 @@ class IMDType : public IMDCacheObject {
   virtual const IMDId *CmpOpMdid() const = 0;
 
   // id of hash operator for type
-  virtual BOOL IsHashable() const = 0;
+  virtual bool IsHashable() const = 0;
 
   // type is merge joinable on '='
-  virtual BOOL IsMergeJoinable() const = 0;
+  virtual bool IsMergeJoinable() const = 0;
 
   // id of the array type for the type
   virtual IMDId *GetArrayTypeMdid() const = 0;
@@ -102,21 +102,21 @@ class IMDType : public IMDCacheObject {
   virtual IDatum *GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const = 0;
 
   // is type fixed length
-  virtual BOOL IsFixedLength() const = 0;
+  virtual bool IsFixedLength() const = 0;
 
   // is type composite
-  virtual BOOL IsComposite() const = 0;
+  virtual bool IsComposite() const = 0;
 
-  virtual BOOL IsTextRelated() const { return false; }
+  virtual bool IsTextRelated() const { return false; }
 
   // id of the relation corresponding to a composite type
   virtual IMDId *GetBaseRelMdid() const = 0;
 
   // type length
-  virtual ULONG Length() const = 0;
+  virtual uint32_t Length() const = 0;
 
   // is type passed by value
-  virtual BOOL IsPassedByValue() const = 0;
+  virtual bool IsPassedByValue() const = 0;
 
   // return the null constant for this type
   virtual IDatum *DatumNull() const = 0;
@@ -131,17 +131,17 @@ class IMDType : public IMDCacheObject {
   virtual CDXLDatum *GetDXLDatumNull(CMemoryPool *mp) const = 0;
 
   // is type an ambiguous one? e.g., AnyElement in GPDB
-  virtual BOOL IsAmbiguous() const { return false; }
+  virtual bool IsAmbiguous() const { return false; }
 
   // string representation of comparison types
   static const CWStringConst *GetCmpTypeStr(IMDType::ECmpType cmp_type);
 
   // return true if we can perform statistical comparison between datums of these two types; else return false
-  static BOOL StatsAreComparable(const IMDType *mdtype_first, const IMDType *mdtype_second);
+  static bool StatsAreComparable(const IMDType *mdtype_first, const IMDType *mdtype_second);
 
   // return true if we can perform statistical comparison between datum of the given type and a given datum; else return
   // false
-  static BOOL StatsAreComparable(const IMDType *mdtype_first, const IDatum *datum_second);
+  static bool StatsAreComparable(const IMDType *mdtype_first, const IDatum *datum_second);
 };
 }  // namespace gpmd
 

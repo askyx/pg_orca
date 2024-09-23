@@ -21,7 +21,7 @@
 
 namespace gpos {
 // fwd declaration
-template <class K, class T, ULONG (*HashFn)(const K *), BOOL (*EqFn)(const K *, const K *), void (*DestroyKFn)(K *),
+template <class K, class T, uint32_t (*HashFn)(const K *), bool (*EqFn)(const K *, const K *), void (*DestroyKFn)(K *),
           void (*DestroyTFn)(T *)>
 class CHashMapIter;
 
@@ -33,7 +33,7 @@ class CHashMapIter;
 //		Hash map
 //
 //---------------------------------------------------------------------------
-template <class K, class T, ULONG (*HashFn)(const K *), BOOL (*EqFn)(const K *, const K *), void (*DestroyKFn)(K *),
+template <class K, class T, uint32_t (*HashFn)(const K *), bool (*EqFn)(const K *, const K *), void (*DestroyKFn)(K *),
           void (*DestroyTFn)(T *)>
 
 class CHashMap : public CRefCount {
@@ -56,13 +56,13 @@ class CHashMap : public CRefCount {
     T *m_value;
 
     // own objects
-    BOOL m_owns_objects;
+    bool m_owns_objects;
 
    public:
     CHashMapElem(const CHashMapElem &) = delete;
 
     // ctor
-    CHashMapElem(K *key, T *value, BOOL fOwn) : m_key(key), m_value(value), m_owns_objects(fOwn) {
+    CHashMapElem(K *key, T *value, bool fOwn) : m_key(key), m_value(value), m_owns_objects(fOwn) {
       GPOS_ASSERT(nullptr != key);
     }
 
@@ -91,17 +91,17 @@ class CHashMap : public CRefCount {
     }
 
     // equality operator -- map elements are equal if their keys match
-    BOOL operator==(const CHashMapElem &elem) const { return EqFn(m_key, elem.m_key); }
+    bool operator==(const CHashMapElem &elem) const { return EqFn(m_key, elem.m_key); }
   };
 
   // memory pool
   CMemoryPool *const m_mp;
 
   // size
-  ULONG m_num_chains;
+  uint32_t m_num_chains;
 
   // number of entries
-  ULONG m_size;
+  uint32_t m_size;
 
   // each hash chain is an array of hashmap elements
   using CHashSetElemArray = CDynamicPtrArray<CHashMapElem, CleanupDelete>;
@@ -123,7 +123,7 @@ class CHashMap : public CRefCount {
 
   // clear elements
   void Clear() {
-    for (ULONG i = 0; i < m_filled_chains->Size(); i++) {
+    for (uint32_t i = 0; i < m_filled_chains->Size(); i++) {
       // release each hash chain
       m_chains[*(*m_filled_chains)[i]]->Release();
     }
@@ -148,7 +148,7 @@ class CHashMap : public CRefCount {
   CHashMap(const CHashMap<K, T, HashFn, EqFn, DestroyKFn, DestroyTFn> &) = delete;
 
   // ctor
-  CHashMap(CMemoryPool *mp, ULONG num_chains = 127)
+  CHashMap(CMemoryPool *mp, uint32_t num_chains = 127)
       : m_mp(mp),
         m_num_chains(num_chains),
         m_size(0),
@@ -170,7 +170,7 @@ class CHashMap : public CRefCount {
   }
 
   // insert an element if key is not yet present
-  BOOL Insert(K *key, T *value) {
+  bool Insert(K *key, T *value) {
     if (nullptr != Find(key)) {
       return false;
     }
@@ -178,8 +178,8 @@ class CHashMap : public CRefCount {
     CHashSetElemArray **chain = GetChain(key);
     if (nullptr == *chain) {
       *chain = GPOS_NEW(m_mp) CHashSetElemArray(m_mp);
-      INT chain_idx = HashFn(key) % m_num_chains;
-      m_filled_chains->Append(GPOS_NEW(m_mp) INT(chain_idx));
+      int32_t chain_idx = HashFn(key) % m_num_chains;
+      m_filled_chains->Append(GPOS_NEW(m_mp) int32_t(chain_idx));
     }
 
     CHashMapElem *elem = GPOS_NEW(m_mp) CHashMapElem(key, value, true /*fOwn*/);
@@ -202,10 +202,10 @@ class CHashMap : public CRefCount {
   }
 
   // replace the value in a map entry with a new given value
-  BOOL Replace(const K *key, T *ptNew) {
+  bool Replace(const K *key, T *ptNew) {
     GPOS_ASSERT(nullptr != key);
 
-    BOOL fSuccess = false;
+    bool fSuccess = false;
     CHashMapElem *elem = Lookup(key);
     if (nullptr != elem) {
       elem->ReplaceValue(ptNew);
@@ -215,11 +215,11 @@ class CHashMap : public CRefCount {
     return fSuccess;
   }
 
-  BOOL Delete(const K *key) {
+  bool Delete(const K *key) {
     CHashSetElemArray **chain = GetChain(key);
 
     if (nullptr != *chain) {
-      for (ULONG ul = 0; ul < (*chain)->Size(); ul++) {
+      for (uint32_t ul = 0; ul < (*chain)->Size(); ul++) {
         if (EqFn((**chain)[ul]->Key(), key)) {
           // found the entry, now remove it by putting it last,
           // then removing the last element
@@ -234,14 +234,13 @@ class CHashMap : public CRefCount {
   }
 
   // return number of map entries
-  ULONG
-  Size() const { return m_size; }
+  uint32_t Size() const { return m_size; }
 
   Keys *GetKeys() const { return m_keys; }
 };  // class CHashMap
 
-using UlongToUlongMap =
-    CHashMap<ULONG, ULONG, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>, CleanupDelete<ULONG>>;
+using UlongToUlongMap = CHashMap<uint32_t, uint32_t, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                 CleanupDelete<uint32_t>, CleanupDelete<uint32_t>>;
 }  // namespace gpos
 
 #endif  // !GPOS_CHashMap_H

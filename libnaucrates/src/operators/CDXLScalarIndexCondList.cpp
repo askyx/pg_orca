@@ -58,12 +58,12 @@ const CWStringConst *CDXLScalarIndexCondList::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarIndexCondList::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLScalarIndexCondList::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(nullptr != node);
 
   if (validate_children) {
-    const ULONG arity = node->Arity();
-    for (ULONG ul = 0; ul < arity; ul++) {
+    const uint32_t arity = node->Arity();
+    for (uint32_t ul = 0; ul < arity; ul++) {
       CDXLNode *child_dxlnode = (*node)[ul];
       GPOS_ASSERT(EdxloptypeScalar == child_dxlnode->GetOperator()->GetDXLOperatorType());
       child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);

@@ -33,11 +33,11 @@ namespace gpos {
 //---------------------------------------------------------------------------
 class CMemoryPoolManager {
  private:
-  using MemoryPoolKeyAccessor = CSyncHashtableAccessByKey<CMemoryPool, ULONG_PTR>;
+  using MemoryPoolKeyAccessor = CSyncHashtableAccessByKey<CMemoryPool, uintptr_t>;
 
-  using MemoryPoolIter = CSyncHashtableIter<CMemoryPool, ULONG_PTR>;
+  using MemoryPoolIter = CSyncHashtableIter<CMemoryPool, uintptr_t>;
 
-  using MemoryPoolIterAccessor = CSyncHashtableAccessByIter<CMemoryPool, ULONG_PTR>;
+  using MemoryPoolIterAccessor = CSyncHashtableAccessByIter<CMemoryPool, uintptr_t>;
 
   // memory pool in which all objects created by the manager itself
   // are allocated - must be thread-safe
@@ -48,7 +48,7 @@ class CMemoryPoolManager {
   CMemoryPool *m_global_memory_pool;
 
   // hash table to maintain created pools
-  CSyncHashtable<CMemoryPool, ULONG_PTR> *m_ht_all_pools;
+  CSyncHashtable<CMemoryPool, uintptr_t> *m_ht_all_pools;
 
   // global instance
   static CMemoryPoolManager *m_memory_pool_mgr;
@@ -109,7 +109,7 @@ class CMemoryPoolManager {
   IOstream &OsPrint(IOstream &os);
 
   // print memory pools whose allocated size above the given threshold
-  void PrintOverSizedPools(CMemoryPool *trace, ULLONG size_threshold);
+  void PrintOverSizedPools(CMemoryPool *trace, uint64_t size_threshold);
 #endif  // GPOS_DEBUG
 
   // delete memory pools and release manager
@@ -124,13 +124,13 @@ class CMemoryPoolManager {
   virtual ~CMemoryPoolManager() = default;
 
   // return total allocated size in bytes
-  ULLONG TotalAllocatedSize();
+  uint64_t TotalAllocatedSize();
 
   // free memory allocation
   virtual void DeleteImpl(void *ptr, CMemoryPool::EAllocationType eat);
 
   // get user requested size of allocation
-  virtual ULONG UserSizeOfAlloc(const void *ptr);
+  virtual uint32_t UserSizeOfAlloc(const void *ptr);
 
   // initialize global instance
   static void Init();

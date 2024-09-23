@@ -24,8 +24,8 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarFieldSelect::CScalarFieldSelect(CMemoryPool *mp, IMDId *field_type, IMDId *field_collation, INT type_modifier,
-                                       SINT field_number)
+CScalarFieldSelect::CScalarFieldSelect(CMemoryPool *mp, IMDId *field_type, IMDId *field_collation,
+                                       int32_t type_modifier, int16_t field_number)
     : CScalar(mp),
       m_field_type(field_type),
       m_field_collation(field_collation),
@@ -55,11 +55,10 @@ CScalarFieldSelect::~CScalarFieldSelect() {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarFieldSelect::HashValue() const {
+uint32_t CScalarFieldSelect::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(),
                              CombineHashes(CombineHashes(m_field_type->HashValue(), m_field_collation->HashValue()),
-                                           gpos::HashValue<SINT>(&m_field_number)));
+                                           gpos::HashValue<int16_t>(&m_field_number)));
 }
 
 //---------------------------------------------------------------------------
@@ -70,7 +69,7 @@ CScalarFieldSelect::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarFieldSelect::Matches(COperator *pop) const {
+bool CScalarFieldSelect::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }

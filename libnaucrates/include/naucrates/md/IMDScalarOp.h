@@ -51,13 +51,13 @@ class IMDScalarOp : public IMDCacheObject {
   virtual IMDId *GetInverseOpMdid() const = 0;
 
   // is this an equality operator
-  virtual BOOL IsEqualityOp() const = 0;
+  virtual bool IsEqualityOp() const = 0;
 
   // does operator return NULL when all inputs are NULL?
-  virtual BOOL ReturnsNullOnNullInput() const = 0;
+  virtual bool ReturnsNullOnNullInput() const = 0;
 
   // preserves NDVs of its inputs?
-  virtual BOOL IsNDVPreserving() const = 0;
+  virtual bool IsNDVPreserving() const = 0;
 
   virtual IMDType::ECmpType ParseCmpType() const = 0;
 
@@ -65,10 +65,10 @@ class IMDScalarOp : public IMDCacheObject {
   CMDName Mdname() const override = 0;
 
   // number of classes this operator belongs to
-  virtual ULONG OpfamiliesCount() const = 0;
+  virtual uint32_t OpfamiliesCount() const = 0;
 
   // operator class at given position
-  virtual IMDId *OpfamilyMdidAt(ULONG pos) const = 0;
+  virtual IMDId *OpfamilyMdidAt(uint32_t pos) const = 0;
 
   // compatible hash opfamily
   virtual IMDId *HashOpfamilyMdid() const = 0;

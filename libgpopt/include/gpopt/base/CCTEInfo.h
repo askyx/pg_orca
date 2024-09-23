@@ -48,40 +48,39 @@ class CCTEInfo : public CRefCount {
   struct SConsumerCounter {
    private:
     // consumer ID
-    ULONG m_ulCTEId;
+    uint32_t m_ulCTEId;
 
     // number of occurrences
-    ULONG m_ulCount;
+    uint32_t m_ulCount;
 
    public:
     // ctor
-    explicit SConsumerCounter(ULONG ulCTEId) : m_ulCTEId(ulCTEId), m_ulCount(1) {}
+    explicit SConsumerCounter(uint32_t ulCTEId) : m_ulCTEId(ulCTEId), m_ulCount(1) {}
 
     // consumer ID
-    ULONG
-    UlCTEId() const { return m_ulCTEId; }
+    uint32_t UlCTEId() const { return m_ulCTEId; }
 
     // number of consumers
-    ULONG
-    UlCount() const { return m_ulCount; }
+    uint32_t UlCount() const { return m_ulCount; }
 
     // increment number of consumers
     void Increment() { m_ulCount++; }
   };
 
-  // hash map mapping ULONG -> SConsumerCounter
-  using UlongToConsumerCounterMap = CHashMap<ULONG, SConsumerCounter, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                             CleanupDelete<ULONG>, CleanupDelete<SConsumerCounter>>;
+  // hash map mapping uint32_t -> SConsumerCounter
+  using UlongToConsumerCounterMap =
+      CHashMap<uint32_t, SConsumerCounter, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>, CleanupDelete<uint32_t>,
+               CleanupDelete<SConsumerCounter>>;
 
   // map iterator
   using UlongToConsumerCounterMapIter =
-      CHashMapIter<ULONG, SConsumerCounter, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>,
-                   CleanupDelete<SConsumerCounter>>;
+      CHashMapIter<uint32_t, SConsumerCounter, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                   CleanupDelete<uint32_t>, CleanupDelete<SConsumerCounter>>;
 
-  // hash map mapping ULONG -> UlongToConsumerCounterMap: maps from CTE producer ID to all consumers inside this CTE
+  // hash map mapping uint32_t -> UlongToConsumerCounterMap: maps from CTE producer ID to all consumers inside this CTE
   using UlongToProducerConsumerMap =
-      CHashMap<ULONG, UlongToConsumerCounterMap, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>,
-               CleanupRelease<UlongToConsumerCounterMap>>;
+      CHashMap<uint32_t, UlongToConsumerCounterMap, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+               CleanupDelete<uint32_t>, CleanupRelease<UlongToConsumerCounterMap>>;
 
   //-------------------------------------------------------------------
   //	@struct:
@@ -103,15 +102,15 @@ class CCTEInfo : public CRefCount {
     ColRefToUlongMap *m_phmcrulConsumers;
 
     // is this CTE used
-    BOOL m_fUsed;
+    bool m_fUsed;
 
     // does CTE have outer references outside CTE? If so, force inlining
-    BOOL m_hasOuterReferences;
+    bool m_hasOuterReferences;
 
    public:
     // ctors
     CCTEInfoEntry(CMemoryPool *mp, CExpression *pexprCTEProducer);
-    CCTEInfoEntry(CMemoryPool *mp, CExpression *pexprCTEProducer, BOOL fUsed);
+    CCTEInfoEntry(CMemoryPool *mp, CExpression *pexprCTEProducer, bool fUsed);
 
     // dtor
     ~CCTEInfoEntry() override;
@@ -120,10 +119,10 @@ class CCTEInfo : public CRefCount {
     CExpression *Pexpr() const { return m_pexprCTEProducer; }
 
     // is this CTE used?
-    BOOL FUsed() const { return m_fUsed; }
+    bool FUsed() const { return m_fUsed; }
 
     // CTE id
-    ULONG UlCTEId() const;
+    uint32_t UlCTEId() const;
 
     // mark CTE as unused
     void MarkUnused() { m_fUsed = false; }
@@ -135,23 +134,24 @@ class CCTEInfo : public CRefCount {
     void AddConsumerCols(CColRefArray *colref_array);
 
     // return position of given consumer column in consumer output
-    ULONG UlConsumerColPos(CColRef *colref);
+    uint32_t UlConsumerColPos(CColRef *colref);
 
     // check if CTE entry has outer reference
-    BOOL HasOuterReferences() const { return m_hasOuterReferences; }
+    bool HasOuterReferences() const { return m_hasOuterReferences; }
 
     // mark cte entry as containing an outer reference
     void SetHasOuterReferences() { m_hasOuterReferences = true; }
 
   };  // class CCTEInfoEntry
 
-  // hash maps mapping ULONG -> CCTEInfoEntry
-  using UlongToCTEInfoEntryMap = CHashMap<ULONG, CCTEInfoEntry, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                          CleanupDelete<ULONG>, CleanupRelease<CCTEInfoEntry>>;
+  // hash maps mapping uint32_t -> CCTEInfoEntry
+  using UlongToCTEInfoEntryMap = CHashMap<uint32_t, CCTEInfoEntry, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                          CleanupDelete<uint32_t>, CleanupRelease<CCTEInfoEntry>>;
 
   // map iterator
-  using UlongToCTEInfoEntryMapIter = CHashMapIter<ULONG, CCTEInfoEntry, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                                  CleanupDelete<ULONG>, CleanupRelease<CCTEInfoEntry>>;
+  using UlongToCTEInfoEntryMapIter =
+      CHashMapIter<uint32_t, CCTEInfoEntry, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>, CleanupDelete<uint32_t>,
+                   CleanupRelease<CCTEInfoEntry>>;
 
   // memory pool
   CMemoryPool *m_mp;
@@ -160,10 +160,10 @@ class CCTEInfo : public CRefCount {
   UlongToCTEInfoEntryMap *m_phmulcteinfoentry;
 
   // next available CTE Id
-  ULONG m_ulNextCTEId;
+  uint32_t m_ulNextCTEId;
 
   // whether or not to inline CTE consumers
-  BOOL m_fEnableInlining;
+  bool m_fEnableInlining;
 
   // consumers inside each cte/main query
   UlongToProducerConsumerMap *m_phmulprodconsmap;
@@ -175,10 +175,10 @@ class CCTEInfo : public CRefCount {
   CExpression *PexprPreprocessCTEProducer(const CExpression *pexprCTEProducer);
 
   // number of consumers of given CTE inside a given parent
-  ULONG UlConsumersInParent(ULONG ulConsumerId, ULONG ulParentId) const;
+  uint32_t UlConsumersInParent(uint32_t ulConsumerId, uint32_t ulParentId) const;
 
   // find all CTE consumers inside given parent, and push them to the given stack
-  void FindConsumersInParent(ULONG ulParentId, CBitSet *pbsUnusedConsumers, CStack<ULONG> *pstack);
+  void FindConsumersInParent(uint32_t ulParentId, CBitSet *pbsUnusedConsumers, CStack<uint32_t> *pstack);
 
  public:
   CCTEInfo(const CCTEInfo &) = delete;
@@ -190,22 +190,22 @@ class CCTEInfo : public CRefCount {
   ~CCTEInfo() override;
 
   // logical cte producer with given id
-  CExpression *PexprCTEProducer(ULONG ulCTEId) const;
+  CExpression *PexprCTEProducer(uint32_t ulCTEId) const;
 
   // number of CTE consumers of given CTE
-  ULONG UlConsumers(ULONG ulCTEId) const;
+  uint32_t UlConsumers(uint32_t ulCTEId) const;
 
   // check if given CTE is used
-  BOOL FUsed(ULONG ulCTEId) const;
+  bool FUsed(uint32_t ulCTEId) const;
 
   // check if given CTE has outer reference
-  BOOL HasOuterReferences(ULONG ulCTEId) const;
+  bool HasOuterReferences(uint32_t ulCTEId) const;
 
   // mark given cte as containing an outer reference
-  void SetHasOuterReferences(ULONG ulCTEId);
+  void SetHasOuterReferences(uint32_t ulCTEId);
 
   // increment number of CTE consumers
-  void IncrementConsumers(ULONG ulConsumerId, ULONG ulParentCTEId = gpos::ulong_max);
+  void IncrementConsumers(uint32_t ulConsumerId, uint32_t ulParentCTEId = UINT32_MAX);
 
   // add cte producer to hashmap
   void AddCTEProducer(CExpression *pexprCTEProducer);
@@ -214,8 +214,7 @@ class CCTEInfo : public CRefCount {
   void ReplaceCTEProducer(CExpression *pexprCTEProducer);
 
   // next available CTE id
-  ULONG
-  next_id() { return m_ulNextCTEId++; }
+  uint32_t next_id() { return m_ulNextCTEId++; }
 
   // derive the statistics on the CTE producer
   void DeriveProducerStats(CLogicalCTEConsumer *popConsumer,  // CTE Consumer operator
@@ -232,7 +231,7 @@ class CCTEInfo : public CRefCount {
   void DisableInlining() { m_fEnableInlining = false; }
 
   // whether or not to inline CTE consumers
-  BOOL FEnableInlining() const { return m_fEnableInlining; }
+  bool FEnableInlining() const { return m_fEnableInlining; }
 
   // mark unused CTEs
   void MarkUnusedCTEs();
@@ -242,13 +241,13 @@ class CCTEInfo : public CRefCount {
   void MapComputedToUsedCols(CColumnFactory *col_factory) const;
 
   // add given columns to consumers column map
-  void AddConsumerCols(ULONG ulCTEId, CColRefArray *colref_array);
+  void AddConsumerCols(uint32_t ulCTEId, CColRefArray *colref_array);
 
   // return position of given consumer column in consumer output
-  ULONG UlConsumerColPos(ULONG ulCTEId, CColRef *colref);
+  uint32_t UlConsumerColPos(uint32_t ulCTEId, CColRef *colref);
 
   // return a map from Id's of consumer columns in the given column set to their corresponding producer columns
-  UlongToColRefMap *PhmulcrConsumerToProducer(CMemoryPool *mp, ULONG ulCTEId, CColRefSet *pcrs,
+  UlongToColRefMap *PhmulcrConsumerToProducer(CMemoryPool *mp, uint32_t ulCTEId, CColRefSet *pcrs,
                                               CColRefArray *pdrgpcrProducer);
 
 };  // CCTEInfo

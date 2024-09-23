@@ -31,7 +31,7 @@ class CDXLScalarProjElem : public CDXLScalar {
  private:
   // id of column defined by this project element:
   // for computed columns this is a new id, for colrefs: id of the original column
-  ULONG m_id;
+  uint32_t m_id;
 
   // alias
   const CMDName *m_mdname;
@@ -40,7 +40,7 @@ class CDXLScalarProjElem : public CDXLScalar {
   CDXLScalarProjElem(CDXLScalarProjElem &) = delete;
 
   // ctor/dtor
-  CDXLScalarProjElem(CMemoryPool *mp, ULONG id, const CMDName *mdname);
+  CDXLScalarProjElem(CMemoryPool *mp, uint32_t id, const CMDName *mdname);
 
   ~CDXLScalarProjElem() override;
 
@@ -51,7 +51,7 @@ class CDXLScalarProjElem : public CDXLScalar {
   const CWStringConst *GetOpNameStr() const override;
 
   // id of the proj element
-  ULONG Id() const;
+  uint32_t Id() const;
 
   // alias of the proj elem
   const CMDName *GetMdNameAlias() const;
@@ -59,7 +59,7 @@ class CDXLScalarProjElem : public CDXLScalar {
   // serialize operator in DXL format
 
   // check if given column is defined by operator
-  BOOL IsColDefined(ULONG colid) const override { return (Id() == colid); }
+  bool IsColDefined(uint32_t colid) const override { return (Id() == colid); }
 
   // conversion function
   static CDXLScalarProjElem *Cast(CDXLOperator *dxl_op) {
@@ -70,7 +70,7 @@ class CDXLScalarProjElem : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     GPOS_ASSERT(!"Invalid function call on a container operator");
     return false;
@@ -78,7 +78,7 @@ class CDXLScalarProjElem : public CDXLScalar {
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

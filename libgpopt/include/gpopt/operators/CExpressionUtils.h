@@ -38,8 +38,8 @@ class CExpression;
 class CExpressionUtils {
  private:
   // unnest a given expression's child and append unnested nodes to given array
-  static void UnnestChild(CMemoryPool *mp, CExpression *pexpr, ULONG UlChildIndex, BOOL fAnd, BOOL fOr,
-                          BOOL fNotChildren, CExpressionArray *pdrgpexpr);
+  static void UnnestChild(CMemoryPool *mp, CExpression *pexpr, uint32_t UlChildIndex, bool fAnd, bool fOr,
+                          bool fNotChildren, CExpressionArray *pdrgpexpr);
 
   // append the unnested children of given expression to given array
   static void AppendChildren(CMemoryPool *mp, CExpression *pexpr, CExpressionArray *pdrgpexpr);

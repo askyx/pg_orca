@@ -54,21 +54,21 @@ class CJoinOrderDP : public CJoinOrder {
     ~SComponentPair() override;
 
     // hashing function
-    static ULONG HashValue(const SComponentPair *pcomppair);
+    static uint32_t HashValue(const SComponentPair *pcomppair);
 
     // equality function
-    static BOOL Equals(const SComponentPair *pcomppairFst, const SComponentPair *pcomppairSnd);
+    static bool Equals(const SComponentPair *pcomppairFst, const SComponentPair *pcomppairSnd);
   };
 
   // hashing function
-  static ULONG UlHashBitSet(const CBitSet *pbs) {
+  static uint32_t UlHashBitSet(const CBitSet *pbs) {
     GPOS_ASSERT(nullptr != pbs);
 
     return pbs->HashValue();
   }
 
   // equality function
-  static BOOL FEqualBitSet(const CBitSet *pbsFst, const CBitSet *pbsSnd) {
+  static bool FEqualBitSet(const CBitSet *pbsFst, const CBitSet *pbsSnd) {
     GPOS_ASSERT(nullptr != pbsFst);
     GPOS_ASSERT(nullptr != pbsSnd);
 
@@ -143,10 +143,10 @@ class CJoinOrderDP : public CJoinOrder {
   void DeriveStats(CExpression *pexpr) override;
 
   // add expression to cost map
-  void InsertExpressionCost(CExpression *pexpr, CDouble dCost, BOOL fValidateInsert);
+  void InsertExpressionCost(CExpression *pexpr, CDouble dCost, bool fValidateInsert);
 
   // generate all subsets of the given array of elements
-  static void GenerateSubsets(CMemoryPool *mp, CBitSet *pbsCurrent, ULONG *pulElems, ULONG size, ULONG ulIndex,
+  static void GenerateSubsets(CMemoryPool *mp, CBitSet *pbsCurrent, uint32_t *pulElems, uint32_t size, uint32_t ulIndex,
                               CBitSetArray *pdrgpbsSubsets);
 
   // driver of subset generation

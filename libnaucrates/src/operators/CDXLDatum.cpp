@@ -28,12 +28,12 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLDatum::CDXLDatum(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, BOOL is_null, ULONG length)
+CDXLDatum::CDXLDatum(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, bool is_null, uint32_t length)
     : m_mp(mp), m_mdid_type(mdid_type), m_type_modifier(type_modifier), m_is_null(is_null), m_length(length) {
   GPOS_ASSERT(m_mdid_type->IsValid());
 }
 
-INT CDXLDatum::TypeModifier() const {
+int32_t CDXLDatum::TypeModifier() const {
   return m_type_modifier;
 }
 
@@ -45,7 +45,7 @@ INT CDXLDatum::TypeModifier() const {
 //		Is the datum NULL
 //
 //---------------------------------------------------------------------------
-BOOL CDXLDatum::IsNull() const {
+bool CDXLDatum::IsNull() const {
   return m_is_null;
 }
 
@@ -57,7 +57,6 @@ BOOL CDXLDatum::IsNull() const {
 //		Returns the size of the byte array
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLDatum::Length() const {
+uint32_t CDXLDatum::Length() const {
   return m_length;
 }

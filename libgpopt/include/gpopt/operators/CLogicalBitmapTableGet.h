@@ -39,8 +39,8 @@ class CLogicalBitmapTableGet : public CLogical {
   // table descriptor
   CTableDescriptorHashSet *m_ptabdesc;
 
-  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-  ULONG m_ulOriginOpId;
+  // origin operator id -- UINT32_MAX if operator was not generated via a transformation
+  uint32_t m_ulOriginOpId;
 
   // alias for table
   const CName *m_pnameTableAlias;
@@ -52,8 +52,8 @@ class CLogicalBitmapTableGet : public CLogical {
   CLogicalBitmapTableGet(const CLogicalBitmapTableGet &) = delete;
 
   // ctor
-  CLogicalBitmapTableGet(CMemoryPool *mp, CTableDescriptor *ptabdesc, ULONG ulOriginOpId, const CName *pnameTableAlias,
-                         CColRefArray *pdrgpcrOutput);
+  CLogicalBitmapTableGet(CMemoryPool *mp, CTableDescriptor *ptabdesc, uint32_t ulOriginOpId,
+                         const CName *pnameTableAlias, CColRefArray *pdrgpcrOutput);
 
   // ctor
   // only for transformations
@@ -75,23 +75,22 @@ class CLogicalBitmapTableGet : public CLogical {
   EOperatorId Eopid() const override { return EopLogicalBitmapTableGet; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalBitmapTableGet"; }
+  const char *SzId() const override { return "CLogicalBitmapTableGet"; }
 
-  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-  ULONG
-  UlOriginOpId() const { return m_ulOriginOpId; }
+  // origin operator id -- UINT32_MAX if operator was not generated via a transformation
+  uint32_t UlOriginOpId() const { return m_ulOriginOpId; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // derive output columns
   CColRefSet *DeriveOutputColumns(CMemoryPool *mp, CExpressionHandle &exprhdl) override;
@@ -110,9 +109,8 @@ class CLogicalBitmapTableGet : public CLogical {
   CPropConstraint *DerivePropertyConstraint(CMemoryPool *mp, CExpressionHandle &exprhdl) const override;
 
   // derive join depth
-  ULONG
-  DeriveJoinDepth(CMemoryPool *,       // mp
-                  CExpressionHandle &  // exprhdl
+  uint32_t DeriveJoinDepth(CMemoryPool *,       // mp
+                           CExpressionHandle &  // exprhdl
   ) const override {
     return 1;
   }
@@ -129,7 +127,7 @@ class CLogicalBitmapTableGet : public CLogical {
   CColRefSet *PcrsStat(CMemoryPool *mp,
                        CExpressionHandle &,  // exprhdl
                        CColRefSet *,         // pcrsInput
-                       ULONG                 // child_index
+                       uint32_t              // child_index
   ) const override {
     return GPOS_NEW(mp) CColRefSet(mp);
   }

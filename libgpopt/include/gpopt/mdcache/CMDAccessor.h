@@ -138,10 +138,10 @@ class CMDAccessor {
     IMDId *MDId() const;
 
     // equality function for hash tables
-    static BOOL Equals(const MdidPtr &left_mdid, const MdidPtr &right_mdid);
+    static bool Equals(const MdidPtr &left_mdid, const MdidPtr &right_mdid);
 
     // hash function for cost contexts hash table
-    static ULONG HashValue(const MdidPtr &mdid);
+    static uint32_t HashValue(const MdidPtr &mdid);
   };
 
   // element in the MD provider hashtable
@@ -173,10 +173,10 @@ class CMDAccessor {
     CSystemId Sysid() const;
 
     // equality function for hash tables
-    static BOOL Equals(const SMDProviderElem &mdpelemLeft, const SMDProviderElem &mdpelemRight);
+    static bool Equals(const SMDProviderElem &mdpelemLeft, const SMDProviderElem &mdpelemRight);
 
     // hash function for MD providers hash table
-    static ULONG HashValue(const SMDProviderElem &mdpelem);
+    static uint32_t HashValue(const SMDProviderElem &mdpelem);
   };
 
  private:
@@ -224,11 +224,11 @@ class CMDAccessor {
   void InitHashtables(CMemoryPool *mp);
 
   // return the column statistics meta data object for a given column of a table
-  const IMDColStats *Pmdcolstats(CMemoryPool *mp, IMDId *rel_mdid, ULONG ulPos);
+  const IMDColStats *Pmdcolstats(CMemoryPool *mp, IMDId *rel_mdid, uint32_t ulPos);
 
   // record histogram and width information for a given column of a table
-  void RecordColumnStats(CMemoryPool *mp, IMDId *rel_mdid, ULONG colid, ULONG ulPos, BOOL isSystemCol,
-                         BOOL isEmptyTable, UlongToHistogramMap *col_histogram_mapping,
+  void RecordColumnStats(CMemoryPool *mp, IMDId *rel_mdid, uint32_t colid, uint32_t ulPos, bool isSystemCol,
+                         bool isEmptyTable, UlongToHistogramMap *col_histogram_mapping,
                          UlongToDoubleMap *colid_width_mapping, CStatisticsConfig *stats_config);
 
   // construct a stats histogram from an MD column stats object
@@ -295,7 +295,7 @@ class CMDAccessor {
   const IMDFunction *RetrieveFunc(IMDId *mdid);
 
   // interface to check if the window function from the MD cache is an aggregate window function
-  BOOL FAggWindowFunc(IMDId *mdid);
+  bool FAggWindowFunc(IMDId *mdid);
 
   // interface to an aggregate from the MD cache
   const IMDAggregate *RetrieveAgg(IMDId *mdid);

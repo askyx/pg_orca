@@ -48,7 +48,7 @@ class CXformLimit2IndexGet : public CXformExploration {
   EXformId Exfid() const override { return ExfLimit2IndexGet; }
 
   // xform name
-  const CHAR *SzId() const override { return "CXformLimit2IndexGet"; }
+  const char *SzId() const override { return "CXformLimit2IndexGet"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

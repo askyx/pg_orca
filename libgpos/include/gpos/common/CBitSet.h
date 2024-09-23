@@ -41,7 +41,7 @@ class CBitSet : public CRefCount {
   class CBitSetLink {
    private:
     // offset
-    ULONG m_offset;
+    uint32_t m_offset;
 
     // bitvector
     CBitVector *m_vec;
@@ -50,7 +50,7 @@ class CBitSet : public CRefCount {
     CBitSetLink(const CBitSetLink &) = delete;
 
     // ctor
-    explicit CBitSetLink(CMemoryPool *, ULONG offset, ULONG vector_size);
+    explicit CBitSetLink(CMemoryPool *, uint32_t offset, uint32_t vector_size);
 
     explicit CBitSetLink(CMemoryPool *, const CBitSetLink &);
 
@@ -58,8 +58,7 @@ class CBitSet : public CRefCount {
     ~CBitSetLink();
 
     // accessor
-    ULONG
-    GetOffset() const { return m_offset; }
+    uint32_t GetOffset() const { return m_offset; }
 
     // accessor
     CBitVector *GetVec() const { return m_vec; }
@@ -76,42 +75,42 @@ class CBitSet : public CRefCount {
   CMemoryPool *m_mp;
 
   // size of individual bitvectors
-  ULONG m_vector_size;
+  uint32_t m_vector_size;
 
   // number of elements
-  ULONG m_size;
+  uint32_t m_size;
 
   // private copy ctor
   CBitSet(const CBitSet &);
 
   // find link with offset less or equal to given value
-  CBitSetLink *FindLinkByOffset(ULONG, CBitSetLink * = nullptr) const;
+  CBitSetLink *FindLinkByOffset(uint32_t, CBitSetLink * = nullptr) const;
 
   // reset set
   void Clear();
 
   // compute target offset
-  ULONG ComputeOffset(ULONG) const;
+  uint32_t ComputeOffset(uint32_t) const;
 
   // re-compute size of set
   void RecomputeSize();
 
  public:
   // ctor
-  CBitSet(CMemoryPool *mp, ULONG vector_size = 256);
+  CBitSet(CMemoryPool *mp, uint32_t vector_size = 256);
   CBitSet(CMemoryPool *mp, const CBitSet &);
 
   // dtor
   ~CBitSet() override;
 
   // determine if bit is set
-  BOOL Get(ULONG pos) const;
+  bool Get(uint32_t pos) const;
 
   // set given bit; return previous value
-  BOOL ExchangeSet(ULONG pos);
+  bool ExchangeSet(uint32_t pos);
 
   // clear given bit; return previous value
-  BOOL ExchangeClear(ULONG pos);
+  bool ExchangeClear(uint32_t pos);
 
   // union sets
   void Union(const CBitSet *);
@@ -123,20 +122,19 @@ class CBitSet : public CRefCount {
   void Difference(const CBitSet *);
 
   // is subset
-  BOOL ContainsAll(const CBitSet *) const;
+  bool ContainsAll(const CBitSet *) const;
 
   // equality
-  BOOL Equals(const CBitSet *) const;
+  bool Equals(const CBitSet *) const;
 
   // disjoint
-  BOOL IsDisjoint(const CBitSet *) const;
+  bool IsDisjoint(const CBitSet *) const;
 
   // hash value for set
-  ULONG HashValue() const;
+  uint32_t HashValue() const;
 
   // number of elements
-  ULONG
-  Size() const { return m_size; }
+  uint32_t Size() const { return m_size; }
 
   // print function
   virtual IOstream &OsPrint(IOstream &os) const;

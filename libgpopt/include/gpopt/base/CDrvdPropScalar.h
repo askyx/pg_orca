@@ -70,7 +70,7 @@ class CDrvdPropScalar : public CDrvdProp {
   CColRefSet *m_pcrsUsed;
 
   // do subqueries appear in the operator's tree?
-  BOOL m_fHasSubquery;
+  bool m_fHasSubquery;
 
   // partition table consumers in subqueries
   CPartInfo *m_ppartinfo;
@@ -79,25 +79,25 @@ class CDrvdPropScalar : public CDrvdProp {
   CFunctionProp *m_pfp;
 
   // scalar expression contains non-scalar function?
-  BOOL m_fHasNonScalarFunction;
+  bool m_fHasNonScalarFunction;
 
   // total number of Distinct Aggs (e.g., {count(distinct a), sum(distinct a), count(distinct b)}, the value is 3),
   // only applicable to project lists
-  ULONG m_ulDistinctAggs;
+  uint32_t m_ulDistinctAggs;
 
   // only applicable to project lists
-  BOOL m_fHasScalarFunc;
+  bool m_fHasScalarFunc;
 
   // does operator define Distinct Aggs on different arguments (e.g., count(distinct a), sum(distinct b)),
   // only applicable to project lists
-  BOOL m_fHasMultipleDistinctAggs;
-  ULONG m_ulOrderedAggs;
+  bool m_fHasMultipleDistinctAggs;
+  uint32_t m_ulOrderedAggs;
 
   // does expression contain ScalarArrayCmp generated for "scalar op ANY/ALL (array)" construct
-  BOOL m_fHasScalarArrayCmp;
+  bool m_fHasScalarArrayCmp;
 
   // does expression contain only replication safe agg funcs
-  BOOL m_fContainsOnlyReplicationSafeAggFuncs;
+  bool m_fContainsOnlyReplicationSafeAggFuncs;
 
   // Have all the properties been derived?
   //
@@ -110,7 +110,7 @@ class CDrvdPropScalar : public CDrvdProp {
   // corresponding expression used to derive it, this MUST be set to true,
   // since after the detachment, there will be no way to derive the
   // properties once again.
-  BOOL m_is_complete;
+  bool m_is_complete;
 
  protected:
   CColRefSet *DeriveDefinedColumns(CExpressionHandle &);
@@ -119,24 +119,24 @@ class CDrvdPropScalar : public CDrvdProp {
 
   CColRefSet *DeriveSetReturningFunctionColumns(CExpressionHandle &);
 
-  BOOL DeriveHasSubquery(CExpressionHandle &);
+  bool DeriveHasSubquery(CExpressionHandle &);
 
   CPartInfo *DerivePartitionInfo(CExpressionHandle &);
 
   CFunctionProp *DeriveFunctionProperties(CExpressionHandle &);
 
-  BOOL DeriveHasNonScalarFunction(CExpressionHandle &);
+  bool DeriveHasNonScalarFunction(CExpressionHandle &);
 
-  ULONG DeriveTotalDistinctAggs(CExpressionHandle &);
+  uint32_t DeriveTotalDistinctAggs(CExpressionHandle &);
 
-  BOOL DeriveHasScalarFuncProject(CExpressionHandle &);
+  bool DeriveHasScalarFuncProject(CExpressionHandle &);
 
-  BOOL DeriveHasMultipleDistinctAggs(CExpressionHandle &);
+  bool DeriveHasMultipleDistinctAggs(CExpressionHandle &);
 
-  BOOL DeriveContainsOnlyReplicationSafeAggFuncs(CExpressionHandle &);
+  bool DeriveContainsOnlyReplicationSafeAggFuncs(CExpressionHandle &);
 
-  BOOL DeriveHasScalarArrayCmp(CExpressionHandle &);
-  ULONG DeriveTotalOrderedAggs(CExpressionHandle &);
+  bool DeriveHasScalarArrayCmp(CExpressionHandle &);
+  uint32_t DeriveTotalOrderedAggs(CExpressionHandle &);
 
  public:
   CDrvdPropScalar(const CDrvdPropScalar &) = delete;
@@ -150,13 +150,13 @@ class CDrvdPropScalar : public CDrvdProp {
   // type of properties
   EPropType Ept() override { return EptScalar; }
 
-  BOOL IsComplete() const override { return m_is_complete; }
+  bool IsComplete() const override { return m_is_complete; }
 
   // derivation function
   void Derive(CMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPropCtxt *pdpctxt) override;
 
   // check for satisfying required plan properties
-  BOOL FSatisfies(const CReqdPropPlan *prpp) const override;
+  bool FSatisfies(const CReqdPropPlan *prpp) const override;
 
   // defined columns
   CColRefSet *GetDefinedColumns() const;
@@ -168,7 +168,7 @@ class CDrvdPropScalar : public CDrvdProp {
   CColRefSet *GetSetReturningFunctionColumns() const;
 
   // do subqueries appear in the operator's tree?
-  BOOL HasSubquery() const;
+  bool HasSubquery() const;
 
   // derived partition consumers
   CPartInfo *GetPartitionInfo() const;
@@ -177,19 +177,19 @@ class CDrvdPropScalar : public CDrvdProp {
   CFunctionProp *GetFunctionProperties() const;
 
   // scalar expression contains non-scalar function?
-  virtual BOOL HasNonScalarFunction() const;
+  virtual bool HasNonScalarFunction() const;
 
   // return total number of Distinct Aggs, only applicable to project list
-  ULONG GetTotalDistinctAggs() const;
+  uint32_t GetTotalDistinctAggs() const;
 
-  BOOL HasScalarFuncProject() const;
+  bool HasScalarFuncProject() const;
 
   // does operator define Distinct Aggs on different arguments, only applicable to project lists
-  BOOL HasMultipleDistinctAggs() const;
+  bool HasMultipleDistinctAggs() const;
 
-  BOOL HasScalarArrayCmp() const;
+  bool HasScalarArrayCmp() const;
 
-  BOOL ContainsOnlyReplicationSafeAggFuncs() const;
+  bool ContainsOnlyReplicationSafeAggFuncs() const;
 
   // short hand for conversion
   static CDrvdPropScalar *GetDrvdScalarProps(CDrvdProp *pdp);

@@ -38,7 +38,7 @@ class CMessageTable {
   CMessageTable(const CMessageTable &) = delete;
 
   // ctor
-  CMessageTable(CMemoryPool *mp, ULONG size, ELocale locale);
+  CMessageTable(CMemoryPool *mp, uint32_t size, ELocale locale);
 
   // lookup message by error/local
   CMessage *LookupMessage(CException exc);
@@ -47,13 +47,13 @@ class CMessageTable {
   void AddMessage(CMessage *msg);
 
   // simple comparison
-  BOOL operator==(const CMessageTable &mt) const { return m_locale == mt.m_locale; }
+  bool operator==(const CMessageTable &mt) const { return m_locale == mt.m_locale; }
 
   // equality function -- needed for hashtable
-  static BOOL Equals(const ELocale &locale, const ELocale &other_locale) { return locale == other_locale; }
+  static bool Equals(const ELocale &locale, const ELocale &other_locale) { return locale == other_locale; }
 
   // basic hash function
-  static ULONG HashValue(const ELocale &locale) { return (ULONG)locale; }
+  static uint32_t HashValue(const ELocale &locale) { return (uint32_t)locale; }
 
   // link object
   SLink m_link;

@@ -38,7 +38,7 @@ CMDKey::CMDKey(const IMDId *mdid) : m_mdid(mdid) {
 //		Equality function
 //
 //---------------------------------------------------------------------------
-BOOL CMDKey::Equals(const CMDKey &mdkey) const {
+bool CMDKey::Equals(const CMDKey &mdkey) const {
   return mdkey.MDId()->Equals(m_mdid);
 }
 
@@ -50,7 +50,7 @@ BOOL CMDKey::Equals(const CMDKey &mdkey) const {
 //		Equality function for using MD keys in a cache
 //
 //---------------------------------------------------------------------------
-BOOL CMDKey::FEqualMDKey(CMDKey *const &pvLeft, CMDKey *const &pvRight) {
+bool CMDKey::FEqualMDKey(CMDKey *const &pvLeft, CMDKey *const &pvRight) {
   if (nullptr == pvLeft && nullptr == pvRight) {
     return true;
   }
@@ -72,8 +72,7 @@ BOOL CMDKey::FEqualMDKey(CMDKey *const &pvLeft, CMDKey *const &pvRight) {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDKey::HashValue() const {
+uint32_t CMDKey::HashValue() const {
   return m_mdid->HashValue();
 }
 
@@ -85,8 +84,7 @@ CMDKey::HashValue() const {
 //		Hash function for using MD keys in a cache
 //
 //---------------------------------------------------------------------------
-ULONG
-CMDKey::UlHashMDKey(CMDKey *const &pv) {
+uint32_t CMDKey::UlHashMDKey(CMDKey *const &pv) {
   return pv->MDId()->HashValue();
 }
 

@@ -28,9 +28,9 @@ using namespace gpopt;
 //---------------------------------------------------------------------------
 CPhysicalAgg::CPhysicalAgg(CMemoryPool *mp, CColRefArray *colref_array,
                            CColRefArray *pdrgpcrMinimal,  // minimal grouping columns based on FD's
-                           COperator::EGbAggType egbaggtype, BOOL fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA,
-                           BOOL fMultiStage, BOOL isAggFromSplitDQA, CLogicalGbAgg::EAggStage aggStage,
-                           BOOL should_enforce_distribution)
+                           COperator::EGbAggType egbaggtype, bool fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA,
+                           bool fMultiStage, bool isAggFromSplitDQA, CLogicalGbAgg::EAggStage aggStage,
+                           bool should_enforce_distribution)
     : CPhysical(mp),
       m_pdrgpcr(colref_array),
       m_egbaggtype(egbaggtype),
@@ -45,7 +45,7 @@ CPhysicalAgg::CPhysicalAgg(CMemoryPool *mp, CColRefArray *colref_array,
   GPOS_ASSERT(COperator::EgbaggtypeSentinel > egbaggtype);
   GPOS_ASSERT_IMP(EgbaggtypeGlobal != egbaggtype, fMultiStage);
 
-  ULONG ulDistrReqs = 1;
+  uint32_t ulDistrReqs = 1;
   if (pdrgpcrMinimal == nullptr || 0 == pdrgpcrMinimal->Size()) {
     colref_array->AddRef();
     m_pdrgpcrMinimal = colref_array;
@@ -126,9 +126,9 @@ CPhysicalAgg::~CPhysicalAgg() {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalAgg::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                       ULONG child_index,
+                                       uint32_t child_index,
                                        CDrvdPropArray *,  // pdrgpdpCtxt
-                                       ULONG              // ulOptReq
+                                       uint32_t           // ulOptReq
 ) {
   return PcrsRequiredAgg(mp, exprhdl, pcrsRequired, child_index, m_pdrgpcr);
 }
@@ -143,7 +143,7 @@ CColRefSet *CPhysicalAgg::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprh
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalAgg::PcrsRequiredAgg(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                          ULONG child_index, CColRefArray *pdrgpcrGrp) {
+                                          uint32_t child_index, CColRefArray *pdrgpcrGrp) {
   GPOS_ASSERT(nullptr != pdrgpcrGrp);
   GPOS_ASSERT(0 == child_index && "Required properties can only be computed on the relational child");
 
@@ -170,13 +170,13 @@ CColRefSet *CPhysicalAgg::PcrsRequiredAgg(CMemoryPool *mp, CExpressionHandle &ex
 CCTEReq *CPhysicalAgg::PcteRequired(CMemoryPool *,        // mp,
                                     CExpressionHandle &,  // exprhdl,
                                     CCTEReq *pcter,
-                                    ULONG
+                                    uint32_t
 #ifdef GPOS_DEBUG
                                         child_index
 #endif
                                     ,
                                     CDrvdPropArray *,  // pdrgpdpCtxt,
-                                    ULONG              // ulOptReq
+                                    uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -190,8 +190,8 @@ CCTEReq *CPhysicalAgg::PcteRequired(CMemoryPool *,        // mp,
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalAgg::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                     ULONG  // ulOptReq
+bool CPhysicalAgg::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                     uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcrsRequired);
   GPOS_ASSERT(2 == exprhdl.Arity());
@@ -203,7 +203,7 @@ BOOL CPhysicalAgg::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcr
 
   // include defined columns by scalar child
   pcrs->Union(exprhdl.DeriveDefinedColumns(1));
-  BOOL fProvidesCols = pcrs->ContainsAll(pcrsRequired);
+  bool fProvidesCols = pcrs->ContainsAll(pcrsRequired);
   pcrs->Release();
 
   return fProvidesCols;
@@ -217,21 +217,20 @@ BOOL CPhysicalAgg::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcr
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysicalAgg::HashValue() const {
-  ULONG ulHash = COperator::HashValue();
-  const ULONG arity = m_pdrgpcr->Size();
-  ULONG ulGbaggtype = (ULONG)m_egbaggtype;
-  ULONG ulaggstage = (ULONG)m_aggStage;
-  for (ULONG ul = 0; ul < arity; ul++) {
+uint32_t CPhysicalAgg::HashValue() const {
+  uint32_t ulHash = COperator::HashValue();
+  const uint32_t arity = m_pdrgpcr->Size();
+  uint32_t ulGbaggtype = (uint32_t)m_egbaggtype;
+  uint32_t ulaggstage = (uint32_t)m_aggStage;
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CColRef *colref = (*m_pdrgpcr)[ul];
     ulHash = gpos::CombineHashes(ulHash, gpos::HashPtr<CColRef>(colref));
   }
 
-  ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<ULONG>(&ulGbaggtype));
-  ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<ULONG>(&ulaggstage));
+  ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<uint32_t>(&ulGbaggtype));
+  ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<uint32_t>(&ulaggstage));
 
-  return gpos::CombineHashes(ulHash, gpos::HashValue<BOOL>(&m_fGeneratesDuplicates));
+  return gpos::CombineHashes(ulHash, gpos::HashValue<bool>(&m_fGeneratesDuplicates));
 }
 
 //---------------------------------------------------------------------------
@@ -242,7 +241,7 @@ CPhysicalAgg::HashValue() const {
 //		Match operator
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalAgg::Matches(COperator *pop) const {
+bool CPhysicalAgg::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -263,15 +262,15 @@ BOOL CPhysicalAgg::Matches(COperator *pop) const {
   return false;
 }
 
-BOOL CPhysicalAgg::IsTwoStageScalarDQA() const {
+bool CPhysicalAgg::IsTwoStageScalarDQA() const {
   return (m_aggStage == CLogicalGbAgg::EasTwoStageScalarDQA);
 }
 
-BOOL CPhysicalAgg::IsThreeStageScalarDQA() const {
+bool CPhysicalAgg::IsThreeStageScalarDQA() const {
   return (m_aggStage == CLogicalGbAgg::EasThreeStageScalarDQA);
 }
 
-BOOL CPhysicalAgg::IsAggFromSplitDQA() const {
+bool CPhysicalAgg::IsAggFromSplitDQA() const {
   return m_isAggFromSplitDQA;
 }
 //---------------------------------------------------------------------------

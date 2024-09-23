@@ -54,7 +54,7 @@ CDefaultComparator::CDefaultComparator(IConstExprEvaluator *pceeval) : m_pceeval
 //		data and evaluates it.
 //
 //---------------------------------------------------------------------------
-BOOL CDefaultComparator::FEvalComparison(CMemoryPool *mp, const IDatum *datum1, const IDatum *datum2,
+bool CDefaultComparator::FEvalComparison(CMemoryPool *mp, const IDatum *datum1, const IDatum *datum2,
                                          IMDType::ECmpType cmp_type) const {
   GPOS_ASSERT(m_pceeval->FCanEvalExpressions());
 
@@ -71,14 +71,14 @@ BOOL CDefaultComparator::FEvalComparison(CMemoryPool *mp, const IDatum *datum1, 
 
   GPOS_ASSERT(IMDType::EtiBool == datum->GetDatumType());
   IDatumBool *pdatumBool = dynamic_cast<IDatumBool *>(datum);
-  BOOL result = pdatumBool->GetValue();
+  bool result = pdatumBool->GetValue();
   pexprResult->Release();
 
   return result;
 }
 
-BOOL CDefaultComparator::FUseInternalEvaluator(const IDatum *datum1, const IDatum *datum2,
-                                               BOOL *can_use_external_evaluator) {
+bool CDefaultComparator::FUseInternalEvaluator(const IDatum *datum1, const IDatum *datum2,
+                                               bool *can_use_external_evaluator) {
   IMDId *mdid1 = datum1->MDId();
   IMDId *mdid2 = datum2->MDId();
 
@@ -89,7 +89,7 @@ BOOL CDefaultComparator::FUseInternalEvaluator(const IDatum *datum1, const IDatu
 
   if (CUtils::FIntType(mdid1) && CUtils::FIntType(mdid2) &&
       !(*can_use_external_evaluator && GPOS_FTRACE(EopttraceUseExternalConstantExpressionEvaluationForInts))) {
-    // INT types can be processed precisely by the internal evaluator
+    // int32_t types can be processed precisely by the internal evaluator
     return true;
   }
 
@@ -121,8 +121,8 @@ BOOL CDefaultComparator::FUseInternalEvaluator(const IDatum *datum1, const IDatu
 //		Tests if the two arguments are equal.
 //
 //---------------------------------------------------------------------------
-BOOL CDefaultComparator::Equals(const IDatum *datum1, const IDatum *datum2) const {
-  BOOL can_use_external_evaluator = false;
+bool CDefaultComparator::Equals(const IDatum *datum1, const IDatum *datum2) const {
+  bool can_use_external_evaluator = false;
 
   if (FUseInternalEvaluator(datum1, datum2, &can_use_external_evaluator)) {
     return datum1->StatsAreEqual(datum2);
@@ -153,8 +153,8 @@ BOOL CDefaultComparator::Equals(const IDatum *datum1, const IDatum *datum2) cons
 //		Tests if the first argument is less than the second.
 //
 //---------------------------------------------------------------------------
-BOOL CDefaultComparator::IsLessThan(const IDatum *datum1, const IDatum *datum2) const {
-  BOOL can_use_external_evaluator = false;
+bool CDefaultComparator::IsLessThan(const IDatum *datum1, const IDatum *datum2) const {
+  bool can_use_external_evaluator = false;
 
   if (FUseInternalEvaluator(datum1, datum2, &can_use_external_evaluator)) {
     return datum1->StatsAreLessThan(datum2);
@@ -185,8 +185,8 @@ BOOL CDefaultComparator::IsLessThan(const IDatum *datum1, const IDatum *datum2) 
 //		Tests if the first argument is less than or equal to the second.
 //
 //---------------------------------------------------------------------------
-BOOL CDefaultComparator::IsLessThanOrEqual(const IDatum *datum1, const IDatum *datum2) const {
-  BOOL can_use_external_evaluator = false;
+bool CDefaultComparator::IsLessThanOrEqual(const IDatum *datum1, const IDatum *datum2) const {
+  bool can_use_external_evaluator = false;
 
   if (FUseInternalEvaluator(datum1, datum2, &can_use_external_evaluator)) {
     return datum1->StatsAreLessThan(datum2) || datum1->StatsAreEqual(datum2);
@@ -223,8 +223,8 @@ BOOL CDefaultComparator::IsLessThanOrEqual(const IDatum *datum1, const IDatum *d
 //		Tests if the first argument is greater than the second.
 //
 //---------------------------------------------------------------------------
-BOOL CDefaultComparator::IsGreaterThan(const IDatum *datum1, const IDatum *datum2) const {
-  BOOL can_use_external_evaluator = false;
+bool CDefaultComparator::IsGreaterThan(const IDatum *datum1, const IDatum *datum2) const {
+  bool can_use_external_evaluator = false;
 
   if (FUseInternalEvaluator(datum1, datum2, &can_use_external_evaluator)) {
     return datum1->StatsAreGreaterThan(datum2);
@@ -255,8 +255,8 @@ BOOL CDefaultComparator::IsGreaterThan(const IDatum *datum1, const IDatum *datum
 //		Tests if the first argument is greater than or equal to the second.
 //
 //---------------------------------------------------------------------------
-BOOL CDefaultComparator::IsGreaterThanOrEqual(const IDatum *datum1, const IDatum *datum2) const {
-  BOOL can_use_external_evaluator = false;
+bool CDefaultComparator::IsGreaterThanOrEqual(const IDatum *datum1, const IDatum *datum2) const {
+  bool can_use_external_evaluator = false;
 
   if (FUseInternalEvaluator(datum1, datum2, &can_use_external_evaluator)) {
     return datum1->StatsAreGreaterThan(datum2) || datum1->StatsAreEqual(datum2);

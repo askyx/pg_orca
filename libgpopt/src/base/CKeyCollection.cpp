@@ -103,12 +103,12 @@ void CKeyCollection::Add(CColRefSet *pcrs) {
 //		Check if set constitutes key
 //
 //---------------------------------------------------------------------------
-BOOL CKeyCollection::FKey(const CColRefSet *pcrs,
-                          BOOL fExactMatch  // true: match keys exactly,
+bool CKeyCollection::FKey(const CColRefSet *pcrs,
+                          bool fExactMatch  // true: match keys exactly,
                                             //  false: match keys by inclusion
 ) const {
-  const ULONG ulSets = m_pdrgpcrs->Size();
-  for (ULONG ul = 0; ul < ulSets; ul++) {
+  const uint32_t ulSets = m_pdrgpcrs->Size();
+  for (uint32_t ul = 0; ul < ulSets; ul++) {
     if (fExactMatch) {
       // accept only exact matches
       if (pcrs->Equals((*m_pdrgpcrs)[ul])) {
@@ -133,11 +133,11 @@ BOOL CKeyCollection::FKey(const CColRefSet *pcrs,
 //		Check if array constitutes key
 //
 //---------------------------------------------------------------------------
-BOOL CKeyCollection::FKey(CMemoryPool *mp, const CColRefArray *colref_array) const {
+bool CKeyCollection::FKey(CMemoryPool *mp, const CColRefArray *colref_array) const {
   CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
   pcrs->Include(colref_array);
 
-  BOOL fKey = FKey(pcrs);
+  bool fKey = FKey(pcrs);
   pcrs->Release();
 
   return fKey;
@@ -156,8 +156,8 @@ CColRefArray *CKeyCollection::PdrgpcrTrim(CMemoryPool *mp, const CColRefArray *c
   CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
   pcrs->Include(colref_array);
 
-  const ULONG ulSets = m_pdrgpcrs->Size();
-  for (ULONG ul = 0; ul < ulSets; ul++) {
+  const uint32_t ulSets = m_pdrgpcrs->Size();
+  for (uint32_t ul = 0; ul < ulSets; ul++) {
     CColRefSet *pcrsKey = (*m_pdrgpcrs)[ul];
     if (pcrs->ContainsAll(pcrsKey)) {
       pdrgpcrTrim = pcrsKey->Pdrgpcr(mp);
@@ -197,8 +197,8 @@ CColRefArray *CKeyCollection::PdrgpcrKey(CMemoryPool *mp) const {
 //
 //---------------------------------------------------------------------------
 CColRefArray *CKeyCollection::PdrgpcrHashableKey(CMemoryPool *mp) const {
-  const ULONG ulSets = m_pdrgpcrs->Size();
-  for (ULONG ul = 0; ul < ulSets; ul++) {
+  const uint32_t ulSets = m_pdrgpcrs->Size();
+  for (uint32_t ul = 0; ul < ulSets; ul++) {
     CColRefArray *pdrgpcrKey = (*m_pdrgpcrs)[ul]->Pdrgpcr(mp);
     if (CUtils::IsHashable(pdrgpcrKey)) {
       return pdrgpcrKey;
@@ -218,7 +218,7 @@ CColRefArray *CKeyCollection::PdrgpcrHashableKey(CMemoryPool *mp) const {
 //		Extract the key at a position
 //
 //---------------------------------------------------------------------------
-CColRefArray *CKeyCollection::PdrgpcrKey(CMemoryPool *mp, ULONG ulIndex) const {
+CColRefArray *CKeyCollection::PdrgpcrKey(CMemoryPool *mp, uint32_t ulIndex) const {
   if (0 == m_pdrgpcrs->Size()) {
     return nullptr;
   }
@@ -237,7 +237,7 @@ CColRefArray *CKeyCollection::PdrgpcrKey(CMemoryPool *mp, ULONG ulIndex) const {
 //		Extract key at given position
 //
 //---------------------------------------------------------------------------
-CColRefSet *CKeyCollection::PcrsKey(CMemoryPool *mp, ULONG ulIndex) const {
+CColRefSet *CKeyCollection::PcrsKey(CMemoryPool *mp, uint32_t ulIndex) const {
   if (0 == m_pdrgpcrs->Size()) {
     return nullptr;
   }
@@ -259,8 +259,8 @@ CColRefSet *CKeyCollection::PcrsKey(CMemoryPool *mp, ULONG ulIndex) const {
 IOstream &CKeyCollection::OsPrint(IOstream &os) const {
   os << " Keys: (";
 
-  const ULONG ulSets = m_pdrgpcrs->Size();
-  for (ULONG ul = 0; ul < ulSets; ul++) {
+  const uint32_t ulSets = m_pdrgpcrs->Size();
+  for (uint32_t ul = 0; ul < ulSets; ul++) {
     if (0 < ul) {
       os << ", ";
     }

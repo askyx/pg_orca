@@ -25,7 +25,7 @@ using namespace gpos;
 //		Ctor - initializes with empty string
 //
 //---------------------------------------------------------------------------
-CStringStatic::CStringStatic(CHAR buffer[], ULONG capacity) : m_buffer(buffer), m_length(0), m_capacity(capacity) {
+CStringStatic::CStringStatic(char buffer[], uint32_t capacity) : m_buffer(buffer), m_length(0), m_capacity(capacity) {
   GPOS_ASSERT(nullptr != buffer);
   GPOS_ASSERT(0 < m_capacity);
 
@@ -40,7 +40,7 @@ CStringStatic::CStringStatic(CHAR buffer[], ULONG capacity) : m_buffer(buffer), 
 //		Ctor with string initialization
 //
 //---------------------------------------------------------------------------
-CStringStatic::CStringStatic(CHAR buffer[], ULONG capacity, const CHAR init_str[])
+CStringStatic::CStringStatic(char buffer[], uint32_t capacity, const char init_str[])
     : m_buffer(buffer), m_length(0), m_capacity(capacity) {
   GPOS_ASSERT(nullptr != buffer);
   GPOS_ASSERT(0 < m_capacity);
@@ -56,10 +56,10 @@ CStringStatic::CStringStatic(CHAR buffer[], ULONG capacity, const CHAR init_str[
 //		Checks whether the string is byte-wise equal to a given string literal
 //
 //---------------------------------------------------------------------------
-BOOL CStringStatic::Equals(const CHAR *buf) const {
+bool CStringStatic::Equals(const char *buf) const {
   GPOS_ASSERT(nullptr != buf);
 
-  ULONG length = clib::Strlen(buf);
+  uint32_t length = clib::Strlen(buf);
   return (m_length == length && 0 == clib::Strncmp(m_buffer, buf, length));
 }
 
@@ -83,9 +83,9 @@ void CStringStatic::Append(const CStringStatic *str) {
 //		Appends the contents of a buffer to the current string
 //
 //---------------------------------------------------------------------------
-void CStringStatic::AppendBuffer(const CHAR *buf) {
+void CStringStatic::AppendBuffer(const char *buf) {
   GPOS_ASSERT(nullptr != buf);
-  ULONG length = clib::Strlen(buf);
+  uint32_t length = clib::Strlen(buf);
   if (0 == length || m_capacity == m_length) {
     return;
   }
@@ -115,7 +115,7 @@ void CStringStatic::AppendBuffer(const CHAR *buf) {
 //		Appends a formatted string
 //
 //---------------------------------------------------------------------------
-void CStringStatic::AppendFormat(const CHAR *format, ...) {
+void CStringStatic::AppendFormat(const char *format, ...) {
   VA_LIST va_args;
 
   // get arguments
@@ -135,11 +135,11 @@ void CStringStatic::AppendFormat(const CHAR *format, ...) {
 //		Appends a formatted string based on passed va list
 //
 //---------------------------------------------------------------------------
-void CStringStatic::AppendFormatVA(const CHAR *format, VA_LIST va_args) {
+void CStringStatic::AppendFormatVA(const char *format, VA_LIST va_args) {
   GPOS_ASSERT(nullptr != format);
 
   // available space in buffer
-  ULONG ulAvailable = m_capacity - m_length;
+  uint32_t ulAvailable = m_capacity - m_length;
 
   // format string
   (void)clib::Vsnprintf(m_buffer + m_length, ulAvailable, format, va_args);
@@ -161,24 +161,24 @@ void CStringStatic::AppendFormatVA(const CHAR *format, VA_LIST va_args) {
 //		Appends wide character string
 //
 //---------------------------------------------------------------------------
-void CStringStatic::AppendConvert(const WCHAR *wc_str) {
-  ULONG length_entry = GPOS_WSZ_LENGTH(wc_str);
+void CStringStatic::AppendConvert(const wchar_t *wc_str) {
+  uint32_t length_entry = GPOS_WSZ_LENGTH(wc_str);
 
   if (m_capacity - m_length < length_entry) {
     length_entry = m_capacity - m_length - 1;
   }
 
-  for (ULONG i = 0; i < length_entry; i++) {
-    CHAR str_convert[MB_LEN_MAX];
+  for (uint32_t i = 0; i < length_entry; i++) {
+    char str_convert[MB_LEN_MAX];
 
     /* convert wide character to multi-byte array */
-    ULONG char_length = clib::Wctomb(str_convert, wc_str[i]);
+    uint32_t char_length = clib::Wctomb(str_convert, wc_str[i]);
     GPOS_ASSERT(0 < char_length);
 
     // check if wide character is ASCII-compatible
     if (1 == char_length) {
       // simple cast; works only for ASCII characters
-      m_buffer[m_length] = CHAR(wc_str[i]);
+      m_buffer[m_length] = char(wc_str[i]);
     } else {
       // substitute wide character
       m_buffer[m_length] = GPOS_WCHAR_UNPRINTABLE;

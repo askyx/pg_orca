@@ -32,8 +32,8 @@ class CPhysicalIndexOnlyScan : public CPhysicalScan {
   // index descriptor
   CIndexDescriptor *m_pindexdesc;
 
-  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-  ULONG m_ulOriginOpId;
+  // origin operator id -- UINT32_MAX if operator was not generated via a transformation
+  uint32_t m_ulOriginOpId;
 
   // order
   COrderSpec *m_pos;
@@ -45,8 +45,8 @@ class CPhysicalIndexOnlyScan : public CPhysicalScan {
   CPhysicalIndexOnlyScan(const CPhysicalIndexOnlyScan &) = delete;
 
   // ctors
-  CPhysicalIndexOnlyScan(CMemoryPool *mp, CIndexDescriptor *pindexdesc, CTableDescriptor *ptabdesc, ULONG ulOriginOpId,
-                         const CName *pnameAlias, CColRefArray *colref_array, COrderSpec *pos,
+  CPhysicalIndexOnlyScan(CMemoryPool *mp, CIndexDescriptor *pindexdesc, CTableDescriptor *ptabdesc,
+                         uint32_t ulOriginOpId, const CName *pnameAlias, CColRefArray *colref_array, COrderSpec *pos,
                          EIndexScanDirection scan_direction);
 
   // dtor
@@ -56,29 +56,28 @@ class CPhysicalIndexOnlyScan : public CPhysicalScan {
   EOperatorId Eopid() const override { return EopPhysicalIndexOnlyScan; }
 
   // operator name
-  const CHAR *SzId() const override { return "CPhysicalIndexOnlyScan"; }
+  const char *SzId() const override { return "CPhysicalIndexOnlyScan"; }
 
   // table alias name
   const CName &NameAlias() const { return *m_pnameAlias; }
 
-  // origin operator id -- gpos::ulong_max if operator was not generated via a transformation
-  ULONG
-  UlOriginOpId() const { return m_ulOriginOpId; }
+  // origin operator id -- UINT32_MAX if operator was not generated via a transformation
+  uint32_t UlOriginOpId() const { return m_ulOriginOpId; }
 
   // index scan direction is only used for B-tree indices.
   EIndexScanDirection IndexScanDirection() const { return m_scan_direction; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // index descriptor
   CIndexDescriptor *Pindexdesc() const { return m_pindexdesc; }
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties

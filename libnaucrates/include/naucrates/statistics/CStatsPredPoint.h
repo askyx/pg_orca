@@ -50,7 +50,7 @@ class CStatsPredPoint : public CStatsPred {
   CStatsPredPoint(const CStatsPredPoint &) = delete;
 
   // ctor
-  CStatsPredPoint(ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type, CPoint *point);
+  CStatsPredPoint(uint32_t colid, CStatsPred::EStatsCmpType stats_cmp_type, CPoint *point);
 
   // ctor
   CStatsPredPoint(CMemoryPool *mp, const CColRef *colref, CStatsPred::EStatsCmpType stats_cmp_type, IDatum *datum);

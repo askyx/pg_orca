@@ -23,7 +23,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarProjElem::CDXLScalarProjElem(CMemoryPool *mp, ULONG id, const CMDName *mdname)
+CDXLScalarProjElem::CDXLScalarProjElem(CMemoryPool *mp, uint32_t id, const CMDName *mdname)
     : CDXLScalar(mp), m_id(id), m_mdname(mdname) {
   GPOS_ASSERT(nullptr != mdname);
 }
@@ -72,8 +72,7 @@ const CWStringConst *CDXLScalarProjElem::GetOpNameStr() const {
 //		Col id for this project element
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLScalarProjElem::Id() const {
+uint32_t CDXLScalarProjElem::Id() const {
   return m_id;
 }
 
@@ -98,7 +97,7 @@ const CMDName *CDXLScalarProjElem::GetMdNameAlias() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarProjElem::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarProjElem::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(1 == dxlnode->Arity());
   CDXLNode *child_dxlnode = (*dxlnode)[0];
 

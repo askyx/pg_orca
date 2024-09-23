@@ -92,7 +92,7 @@ void CXformLimit2IndexGet::Transform(CXformContext *pxfctxt, CXformResult *pxfre
   }
 
   // get the indices count of this relation
-  const ULONG ulIndices = popGet->Ptabdesc()->IndexCount();
+  const uint32_t ulIndices = popGet->Ptabdesc()->IndexCount();
   // Ignore xform if relation doesn't have any indices
   if (0 == ulIndices) {
     return;
@@ -121,7 +121,7 @@ void CXformLimit2IndexGet::Transform(CXformContext *pxfctxt, CXformResult *pxfre
   const IMDRelation *pmdrel = md_accessor->RetrieveRel(popGet->Ptabdesc()->MDId());
   CColRefArray *pdrgpcrIndexColumns = nullptr;
 
-  for (ULONG ul = 0; ul < ulIndices; ul++) {
+  for (uint32_t ul = 0; ul < ulIndices; ul++) {
     IMDId *pmdidIndex = pmdrel->IndexMDidAt(ul);
     const IMDIndex *pmdindex = md_accessor->RetrieveIndex(pmdidIndex);
     // get columns in the index
@@ -130,7 +130,7 @@ void CXformLimit2IndexGet::Transform(CXformContext *pxfctxt, CXformResult *pxfre
     EIndexScanDirection scan_direction = GetScanDirection(pos, pdrgpcrIndexColumns, pmdindex);
     // Proceed if index is applicable
     if (scan_direction != EisdSentinel) {
-      BOOL indexonly = Exfid() == ExfLimit2IndexOnlyGet;
+      bool indexonly = Exfid() == ExfLimit2IndexOnlyGet;
       // build IndexGet expression
       CExpression *pexprIndexGet = CXformUtils::PexprBuildBtreeIndexPlan(
           mp, md_accessor, pexprUpdtdRltn, popLimit->UlOpId(), pdrgpexpr, pcrsScalarExpr, nullptr /*outer_refs*/,
@@ -181,7 +181,7 @@ EIndexScanDirection CXformLimit2IndexGet::GetScanDirection(COrderSpec *pos, CCol
 
   EIndexScanDirection finalDirection = EisdSentinel;
 
-  for (ULONG i = 0; i < pos->UlSortColumns(); i++) {
+  for (uint32_t i = 0; i < pos->UlSortColumns(); i++) {
     // ORDER BY columns must match with leading index columns
     const CColRef *colref = pos->Pcr(i);
     if (!CColRef::Equals(colref, (*pdrgpcrIndexColumns)[i])) {
@@ -191,9 +191,9 @@ EIndexScanDirection CXformLimit2IndexGet::GetScanDirection(COrderSpec *pos, CCol
     // 1st bit represents sort direction, 1 for DESC.
     // 2nd bit represents nulls direction, 1 for NULLS FIRST.
     // track required order's sort, nulls direction
-    ULONG reqOrder = 0;
+    uint32_t reqOrder = 0;
     // track index key's sort, nulls direction
-    ULONG indexOrder = 0;
+    uint32_t indexOrder = 0;
     IMDId *greater_than_mdid = colref->RetrieveType()->GetMdidForCmpType(IMDType::EcmptG);
     if (greater_than_mdid->Equals(pos->GetMdIdSortOp(i))) {
       // If order spec's sort mdid is DESC

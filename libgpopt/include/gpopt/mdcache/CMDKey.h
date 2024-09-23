@@ -43,16 +43,16 @@ class CMDKey {
   const IMDId *MDId() const { return m_mdid; }
 
   // equality function
-  BOOL Equals(const CMDKey &mdkey) const;
+  bool Equals(const CMDKey &mdkey) const;
 
   // hash function
-  ULONG HashValue() const;
+  uint32_t HashValue() const;
 
   // equality function for using MD keys in a cache
-  static BOOL FEqualMDKey(CMDKey *const &pvLeft, CMDKey *const &pvRight);
+  static bool FEqualMDKey(CMDKey *const &pvLeft, CMDKey *const &pvRight);
 
   // hash function for using MD keys in a cache
-  static ULONG UlHashMDKey(CMDKey *const &pv);
+  static uint32_t UlHashMDKey(CMDKey *const &pv);
 };
 }  // namespace gpopt
 

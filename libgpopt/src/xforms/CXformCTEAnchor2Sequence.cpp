@@ -43,8 +43,8 @@ CXformCTEAnchor2Sequence::CXformCTEAnchor2Sequence(CMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise CXformCTEAnchor2Sequence::Exfp(CExpressionHandle &exprhdl) const {
-  ULONG id = CLogicalCTEAnchor::PopConvert(exprhdl.Pop())->Id();
-  const ULONG ulConsumers = COptCtxt::PoctxtFromTLS()->Pcteinfo()->UlConsumers(id);
+  uint32_t id = CLogicalCTEAnchor::PopConvert(exprhdl.Pop())->Id();
+  const uint32_t ulConsumers = COptCtxt::PoctxtFromTLS()->Pcteinfo()->UlConsumers(id);
   GPOS_ASSERT(0 < ulConsumers);
 
   if (1 == ulConsumers && CXformUtils::FInlinableCTE(id)) {
@@ -89,7 +89,7 @@ void CXformCTEAnchor2Sequence::Transform(CXformContext *pxfctxt, CXformResult *p
   CLogicalCTEAnchor *popCTEAnchor = CLogicalCTEAnchor::PopConvert(pexpr->Pop());
   CMemoryPool *mp = pxfctxt->Pmp();
 
-  ULONG id = popCTEAnchor->Id();
+  uint32_t id = popCTEAnchor->Id();
 
   CExpression *pexprProducer = COptCtxt::PoctxtFromTLS()->Pcteinfo()->PexprCTEProducer(id);
   GPOS_ASSERT(nullptr != pexprProducer);

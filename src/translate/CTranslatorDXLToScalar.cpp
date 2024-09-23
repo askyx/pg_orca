@@ -216,7 +216,7 @@ Expr *CTranslatorDXLToScalar::TranslateDXLScalarIfStmtToScalar(const CDXLNode *s
 
   // An If statement is of the format: IF <condition> <then> <else>
   // The leaf else statement is the def result of the case statement
-  BOOL is_leaf_else_stmt = false;
+  bool is_leaf_else_stmt = false;
 
   while (!is_leaf_else_stmt) {
     if (3 != curr_node->Arity()) {
@@ -265,9 +265,9 @@ Expr *CTranslatorDXLToScalar::TranslateDXLScalarSwitchToScalar(const CDXLNode *s
   case_expr->arg = TranslateDXLToScalar((*scalar_switch_node)[0], colid_var);
   GPOS_ASSERT(nullptr != case_expr->arg);
 
-  const ULONG arity = scalar_switch_node->Arity();
+  const uint32_t arity = scalar_switch_node->Arity();
   GPOS_ASSERT(1 < arity);
-  for (ULONG ul = 1; ul < arity; ul++) {
+  for (uint32_t ul = 1; ul < arity; ul++) {
     const CDXLNode *child_dxl = (*scalar_switch_node)[ul];
 
     if (EdxlopScalarSwitchCase == child_dxl->GetOperator()->GetDXLOperator()) {
@@ -530,7 +530,7 @@ Expr *CTranslatorDXLToScalar::TranslateDXLScalarAggrefToScalar(const CDXLNode *a
   if (dxlop->IsDistinct()) {
     List *aggdistinct = TranslateScalarListChildren((*aggref_node)[EdxlscalaraggrefIndexAggDistinct]);
 
-    ULONG i;
+    uint32_t i;
     ListCell *lc;
     foreach (lc, aggdistinct) {
       i++;
@@ -564,7 +564,7 @@ Expr *CTranslatorDXLToScalar::TranslateDXLScalarAggrefToScalar(const CDXLNode *a
   }
 
   ULongPtrArray *argtypes = dxlop->GetArgTypes();
-  for (ULONG ul = 0; ul < argtypes->Size(); ul++) {
+  for (uint32_t ul = 0; ul < argtypes->Size(); ul++) {
     aggref->aggargtypes = gpdb::LAppendOid(aggref->aggargtypes, *(*argtypes)[ul]);
   }
 
@@ -677,23 +677,23 @@ Expr *CTranslatorDXLToScalar::TranslateDXLScalarSubplanToScalar(const CDXLNode *
 
   const CDXLColRefArray *outer_refs = dxlop->GetDxlOuterColRefsArray();
 
-  const ULONG len = outer_refs->Size();
+  const uint32_t len = outer_refs->Size();
 
   // Translate a copy of the translate context: the param mappings from the outer scope get copied in the constructor
   CDXLTranslateContext subplan_translate_ctxt(output_context->IsParentAggNode(),
                                               output_context->GetColIdToParamIdMap());
 
   // insert new outer ref mappings in the subplan translate context
-  for (ULONG ul = 0; ul < len; ul++) {
+  for (uint32_t ul = 0; ul < len; ul++) {
     CDXLColRef *dxl_colref = (*outer_refs)[ul];
     IMDId *mdid = dxl_colref->MdidType();
-    ULONG colid = dxl_colref->Id();
-    INT type_modifier = dxl_colref->TypeModifier();
+    uint32_t colid = dxl_colref->Id();
+    int32_t type_modifier = dxl_colref->TypeModifier();
     OID type_oid = CMDIdGPDB::CastMdid(mdid)->Oid();
 
     if (nullptr == subplan_translate_ctxt.GetParamIdMappingElement(colid)) {
       // keep outer reference mapping to the original column for subsequent subplans
-      ULONG param_id = dxl_to_plstmt_ctxt->GetNextParamId(type_oid);
+      uint32_t param_id = dxl_to_plstmt_ctxt->GetNextParamId(type_oid);
 
       subplan_translate_ctxt.FInsertParamMapping(colid,
                                                  new CMappingElementColIdParamId(colid, param_id, mdid, type_modifier));
@@ -777,7 +777,7 @@ void CTranslatorDXLToScalar::TranslateDXLTestExprScalarIdentToExpr(CDXLNode *chi
 //
 //---------------------------------------------------------------------------
 Expr *CTranslatorDXLToScalar::TranslateDXLSubplanTestExprToScalar(CDXLNode *test_expr_node, SubLinkType slink,
-                                                                  BOOL has_outer_refs, List **param_ids) {
+                                                                  bool has_outer_refs, List **param_ids) {
   if (EXPR_SUBLINK == slink || EXISTS_SUBLINK == slink) {
     // expr/exists/not-exists sublinks have no test expression
     return nullptr;
@@ -891,8 +891,8 @@ void CTranslatorDXLToScalar::TranslateSubplanParams(SubPlan *subplan, CDXLTransl
   GPOS_ASSERT(nullptr != colid_var);
 
   // Create the PARAM and ARG nodes
-  const ULONG size = outer_refs->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = outer_refs->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     CDXLColRef *dxl_colref = (*outer_refs)[ul];
     dxl_colref->AddRef();
     const CMappingElementColIdParamId *colid_to_param_id_map =
@@ -951,7 +951,7 @@ SubPlan *CTranslatorDXLToScalar::TranslateSubplanFromChildPlan(Plan *plan, SubLi
 //		build plan name, for explain purposes
 //
 //---------------------------------------------------------------------------
-CHAR *CTranslatorDXLToScalar::GetSubplanAlias(ULONG plan_id) {
+char *CTranslatorDXLToScalar::GetSubplanAlias(uint32_t plan_id) {
   auto s = std::format("SubPlan {}", plan_id);
   return pstrdup(s.c_str());
 }
@@ -1328,8 +1328,8 @@ Expr *CTranslatorDXLToScalar::TranslateDXLScalarMinMaxToScalar(const CDXLNode *s
 List *CTranslatorDXLToScalar::TranslateScalarChildren(List *list, const CDXLNode *dxlnode) {
   List *new_list = list;
 
-  const ULONG arity = dxlnode->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = dxlnode->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CDXLNode *child_dxl = (*dxlnode)[ul];
     Expr *child_expr = TranslateDXLToScalar(child_dxl, colid_var);
     new_list = lappend(new_list, child_expr);
@@ -1341,8 +1341,8 @@ List *CTranslatorDXLToScalar::TranslateScalarChildren(List *list, const CDXLNode
 List *CTranslatorDXLToScalar::TranslateScalarListChildren(const CDXLNode *dxlnode) {
   List *new_list = nullptr;
 
-  const ULONG arity = dxlnode->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = dxlnode->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CDXLNode *child_dxl = (*dxlnode)[ul];
     Expr *child_expr = TranslateDXLToScalar(child_dxl, colid_var);
     new_list = lappend(new_list, child_expr);
@@ -1573,13 +1573,13 @@ Const *CTranslatorDXLToScalar::TranslateDXLDatumGenericToScalar(CDXLDatum *datum
   } else if (constant->constbyval) {
     // if it is a by-value constant, the value is stored in the datum.
     GPOS_ASSERT(constant->constlen >= 0);
-    GPOS_ASSERT((ULONG)constant->constlen <= sizeof(Datum));
+    GPOS_ASSERT((uint32_t)constant->constlen <= sizeof(Datum));
     memcpy(&constant->constvalue, datum_generic_dxl->GetByteArray(), sizeof(Datum));
   } else {
     Datum val = gpdb::DatumFromPointer(datum_generic_dxl->GetByteArray());
-    ULONG length = (ULONG)gpdb::DatumSize(val, false, constant->constlen);
+    uint32_t length = (uint32_t)gpdb::DatumSize(val, false, constant->constlen);
 
-    CHAR *str = (CHAR *)gpdb::GPDBAlloc(length + 1);
+    char *str = (char *)gpdb::GPDBAlloc(length + 1);
     memcpy(str, datum_generic_dxl->GetByteArray(), length);
     str[length] = '\0';
     constant->constvalue = gpdb::DatumFromPointer(str);
@@ -1717,7 +1717,7 @@ Expr *CTranslatorDXLToScalar::TranslateDXLScalarArrayRefToScalar(const CDXLNode 
   array_ref->refcollid = gpdb::TypeCollation(array_ref->refelemtype);
   array_ref->reftypmod = dxlop->TypeModifier();
 
-  const ULONG arity = scalar_array_ref_node->Arity();
+  const uint32_t arity = scalar_array_ref_node->Arity();
   GPOS_ASSERT(3 == arity || 4 == arity);
 
   array_ref->reflowerindexpr =
@@ -1815,7 +1815,7 @@ Oid CTranslatorDXLToScalar::GetFunctionReturnTypeOid(IMDId *mdid) const {
 //		Check to see if the operator returns a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CTranslatorDXLToScalar::HasBoolResult(CDXLNode *dxlnode, CMDAccessor *md_accessor) {
+bool CTranslatorDXLToScalar::HasBoolResult(CDXLNode *dxlnode, CMDAccessor *md_accessor) {
   GPOS_ASSERT(nullptr != dxlnode);
 
   if (EdxloptypeScalar != dxlnode->GetOperator()->GetDXLOperatorType()) {
@@ -1835,7 +1835,7 @@ BOOL CTranslatorDXLToScalar::HasBoolResult(CDXLNode *dxlnode, CMDAccessor *md_ac
 //		Check if the operator is a "true" bool constant
 //
 //---------------------------------------------------------------------------
-BOOL CTranslatorDXLToScalar::HasConstTrue(CDXLNode *dxlnode, CMDAccessor *md_accessor) {
+bool CTranslatorDXLToScalar::HasConstTrue(CDXLNode *dxlnode, CMDAccessor *md_accessor) {
   GPOS_ASSERT(nullptr != dxlnode);
   if (!HasBoolResult(dxlnode, md_accessor) || EdxlopScalarConstValue != dxlnode->GetOperator()->GetDXLOperator()) {
     return false;
@@ -1855,7 +1855,7 @@ BOOL CTranslatorDXLToScalar::HasConstTrue(CDXLNode *dxlnode, CMDAccessor *md_acc
 //		Check if the operator is a NULL constant
 //
 //---------------------------------------------------------------------------
-BOOL CTranslatorDXLToScalar::HasConstNull(CDXLNode *dxlnode) {
+bool CTranslatorDXLToScalar::HasConstNull(CDXLNode *dxlnode) {
   GPOS_ASSERT(nullptr != dxlnode);
   if (EdxlopScalarConstValue != dxlnode->GetOperator()->GetDXLOperator()) {
     return false;

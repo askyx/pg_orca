@@ -40,10 +40,10 @@ class COstreamBasic : public COstream {
   ~COstreamBasic() override = default;
 
   // implement << operator
-  IOstream &operator<<(const WCHAR *) override;
+  IOstream &operator<<(const wchar_t *) override;
 
   // implement << operator
-  IOstream &operator<<(const WCHAR) override;
+  IOstream &operator<<(const wchar_t) override;
 };
 
 }  // namespace gpos

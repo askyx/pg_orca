@@ -41,8 +41,8 @@ CLogicalSequenceProject::CLogicalSequenceProject(CMemoryPool *mp, COrderSpecArra
   m_pcrsLocalUsed->Include(pcrsSort);
   pcrsSort->Release();
 
-  const ULONG ulFrames = m_pdrgpwf->Size();
-  for (ULONG ul = 0; ul < ulFrames; ul++) {
+  const uint32_t ulFrames = m_pdrgpwf->Size();
+  for (uint32_t ul = 0; ul < ulFrames; ul++) {
     CWindowFrame *pwf = (*m_pdrgpwf)[ul];
     if (!CWindowFrame::IsEmpty(pwf)) {
       m_pcrsLocalUsed->Include(pwf->PcrsUsed());
@@ -85,17 +85,17 @@ CLogicalSequenceProject::~CLogicalSequenceProject() {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalSequenceProject::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                               BOOL must_exist) {
+                                                               bool must_exist) {
   COrderSpecArray *pdrgpos = GPOS_NEW(mp) COrderSpecArray(mp);
-  const ULONG ulOrderSpec = m_pdrgpos->Size();
-  for (ULONG ul = 0; ul < ulOrderSpec; ul++) {
+  const uint32_t ulOrderSpec = m_pdrgpos->Size();
+  for (uint32_t ul = 0; ul < ulOrderSpec; ul++) {
     COrderSpec *pos = ((*m_pdrgpos)[ul])->PosCopyWithRemappedColumns(mp, colref_mapping, must_exist);
     pdrgpos->Append(pos);
   }
 
   CWindowFrameArray *pdrgpwf = GPOS_NEW(mp) CWindowFrameArray(mp);
-  const ULONG ulWindowFrames = m_pdrgpwf->Size();
-  for (ULONG ul = 0; ul < ulWindowFrames; ul++) {
+  const uint32_t ulWindowFrames = m_pdrgpwf->Size();
+  for (uint32_t ul = 0; ul < ulWindowFrames; ul++) {
     CWindowFrame *pwf = ((*m_pdrgpwf)[ul])->PwfCopyWithRemappedColumns(mp, colref_mapping, must_exist);
     pdrgpwf->Append(pwf);
   }
@@ -114,13 +114,13 @@ COperator *CLogicalSequenceProject::PopCopyWithRemappedColumns(CMemoryPool *mp, 
 void CLogicalSequenceProject::SetHasOrderSpecs(CMemoryPool *mp) {
   GPOS_ASSERT(nullptr != m_pdrgpos);
 
-  const ULONG ulOrderSpecs = m_pdrgpos->Size();
+  const uint32_t ulOrderSpecs = m_pdrgpos->Size();
   if (0 == ulOrderSpecs) {
     // if no order specs are given, we add one empty order spec
     m_pdrgpos->Append(GPOS_NEW(mp) COrderSpec(mp));
   }
-  BOOL fHasOrderSpecs = false;
-  for (ULONG ul = 0; !fHasOrderSpecs && ul < ulOrderSpecs; ul++) {
+  bool fHasOrderSpecs = false;
+  for (uint32_t ul = 0; !fHasOrderSpecs && ul < ulOrderSpecs; ul++) {
     fHasOrderSpecs = !(*m_pdrgpos)[ul]->IsEmpty();
   }
   m_fHasOrderSpecs = fHasOrderSpecs;
@@ -138,15 +138,15 @@ void CLogicalSequenceProject::SetHasFrameSpecs(CMemoryPool *  // mp
 ) {
   GPOS_ASSERT(nullptr != m_pdrgpwf);
 
-  const ULONG ulFrameSpecs = m_pdrgpwf->Size();
+  const uint32_t ulFrameSpecs = m_pdrgpwf->Size();
   if (0 == ulFrameSpecs) {
     // if no frame specs are given, we add one empty frame
     CWindowFrame *pwf = const_cast<CWindowFrame *>(CWindowFrame::PwfEmpty());
     pwf->AddRef();
     m_pdrgpwf->Append(pwf);
   }
-  BOOL fHasFrameSpecs = false;
-  for (ULONG ul = 0; !fHasFrameSpecs && ul < ulFrameSpecs; ul++) {
+  bool fHasFrameSpecs = false;
+  for (uint32_t ul = 0; !fHasFrameSpecs && ul < ulFrameSpecs; ul++) {
     fHasFrameSpecs = !CWindowFrame::IsEmpty((*m_pdrgpwf)[ul]);
   }
   m_fHasFrameSpecs = fHasFrameSpecs;
@@ -194,7 +194,7 @@ CColRefSet *CLogicalSequenceProject::DeriveOuterReferences(CMemoryPool *mp, CExp
 // the provided ColRefs
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalSequenceProject::FHasLocalReferencesTo(const CColRefSet *outerRefsToCheck) const {
+bool CLogicalSequenceProject::FHasLocalReferencesTo(const CColRefSet *outerRefsToCheck) const {
   return !outerRefsToCheck->IsDisjoint(m_pcrsLocalUsed);
 }
 
@@ -233,7 +233,7 @@ CMaxCard CLogicalSequenceProject::DeriveMaxCard(CMemoryPool *,  // mp
 //		Matching function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalSequenceProject::Matches(COperator *pop) const {
+bool CLogicalSequenceProject::Matches(COperator *pop) const {
   GPOS_ASSERT(nullptr != pop);
   if (Eopid() == pop->Eopid()) {
     CLogicalSequenceProject *popLogicalSequenceProject = CLogicalSequenceProject::PopConvert(pop);
@@ -252,9 +252,8 @@ BOOL CLogicalSequenceProject::Matches(COperator *pop) const {
 //		Hashing function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalSequenceProject::HashValue() const {
-  ULONG ulHash = 0;
+uint32_t CLogicalSequenceProject::HashValue() const {
+  uint32_t ulHash = 0;
   ulHash = gpos::CombineHashes(ulHash, CWindowFrame::HashValue(m_pdrgpwf, 3 /*ulMaxSize*/));
   ulHash = gpos::CombineHashes(ulHash, COrderSpec::HashValue(m_pdrgpos, 3 /*ulMaxSize*/));
 

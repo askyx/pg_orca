@@ -19,19 +19,19 @@ namespace gpos {
 //		CBitVector
 //
 //	@doc:
-//		Bit vector based on ULLONG elements
+//		Bit vector based on uint64_t elements
 //
 //---------------------------------------------------------------------------
 class CBitVector {
  private:
   // size in bits
-  ULONG m_nbits;
+  uint32_t m_nbits;
 
   // size of vector in units, not bits
-  ULONG m_len;
+  uint32_t m_len;
 
   // vector
-  ULLONG *m_vec;
+  uint64_t *m_vec;
 
   // clear vector
   void Clear();
@@ -40,7 +40,7 @@ class CBitVector {
   CBitVector(const CBitVector &) = delete;
 
   // ctor
-  CBitVector(CMemoryPool *mp, ULONG cBits);
+  CBitVector(CMemoryPool *mp, uint32_t cBits);
 
   // dtor
   ~CBitVector();
@@ -49,13 +49,13 @@ class CBitVector {
   CBitVector(CMemoryPool *mp, const CBitVector &);
 
   // determine if bit is set
-  BOOL Get(ULONG ulBit) const;
+  bool Get(uint32_t ulBit) const;
 
   // set given bit; return previous value
-  BOOL ExchangeSet(ULONG ulBit);
+  bool ExchangeSet(uint32_t ulBit);
 
   // clear given bit; return previous value
-  BOOL ExchangeClear(ULONG ulBit);
+  bool ExchangeClear(uint32_t ulBit);
 
   // union vectors
   void Or(const CBitVector *);
@@ -64,25 +64,25 @@ class CBitVector {
   void And(const CBitVector *);
 
   // is subset
-  BOOL ContainsAll(const CBitVector *) const;
+  bool ContainsAll(const CBitVector *) const;
 
   // is dijoint
-  BOOL IsDisjoint(const CBitVector *) const;
+  bool IsDisjoint(const CBitVector *) const;
 
   // equality
-  BOOL Equals(const CBitVector *) const;
+  bool Equals(const CBitVector *) const;
 
   // is empty?
-  BOOL IsEmpty() const;
+  bool IsEmpty() const;
 
   // find next bit from given position
-  BOOL GetNextSetBit(ULONG, ULONG &) const;
+  bool GetNextSetBit(uint32_t, uint32_t &) const;
 
   // number of bits set
-  ULONG CountSetBits() const;
+  uint32_t CountSetBits() const;
 
   // hash value
-  ULONG HashValue() const;
+  uint32_t HashValue() const;
 
 };  // class CBitVector
 

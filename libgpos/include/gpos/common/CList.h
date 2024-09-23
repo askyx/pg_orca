@@ -45,10 +45,10 @@ class CList {
 
  private:
   // offest of link element
-  ULONG m_offset{gpos::ulong_max};
+  uint32_t m_offset{UINT32_MAX};
 
   // size
-  ULONG m_size{0};
+  uint32_t m_size{0};
 
   // head element
   T *m_head;
@@ -61,8 +61,8 @@ class CList {
     GPOS_ASSERT(MAX_ALIGNED(pv));
     GPOS_ASSERT(MAX_ALIGNED(m_offset));
 
-    GPOS_ASSERT(gpos::ulong_max != m_offset && "Link offset not initialized.");
-    SLink &link = *(SLink *)(((BYTE *)pv) + m_offset);
+    GPOS_ASSERT(UINT32_MAX != m_offset && "Link offset not initialized.");
+    SLink &link = *(SLink *)(((uint8_t *)pv) + m_offset);
     return link;
   }
 
@@ -73,7 +73,7 @@ class CList {
   CList() : m_head(nullptr), m_tail(nullptr) {}
 
   // init function to facilitate arrays
-  void Init(ULONG offset) {
+  void Init(uint32_t offset) {
     GPOS_ASSERT(MAX_ALIGNED(offset));
     m_offset = offset;
   }
@@ -231,11 +231,10 @@ class CList {
   }
 
   // get size
-  ULONG
-  Size() const { return m_size; }
+  uint32_t Size() const { return m_size; }
 
   // check if empty
-  BOOL IsEmpty() const { return nullptr == First(); }
+  bool IsEmpty() const { return nullptr == First(); }
 
   // lookup a given element in the list
   GPOS_RESULT
@@ -256,7 +255,7 @@ class CList {
 #ifdef GPOS_DEBUG
   // debug print of element addresses
   IOstream &OsPrint(IOstream &os) const {
-    ULONG c = 0;
+    uint32_t c = 0;
 
     T *t = First();
 

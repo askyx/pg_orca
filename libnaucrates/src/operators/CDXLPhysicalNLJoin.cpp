@@ -24,8 +24,8 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalNLJoin::CDXLPhysicalNLJoin(CMemoryPool *mp, EdxlJoinType join_type, BOOL is_index_nlj,
-                                       BOOL nest_params_exists)
+CDXLPhysicalNLJoin::CDXLPhysicalNLJoin(CMemoryPool *mp, EdxlJoinType join_type, bool is_index_nlj,
+                                       bool nest_params_exists)
     : CDXLPhysicalJoin(mp, join_type), m_is_index_nlj(is_index_nlj), m_nest_params_exists(nest_params_exists) {
   m_nest_params_col_refs = nullptr;
 }
@@ -67,7 +67,7 @@ const CWStringConst *CDXLPhysicalNLJoin::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalNLJoin::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLPhysicalNLJoin::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   // assert proj list and filter are valid
   CDXLPhysical::AssertValid(dxlnode, validate_children);
 
@@ -95,7 +95,7 @@ void CDXLPhysicalNLJoin::SetNestLoopParamsColRefs(CDXLColRefArray *nest_params_c
   m_nest_params_col_refs = nest_params_col_refs;
 }
 
-BOOL CDXLPhysicalNLJoin::NestParamsExists() const {
+bool CDXLPhysicalNLJoin::NestParamsExists() const {
   return m_nest_params_exists;
 }
 

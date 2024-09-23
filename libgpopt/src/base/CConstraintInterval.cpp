@@ -40,7 +40,7 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CConstraintInterval::CConstraintInterval(CMemoryPool *mp, const CColRef *colref, CRangeArray *pdrgprng,
-                                         BOOL fIncludesNull)
+                                         bool fIncludesNull)
     : CConstraint(mp, GPOS_NEW(mp) CColRefSet(mp)),
       m_pcr(colref),
       m_pdrgprng(pdrgprng),
@@ -71,7 +71,7 @@ CConstraintInterval::~CConstraintInterval() {
 //		it has no ranges and the null flag is not set
 //
 //---------------------------------------------------------------------------
-BOOL CConstraintInterval::FContradiction() const {
+bool CConstraintInterval::FContradiction() const {
   if (!m_fIncludesNull && 0 == m_pdrgprng->Size()) {
     return true;
   }
@@ -98,7 +98,7 @@ BOOL CConstraintInterval::FContradiction() const {
 //		it has a (-inf, inf) range and the null flag is set
 //
 //---------------------------------------------------------------------------
-BOOL CConstraintInterval::IsConstraintUnbounded() const {
+bool CConstraintInterval::IsConstraintUnbounded() const {
   return (m_fIncludesNull && 1 == m_pdrgprng->Size() && (*m_pdrgprng)[0]->IsConstraintUnbounded());
 }
 
@@ -111,7 +111,7 @@ BOOL CConstraintInterval::IsConstraintUnbounded() const {
 //
 //---------------------------------------------------------------------------
 CConstraint *CConstraintInterval::PcnstrCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                                BOOL must_exist) {
+                                                                bool must_exist) {
   CColRef *colref = CUtils::PcrRemap(m_pcr, colref_mapping, must_exist);
   return PcnstrRemapForColumn(mp, colref);
 }
@@ -162,7 +162,7 @@ CConstraint *CConstraintInterval::GetConstraintOnSegmentId() const {
 //
 //---------------------------------------------------------------------------
 CConstraintInterval *CConstraintInterval::PciIntervalFromScalarExpr(CMemoryPool *mp, CExpression *pexpr,
-                                                                    CColRef *colref, BOOL infer_nulls_as,
+                                                                    CColRef *colref, bool infer_nulls_as,
                                                                     IMDIndex::EmdindexType access_method) {
   GPOS_ASSERT(nullptr != pexpr);
   GPOS_ASSERT(pexpr->Pop()->FScalar());
@@ -219,7 +219,7 @@ CConstraintInterval *CConstraintInterval::PciIntervalFromScalarExpr(CMemoryPool 
 //
 //---------------------------------------------------------------------------
 CConstraintInterval *CConstraintInterval::PcnstrIntervalFromScalarArrayCmp(CMemoryPool *mp, CExpression *pexpr,
-                                                                           CColRef *colref, BOOL infer_nulls_as) {
+                                                                           CColRef *colref, bool infer_nulls_as) {
   if (!(CPredicateUtils::FCompareIdentToConstArray(pexpr) || CPredicateUtils::FCompareCastIdentToConstArray(pexpr))) {
     return nullptr;
   }
@@ -241,7 +241,7 @@ CConstraintInterval *CConstraintInterval::PcnstrIntervalFromScalarArrayCmp(CMemo
   IMDType::ECmpType cmp_type = CUtils::ParseCmpType(popScArrayCmp->MdIdOp());
 
   CExpression *pexprArray = CUtils::PexprScalarArrayChild(pexpr);
-  const ULONG ulArrayExprArity = CUtils::UlScalarArrayArity(pexprArray);
+  const uint32_t ulArrayExprArity = CUtils::UlScalarArrayArity(pexprArray);
   if (0 == ulArrayExprArity) {
     return nullptr;
   }
@@ -254,7 +254,7 @@ CConstraintInterval *CConstraintInterval::PcnstrIntervalFromScalarArrayCmp(CMemo
   switch (cmp_type) {
     case IMDType::EcmptEq: {
       // IN case, create ranges [X, X] [Y, Y] [Z, Z]
-      for (ULONG ul = 0; ul < apdatumsortedset->Size(); ul++) {
+      for (uint32_t ul = 0; ul < apdatumsortedset->Size(); ul++) {
         (*apdatumsortedset)[ul]->AddRef();
         CRange *prng = GPOS_NEW(mp) CRange(pcomp, IMDType::EcmptEq, (*apdatumsortedset)[ul]);
         prgrng->Append(prng);
@@ -266,7 +266,7 @@ CConstraintInterval *CConstraintInterval::PcnstrIntervalFromScalarArrayCmp(CMemo
       IDatum *pprevdatum = nullptr;
       IDatum *datum = nullptr;
 
-      for (ULONG ul = 0; ul < apdatumsortedset->Size(); ul++) {
+      for (uint32_t ul = 0; ul < apdatumsortedset->Size(); ul++) {
         if (0 != ul) {
           pprevdatum->AddRef();
         }
@@ -474,7 +474,7 @@ CConstraintInterval *CConstraintInterval::PciIntervalFromScalarBooleanTest(CMemo
 //---------------------------------------------------------------------------
 CConstraintInterval *CConstraintInterval::PciIntervalFromColConstCmp(CMemoryPool *mp, CColRef *colref,
                                                                      IMDType::ECmpType cmp_type,
-                                                                     CScalarConst *popScConst, BOOL infer_nulls_as) {
+                                                                     CScalarConst *popScConst, bool infer_nulls_as) {
   CConstraintInterval *pcri = nullptr;
   CRangeArray *pdrngprng = PciRangeFromColConstCmp(mp, cmp_type, popScConst);
 
@@ -496,7 +496,7 @@ CConstraintInterval *CConstraintInterval::PciIntervalFromColConstCmp(CMemoryPool
 //
 //---------------------------------------------------------------------------
 CConstraintInterval *CConstraintInterval::PciIntervalFromScalarCmp(CMemoryPool *mp, CExpression *pexpr, CColRef *colref,
-                                                                   BOOL infer_nulls_as,
+                                                                   bool infer_nulls_as,
                                                                    IMDIndex::EmdindexType access_method) {
   GPOS_ASSERT(nullptr != pexpr);
   GPOS_ASSERT(CUtils::FScalarCmp(pexpr) || CUtils::FScalarArrayCmp(pexpr));
@@ -585,7 +585,7 @@ CConstraintInterval *CConstraintInterval::PciIntervalFromScalarIDF(CMemoryPool *
 //
 //---------------------------------------------------------------------------
 CConstraintInterval *CConstraintInterval::PciIntervalFromScalarBoolOp(CMemoryPool *mp, CExpression *pexpr,
-                                                                      CColRef *colref, BOOL infer_nulls_as,
+                                                                      CColRef *colref, bool infer_nulls_as,
                                                                       IMDIndex::EmdindexType access_method) {
   GPOS_ASSERT(nullptr != pexpr);
   GPOS_ASSERT(CUtils::FScalarBoolOp(pexpr));
@@ -624,7 +624,7 @@ CConstraintInterval *CConstraintInterval::PciIntervalFromScalarBoolOp(CMemoryPoo
 //
 //---------------------------------------------------------------------------
 CConstraintInterval *CConstraintInterval::PciIntervalFromScalarIdent(CMemoryPool *mp, CColRef *colref,
-                                                                     BOOL infer_nulls_as) {
+                                                                     bool infer_nulls_as) {
   GPOS_ASSERT(colref->RetrieveType()->GetDatumType() == IMDType::EtiBool);
 
   CRangeArray *pdrngprng = GPOS_NEW(mp) CRangeArray(mp);
@@ -645,17 +645,17 @@ CConstraintInterval *CConstraintInterval::PciIntervalFromScalarIdent(CMemoryPool
 //
 //---------------------------------------------------------------------------
 CConstraintInterval *CConstraintInterval::PciIntervalFromScalarBoolOr(CMemoryPool *mp, CExpression *pexpr,
-                                                                      CColRef *colref, BOOL infer_nulls_as,
+                                                                      CColRef *colref, bool infer_nulls_as,
                                                                       IMDIndex::EmdindexType access_method) {
   GPOS_ASSERT(nullptr != pexpr);
   GPOS_ASSERT(CUtils::FScalarBoolOp(pexpr));
   GPOS_ASSERT(CScalarBoolOp::EboolopOr == CScalarBoolOp::PopConvert(pexpr->Pop())->Eboolop());
 
-  const ULONG arity = pexpr->Arity();
+  const uint32_t arity = pexpr->Arity();
   GPOS_ASSERT(0 < arity);
 
   CConstraintIntervalArray *child_constraints = GPOS_NEW(mp) CConstraintIntervalArray(mp);
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CConstraintInterval *pciChild = PciIntervalFromScalarExpr(mp, (*pexpr)[ul], colref, infer_nulls_as, access_method);
 
     if (nullptr == pciChild) {
@@ -675,8 +675,8 @@ CConstraintInterval *CConstraintInterval::PciIntervalFromScalarBoolOr(CMemoryPoo
   while (child_constraints->Size() > 1) {
     constraints = GPOS_NEW(mp) CConstraintIntervalArray(mp);
 
-    ULONG length = child_constraints->Size();
-    ULONG ul;
+    uint32_t length = child_constraints->Size();
+    uint32_t ul;
 
     for (ul = 0; ul < length - 1; ul += 2) {
       CConstraintInterval *pci1 = (*child_constraints)[ul];
@@ -712,17 +712,17 @@ CConstraintInterval *CConstraintInterval::PciIntervalFromScalarBoolOr(CMemoryPoo
 //
 //---------------------------------------------------------------------------
 CConstraintInterval *CConstraintInterval::PciIntervalFromScalarBoolAnd(CMemoryPool *mp, CExpression *pexpr,
-                                                                       CColRef *colref, BOOL infer_nulls_as,
+                                                                       CColRef *colref, bool infer_nulls_as,
                                                                        IMDIndex::EmdindexType access_method) {
   GPOS_ASSERT(nullptr != pexpr);
   GPOS_ASSERT(CUtils::FScalarBoolOp(pexpr));
   GPOS_ASSERT(CScalarBoolOp::EboolopAnd == CScalarBoolOp::PopConvert(pexpr->Pop())->Eboolop());
 
-  const ULONG arity = pexpr->Arity();
+  const uint32_t arity = pexpr->Arity();
   GPOS_ASSERT(0 < arity);
 
   CConstraintInterval *pci = PciIntervalFromScalarExpr(mp, (*pexpr)[0], colref, infer_nulls_as, access_method);
-  for (ULONG ul = 1; ul < arity; ul++) {
+  for (uint32_t ul = 1; ul < arity; ul++) {
     CConstraintInterval *pciChild = PciIntervalFromScalarExpr(mp, (*pexpr)[ul], colref, infer_nulls_as, access_method);
     // here is where we will return a NULL child from not being able to create a
     // CConstraint interval from the ScalarExpr
@@ -800,8 +800,8 @@ CExpression *CConstraintInterval::PexprConstructScalar(CMemoryPool *mp) const {
 CExpression *CConstraintInterval::PexprConstructDisjunctionScalar(CMemoryPool *mp) const {
   CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
 
-  const ULONG length = m_pdrgprng->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
+  const uint32_t length = m_pdrgprng->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
     CRange *prange = (*m_pdrgprng)[ul];
     CExpression *pexprChild = prange->PexprScalar(mp, m_pcr);
     pdrgpexpr->Append(pexprChild);
@@ -842,8 +842,8 @@ bool CConstraintInterval::FConvertsToIn() const {
   }
 
   bool isIN = true;
-  const ULONG length = m_pdrgprng->Size();
-  for (ULONG ul = 0; ul < length && isIN; ul++) {
+  const uint32_t length = m_pdrgprng->Size();
+  for (uint32_t ul = 0; ul < length && isIN; ul++) {
     isIN &= (*m_pdrgprng)[ul]->FPoint();
   }
   return isIN;
@@ -873,8 +873,8 @@ bool CConstraintInterval::FConvertsToNotIn() const {
   bool isNotIn = true;
   CRange *pLeftRng = (*m_pdrgprng)[0];
   CRange *pRightRng = nullptr;
-  const ULONG length = m_pdrgprng->Size();
-  for (ULONG ul = 1; ul < length && isNotIn; ul++) {
+  const uint32_t length = m_pdrgprng->Size();
+  for (uint32_t ul = 1; ul < length && isNotIn; ul++) {
     pRightRng = (*m_pdrgprng)[ul];
     isNotIn &= pLeftRng->EriRight() == CRange::EriExcluded;
     isNotIn &= pRightRng->EriLeft() == CRange::EriExcluded;
@@ -901,7 +901,7 @@ bool CConstraintInterval::FConvertsToNotIn() const {
 CExpression *CConstraintInterval::PexprConstructArrayScalar(CMemoryPool *mp, bool fIn) const {
   GPOS_ASSERT(FConvertsToIn() || FConvertsToNotIn());
 
-  ULONG ulRngs = m_pdrgprng->Size();
+  uint32_t ulRngs = m_pdrgprng->Size();
   IMDType::ECmpType ecmptype = IMDType::EcmptEq;
   CScalarArrayCmp::EArrCmpType earraycmptype = CScalarArrayCmp::EarrcmpAny;
 
@@ -918,7 +918,7 @@ CExpression *CConstraintInterval::PexprConstructArrayScalar(CMemoryPool *mp, boo
 
   // this method assumes IN or NOT IN which means that the ranges stored will look like either
   // [x,x], ... ,[y,y] or the NOT IN case (-inf, x),(x,y), ... ,(z,inf).
-  for (ULONG ul = 0; ul < ulRngs; ul++) {
+  for (uint32_t ul = 0; ul < ulRngs; ul++) {
     IDatum *datum = (*m_pdrgprng)[ul]->PdatumRight();
     datum->AddRef();
     CScalarConst *popScConst = GPOS_NEW(mp) CScalarConst(mp, datum);
@@ -1030,10 +1030,10 @@ CConstraintInterval *CConstraintInterval::PciIntersect(CMemoryPool *mp, CConstra
 
   CRangeArray *pdrgprngNew = GPOS_NEW(mp) CRangeArray(mp);
 
-  ULONG ulFst = 0;
-  ULONG ulSnd = 0;
-  const ULONG ulNumRangesFst = m_pdrgprng->Size();
-  const ULONG ulNumRangesSnd = pdrgprngOther->Size();
+  uint32_t ulFst = 0;
+  uint32_t ulSnd = 0;
+  const uint32_t ulNumRangesFst = m_pdrgprng->Size();
+  const uint32_t ulNumRangesSnd = pdrgprngOther->Size();
   while (ulFst < ulNumRangesFst && ulSnd < ulNumRangesSnd) {
     CRange *prangeThis = (*m_pdrgprng)[ulFst];
     CRange *prangeOther = (*pdrgprngOther)[ulSnd];
@@ -1071,10 +1071,10 @@ CConstraintInterval *CConstraintInterval::PciUnion(CMemoryPool *mp, CConstraintI
 
   CRangeArray *pdrgprngNew = GPOS_NEW(mp) CRangeArray(mp);
 
-  ULONG ulFst = 0;
-  ULONG ulSnd = 0;
-  const ULONG ulNumRangesFst = m_pdrgprng->Size();
-  const ULONG ulNumRangesSnd = pdrgprngOther->Size();
+  uint32_t ulFst = 0;
+  uint32_t ulSnd = 0;
+  const uint32_t ulNumRangesFst = m_pdrgprng->Size();
+  const uint32_t ulNumRangesSnd = pdrgprngOther->Size();
   while (ulFst < ulNumRangesFst && ulSnd < ulNumRangesSnd) {
     CRange *prangeThis = (*m_pdrgprng)[ulFst];
     CRange *prangeOther = (*pdrgprngOther)[ulSnd];
@@ -1113,12 +1113,12 @@ CConstraintInterval *CConstraintInterval::PciDifference(CMemoryPool *mp, CConstr
 
   CRangeArray *pdrgprngNew = GPOS_NEW(mp) CRangeArray(mp);
 
-  ULONG ulFst = 0;
-  ULONG ulSnd = 0;
+  uint32_t ulFst = 0;
+  uint32_t ulSnd = 0;
   CRangeArray *pdrgprngResidual = GPOS_NEW(mp) CRangeArray(mp);
   CRange *prangeResidual = nullptr;
-  const ULONG ulNumRangesFst = m_pdrgprng->Size();
-  const ULONG ulNumRangesSnd = pdrgprngOther->Size();
+  const uint32_t ulNumRangesFst = m_pdrgprng->Size();
+  const uint32_t ulNumRangesSnd = pdrgprngOther->Size();
   while (ulFst < ulNumRangesFst && ulSnd < ulNumRangesSnd) {
     // if there is a residual range from previous iteration then use it
     CRange *prangeThis = (nullptr == prangeResidual ? (*m_pdrgprng)[ulFst] : prangeResidual);
@@ -1158,7 +1158,7 @@ CConstraintInterval *CConstraintInterval::PciDifference(CMemoryPool *mp, CConstr
 //		Does the current interval contain the given interval?
 //
 //---------------------------------------------------------------------------
-BOOL CConstraintInterval::FContainsInterval(CMemoryPool *mp, CConstraintInterval *pci) {
+bool CConstraintInterval::FContainsInterval(CMemoryPool *mp, CConstraintInterval *pci) {
   GPOS_ASSERT(nullptr != pci);
   GPOS_ASSERT(m_pcr == pci->Pcr());
 
@@ -1173,7 +1173,7 @@ BOOL CConstraintInterval::FContainsInterval(CMemoryPool *mp, CConstraintInterval
   CConstraintInterval *pciDiff = pci->PciDifference(mp, this);
 
   // if the difference is empty, then this interval contains the given one
-  BOOL fContains = pciDiff->FContradiction();
+  bool fContains = pciDiff->FContradiction();
   pciDiff->Release();
 
   return fContains;
@@ -1187,7 +1187,7 @@ BOOL CConstraintInterval::FContainsInterval(CMemoryPool *mp, CConstraintInterval
 //		Create an unbounded interval
 //
 //---------------------------------------------------------------------------
-CConstraintInterval *CConstraintInterval::PciUnbounded(CMemoryPool *mp, const CColRef *colref, BOOL fIncludesNull) {
+CConstraintInterval *CConstraintInterval::PciUnbounded(CMemoryPool *mp, const CColRef *colref, bool fIncludesNull) {
   IMDId *mdid = colref->RetrieveType()->MDId();
   if (!CUtils::FConstrainableType(mdid)) {
     return nullptr;
@@ -1222,7 +1222,7 @@ CConstraintInterval *CConstraintInterval::PciUnbounded(CMemoryPool *mp, const CC
 //		Create an unbounded interval on any column from the given set
 //
 //---------------------------------------------------------------------------
-CConstraintInterval *CConstraintInterval::PciUnbounded(CMemoryPool *mp, const CColRefSet *pcrs, BOOL fIncludesNull) {
+CConstraintInterval *CConstraintInterval::PciUnbounded(CMemoryPool *mp, const CColRefSet *pcrs, bool fIncludesNull) {
   // find the first constrainable column
   CColRefSetIter crsi(*pcrs);
   while (crsi.Advance()) {
@@ -1317,10 +1317,10 @@ CRange *CConstraintInterval::PrangeDiffWithRightResidual(CMemoryPool *mp, CRange
 //		range with the given index
 //
 //---------------------------------------------------------------------------
-void CConstraintInterval::AddRemainingRanges(CMemoryPool *mp, CRangeArray *pdrgprngSrc, ULONG ulStart,
+void CConstraintInterval::AddRemainingRanges(CMemoryPool *mp, CRangeArray *pdrgprngSrc, uint32_t ulStart,
                                              CRangeArray *pdrgprngDest) {
-  const ULONG length = pdrgprngSrc->Size();
-  for (ULONG ul = ulStart; ul < length; ul++) {
+  const uint32_t length = pdrgprngSrc->Size();
+  for (uint32_t ul = ulStart; ul < length; ul++) {
     CRange *prange = (*pdrgprngSrc)[ul];
     prange->AddRef();
     AppendOrExtend(mp, pdrgprngDest, prange);
@@ -1343,7 +1343,7 @@ void CConstraintInterval::AppendOrExtend(CMemoryPool *mp, CRangeArray *pdrgprng,
 
   GPOS_ASSERT(nullptr != pdrgprng);
 
-  const ULONG length = pdrgprng->Size();
+  const uint32_t length = pdrgprng->Size();
   if (0 == length) {
     pdrgprng->Append(prange);
     return;
@@ -1370,9 +1370,9 @@ void CConstraintInterval::AppendOrExtend(CMemoryPool *mp, CRangeArray *pdrgprng,
 IOstream &CConstraintInterval::OsPrint(IOstream &os) const {
   os << "{";
   m_pcr->OsPrint(os);
-  const ULONG length = m_pdrgprng->Size();
+  const uint32_t length = m_pdrgprng->Size();
   os << ", ranges: ";
-  for (ULONG ul = 0; ul < length; ul++) {
+  for (uint32_t ul = 0; ul < length; ul++) {
     CRange *prange = (*m_pdrgprng)[ul];
     os << *prange << " ";
   }

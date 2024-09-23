@@ -33,7 +33,7 @@ class CJobQueue {
   CJob *m_pj{nullptr};
 
   // flag indicating if main job has completed
-  BOOL m_fCompleted{false};
+  bool m_fCompleted{false};
 
   // list of jobs waiting for main job to complete
   CList<CJob> m_listjQueued;

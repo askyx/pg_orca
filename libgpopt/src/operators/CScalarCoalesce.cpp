@@ -59,8 +59,7 @@ CScalarCoalesce::~CScalarCoalesce() {
 //		return type id
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarCoalesce::HashValue() const {
+uint32_t CScalarCoalesce::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), m_mdid_type->HashValue());
 }
 
@@ -72,7 +71,7 @@ CScalarCoalesce::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarCoalesce::Matches(COperator *pop) const {
+bool CScalarCoalesce::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarCoalesce *popScCoalesce = CScalarCoalesce::PopConvert(pop);
 

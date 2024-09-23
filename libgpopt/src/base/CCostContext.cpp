@@ -40,7 +40,7 @@ using namespace gpnaucrates;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CCostContext::CCostContext(CMemoryPool *mp, COptimizationContext *poc, ULONG ulOptReq, CGroupExpression *pgexpr)
+CCostContext::CCostContext(CMemoryPool *mp, COptimizationContext *poc, uint32_t ulOptReq, CGroupExpression *pgexpr)
     : m_mp(mp),
       m_cost(GPOPT_INVALID_COST),
       m_estate(estUncosted),
@@ -90,7 +90,7 @@ CCostContext::~CCostContext() {
 //		Check if new stats are owned by this context
 //
 //---------------------------------------------------------------------------
-BOOL CCostContext::FOwnsStats() const {
+bool CCostContext::FOwnsStats() const {
   GPOS_ASSERT(nullptr != m_pstats);
 
   // new stats are owned if context holds stats different from group stats
@@ -109,7 +109,7 @@ BOOL CCostContext::FOwnsStats() const {
 //		selection in some other part of the plan
 //
 //---------------------------------------------------------------------------
-BOOL CCostContext::FNeedsNewStats() const {
+bool CCostContext::FNeedsNewStats() const {
   COperator *pop = m_pgexpr->Pop();
   if (pop->FScalar()) {
     // return false if scalar operator
@@ -131,9 +131,9 @@ BOOL CCostContext::FNeedsNewStats() const {
   }
 
   // we need to derive stats if any child has modified stats
-  BOOL fDeriveStats = false;
-  const ULONG arity = Pdrgpoc()->Size();
-  for (ULONG ul = 0; !fDeriveStats && ul < arity; ul++) {
+  bool fDeriveStats = false;
+  const uint32_t arity = Pdrgpoc()->Size();
+  for (uint32_t ul = 0; !fDeriveStats && ul < arity; ul++) {
     COptimizationContext *pocChild = (*Pdrgpoc())[ul];
     CCostContext *pccChild = pocChild->PccBest();
     GPOS_ASSERT(nullptr != pccChild);
@@ -211,7 +211,7 @@ void CCostContext::DerivePlanProps(CMemoryPool *mp) {
 //		Comparison operator
 //
 //---------------------------------------------------------------------------
-BOOL CCostContext::operator==(const CCostContext &cc) const {
+bool CCostContext::operator==(const CCostContext &cc) const {
   return Equals(cc, *this);
 }
 
@@ -223,7 +223,7 @@ BOOL CCostContext::operator==(const CCostContext &cc) const {
 //		Check validity by comparing derived and required properties
 //
 //---------------------------------------------------------------------------
-BOOL CCostContext::IsValid(CMemoryPool *mp) {
+bool CCostContext::IsValid(CMemoryPool *mp) {
   GPOS_ASSERT(nullptr != m_poc);
   GPOS_ASSERT(nullptr != m_pdrgpoc);
 
@@ -235,7 +235,7 @@ BOOL CCostContext::IsValid(CMemoryPool *mp) {
   DerivePlanProps(mp);
 
   // checking for required properties satisfaction
-  BOOL fValid = Poc()->Prpp()->FSatisfied(pdprel, m_pdpplan);
+  bool fValid = Poc()->Prpp()->FSatisfied(pdprel, m_pdpplan);
 
 #ifdef GPOS_DEBUG
   if (COptCtxt::FAllEnforcersEnabled() && !fValid) {
@@ -267,7 +267,7 @@ BOOL CCostContext::IsValid(CMemoryPool *mp) {
 //---------------------------------------------------------------------------
 void CCostContext::BreakCostTiesForJoinPlans(const CCostContext *pccFst, const CCostContext *pccSnd,
                                              CONST_COSTCTXT_PTR *ppccPrefered,  // output: preferred cost context
-                                             BOOL *pfTiesResolved  // output: if true, tie resolution has succeeded
+                                             bool *pfTiesResolved  // output: if true, tie resolution has succeeded
 ) {
   GPOS_ASSERT(nullptr != pccFst);
   GPOS_ASSERT(nullptr != pccSnd);
@@ -310,9 +310,9 @@ void CCostContext::BreakCostTiesForJoinPlans(const CCostContext *pccFst, const C
 
   // both plans have equal estimated rows for both children, break tie based on join depth
   *pfTiesResolved = true;
-  ULONG ulOuterJoinDepthFst =
+  uint32_t ulOuterJoinDepthFst =
       CDrvdPropRelational::GetRelationalProperties((*pccFst->Pgexpr())[0]->Pdp())->GetJoinDepth();
-  ULONG ulInnerJoinDepthFst =
+  uint32_t ulInnerJoinDepthFst =
       CDrvdPropRelational::GetRelationalProperties((*pccFst->Pgexpr())[1]->Pdp())->GetJoinDepth();
   if (ulInnerJoinDepthFst < ulOuterJoinDepthFst) {
     *ppccPrefered = pccFst;
@@ -330,7 +330,7 @@ void CCostContext::BreakCostTiesForJoinPlans(const CCostContext *pccFst, const C
 //		based on cost?
 //
 //---------------------------------------------------------------------------
-BOOL CCostContext::FBetterThan(const CCostContext *pcc) const {
+bool CCostContext::FBetterThan(const CCostContext *pcc) const {
   GPOS_ASSERT(nullptr != pcc);
   GPOS_ASSERT(*m_poc == *(pcc->Poc()));
   GPOS_ASSERT(estCosted == m_estate);
@@ -360,7 +360,7 @@ BOOL CCostContext::FBetterThan(const CCostContext *pcc) const {
     }
   }
 
-  DOUBLE dCostDiff = (Cost().Get() - pcc->Cost().Get());
+  double dCostDiff = (Cost().Get() - pcc->Cost().Get());
   if (dCostDiff < 0.0) {
     // if current context has a strictly smaller cost, then it is preferred
     return true;
@@ -376,7 +376,7 @@ BOOL CCostContext::FBetterThan(const CCostContext *pcc) const {
   // the plan with deeper outer child
   if (CUtils::FPhysicalJoin(Pgexpr()->Pop()) && CUtils::FPhysicalJoin(pcc->Pgexpr()->Pop())) {
     CONST_COSTCTXT_PTR pccPrefered = nullptr;
-    BOOL fSuccess = false;
+    bool fSuccess = false;
     BreakCostTiesForJoinPlans(this, pcc, &pccPrefered, &fSuccess);
     if (fSuccess) {
       return (this == pccPrefered);
@@ -396,7 +396,7 @@ BOOL CCostContext::FBetterThan(const CCostContext *pcc) const {
   return false;
 }
 
-BOOL CCostContext::IsTwoStageScalarDQACostCtxt(const CCostContext *pcc) {
+bool CCostContext::IsTwoStageScalarDQACostCtxt(const CCostContext *pcc) {
   if (CUtils::FPhysicalAgg(pcc->Pgexpr()->Pop())) {
     CPhysicalAgg *popAgg = CPhysicalAgg::PopConvert(pcc->Pgexpr()->Pop());
     // 2 stage scalar agg are only generated by split dqa xform
@@ -407,7 +407,7 @@ BOOL CCostContext::IsTwoStageScalarDQACostCtxt(const CCostContext *pcc) {
   return false;
 }
 
-BOOL CCostContext::IsThreeStageScalarDQACostCtxt(const CCostContext *pcc) {
+bool CCostContext::IsThreeStageScalarDQACostCtxt(const CCostContext *pcc) {
   if (CUtils::FPhysicalAgg(pcc->Pgexpr()->Pop())) {
     CPhysicalAgg *popAgg = CPhysicalAgg::PopConvert(pcc->Pgexpr()->Pop());
     // 3 stage scalar agg are only generated by split dqa xform
@@ -418,7 +418,7 @@ BOOL CCostContext::IsThreeStageScalarDQACostCtxt(const CCostContext *pcc) {
   return false;
 }
 
-BOOL CCostContext::IsMultiStageAggCostCtxt(const CCostContext *pcc) {
+bool CCostContext::IsMultiStageAggCostCtxt(const CCostContext *pcc) {
   if (CUtils::FPhysicalAgg(pcc->Pgexpr()->Pop())) {
     CPhysicalAgg *popAgg = CPhysicalAgg::PopConvert(pcc->Pgexpr()->Pop());
     return popAgg->FMultiStage();
@@ -427,7 +427,7 @@ BOOL CCostContext::IsMultiStageAggCostCtxt(const CCostContext *pcc) {
   return false;
 }
 
-BOOL CCostContext::IsSingleStageAggCostCtxt(const CCostContext *pcc) {
+bool CCostContext::IsSingleStageAggCostCtxt(const CCostContext *pcc) {
   if (CUtils::FPhysicalAgg(pcc->Pgexpr()->Pop())) {
     CPhysicalAgg *popAgg = CPhysicalAgg::PopConvert(pcc->Pgexpr()->Pop());
     return !popAgg->FMultiStage();
@@ -469,7 +469,7 @@ CCost CCostContext::CostCompute(CMemoryPool *mp, CCostArray *pdrgpcostChildren) 
   // derive context stats
   DeriveStats();
 
-  ULONG arity = 0;
+  uint32_t arity = 0;
   if (nullptr != m_pdrgpoc) {
     arity = Pdrgpoc()->Size();
   }
@@ -483,20 +483,20 @@ CCost CCostContext::CostCompute(CMemoryPool *mp, CCostArray *pdrgpcostChildren) 
   exprhdl.Attach(this);
 
   // extract local costing info
-  DOUBLE rows = m_pstats->Rows().Get();
+  double rows = m_pstats->Rows().Get();
 
   ci.SetRows(rows);
 
-  DOUBLE width = m_pstats->Width(mp, m_poc->Prpp()->PcrsRequired()).Get();
+  double width = m_pstats->Width(mp, m_poc->Prpp()->PcrsRequired()).Get();
   ci.SetWidth(width);
 
-  DOUBLE num_rebinds = m_pstats->NumRebinds().Get();
+  double num_rebinds = m_pstats->NumRebinds().Get();
   ci.SetRebinds(num_rebinds);
-  GPOS_ASSERT_IMP(!exprhdl.HasOuterRefs(), GPOPT_DEFAULT_REBINDS == (ULONG)(num_rebinds) &&
+  GPOS_ASSERT_IMP(!exprhdl.HasOuterRefs(), GPOPT_DEFAULT_REBINDS == (uint32_t)(num_rebinds) &&
                                                "invalid number of rebinds when there are no outer references");
 
   // extract children costing info
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     COptimizationContext *pocChild = (*m_pdrgpoc)[ul];
     CCostContext *pccChild = pocChild->PccBest();
     GPOS_ASSERT(nullptr != pccChild);
@@ -506,19 +506,19 @@ CCost CCostContext::CostCompute(CMemoryPool *mp, CCostArray *pdrgpcostChildren) 
     child_stats->AddRef();
     ci.SetChildStats(ul, GPOS_NEW(mp) ICostModel::CCostingStats(child_stats));
 
-    DOUBLE dRowsChild = child_stats->Rows().Get();
+    double dRowsChild = child_stats->Rows().Get();
 
     ci.SetChildRows(ul, dRowsChild);
 
-    DOUBLE dWidthChild = child_stats->Width(mp, pocChild->Prpp()->PcrsRequired()).Get();
+    double dWidthChild = child_stats->Width(mp, pocChild->Prpp()->PcrsRequired()).Get();
     ci.SetChildWidth(ul, dWidthChild);
 
-    DOUBLE dRebindsChild = child_stats->NumRebinds().Get();
+    double dRebindsChild = child_stats->NumRebinds().Get();
     ci.SetChildRebinds(ul, dRebindsChild);
-    GPOS_ASSERT_IMP(!exprhdl.HasOuterRefs(ul), GPOPT_DEFAULT_REBINDS == (ULONG)(dRebindsChild) &&
+    GPOS_ASSERT_IMP(!exprhdl.HasOuterRefs(ul), GPOPT_DEFAULT_REBINDS == (uint32_t)(dRebindsChild) &&
                                                    "invalid number of rebinds when there are no outer references");
 
-    DOUBLE dCostChild = (*pdrgpcostChildren)[ul]->Get();
+    double dCostChild = (*pdrgpcostChildren)[ul]->Get();
     ci.SetChildCost(ul, dCostChild);
   }
 
@@ -535,7 +535,7 @@ CCost CCostContext::CostCompute(CMemoryPool *mp, CCostArray *pdrgpcostChildren) 
 //
 //---------------------------------------------------------------------------
 CDouble CCostContext::DRowsPerHost() const {
-  DOUBLE rows = Pstats()->Rows().Get();
+  double rows = Pstats()->Rows().Get();
 
   return CDouble(rows);
 }
@@ -553,9 +553,9 @@ IOstream &CCostContext::OsPrint(IOstream &os) const {
 
   if (nullptr != m_pdrgpoc) {
     os << ", child ctxts:[";
-    ULONG arity = m_pdrgpoc->Size();
+    uint32_t arity = m_pdrgpoc->Size();
     if (0 < arity) {
-      for (ULONG i = 0; i < arity - 1; i++) {
+      for (uint32_t i = 0; i < arity - 1; i++) {
         os << (*m_pdrgpoc)[i]->Id();
         os << ", ";
       }

@@ -359,13 +359,13 @@ class CTranslatorExprToDXL {
   CDXLNode *PdxlnFilter(CDXLNode *pdxlnCond);
 
   // find the position of the given colref in the array
-  static ULONG UlPosInArray(const CColRef *colref, const CColRefArray *colref_array);
+  static uint32_t UlPosInArray(const CColRef *colref, const CColRefArray *colref_array);
 
   // return hash join type
   static EdxlJoinType EdxljtHashJoin(CPhysicalHashJoin *popHJ);
 
   // main translation routine for Expr tree -> DXL tree
-  CDXLNode *CreateDXLNode(CExpression *pexpr, CColRefArray *colref_array, BOOL fRemap);
+  CDXLNode *CreateDXLNode(CExpression *pexpr, CColRefArray *colref_array, bool fRemap);
 
   // translate expression children and add them as children of the DXL node
   void TranslateScalarChildren(CExpression *pexpr, CDXLNode *dxlnode);
@@ -384,7 +384,7 @@ class CTranslatorExprToDXL {
   static CColRefArray *PdrgpcrMerge(CMemoryPool *mp, CColRefArray *pdrgpcrOrder, CColRefArray *pdrgpcrRequired);
 
   // helper to add a project of bool constant
-  CDXLNode *PdxlnProjectBoolConst(CDXLNode *dxlnode, BOOL value);
+  CDXLNode *PdxlnProjectBoolConst(CDXLNode *dxlnode, bool value);
 
   // helper to build a Result expression with project list restricted to required column
   CDXLNode *PdxlnRestrictResult(CDXLNode *dxlnode, const CColRef *colref);
@@ -416,7 +416,7 @@ class CTranslatorExprToDXL {
   CDXLNode *PdxlnExistentialSubplan(CColRefArray *pdrgpcrInner, CExpression *pexprCorrelatedNLJoin,
                                     CDXLColRefArray *dxl_colref_array);
 
-  void AddPartForScanId(ULONG scanid, ULONG index);
+  void AddPartForScanId(uint32_t scanid, uint32_t index);
 
   // helper to find subplan type from a correlated left outer join expression
   static EdxlSubPlanType EdxlsubplantypeCorrelatedLOJ(CExpression *pexprCorrelatedLOJ);
@@ -433,7 +433,7 @@ class CTranslatorExprToDXL {
 
  public:
   // ctor
-  CTranslatorExprToDXL(CMemoryPool *mp, CMDAccessor *md_accessor, BOOL fInitColumnFactory = true);
+  CTranslatorExprToDXL(CMemoryPool *mp, CMDAccessor *md_accessor, bool fInitColumnFactory = true);
 
   // dtor
   ~CTranslatorExprToDXL();

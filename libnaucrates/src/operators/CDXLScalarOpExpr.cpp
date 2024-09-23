@@ -116,7 +116,7 @@ IMDId *CDXLScalarOpExpr::GetReturnTypeMdId() const {
 //		Does the operator return boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarOpExpr::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarOpExpr::HasBoolResult(CMDAccessor *md_accessor) const {
   const IMDScalarOp *md_scalar_op = md_accessor->RetrieveScOp(m_mdid);
   IMDId *mdid = md_accessor->RetrieveFunc(md_scalar_op->FuncMdId())->GetResultTypeMdid();
   return (IMDType::EtiBool == md_accessor->RetrieveType(mdid)->GetDatumType());
@@ -131,11 +131,11 @@ BOOL CDXLScalarOpExpr::HasBoolResult(CMDAccessor *md_accessor) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarOpExpr::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
-  const ULONG arity = dxlnode->Arity();
+void CDXLScalarOpExpr::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
+  const uint32_t arity = dxlnode->Arity();
   GPOS_ASSERT(1 == arity || 2 == arity);
 
-  for (ULONG ul = 0; ul < arity; ++ul) {
+  for (uint32_t ul = 0; ul < arity; ++ul) {
     CDXLNode *dxlnode_arg = (*dxlnode)[ul];
     GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 

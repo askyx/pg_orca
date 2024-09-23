@@ -73,7 +73,7 @@ class CJobGroupExpressionOptimization : public CJobGroupExpression {
   COptimizationContext *m_poc;
 
   // optimization request number
-  ULONG m_ulOptReq;
+  uint32_t m_ulOptReq;
 
   // array of child groups optimization contexts
   COptimizationContextArray *m_pdrgpoc;
@@ -88,22 +88,22 @@ class CJobGroupExpressionOptimization : public CJobGroupExpression {
   CPhysical::EChildExecOrder m_eceo;
 
   // counter of next child group to be optimized
-  ULONG m_ulChildIndex;
+  uint32_t m_ulChildIndex;
 
   // number of children
-  ULONG m_ulArity;
+  uint32_t m_ulArity;
 
   // flag to indicate if optimizing a child has failed
-  BOOL m_fChildOptimizationFailed;
+  bool m_fChildOptimizationFailed;
 
   // flag to indicate if current job optimizes a Sequence operator that captures a CTE
-  BOOL m_fOptimizeCTESequence;
+  bool m_fOptimizeCTESequence;
 
   // plan properties required from CTE producer based on consumer derived plan properties
   CReqdPropPlan *m_prppCTEProducer;
 
   // flag to indicate if a child job for optimizing CTE has been scheduled
-  BOOL m_fScheduledCTEOptimization;
+  bool m_fScheduledCTEOptimization;
 
   // a handle object for required plan properties computation
   CExpressionHandle *m_pexprhdlPlan;
@@ -136,8 +136,8 @@ class CJobGroupExpressionOptimization : public CJobGroupExpression {
   static EEvent EevtFinalize(CSchedulerContext *psc, CJob *pj);
 
   // schedule a new group expression optimization job for CTE optimization
-  static BOOL FScheduleCTEOptimization(CSchedulerContext *psc, CGroupExpression *pgexpr, COptimizationContext *poc,
-                                       ULONG ulOptReq, CJob *pjParent);
+  static bool FScheduleCTEOptimization(CSchedulerContext *psc, CGroupExpression *pgexpr, COptimizationContext *poc,
+                                       uint32_t ulOptReq, CJob *pjParent);
 
  protected:
   // schedule transformation jobs for applicable xforms
@@ -159,18 +159,18 @@ class CJobGroupExpressionOptimization : public CJobGroupExpression {
   ~CJobGroupExpressionOptimization() override;
 
   // initialize job
-  void Init(CGroupExpression *pgexpr, COptimizationContext *poc, ULONG ulOptReq,
+  void Init(CGroupExpression *pgexpr, COptimizationContext *poc, uint32_t ulOptReq,
             CReqdPropPlan *prppCTEProducer = nullptr);
 
   // cleanup internal state
   void Cleanup() override;
 
   // schedule a new group expression optimization job
-  static void ScheduleJob(CSchedulerContext *psc, CGroupExpression *pgexpr, COptimizationContext *poc, ULONG ulOptReq,
-                          CJob *pjParent);
+  static void ScheduleJob(CSchedulerContext *psc, CGroupExpression *pgexpr, COptimizationContext *poc,
+                          uint32_t ulOptReq, CJob *pjParent);
 
   // job's function
-  BOOL FExecute(CSchedulerContext *psc) override;
+  bool FExecute(CSchedulerContext *psc) override;
 
 #ifdef GPOS_DEBUG
 
@@ -178,14 +178,14 @@ class CJobGroupExpressionOptimization : public CJobGroupExpression {
   IOstream &OsPrint(IOstream &os) const override;
 
   // dump state machine diagram in graphviz format
-  virtual IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const WCHAR *wszTitle) const {
+  virtual IOstream &OsDiagramToGraphviz(CMemoryPool *mp, IOstream &os, const wchar_t *wszTitle) const {
     (void)m_jsm.OsDiagramToGraphviz(mp, os, wszTitle);
 
     return os;
   }
 
   // compute unreachable states
-  void Unreachable(CMemoryPool *mp, EState **ppestate, ULONG *pulSize) const {
+  void Unreachable(CMemoryPool *mp, EState **ppestate, uint32_t *pulSize) const {
     m_jsm.Unreachable(mp, ppestate, pulSize);
   }
 

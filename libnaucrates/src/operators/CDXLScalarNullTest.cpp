@@ -25,7 +25,7 @@ using namespace gpdxl;
 //		Constructs a NullTest node
 //
 //---------------------------------------------------------------------------
-CDXLScalarNullTest::CDXLScalarNullTest(CMemoryPool *mp, BOOL is_null) : CDXLScalar(mp), m_is_null(is_null) {}
+CDXLScalarNullTest::CDXLScalarNullTest(CMemoryPool *mp, bool is_null) : CDXLScalar(mp), m_is_null(is_null) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -47,7 +47,7 @@ Edxlopid CDXLScalarNullTest::GetDXLOperator() const {
 //		Null Test type (is null or is not null)
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarNullTest::IsNullTest() const {
+bool CDXLScalarNullTest::IsNullTest() const {
   return m_is_null;
 }
 
@@ -75,7 +75,7 @@ const CWStringConst *CDXLScalarNullTest::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarNullTest::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarNullTest::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(1 == dxlnode->Arity());
 
   CDXLNode *dxlnode_arg = (*dxlnode)[0];

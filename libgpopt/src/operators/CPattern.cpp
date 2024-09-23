@@ -53,7 +53,7 @@ CReqdProp *CPattern::PrpCreate(CMemoryPool *  // mp
 //		match against an operator
 //
 //---------------------------------------------------------------------------
-BOOL CPattern::Matches(COperator *pop) const {
+bool CPattern::Matches(COperator *pop) const {
   return Eopid() == pop->Eopid();
 }
 
@@ -65,7 +65,7 @@ BOOL CPattern::Matches(COperator *pop) const {
 //		By default patterns are leaves; no need to call this function ever
 //
 //---------------------------------------------------------------------------
-BOOL CPattern::FInputOrderSensitive() const {
+bool CPattern::FInputOrderSensitive() const {
   GPOS_ASSERT(!"Unexpected call to function FInputOrderSensitive");
   return true;
 }
@@ -80,7 +80,7 @@ BOOL CPattern::FInputOrderSensitive() const {
 //---------------------------------------------------------------------------
 COperator *CPattern::PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                                 UlongToColRefMap *,  // colref_mapping,
-                                                BOOL                 // must_exist
+                                                bool                 // must_exist
 ) {
   GPOS_ASSERT(!"PopCopyWithRemappedColumns should not be called for a pattern");
   return nullptr;

@@ -37,13 +37,13 @@ using namespace gpos;
 class CDXLDatumBool : public CDXLDatum {
  private:
   // boolean value
-  BOOL m_value;
+  bool m_value;
 
  public:
   CDXLDatumBool(const CDXLDatumBool &) = delete;
 
   // ctor
-  CDXLDatumBool(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, BOOL value);
+  CDXLDatumBool(CMemoryPool *mp, IMDId *mdid_type, bool is_null, bool value);
 
   // dtor
   ~CDXLDatumBool() override = default;
@@ -54,7 +54,7 @@ class CDXLDatumBool : public CDXLDatum {
   EdxldatumType GetDatumType() const override { return CDXLDatum::EdxldatumBool; }
 
   // accessor of boolean value
-  BOOL GetValue() const { return m_value; }
+  bool GetValue() const { return m_value; }
 
   // conversion function
   static CDXLDatumBool *Cast(CDXLDatum *dxl_datum) {

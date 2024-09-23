@@ -81,7 +81,7 @@ class CRange : public CRefCount {
   }
 
   // print a bound
-  static IOstream &OsPrintBound(IOstream &os, IDatum *datum, const CHAR *szInfinity);
+  static IOstream &OsPrintBound(IOstream &os, IDatum *datum, const char *szInfinity);
 
  public:
   CRange(const CRange &) = delete;
@@ -112,34 +112,34 @@ class CRange : public CRefCount {
   ERangeInclusion EriRight() const { return m_eriRight; }
 
   // is this range disjoint from the given range and to its left
-  BOOL FDisjointLeft(CRange *prange);
+  bool FDisjointLeft(CRange *prange);
 
   // does this range contain the given range
-  BOOL Contains(CRange *prange);
+  bool Contains(CRange *prange);
 
   // does this range overlap only the left end of the given range
-  BOOL FOverlapsLeft(CRange *prange);
+  bool FOverlapsLeft(CRange *prange);
 
   // does this range overlap only the right end of the given range
-  BOOL FOverlapsRight(CRange *prange);
+  bool FOverlapsRight(CRange *prange);
 
   // does this range's upper bound equal the given range's lower bound
-  BOOL FUpperBoundEqualsLowerBound(CRange *prange);
+  bool FUpperBoundEqualsLowerBound(CRange *prange);
 
   // does this range start before the given range starts
-  BOOL FStartsBefore(CRange *prange);
+  bool FStartsBefore(CRange *prange);
 
   // does this range start with or before the given range
-  BOOL FStartsWithOrBefore(CRange *prange);
+  bool FStartsWithOrBefore(CRange *prange);
 
   // does this range end after the given range ends
-  BOOL FEndsAfter(CRange *prange);
+  bool FEndsAfter(CRange *prange);
 
   // does this range end with or after the given range
-  BOOL FEndsWithOrAfter(CRange *prange);
+  bool FEndsWithOrAfter(CRange *prange);
 
   // check if range represents a point
-  BOOL FPoint() const;
+  bool FPoint() const;
 
   // intersection with another range
   CRange *PrngIntersect(CMemoryPool *mp, CRange *prange);
@@ -158,7 +158,7 @@ class CRange : public CRefCount {
   CExpression *PexprScalar(CMemoryPool *mp, const CColRef *colref);
 
   // is this interval unbounded
-  BOOL IsConstraintUnbounded() const { return (nullptr == m_pdatumLeft && nullptr == m_pdatumRight); }
+  bool IsConstraintUnbounded() const { return (nullptr == m_pdatumLeft && nullptr == m_pdatumRight); }
 
   // print
   IOstream &OsPrint(IOstream &os) const;

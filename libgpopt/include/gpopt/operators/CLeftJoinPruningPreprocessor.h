@@ -31,17 +31,17 @@ class CLeftJoinPruningPreprocessor {
   static CExpression *PexprCheckLeftOuterJoinPruningConditions(CMemoryPool *mp, CExpression *pexprNew,
                                                                CColRefSet *output_columns);
 
-  static BOOL CheckJoinPruningCondOnInnerRel(const CExpression *pexprNew, CColRefSet *output_columns);
+  static bool CheckJoinPruningCondOnInnerRel(const CExpression *pexprNew, CColRefSet *output_columns);
 
-  static BOOL CheckJoinPruningCondOnJoinCond(CMemoryPool *mp, const CExpression *pexprNew, CColRefSet *result);
+  static bool CheckJoinPruningCondOnJoinCond(CMemoryPool *mp, const CExpression *pexprNew, CColRefSet *result);
 
-  static BOOL CheckAndCondInJoinCond(CMemoryPool *mp, const CExpression *join_cond, const CColRefSet *inner_unique_keys,
+  static bool CheckAndCondInJoinCond(CMemoryPool *mp, const CExpression *join_cond, const CColRefSet *inner_unique_keys,
                                      CColRefSet *result, const CColRefSet *outer_rel_columns);
 
   static void CheckUniqueKeyInJoinCond(CColRefSet *inner_columns, const CColRefSet *usedColumns, CColRefSet *result,
                                        const CColRefSet *inner_unique_keys, const CColRefSet *outer_rel_columns);
 
-  static BOOL CheckForFullUniqueKeySetInInnerRel(CMemoryPool *mp, const CExpression *pexprNew,
+  static bool CheckForFullUniqueKeySetInInnerRel(CMemoryPool *mp, const CExpression *pexprNew,
                                                  const CColRefSet *result);
 
  public:

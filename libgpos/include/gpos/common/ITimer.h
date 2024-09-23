@@ -35,11 +35,10 @@ class ITimer {
   virtual ~ITimer() = default;
 
   // retrieve elapsed time in micro-seconds
-  virtual ULONG ElapsedUS() const = 0;
+  virtual uint32_t ElapsedUS() const = 0;
 
   // retrieve elapsed time in milli-seconds
-  ULONG
-  ElapsedMS() const { return ElapsedUS() / GPOS_USEC_IN_MSEC; }
+  uint32_t ElapsedMS() const { return ElapsedUS() / GPOS_USEC_IN_MSEC; }
 
   // restart timer
   virtual void Restart() = 0;

@@ -25,7 +25,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPartInfo::CPartInfoEntry::CPartInfoEntry(ULONG scan_id, IMDId *mdid, CPartKeysArray *pdrgppartkeys)
+CPartInfo::CPartInfoEntry::CPartInfoEntry(uint32_t scan_id, IMDId *mdid, CPartKeysArray *pdrgppartkeys)
     : m_scan_id(scan_id), m_mdid(mdid), m_pdrgppartkeys(pdrgppartkeys) {
   GPOS_ASSERT(mdid->IsValid());
   GPOS_ASSERT(pdrgppartkeys != nullptr);
@@ -61,8 +61,8 @@ CPartInfo::CPartInfoEntry *CPartInfo::CPartInfoEntry::PpartinfoentryAddRemappedK
 
   CPartKeysArray *pdrgppartkeys = CPartKeys::PdrgppartkeysCopy(mp, m_pdrgppartkeys);
 
-  const ULONG size = m_pdrgppartkeys->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = m_pdrgppartkeys->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     CPartKeys *ppartkeys = (*m_pdrgppartkeys)[ul];
 
     if (ppartkeys->FOverlap(pcrs)) {
@@ -156,7 +156,7 @@ CPartInfo::~CPartInfo() {
 //		Add part table consumer
 //
 //---------------------------------------------------------------------------
-void CPartInfo::AddPartConsumer(CMemoryPool *mp, ULONG scan_id, IMDId *mdid, CColRef2dArray *pdrgpdrgpcrPart) {
+void CPartInfo::AddPartConsumer(CMemoryPool *mp, uint32_t scan_id, IMDId *mdid, CColRef2dArray *pdrgpdrgpcrPart) {
   CPartKeysArray *pdrgppartkeys = GPOS_NEW(mp) CPartKeysArray(mp);
   pdrgppartkeys->Append(GPOS_NEW(mp) CPartKeys(pdrgpdrgpcrPart));
 
@@ -171,10 +171,10 @@ void CPartInfo::AddPartConsumer(CMemoryPool *mp, ULONG scan_id, IMDId *mdid, CCo
 //		Check if part info contains given scan id
 //
 //---------------------------------------------------------------------------
-BOOL CPartInfo::FContainsScanId(ULONG scan_id) const {
-  const ULONG size = m_pdrgppartentries->Size();
+bool CPartInfo::FContainsScanId(uint32_t scan_id) const {
+  const uint32_t size = m_pdrgppartentries->Size();
 
-  for (ULONG ul = 0; ul < size; ul++) {
+  for (uint32_t ul = 0; ul < size; ul++) {
     CPartInfoEntry *ppartinfoentry = (*m_pdrgppartentries)[ul];
     if (scan_id == ppartinfoentry->ScanId()) {
       return true;
@@ -192,8 +192,7 @@ BOOL CPartInfo::FContainsScanId(ULONG scan_id) const {
 //		Return scan id of the entry at the given position
 //
 //---------------------------------------------------------------------------
-ULONG
-CPartInfo::ScanId(ULONG ulPos) const {
+uint32_t CPartInfo::ScanId(uint32_t ulPos) const {
   return (*m_pdrgppartentries)[ulPos]->ScanId();
 }
 
@@ -205,7 +204,7 @@ CPartInfo::ScanId(ULONG ulPos) const {
 //		Return relation mdid of the entry at the given position
 //
 //---------------------------------------------------------------------------
-IMDId *CPartInfo::GetRelMdId(ULONG ulPos) const {
+IMDId *CPartInfo::GetRelMdId(uint32_t ulPos) const {
   return (*m_pdrgppartentries)[ulPos]->MDId();
 }
 
@@ -217,7 +216,7 @@ IMDId *CPartInfo::GetRelMdId(ULONG ulPos) const {
 //		Return part keys of the entry at the given position
 //
 //---------------------------------------------------------------------------
-CPartKeysArray *CPartInfo::Pdrgppartkeys(ULONG ulPos) const {
+CPartKeysArray *CPartInfo::Pdrgppartkeys(uint32_t ulPos) const {
   return (*m_pdrgppartentries)[ulPos]->Pdrgppartkeys();
 }
 
@@ -229,10 +228,10 @@ CPartKeysArray *CPartInfo::Pdrgppartkeys(ULONG ulPos) const {
 //		Return part keys of the entry with the given scan id
 //
 //---------------------------------------------------------------------------
-CPartKeysArray *CPartInfo::PdrgppartkeysByScanId(ULONG scan_id) const {
-  const ULONG size = m_pdrgppartentries->Size();
+CPartKeysArray *CPartInfo::PdrgppartkeysByScanId(uint32_t scan_id) const {
+  const uint32_t size = m_pdrgppartentries->Size();
 
-  for (ULONG ul = 0; ul < size; ul++) {
+  for (uint32_t ul = 0; ul < size; ul++) {
     CPartInfoEntry *ppartinfoentry = (*m_pdrgppartentries)[ul];
     if (scan_id == ppartinfoentry->ScanId()) {
       return ppartinfoentry->Pdrgppartkeys();
@@ -260,8 +259,8 @@ CPartInfo *CPartInfo::PpartinfoWithRemappedKeys(CMemoryPool *mp, CColRefArray *p
 
   CPartInfoEntryArray *pdrgppartentries = GPOS_NEW(mp) CPartInfoEntryArray(mp);
 
-  const ULONG size = m_pdrgppartentries->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = m_pdrgppartentries->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     CPartInfoEntry *ppartinfoentry = (*m_pdrgppartentries)[ul];
 
     // if this entry has keys that overlap with the source columns then
@@ -294,8 +293,8 @@ CPartInfo *CPartInfo::PpartinfoCombine(CMemoryPool *mp, CPartInfo *ppartinfoFst,
   CUtils::AddRefAppend(pdrgppartentries, ppartinfoFst->m_pdrgppartentries);
 
   // copy part entries from second part info object, except those which already exist
-  const ULONG length = ppartinfoSnd->m_pdrgppartentries->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
+  const uint32_t length = ppartinfoSnd->m_pdrgppartentries->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
     CPartInfoEntry *ppartinfoentry = (*(ppartinfoSnd->m_pdrgppartentries))[ul];
     CPartKeysArray *pdrgppartkeys = ppartinfoFst->PdrgppartkeysByScanId(ppartinfoentry->ScanId());
 
@@ -323,9 +322,9 @@ CPartInfo *CPartInfo::PpartinfoCombine(CMemoryPool *mp, CPartInfo *ppartinfoFst,
 //
 //---------------------------------------------------------------------------
 IOstream &CPartInfo::OsPrint(IOstream &os) const {
-  const ULONG length = m_pdrgppartentries->Size();
+  const uint32_t length = m_pdrgppartentries->Size();
   os << "Part Consumers: ";
-  for (ULONG ul = 0; ul < length; ul++) {
+  for (uint32_t ul = 0; ul < length; ul++) {
     CPartInfoEntry *ppartinfoentry = (*m_pdrgppartentries)[ul];
     ppartinfoentry->OsPrint(os);
 
@@ -334,12 +333,12 @@ IOstream &CPartInfo::OsPrint(IOstream &os) const {
   }
 
   os << ", Part Keys: ";
-  for (ULONG ulCons = 0; ulCons < length; ulCons++) {
+  for (uint32_t ulCons = 0; ulCons < length; ulCons++) {
     CPartKeysArray *pdrgppartkeys = Pdrgppartkeys(ulCons);
     os << "(";
-    const ULONG ulPartKeys = pdrgppartkeys->Size();
+    const uint32_t ulPartKeys = pdrgppartkeys->Size();
     ;
-    for (ULONG ulPartKey = 0; ulPartKey < ulPartKeys; ulPartKey++) {
+    for (uint32_t ulPartKey = 0; ulPartKey < ulPartKeys; ulPartKey++) {
       os << *(*pdrgppartkeys)[ulPartKey];
       os << (ulPartKey == ulPartKeys - 1 ? "" : ", ");
     }

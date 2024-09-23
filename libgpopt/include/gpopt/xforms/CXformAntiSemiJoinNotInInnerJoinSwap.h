@@ -40,12 +40,12 @@ class CXformAntiSemiJoinNotInInnerJoinSwap : public CXformJoinSwap<CLogicalLeftA
   ~CXformAntiSemiJoinNotInInnerJoinSwap() override = default;
 
   // Compatibility function
-  BOOL FCompatible(CXform::EXformId exfid) override { return ExfInnerJoinAntiSemiJoinNotInSwap != exfid; }
+  bool FCompatible(CXform::EXformId exfid) override { return ExfInnerJoinAntiSemiJoinNotInSwap != exfid; }
 
   // ident accessors
   EXformId Exfid() const override { return ExfAntiSemiJoinNotInInnerJoinSwap; }
 
-  const CHAR *SzId() const override { return "CXformAntiSemiJoinNotInInnerJoinSwap"; }
+  const char *SzId() const override { return "CXformAntiSemiJoinNotInInnerJoinSwap"; }
 
 };  // class CXformAntiSemiJoinNotInInnerJoinSwap
 

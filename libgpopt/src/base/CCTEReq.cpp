@@ -24,7 +24,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CCTEReq::CCTEReqEntry::CCTEReqEntry(ULONG id, CCTEMap::ECteType ect, BOOL fRequired, CDrvdPropPlan *pdpplan)
+CCTEReq::CCTEReqEntry::CCTEReqEntry(uint32_t id, CCTEMap::ECteType ect, bool fRequired, CDrvdPropPlan *pdpplan)
     : m_id(id), m_ect(ect), m_fRequired(fRequired), m_pdpplan(pdpplan) {
   GPOS_ASSERT(CCTEMap::EctSentinel > ect);
   GPOS_ASSERT_IMP(nullptr == pdpplan, CCTEMap::EctProducer == ect);
@@ -50,10 +50,9 @@ CCTEReq::CCTEReqEntry::~CCTEReqEntry() {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CCTEReq::CCTEReqEntry::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(gpos::HashValue<ULONG>(&m_id), gpos::HashValue<CCTEMap::ECteType>(&m_ect));
-  ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<BOOL>(&m_fRequired));
+uint32_t CCTEReq::CCTEReqEntry::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(gpos::HashValue<uint32_t>(&m_id), gpos::HashValue<CCTEMap::ECteType>(&m_ect));
+  ulHash = gpos::CombineHashes(ulHash, gpos::HashValue<bool>(&m_fRequired));
 
   if (nullptr != m_pdpplan) {
     ulHash = gpos::CombineHashes(ulHash, m_pdpplan->HashValue());
@@ -70,7 +69,7 @@ CCTEReq::CCTEReqEntry::HashValue() const {
 //		Equality function
 //
 //---------------------------------------------------------------------------
-BOOL CCTEReq::CCTEReqEntry::Equals(CCTEReqEntry *pcre) const {
+bool CCTEReq::CCTEReqEntry::Equals(CCTEReqEntry *pcre) const {
   GPOS_ASSERT(nullptr != pcre);
   if (m_id != pcre->Id() || m_ect != pcre->Ect() || m_fRequired != pcre->FRequired()) {
     return false;
@@ -141,13 +140,13 @@ CCTEReq::~CCTEReq() {
 //		Insert a new map entry. No entry with the same id can already exist
 //
 //---------------------------------------------------------------------------
-void CCTEReq::Insert(ULONG ulCteId, CCTEMap::ECteType ect, BOOL fRequired, CDrvdPropPlan *pdpplan) {
+void CCTEReq::Insert(uint32_t ulCteId, CCTEMap::ECteType ect, bool fRequired, CDrvdPropPlan *pdpplan) {
   GPOS_ASSERT(CCTEMap::EctSentinel > ect);
   CCTEReqEntry *pcre = GPOS_NEW(m_mp) CCTEReqEntry(ulCteId, ect, fRequired, pdpplan);
-  BOOL fSuccess GPOS_ASSERTS_ONLY = m_phmcter->Insert(GPOS_NEW(m_mp) ULONG(ulCteId), pcre);
+  bool fSuccess GPOS_ASSERTS_ONLY = m_phmcter->Insert(GPOS_NEW(m_mp) uint32_t(ulCteId), pcre);
   GPOS_ASSERT(fSuccess);
   if (fRequired) {
-    m_pdrgpulRequired->Append(GPOS_NEW(m_mp) ULONG(ulCteId));
+    m_pdrgpulRequired->Append(GPOS_NEW(m_mp) uint32_t(ulCteId));
   }
 }
 
@@ -160,8 +159,8 @@ void CCTEReq::Insert(ULONG ulCteId, CCTEMap::ECteType ect, BOOL fRequired, CDrvd
 //		taken from the given context
 //
 //---------------------------------------------------------------------------
-void CCTEReq::InsertConsumer(ULONG id, CDrvdPropArray *pdrgpdpCtxt) {
-  ULONG ulProducerId = gpos::ulong_max;
+void CCTEReq::InsertConsumer(uint32_t id, CDrvdPropArray *pdrgpdpCtxt) {
+  uint32_t ulProducerId = UINT32_MAX;
   CDrvdPropPlan *pdpplan = CDrvdPropPlan::Pdpplan((*pdrgpdpCtxt)[0])->GetCostModel()->PdpplanProducer(&ulProducerId);
   GPOS_ASSERT(nullptr != pdpplan);
   GPOS_ASSERT(ulProducerId == id && "unexpected CTE producer plan properties");
@@ -178,7 +177,7 @@ void CCTEReq::InsertConsumer(ULONG id, CDrvdPropArray *pdrgpdpCtxt) {
 //		Lookup info for given cte id
 //
 //---------------------------------------------------------------------------
-CCTEReq::CCTEReqEntry *CCTEReq::PcreLookup(ULONG ulCteId) const {
+CCTEReq::CCTEReqEntry *CCTEReq::PcreLookup(uint32_t ulCteId) const {
   return m_phmcter->Find(&ulCteId);
 }
 
@@ -190,7 +189,7 @@ CCTEReq::CCTEReqEntry *CCTEReq::PcreLookup(ULONG ulCteId) const {
 //		Check if the current requirement is a subset of the given one
 //
 //---------------------------------------------------------------------------
-BOOL CCTEReq::FSubset(const CCTEReq *pcter) const {
+bool CCTEReq::FSubset(const CCTEReq *pcter) const {
   GPOS_ASSERT(nullptr != pcter);
 
   // compare number of entries first
@@ -224,7 +223,7 @@ BOOL CCTEReq::FSubset(const CCTEReq *pcter) const {
 //		Check if the given CTE is in the requirements
 //
 //---------------------------------------------------------------------------
-BOOL CCTEReq::FContainsRequirement(const ULONG id, const CCTEMap::ECteType ect) const {
+bool CCTEReq::FContainsRequirement(const uint32_t id, const CCTEMap::ECteType ect) const {
   CCTEReqEntry *pcre = PcreLookup(id);
   return (nullptr != pcre && pcre->Ect() == ect);
 }
@@ -237,7 +236,7 @@ BOOL CCTEReq::FContainsRequirement(const ULONG id, const CCTEMap::ECteType ect) 
 //		Return the CTE type associated with the given ID in the requirements
 //
 //---------------------------------------------------------------------------
-CCTEMap::ECteType CCTEReq::Ect(const ULONG id) const {
+CCTEMap::ECteType CCTEReq::Ect(const uint32_t id) const {
   CCTEReqEntry *pcre = PcreLookup(id);
   GPOS_ASSERT(nullptr != pcre);
   return pcre->Ect();
@@ -251,13 +250,12 @@ CCTEMap::ECteType CCTEReq::Ect(const ULONG id) const {
 //		Hash of components
 //
 //---------------------------------------------------------------------------
-ULONG
-CCTEReq::HashValue() const {
-  ULONG ulHash = 0;
+uint32_t CCTEReq::HashValue() const {
+  uint32_t ulHash = 0;
 
   // how many map entries to use for hash computation
-  const ULONG ulMaxEntries = 5;
-  ULONG ul = 0;
+  const uint32_t ulMaxEntries = 5;
+  uint32_t ul = 0;
 
   UlongToCTEReqEntryMapIter hmcri(m_phmcter);
   while (hmcri.Advance() && ul < ulMaxEntries) {
@@ -286,8 +284,8 @@ CCTEReq *CCTEReq::PcterUnresolved(CMemoryPool *mp, CCTEMap *pcm) {
     // if a cte is marked as required and it is not found in the given map
     // then keep it as required, else make it optional
     const CCTEReqEntry *pcre = hmcri.Value();
-    ULONG id = pcre->Id();
-    BOOL fRequired = pcre->FRequired() && CCTEMap::EctSentinel == pcm->Ect(id);
+    uint32_t id = pcre->Id();
+    bool fRequired = pcre->FRequired() && CCTEMap::EctSentinel == pcm->Ect(id);
     CDrvdPropPlan *pdpplan = pcre->PdpplanProducer();
     if (nullptr != pdpplan) {
       pdpplan->AddRef();
@@ -319,9 +317,9 @@ CCTEReq *CCTEReq::PcterUnresolvedSequence(
   while (hmcri.Advance()) {
     const CCTEReqEntry *pcre = hmcri.Value();
 
-    ULONG id = pcre->Id();
+    uint32_t id = pcre->Id();
     CCTEMap::ECteType ect = pcre->Ect();
-    BOOL fRequired = pcre->FRequired();
+    bool fRequired = pcre->FRequired();
 
     CCTEMap::ECteType ectDrvd = pcm->Ect(id);
     if (fRequired && CCTEMap::EctSentinel != ectDrvd) {
@@ -353,9 +351,9 @@ CCTEReq *CCTEReq::PcterUnresolvedSequence(
   // if something is in pcm and not in the requirments, it has to be a producer
   // in which case, add the corresponding consumer as unresolved
   ULongPtrArray *pdrgpulProducers = pcm->PdrgpulAdditionalProducers(mp, this);
-  const ULONG length = pdrgpulProducers->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
-    ULONG *pulId = (*pdrgpulProducers)[ul];
+  const uint32_t length = pdrgpulProducers->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
+    uint32_t *pulId = (*pdrgpulProducers)[ul];
     pcterUnresolved->InsertConsumer(*pulId, pdrgpdpCtxt);
   }
   pdrgpulProducers->Release();
@@ -395,7 +393,7 @@ CCTEReq *CCTEReq::PcterAllOptional(CMemoryPool *mp) {
 //		Lookup plan properties for given cte id
 //
 //---------------------------------------------------------------------------
-CDrvdPropPlan *CCTEReq::Pdpplan(ULONG ulCteId) const {
+CDrvdPropPlan *CCTEReq::Pdpplan(uint32_t ulCteId) const {
   const CCTEReqEntry *pcre = PcreLookup(ulCteId);
   if (nullptr != pcre) {
     return pcre->PdpplanProducer();

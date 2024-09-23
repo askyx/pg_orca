@@ -34,10 +34,10 @@ class CXformMinMax2IndexGet : public CXformExploration {
   static EIndexScanDirection GetScanDirection(const IMDIndex *pmdindex, CScalarAggFunc *popScAggFunc,
                                               const IMDType *agg_col_type);
 
-  static BOOL IsMinMaxAggOnColumn(const IMDType *agg_func_type, CExpression *pexprAggFunc, const CColRef **agg_colref);
+  static bool IsMinMaxAggOnColumn(const IMDType *agg_func_type, CExpression *pexprAggFunc, const CColRef **agg_colref);
 
   static IMdIdArray *GetApplicableIndices(CMemoryPool *mp, const CColRef *agg_colref, CColRefArray *output_col_array,
-                                          CMDAccessor *md_accessor, const IMDRelation *pmdrel, ULONG ulIndices);
+                                          CMDAccessor *md_accessor, const IMDRelation *pmdrel, uint32_t ulIndices);
 
  public:
   CXformMinMax2IndexGet(const CXformMinMax2IndexGet &) = delete;
@@ -52,7 +52,7 @@ class CXformMinMax2IndexGet : public CXformExploration {
   EXformId Exfid() const override { return ExfMinMax2IndexGet; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformMinMax2IndexGet"; }
+  const char *SzId() const override { return "CXformMinMax2IndexGet"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

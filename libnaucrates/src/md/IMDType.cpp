@@ -46,7 +46,7 @@ const CWStringConst *IMDType::GetCmpTypeStr(IMDType::ECmpType cmp_type) {
 //		datums of these two types; else return false
 //
 //---------------------------------------------------------------------------
-BOOL IMDType::StatsAreComparable(const IMDType *mdtype_first, const IMDType *mdtype_second) {
+bool IMDType::StatsAreComparable(const IMDType *mdtype_first, const IMDType *mdtype_second) {
   GPOS_ASSERT(nullptr != mdtype_first);
   GPOS_ASSERT(nullptr != mdtype_second);
 
@@ -65,7 +65,7 @@ BOOL IMDType::StatsAreComparable(const IMDType *mdtype_first, const IMDType *mdt
 //		datum of the given type and a given datum; else return false
 //
 //---------------------------------------------------------------------------
-BOOL IMDType::StatsAreComparable(const IMDType *mdtype_first, const IDatum *datum_second) {
+bool IMDType::StatsAreComparable(const IMDType *mdtype_first, const IDatum *datum_second) {
   GPOS_ASSERT(nullptr != mdtype_first);
   GPOS_ASSERT(nullptr != datum_second);
 

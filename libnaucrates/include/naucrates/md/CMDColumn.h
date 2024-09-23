@@ -37,28 +37,28 @@ class CMDColumn : public IMDColumn {
   CMDName *m_mdname;
 
   // attribute number
-  INT m_attno;
+  int32_t m_attno;
 
   // column type
   IMDId *m_mdid_type;
 
-  INT m_type_modifier;
+  int32_t m_type_modifier;
 
   // is NULL an allowed value for the attribute
-  BOOL m_is_nullable;
+  bool m_is_nullable;
 
   // is column dropped
-  BOOL m_is_dropped;
+  bool m_is_dropped;
 
   // length of the column
-  ULONG m_length;
+  uint32_t m_length;
 
  public:
   CMDColumn(const CMDColumn &) = delete;
 
   // ctor
-  CMDColumn(CMDName *mdname, INT attrnum, IMDId *mdid_type, INT type_modifier, BOOL is_nullable, BOOL is_dropped,
-            ULONG length = gpos::ulong_max);
+  CMDColumn(CMDName *mdname, int32_t attrnum, IMDId *mdid_type, int32_t type_modifier, bool is_nullable,
+            bool is_dropped, uint32_t length = UINT32_MAX);
 
   // dtor
   ~CMDColumn() override;
@@ -69,23 +69,22 @@ class CMDColumn : public IMDColumn {
   // column type
   IMDId *MdidType() const override;
 
-  INT TypeModifier() const override;
+  int32_t TypeModifier() const override;
 
   // attribute number
-  INT AttrNum() const override;
+  int32_t AttrNum() const override;
 
   // is this a system column
-  BOOL IsSystemColumn() const override { return (0 > m_attno); }
+  bool IsSystemColumn() const override { return (0 > m_attno); }
 
   // length of the column
-  ULONG
-  Length() const override { return m_length; }
+  uint32_t Length() const override { return m_length; }
 
   // is the column nullable
-  BOOL IsNullable() const override;
+  bool IsNullable() const override;
 
   // is the column dropped
-  BOOL IsDropped() const override;
+  bool IsDropped() const override;
 
   // serialize metadata object in DXL format given a serializer object
   virtual

@@ -48,7 +48,7 @@ class CMDCastGPDB : public IMDCast {
   IMDId *m_mdid_dest;
 
   // is cast between binary coercible types, i.e. the types are binary compatible
-  BOOL m_is_binary_coercible;
+  bool m_is_binary_coercible;
 
   // cast func id
   IMDId *m_mdid_cast_func;
@@ -61,7 +61,7 @@ class CMDCastGPDB : public IMDCast {
 
   // ctor
   CMDCastGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *mdid_src, IMDId *mdid_dest,
-              BOOL is_binary_coercible, IMDId *mdid_cast_func, EmdCoercepathType path_type = EmdtNone);
+              bool is_binary_coercible, IMDId *mdid_cast_func, EmdCoercepathType path_type = EmdtNone);
 
   // dtor
   ~CMDCastGPDB() override;
@@ -81,7 +81,7 @@ class CMDCastGPDB : public IMDCast {
   IMDId *MdidDest() const override;
 
   // is this a cast between binary coeercible types, i.e. the types are binary compatible
-  BOOL IsBinaryCoercible() const override;
+  bool IsBinaryCoercible() const override;
 
   // return the coercion path type
   EmdCoercepathType GetMDPathType() const override;

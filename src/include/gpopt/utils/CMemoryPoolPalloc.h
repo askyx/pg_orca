@@ -28,7 +28,7 @@ class CMemoryPoolPalloc : public CMemoryPool {
   // the size of the element to get number of elements to iterate through.
   // This struct is only used for array allocations (GPOS_NEW_ARRAY())
   struct SArrayAllocHeader {
-    ULONG m_user_size;
+    uint32_t m_user_size;
   };
 
  public:
@@ -36,7 +36,7 @@ class CMemoryPoolPalloc : public CMemoryPool {
   CMemoryPoolPalloc();
 
   // allocate memory
-  void *NewImpl(const ULONG bytes, const CHAR *file, const ULONG line, CMemoryPool::EAllocationType eat) override;
+  void *NewImpl(const uint32_t bytes, const char *file, const uint32_t line, CMemoryPool::EAllocationType eat) override;
 
   // free memory
   static void DeleteImpl(void *ptr, CMemoryPool::EAllocationType eat);
@@ -45,10 +45,10 @@ class CMemoryPoolPalloc : public CMemoryPool {
   void TearDown() override;
 
   // return total allocated size include management overhead
-  ULLONG TotalAllocatedSize() const override;
+  uint64_t TotalAllocatedSize() const override;
 
   // get user requested size of allocation
-  static ULONG UserSizeOfAlloc(const void *ptr);
+  static uint32_t UserSizeOfAlloc(const void *ptr);
 };
 }  // namespace gpos
 

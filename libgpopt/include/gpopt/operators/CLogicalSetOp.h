@@ -45,21 +45,21 @@ class CLogicalSetOp : public CLogical {
   void BuildColumnSets(CMemoryPool *mp);
 
   // output equivalence classes
-  CColRefSetArray *PdrgpcrsOutputEquivClasses(CMemoryPool *mp, CExpressionHandle &exprhdl, BOOL fIntersect) const;
+  CColRefSetArray *PdrgpcrsOutputEquivClasses(CMemoryPool *mp, CExpressionHandle &exprhdl, bool fIntersect) const;
 
   // equivalence classes from one input child, mapped to output columns
-  CColRefSetArray *PdrgpcrsInputMapped(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulChild) const;
+  CColRefSetArray *PdrgpcrsInputMapped(CMemoryPool *mp, CExpressionHandle &exprhdl, uint32_t ulChild) const;
 
   // constraints for a given output column from all children
-  CConstraintArray *PdrgpcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulColIndex,
-                                     ULONG ulStart) const;
+  CConstraintArray *PdrgpcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl, uint32_t ulColIndex,
+                                     uint32_t ulStart) const;
 
   // get constraint for a given output column from a given children
-  CConstraint *PcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulColIndex, ULONG ulChild) const;
+  CConstraint *PcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl, uint32_t ulColIndex, uint32_t ulChild) const;
 
   // derive constraint property for difference, intersect, and union
   // operators
-  CPropConstraint *PpcDeriveConstraintSetop(CMemoryPool *mp, CExpressionHandle &exprhdl, BOOL fIntersect) const;
+  CPropConstraint *PpcDeriveConstraintSetop(CMemoryPool *mp, CExpressionHandle &exprhdl, bool fIntersect) const;
 
  public:
   // ctor
@@ -76,7 +76,7 @@ class CLogicalSetOp : public CLogical {
   EOperatorId Eopid() const override = 0;
 
   // return a string for operator name
-  const CHAR *SzId() const override = 0;
+  const char *SzId() const override = 0;
 
   // accessor of output column array
   CColRefArray *PdrgpcrOutput() const {
@@ -91,13 +91,13 @@ class CLogicalSetOp : public CLogical {
   }
 
   // return true if we can pull projections up past this operator from its given child
-  BOOL FCanPullProjectionsUp(ULONG  // child_index
+  bool FCanPullProjectionsUp(uint32_t  // child_index
   ) const override {
     return false;
   }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   IOstream &OsPrint(IOstream &os) const override;
 
@@ -122,7 +122,7 @@ class CLogicalSetOp : public CLogical {
   CColRefSet *PcrsStat(CMemoryPool *,        // mp
                        CExpressionHandle &,  // exprhdl
                        CColRefSet *pcrsInput,
-                       ULONG  // child_index
+                       uint32_t  // child_index
   ) const override;
 
   // conversion function

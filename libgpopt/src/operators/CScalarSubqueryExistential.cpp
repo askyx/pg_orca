@@ -62,7 +62,7 @@ IMDId *CScalarSubqueryExistential::MdidType() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarSubqueryExistential::Matches(COperator *pop) const {
+bool CScalarSubqueryExistential::Matches(COperator *pop) const {
   GPOS_ASSERT(nullptr != pop);
 
   return pop->Eopid() == Eopid();

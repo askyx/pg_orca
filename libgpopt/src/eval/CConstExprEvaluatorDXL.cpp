@@ -88,7 +88,7 @@ CExpression *CConstExprEvaluatorDXL::PexprEval(CExpression *pexpr) {
 //		Returns true, since this evaluator always attempts to evaluate the expression and compute a datum
 //
 //---------------------------------------------------------------------------
-BOOL CConstExprEvaluatorDXL::FCanEvalExpressions() {
+bool CConstExprEvaluatorDXL::FCanEvalExpressions() {
   return m_pconstdxleval->FCanEvalExpressions();
 }
 

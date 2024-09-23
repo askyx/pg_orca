@@ -40,8 +40,8 @@ class CScalarCoerceViaIO : public CScalarCoerceBase {
   CScalarCoerceViaIO(const CScalarCoerceViaIO &) = delete;
 
   // ctor
-  CScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, ECoercionForm dxl_coerce_format,
-                     INT location);
+  CScalarCoerceViaIO(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, ECoercionForm dxl_coerce_format,
+                     int32_t location);
 
   // dtor
   ~CScalarCoerceViaIO() override = default;
@@ -49,13 +49,13 @@ class CScalarCoerceViaIO : public CScalarCoerceBase {
   EOperatorId Eopid() const override { return EopScalarCoerceViaIO; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarCoerceViaIO"; }
+  const char *SzId() const override { return "CScalarCoerceViaIO"; }
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // conversion function
   static CScalarCoerceViaIO *PopConvert(COperator *pop) {

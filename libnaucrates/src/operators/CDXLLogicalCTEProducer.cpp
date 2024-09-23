@@ -28,7 +28,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLLogicalCTEProducer::CDXLLogicalCTEProducer(CMemoryPool *mp, ULONG id, ULongPtrArray *output_colids_array)
+CDXLLogicalCTEProducer::CDXLLogicalCTEProducer(CMemoryPool *mp, uint32_t id, ULongPtrArray *output_colids_array)
     : CDXLLogical(mp), m_id(id), m_output_colids_array(output_colids_array) {
   GPOS_ASSERT(nullptr != output_colids_array);
 }
@@ -78,7 +78,7 @@ const CWStringConst *CDXLLogicalCTEProducer::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalCTEProducer::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLLogicalCTEProducer::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(1 == dxlnode->Arity());
 
   CDXLNode *child_dxlnode = (*dxlnode)[0];

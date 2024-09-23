@@ -150,7 +150,7 @@ void CDXLNode::AddChild(CDXLNode *child_dxlnode) {
 //		Replaces a child of the DXL node with a new one
 //
 //---------------------------------------------------------------------------
-void CDXLNode::ReplaceChild(ULONG pos, CDXLNode *child_dxlnode) {
+void CDXLNode::ReplaceChild(uint32_t pos, CDXLNode *child_dxlnode) {
   GPOS_ASSERT(nullptr != m_dxl_array);
   GPOS_ASSERT(nullptr != child_dxlnode);
 
@@ -193,13 +193,13 @@ void CDXLNode::SetProperties(CDXLProperties *dxl_properties) {
 //		Checks whether node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLNode::AssertValid(BOOL validate_children) const {
+void CDXLNode::AssertValid(bool validate_children) const {
   if (!validate_children) {
     return;
   }
 
-  const ULONG arity = Arity();
-  for (ULONG idx = 0; idx < arity; idx++) {
+  const uint32_t arity = Arity();
+  for (uint32_t idx = 0; idx < arity; idx++) {
     CDXLNode *child_dxlnode = (*this)[idx];
     child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
   }

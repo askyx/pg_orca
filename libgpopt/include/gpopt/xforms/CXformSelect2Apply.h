@@ -41,7 +41,7 @@ class CXformSelect2Apply : public CXformSubqueryUnnest {
   EXformId Exfid() const override { return ExfSelect2Apply; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformSelect2Apply"; }
+  const char *SzId() const override { return "CXformSelect2Apply"; }
 
 };  // class CXformSelect2Apply
 

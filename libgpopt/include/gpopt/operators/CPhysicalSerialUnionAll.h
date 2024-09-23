@@ -32,7 +32,7 @@ class CPhysicalSerialUnionAll : public CPhysicalUnionAll {
   // ident accessors
   EOperatorId Eopid() const override { return EopPhysicalSerialUnionAll; }
 
-  const CHAR *SzId() const override { return "CPhysicalSerialUnionAll"; }
+  const char *SzId() const override { return "CPhysicalSerialUnionAll"; }
 
 };  // class CPhysicalSerialUnionAll
 

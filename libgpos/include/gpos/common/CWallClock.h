@@ -32,7 +32,7 @@ class CWallClock : public ITimer {
   CWallClock() { Restart(); }
 
   // retrieve elapsed wall-clock time in micro-seconds
-  ULONG ElapsedUS() const override;
+  uint32_t ElapsedUS() const override;
 
   // restart timer
   void Restart() override;

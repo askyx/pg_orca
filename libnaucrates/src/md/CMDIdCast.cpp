@@ -69,7 +69,7 @@ void CMDIdCast::Serialize() const {
 //		Returns the string representation of the mdid
 //
 //---------------------------------------------------------------------------
-const WCHAR *CMDIdCast::GetBuffer() const {
+const wchar_t *CMDIdCast::GetBuffer() const {
   Serialize();
   return m_str.GetBuffer();
 }
@@ -106,7 +106,7 @@ IMDId *CMDIdCast::MdidDest() const {
 //		Checks if the mdids are equal
 //
 //---------------------------------------------------------------------------
-BOOL CMDIdCast::Equals(const IMDId *mdid) const {
+bool CMDIdCast::Equals(const IMDId *mdid) const {
   if (nullptr == mdid || EmdidCastFunc != mdid->MdidType()) {
     return false;
   }

@@ -40,7 +40,7 @@ class CXformLeftSemiJoin2InnerJoinUnderGb : public CXformExploration {
   EXformId Exfid() const override { return ExfLeftSemiJoin2InnerJoinUnderGb; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformLeftSemiJoin2InnerJoinUnderGb"; }
+  const char *SzId() const override { return "CXformLeftSemiJoin2InnerJoinUnderGb"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

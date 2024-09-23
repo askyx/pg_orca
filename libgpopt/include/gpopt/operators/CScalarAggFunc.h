@@ -64,7 +64,7 @@ class CScalarAggFunc : public CScalar {
   const CWStringConst *m_pstrAggFunc;
 
   // distinct aggregate computation
-  BOOL m_is_distinct;
+  bool m_is_distinct;
 
   EAggfuncKind m_aggkind;
 
@@ -74,18 +74,18 @@ class CScalarAggFunc : public CScalar {
   EAggfuncStage m_eaggfuncstage;
 
   // is result of splitting aggregates
-  BOOL m_fSplit;
+  bool m_fSplit;
 
   // is aggregate replicate slice execution safe
-  BOOL m_fRepSafe;
+  bool m_fRepSafe;
 
  public:
   CScalarAggFunc(const CScalarAggFunc &) = delete;
 
   // ctor
   CScalarAggFunc(CMemoryPool *mp, IMDId *pmdidAggFunc, IMDId *resolved_rettype, const CWStringConst *pstrAggFunc,
-                 BOOL is_distinct, EAggfuncStage eaggfuncstage, BOOL fSplit, EAggfuncKind aggkind,
-                 ULongPtrArray *argtypes, BOOL fRepSafe);
+                 bool is_distinct, EAggfuncStage eaggfuncstage, bool fSplit, EAggfuncKind aggkind,
+                 ULongPtrArray *argtypes, bool fRepSafe);
 
   // dtor
   ~CScalarAggFunc() override {
@@ -100,21 +100,21 @@ class CScalarAggFunc : public CScalar {
   EOperatorId Eopid() const override { return EopScalarAggFunc; }
 
   // return a string for aggregate function
-  const CHAR *SzId() const override { return "CScalarAggFunc"; }
+  const char *SzId() const override { return "CScalarAggFunc"; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
@@ -134,9 +134,9 @@ class CScalarAggFunc : public CScalar {
   IMDId *MDId() const;
 
   // ident accessors
-  BOOL IsDistinct() const { return m_is_distinct; }
+  bool IsDistinct() const { return m_is_distinct; }
 
-  void SetIsDistinct(BOOL val) { m_is_distinct = val; }
+  void SetIsDistinct(bool val) { m_is_distinct = val; }
 
   EAggfuncKind AggKind() const { return m_aggkind; }
 
@@ -146,13 +146,13 @@ class CScalarAggFunc : public CScalar {
   EAggfuncStage Eaggfuncstage() const { return m_eaggfuncstage; }
 
   // global or local aggregate function
-  BOOL FGlobal() const { return (EaggfuncstageGlobal == m_eaggfuncstage); }
+  bool FGlobal() const { return (EaggfuncstageGlobal == m_eaggfuncstage); }
 
   // is result of splitting aggregates
-  BOOL FSplit() const { return m_fSplit; }
+  bool FSplit() const { return m_fSplit; }
 
   // is aggregate replicate slice execution safe
-  BOOL FRepSafe() const { return m_fRepSafe; }
+  bool FRepSafe() const { return m_fRepSafe; }
 
   // type of expression's result
   IMDId *MdidType() const override {
@@ -164,22 +164,22 @@ class CScalarAggFunc : public CScalar {
   }
 
   // is return type of Agg ambiguous?
-  BOOL FHasAmbiguousReturnType() const { return (nullptr != m_pmdidResolvedRetType); }
+  bool FHasAmbiguousReturnType() const { return (nullptr != m_pmdidResolvedRetType); }
 
   // is function count(*)?
-  BOOL FCountStar() const;
+  bool FCountStar() const;
 
   // is function count(Any)?
-  BOOL FCountAny() const;
+  bool FCountAny() const;
 
   // is function either min() or max()?
-  BOOL IsMinMax(const IMDType *mdtype) const;
+  bool IsMinMax(const IMDType *mdtype) const;
 
   // print
   IOstream &OsPrint(IOstream &os) const override;
 
   // lookup mdid of return type for given Agg function
-  static IMDId *PmdidLookupReturnType(IMDId *pmdidAggFunc, BOOL fGlobal, CMDAccessor *pmdaInput = nullptr);
+  static IMDId *PmdidLookupReturnType(IMDId *pmdidAggFunc, bool fGlobal, CMDAccessor *pmdaInput = nullptr);
 
 };  // class CScalarAggFunc
 

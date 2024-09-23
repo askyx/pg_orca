@@ -29,7 +29,7 @@ class CXformGbAgg2HashAgg : public CXformImplementation {
  private:
  protected:
   // check if the transformation is applicable
-  static BOOL FApplicable(CExpression *pexpr);
+  static bool FApplicable(CExpression *pexpr);
 
  public:
   CXformGbAgg2HashAgg(const CXformGbAgg2HashAgg &) = delete;
@@ -47,7 +47,7 @@ class CXformGbAgg2HashAgg : public CXformImplementation {
   EXformId Exfid() const override { return ExfGbAgg2HashAgg; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformGbAgg2HashAgg"; }
+  const char *SzId() const override { return "CXformGbAgg2HashAgg"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

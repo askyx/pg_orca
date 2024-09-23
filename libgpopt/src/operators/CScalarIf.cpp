@@ -46,8 +46,7 @@ CScalarIf::CScalarIf(CMemoryPool *mp, IMDId *mdid) : CScalar(mp), m_mdid_type(md
 //		return type id
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarIf::HashValue() const {
+uint32_t CScalarIf::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), m_mdid_type->HashValue());
 }
 
@@ -59,7 +58,7 @@ CScalarIf::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarIf::Matches(COperator *pop) const {
+bool CScalarIf::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarIf *popScIf = CScalarIf::PopConvert(pop);
 

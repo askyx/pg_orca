@@ -37,7 +37,7 @@ class CColRefSetIter : public CBitSetIter {
   CColRefSetIter(const CColRefSetIter &);
 
   // current bit -- private to make super class' inaccessible
-  ULONG UlBit() const;
+  uint32_t UlBit() const;
 
  public:
   // ctor

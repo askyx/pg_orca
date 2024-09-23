@@ -22,13 +22,13 @@ class CLeftAntiSemiJoinStatsProcessor : public CJoinStatsProcessor {
                                  CHistogram **result_hist1,  // output: histogram 1 after join
                                  CHistogram **result_hist2,  // output: histogram 2 after join
                                  CDouble *scale_factor,      // output: scale factor based on the join
-                                 BOOL is_input_empty,        // if true, one of the inputs is empty
-                                 IStatistics::EStatsJoinType join_type, BOOL DoIgnoreLASJHistComputation);
+                                 bool is_input_empty,        // if true, one of the inputs is empty
+                                 IStatistics::EStatsJoinType join_type, bool DoIgnoreLASJHistComputation);
   // left anti semi join with another stats structure
   static CStatistics *CalcLASJoinStatsStatic(
       CMemoryPool *mp, const IStatistics *outer_stats_input, const IStatistics *inner_stats_input,
       CStatsPredJoinArray *join_preds_stats,
-      BOOL DoIgnoreLASJHistComputation  // except for the case of LOJ cardinality estimation this flag is always
+      bool DoIgnoreLASJHistComputation  // except for the case of LOJ cardinality estimation this flag is always
                                         // "true" since LASJ stats computation is very aggressive
   );
   // compute the null frequency for LASJ

@@ -29,7 +29,7 @@ class CXformImplementFullOuterMergeJoin : public CXformExploration {
   EXformId Exfid() const override { return ExfImplementFullOuterMergeJoin; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformImplementFullOuterMergeJoin"; }
+  const char *SzId() const override { return "CXformImplementFullOuterMergeJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

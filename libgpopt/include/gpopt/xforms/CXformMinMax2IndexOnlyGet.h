@@ -41,7 +41,7 @@ class CXformMinMax2IndexOnlyGet : public CXformMinMax2IndexGet {
   EXformId Exfid() const override { return ExfMinMax2IndexOnlyGet; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformMinMax2IndexOnlyGet"; }
+  const char *SzId() const override { return "CXformMinMax2IndexOnlyGet"; }
 
 };  // class CXformMinMax2IndexOnlyGet
 

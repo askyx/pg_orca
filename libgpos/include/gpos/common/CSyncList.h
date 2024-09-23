@@ -47,7 +47,7 @@ class CSyncList {
   ~CSyncList() = default;
 
   // init function to facilitate arrays
-  void Init(ULONG offset) { m_list.Init(offset); }
+  void Init(uint32_t offset) { m_list.Init(offset); }
 
   // insert element at the head of the list;
   void Push(T *elem) { m_list.Prepend(elem); }
@@ -67,7 +67,7 @@ class CSyncList {
   T *Next(T *elem) const { return m_list.Next(elem); }
 
   // check if list is empty
-  BOOL IsEmpty() const { return NULL == m_list.First(); }
+  bool IsEmpty() const { return NULL == m_list.First(); }
 
   // lookup a given element in the stack
   // this works only when no elements are removed

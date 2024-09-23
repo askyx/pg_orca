@@ -27,7 +27,7 @@ using namespace gpos;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CJobFactory::CJobFactory(CMemoryPool *mp, ULONG ulJobs)
+CJobFactory::CJobFactory(CMemoryPool *mp, uint32_t ulJobs)
     : m_mp(mp),
       m_ulJobs(ulJobs),
       m_pspjTest(nullptr),

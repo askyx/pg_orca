@@ -1267,7 +1267,7 @@ CDXLNode *CTranslatorExprToDXL::PdxlnAssert(CExpression *pexprAssert, CColRefArr
 
   CDXLNode *pdxlnPrL = PdxlnProjList(pcrsOutput, colref_array);
 
-  const CHAR *sql_state = popAssert->Pexc()->GetSQLState();
+  const char *sql_state = popAssert->Pexc()->GetSQLState();
   CDXLPhysicalAssert *pdxlopAssert = GPOS_NEW(m_mp) CDXLPhysicalAssert(m_mp, sql_state);
   CDXLNode *pdxlnAssert = GPOS_NEW(m_mp) CDXLNode(m_mp, pdxlopAssert, pdxlnPrL, pdxlnAssertPredicate, child_dxlnode);
 
@@ -2238,7 +2238,7 @@ CDXLNode *CTranslatorExprToDXL::PdxlnRestrictResult(CDXLNode *dxlnode, const CCo
       CDXLNode *child_dxlnode = (*pdxlnProjListOld)[ul];
       CDXLScalarProjElem *pdxlPrjElem = CDXLScalarProjElem::Cast(child_dxlnode->GetOperator());
 
-      const INT colid = pdxlPrjElem->Id();
+      const int32_t colid = pdxlPrjElem->Id();
       CColRef *colref = phmicr->Find(&colid);
       if (colref) {
         // create a new project element that simply points to required column,
@@ -2806,7 +2806,7 @@ static uint32_t UlIndexFilter(Edxlopid edxlopid) {
       return EdxlresultIndexFilter;
     default:
       GPOS_RTL_ASSERT("Unexpected operator. Expected operators that contain a filter child");
-      return gpos::ulong_max;
+      return UINT32_MAX;
   }
 }
 
@@ -2842,7 +2842,7 @@ CDXLNode *CTranslatorExprToDXL::PdxlnResultFromNLJoinOuter(CExpression *pexprOut
 
       // create new AND expression with the outer child's filter node and the join condition
       uint32_t ulIndexFilter = UlIndexFilter(edxlopid);
-      GPOS_ASSERT(ulIndexFilter != gpos::ulong_max);
+      GPOS_ASSERT(ulIndexFilter != UINT32_MAX);
       CDXLNode *pdxlnChildFilter = (*pdxlnRelationalNew)[ulIndexFilter];
       GPOS_ASSERT(EdxlopScalarFilter == pdxlnChildFilter->GetOperator()->GetDXLOperator());
       CDXLNode *newFilterPred = pdxlnJoinCond;
@@ -4499,8 +4499,8 @@ CDXLNode *CTranslatorExprToDXL::PdxlnFieldSelect(CExpression *pexpr) {
   field_type->AddRef();
   IMDId *field_collation = pop->FieldCollation();
   field_collation->AddRef();
-  INT type_modifier = pop->TypeModifier();
-  SINT field_number = pop->FieldNumber();
+  int32_t type_modifier = pop->TypeModifier();
+  int16_t field_number = pop->FieldNumber();
 
   CDXLNode *pdxlnFieldSelect = GPOS_NEW(m_mp) CDXLNode(
       m_mp, GPOS_NEW(m_mp) CDXLScalarFieldSelect(m_mp, field_type, field_collation, type_modifier, field_number));
@@ -4790,7 +4790,7 @@ CDXLPhysicalProperties *CTranslatorExprToDXL::GetProperties(const CExpression *p
   if (nullptr != stats) {
     width = stats->Width(colids);
   }
-  width_str->AppendFormat(GPOS_WSZ_LIT("%lld"), (LINT)width.Get());
+  width_str->AppendFormat(GPOS_WSZ_LIT("%lld"), (int64_t)width.Get());
 
   // get the cost from expression node
   CWStringDynamic str(m_mp);

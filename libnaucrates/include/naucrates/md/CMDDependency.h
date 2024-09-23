@@ -34,10 +34,10 @@ class CMDDependency : public CRefCount {
 
   IntPtrArray *m_from_attno;
 
-  INT m_to_attno;
+  int32_t m_to_attno;
 
  public:
-  CMDDependency(CMemoryPool *mp, DOUBLE degree, IntPtrArray *from_attno, INT to_attno)
+  CMDDependency(CMemoryPool *mp, double degree, IntPtrArray *from_attno, int32_t to_attno)
       : m_mp(mp), m_degree(degree), m_from_attno(from_attno), m_to_attno(to_attno) {}
 
   ~CMDDependency() override { m_from_attno->Release(); }
@@ -45,8 +45,8 @@ class CMDDependency : public CRefCount {
   CWStringDynamic *FromAttnosToStr() {
     CWStringDynamic *str = GPOS_NEW(m_mp) CWStringDynamic(m_mp);
 
-    ULONG size = m_from_attno->Size();
-    for (ULONG i = 0; i < size - 1; i++) {
+    uint32_t size = m_from_attno->Size();
+    for (uint32_t i = 0; i < size - 1; i++) {
       str->AppendFormat(GPOS_WSZ_LIT("%d,"), *(*m_from_attno)[i]);
     }
     str->AppendFormat(GPOS_WSZ_LIT("%d"), *(*m_from_attno)[size - 1]);
@@ -56,12 +56,11 @@ class CMDDependency : public CRefCount {
 
   IntPtrArray *GetFromAttno() const { return m_from_attno; }
 
-  INT GetToAttno() const { return m_to_attno; }
+  int32_t GetToAttno() const { return m_to_attno; }
 
   CDouble GetDegree() const { return m_degree; }
 
-  ULONG
-  GetNAttributes() const
+  uint32_t GetNAttributes() const
 
   {
     return m_from_attno->Size() + 1;

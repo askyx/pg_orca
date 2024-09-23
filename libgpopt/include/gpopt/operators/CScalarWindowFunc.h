@@ -50,23 +50,23 @@ class CScalarWindowFunc : public CScalarFunc {
   EWinStage m_ewinstage;
 
   // distinct window computation
-  BOOL m_is_distinct;
+  bool m_is_distinct;
 
   /* TRUE if argument list was really '*' */
-  BOOL m_is_star_arg;
+  bool m_is_star_arg;
 
   /* is function a simple aggregate? */
-  BOOL m_is_simple_agg;
+  bool m_is_simple_agg;
 
   // aggregate window function, e.g. count(*) over()
-  BOOL m_fAgg;
+  bool m_fAgg;
 
  public:
   CScalarWindowFunc(const CScalarWindowFunc &) = delete;
 
   // ctor
   CScalarWindowFunc(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, const CWStringConst *pstrFunc,
-                    EWinStage ewinstage, BOOL is_distinct, BOOL is_star_arg, BOOL is_simple_agg);
+                    EWinStage ewinstage, bool is_distinct, bool is_star_arg, bool is_simple_agg);
 
   // dtor
   ~CScalarWindowFunc() override = default;
@@ -75,15 +75,15 @@ class CScalarWindowFunc : public CScalarFunc {
   EOperatorId Eopid() const override { return EopScalarWindowFunc; }
 
   // return a string for window function
-  const CHAR *SzId() const override { return "CScalarWindowFunc"; }
+  const char *SzId() const override { return "CScalarWindowFunc"; }
 
   EWinStage Ews() const { return m_ewinstage; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // conversion function
   static CScalarWindowFunc *PopConvert(COperator *pop) {
@@ -94,14 +94,14 @@ class CScalarWindowFunc : public CScalarFunc {
   }
 
   // does window function definition include Distinct?
-  BOOL IsDistinct() const { return m_is_distinct; }
+  bool IsDistinct() const { return m_is_distinct; }
 
-  BOOL IsStarArg() const { return m_is_star_arg; }
+  bool IsStarArg() const { return m_is_star_arg; }
 
-  BOOL IsSimpleAgg() const { return m_is_simple_agg; }
+  bool IsSimpleAgg() const { return m_is_simple_agg; }
 
   // is window function defined as Aggregate?
-  BOOL FAgg() const { return m_fAgg; }
+  bool FAgg() const { return m_fAgg; }
 
   // print
   IOstream &OsPrint(IOstream &os) const override;

@@ -25,7 +25,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLStatsDerivedRelation::CDXLStatsDerivedRelation(CDouble rows, BOOL is_empty,
+CDXLStatsDerivedRelation::CDXLStatsDerivedRelation(CDouble rows, bool is_empty,
                                                    CDXLStatsDerivedColumnArray *dxl_stats_derived_col_array)
     : m_rows(rows), m_empty(is_empty), m_dxl_stats_derived_col_array(dxl_stats_derived_col_array) {
   GPOS_ASSERT(nullptr != dxl_stats_derived_col_array);

@@ -29,13 +29,13 @@ class CLogger : public ILogger {
 
  private:
   // buffer used to construct the log entry
-  WCHAR m_entry[GPOS_LOG_ENTRY_BUFFER_SIZE];
+  wchar_t m_entry[GPOS_LOG_ENTRY_BUFFER_SIZE];
 
   // buffer used to construct the log entry
-  WCHAR m_msg[GPOS_LOG_MESSAGE_BUFFER_SIZE];
+  wchar_t m_msg[GPOS_LOG_MESSAGE_BUFFER_SIZE];
 
   // buffer used to retrieve system error messages
-  CHAR m_retrieved_msg[GPOS_LOG_MESSAGE_BUFFER_SIZE];
+  char m_retrieved_msg[GPOS_LOG_MESSAGE_BUFFER_SIZE];
 
   // entry buffer wrapper
   CWStringStatic m_entry_wrapper;
@@ -47,10 +47,10 @@ class CLogger : public ILogger {
   ErrorInfoLevel m_info_level;
 
   // log message
-  void Log(const WCHAR *msg, ULONG severity, const CHAR *filename, ULONG line);
+  void Log(const wchar_t *msg, uint32_t severity, const char *filename, uint32_t line);
 
   // format log message
-  void Format(const WCHAR *msg, ULONG severity, const CHAR *filename, ULONG line);
+  void Format(const wchar_t *msg, uint32_t severity, const char *filename, uint32_t line);
 
   // add date to message
   void AppendDate();
@@ -60,7 +60,7 @@ class CLogger : public ILogger {
 
  protected:
   // accessor for system error buffer
-  CHAR *Msg() { return m_retrieved_msg; }
+  char *Msg() { return m_retrieved_msg; }
 
  public:
   CLogger(const CLogger &) = delete;

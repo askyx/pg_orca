@@ -47,10 +47,10 @@ class CLogicalApply : public CLogical {
   CLogicalApply(const CLogicalApply &) = delete;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // inner column references accessor
   CColRefArray *PdrgPcrInner() const { return m_pdrgpcrInner; }
@@ -58,7 +58,7 @@ class CLogicalApply : public CLogical {
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
@@ -103,19 +103,19 @@ class CLogicalApply : public CLogical {
 
   // compute required stat columns of the n-th child
   CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                       ULONG child_index) const override;
+                       uint32_t child_index) const override;
 
   // return true if operator is a correlated apply
-  virtual BOOL FCorrelated() const { return false; }
+  virtual bool FCorrelated() const { return false; }
 
   // return true if operator is a left semi apply
-  virtual BOOL FLeftSemiApply() const { return false; }
+  virtual bool FLeftSemiApply() const { return false; }
 
   // return true if operator is a left anti semi apply
-  virtual BOOL FLeftAntiSemiApply() const { return false; }
+  virtual bool FLeftAntiSemiApply() const { return false; }
 
   // return true if operator can select a subset of input tuples based on some predicate
-  BOOL FSelectionOp() const override { return true; }
+  bool FSelectionOp() const override { return true; }
 
   // origin subquery id
   EOperatorId EopidOriginSubq() const { return m_eopidOriginSubq; }

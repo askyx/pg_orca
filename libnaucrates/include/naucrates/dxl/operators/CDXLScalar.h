@@ -45,10 +45,10 @@ class CDXLScalar : public CDXLOperator {
   Edxloptype GetDXLOperatorType() const override;
 
   // does the operator return a boolean result
-  virtual BOOL HasBoolResult(CMDAccessor *md_accessor) const = 0;
+  virtual bool HasBoolResult(CMDAccessor *md_accessor) const = 0;
 
 #ifdef GPOS_DEBUG
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override = 0;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override = 0;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

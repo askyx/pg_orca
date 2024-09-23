@@ -40,28 +40,28 @@ class CDXLColDescr : public CRefCount {
   CMDName *m_md_name;
 
   // column id: unique identifier of that instance of the column in the query
-  ULONG m_column_id;
+  uint32_t m_column_id;
 
   // attribute number in the database (corresponds to varattno in GPDB)
-  INT m_attr_no;
+  int32_t m_attr_no;
 
   // mdid of column's type
   IMDId *m_column_mdid_type;
 
-  INT m_type_modifier;
+  int32_t m_type_modifier;
 
   // is column dropped from the table: needed for correct restoring of attribute numbers in the range table entries
-  BOOL m_is_dropped;
+  bool m_is_dropped;
 
   // width of the column, for instance  char(10) column has width 10
-  ULONG m_column_width;
+  uint32_t m_column_width;
 
  public:
   CDXLColDescr(const CDXLColDescr &) = delete;
 
   // ctor
-  CDXLColDescr(CMDName *, ULONG column_id, INT attr_no, IMDId *column_mdid_type, INT type_modifier, BOOL is_dropped,
-               ULONG width = gpos::ulong_max);
+  CDXLColDescr(CMDName *, uint32_t column_id, int32_t attr_no, IMDId *column_mdid_type, int32_t type_modifier,
+               bool is_dropped, uint32_t width = UINT32_MAX);
 
   // dtor
   ~CDXLColDescr() override;
@@ -70,21 +70,21 @@ class CDXLColDescr : public CRefCount {
   const CMDName *MdName() const;
 
   // column identifier
-  ULONG Id() const;
+  uint32_t Id() const;
 
   // attribute number of the column in the base table
-  INT AttrNum() const;
+  int32_t AttrNum() const;
 
   // is the column dropped in the base table
-  BOOL IsDropped() const;
+  bool IsDropped() const;
 
   // column type
   IMDId *MdidType() const;
 
-  INT TypeModifier() const;
+  int32_t TypeModifier() const;
 
   // column width
-  ULONG Width() const;
+  uint32_t Width() const;
 };
 
 }  // namespace gpdxl

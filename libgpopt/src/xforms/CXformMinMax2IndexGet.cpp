@@ -84,7 +84,7 @@ void CXformMinMax2IndexGet::Transform(CXformContext *pxfctxt, CXformResult *pxfr
 
   CLogicalGet *popGet = CLogicalGet::PopConvert(pexprRel->Pop());
   // get the indices count of this relation
-  const ULONG ulIndices = popGet->Ptabdesc()->IndexCount();
+  const uint32_t ulIndices = popGet->Ptabdesc()->IndexCount();
 
   // Ignore xform if relation doesn't have any indices
   if (0 == ulIndices) {
@@ -141,14 +141,14 @@ void CXformMinMax2IndexGet::Transform(CXformContext *pxfctxt, CXformResult *pxfr
   pcrsScalarExpr->Include(agg_colref);
   CLogicalGbAgg *popAgg = CLogicalGbAgg::PopConvert(pexpr->Pop());
 
-  for (ULONG ul = 0; ul < btree_indices->Size(); ul++) {
+  for (uint32_t ul = 0; ul < btree_indices->Size(); ul++) {
     IMDId *pmdidIndex = (*btree_indices)[ul];
     const IMDIndex *pmdindex = md_accessor->RetrieveIndex(pmdidIndex);
 
     // Check if index is applicable and get scan direction
     EIndexScanDirection scan_direction = GetScanDirection(pmdindex, popScAggFunc, agg_func_type);
 
-    BOOL indexonly = Exfid() == ExfMinMax2IndexOnlyGet;
+    bool indexonly = Exfid() == ExfMinMax2IndexOnlyGet;
     // build IndexGet expression
     CExpression *pexprIndexGet = CXformUtils::PexprBuildBtreeIndexPlan(
         mp, md_accessor, pexprGetNotNull, popAgg->UlOpId(), pdrgpexpr, pcrsScalarExpr, nullptr /*outer_refs*/, pmdindex,
@@ -215,7 +215,7 @@ EIndexScanDirection CXformMinMax2IndexGet::GetScanDirection(const IMDIndex *pmdi
 //		performed on a column to determine if this transform
 //		applies for a given pattern.
 //---------------------------------------------------------------------------
-BOOL CXformMinMax2IndexGet::IsMinMaxAggOnColumn(const IMDType *agg_func_type, CExpression *pexprAggFunc,
+bool CXformMinMax2IndexGet::IsMinMaxAggOnColumn(const IMDType *agg_func_type, CExpression *pexprAggFunc,
                                                 const CColRef **agg_colref) {
   CScalarAggFunc *popScAggFunc = CScalarAggFunc::PopConvert(pexprAggFunc->Pop());
 
@@ -251,11 +251,11 @@ BOOL CXformMinMax2IndexGet::IsMinMaxAggOnColumn(const IMDType *agg_func_type, CE
 //---------------------------------------------------------------------------
 IMdIdArray *CXformMinMax2IndexGet::GetApplicableIndices(CMemoryPool *mp, const CColRef *agg_colref,
                                                         CColRefArray *output_col_array, CMDAccessor *md_accessor,
-                                                        const IMDRelation *pmdrel, ULONG ulIndices) {
+                                                        const IMDRelation *pmdrel, uint32_t ulIndices) {
   CColRefArray *pdrgpcrIndexColumns = nullptr;
   IMdIdArray *btree_indices = GPOS_NEW(mp) IMdIdArray(mp);
 
-  for (ULONG ul = 0; ul < ulIndices; ul++) {
+  for (uint32_t ul = 0; ul < ulIndices; ul++) {
     IMDId *pmdidIndex = pmdrel->IndexMDidAt(ul);
     const IMDIndex *pmdindex = md_accessor->RetrieveIndex(pmdidIndex);
     // get columns in the index

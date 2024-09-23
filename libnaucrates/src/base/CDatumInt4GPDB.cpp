@@ -32,7 +32,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDatumInt4GPDB::CDatumInt4GPDB(CSystemId sysid, INT val, BOOL is_null)
+CDatumInt4GPDB::CDatumInt4GPDB(CSystemId sysid, int32_t val, bool is_null)
     : m_mdid(nullptr), m_val(val), m_is_null(is_null) {
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
   IMDId *mdid = dynamic_cast<const CMDTypeInt4GPDB *>(md_accessor->PtMDType<IMDTypeInt4>(sysid))->MDId();
@@ -42,7 +42,7 @@ CDatumInt4GPDB::CDatumInt4GPDB(CSystemId sysid, INT val, BOOL is_null)
 
   if (IsNull()) {
     // needed for hash computation
-    m_val = gpos::int_max;
+    m_val = INT32_MAX;
   }
 }
 
@@ -54,13 +54,13 @@ CDatumInt4GPDB::CDatumInt4GPDB(CSystemId sysid, INT val, BOOL is_null)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDatumInt4GPDB::CDatumInt4GPDB(IMDId *mdid, INT val, BOOL is_null) : m_mdid(mdid), m_val(val), m_is_null(is_null) {
+CDatumInt4GPDB::CDatumInt4GPDB(IMDId *mdid, int32_t val, bool is_null) : m_mdid(mdid), m_val(val), m_is_null(is_null) {
   GPOS_ASSERT(nullptr != m_mdid);
   GPOS_ASSERT(GPDB_INT4_OID == CMDIdGPDB::CastMdid(m_mdid)->Oid());
 
   if (IsNull()) {
     // needed for hash computation
-    m_val = gpos::int_max;
+    m_val = INT32_MAX;
   }
 }
 
@@ -84,7 +84,7 @@ CDatumInt4GPDB::~CDatumInt4GPDB() {
 //		Accessor of integer value
 //
 //---------------------------------------------------------------------------
-INT CDatumInt4GPDB::Value() const {
+int32_t CDatumInt4GPDB::Value() const {
   return m_val;
 }
 
@@ -96,7 +96,7 @@ INT CDatumInt4GPDB::Value() const {
 //		Accessor of is null
 //
 //---------------------------------------------------------------------------
-BOOL CDatumInt4GPDB::IsNull() const {
+bool CDatumInt4GPDB::IsNull() const {
   return m_is_null;
 }
 
@@ -108,8 +108,7 @@ BOOL CDatumInt4GPDB::IsNull() const {
 //		Accessor of size
 //
 //---------------------------------------------------------------------------
-ULONG
-CDatumInt4GPDB::Size() const {
+uint32_t CDatumInt4GPDB::Size() const {
   return 4;
 }
 
@@ -133,9 +132,8 @@ IMDId *CDatumInt4GPDB::MDId() const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CDatumInt4GPDB::HashValue() const {
-  return gpos::CombineHashes(m_mdid->HashValue(), gpos::HashValue<INT>(&m_val));
+uint32_t CDatumInt4GPDB::HashValue() const {
+  return gpos::CombineHashes(m_mdid->HashValue(), gpos::HashValue<int32_t>(&m_val));
 }
 
 //---------------------------------------------------------------------------
@@ -165,7 +163,7 @@ const CWStringConst *CDatumInt4GPDB::GetStrRepr(CMemoryPool *mp) const {
 //		Matches the values of datums
 //
 //---------------------------------------------------------------------------
-BOOL CDatumInt4GPDB::Matches(const IDatum *datum) const {
+bool CDatumInt4GPDB::Matches(const IDatum *datum) const {
   if (!datum->MDId()->Equals(m_mdid)) {
     return false;
   }

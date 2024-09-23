@@ -46,7 +46,7 @@ class CXformPushJoinBelowUnionAll : public CXformExploration {
   // three children, one is a multileaf, and two are trees
   // To prevent the search space from exploding, return true
   // for xform to be applied only once
-  BOOL IsApplyOnce() override { return true; };
+  bool IsApplyOnce() override { return true; };
 };  // class CXformPushJoinBelowUnionAll
 
 }  // namespace gpopt

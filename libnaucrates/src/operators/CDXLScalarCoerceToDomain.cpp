@@ -25,8 +25,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarCoerceToDomain::CDXLScalarCoerceToDomain(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier,
-                                                   EdxlCoercionForm dxl_coerce_format, INT location)
+CDXLScalarCoerceToDomain::CDXLScalarCoerceToDomain(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier,
+                                                   EdxlCoercionForm dxl_coerce_format, int32_t location)
     : CDXLScalarCoerceBase(mp, mdid_type, type_modifier, dxl_coerce_format, location) {}
 
 //---------------------------------------------------------------------------

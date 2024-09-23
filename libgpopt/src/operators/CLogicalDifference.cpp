@@ -80,7 +80,7 @@ CMaxCard CLogicalDifference::DeriveMaxCard(CMemoryPool *,  // mp
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalDifference::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                          BOOL must_exist) {
+                                                          bool must_exist) {
   CColRefArray *pdrgpcrOutput = CUtils::PdrgpcrRemap(mp, m_pdrgpcrOutput, colref_mapping, must_exist);
   CColRef2dArray *pdrgpdrgpcrInput = CUtils::PdrgpdrgpcrRemap(mp, m_pdrgpdrgpcrInput, colref_mapping, must_exist);
 
@@ -117,8 +117,8 @@ IStatistics *CLogicalDifference::PstatsDerive(CMemoryPool *mp, CExpressionHandle
   // difference is transformed into an aggregate over a LASJ,
   // we follow the same route to compute statistics
   CColRefSetArray *output_colrefsets = GPOS_NEW(mp) CColRefSetArray(mp);
-  const ULONG size = m_pdrgpdrgpcrInput->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = m_pdrgpdrgpcrInput->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, (*m_pdrgpdrgpcrInput)[ul]);
     output_colrefsets->Append(pcrs);
   }

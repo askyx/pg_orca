@@ -46,7 +46,7 @@ CStatistics *CProjectStatsProcessor::CalcProjStats(CMemoryPool *mp, const CStati
       CBucketArray *proj_col_bucket = GPOS_NEW(mp) CBucketArray(mp);
       CDouble null_freq = 0.0;
 
-      BOOL is_well_defined = false;
+      bool is_well_defined = false;
       if (nullptr != datum_map) {
         IDatum *datum = datum_map->Find(&colid);
         if (nullptr != datum) {
@@ -71,9 +71,9 @@ CStatistics *CProjectStatsProcessor::CalcProjStats(CMemoryPool *mp, const CStati
                                                      CHistogram::DefaultNDVRemain, CHistogram::DefaultNDVFreqRemain);
       }
 
-      histograms_new->Insert(GPOS_NEW(mp) ULONG(colid), proj_col_histogram);
+      histograms_new->Insert(GPOS_NEW(mp) uint32_t(colid), proj_col_histogram);
     } else {
-      histograms_new->Insert(GPOS_NEW(mp) ULONG(colid), histogram->CopyHistogram());
+      histograms_new->Insert(GPOS_NEW(mp) uint32_t(colid), histogram->CopyHistogram());
     }
 
     // look up width
@@ -92,9 +92,9 @@ CStatistics *CProjectStatsProcessor::CalcProjStats(CMemoryPool *mp, const CStati
       GPOS_ASSERT(nullptr != colref);
 
       CDouble width = CStatisticsUtils::DefaultColumnWidth(colref->RetrieveType());
-      colid_width_mapping->Insert(GPOS_NEW(mp) ULONG(colid), GPOS_NEW(mp) CDouble(width));
+      colid_width_mapping->Insert(GPOS_NEW(mp) uint32_t(colid), GPOS_NEW(mp) CDouble(width));
     } else {
-      colid_width_mapping->Insert(GPOS_NEW(mp) ULONG(colid), GPOS_NEW(mp) CDouble(*width));
+      colid_width_mapping->Insert(GPOS_NEW(mp) uint32_t(colid), GPOS_NEW(mp) CDouble(*width));
     }
   }
 

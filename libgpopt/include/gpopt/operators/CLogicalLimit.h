@@ -33,20 +33,20 @@ class CLogicalLimit : public CLogical {
   COrderSpec *m_pos;
 
   // global limit
-  BOOL m_fGlobal;
+  bool m_fGlobal;
 
   // does limit specify a number of rows?
-  BOOL m_fHasCount;
+  bool m_fHasCount;
 
   // the limit must be kept, even if it has no offset, nor count
-  BOOL m_top_limit_under_dml;
+  bool m_top_limit_under_dml;
 
  public:
   CLogicalLimit(const CLogicalLimit &) = delete;
 
   // ctors
   explicit CLogicalLimit(CMemoryPool *mp);
-  CLogicalLimit(CMemoryPool *mp, COrderSpec *pos, BOOL fGlobal, BOOL fHasCount, BOOL fTopLimitUnderDML);
+  CLogicalLimit(CMemoryPool *mp, COrderSpec *pos, bool fGlobal, bool fHasCount, bool fTopLimitUnderDML);
 
   // dtor
   ~CLogicalLimit() override;
@@ -54,31 +54,31 @@ class CLogicalLimit : public CLogical {
   // ident accessors
   EOperatorId Eopid() const override { return EopLogicalLimit; }
 
-  const CHAR *SzId() const override { return "CLogicalLimit"; }
+  const char *SzId() const override { return "CLogicalLimit"; }
 
   // order spec
   COrderSpec *Pos() const { return m_pos; }
 
   // global limit
-  BOOL FGlobal() const { return m_fGlobal; }
+  bool FGlobal() const { return m_fGlobal; }
 
   // does limit specify a number of rows
-  BOOL FHasCount() const { return m_fHasCount; }
+  bool FHasCount() const { return m_fHasCount; }
 
   // must the limit be always kept
-  BOOL IsTopLimitUnderDMLorCTAS() const { return m_top_limit_under_dml; }
+  bool IsTopLimitUnderDMLorCTAS() const { return m_top_limit_under_dml; }
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // print
   IOstream &OsPrint(IOstream &os) const override;
@@ -117,7 +117,7 @@ class CLogicalLimit : public CLogical {
 
   // compute required stat columns of the n-th child
   CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                       ULONG child_index) const override;
+                       uint32_t child_index) const override;
 
   //-------------------------------------------------------------------------------------
   // Transformations

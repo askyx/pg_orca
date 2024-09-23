@@ -40,7 +40,7 @@ class CXformImplementDML : public CXformImplementation {
   EXformId Exfid() const override { return ExfImplementDML; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformImplementDML"; }
+  const char *SzId() const override { return "CXformImplementDML"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

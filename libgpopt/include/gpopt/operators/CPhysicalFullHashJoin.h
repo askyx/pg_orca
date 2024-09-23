@@ -34,7 +34,7 @@ class CPhysicalFullHashJoin : public CPhysicalHashJoin {
 
   // ctor
   CPhysicalFullHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys, CExpressionArray *pdrgpexprInnerKeys,
-                        IMdIdArray *hash_opfamilies, BOOL is_null_aware = true,
+                        IMdIdArray *hash_opfamilies, bool is_null_aware = true,
                         CXform::EXformId origin_xform = CXform::ExfSentinel);
 
   // dtor
@@ -44,7 +44,7 @@ class CPhysicalFullHashJoin : public CPhysicalHashJoin {
   EOperatorId Eopid() const override { return EopPhysicalFullHashJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalFullHashJoin"; }
+  const char *SzId() const override { return "CPhysicalFullHashJoin"; }
 
   // conversion function
   static CPhysicalFullHashJoin *PopConvert(COperator *pop) {

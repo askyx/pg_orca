@@ -57,10 +57,10 @@ class CJobGroup : public CJob {
   virtual CGroupExpression *PgexprFirstUnsched() = 0;
 
   // schedule jobs for of all new group expressions
-  virtual BOOL FScheduleGroupExpressions(CSchedulerContext *psc) = 0;
+  virtual bool FScheduleGroupExpressions(CSchedulerContext *psc) = 0;
 
   // job's function
-  BOOL FExecute(CSchedulerContext *psc) override = 0;
+  bool FExecute(CSchedulerContext *psc) override = 0;
 
 #ifdef GPOS_DEBUG
 

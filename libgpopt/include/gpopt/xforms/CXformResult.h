@@ -31,7 +31,7 @@ class CXformResult : public CRefCount {
   CExpressionArray *m_pdrgpexpr;
 
   // cursor for retrieval
-  ULONG m_ulExpr;
+  uint32_t m_ulExpr;
 
  public:
   CXformResult(const CXformResult &) = delete;
@@ -54,8 +54,7 @@ class CXformResult : public CRefCount {
   // print function
   IOstream &OsPrint(IOstream &os) const;
 
-  ULONG
-  Size() const { return m_pdrgpexpr->Size(); }
+  uint32_t Size() const { return m_pdrgpexpr->Size(); }
 
 };  // class CXformResult
 

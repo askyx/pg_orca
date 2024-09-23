@@ -41,10 +41,10 @@ class CScalarCmp : public CScalar {
   IMDType::ECmpType m_comparision_type;
 
   // does operator return NULL on NULL input?
-  BOOL m_returns_null_on_null_input;
+  bool m_returns_null_on_null_input;
 
   // is comparison commutative
-  BOOL m_fCommutative;
+  bool m_fCommutative;
 
   // private copy ctor
   CScalarCmp(const CScalarCmp &);
@@ -66,27 +66,27 @@ class CScalarCmp : public CScalar {
   IMDType::ECmpType ParseCmpType() const { return m_comparision_type; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarCmp"; }
+  const char *SzId() const override { return "CScalarCmp"; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
 
   // is operator commutative
-  BOOL FCommutative() const;
+  bool FCommutative() const;
 
   // boolean expression evaluation
   EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const override;

@@ -27,7 +27,7 @@ namespace gpopt {
 class CLogicalCTEProducer : public CLogical {
  private:
   // cte identifier
-  ULONG m_id;
+  uint32_t m_id;
 
   // cte columns
   CColRefArray *m_pdrgpcr;
@@ -42,7 +42,7 @@ class CLogicalCTEProducer : public CLogical {
   explicit CLogicalCTEProducer(CMemoryPool *mp);
 
   // ctor
-  CLogicalCTEProducer(CMemoryPool *mp, ULONG id, CColRefArray *colref_array);
+  CLogicalCTEProducer(CMemoryPool *mp, uint32_t id, CColRefArray *colref_array);
 
   // dtor
   ~CLogicalCTEProducer() override;
@@ -50,11 +50,10 @@ class CLogicalCTEProducer : public CLogical {
   // ident accessors
   EOperatorId Eopid() const override { return EopLogicalCTEProducer; }
 
-  const CHAR *SzId() const override { return "CLogicalCTEProducer"; }
+  const char *SzId() const override { return "CLogicalCTEProducer"; }
 
   // cte identifier
-  ULONG
-  UlCTEId() const { return m_id; }
+  uint32_t UlCTEId() const { return m_id; }
 
   // cte columns
   CColRefArray *Pdrgpcr() const { return m_pdrgpcr; }
@@ -63,16 +62,16 @@ class CLogicalCTEProducer : public CLogical {
   CColRefSet *DeriveOutputColumns() const { return m_pcrsOutput; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -106,7 +105,7 @@ class CLogicalCTEProducer : public CLogical {
   CColRefSet *PcrsStat(CMemoryPool *,        // mp
                        CExpressionHandle &,  // exprhdl
                        CColRefSet *pcrsInput,
-                       ULONG  // child_index
+                       uint32_t  // child_index
   ) const override {
     return PcrsStatsPassThru(pcrsInput);
   }

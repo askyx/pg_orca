@@ -52,7 +52,7 @@ CExpression *CConstExprEvaluatorDefault::PexprEval(CExpression *pexpr) {
 //		Returns false, since this evaluator cannot call any functions
 //
 //---------------------------------------------------------------------------
-BOOL CConstExprEvaluatorDefault::FCanEvalExpressions() {
+bool CConstExprEvaluatorDefault::FCanEvalExpressions() {
   return false;
 }
 

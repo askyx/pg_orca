@@ -87,11 +87,11 @@ void CXformExpandFullOuterJoin::Transform(CXformContext *pxfctxt, CXformResult *
   CExpression *pexprScalar = (*pexpr)[2];
 
   // 1. create the CTE producers
-  const ULONG ulCTEIdA = COptCtxt::PoctxtFromTLS()->Pcteinfo()->next_id();
+  const uint32_t ulCTEIdA = COptCtxt::PoctxtFromTLS()->Pcteinfo()->next_id();
   CColRefArray *pdrgpcrOutA = pexprA->DeriveOutputColumns()->Pdrgpcr(mp);
   (void)CXformUtils::PexprAddCTEProducer(mp, ulCTEIdA, pdrgpcrOutA, pexprA);
 
-  const ULONG ulCTEIdB = COptCtxt::PoctxtFromTLS()->Pcteinfo()->next_id();
+  const uint32_t ulCTEIdB = COptCtxt::PoctxtFromTLS()->Pcteinfo()->next_id();
   CColRefArray *pdrgpcrOutB = pexprB->DeriveOutputColumns()->Pdrgpcr(mp);
   (void)CXformUtils::PexprAddCTEProducer(mp, ulCTEIdB, pdrgpcrOutB, pexprB);
 
@@ -159,8 +159,8 @@ void CXformExpandFullOuterJoin::Transform(CXformContext *pxfctxt, CXformResult *
 //
 //---------------------------------------------------------------------------
 CExpression *CXformExpandFullOuterJoin::PexprLogicalJoinOverCTEs(CMemoryPool *mp, EdxlJoinType edxljointype,
-                                                                 ULONG ulLeftCTEId, CColRefArray *pdrgpcrLeft,
-                                                                 ULONG ulRightCTEId, CColRefArray *pdrgpcrRight,
+                                                                 uint32_t ulLeftCTEId, CColRefArray *pdrgpcrLeft,
+                                                                 uint32_t ulRightCTEId, CColRefArray *pdrgpcrRight,
                                                                  CExpression *pexprScalar) {
   GPOS_ASSERT(nullptr != pexprScalar);
 

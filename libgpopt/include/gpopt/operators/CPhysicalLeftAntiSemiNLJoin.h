@@ -38,10 +38,10 @@ class CPhysicalLeftAntiSemiNLJoin : public CPhysicalNLJoin {
   EOperatorId Eopid() const override { return EopPhysicalLeftAntiSemiNLJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalLeftAntiSemiNLJoin"; }
+  const char *SzId() const override { return "CPhysicalLeftAntiSemiNLJoin"; }
 
   // check if required columns are included in output columns
-  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
+  bool FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t ulOptReq) const override;
 
   // conversion function
   static CPhysicalLeftAntiSemiNLJoin *PopConvert(COperator *pop) {

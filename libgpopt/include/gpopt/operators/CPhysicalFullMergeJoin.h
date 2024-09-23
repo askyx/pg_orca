@@ -20,7 +20,7 @@ class CPhysicalFullMergeJoin : public CPhysicalJoin {
   // ctor
   explicit CPhysicalFullMergeJoin(CMemoryPool *mp, CExpressionArray *outer_merge_clauses,
                                   CExpressionArray *inner_merge_clauses, IMdIdArray *hash_opfamilies,
-                                  BOOL is_null_aware = true, CXform::EXformId origin_xform = CXform::ExfSentinel);
+                                  bool is_null_aware = true, CXform::EXformId origin_xform = CXform::ExfSentinel);
 
   // dtor
   ~CPhysicalFullMergeJoin() override;
@@ -29,7 +29,7 @@ class CPhysicalFullMergeJoin : public CPhysicalJoin {
   EOperatorId Eopid() const override { return EopPhysicalFullMergeJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalFullMergeJoin"; }
+  const char *SzId() const override { return "CPhysicalFullMergeJoin"; }
 
   // conversion function
   static CPhysicalFullMergeJoin *PopConvert(COperator *pop) {
@@ -38,8 +38,8 @@ class CPhysicalFullMergeJoin : public CPhysicalJoin {
     return dynamic_cast<CPhysicalFullMergeJoin *>(pop);
   }
 
-  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, ULONG child_index,
-                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, uint32_t child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // return order property enforcing type for this operator
   CEnfdProp::EPropEnforcingType EpetOrder(CExpressionHandle &exprhdl, const CEnfdOrder *peo) const override;

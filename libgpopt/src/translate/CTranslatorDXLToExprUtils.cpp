@@ -68,8 +68,8 @@ IDatumArray *CTranslatorDXLToExprUtils::Pdrgpdatum(CMemoryPool *mp, CMDAccessor 
   GPOS_ASSERT(nullptr != pdrgpdxldatum);
 
   IDatumArray *pdrgdatum = GPOS_NEW(mp) IDatumArray(mp);
-  const ULONG length = pdrgpdxldatum->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
+  const uint32_t length = pdrgpdxldatum->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
     CDXLDatum *dxl_datum = (*pdrgpdxldatum)[ul];
     IMDId *mdid = dxl_datum->MDId();
     IDatum *datum = md_accessor->RetrieveType(mdid)->GetDatumForDXLDatum(mp, dxl_datum);
@@ -88,7 +88,7 @@ IDatumArray *CTranslatorDXLToExprUtils::Pdrgpdatum(CMemoryPool *mp, CMDAccessor 
 //
 //---------------------------------------------------------------------------
 CExpression *CTranslatorDXLToExprUtils::PexprConstInt8(CMemoryPool *mp, CMDAccessor *md_accessor, CSystemId sysid,
-                                                       LINT val) {
+                                                       int64_t val) {
   IDatumInt8 *datum = md_accessor->PtMDType<IMDTypeInt8>(sysid)->CreateInt8Datum(mp, val, false /* is_null */);
   CExpression *pexprConst = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CScalarConst(mp, datum));
 
@@ -108,16 +108,16 @@ void CTranslatorDXLToExprUtils::AddKeySets(CMemoryPool *mp, CTableDescriptor *pt
   GPOS_ASSERT(nullptr != ptabdesc);
   GPOS_ASSERT(nullptr != pmdrel);
 
-  const ULONG ulKeySets = pmdrel->KeySetCount();
-  for (ULONG ul = 0; ul < ulKeySets; ul++) {
+  const uint32_t ulKeySets = pmdrel->KeySetCount();
+  for (uint32_t ul = 0; ul < ulKeySets; ul++) {
     CBitSet *pbs = GPOS_NEW(mp) CBitSet(mp, ptabdesc->ColumnCount());
     const ULongPtrArray *pdrgpulKeys = pmdrel->KeySetAt(ul);
-    const ULONG ulKeys = pdrgpulKeys->Size();
+    const uint32_t ulKeys = pdrgpulKeys->Size();
 
-    for (ULONG ulKey = 0; ulKey < ulKeys; ulKey++) {
+    for (uint32_t ulKey = 0; ulKey < ulKeys; ulKey++) {
       // populate current keyset
-      ULONG ulOriginalKey = *((*pdrgpulKeys)[ulKey]);
-      ULONG *pulRemappedKey = phmululColMapping->Find(&ulOriginalKey);
+      uint32_t ulOriginalKey = *((*pdrgpulKeys)[ulKey]);
+      uint32_t *pulRemappedKey = phmululColMapping->Find(&ulOriginalKey);
       GPOS_ASSERT(nullptr != pulRemappedKey);
 
       pbs->ExchangeSet(*pulRemappedKey);
@@ -137,7 +137,7 @@ void CTranslatorDXLToExprUtils::AddKeySets(CMemoryPool *mp, CTableDescriptor *pt
 //		Check if a dxl node is a scalar bool
 //
 //---------------------------------------------------------------------------
-BOOL CTranslatorDXLToExprUtils::FScalarBool(const CDXLNode *dxlnode, EdxlBoolExprType edxlboolexprtype) {
+bool CTranslatorDXLToExprUtils::FScalarBool(const CDXLNode *dxlnode, EdxlBoolExprType edxlboolexprtype) {
   GPOS_ASSERT(nullptr != dxlnode);
 
   CDXLOperator *dxl_op = dxlnode->GetOperator();
@@ -195,8 +195,8 @@ CColRefArray *CTranslatorDXLToExprUtils::Pdrgpcr(CMemoryPool *mp, UlongToColRefM
 
   CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
 
-  for (ULONG ul = 0; ul < colids->Size(); ul++) {
-    ULONG *pulColId = (*colids)[ul];
+  for (uint32_t ul = 0; ul < colids->Size(); ul++) {
+    uint32_t *pulColId = (*colids)[ul];
     CColRef *colref = colref_mapping->Find(pulColId);
     colref->MarkAsUsed();
     GPOS_ASSERT(nullptr != colref);
@@ -215,7 +215,7 @@ CColRefArray *CTranslatorDXLToExprUtils::Pdrgpcr(CMemoryPool *mp, UlongToColRefM
 //		Is the given expression is a scalar function that is used to cast
 //
 //---------------------------------------------------------------------------
-BOOL CTranslatorDXLToExprUtils::FCastFunc(CMDAccessor *md_accessor, const CDXLNode *dxlnode, IMDId *pmdidInput) {
+bool CTranslatorDXLToExprUtils::FCastFunc(CMDAccessor *md_accessor, const CDXLNode *dxlnode, IMDId *pmdidInput) {
   GPOS_ASSERT(nullptr != dxlnode);
 
   if (1 != dxlnode->Arity()) {

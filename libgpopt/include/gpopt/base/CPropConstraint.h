@@ -69,7 +69,7 @@ class CPropConstraint : public CRefCount {
   CConstraint *Pcnstr() const { return m_pcnstr; }
 
   // is this a contradiction
-  BOOL FContradiction() const;
+  bool FContradiction() const;
 
   // scalar expression on given column mapped from all constraints
   // on its equivalent columns

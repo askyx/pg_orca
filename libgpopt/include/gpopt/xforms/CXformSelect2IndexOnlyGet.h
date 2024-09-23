@@ -41,7 +41,7 @@ class CXformSelect2IndexOnlyGet : public CXformExploration {
   EXformId Exfid() const override { return ExfSelect2IndexOnlyGet; }
 
   // xform name
-  const CHAR *SzId() const override { return "CXformSelect2IndexOnlyGet"; }
+  const char *SzId() const override { return "CXformSelect2IndexOnlyGet"; }
 
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;
 

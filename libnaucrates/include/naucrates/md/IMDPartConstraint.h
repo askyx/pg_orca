@@ -44,7 +44,7 @@ class IMDPartConstraint : public IMDInterface {
   virtual ULongPtrArray *GetDefaultPartsArray() const = 0;
 
   // is constraint unbounded
-  virtual BOOL IsConstraintUnbounded() const = 0;
+  virtual bool IsConstraintUnbounded() const = 0;
 };
 }  // namespace gpmd
 

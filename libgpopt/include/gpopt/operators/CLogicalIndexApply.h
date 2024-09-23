@@ -22,7 +22,7 @@ class CLogicalIndexApply : public CLogicalApply {
   CColRefArray *m_pdrgpcrOuterRefs;
 
   // is this an outer join?
-  BOOL m_fOuterJoin;
+  bool m_fOuterJoin;
 
   // a copy of the original join predicate that has been pushed down to the inner side
   CExpression *m_origJoinPred;
@@ -31,7 +31,7 @@ class CLogicalIndexApply : public CLogicalApply {
   CLogicalIndexApply(const CLogicalIndexApply &) = delete;
 
   // ctor
-  CLogicalIndexApply(CMemoryPool *mp, CColRefArray *pdrgpcrOuterRefs, BOOL fOuterJoin, CExpression *origJoinPred);
+  CLogicalIndexApply(CMemoryPool *mp, CColRefArray *pdrgpcrOuterRefs, bool fOuterJoin, CExpression *origJoinPred);
 
   // ctor for patterns
   explicit CLogicalIndexApply(CMemoryPool *mp);
@@ -43,13 +43,13 @@ class CLogicalIndexApply : public CLogicalApply {
   EOperatorId Eopid() const override { return EopLogicalIndexApply; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalIndexApply"; }
+  const char *SzId() const override { return "CLogicalIndexApply"; }
 
   // outer column references accessor
   CColRefArray *PdrgPcrOuterRefs() const { return m_pdrgpcrOuterRefs; }
 
   // outer column references accessor
-  BOOL FouterJoin() const { return m_fOuterJoin; }
+  bool FouterJoin() const { return m_fOuterJoin; }
 
   CExpression *OrigJoinPred() { return m_origJoinPred; }
 
@@ -81,7 +81,7 @@ class CLogicalIndexApply : public CLogicalApply {
   CXformSet *PxfsCandidates(CMemoryPool *mp) const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   //-------------------------------------------------------------------------------------
   // Derived Stats
@@ -97,7 +97,7 @@ class CLogicalIndexApply : public CLogicalApply {
   }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // conversion function
   static CLogicalIndexApply *PopConvert(COperator *pop) {

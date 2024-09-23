@@ -39,7 +39,7 @@ class CXformImplementUnionAll : public CXformImplementation {
   // ident accessors
   EXformId Exfid() const override { return ExfImplementUnionAll; }
 
-  const CHAR *SzId() const override { return "CXformImplementUnionAll"; }
+  const char *SzId() const override { return "CXformImplementUnionAll"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &  // exprhdl

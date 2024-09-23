@@ -68,22 +68,22 @@ class CTask : public ITask {
   ETaskStatus m_status;
 
   // cancellation flag
-  BOOL *m_cancel;
+  bool *m_cancel;
 
   // local cancellation flag; used when no flag is externally passed
-  BOOL m_cancel_local;
+  bool m_cancel_local;
 
   // counter of requests to suspend cancellation
-  ULONG m_abort_suspend_count;
+  uint32_t m_abort_suspend_count;
 
   // flag denoting task completion report
-  BOOL m_reported;
+  bool m_reported;
 
   // task identifier
   CTaskId m_tid;
 
   // ctor
-  CTask(CMemoryPool *mp, CTaskContext *task_ctxt, IErrorContext *err_ctxt, BOOL *cancel);
+  CTask(CMemoryPool *mp, CTaskContext *task_ctxt, IErrorContext *err_ctxt, bool *cancel);
 
   // binding a task structure to a function and its arguments
   void Bind(void *(*func)(void *), void *arg);
@@ -92,16 +92,16 @@ class CTask : public ITask {
   void Execute();
 
   // check if task has been scheduled
-  BOOL IsScheduled() const;
+  bool IsScheduled() const;
 
   // check if task finished executing
-  BOOL IsFinished() const;
+  bool IsFinished() const;
 
   // check if task is currently executing
-  BOOL IsRunning() const { return EtsRunning == m_status; }
+  bool IsRunning() const { return EtsRunning == m_status; }
 
   // reported flag accessor
-  BOOL IsReported() const { return m_reported; }
+  bool IsReported() const { return m_reported; }
 
   // set reported flag
   void SetReported() {
@@ -133,15 +133,15 @@ class CTask : public ITask {
 
   ILogger *GetErrorLogger() const override { return this->m_task_ctxt->GetErrorLogger(); }
 
-  BOOL SetTrace(ULONG trace, BOOL val) override { return this->m_task_ctxt->SetTrace(trace, val); }
+  bool SetTrace(uint32_t trace, bool val) override { return this->m_task_ctxt->SetTrace(trace, val); }
 
-  BOOL IsTraceSet(ULONG trace) override { return this->m_task_ctxt->IsTraceSet(trace); }
+  bool IsTraceSet(uint32_t trace) override { return this->m_task_ctxt->IsTraceSet(trace); }
 
   // locale
   ELocale Locale() const override { return m_task_ctxt->Locale(); }
 
   // check if task is canceled
-  BOOL IsCanceled() const { return *m_cancel; }
+  bool IsCanceled() const { return *m_cancel; }
 
   // reset cancel flag
   void ResetCancel() { *m_cancel = false; }
@@ -150,7 +150,7 @@ class CTask : public ITask {
   void Cancel() { *m_cancel = true; }
 
   // check if a request to suspend abort was received
-  BOOL IsAbortSuspended() const { return (0 < m_abort_suspend_count); }
+  bool IsAbortSuspended() const { return (0 < m_abort_suspend_count); }
 
   // increment counter for requests to suspend abort
   void SuspendAbort() { m_abort_suspend_count++; }
@@ -174,11 +174,11 @@ class CTask : public ITask {
   CErrorContext *ConvertErrCtxt() { return dynamic_cast<CErrorContext *>(m_err_ctxt); }
 
   // pending exceptions
-  BOOL HasPendingExceptions() const override { return m_err_ctxt->IsPending(); }
+  bool HasPendingExceptions() const override { return m_err_ctxt->IsPending(); }
 
 #ifdef GPOS_DEBUG
   // check if task has expected status
-  BOOL CheckStatus(BOOL completed);
+  bool CheckStatus(bool completed);
 #endif  // GPOS_DEBUG
 
   // slink for auto task proxy

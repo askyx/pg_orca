@@ -57,9 +57,9 @@ CPhysicalAssert::~CPhysicalAssert() {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalAssert::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                          ULONG child_index,
+                                          uint32_t child_index,
                                           CDrvdPropArray *,  // pdrgpdpCtxt
-                                          ULONG              // ulOptReq
+                                          uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(0 == child_index && "Required properties can only be computed on the relational child");
 
@@ -75,9 +75,9 @@ CColRefSet *CPhysicalAssert::PcrsRequired(CMemoryPool *mp, CExpressionHandle &ex
 //
 //---------------------------------------------------------------------------
 COrderSpec *CPhysicalAssert::PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired,
-                                         ULONG child_index,
+                                         uint32_t child_index,
                                          CDrvdPropArray *,  // pdrgpdpCtxt
-                                         ULONG              // ulOptReq
+                                         uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
 
@@ -95,13 +95,13 @@ COrderSpec *CPhysicalAssert::PosRequired(CMemoryPool *mp, CExpressionHandle &exp
 CCTEReq *CPhysicalAssert::PcteRequired(CMemoryPool *,        // mp,
                                        CExpressionHandle &,  // exprhdl,
                                        CCTEReq *pcter,
-                                       ULONG
+                                       uint32_t
 #ifdef GPOS_DEBUG
                                            child_index
 #endif
                                        ,
                                        CDrvdPropArray *,  // pdrgpdpCtxt,
-                                       ULONG              // ulOptReq
+                                       uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -128,7 +128,7 @@ COrderSpec *CPhysicalAssert::PosDerive(CMemoryPool *,  // mp
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalAssert::Matches(COperator *pop) const {
+bool CPhysicalAssert::Matches(COperator *pop) const {
   if (Eopid() != pop->Eopid()) {
     return false;
   }
@@ -145,8 +145,8 @@ BOOL CPhysicalAssert::Matches(COperator *pop) const {
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalAssert::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                        ULONG  // ulOptReq
+bool CPhysicalAssert::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                        uint32_t  // ulOptReq
 ) const {
   return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }

@@ -35,19 +35,19 @@ class CScalarCast : public CScalar {
   IMDId *m_func_mdid;
 
   // whether or not this cast is binary coercible
-  BOOL m_is_binary_coercible;
+  bool m_is_binary_coercible;
 
   // does operator return NULL on NULL input?
-  BOOL m_returns_null_on_null_input;
+  bool m_returns_null_on_null_input;
 
-  // is operator's return type BOOL?
-  BOOL m_fBoolReturnType;
+  // is operator's return type bool?
+  bool m_fBoolReturnType;
 
  public:
   CScalarCast(const CScalarCast &) = delete;
 
   // ctor
-  CScalarCast(CMemoryPool *mp, IMDId *return_type_mdid, IMDId *mdid_func, BOOL is_binary_coercible);
+  CScalarCast(CMemoryPool *mp, IMDId *return_type_mdid, IMDId *mdid_func, bool is_binary_coercible);
 
   // dtor
   ~CScalarCast() override {
@@ -66,24 +66,24 @@ class CScalarCast : public CScalar {
   EOperatorId Eopid() const override { return EopScalarCast; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarCast"; }
+  const char *SzId() const override { return "CScalarCast"; }
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
 
   // whether or not this cast is binary coercible
-  BOOL IsBinaryCoercible() const { return m_is_binary_coercible; }
+  bool IsBinaryCoercible() const { return m_is_binary_coercible; }
 
   // boolean expression evaluation
   EBoolEvalResult Eber(ULongPtrArray *pdrgpulChildren) const override {

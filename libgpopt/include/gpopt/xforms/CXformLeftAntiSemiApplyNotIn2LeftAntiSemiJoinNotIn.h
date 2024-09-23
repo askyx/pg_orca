@@ -45,7 +45,7 @@ class CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn
   EXformId Exfid() const override { return ExfLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn; }
 
   // xform name
-  const CHAR *SzId() const override { return "CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn"; }
+  const char *SzId() const override { return "CXformLeftAntiSemiApplyNotIn2LeftAntiSemiJoinNotIn"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

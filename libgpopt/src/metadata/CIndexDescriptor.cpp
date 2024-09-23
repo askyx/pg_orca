@@ -28,7 +28,7 @@ using namespace gpopt;
 //---------------------------------------------------------------------------
 CIndexDescriptor::CIndexDescriptor(CMemoryPool *mp, IMDId *pmdidIndex, const CName &name,
                                    CColumnDescriptorArray *pdrgcoldescKeyCols,
-                                   CColumnDescriptorArray *pdrgcoldescIncludedCols, BOOL is_clustered,
+                                   CColumnDescriptorArray *pdrgcoldescIncludedCols, bool is_clustered,
                                    IMDIndex::EmdindexType index_type)
     : m_pmdidIndex(pmdidIndex),
       m_name(mp, name),
@@ -65,8 +65,7 @@ CIndexDescriptor::~CIndexDescriptor() {
 //		number of key columns
 //
 //---------------------------------------------------------------------------
-ULONG
-CIndexDescriptor::Keys() const {
+uint32_t CIndexDescriptor::Keys() const {
   return m_pdrgpcoldescKeyCols->Size();
 }
 
@@ -78,8 +77,7 @@ CIndexDescriptor::Keys() const {
 //		Number of included columns
 //
 //---------------------------------------------------------------------------
-ULONG
-CIndexDescriptor::UlIncludedColumns() const {
+uint32_t CIndexDescriptor::UlIncludedColumns() const {
   // array allocated in ctor
   GPOS_ASSERT(nullptr != m_pdrgpcoldescIncludedCols);
 
@@ -106,7 +104,7 @@ CIndexDescriptor *CIndexDescriptor::Pindexdesc(CMemoryPool *mp, const CTableDesc
   // array of index column descriptors
   CColumnDescriptorArray *pdrgcoldescKey = GPOS_NEW(mp) CColumnDescriptorArray(mp);
 
-  for (ULONG ul = 0; ul < pmdindex->Keys(); ul++) {
+  for (uint32_t ul = 0; ul < pmdindex->Keys(); ul++) {
     CColumnDescriptor *pcoldesc = (*pdrgpcoldesc)[ul];
     pcoldesc->AddRef();
     pdrgcoldescKey->Append(pcoldesc);
@@ -114,7 +112,7 @@ CIndexDescriptor *CIndexDescriptor::Pindexdesc(CMemoryPool *mp, const CTableDesc
 
   // array of included column descriptors
   CColumnDescriptorArray *pdrgcoldescIncluded = GPOS_NEW(mp) CColumnDescriptorArray(mp);
-  for (ULONG ul = 0; ul < pmdindex->IncludedCols(); ul++) {
+  for (uint32_t ul = 0; ul < pmdindex->IncludedCols(); ul++) {
     CColumnDescriptor *pcoldesc = (*pdrgpcoldesc)[ul];
     pcoldesc->AddRef();
     pdrgcoldescIncluded->Append(pcoldesc);
@@ -127,7 +125,7 @@ CIndexDescriptor *CIndexDescriptor::Pindexdesc(CMemoryPool *mp, const CTableDesc
   return pindexdesc;
 }
 
-BOOL CIndexDescriptor::SupportsIndexOnlyScan(CTableDescriptor *ptabdesc) const {
+bool CIndexDescriptor::SupportsIndexOnlyScan(CTableDescriptor *ptabdesc) const {
   // index only scan is not supported on GPDB 6 append-only tables.
   return !((ptabdesc->IsAORowOrColTable() ||
             IMDRelation::ErelstorageMixedPartitioned == ptabdesc->RetrieveRelStorageType()));

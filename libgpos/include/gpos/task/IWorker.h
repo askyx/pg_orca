@@ -27,7 +27,7 @@
     }                                          \
   } while (0)
 
-#define GPOS_CHECK_ABORT_MAX_INTERVAL_MSEC (ULONG(1500))
+#define GPOS_CHECK_ABORT_MAX_INTERVAL_MSEC (uint32_t(1500))
 
 namespace gpos {
 // prototypes
@@ -45,7 +45,7 @@ class CWorkerId;
 class IWorker : public CStackObject {
  private:
   // check for abort request
-  virtual void CheckForAbort(const CHAR *, ULONG) = 0;
+  virtual void CheckForAbort(const char *, uint32_t) = 0;
 
  public:
   IWorker(const IWorker &) = delete;
@@ -57,17 +57,17 @@ class IWorker : public CStackObject {
   virtual ~IWorker() = default;
 
   // accessors
-  virtual ULONG_PTR GetStackStart() const = 0;
+  virtual uintptr_t GetStackStart() const = 0;
   virtual ITask *GetTask() = 0;
 
   // stack check
-  virtual BOOL CheckStackSize(ULONG request = 0) const = 0;
+  virtual bool CheckStackSize(uint32_t request = 0) const = 0;
 
   // lookup worker in worker pool manager
   static IWorker *Self();
 
   // check for aborts
-  static void CheckAbort(const CHAR *file, ULONG line_num);
+  static void CheckAbort(const char *file, uint32_t line_num);
 
 };  // class IWorker
 }  // namespace gpos

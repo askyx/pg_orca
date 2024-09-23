@@ -41,10 +41,10 @@ class CScalarSubqueryAll : public CScalarSubqueryQuantified {
   EOperatorId Eopid() const override { return EopScalarSubqueryAll; }
 
   // return a string for scalar subquery
-  const CHAR *SzId() const override { return "CScalarSubqueryAll"; }
+  const char *SzId() const override { return "CScalarSubqueryAll"; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // conversion function
   static CScalarSubqueryAll *PopConvert(COperator *pop) {

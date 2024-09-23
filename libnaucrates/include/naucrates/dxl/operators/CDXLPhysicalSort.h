@@ -38,18 +38,18 @@ enum Edxlsort {
 class CDXLPhysicalSort : public CDXLPhysical {
  private:
   // whether sort discards duplicates
-  BOOL m_discard_duplicates;
+  bool m_discard_duplicates;
 
  public:
   CDXLPhysicalSort(const CDXLPhysicalSort &) = delete;
 
   // ctor/dtor
-  CDXLPhysicalSort(CMemoryPool *mp, BOOL discard_duplicates);
+  CDXLPhysicalSort(CMemoryPool *mp, bool discard_duplicates);
 
   // accessors
   Edxlopid GetDXLOperator() const override;
   const CWStringConst *GetOpNameStr() const override;
-  BOOL FDiscardDuplicates() const;
+  bool FDiscardDuplicates() const;
 
   // serialize operator in DXL format
 
@@ -64,7 +64,7 @@ class CDXLPhysicalSort : public CDXLPhysical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

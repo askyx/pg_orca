@@ -36,22 +36,22 @@ class CErrorContext : public IErrorContext {
   CException m_exception;
 
   // exception severity
-  ULONG m_severity{CException::ExsevError};
+  uint32_t m_severity{CException::ExsevError};
 
   // flag to indicate if handled yet
-  BOOL m_pending{false};
+  bool m_pending{false};
 
   // flag to indicate if handled yet
-  BOOL m_rethrown{false};
+  bool m_rethrown{false};
 
   // flag to indicate that we are currently serializing this.
-  BOOL m_serializing{false};
+  bool m_serializing{false};
 
   // error message buffer
-  WCHAR m_error_msg[GPOS_ERROR_MESSAGE_BUFFER_SIZE];
+  wchar_t m_error_msg[GPOS_ERROR_MESSAGE_BUFFER_SIZE];
 
   // system error message buffer
-  CHAR m_system_error_msg[GPOS_ERROR_MESSAGE_BUFFER_SIZE];
+  char m_system_error_msg[GPOS_ERROR_MESSAGE_BUFFER_SIZE];
 
   // string with static buffer allocation
   CWStringStatic m_static_buffer;
@@ -80,7 +80,7 @@ class CErrorContext : public IErrorContext {
   // accessors
   CException GetException() const override { return m_exception; }
 
-  const WCHAR *GetErrorMsg() const override { return m_error_msg; }
+  const wchar_t *GetErrorMsg() const override { return m_error_msg; }
 
   CStackDescriptor *GetStackDescriptor() { return &m_stack_descriptor; }
 
@@ -94,11 +94,10 @@ class CErrorContext : public IErrorContext {
   void CopyPropErrCtxt(const IErrorContext *perrctxt) override;
 
   // severity accessor
-  ULONG
-  GetSeverity() const override { return m_severity; }
+  uint32_t GetSeverity() const override { return m_severity; }
 
   // set severity
-  void SetSev(ULONG severity) override { m_severity = severity; }
+  void SetSev(uint32_t severity) override { m_severity = severity; }
 
   // print error stack trace
   void AppendStackTrace() override {
@@ -109,9 +108,9 @@ class CErrorContext : public IErrorContext {
   // print errno message
   void AppendErrnoMsg() override;
 
-  BOOL IsPending() const override { return m_pending; }
+  bool IsPending() const override { return m_pending; }
 
-  BOOL IsRethrown() const override { return m_rethrown; }
+  bool IsRethrown() const override { return m_rethrown; }
 
   void SetRethrow() override { m_rethrown = true; }
 

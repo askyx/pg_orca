@@ -49,7 +49,7 @@ class CLogicalSelect : public CLogicalUnary {
   // ident accessors
   EOperatorId Eopid() const override { return EopLogicalSelect; }
 
-  const CHAR *SzId() const override { return "CLogicalSelect"; }
+  const char *SzId() const override { return "CLogicalSelect"; }
 
   // return table's descriptor
   CTableDescriptor *Ptabdesc() const { return m_ptabdesc; }
@@ -84,7 +84,7 @@ class CLogicalSelect : public CLogicalUnary {
   //-------------------------------------------------------------------------------------
 
   // return true if operator can select a subset of input tuples based on some predicate,
-  BOOL FSelectionOp() const override { return true; }
+  bool FSelectionOp() const override { return true; }
 
   // conversion function
   static CLogicalSelect *PopConvert(COperator *pop) {

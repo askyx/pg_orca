@@ -33,11 +33,11 @@ class CPrintPrefix {
   const CPrintPrefix *m_ppfx;
 
   // actual string
-  const CHAR *m_sz;
+  const char *m_sz;
 
  public:
   // ctor
-  explicit CPrintPrefix(const CPrintPrefix *, const CHAR *);
+  explicit CPrintPrefix(const CPrintPrefix *, const char *);
 
   // print
   IOstream &OsPrint(IOstream &os) const;

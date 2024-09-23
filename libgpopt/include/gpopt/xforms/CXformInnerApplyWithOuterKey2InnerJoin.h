@@ -45,10 +45,10 @@ class CXformInnerApplyWithOuterKey2InnerJoin : public CXformExploration {
   // ident accessors
   EXformId Exfid() const override { return ExfInnerApplyWithOuterKey2InnerJoin; }
 
-  const CHAR *SzId() const override { return "CXformInnerApplyWithOuterKey2InnerJoin"; }
+  const char *SzId() const override { return "CXformInnerApplyWithOuterKey2InnerJoin"; }
 
   // is transformation an Apply decorrelation (Apply To Join) xform?
-  BOOL FApplyDecorrelating() const override { return true; }
+  bool FApplyDecorrelating() const override { return true; }
 
   // actual transform
   void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;

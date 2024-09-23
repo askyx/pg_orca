@@ -58,7 +58,7 @@ class CUpperBoundNDVs {
   CDouble UpperBoundNDVs() const { return m_upper_bound_ndv; }
 
   // check if the column is present
-  BOOL IsPresent(const CColRef *column_ref) const { return m_column_refset->FMember(column_ref); }
+  bool IsPresent(const CColRef *column_ref) const { return m_column_refset->FMember(column_ref); }
 
   // copy upper bound ndvs
   CUpperBoundNDVs *CopyUpperBoundNDVs(CMemoryPool *mp) const;

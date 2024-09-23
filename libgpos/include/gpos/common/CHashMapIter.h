@@ -25,7 +25,7 @@ namespace gpos {
 //		Hash map iterator
 //
 //---------------------------------------------------------------------------
-template <class K, class T, ULONG (*HashFn)(const K *), BOOL (*EqFn)(const K *, const K *), void (*DestroyKFn)(K *),
+template <class K, class T, uint32_t (*HashFn)(const K *), bool (*EqFn)(const K *, const K *), void (*DestroyKFn)(K *),
           void (*DestroyTFn)(T *)>
 class CHashMapIter : public CStackObject {
   // short hand for hashmap type
@@ -36,13 +36,13 @@ class CHashMapIter : public CStackObject {
   const TMap *m_map;
 
   // current hashchain
-  ULONG m_chain_idx;
+  uint32_t m_chain_idx;
 
   // current key
-  ULONG m_key_idx;
+  uint32_t m_key_idx;
 
   // is initialized?
-  BOOL m_is_initialized;
+  bool m_is_initialized;
 
   // method to return the current element
   const typename TMap::CHashMapElem *Get() const {
@@ -63,7 +63,7 @@ class CHashMapIter : public CStackObject {
   virtual ~CHashMapIter() = default;
 
   // advance iterator to next element
-  BOOL Advance() {
+  bool Advance() {
     if (m_key_idx < m_map->m_keys->Size()) {
       m_key_idx++;
       return true;

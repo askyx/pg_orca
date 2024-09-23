@@ -44,7 +44,7 @@ CLogicalLimit::CLogicalLimit(CMemoryPool *mp)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalLimit::CLogicalLimit(CMemoryPool *mp, COrderSpec *pos, BOOL fGlobal, BOOL fHasCount, BOOL fTopLimitUnderDML)
+CLogicalLimit::CLogicalLimit(CMemoryPool *mp, COrderSpec *pos, bool fGlobal, bool fHasCount, bool fTopLimitUnderDML)
     : CLogical(mp), m_pos(pos), m_fGlobal(fGlobal), m_fHasCount(fHasCount), m_top_limit_under_dml(fTopLimitUnderDML) {
   GPOS_ASSERT(nullptr != pos);
   CColRefSet *pcrsSort = m_pos->PcrsUsed(mp);
@@ -72,11 +72,10 @@ CLogicalLimit::~CLogicalLimit() {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalLimit::HashValue() const {
+uint32_t CLogicalLimit::HashValue() const {
   return gpos::CombineHashes(
       gpos::CombineHashes(COperator::HashValue(), m_pos->HashValue()),
-      gpos::CombineHashes(gpos::HashValue<BOOL>(&m_fGlobal), gpos::HashValue<BOOL>(&m_fHasCount)));
+      gpos::CombineHashes(gpos::HashValue<bool>(&m_fGlobal), gpos::HashValue<bool>(&m_fHasCount)));
 }
 
 //---------------------------------------------------------------------------
@@ -87,7 +86,7 @@ CLogicalLimit::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalLimit::Matches(COperator *pop) const {
+bool CLogicalLimit::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CLogicalLimit *popLimit = CLogicalLimit::PopConvert(pop);
 
@@ -109,7 +108,7 @@ BOOL CLogicalLimit::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalLimit::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                     BOOL must_exist) {
+                                                     bool must_exist) {
   COrderSpec *pos = m_pos->PosCopyWithRemappedColumns(mp, colref_mapping, must_exist);
 
   return GPOS_NEW(mp) CLogicalLimit(mp, pos, m_fGlobal, m_fHasCount, m_top_limit_under_dml);
@@ -196,7 +195,7 @@ CXformSet *CLogicalLimit::PxfsCandidates(CMemoryPool *mp) const {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CLogicalLimit::PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                                    ULONG child_index) const {
+                                    uint32_t child_index) const {
   GPOS_ASSERT(0 == child_index);
 
   CColRefSet *pcrsUsed = GPOS_NEW(mp) CColRefSet(mp);

@@ -35,7 +35,7 @@ COstreamBasic gpos::oswcout(&std::wcout);
 //		Print wide-character string
 //
 //---------------------------------------------------------------------------
-void gpos::Print(WCHAR *wsz) {
+void gpos::Print(wchar_t *wsz) {
   std::wcout << wsz;
 }
 
@@ -47,20 +47,20 @@ void gpos::Print(WCHAR *wsz) {
 //		Generic memory dumper; produces regular hex dump
 //
 //---------------------------------------------------------------------------
-IOstream &gpos::HexDump(IOstream &os, const void *pv, ULLONG size) {
-  for (ULONG i = 0; i < 1 + (size / GPOS_MEM_BPL); i++) {
+IOstream &gpos::HexDump(IOstream &os, const void *pv, uint64_t size) {
+  for (uint32_t i = 0; i < 1 + (size / GPOS_MEM_BPL); i++) {
     // starting address of line
-    BYTE *buf = ((BYTE *)pv) + (GPOS_MEM_BPL * i);
+    uint8_t *buf = ((uint8_t *)pv) + (GPOS_MEM_BPL * i);
     os << (void *)buf << "  ";
     os << COstream::EsmHex;
 
     // individual bytes
-    for (ULONG j = 0; j < GPOS_MEM_BPL; j++) {
+    for (uint32_t j = 0; j < GPOS_MEM_BPL; j++) {
       if (buf[j] < 16) {
         os << "0";
       }
 
-      os << (ULONG)buf[j] << " ";
+      os << (uint32_t)buf[j] << " ";
 
       // separator in middle of line
       if (j + 1 == GPOS_MEM_BPL / 2) {
@@ -72,11 +72,11 @@ IOstream &gpos::HexDump(IOstream &os, const void *pv, ULLONG size) {
     os << " ";
 
     // text representation
-    for (ULONG j = 0; j < GPOS_MEM_BPL; j++) {
+    for (uint32_t j = 0; j < GPOS_MEM_BPL; j++) {
       // print only 'visible' characters
       if (buf[j] >= 0x20 && buf[j] <= 0x7f) {
-        // cast to CHAR to avoid stream from (mis-)interpreting BYTE
-        os << (CHAR)buf[j];
+        // cast to char to avoid stream from (mis-)interpreting uint8_t
+        os << (char)buf[j];
       } else {
         os << ".";
       }
@@ -95,12 +95,11 @@ IOstream &gpos::HexDump(IOstream &os, const void *pv, ULLONG size) {
 //		Taken from D. E. Knuth;
 //
 //---------------------------------------------------------------------------
-ULONG
-gpos::HashByteArray(const BYTE *byte_array, ULONG size) {
-  ULONG hash = size;
+uint32_t gpos::HashByteArray(const uint8_t *byte_array, uint32_t size) {
+  uint32_t hash = size;
 
-  for (ULONG i = 0; i < size; ++i) {
-    BYTE b = byte_array[i];
+  for (uint32_t i = 0; i < size; ++i) {
+    uint8_t b = byte_array[i];
     hash = ((hash << 5) ^ (hash >> 27)) ^ b;
   }
 
@@ -112,16 +111,15 @@ gpos::HashByteArray(const BYTE *byte_array, ULONG size) {
 //		gpos::CombineHashes
 //
 //	@doc:
-//		Combine ULONG-based hash values
+//		Combine uint32_t-based hash values
 //
 //---------------------------------------------------------------------------
-ULONG
-gpos::CombineHashes(ULONG hash1, ULONG hash2) {
-  ULONG hashes[2];
+uint32_t gpos::CombineHashes(uint32_t hash1, uint32_t hash2) {
+  uint32_t hashes[2];
   hashes[0] = hash1;
   hashes[1] = hash2;
 
-  return HashByteArray((BYTE *)hashes, GPOS_ARRAY_SIZE(hashes) * sizeof(hashes[0]));
+  return HashByteArray((uint8_t *)hashes, GPOS_ARRAY_SIZE(hashes) * sizeof(hashes[0]));
 }
 
 //---------------------------------------------------------------------------
@@ -132,15 +130,14 @@ gpos::CombineHashes(ULONG hash1, ULONG hash2) {
 //		Add two unsigned long long values, throw an exception if overflow occurs,
 //
 //---------------------------------------------------------------------------
-ULLONG
-gpos::Add(ULLONG first, ULLONG second) {
-  if (first > gpos::ullong_max - second) {
-    // if addition result overflows, we have (a + b > gpos::ullong_max),
-    // then we need to check for  (a > gpos::ullong_max - b)
+uint64_t gpos::Add(uint64_t first, uint64_t second) {
+  if (first > UINT64_MAX - second) {
+    // if addition result overflows, we have (a + b > UINT64_MAX),
+    // then we need to check for  (a > UINT64_MAX - b)
     GPOS_RAISE(CException::ExmaSystem, CException::ExmiOverflow);
   }
 
-  ULLONG res = first + second;
+  uint64_t res = first + second;
 
   return res;
 }
@@ -153,14 +150,13 @@ gpos::Add(ULLONG first, ULLONG second) {
 //		Multiply two unsigned long long values, throw an exception if overflow occurs,
 //
 //---------------------------------------------------------------------------
-ULLONG
-gpos::Multiply(ULLONG first, ULLONG second) {
-  if (0 < second && first > gpos::ullong_max / second) {
-    // if multiplication result overflows, we have (a * b > gpos::ullong_max),
-    // then we need to check for  (a > gpos::ullong_max / b)
+uint64_t gpos::Multiply(uint64_t first, uint64_t second) {
+  if (0 < second && first > UINT64_MAX / second) {
+    // if multiplication result overflows, we have (a * b > UINT64_MAX),
+    // then we need to check for  (a > UINT64_MAX / b)
     GPOS_RAISE(CException::ExmaSystem, CException::ExmiOverflow);
   }
-  ULLONG res = first * second;
+  uint64_t res = first * second;
 
   return res;
 }

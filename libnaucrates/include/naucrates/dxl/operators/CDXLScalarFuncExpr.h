@@ -36,21 +36,21 @@ class CDXLScalarFuncExpr : public CDXLScalar {
   // return type
   IMDId *m_return_type_mdid;
 
-  const INT m_return_type_modifier;
+  const int32_t m_return_type_modifier;
 
   // does the func return a set
-  BOOL m_returns_set;
+  bool m_returns_set;
 
   //  true if in the function, variadic arguments have been
   //  combined into an array last argument
-  BOOL m_funcvariadic;
+  bool m_funcvariadic;
 
  public:
   CDXLScalarFuncExpr(const CDXLScalarFuncExpr &) = delete;
 
   // ctor
-  CDXLScalarFuncExpr(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, INT return_type_modifier,
-                     BOOL returns_set, BOOL funcvariadic);
+  CDXLScalarFuncExpr(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, int32_t return_type_modifier,
+                     bool returns_set, bool funcvariadic);
 
   // dtor
   ~CDXLScalarFuncExpr() override;
@@ -67,13 +67,13 @@ class CDXLScalarFuncExpr : public CDXLScalar {
   // return type
   IMDId *ReturnTypeMdId() const;
 
-  INT TypeModifier() const;
+  int32_t TypeModifier() const;
 
   // does function return a set
-  BOOL ReturnsSet() const;
+  bool ReturnsSet() const;
 
   // Is the variadic flag set
-  BOOL IsFuncVariadic() const;
+  bool IsFuncVariadic() const;
 
   // serialize operator in DXL format
 
@@ -86,12 +86,12 @@ class CDXLScalarFuncExpr : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
+  bool HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

@@ -350,8 +350,8 @@ Plan *PlanGenerator::GenerateHashJoinPlan(PlanGeneratorContext *ctx) {
 
   std::vector<CExpression *> hash_clauses;
 
-  const ULONG size = pdrgpexprPredicates->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
+  const uint32_t size = pdrgpexprPredicates->Size();
+  for (uint32_t ul = 0; ul < size; ul++) {
     CExpression *pexprPred = (*pdrgpexprPredicates)[ul];
     if (CPhysicalJoin::FHashJoinCompatible(pexprPred, pexprOuterChild, pexprInnerChild)) {
       CExpression *pexprPredOuter;
@@ -640,7 +640,7 @@ Plan *PlanGenerator::GenerateAggPlan(PlanGeneratorContext *ctx) {
 
   plan->lefttree = left;
 
-  INT aggsplit = 0;
+  int32_t aggsplit = 0;
   foreach_node(TargetEntry, te, plan->targetlist) {
     if (IsA(te->expr, Aggref)) {
       Aggref *aggref = (Aggref *)te->expr;
@@ -1130,7 +1130,7 @@ Var *PlanGenerator::CreateVar(CColRef *colref) {
   auto varcollid = gpdb::TypeCollation(vartype);
   auto varlevelsup = 0;
 
-  const ULONG colid = colref->Id();
+  const uint32_t colid = colref->Id();
   if (translate_ctxt_base_table_) {
     varno = translate_ctxt_base_table_->rte_index;
     attno = translate_ctxt_base_table_->colid_to_attno_map.contains(colid)

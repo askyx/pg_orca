@@ -72,12 +72,12 @@ const CJobGroupExpressionExploration::EEvent
 #ifdef GPOS_DEBUG
 
 // names for states
-const WCHAR rgwszStates[CJobGroupExpressionExploration::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
+const wchar_t rgwszStates[CJobGroupExpressionExploration::estSentinel][GPOPT_FSM_NAME_LENGTH] = {
     GPOS_WSZ_LIT("initialized"), GPOS_WSZ_LIT("children explored"), GPOS_WSZ_LIT("self explored"),
     GPOS_WSZ_LIT("completed")};
 
 // names for events
-const WCHAR rgwszEvents[CJobGroupExpressionExploration::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
+const wchar_t rgwszEvents[CJobGroupExpressionExploration::eevSentinel][GPOPT_FSM_NAME_LENGTH] = {
     GPOS_WSZ_LIT("exploring children groups"), GPOS_WSZ_LIT("explored children groups"),
     GPOS_WSZ_LIT("applying exploration xforms"), GPOS_WSZ_LIT("applied exploration xforms"), GPOS_WSZ_LIT("finalized")};
 
@@ -165,9 +165,9 @@ void CJobGroupExpressionExploration::ScheduleApplicableTransformations(CSchedule
 void CJobGroupExpressionExploration::ScheduleChildGroupsJobs(CSchedulerContext *psc) {
   GPOS_ASSERT(!FChildrenScheduled());
 
-  ULONG arity = m_pgexpr->Arity();
+  uint32_t arity = m_pgexpr->Arity();
 
-  for (ULONG i = 0; i < arity; i++) {
+  for (uint32_t i = 0; i < arity; i++) {
     CJobGroupExploration::ScheduleJob(psc, (*(m_pgexpr))[i], this);
   }
 
@@ -241,7 +241,7 @@ CJobGroupExpressionExploration::EEvent CJobGroupExpressionExploration::EevtFinal
 //		Main job function
 //
 //---------------------------------------------------------------------------
-BOOL CJobGroupExpressionExploration::FExecute(CSchedulerContext *psc) {
+bool CJobGroupExpressionExploration::FExecute(CSchedulerContext *psc) {
   GPOS_ASSERT(FInit());
 
   return m_jsm.FRun(psc, this);

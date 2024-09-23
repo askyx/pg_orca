@@ -29,7 +29,7 @@ using namespace gpmd;
 //---------------------------------------------------------------------------
 CDXLColStats::CDXLColStats(CMemoryPool *mp, CMDIdColStats *mdid_col_stats, CMDName *mdname, CDouble width,
                            CDouble null_freq, CDouble distinct_remaining, CDouble freq_remaining,
-                           CDXLBucketArray *dxl_stats_bucket_array, BOOL is_col_stats_missing)
+                           CDXLBucketArray *dxl_stats_bucket_array, bool is_col_stats_missing)
     : m_mp(mp),
       m_mdid_col_stats(mdid_col_stats),
       m_mdname(mdname),
@@ -92,8 +92,7 @@ CMDName CDXLColStats::Mdname() const {
 //		Returns the number of buckets in the histogram
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLColStats::Buckets() const {
+uint32_t CDXLColStats::Buckets() const {
   return m_dxl_stats_bucket_array->Size();
 }
 
@@ -105,7 +104,7 @@ CDXLColStats::Buckets() const {
 //		Returns the bucket at the given position
 //
 //---------------------------------------------------------------------------
-const CDXLBucket *CDXLColStats::GetDXLBucketAt(ULONG pos) const {
+const CDXLBucket *CDXLColStats::GetDXLBucketAt(uint32_t pos) const {
   return (*m_dxl_stats_bucket_array)[pos];
 }
 
@@ -125,7 +124,7 @@ void CDXLColStats::DebugPrint(IOstream &os) const {
 
   os << "Column name: " << (Mdname()).GetMDName()->GetBuffer() << std::endl;
 
-  for (ULONG ul = 0; ul < Buckets(); ul++) {
+  for (uint32_t ul = 0; ul < Buckets(); ul++) {
     const CDXLBucket *dxl_bucket = GetDXLBucketAt(ul);
     dxl_bucket->DebugPrint(os);
   }

@@ -38,7 +38,7 @@ CLogicalCTEProducer::CLogicalCTEProducer(CMemoryPool *mp)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CLogicalCTEProducer::CLogicalCTEProducer(CMemoryPool *mp, ULONG id, CColRefArray *colref_array)
+CLogicalCTEProducer::CLogicalCTEProducer(CMemoryPool *mp, uint32_t id, CColRefArray *colref_array)
     : CLogical(mp), m_id(id), m_pdrgpcr(colref_array) {
   GPOS_ASSERT(nullptr != colref_array);
 
@@ -133,7 +133,7 @@ CTableDescriptorHashSet *CLogicalCTEProducer::DeriveTableDescriptor(CMemoryPool 
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalCTEProducer::Matches(COperator *pop) const {
+bool CLogicalCTEProducer::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -151,9 +151,8 @@ BOOL CLogicalCTEProducer::Matches(COperator *pop) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalCTEProducer::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_id);
+uint32_t CLogicalCTEProducer::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_id);
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcr));
 
   return ulHash;
@@ -168,7 +167,7 @@ CLogicalCTEProducer::HashValue() const {
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalCTEProducer::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                           BOOL must_exist) {
+                                                           bool must_exist) {
   CColRefArray *colref_array = CUtils::PdrgpcrRemap(mp, m_pdrgpcr, colref_mapping, must_exist);
 
   return GPOS_NEW(mp) CLogicalCTEProducer(mp, m_id, colref_array);

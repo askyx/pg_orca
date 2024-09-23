@@ -22,7 +22,7 @@
 using namespace gpopt;
 
 // value of the first value part id
-ULONG COptCtxt::m_ulFirstValidPartId = 1;
+uint32_t COptCtxt::m_ulFirstValidPartId = 1;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -125,27 +125,27 @@ COptCtxt *COptCtxt::PoctxtCreate(CMemoryPool *mp, CMDAccessor *md_accessor, ICon
 //		Return true if all enforcers are enabled
 //
 //---------------------------------------------------------------------------
-BOOL COptCtxt::FAllEnforcersEnabled() {
-  BOOL fEnforcerDisabled = GPOS_FTRACE(EopttraceDisableSort) || GPOS_FTRACE(EopttraceDisableSpool) ||
+bool COptCtxt::FAllEnforcersEnabled() {
+  bool fEnforcerDisabled = GPOS_FTRACE(EopttraceDisableSort) || GPOS_FTRACE(EopttraceDisableSpool) ||
                            GPOS_FTRACE(EopttraceDisablePartPropagation);
 
   return !fEnforcerDisabled;
 }
 
-void COptCtxt::AddPartForScanId(ULONG scanid, ULONG index) {
+void COptCtxt::AddPartForScanId(uint32_t scanid, uint32_t index) {
   CBitSet *parts = m_scanid_to_part_map->Find(&scanid);
   if (nullptr == parts) {
     parts = GPOS_NEW(m_mp) CBitSet(m_mp);
-    m_scanid_to_part_map->Insert(GPOS_NEW(m_mp) ULONG(scanid), parts);
+    m_scanid_to_part_map->Insert(GPOS_NEW(m_mp) uint32_t(scanid), parts);
   }
   parts->ExchangeSet(index);
 }
 
-const SPartSelectorInfoEntry *COptCtxt::GetPartSelectorInfo(ULONG selector_id) const {
+const SPartSelectorInfoEntry *COptCtxt::GetPartSelectorInfo(uint32_t selector_id) const {
   return m_part_selector_info->Find(&selector_id);
 }
 
-BOOL COptCtxt::AddPartSelectorInfo(ULONG selector_id, SPartSelectorInfoEntry *entry) {
-  ULONG *key = GPOS_NEW(m_mp) ULONG(selector_id);
+bool COptCtxt::AddPartSelectorInfo(uint32_t selector_id, SPartSelectorInfoEntry *entry) {
+  uint32_t *key = GPOS_NEW(m_mp) uint32_t(selector_id);
   return m_part_selector_info->Insert(key, entry);
 }

@@ -92,7 +92,7 @@ void gpopt::EresExceptionInit(CMemoryPool *mp) {
   CMessage *rgpmsg[gpopt::ExmiSentinel];
   CMessageRepository *pmr = CMessageRepository::GetMessageRepository();
 
-  for (ULONG i = 0; i < GPOS_ARRAY_SIZE(rgpmsg); i++) {
+  for (uint32_t i = 0; i < GPOS_ARRAY_SIZE(rgpmsg); i++) {
     rgpmsg[i] = GPOS_NEW(mp) CMessage(rgmsg[i]);
     pmr->AddMessage(ElocEnUS_Utf8, rgpmsg[i]);
   }

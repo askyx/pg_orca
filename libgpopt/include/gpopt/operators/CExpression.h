@@ -86,10 +86,10 @@ class CExpression : public CRefCount {
   CCost m_cost;
 
   // id of origin group, used for debugging expressions extracted from memo
-  ULONG m_ulOriginGrpId;
+  uint32_t m_ulOriginGrpId;
 
   // id of origin group expression, used for debugging expressions extracted from memo
-  ULONG m_ulOriginGrpExprId;
+  uint32_t m_ulOriginGrpExprId;
 
   // get expression's derived property given its type
   CDrvdProp *Pdp(const CDrvdProp::EPropType ept) const;
@@ -136,14 +136,13 @@ class CExpression : public CRefCount {
   ~CExpression() override;
 
   // shorthand to access children
-  CExpression *operator[](ULONG ulPos) const {
+  CExpression *operator[](uint32_t ulPos) const {
     GPOS_ASSERT(nullptr != m_pdrgpexpr);
     return (*m_pdrgpexpr)[ulPos];
   };
 
   // arity function
-  ULONG
-  Arity() const { return m_pdrgpexpr == nullptr ? 0 : m_pdrgpexpr->Size(); }
+  uint32_t Arity() const { return m_pdrgpexpr == nullptr ? 0 : m_pdrgpexpr->Size(); }
 
   // accessor for operator
   COperator *Pop() const {
@@ -193,44 +192,44 @@ class CExpression : public CRefCount {
   void ResetStats();
 
   // check for outer references
-  BOOL HasOuterRefs();
+  bool HasOuterRefs();
 
   // print driver
   IOstream &OsPrint(IOstream &os) const;
 
   // print driver, customized for expressions
-  IOstream &OsPrintExpression(IOstream &os, const CPrintPrefix * = nullptr, BOOL fLast = true) const;
+  IOstream &OsPrintExpression(IOstream &os, const CPrintPrefix * = nullptr, bool fLast = true) const;
 
   // match with group expression
-  BOOL FMatchPattern(CGroupExpression *pgexpr) const;
+  bool FMatchPattern(CGroupExpression *pgexpr) const;
 
   // return a copy of the expression with remapped columns
-  CExpression *PexprCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) const;
+  CExpression *PexprCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) const;
 
   // compare entire expression rooted here
-  BOOL Matches(CExpression *pexpr) const;
+  bool Matches(CExpression *pexpr) const;
 
   // match against given pattern
-  BOOL FMatchPattern(CExpression *pexpr) const;
+  bool FMatchPattern(CExpression *pexpr) const;
 
   // match children against given pattern
-  BOOL FMatchPatternChildren(CExpression *pexpr) const;
+  bool FMatchPatternChildren(CExpression *pexpr) const;
 
   // compare entire expression rooted here
-  BOOL FMatchDebug(CExpression *pexpr) const;
+  bool FMatchDebug(CExpression *pexpr) const;
 
   // debug print; for interactive debugging sessions only
   // prints expression properties as well
   void DbgPrintWithProperties() const;
 
   // check if the expression satisfies given required properties
-  BOOL FValidPlan(const CReqdPropPlan *prpp, CDrvdPropCtxtPlan *pdpctxtplan);
+  bool FValidPlan(const CReqdPropPlan *prpp, CDrvdPropCtxtPlan *pdpctxtplan);
 
   // static hash function
-  static ULONG HashValue(const CExpression *pexpr);
+  static uint32_t HashValue(const CExpression *pexpr);
 
   // static hash function
-  static ULONG UlHashDedup(const CExpression *pexpr);
+  static uint32_t UlHashDedup(const CExpression *pexpr);
 
   // rehydrate expression from a given cost context and child expressions
   static CExpression *PexprRehydrate(CMemoryPool *mp, CCostContext *pcc, CExpressionArray *pdrgpexpr,
@@ -244,7 +243,7 @@ class CExpression : public CRefCount {
   CKeyCollection *DeriveKeyCollection();
   CPropConstraint *DerivePropertyConstraint();
   CMaxCard DeriveMaxCard();
-  ULONG DeriveJoinDepth();
+  uint32_t DeriveJoinDepth();
   CFunctionProp *DeriveFunctionProperties();
   CFunctionalDependencyArray *DeriveFunctionalDependencies();
   CPartInfo *DerivePartitionInfo();
@@ -254,16 +253,16 @@ class CExpression : public CRefCount {
   CColRefSet *DeriveDefinedColumns();
   CColRefSet *DeriveUsedColumns();
   CColRefSet *DeriveSetReturningFunctionColumns();
-  BOOL DeriveHasSubquery();
+  bool DeriveHasSubquery();
   CPartInfo *DeriveScalarPartitionInfo();
   CFunctionProp *DeriveScalarFunctionProperties();
-  BOOL DeriveHasNonScalarFunction();
-  ULONG DeriveTotalDistinctAggs();
-  BOOL DeriveHasMultipleDistinctAggs();
-  BOOL DeriveHasScalarArrayCmp();
-  BOOL DeriveHasScalarFuncProject();
-  BOOL DeriveContainsOnlyReplicationSafeAggFuncs();
-  ULONG DeriveTotalOrderedAggs();
+  bool DeriveHasNonScalarFunction();
+  uint32_t DeriveTotalDistinctAggs();
+  bool DeriveHasMultipleDistinctAggs();
+  bool DeriveHasScalarArrayCmp();
+  bool DeriveHasScalarFuncProject();
+  bool DeriveContainsOnlyReplicationSafeAggFuncs();
+  uint32_t DeriveTotalOrderedAggs();
 
 };  // class CExpression
 
@@ -272,13 +271,13 @@ inline IOstream &operator<<(IOstream &os, CExpression &expr) {
   return expr.OsPrint(os);
 }
 
-// hash map from ULONG to expression
-using UlongToExprMap = CHashMap<ULONG, CExpression, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>,
-                                CleanupRelease<CExpression>>;
+// hash map from uint32_t to expression
+using UlongToExprMap = CHashMap<uint32_t, CExpression, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                CleanupDelete<uint32_t>, CleanupRelease<CExpression>>;
 
 // map iterator
-using UlongToExprMapIter = CHashMapIter<ULONG, CExpression, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                        CleanupDelete<ULONG>, CleanupRelease<CExpression>>;
+using UlongToExprMapIter = CHashMapIter<uint32_t, CExpression, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                        CleanupDelete<uint32_t>, CleanupRelease<CExpression>>;
 
 }  // namespace gpopt
 

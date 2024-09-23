@@ -83,7 +83,7 @@ class CConstExprEvaluatorProxy : public gpopt::IConstDXLNodeEvaluator {
   CDXLNode *EvaluateExpr(const CDXLNode *expr) override;
 
   // returns true iff the evaluator can evaluate constant expressions without subqueries
-  BOOL FCanEvalExpressions() override { return true; }
+  bool FCanEvalExpressions() override { return true; }
 };
 }  // namespace gpdxl
 

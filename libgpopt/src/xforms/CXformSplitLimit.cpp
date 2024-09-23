@@ -112,8 +112,8 @@ void CXformSplitLimit::Transform(CXformContext *pxfctxt, CXformResult *pxfres, C
 //
 //---------------------------------------------------------------------------
 CExpression *CXformSplitLimit::PexprLimit(CMemoryPool *mp, CExpression *pexprRelational, CExpression *pexprScalarStart,
-                                          CExpression *pexprScalarRows, COrderSpec *pos, BOOL fGlobal, BOOL fHasCount,
-                                          BOOL fTopLimitUnderDML) {
+                                          CExpression *pexprScalarRows, COrderSpec *pos, bool fGlobal, bool fHasCount,
+                                          bool fTopLimitUnderDML) {
   pexprScalarStart->AddRef();
   pexprScalarRows->AddRef();
   pos->AddRef();

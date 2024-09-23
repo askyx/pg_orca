@@ -44,8 +44,8 @@ CXformInnerJoinCommutativity::CXformInnerJoinCommutativity(CMemoryPool *mp)
 //		Compatibility function for join commutativity
 //
 //---------------------------------------------------------------------------
-BOOL CXformInnerJoinCommutativity::FCompatible(CXform::EXformId exfid) {
-  BOOL fCompatible = true;
+bool CXformInnerJoinCommutativity::FCompatible(CXform::EXformId exfid) {
+  bool fCompatible = true;
 
   switch (exfid) {
     case CXform::ExfInnerJoinCommutativity:

@@ -37,13 +37,13 @@ class CPatternLeaf : public CPattern {
   ~CPatternLeaf() override = default;
 
   // check if operator is a pattern leaf
-  BOOL FLeaf() const override { return true; }
+  bool FLeaf() const override { return true; }
 
   // ident accessors
   EOperatorId Eopid() const override { return EopPatternLeaf; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPatternLeaf"; }
+  const char *SzId() const override { return "CPatternLeaf"; }
 
 };  // class CPatternLeaf
 

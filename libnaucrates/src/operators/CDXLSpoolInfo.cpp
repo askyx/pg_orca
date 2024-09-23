@@ -22,7 +22,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLSpoolInfo::CDXLSpoolInfo(ULONG ulSpoolId, Edxlspooltype edxlspstype, BOOL fMultiSlice, INT iExecutorSlice)
+CDXLSpoolInfo::CDXLSpoolInfo(uint32_t ulSpoolId, Edxlspooltype edxlspstype, bool fMultiSlice, int32_t iExecutorSlice)
     : m_spool_id(ulSpoolId),
       m_spool_type(edxlspstype),
       m_is_multi_slice_shared(fMultiSlice),
@@ -36,8 +36,7 @@ CDXLSpoolInfo::CDXLSpoolInfo(ULONG ulSpoolId, Edxlspooltype edxlspstype, BOOL fM
 //		Spool id
 //
 //---------------------------------------------------------------------------
-ULONG
-CDXLSpoolInfo::GetSpoolId() const {
+uint32_t CDXLSpoolInfo::GetSpoolId() const {
   return m_spool_id;
 }
 
@@ -61,7 +60,7 @@ Edxlspooltype CDXLSpoolInfo::GetSpoolType() const {
 //		Is the spool used across slices
 //
 //---------------------------------------------------------------------------
-BOOL CDXLSpoolInfo::IsMultiSlice() const {
+bool CDXLSpoolInfo::IsMultiSlice() const {
   return m_is_multi_slice_shared;
 }
 
@@ -73,7 +72,7 @@ BOOL CDXLSpoolInfo::IsMultiSlice() const {
 //		Id of slice executing the underlying operation
 //
 //---------------------------------------------------------------------------
-INT CDXLSpoolInfo::GetExecutorSliceId() const {
+int32_t CDXLSpoolInfo::GetExecutorSliceId() const {
   return m_executor_slice_id;
 }
 

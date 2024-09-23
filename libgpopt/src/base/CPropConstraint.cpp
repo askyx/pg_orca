@@ -57,19 +57,19 @@ CPropConstraint::~CPropConstraint() {
 //---------------------------------------------------------------------------
 void CPropConstraint::InitHashMap(CMemoryPool *mp) {
   GPOS_ASSERT(nullptr == m_phmcrcrs);
-  const ULONG ulEquiv = m_pdrgpcrs->Size();
+  const uint32_t ulEquiv = m_pdrgpcrs->Size();
 
   // m_phmcrcrs is only needed when storing equivalent columns
   if (0 != ulEquiv) {
     m_phmcrcrs = GPOS_NEW(mp) ColRefToColRefSetMap(mp);
   }
-  for (ULONG ul = 0; ul < ulEquiv; ul++) {
+  for (uint32_t ul = 0; ul < ulEquiv; ul++) {
     CColRefSet *pcrs = (*m_pdrgpcrs)[ul];
 
     CColRefSetIter crsi(*pcrs);
     while (crsi.Advance()) {
       pcrs->AddRef();
-      BOOL fres GPOS_ASSERTS_ONLY = m_phmcrcrs->Insert(crsi.Pcr(), pcrs);
+      bool fres GPOS_ASSERTS_ONLY = m_phmcrcrs->Insert(crsi.Pcr(), pcrs);
       GPOS_ASSERT(fres);
     }
   }
@@ -83,7 +83,7 @@ void CPropConstraint::InitHashMap(CMemoryPool *mp) {
 //		Is this a contradiction
 //
 //---------------------------------------------------------------------------
-BOOL CPropConstraint::FContradiction() const {
+bool CPropConstraint::FContradiction() const {
   return (nullptr != m_pcnstr && m_pcnstr->FContradiction());
 }
 
@@ -175,11 +175,11 @@ CExpression *CPropConstraint::PexprScalarMappedFromEquivCols(CMemoryPool *mp, CC
 //
 //---------------------------------------------------------------------------
 IOstream &CPropConstraint::OsPrint(IOstream &os) const {
-  const ULONG length = m_pdrgpcrs->Size();
+  const uint32_t length = m_pdrgpcrs->Size();
   if (0 < length) {
     os << "Equivalence Classes: { ";
 
-    for (ULONG ul = 0; ul < length; ul++) {
+    for (uint32_t ul = 0; ul < length; ul++) {
       CColRefSet *pcrs = (*m_pdrgpcrs)[ul];
       os << "(" << *pcrs << ") ";
     }

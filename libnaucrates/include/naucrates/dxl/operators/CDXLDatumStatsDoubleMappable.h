@@ -44,8 +44,8 @@ class CDXLDatumStatsDoubleMappable : public CDXLDatumGeneric {
   CDXLDatumStatsDoubleMappable(const CDXLDatumStatsDoubleMappable &) = delete;
 
   // ctor
-  CDXLDatumStatsDoubleMappable(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, BOOL is_null, BYTE *data,
-                               ULONG length, CDouble val);
+  CDXLDatumStatsDoubleMappable(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, bool is_null, uint8_t *data,
+                               uint32_t length, CDouble val);
 
   // dtor
   ~CDXLDatumStatsDoubleMappable() override = default;
@@ -58,7 +58,7 @@ class CDXLDatumStatsDoubleMappable : public CDXLDatumGeneric {
   // statistics related APIs
 
   // can datum be mapped to double
-  BOOL IsDatumMappableToDouble() const override { return true; }
+  bool IsDatumMappableToDouble() const override { return true; }
 
   // return the double mapping needed for statistics computation
   CDouble GetDoubleMapping() const override { return m_val; }

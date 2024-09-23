@@ -31,8 +31,8 @@ class CScalarCoalesce : public CScalar {
   // return type
   IMDId *m_mdid_type;
 
-  // is operator return type BOOL?
-  BOOL m_fBoolReturnType;
+  // is operator return type bool?
+  bool m_fBoolReturnType;
 
  public:
   CScalarCoalesce(const CScalarCoalesce &) = delete;
@@ -47,24 +47,24 @@ class CScalarCoalesce : public CScalar {
   EOperatorId Eopid() const override { return EopScalarCoalesce; }
 
   // operator name
-  const CHAR *SzId() const override { return "CScalarCoalesce"; }
+  const char *SzId() const override { return "CScalarCoalesce"; }
 
   // return type
   IMDId *MdidType() const override { return m_mdid_type; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

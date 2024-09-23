@@ -28,7 +28,7 @@ using namespace gpdxl;
 //
 //---------------------------------------------------------------------------
 CDXLScalarFuncExpr::CDXLScalarFuncExpr(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type,
-                                       INT return_type_modifier, BOOL fRetSet, BOOL funcvariadic)
+                                       int32_t return_type_modifier, bool fRetSet, bool funcvariadic)
     : CDXLScalar(mp),
       m_func_mdid(mdid_func),
       m_return_type_mdid(mdid_return_type),
@@ -100,7 +100,7 @@ IMDId *CDXLScalarFuncExpr::ReturnTypeMdId() const {
   return m_return_type_mdid;
 }
 
-INT CDXLScalarFuncExpr::TypeModifier() const {
+int32_t CDXLScalarFuncExpr::TypeModifier() const {
   return m_return_type_modifier;
 }
 
@@ -112,7 +112,7 @@ INT CDXLScalarFuncExpr::TypeModifier() const {
 //		Returns whether the function returns a set
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarFuncExpr::ReturnsSet() const {
+bool CDXLScalarFuncExpr::ReturnsSet() const {
   return m_returns_set;
 }
 //---------------------------------------------------------------------------
@@ -123,7 +123,7 @@ BOOL CDXLScalarFuncExpr::ReturnsSet() const {
 //		Returns whether the function is variadic
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarFuncExpr::IsFuncVariadic() const {
+bool CDXLScalarFuncExpr::IsFuncVariadic() const {
   return m_funcvariadic;
 }
 
@@ -135,7 +135,7 @@ BOOL CDXLScalarFuncExpr::IsFuncVariadic() const {
 //		Does the operator return boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarFuncExpr::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarFuncExpr::HasBoolResult(CMDAccessor *md_accessor) const {
   IMDId *mdid = md_accessor->RetrieveFunc(m_func_mdid)->GetResultTypeMdid();
   return (IMDType::EtiBool == md_accessor->RetrieveType(mdid)->GetDatumType());
 }
@@ -149,8 +149,8 @@ BOOL CDXLScalarFuncExpr::HasBoolResult(CMDAccessor *md_accessor) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarFuncExpr::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
-  for (ULONG ul = 0; ul < dxlnode->Arity(); ++ul) {
+void CDXLScalarFuncExpr::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
+  for (uint32_t ul = 0; ul < dxlnode->Arity(); ++ul) {
     CDXLNode *dxlnode_arg = (*dxlnode)[ul];
     GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 

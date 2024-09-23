@@ -23,7 +23,6 @@ class OptConfig;
 
 namespace gpos {
 class CTaskContext {
-
  public:
   // trace vector
   CBitSet *m_bitset;
@@ -65,10 +64,10 @@ class CTaskContext {
   }
 
   // set trace flag
-  BOOL SetTrace(ULONG trace, BOOL val);
+  bool SetTrace(uint32_t trace, bool val);
 
   // test if tracing on
-  inline BOOL IsTraceSet(ULONG trace) { return m_bitset->Get(trace); }
+  inline bool IsTraceSet(uint32_t trace) { return m_bitset->Get(trace); }
 
   // locale
   ELocale Locale() const { return m_locale; }

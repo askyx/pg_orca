@@ -52,10 +52,10 @@ class CPhysicalCorrelatedNotInLeftAntiSemiNLJoin : public CPhysicalLeftAntiSemiN
   EOperatorId Eopid() const override { return EopPhysicalCorrelatedNotInLeftAntiSemiNLJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalCorrelatedNotInLeftAntiSemiNLJoin"; }
+  const char *SzId() const override { return "CPhysicalCorrelatedNotInLeftAntiSemiNLJoin"; }
 
   // match function
-  BOOL Matches(COperator *pop) const override {
+  bool Matches(COperator *pop) const override {
     if (pop->Eopid() == Eopid()) {
       return m_pdrgpcrInner->Equals(CPhysicalCorrelatedNotInLeftAntiSemiNLJoin::PopConvert(pop)->PdrgPcrInner());
     }
@@ -72,7 +72,7 @@ class CPhysicalCorrelatedNotInLeftAntiSemiNLJoin : public CPhysicalLeftAntiSemiN
   }
 
   // return true if operator is a correlated NL Join
-  BOOL FCorrelated() const override { return true; }
+  bool FCorrelated() const override { return true; }
 
   // return required inner columns
   CColRefArray *PdrgPcrInner() const override { return m_pdrgpcrInner; }

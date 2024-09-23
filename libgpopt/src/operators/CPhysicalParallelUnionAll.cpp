@@ -23,7 +23,7 @@ COperator::EOperatorId CPhysicalParallelUnionAll::Eopid() const {
   return EopPhysicalParallelUnionAll;
 }
 
-const CHAR *CPhysicalParallelUnionAll::SzId() const {
+const char *CPhysicalParallelUnionAll::SzId() const {
   return "CPhysicalParallelUnionAll";
 }
 

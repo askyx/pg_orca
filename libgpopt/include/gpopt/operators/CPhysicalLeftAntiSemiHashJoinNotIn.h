@@ -31,13 +31,13 @@ class CPhysicalLeftAntiSemiHashJoinNotIn : public CPhysicalLeftAntiSemiHashJoin 
   // ctor
   CPhysicalLeftAntiSemiHashJoinNotIn(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys,
                                      CExpressionArray *pdrgpexprInnerKeys, IMdIdArray *hash_opfamilies,
-                                     BOOL is_null_aware = true, CXform::EXformId origin_xform = CXform::ExfSentinel);
+                                     bool is_null_aware = true, CXform::EXformId origin_xform = CXform::ExfSentinel);
 
   // ident accessors
   EOperatorId Eopid() const override { return EopPhysicalLeftAntiSemiHashJoinNotIn; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalLeftAntiSemiHashJoinNotIn"; }
+  const char *SzId() const override { return "CPhysicalLeftAntiSemiHashJoinNotIn"; }
 
   //-------------------------------------------------------------------------------------
   // Required Plan Properties

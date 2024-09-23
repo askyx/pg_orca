@@ -57,11 +57,11 @@ void COrderedAggPreprocessor::SplitPrjList(
 
   // iterate over project list and split project elements between
   // Ordered Aggs list, and Other aggs list
-  const ULONG arity = pexprPrjList->Arity();
+  const uint32_t arity = pexprPrjList->Arity();
   CColRefArray *colref_array = nullptr;
   CExpressionArray *pdrgpexprSortClauseArray = nullptr;
 
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprPrjEl = (*pexprPrjList)[ul];
     CExpression *pexprAggFunc = (*pexprPrjEl)[0];
     CScalarProjectElement *popScPrjElem = CScalarProjectElement::PopConvert(pexprPrjEl->Pop());
@@ -73,7 +73,7 @@ void COrderedAggPreprocessor::SplitPrjList(
       CScalarSortGroupClause *curr_sort_clause = CScalarSortGroupClause::PopConvert(pexprSortGroupClause->Pop());
 
       const CColRef *colref = CCastUtils::PcrExtractFromScIdOrCastScId(pexprSortCol);
-      BOOL skip = false;
+      bool skip = false;
       if (nullptr == pdrgpexprSortClauseArray) {
         colref_array = GPOS_NEW(mp) CColRefArray(mp);
         colref_array->Append(const_cast<CColRef *>(colref));
@@ -81,7 +81,7 @@ void COrderedAggPreprocessor::SplitPrjList(
         pexprSortGroupClause->AddRef();
         pdrgpexprSortClauseArray->Append(pexprSortGroupClause);
       } else {
-        for (ULONG uidx = 0; uidx < pdrgpexprSortClauseArray->Size(); uidx++) {
+        for (uint32_t uidx = 0; uidx < pdrgpexprSortClauseArray->Size(); uidx++) {
           // For multiple ordered-set aggs on the same ORDERING column and ORDERING SPEC(ASC/DESC), we optimize
           // to add the new aggregate as a ProjectElement to the ProjectList of an existing JOIN, instead of
           // creating a new JOIN for doing the same SORT.
@@ -318,7 +318,7 @@ void COrderedAggPreprocessor::SplitOrderedAggsPrj(
   pexpr->AddRef();
   // in case of multiple ordered aggs, we need to expand the GbAgg expression
   // into a join expression where leaves carry split ordered aggs
-  for (ULONG ul = 1; ul < ppdrgpexprOrderedAggsPrEl->Size(); ul++) {
+  for (uint32_t ul = 1; ul < ppdrgpexprOrderedAggsPrEl->Size(); ul++) {
     CExpression *pexprWindowConsumer = (*ppdrgpexprOrderedAggsPrEl)[ul];
     CExpression *pexprJoinCondition = CUtils::PexprScalarConstBool(mp, true /*value*/);
 
@@ -370,7 +370,7 @@ void COrderedAggPreprocessor::CreateCTE(CMemoryPool *mp, CExpression *pexprChild
 
   // create a CTE producer based on SeqPrj child expression
   CCTEInfo *pcteinfo = COptCtxt::PoctxtFromTLS()->Pcteinfo();
-  const ULONG ulCTEId = pcteinfo->next_id();
+  const uint32_t ulCTEId = pcteinfo->next_id();
   CExpression *pexprCTEProd = CXformUtils::PexprAddCTEProducer(mp, ulCTEId, pdrgpcrChildOutput, pexprChild);
   CColRefArray *pdrgpcrProducerOutput = pexprCTEProd->DeriveOutputColumns()->Pdrgpcr(mp);
 
@@ -418,20 +418,20 @@ CExpression *COrderedAggPreprocessor::PexprFinalAgg(CMemoryPool *mp, CExpression
   pexprAggFuncArg->AddRef();
   pdrgpexprChildren->Append(pexprAggFuncArg);
   argtypes->Append(GPOS_NEW(mp)
-                       ULONG(CMDIdGPDB::CastMdid(CScalar::PopConvert(pexprAggFuncArg->Pop())->MdidType())->Oid()));
+                       uint32_t(CMDIdGPDB::CastMdid(CScalar::PopConvert(pexprAggFuncArg->Pop())->MdidType())->Oid()));
 
   CExpression *pexprAggFuncDirectArg = (*(*pexprAggFunc)[EAggfuncChildIndices::EaggfuncIndexDirectArgs])[0];
   pexprAggFuncDirectArg->AddRef();
   pdrgpexprChildren->Append(pexprAggFuncDirectArg);
   argtypes->Append(
-      GPOS_NEW(mp) ULONG(CMDIdGPDB::CastMdid(CScalar::PopConvert(pexprAggFuncDirectArg->Pop())->MdidType())->Oid()));
+      GPOS_NEW(mp) uint32_t(CMDIdGPDB::CastMdid(CScalar::PopConvert(pexprAggFuncDirectArg->Pop())->MdidType())->Oid()));
   pdrgpexprChildren->Append(CUtils::PexprScalarIdent(mp, total_count_colref));
-  argtypes->Append(GPOS_NEW(mp) ULONG(CMDIdGPDB::CastMdid(total_count_colref->RetrieveType()->MDId())->Oid()));
+  argtypes->Append(GPOS_NEW(mp) uint32_t(CMDIdGPDB::CastMdid(total_count_colref->RetrieveType()->MDId())->Oid()));
   // Passing along the calculated peer_count col_ref for handling skew
   CExpression *pexprPeerCount = CUtils::PexprScalarIdent(mp, peer_count_colref);
   pdrgpexprChildren->Append(pexprPeerCount);
   argtypes->Append(GPOS_NEW(mp)
-                       ULONG(CMDIdGPDB::CastMdid(CScalar::PopConvert(pexprPeerCount->Pop())->MdidType())->Oid()));
+                       uint32_t(CMDIdGPDB::CastMdid(CScalar::PopConvert(pexprPeerCount->Pop())->MdidType())->Oid()));
 
   pdrgpexpr->Append(GPOS_NEW(mp) CExpression(mp, popScalarValuesList, pdrgpexprChildren));
 
@@ -492,19 +492,19 @@ CExpression *COrderedAggPreprocessor::PexprInputAggPrj2Join(CMemoryPool *mp, CEx
   } else {
     pexprFinalJoin = pexprOrderedAgg;
   }
-  ULONG arity = pexprOrderedAgg->Arity();
-  BOOL has_nlj_ontop = (COperator::EopLogicalInnerJoin == pexprOrderedAgg->Pop()->Eopid());
+  uint32_t arity = pexprOrderedAgg->Arity();
+  bool has_nlj_ontop = (COperator::EopLogicalInnerJoin == pexprOrderedAgg->Pop()->Eopid());
   CExpression *pexprTopmostCTE = pexprOrderedAgg;
   while (COperator::EopLogicalGbAgg != pexprTopmostCTE->Pop()->Eopid()) {
     pexprTopmostCTE = (*pexprTopmostCTE)[0];
   }
-  ULONG ulCTEIdStart = CLogicalCTEConsumer::PopConvert((*(*(*pexprTopmostCTE)[0])[0])[0]->Pop())->UlCTEId();
-  ULONG ulCTEIdEnd = ulCTEIdStart;
+  uint32_t ulCTEIdStart = CLogicalCTEConsumer::PopConvert((*(*(*pexprTopmostCTE)[0])[0])[0]->Pop())->UlCTEId();
+  uint32_t ulCTEIdEnd = ulCTEIdStart;
   if (has_nlj_ontop) {
     ulCTEIdEnd = CLogicalCTEConsumer::PopConvert((*(*(*(*pexprOrderedAgg)[arity - 2])[0])[0])[0]->Pop())->UlCTEId();
   }
   CExpression *pexpResult = pexprFinalJoin;
-  for (ULONG ul = ulCTEIdEnd; ul > ulCTEIdStart; ul--) {
+  for (uint32_t ul = ulCTEIdEnd; ul > ulCTEIdStart; ul--) {
     CExpression *ctenext = GPOS_NEW(mp) CExpression(mp, GPOS_NEW(mp) CLogicalCTEAnchor(mp, ul), pexpResult);
     pexpResult = ctenext;
   }
@@ -539,9 +539,9 @@ CExpression *COrderedAggPreprocessor::PexprPreprocess(CMemoryPool *mp, CExpressi
   }
 
   // recursively process child expressions
-  const ULONG arity = pexpr->Arity();
+  const uint32_t arity = pexpr->Arity();
   CExpressionArray *pdrgpexprChildren = GPOS_NEW(mp) CExpressionArray(mp);
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprChild = PexprPreprocess(mp, (*pexpr)[ul]);
     pdrgpexprChildren->Append(pexprChild);
   }

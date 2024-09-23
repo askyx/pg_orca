@@ -70,8 +70,8 @@ PartitionedRelPruneInfo *CPartPruneStepsBuilder::CreatePartPruneInfoForOneLevel(
   // m_part_indexes contains the indexes (into m_relation->rd_partdesc) of the
   // partitions that survived static partition pruning; iterate over this list
   // to populate pinfo->subplan_map, pinfo->relid_map & pinfo->present_parts
-  ULONG part_ptr = 0;
-  for (ULONG i = 0; (int)i < pinfo->nparts; ++i) {
+  uint32_t part_ptr = 0;
+  for (uint32_t i = 0; (int)i < pinfo->nparts; ++i) {
     pinfo->subpart_map[i] = -1;
     if (part_ptr < m_part_indexes->Size() && i == *(*m_part_indexes)[part_ptr]) {
       // partition did survive pruning
@@ -87,7 +87,7 @@ PartitionedRelPruneInfo *CPartPruneStepsBuilder::CreatePartPruneInfoForOneLevel(
     }
   }
 
-  INT step_id = 0;
+  int32_t step_id = 0;
   pinfo->exec_pruning_steps = PartPruneStepsFromFilter(filterNode, &step_id, pinfo->exec_pruning_steps);
   return pinfo;
 }
@@ -155,7 +155,7 @@ List *CPartPruneStepsBuilder::PartPruneStepFromScalarBoolExpr(CDXLNode *node, in
   }
 
   List *stepids = NIL;
-  for (ULONG ul = 0; ul < node->Arity(); ul++) {
+  for (uint32_t ul = 0; ul < node->Arity(); ul++) {
     CDXLNode *child_node = (*node)[ul];
     steps_list = PartPruneStepsFromFilter(child_node, step_id, steps_list);
 
@@ -171,7 +171,7 @@ List *CPartPruneStepsBuilder::PartPruneStepFromScalarBoolExpr(CDXLNode *node, in
   return gpdb::LAppend(steps_list, (PartitionPruneStep *)step);
 }
 
-List *CPartPruneStepsBuilder::PartPruneStepsFromFilter(CDXLNode *node, INT *step_id, List *steps_list) {
+List *CPartPruneStepsBuilder::PartPruneStepsFromFilter(CDXLNode *node, int32_t *step_id, List *steps_list) {
   GPOS_ASSERT(nullptr != node);
   Edxlopid eopid = node->GetOperator()->GetDXLOperator();
 

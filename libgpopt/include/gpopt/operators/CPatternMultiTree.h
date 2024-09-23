@@ -37,13 +37,13 @@ class CPatternMultiTree : public CPattern {
   ~CPatternMultiTree() override = default;
 
   // check if operator is a pattern leaf
-  BOOL FLeaf() const override { return false; }
+  bool FLeaf() const override { return false; }
 
   // ident accessors
   EOperatorId Eopid() const override { return EopPatternMultiTree; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPatternMultiTree"; }
+  const char *SzId() const override { return "CPatternMultiTree"; }
 
 };  // class CPatternMultiTree
 

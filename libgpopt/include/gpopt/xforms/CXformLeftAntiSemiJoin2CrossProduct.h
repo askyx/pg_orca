@@ -43,7 +43,7 @@ class CXformLeftAntiSemiJoin2CrossProduct : public CXformExploration {
   EXformId Exfid() const override { return ExfLeftAntiSemiJoin2CrossProduct; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformLeftAntiSemiJoin2CrossProduct"; }
+  const char *SzId() const override { return "CXformLeftAntiSemiJoin2CrossProduct"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

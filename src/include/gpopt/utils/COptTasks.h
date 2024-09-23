@@ -171,25 +171,25 @@ struct SOptContext {
   };
 
   // query object serialized to DXL
-  CHAR *m_query_dxl{nullptr};
+  char *m_query_dxl{nullptr};
 
   // query object
   Query *m_query{nullptr};
 
   // plan object serialized to DXL
-  CHAR *m_plan_dxl{nullptr};
+  char *m_plan_dxl{nullptr};
 
   // plan object
   PlannedStmt *m_plan_stmt{nullptr};
 
   // is generating a plan object required ?
-  BOOL m_should_generate_plan_stmt{false};
+  bool m_should_generate_plan_stmt{false};
 
   // did the optimizer fail unexpectedly?
-  BOOL m_is_unexpected_failure{false};
+  bool m_is_unexpected_failure{false};
 
   // buffer for optimizer error messages
-  CHAR *m_error_msg{nullptr};
+  char *m_error_msg{nullptr};
 
   gpdxl::OptConfig *config;
 
@@ -200,7 +200,7 @@ struct SOptContext {
   void Free(EPin input, EPin epinOutput) const;
 
   // Clone the error message in given context.
-  CHAR *CloneErrorMsg(struct MemoryContextData *context) const;
+  char *CloneErrorMsg(struct MemoryContextData *context) const;
 
   // casting function
   static SOptContext *Cast(void *ptr);
@@ -213,7 +213,7 @@ class COptTasks {
   static void Execute(void *(*func)(void *), void *func_arg);
 
   // map GPOS log severity level to GPDB, print error and delete the given error buffer
-  static void LogExceptionMessageAndDelete(CHAR *err_buf);
+  static void LogExceptionMessageAndDelete(char *err_buf);
 
   // create optimizer configuration object
   static COptimizerConfig *CreateOptimizerConfig(CMemoryPool *mp, ICostModel *cost_model);
@@ -226,13 +226,13 @@ class COptTasks {
                                                const CDXLNode *dxlnode, bool can_set_tag);
 
   // helper for converting wide character string to regular string
-  static CHAR *CreateMultiByteCharStringFromWCString(const WCHAR *wcstr);
+  static char *CreateMultiByteCharStringFromWCString(const wchar_t *wcstr);
 
   // set cost model parameters
   static void SetCostModelParams(ICostModel *cost_model);
 
   // generate an instance of optimizer cost model
-  static ICostModel *GetCostModel(CMemoryPool *mp, ULONG num_segments);
+  static ICostModel *GetCostModel(CMemoryPool *mp, uint32_t num_segments);
 
  public:
   // convert Query->DXL->LExpr->Optimize->PExpr->DXL

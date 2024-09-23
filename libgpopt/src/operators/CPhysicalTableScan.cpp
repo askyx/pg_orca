@@ -38,9 +38,8 @@ CPhysicalTableScan::CPhysicalTableScan(CMemoryPool *mp, const CName *pnameAlias,
 //		Combine pointer for table descriptor and Eop
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysicalTableScan::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
+uint32_t CPhysicalTableScan::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrOutput));
 
   return ulHash;
@@ -54,7 +53,7 @@ CPhysicalTableScan::HashValue() const {
 //		match operator
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalTableScan::Matches(COperator *pop) const {
+bool CPhysicalTableScan::Matches(COperator *pop) const {
   if (Eopid() != pop->Eopid()) {
     return false;
   }

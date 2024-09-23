@@ -68,7 +68,7 @@ class CScheduler {
   // job wrapper; used for inserting job to waiting list (lock-free)
   struct SJobLink {
     // link id, set by sync set
-    ULONG m_id;
+    uint32_t m_id;
 
     // pointer to job
     CJob *m_pj;
@@ -90,17 +90,17 @@ class CScheduler {
   CSyncPool<SJobLink> m_spjl;
 
   // current job counters
-  ULONG_PTR m_ulpTotal;
-  ULONG_PTR m_ulpRunning;
-  ULONG_PTR m_ulpQueued;
+  uintptr_t m_ulpTotal;
+  uintptr_t m_ulpRunning;
+  uintptr_t m_ulpQueued;
 
   // stats
-  ULONG_PTR m_ulpStatsQueued;
-  ULONG_PTR m_ulpStatsDequeued;
-  ULONG_PTR m_ulpStatsSuspended;
-  ULONG_PTR m_ulpStatsCompleted;
-  ULONG_PTR m_ulpStatsCompletedQueued;
-  ULONG_PTR m_ulpStatsResumed;
+  uintptr_t m_ulpStatsQueued;
+  uintptr_t m_ulpStatsDequeued;
+  uintptr_t m_ulpStatsSuspended;
+  uintptr_t m_ulpStatsCompleted;
+  uintptr_t m_ulpStatsCompletedQueued;
+  uintptr_t m_ulpStatsResumed;
 
 #ifdef GPOS_DEBUG
   // list of running jobs
@@ -111,14 +111,14 @@ class CScheduler {
 
   // flag indicating if scheduler keeps track
   // of running and suspended jobs
-  const BOOL m_fTrackingJobs;
+  const bool m_fTrackingJobs;
 #endif  // GPOS_DEBUG
 
   // keep executing jobs (if any)
   void ExecuteJobs(CSchedulerContext *psc);
 
   // process job execution results
-  void ProcessJobResult(CJob *pj, CSchedulerContext *psc, BOOL fCompleted);
+  void ProcessJobResult(CJob *pj, CSchedulerContext *psc, bool fCompleted);
 
   // retrieve next job to run
   CJob *PjRetrieve();
@@ -130,26 +130,26 @@ class CScheduler {
   void PreExecute(CJob *pj);
 
   // execute job
-  static BOOL FExecute(CJob *pj, CSchedulerContext *psc);
+  static bool FExecute(CJob *pj, CSchedulerContext *psc);
 
   // process job execution outcome
-  EJobResult EjrPostExecute(CJob *pj, BOOL fCompleted);
+  EJobResult EjrPostExecute(CJob *pj, bool fCompleted);
 
   // resume parent job
   void ResumeParent(CJob *pj);
 
   // check if all jobs have completed
-  BOOL IsEmpty() const { return (0 == m_ulpTotal); }
+  bool IsEmpty() const { return (0 == m_ulpTotal); }
 
   // no copy ctor
   CScheduler(const CScheduler &);
 
  public:
   // ctor
-  CScheduler(CMemoryPool *mp, ULONG ulJobs
+  CScheduler(CMemoryPool *mp, uint32_t ulJobs
 #ifdef GPOS_DEBUG
              ,
-             BOOL fTrackingJobs = true
+             bool fTrackingJobs = true
 #endif  // GPOS_DEBUG
   );
 
@@ -179,7 +179,7 @@ class CScheduler {
 
 #ifdef GPOS_DEBUG
   // get flag for tracking jobs
-  BOOL FTrackingJobs() const { return m_fTrackingJobs; }
+  bool FTrackingJobs() const { return m_fTrackingJobs; }
 
   // print queue
   IOstream &OsPrintActiveJobs(IOstream &);

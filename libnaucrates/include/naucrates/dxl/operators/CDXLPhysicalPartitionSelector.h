@@ -43,10 +43,10 @@ class CDXLPhysicalPartitionSelector : public CDXLPhysical {
   IMDId *m_rel_mdid;
 
   // selector id
-  ULONG m_selector_id;
+  uint32_t m_selector_id;
 
   // scan id
-  ULONG m_scan_id;
+  uint32_t m_scan_id;
 
   ULongPtrArray *m_parts;
 
@@ -54,7 +54,7 @@ class CDXLPhysicalPartitionSelector : public CDXLPhysical {
   CDXLPhysicalPartitionSelector(CDXLPhysicalPartitionSelector &) = delete;
 
   // ctor
-  CDXLPhysicalPartitionSelector(CMemoryPool *mp, IMDId *mdid_rel, ULONG selector_id, ULONG scan_id,
+  CDXLPhysicalPartitionSelector(CMemoryPool *mp, IMDId *mdid_rel, uint32_t selector_id, uint32_t scan_id,
                                 ULongPtrArray *parts);
 
   // dtor
@@ -70,12 +70,10 @@ class CDXLPhysicalPartitionSelector : public CDXLPhysical {
   IMDId *GetRelMdId() const { return m_rel_mdid; }
 
   // number of partitioning levels
-  ULONG
-  SelectorId() const { return m_selector_id; }
+  uint32_t SelectorId() const { return m_selector_id; }
 
   // scan id
-  ULONG
-  ScanId() const { return m_scan_id; }
+  uint32_t ScanId() const { return m_scan_id; }
 
   ULongPtrArray *Partitions() const { return m_parts; }
 
@@ -84,7 +82,7 @@ class CDXLPhysicalPartitionSelector : public CDXLPhysical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 
   // conversion function

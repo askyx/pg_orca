@@ -64,8 +64,8 @@ class ITask {
   virtual ILogger *GetErrorLogger() const = 0;
 
   // manipulate traceflags
-  virtual BOOL SetTrace(ULONG, BOOL) = 0;
-  virtual BOOL IsTraceSet(ULONG) = 0;
+  virtual bool SetTrace(uint32_t, bool) = 0;
+  virtual bool IsTraceSet(uint32_t) = 0;
 
   // current locale
   virtual ELocale Locale() const = 0;
@@ -74,7 +74,7 @@ class ITask {
   virtual IErrorContext *GetErrCtxt() const = 0;
 
   // any pending exceptions?
-  virtual BOOL HasPendingExceptions() const = 0;
+  virtual bool HasPendingExceptions() const = 0;
 
   static ITask *Self();
 

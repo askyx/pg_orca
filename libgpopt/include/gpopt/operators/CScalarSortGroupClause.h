@@ -30,36 +30,36 @@ using namespace gpnaucrates;
 //---------------------------------------------------------------------------
 class CScalarSortGroupClause : public CScalar {
  private:
-  INT m_tle_sort_group_ref;
-  INT m_eqop;
-  INT m_sortop;
-  BOOL m_nulls_first;
-  BOOL m_hashable;
+  int32_t m_tle_sort_group_ref;
+  int32_t m_eqop;
+  int32_t m_sortop;
+  bool m_nulls_first;
+  bool m_hashable;
 
  public:
   // private copy ctor
   CScalarSortGroupClause(const CScalarSortGroupClause &) = delete;
 
   // ctor
-  CScalarSortGroupClause(CMemoryPool *mp, INT tle_sort_group_ref, INT eqop, INT sortop, BOOL nulls_first,
-                         BOOL hashable);
+  CScalarSortGroupClause(CMemoryPool *mp, int32_t tle_sort_group_ref, int32_t eqop, int32_t sortop, bool nulls_first,
+                         bool hashable);
 
   ~CScalarSortGroupClause() override = default;
 
-  INT Index() const { return m_tle_sort_group_ref; }
-  INT EqOp() const { return m_eqop; }
-  INT SortOp() const { return m_sortop; }
-  BOOL NullsFirst() const { return m_nulls_first; }
-  BOOL IsHashable() const { return m_hashable; }
+  int32_t Index() const { return m_tle_sort_group_ref; }
+  int32_t EqOp() const { return m_eqop; }
+  int32_t SortOp() const { return m_sortop; }
+  bool NullsFirst() const { return m_nulls_first; }
+  bool IsHashable() const { return m_hashable; }
 
   // identity accessor
   EOperatorId Eopid() const override { return EopScalarSortGroupClause; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarSortGroupClause"; }
+  const char *SzId() const override { return "CScalarSortGroupClause"; }
 
   // match function
-  BOOL Matches(COperator *op) const override;
+  bool Matches(COperator *op) const override;
 
   // conversion function
   static CScalarSortGroupClause *PopConvert(COperator *pop) {
@@ -72,19 +72,19 @@ class CScalarSortGroupClause : public CScalar {
   // the type of the scalar expression
   IMDId *MdidType() const override { return nullptr; }
 
-  INT TypeModifier() const override;
+  int32_t TypeModifier() const override;
 
   // boolean expression evaluation
   EBoolEvalResult Eber(ULongPtrArray *) const override;
 
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
 
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // print
   IOstream &OsPrint(IOstream &io) const override;

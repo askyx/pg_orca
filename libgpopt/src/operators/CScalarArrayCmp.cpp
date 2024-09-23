@@ -24,7 +24,7 @@
 using namespace gpopt;
 using namespace gpmd;
 
-const CHAR CScalarArrayCmp::m_rgszCmpType[EarrcmpSentinel][10] = {"Any", "All"};
+const char CScalarArrayCmp::m_rgszCmpType[EarrcmpSentinel][10] = {"Any", "All"};
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -76,8 +76,7 @@ IMDId *CScalarArrayCmp::MdIdOp() const {
 //		metadata id
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarArrayCmp::HashValue() const {
+uint32_t CScalarArrayCmp::HashValue() const {
   return gpos::CombineHashes(gpos::CombineHashes(COperator::HashValue(), m_mdid_op->HashValue()), m_earrccmpt);
 }
 
@@ -89,7 +88,7 @@ CScalarArrayCmp::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarArrayCmp::Matches(COperator *pop) const {
+bool CScalarArrayCmp::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarArrayCmp *popCmp = CScalarArrayCmp::PopConvert(pop);
 
@@ -159,11 +158,11 @@ CExpression *CScalarArrayCmp::PexprExpand(CMemoryPool *mp, CExpression *pexprArr
   GPOS_ASSERT(EopScalarArrayCmp == pexprArrayCmp->Pop()->Eopid());
 
   COptimizerConfig *optimizer_config = COptCtxt::PoctxtFromTLS()->GetOptimizerConfig();
-  ULONG array_expansion_threshold = optimizer_config->GetHint()->UlArrayExpansionThreshold();
+  uint32_t array_expansion_threshold = optimizer_config->GetHint()->UlArrayExpansionThreshold();
   CExpression *pexprIdent = (*pexprArrayCmp)[0];
   CExpression *pexprArray = CUtils::PexprScalarArrayChild(pexprArrayCmp);
   CScalarArrayCmp *popArrayCmp = CScalarArrayCmp::PopConvert(pexprArrayCmp->Pop());
-  ULONG ulArrayElems = 0;
+  uint32_t ulArrayElems = 0;
 
   if (CUtils::FScalarArray(pexprArray)) {
     ulArrayElems = CUtils::UlScalarArrayArity(pexprArray);
@@ -178,7 +177,7 @@ CExpression *CScalarArrayCmp::PexprExpand(CMemoryPool *mp, CExpression *pexprArr
   }
 
   CExpressionArray *pdrgpexpr = GPOS_NEW(mp) CExpressionArray(mp);
-  for (ULONG ul = 0; ul < ulArrayElems; ul++) {
+  for (uint32_t ul = 0; ul < ulArrayElems; ul++) {
     CExpression *pexprArrayElem = CUtils::PScalarArrayExprChildAt(mp, pexprArray, ul);
     pexprIdent->AddRef();
     const CWStringConst *str_opname = popArrayCmp->Pstr();

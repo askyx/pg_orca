@@ -52,7 +52,7 @@ class CXformLeftAntiSemiJoinNotIn2CrossProduct : public CXformLeftAntiSemiJoin2C
   EXformId Exfid() const override { return ExfLeftAntiSemiJoinNotIn2CrossProduct; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformLeftAntiSemiJoinNotIn2CrossProduct"; }
+  const char *SzId() const override { return "CXformLeftAntiSemiJoinNotIn2CrossProduct"; }
 
 };  // class CXformLeftAntiSemiJoinNotIn2CrossProduct
 

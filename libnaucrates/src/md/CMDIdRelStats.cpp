@@ -64,7 +64,7 @@ void CMDIdRelStats::Serialize() const {
 //		Returns the string representation of the mdid
 //
 //---------------------------------------------------------------------------
-const WCHAR *CMDIdRelStats::GetBuffer() const {
+const wchar_t *CMDIdRelStats::GetBuffer() const {
   Serialize();
   return m_str.GetBuffer();
 }
@@ -89,7 +89,7 @@ IMDId *CMDIdRelStats::GetRelMdId() const {
 //		Checks if the mdids are equal
 //
 //---------------------------------------------------------------------------
-BOOL CMDIdRelStats::Equals(const IMDId *mdid) const {
+bool CMDIdRelStats::Equals(const IMDId *mdid) const {
   if (nullptr == mdid || EmdidRelStats != mdid->MdidType()) {
     return false;
   }

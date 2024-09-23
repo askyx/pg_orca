@@ -40,7 +40,7 @@ class CXformCTEAnchor2Sequence : public CXformExploration {
   EXformId Exfid() const override { return ExfCTEAnchor2Sequence; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformCTEAnchor2Sequence"; }
+  const char *SzId() const override { return "CXformCTEAnchor2Sequence"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

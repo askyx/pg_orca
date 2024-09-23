@@ -21,7 +21,7 @@
 using namespace gpopt;
 using namespace gpmd;
 
-const WCHAR CScalarBooleanTest::m_rgwszBoolTest[EbtSentinel][30] = {
+const wchar_t CScalarBooleanTest::m_rgwszBoolTest[EbtSentinel][30] = {
     GPOS_WSZ_LIT("Is True"),      GPOS_WSZ_LIT("Is Not True"), GPOS_WSZ_LIT("Is False"),
     GPOS_WSZ_LIT("Is Not False"), GPOS_WSZ_LIT("Is Unknown"),  GPOS_WSZ_LIT("Is Not Unknown"),
 };
@@ -31,8 +31,7 @@ const WCHAR CScalarBooleanTest::m_rgwszBoolTest[EbtSentinel][30] = {
 // (1) operator type: IS_TRUE / IS_NOT_TRUE / IS_FALSE / IS_NOT_FALSE / IS_UNKNOWN / IS_NOT_UNKNOWN
 // (2) child value: EberTrue / EberFalse / EberNull / EberAny
 // (3) expected result:  EberTrue / EberFalse / EberNull / EberAny
-
-const BYTE CScalarBooleanTest::m_rgBoolEvalMap[][3] = {
+const uint8_t CScalarBooleanTest::m_rgBoolEvalMap[][3] = {
     {EbtIsTrue, EberTrue, EberTrue},      // IS_TRUE(True) = True
     {EbtIsTrue, EberFalse, EberFalse},    // IS_TRUE(False) = False
     {EbtIsTrue, EberNull, EberFalse},     // IS_TRUE(Null) = False
@@ -79,7 +78,7 @@ const BYTE CScalarBooleanTest::m_rgBoolEvalMap[][3] = {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarBooleanTest::Matches(COperator *pop) const {
+bool CScalarBooleanTest::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     return m_ebt == CScalarBooleanTest::PopConvert(pop)->Ebt();
   }
@@ -114,7 +113,7 @@ CScalar::EBoolEvalResult CScalarBooleanTest::Eber(ULongPtrArray *pdrgpulChildren
   GPOS_ASSERT(1 == pdrgpulChildren->Size());
 
   EBoolEvalResult eber = (EBoolEvalResult) * ((*pdrgpulChildren)[0]);
-  for (ULONG ul = 0; ul < GPOS_ARRAY_SIZE(m_rgBoolEvalMap); ul++) {
+  for (uint32_t ul = 0; ul < GPOS_ARRAY_SIZE(m_rgBoolEvalMap); ul++) {
     if (m_ebt == m_rgBoolEvalMap[ul][0] && eber == m_rgBoolEvalMap[ul][1]) {
       return (CScalar::EBoolEvalResult)m_rgBoolEvalMap[ul][2];
     }

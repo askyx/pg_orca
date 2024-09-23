@@ -27,10 +27,10 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScheduler::CScheduler(CMemoryPool *mp, ULONG ulJobs
+CScheduler::CScheduler(CMemoryPool *mp, uint32_t ulJobs
 #ifdef GPOS_DEBUG
                        ,
-                       BOOL fTrackingJobs
+                       bool fTrackingJobs
 #endif  // GPOS_DEBUG
                        )
     : m_spjl(mp, ulJobs),
@@ -101,7 +101,7 @@ void *CScheduler::Run(void *pv) {
 //---------------------------------------------------------------------------
 void CScheduler::ExecuteJobs(CSchedulerContext *psc) {
   CJob *pj = nullptr;
-  ULONG count = 0;
+  uint32_t count = 0;
 
   // keep retrieving jobs
   while (nullptr != (pj = PjRetrieve())) {
@@ -109,7 +109,7 @@ void CScheduler::ExecuteJobs(CSchedulerContext *psc) {
     PreExecute(pj);
 
     // execute job
-    BOOL fCompleted = FExecute(pj, psc);
+    bool fCompleted = FExecute(pj, psc);
 
 #ifdef GPOS_DEBUG
     // restrict parallelism to keep track of jobs
@@ -261,8 +261,8 @@ void CScheduler::PreExecute(CJob *pj) {
 //		Execution function using job queue
 //
 //---------------------------------------------------------------------------
-BOOL CScheduler::FExecute(CJob *pj, CSchedulerContext *psc) {
-  BOOL fCompleted = true;
+bool CScheduler::FExecute(CJob *pj, CSchedulerContext *psc) {
+  bool fCompleted = true;
   CJobQueue *pjq = pj->Pjq();
 
   // check if job is associated to a job queue
@@ -303,12 +303,12 @@ BOOL CScheduler::FExecute(CJob *pj, CSchedulerContext *psc) {
 // 		Process job execution outcome
 //
 //---------------------------------------------------------------------------
-CScheduler::EJobResult CScheduler::EjrPostExecute(CJob *pj, BOOL fCompleted) {
+CScheduler::EJobResult CScheduler::EjrPostExecute(CJob *pj, bool fCompleted) {
   GPOS_ASSERT(nullptr != pj);
   GPOS_ASSERT(0 < pj->UlpRefs() && "IsRunning job is marked as completed");
 
   // decrement job ref counter
-  ULONG_PTR ulRefs = pj->UlpDecrRefs();
+  uintptr_t ulRefs = pj->UlpDecrRefs();
 
   // decrement number of running jobs
   m_ulpRunning--;

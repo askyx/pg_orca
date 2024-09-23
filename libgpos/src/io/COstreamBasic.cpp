@@ -33,10 +33,10 @@ COstreamBasic::COstreamBasic(WOSTREAM *pos) : COstream(), m_ostream(pos) {
 //		COstreamBasic::operator<<
 //
 //	@doc:
-//		WCHAR write thru;
+//		wchar_t write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &COstreamBasic::operator<<(const WCHAR *wsz) {
+IOstream &COstreamBasic::operator<<(const wchar_t *wsz) {
   m_ostream = &(*m_ostream << wsz);
   return *this;
 }
@@ -46,10 +46,10 @@ IOstream &COstreamBasic::operator<<(const WCHAR *wsz) {
 //		COstreamBasic::operator<<
 //
 //	@doc:
-//		WCHAR write thru;
+//		wchar_t write thru;
 //
 //---------------------------------------------------------------------------
-IOstream &COstreamBasic::operator<<(const WCHAR wc) {
+IOstream &COstreamBasic::operator<<(const wchar_t wc) {
   m_ostream = &(*m_ostream << wc);
   return *this;
 }

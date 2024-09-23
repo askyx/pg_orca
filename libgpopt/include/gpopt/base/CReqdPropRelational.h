@@ -49,7 +49,7 @@ class CReqdPropRelational : public CReqdProp {
   ~CReqdPropRelational() override;
 
   // type of properties
-  BOOL FRelational() const override {
+  bool FRelational() const override {
     GPOS_ASSERT(!FPlan());
     return true;
   }
@@ -58,14 +58,14 @@ class CReqdPropRelational : public CReqdProp {
   CColRefSet *PcrsStat() const { return m_pcrsStat; }
 
   // required properties computation function
-  void Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, ULONG child_index,
-               CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
+  void Compute(CMemoryPool *mp, CExpressionHandle &exprhdl, CReqdProp *prpInput, uint32_t child_index,
+               CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) override;
 
   // return difference from given properties
   CReqdPropRelational *PrprelDifference(CMemoryPool *mp, CReqdPropRelational *prprel);
 
   // return true if property container is empty
-  BOOL IsEmpty() const;
+  bool IsEmpty() const;
 
   // shorthand for conversion
   static CReqdPropRelational *GetReqdRelationalProps(CReqdProp *prp);

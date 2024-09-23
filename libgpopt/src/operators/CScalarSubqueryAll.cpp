@@ -37,7 +37,7 @@ CScalarSubqueryAll::CScalarSubqueryAll(CMemoryPool *mp, IMDId *scalar_op_mdid, c
 //
 //---------------------------------------------------------------------------
 COperator *CScalarSubqueryAll::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                          BOOL must_exist) {
+                                                          bool must_exist) {
   CColRef *colref = CUtils::PcrRemap(Pcr(), colref_mapping, must_exist);
 
   IMDId *scalar_op_mdid = MdIdOp();

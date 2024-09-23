@@ -69,7 +69,7 @@ IMDId *CMDAccessorUtils::PmdidWindowReturnType(CMDAccessor *md_accessor, IMDId *
 }
 
 // Does a scalar comparison object between given types exists
-BOOL CMDAccessorUtils::FCmpExists(CMDAccessor *md_accessor, IMDId *left_mdid, IMDId *right_mdid,
+bool CMDAccessorUtils::FCmpExists(CMDAccessor *md_accessor, IMDId *left_mdid, IMDId *right_mdid,
                                   IMDType::ECmpType cmp_type) {
   GPOS_ASSERT(nullptr != md_accessor);
   GPOS_ASSERT(nullptr != left_mdid);
@@ -124,7 +124,7 @@ IMDId *CMDAccessorUtils::GetScCmpMdid(CMDAccessor *md_accessor, IMDId *left_mdid
 
 // check is a comparison between given types or a comparison after casting one
 // side to an another exists
-BOOL CMDAccessorUtils::FCmpOrCastedCmpExists(IMDId *left_mdid, IMDId *right_mdid, IMDType::ECmpType cmp_type) {
+bool CMDAccessorUtils::FCmpOrCastedCmpExists(IMDId *left_mdid, IMDId *right_mdid, IMDType::ECmpType cmp_type) {
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
 
   GPOS_ASSERT(nullptr != md_accessor);
@@ -266,7 +266,7 @@ void CMDAccessorUtils::ApplyCastsForScCmp(CMemoryPool *mp, CMDAccessor *md_acces
 //		Check if a cast object between given source and destination types exists
 //
 //---------------------------------------------------------------------------
-BOOL CMDAccessorUtils::FCastExists(CMDAccessor *md_accessor, IMDId *mdid_src, IMDId *mdid_dest) {
+bool CMDAccessorUtils::FCastExists(CMDAccessor *md_accessor, IMDId *mdid_src, IMDId *mdid_dest) {
   GPOS_ASSERT(nullptr != md_accessor);
   GPOS_ASSERT(nullptr != mdid_src);
   GPOS_ASSERT(nullptr != mdid_dest);
@@ -294,7 +294,7 @@ BOOL CMDAccessorUtils::FCastExists(CMDAccessor *md_accessor, IMDId *mdid_src, IM
 //		Does scalar operator return NULL on NULL input?
 //
 //---------------------------------------------------------------------------
-BOOL CMDAccessorUtils::FScalarOpReturnsNullOnNullInput(CMDAccessor *md_accessor, IMDId *mdid_op) {
+bool CMDAccessorUtils::FScalarOpReturnsNullOnNullInput(CMDAccessor *md_accessor, IMDId *mdid_op) {
   GPOS_ASSERT(nullptr != md_accessor);
 
   if (nullptr == mdid_op || !mdid_op->IsValid()) {
@@ -324,10 +324,10 @@ BOOL CMDAccessorUtils::FScalarOpReturnsNullOnNullInput(CMDAccessor *md_accessor,
 //		CUtils::FBoolType
 //
 //	@doc:
-//		Return True if passed mdid is for BOOL type
+//		Return True if passed mdid is for bool type
 //
 //---------------------------------------------------------------------------
-BOOL CMDAccessorUtils::FBoolType(CMDAccessor *md_accessor, IMDId *mdid_type) {
+bool CMDAccessorUtils::FBoolType(CMDAccessor *md_accessor, IMDId *mdid_type) {
   GPOS_ASSERT(nullptr != md_accessor);
 
   if (nullptr != mdid_type && mdid_type->IsValid()) {
@@ -345,7 +345,7 @@ BOOL CMDAccessorUtils::FBoolType(CMDAccessor *md_accessor, IMDId *mdid_type) {
 //		Is scalar operator commutative? This can be used with ScalarOp and ScalarCmp
 //
 //---------------------------------------------------------------------------
-BOOL CMDAccessorUtils::FCommutativeScalarOp(CMDAccessor *md_accessor, IMDId *mdid_op) {
+bool CMDAccessorUtils::FCommutativeScalarOp(CMDAccessor *md_accessor, IMDId *mdid_op) {
   GPOS_ASSERT(nullptr != md_accessor);
   GPOS_ASSERT(nullptr != mdid_op);
 

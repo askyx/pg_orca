@@ -39,7 +39,7 @@ class CScalarArray : public CScalar {
   IMDId *m_pmdidArray;
 
   // is array multidimensional
-  BOOL m_fMultiDimensional;
+  bool m_fMultiDimensional;
 
   // const values
   CScalarConstArray *m_pdrgPconst;
@@ -48,10 +48,10 @@ class CScalarArray : public CScalar {
   CScalarArray(const CScalarArray &) = delete;
 
   // ctor
-  CScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, BOOL is_multidimenstional);
+  CScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, bool is_multidimenstional);
 
   // ctor
-  CScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, BOOL is_multidimenstional,
+  CScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, bool is_multidimenstional,
                CScalarConstArray *pdrgPconst);
 
   // dtor
@@ -61,21 +61,21 @@ class CScalarArray : public CScalar {
   EOperatorId Eopid() const override { return EopScalarArray; }
 
   // return a string for aggregate function
-  const CHAR *SzId() const override { return "CScalarArray"; }
+  const char *SzId() const override { return "CScalarArray"; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
@@ -95,7 +95,7 @@ class CScalarArray : public CScalar {
   IMDId *PmdidArray() const;
 
   // is array multi-dimensional
-  BOOL FMultiDimensional() const;
+  bool FMultiDimensional() const;
 
   // type of expression's result
   IMDId *MdidType() const override;

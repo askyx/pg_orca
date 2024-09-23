@@ -60,7 +60,7 @@ const CWStringConst *CDXLPhysicalHashJoin::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalHashJoin::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLPhysicalHashJoin::AssertValid(const CDXLNode *node, bool validate_children) const {
   // assert proj list and filter are valid
   CDXLPhysical::AssertValid(node, validate_children);
 

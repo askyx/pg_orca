@@ -51,7 +51,7 @@ CPartKeys::~CPartKeys() {
 //		Return key at a given level
 //
 //---------------------------------------------------------------------------
-CColRef *CPartKeys::PcrKey(ULONG ulLevel) const {
+CColRef *CPartKeys::PcrKey(uint32_t ulLevel) const {
   GPOS_ASSERT(ulLevel < m_num_of_part_levels);
   CColRefArray *colref_array = (*m_pdrgpdrgpcr)[ulLevel];
   return (*colref_array)[0];
@@ -65,8 +65,8 @@ CColRef *CPartKeys::PcrKey(ULONG ulLevel) const {
 //		Check whether the key columns overlap the given column
 //
 //---------------------------------------------------------------------------
-BOOL CPartKeys::FOverlap(CColRefSet *pcrs) const {
-  for (ULONG ul = 0; ul < m_num_of_part_levels; ul++) {
+bool CPartKeys::FOverlap(CColRefSet *pcrs) const {
+  for (uint32_t ul = 0; ul < m_num_of_part_levels; ul++) {
     CColRef *colref = PcrKey(ul);
     if (pcrs->FMember(colref)) {
       return true;
@@ -87,12 +87,12 @@ BOOL CPartKeys::FOverlap(CColRefSet *pcrs) const {
 CPartKeys *CPartKeys::PpartkeysCopy(CMemoryPool *mp) {
   CColRef2dArray *pdrgpdrgpcrCopy = GPOS_NEW(mp) CColRef2dArray(mp);
 
-  const ULONG length = m_pdrgpdrgpcr->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
+  const uint32_t length = m_pdrgpdrgpcr->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
     CColRefArray *colref_array = (*m_pdrgpdrgpcr)[ul];
     CColRefArray *pdrgpcrCopy = GPOS_NEW(mp) CColRefArray(mp);
-    const ULONG num_cols = colref_array->Size();
-    for (ULONG ulCol = 0; ulCol < num_cols; ulCol++) {
+    const uint32_t num_cols = colref_array->Size();
+    for (uint32_t ulCol = 0; ulCol < num_cols; ulCol++) {
       pdrgpcrCopy->Append((*colref_array)[ulCol]);
     }
     pdrgpdrgpcrCopy->Append(pdrgpcrCopy);
@@ -113,8 +113,8 @@ CPartKeysArray *CPartKeys::PdrgppartkeysCopy(CMemoryPool *mp, const CPartKeysArr
   GPOS_ASSERT(nullptr != pdrgppartkeys);
 
   CPartKeysArray *pdrgppartkeysCopy = GPOS_NEW(mp) CPartKeysArray(mp);
-  const ULONG length = pdrgppartkeys->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
+  const uint32_t length = pdrgppartkeys->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
     pdrgppartkeysCopy->Append((*pdrgppartkeys)[ul]->PpartkeysCopy(mp));
   }
   return pdrgppartkeysCopy;
@@ -133,7 +133,7 @@ CPartKeys *CPartKeys::PpartkeysRemap(CMemoryPool *mp, UlongToColRefMap *colref_m
   GPOS_ASSERT(nullptr != colref_mapping);
   CColRef2dArray *pdrgpdrgpcr = GPOS_NEW(mp) CColRef2dArray(mp);
 
-  for (ULONG ul = 0; ul < m_num_of_part_levels; ul++) {
+  for (uint32_t ul = 0; ul < m_num_of_part_levels; ul++) {
     CColRef *colref = CUtils::PcrRemap(PcrKey(ul), colref_mapping, false /*must_exist*/);
 
     CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
@@ -155,7 +155,7 @@ CPartKeys *CPartKeys::PpartkeysRemap(CMemoryPool *mp, UlongToColRefMap *colref_m
 //---------------------------------------------------------------------------
 IOstream &CPartKeys::OsPrint(IOstream &os) const {
   os << "(";
-  for (ULONG ul = 0; ul < m_num_of_part_levels; ul++) {
+  for (uint32_t ul = 0; ul < m_num_of_part_levels; ul++) {
     CColRef *colref = PcrKey(ul);
     os << *colref;
 

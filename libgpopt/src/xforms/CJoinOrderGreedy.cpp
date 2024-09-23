@@ -36,7 +36,7 @@ CJoinOrderGreedy::CJoinOrderGreedy(CMemoryPool *pmp, CExpressionArray *pdrgpexpr
     : CJoinOrder(pmp, pdrgpexprComponents, pdrgpexprConjuncts, true /* m_include_loj_childs */),
       m_pcompResult(nullptr) {
 #ifdef GPOS_DEBUG
-  for (ULONG ul = 0; ul < m_ulComps; ul++) {
+  for (uint32_t ul = 0; ul < m_ulComps; ul++) {
     GPOS_ASSERT(nullptr != m_rgpcomp[ul]->m_pexpr->Pstats() && "stats were not derived on input component");
   }
 #endif  // GPOS_DEBUG
@@ -57,12 +57,12 @@ CJoinOrderGreedy::~CJoinOrderGreedy() {
 // function to get the minimal cardinality join pair as the starting pair
 CJoinOrder::SComponent *CJoinOrderGreedy::GetStartingJoins() {
   CDouble dMinRows(0.0);
-  ULONG ul1Counter = 0;
-  ULONG ul2Counter = 0;
+  uint32_t ul1Counter = 0;
+  uint32_t ul2Counter = 0;
   CJoinOrder::SComponent *pcompBest = GPOS_NEW(m_mp) SComponent(m_mp, nullptr /*pexpr*/);
 
-  for (ULONG ul1 = 0; ul1 < m_ulComps; ul1++) {
-    for (ULONG ul2 = ul1 + 1; ul2 < m_ulComps; ul2++) {
+  for (uint32_t ul1 = 0; ul1 < m_ulComps; ul1++) {
+    for (uint32_t ul2 = ul1 + 1; ul2 < m_ulComps; ul2++) {
       SComponent *comp1 = m_rgpcomp[ul1];
       SComponent *comp2 = m_rgpcomp[ul2];
 
@@ -128,7 +128,7 @@ CExpression *CJoinOrderGreedy::PexprExpand() {
 
   // create a bitset for all the unused components
   CBitSet *unused_components_set = GPOS_NEW(m_mp) CBitSet(m_mp);
-  for (ULONG ul = 0; ul < m_ulComps; ul++) {
+  for (uint32_t ul = 0; ul < m_ulComps; ul++) {
     if (!m_rgpcomp[ul]->m_fUsed) {
       unused_components_set->ExchangeSet(ul);
     }
@@ -139,7 +139,7 @@ CExpression *CJoinOrderGreedy::PexprExpand() {
     CBitSet *candidate_comp_set = GetAdjacentComponentsToJoinCandidate();
 
     // index for the best component that we will pick
-    ULONG best_comp_idx = gpos::ulong_max;
+    uint32_t best_comp_idx = UINT32_MAX;
 
     // if there are components available which can be joined with m_pcompResult
     // avoiding cross joins
@@ -152,13 +152,13 @@ CExpression *CJoinOrderGreedy::PexprExpand() {
       best_comp_idx = PickBestJoin(candidate_comp_set);
     }
 
-    if (candidate_comp_set->Size() == 0 || gpos::ulong_max == best_comp_idx) {
+    if (candidate_comp_set->Size() == 0 || UINT32_MAX == best_comp_idx) {
       // only cross joins are available. pick the unused component which will
       // result in minimal cardinality
       best_comp_idx = PickBestJoin(unused_components_set);
     }
 
-    if (gpos::ulong_max == best_comp_idx) {
+    if (UINT32_MAX == best_comp_idx) {
       // could not pick a component to create the join tree
       unused_components_set->Release();
       candidate_comp_set->Release();
@@ -168,7 +168,7 @@ CExpression *CJoinOrderGreedy::PexprExpand() {
       unused_components_set->ExchangeClear(best_comp_idx);
     }
     candidate_comp_set->Release();
-    GPOS_ASSERT(gpos::ulong_max != best_comp_idx);
+    GPOS_ASSERT(UINT32_MAX != best_comp_idx);
   }
   unused_components_set->Release();
   GPOS_ASSERT(nullptr != m_pcompResult->m_pexpr);
@@ -185,13 +185,12 @@ CExpression *CJoinOrderGreedy::PexprExpand() {
  * It then updates m_pcompResult with the best join and returns the index of
  * the component which was picked
  */
-ULONG
-CJoinOrderGreedy::PickBestJoin(CBitSet *candidate_comp_set) {
+uint32_t CJoinOrderGreedy::PickBestJoin(CBitSet *candidate_comp_set) {
   SComponent *pcompBestComponent = nullptr;  // component which gives minimum cardinality when joined with m_pcompResult
   SComponent *pcompBest = nullptr;  // resulting join component using pcompBestComponent and original m_pcompResult
                                     // which gives minimum cardinality
   CDouble dMinRows = 0.0;
-  ULONG best_comp_idx = gpos::ulong_max;
+  uint32_t best_comp_idx = UINT32_MAX;
 
   CBitSetIter iter(*candidate_comp_set);
   while (iter.Advance()) {
@@ -217,11 +216,11 @@ CJoinOrderGreedy::PickBestJoin(CBitSet *candidate_comp_set) {
   }
 
   // component could not be found
-  if (gpos::ulong_max == best_comp_idx) {
-    return gpos::ulong_max;
+  if (UINT32_MAX == best_comp_idx) {
+    return UINT32_MAX;
   }
 
-  GPOS_ASSERT(gpos::ulong_max != best_comp_idx);
+  GPOS_ASSERT(UINT32_MAX != best_comp_idx);
   GPOS_ASSERT(nullptr != pcompBest);
   GPOS_ASSERT(!pcompBestComponent->m_fUsed);
   pcompBestComponent->m_fUsed = true;

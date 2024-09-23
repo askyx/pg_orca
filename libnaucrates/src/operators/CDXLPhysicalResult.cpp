@@ -60,7 +60,7 @@ const CWStringConst *CDXLPhysicalResult::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalResult::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLPhysicalResult::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(EdxlresultIndexSentinel >= dxlnode->Arity());
 
   // check that one time filter is valid

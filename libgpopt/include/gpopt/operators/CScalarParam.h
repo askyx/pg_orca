@@ -28,19 +28,19 @@ using namespace gpos;
 class CScalarParam : public CScalar {
  private:
   // param id
-  const ULONG m_id;
+  const uint32_t m_id;
 
   // param type
   IMDId *m_type;
 
   // param type modifier
-  INT m_type_modifier;
+  int32_t m_type_modifier;
 
  public:
   CScalarParam(const CScalarParam &) = delete;
 
   // ctor
-  CScalarParam(CMemoryPool *mp, ULONG id, IMDId *type, INT type_modifier)
+  CScalarParam(CMemoryPool *mp, uint32_t id, IMDId *type, int32_t type_modifier)
       : CScalar(mp), m_id(id), m_type(type), m_type_modifier(type_modifier) {}
 
   // dtor
@@ -50,23 +50,22 @@ class CScalarParam : public CScalar {
   EOperatorId Eopid() const override { return EopScalarParam; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarParam"; }
+  const char *SzId() const override { return "CScalarParam"; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
-  ULONG
-  Id() const { return m_id; }
+  uint32_t Id() const { return m_id; }
   // the type of the scalar expression
   IMDId *MdidType() const override { return m_type; }
 
   // the type modifier of the scalar expression
-  INT TypeModifier() const override { return m_type_modifier; }
+  int32_t TypeModifier() const override { return m_type_modifier; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
-  BOOL FInputOrderSensitive() const override {
+  bool FInputOrderSensitive() const override {
     GPOS_ASSERT(!"Unexpected call of function FInputOrderSensitive");
     return false;
   }
@@ -74,12 +73,12 @@ class CScalarParam : public CScalar {
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
 
-  static BOOL Equals(const CScalarParam *left, const CScalarParam *right) { return left->Id() == right->Id(); }
+  static bool Equals(const CScalarParam *left, const CScalarParam *right) { return left->Id() == right->Id(); }
 
   // conversion function
   static CScalarParam *PopConvert(COperator *pop) {

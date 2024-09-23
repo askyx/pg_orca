@@ -50,8 +50,8 @@ CXformUnnestTVF::CXformUnnestTVF(CMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise CXformUnnestTVF::Exfp(CExpressionHandle &exprhdl) const {
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     if (exprhdl.DeriveHasSubquery(ul)) {
       // xform is applicable if TVF argument is a subquery
       return CXform::ExfpHigh;
@@ -80,8 +80,8 @@ CColRefArray *CXformUnnestTVF::PdrgpcrSubqueries(CMemoryPool *mp, CExpression *p
   GPOS_ASSERT(pdrgpcrProdOutput->Size() == pdrgpcrConsOutput->Size());
 
   CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
-  const ULONG ulPrjElems = (*pexprProject)[1]->Arity();
-  for (ULONG ulOuter = 0; ulOuter < ulPrjElems; ulOuter++) {
+  const uint32_t ulPrjElems = (*pexprProject)[1]->Arity();
+  for (uint32_t ulOuter = 0; ulOuter < ulPrjElems; ulOuter++) {
     CExpression *pexprPrjElem = (*(*pexprProject)[1])[ulOuter];
     if ((*pexprPrjElem)[0]->DeriveHasSubquery()) {
       CColRef *pcrProducer = CScalarProjectElement::PopConvert(pexprPrjElem->Pop())->Pcr();
@@ -112,8 +112,8 @@ CExpression *CXformUnnestTVF::PexprProjectSubqueries(CMemoryPool *mp, CExpressio
 
   // collect subquery arguments
   CExpressionArray *pdrgpexprSubqueries = GPOS_NEW(mp) CExpressionArray(mp);
-  const ULONG arity = pexprTVF->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = pexprTVF->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprScalarChild = (*pexprTVF)[ul];
     if (pexprScalarChild->DeriveHasSubquery()) {
       pexprScalarChild->AddRef();
@@ -163,12 +163,12 @@ void CXformUnnestTVF::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CE
 
   // create a CTE producer on top of the project
   CCTEInfo *pcteinfo = COptCtxt::PoctxtFromTLS()->Pcteinfo();
-  const ULONG ulCTEId = pcteinfo->next_id();
+  const uint32_t ulCTEId = pcteinfo->next_id();
 
   // construct CTE producer output from subquery columns
   CColRefArray *pdrgpcrOutput = GPOS_NEW(mp) CColRefArray(mp);
-  const ULONG ulPrjElems = (*pexprProject)[1]->Arity();
-  for (ULONG ulOuter = 0; ulOuter < ulPrjElems; ulOuter++) {
+  const uint32_t ulPrjElems = (*pexprProject)[1]->Arity();
+  for (uint32_t ulOuter = 0; ulOuter < ulPrjElems; ulOuter++) {
     CExpression *pexprPrjElem = (*(*pexprProject)[1])[ulOuter];
     if ((*pexprPrjElem)[0]->DeriveHasSubquery()) {
       CColRef *pcrSubq = CScalarProjectElement::PopConvert(pexprPrjElem->Pop())->Pcr();
@@ -193,9 +193,9 @@ void CXformUnnestTVF::Transform(CXformContext *pxfctxt, CXformResult *pxfres, CE
 
   // create new function arguments by replacing subqueries with columns in CTE consumer output
   CExpressionArray *pdrgpexprNewArgs = GPOS_NEW(mp) CExpressionArray(mp);
-  ULONG ulIndex = 0;
-  const ULONG arity = pexpr->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  uint32_t ulIndex = 0;
+  const uint32_t arity = pexpr->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexprScalarChild = (*pexpr)[ul];
     if (pexprScalarChild->DeriveHasSubquery()) {
       CColRef *colref = (*pdrgpcrSubqueries)[ulIndex];

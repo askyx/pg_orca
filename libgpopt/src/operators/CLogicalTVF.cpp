@@ -129,9 +129,8 @@ CLogicalTVF::~CLogicalTVF() {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CLogicalTVF::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(
+uint32_t CLogicalTVF::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(
       COperator::HashValue(),
       gpos::CombineHashes(
           m_func_mdid->HashValue(),
@@ -149,7 +148,7 @@ CLogicalTVF::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalTVF::Matches(COperator *pop) const {
+bool CLogicalTVF::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -168,7 +167,7 @@ BOOL CLogicalTVF::Matches(COperator *pop) const {
 //		Return a copy of the operator with remapped columns
 //
 //---------------------------------------------------------------------------
-COperator *CLogicalTVF::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) {
+COperator *CLogicalTVF::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) {
   CColRefArray *pdrgpcrOutput = nullptr;
   if (must_exist) {
     pdrgpcrOutput = CUtils::PdrgpcrRemapAndCreate(mp, m_pdrgpcrOutput, colref_mapping);
@@ -210,7 +209,7 @@ CColRefSet *CLogicalTVF::DeriveOutputColumns(CMemoryPool *mp,
 //
 //---------------------------------------------------------------------------
 CFunctionProp *CLogicalTVF::DeriveFunctionProperties(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  BOOL fVolatileScan = (IMDFunction::EfsVolatile == m_efs);
+  bool fVolatileScan = (IMDFunction::EfsVolatile == m_efs);
   return PfpDeriveFromChildren(mp, exprhdl, m_efs, fVolatileScan, true /*fScan*/);
 }
 
@@ -222,7 +221,7 @@ CFunctionProp *CLogicalTVF::DeriveFunctionProperties(CMemoryPool *mp, CExpressio
 //		Sensitivity to input order
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalTVF::FInputOrderSensitive() const {
+bool CLogicalTVF::FInputOrderSensitive() const {
   return true;
 }
 

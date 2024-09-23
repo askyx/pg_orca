@@ -40,7 +40,7 @@ class CXformImplementIndexApply : public CXformImplementation {
   // ident accessors
   EXformId Exfid() const override { return ExfImplementIndexApply; }
 
-  const CHAR *SzId() const override { return "CXformImplementIndexApply"; }
+  const char *SzId() const override { return "CXformImplementIndexApply"; }
 
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override {
     if (exprhdl.DeriveHasSubquery(2)) {

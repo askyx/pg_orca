@@ -36,7 +36,7 @@ class CScalarArrayRef : public CScalar {
   IMDId *m_pmdidElem;
 
   // element type modifier
-  INT m_type_modifier;
+  int32_t m_type_modifier;
 
   // array type id
   IMDId *m_pmdidArray;
@@ -48,7 +48,7 @@ class CScalarArrayRef : public CScalar {
   CScalarArrayRef(const CScalarArrayRef &) = delete;
 
   // ctor
-  CScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid, INT type_modifier, IMDId *array_type_mdid,
+  CScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid, int32_t type_modifier, IMDId *array_type_mdid,
                   IMDId *return_type_mdid);
 
   // dtor
@@ -58,30 +58,30 @@ class CScalarArrayRef : public CScalar {
   EOperatorId Eopid() const override { return EopScalarArrayRef; }
 
   // operator name
-  const CHAR *SzId() const override { return "CScalarArrayRef"; }
+  const char *SzId() const override { return "CScalarArrayRef"; }
 
   // element type id
   IMDId *PmdidElem() const { return m_pmdidElem; }
 
   // element type modifier
-  INT TypeModifier() const override;
+  int32_t TypeModifier() const override;
 
   // array type id
   IMDId *PmdidArray() const { return m_pmdidArray; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

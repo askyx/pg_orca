@@ -34,7 +34,7 @@ class CMemoryPoolPallocManager : public CMemoryPoolManager {
   void DeleteImpl(void *ptr, CMemoryPool::EAllocationType eat) override;
 
   // get user requested size of allocation
-  ULONG UserSizeOfAlloc(const void *ptr) override;
+  uint32_t UserSizeOfAlloc(const void *ptr) override;
 
   static void Init();
 };

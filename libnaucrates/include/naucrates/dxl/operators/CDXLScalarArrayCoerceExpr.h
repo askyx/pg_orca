@@ -38,8 +38,8 @@ class CDXLScalarArrayCoerceExpr : public CDXLScalarCoerceBase {
  public:
   CDXLScalarArrayCoerceExpr(const CDXLScalarArrayCoerceExpr &) = delete;
 
-  CDXLScalarArrayCoerceExpr(CMemoryPool *mp, IMDId *result_type_mdid, INT type_modifier, EdxlCoercionForm coerce_format,
-                            INT location);
+  CDXLScalarArrayCoerceExpr(CMemoryPool *mp, IMDId *result_type_mdid, int32_t type_modifier,
+                            EdxlCoercionForm coerce_format, int32_t location);
 
   ~CDXLScalarArrayCoerceExpr() override = default;
 

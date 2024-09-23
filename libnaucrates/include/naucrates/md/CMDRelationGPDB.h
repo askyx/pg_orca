@@ -48,7 +48,7 @@ class CMDRelationGPDB : public IMDRelation {
   CMDName *m_mdname;
 
   // is this a temporary relation
-  BOOL m_is_temp_table;
+  bool m_is_temp_table;
 
   // storage type
   Erelstoragetype m_rel_storage_type;
@@ -57,10 +57,10 @@ class CMDRelationGPDB : public IMDRelation {
   CMDColumnArray *m_md_col_array;
 
   // number of dropped columns
-  ULONG m_dropped_cols;
+  uint32_t m_dropped_cols;
 
   // do we need to consider a hash distributed table as random distributed
-  BOOL m_convert_hash_to_random;
+  bool m_convert_hash_to_random;
 
   // indices of partition columns
   ULongPtrArray *m_partition_cols_array;
@@ -84,7 +84,7 @@ class CMDRelationGPDB : public IMDRelation {
   CDXLNode *m_mdpart_constraint;
 
   // number of system columns
-  ULONG m_system_columns;
+  uint32_t m_system_columns;
 
   // oid of foreign server if this is a foreign relation
   IMDId *m_foreign_server;
@@ -109,9 +109,9 @@ class CMDRelationGPDB : public IMDRelation {
   CMDRelationGPDB(const CMDRelationGPDB &) = delete;
 
   // ctor
-  CMDRelationGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, BOOL is_temp_table, Erelstoragetype rel_storage_type,
+  CMDRelationGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, bool is_temp_table, Erelstoragetype rel_storage_type,
                   CMDColumnArray *mdcol_array, ULongPtrArray *partition_cols_array, CharPtrArray *str_part_types_array,
-                  IMdIdArray *partition_oids, BOOL convert_hash_to_random, ULongPtr2dArray *keyset_array,
+                  IMdIdArray *partition_oids, bool convert_hash_to_random, ULongPtr2dArray *keyset_array,
                   CMDIndexInfoArray *md_index_info_array, IMdIdArray *mdid_check_constraint_array,
                   CDXLNode *mdpart_constraint, IMDId *foreign_server, CDouble rows);
 
@@ -127,75 +127,75 @@ class CMDRelationGPDB : public IMDRelation {
   CMDName Mdname() const override;
 
   // is this a temp relation
-  BOOL IsTemporary() const override;
+  bool IsTemporary() const override;
 
   // storage type (heap, appendonly, ...)
   Erelstoragetype RetrieveRelStorageType() const override;
 
   // number of columns
-  ULONG ColumnCount() const override;
+  uint32_t ColumnCount() const override;
 
   // width of a column with regards to the position
-  DOUBLE ColWidth(ULONG pos) const override;
+  double ColWidth(uint32_t pos) const override;
 
   // does relation have dropped columns
-  BOOL HasDroppedColumns() const override;
+  bool HasDroppedColumns() const override;
 
   // number of non-dropped columns
-  ULONG NonDroppedColsCount() const override;
+  uint32_t NonDroppedColsCount() const override;
 
   // return the absolute position of the given attribute position excluding dropped columns
-  ULONG NonDroppedColAt(ULONG pos) const override;
+  uint32_t NonDroppedColAt(uint32_t pos) const override;
 
   // return the position of a column in the metadata object given the attribute number in the system catalog
-  ULONG GetPosFromAttno(INT attno) const override;
+  uint32_t GetPosFromAttno(int32_t attno) const override;
 
   // return the original positions of all the non-dropped columns
   ULongPtrArray *NonDroppedColsArray() const override;
 
   // number of system columns
-  ULONG SystemColumnsCount() const override;
+  uint32_t SystemColumnsCount() const override;
 
   // retrieve the column at the given position
-  const IMDColumn *GetMdCol(ULONG pos) const override;
+  const IMDColumn *GetMdCol(uint32_t pos) const override;
 
   // number of key sets
-  ULONG KeySetCount() const override;
+  uint32_t KeySetCount() const override;
 
   // key set at given position
-  const ULongPtrArray *KeySetAt(ULONG pos) const override;
+  const ULongPtrArray *KeySetAt(uint32_t pos) const override;
 
   // return true if a hash distributed table needs to be considered as random
-  BOOL ConvertHashToRandom() const override;
+  bool ConvertHashToRandom() const override;
 
   // is this a partitioned table
-  BOOL IsPartitioned() const override;
+  bool IsPartitioned() const override;
 
   // number of partition keys
-  ULONG PartColumnCount() const override;
+  uint32_t PartColumnCount() const override;
 
   // retrieve the partition key column at the given position
-  const IMDColumn *PartColAt(ULONG pos) const override;
+  const IMDColumn *PartColAt(uint32_t pos) const override;
 
   // retrieve list of partition types
   CharPtrArray *GetPartitionTypes() const override;
 
   // retrieve the partition type of the given level
-  CHAR PartTypeAtLevel(ULONG ulLevel) const override;
+  char PartTypeAtLevel(uint32_t ulLevel) const override;
 
   // number of indices
-  ULONG IndexCount() const override;
+  uint32_t IndexCount() const override;
 
   // retrieve the id of the metadata cache index at the given position
-  IMDId *IndexMDidAt(ULONG pos) const override;
+  IMDId *IndexMDidAt(uint32_t pos) const override;
 
   // serialize metadata relation in DXL format given a serializer object
 
   // number of check constraints
-  ULONG CheckConstraintCount() const override;
+  uint32_t CheckConstraintCount() const override;
 
   // retrieve the id of the check constraint cache at the given position
-  IMDId *CheckConstraintMDidAt(ULONG pos) const override;
+  IMDId *CheckConstraintMDidAt(uint32_t pos) const override;
 
   // part constraint
   CDXLNode *MDPartConstraint() const override;

@@ -36,7 +36,7 @@ CScalarArrayRefIndexList::CScalarArrayRefIndexList(CMemoryPool *mp, EIndexListTy
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarArrayRefIndexList::Matches(COperator *pop) const {
+bool CScalarArrayRefIndexList::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }

@@ -45,13 +45,13 @@ class CLogicalAssert : public CLogicalUnary {
   EOperatorId Eopid() const override { return EopLogicalAssert; }
 
   // name of operator
-  const CHAR *SzId() const override { return "CLogicalAssert"; }
+  const char *SzId() const override { return "CLogicalAssert"; }
 
   // exception
   CException *Pexc() const { return m_pexc; }
 
   // match function;
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties

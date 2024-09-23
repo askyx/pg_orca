@@ -29,15 +29,15 @@ class CColRef;
 using CColRefArray = CDynamicPtrArray<CColRef, CleanupNULL>;
 using CColRef2dArray = CDynamicPtrArray<CColRefArray, CleanupRelease>;
 
-// hash map mapping ULONG -> CColRef
-using UlongToColRefMap =
-    CHashMap<ULONG, CColRef, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>, CleanupNULL<CColRef>>;
-// hash map mapping ULONG -> const CColRef
-using UlongToConstColRefMap = CHashMap<ULONG, const CColRef, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                       CleanupDelete<ULONG>, CleanupNULL<const CColRef>>;
+// hash map mapping uint32_t -> CColRef
+using UlongToColRefMap = CHashMap<uint32_t, CColRef, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                  CleanupDelete<uint32_t>, CleanupNULL<CColRef>>;
+// hash map mapping uint32_t -> const CColRef
+using UlongToConstColRefMap = CHashMap<uint32_t, const CColRef, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                       CleanupDelete<uint32_t>, CleanupNULL<const CColRef>>;
 // iterator
-using UlongToColRefMapIter = CHashMapIter<ULONG, CColRef, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                          CleanupDelete<ULONG>, CleanupNULL<CColRef>>;
+using UlongToColRefMapIter = CHashMapIter<uint32_t, CColRef, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                          CleanupDelete<uint32_t>, CleanupNULL<CColRef>>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -58,7 +58,7 @@ class CColRef {
   const IMDType *m_pmdtype;
 
   // type modifier
-  const INT m_type_modifier;
+  const int32_t m_type_modifier;
 
   // name: SQL alias or artificial name
   const CName *m_pname;
@@ -80,7 +80,7 @@ class CColRef {
   };
 
   // ctor
-  CColRef(const IMDType *pmdtype, const INT type_modifier, ULONG id, const CName *pname);
+  CColRef(const IMDType *pmdtype, const int32_t type_modifier, uint32_t id, const CName *pname);
 
   // dtor
   virtual ~CColRef();
@@ -89,28 +89,27 @@ class CColRef {
   const IMDType *RetrieveType() const { return m_pmdtype; }
 
   // type modifier
-  INT TypeModifier() const { return m_type_modifier; }
+  int32_t TypeModifier() const { return m_type_modifier; }
 
   // name
   const CName &Name() const { return *m_pname; }
 
   // id
-  ULONG
-  Id() const { return m_id; }
+  uint32_t Id() const { return m_id; }
 
   // overloaded equality operator
-  BOOL operator==(const CColRef &cr) const { return Equals(m_id, cr.Id()); }
+  bool operator==(const CColRef &cr) const { return Equals(m_id, cr.Id()); }
 
   // static hash functions
-  static ULONG HashValue(const ULONG &);
+  static uint32_t HashValue(const uint32_t &);
 
-  static ULONG HashValue(const CColRef *colref);
+  static uint32_t HashValue(const CColRef *colref);
 
   // equality function for hash table
-  static BOOL Equals(const ULONG &ulKey, const ULONG &ulKeyOther) { return ulKey == ulKeyOther; }
+  static bool Equals(const uint32_t &ulKey, const uint32_t &ulKeyOther) { return ulKey == ulKeyOther; }
 
   // equality function
-  static BOOL Equals(const CColRef *pcrFirst, const CColRef *pcrSecond) {
+  static bool Equals(const CColRef *pcrFirst, const CColRef *pcrSecond) {
     return Equals(pcrFirst->Id(), pcrSecond->Id());
   }
 
@@ -118,22 +117,22 @@ class CColRef {
   static ULongPtrArray *Pdrgpul(CMemoryPool *mp, CColRefArray *colref_array);
 
   // check if the the array of column references are equal
-  static BOOL Equals(const CColRefArray *pdrgpcr1, const CColRefArray *pdrgpcr2);
+  static bool Equals(const CColRefArray *pdrgpcr1, const CColRefArray *pdrgpcr2);
 
   // check if the the array of column reference arrays are equal
-  static BOOL Equals(const CColRef2dArray *pdrgdrgpcr1, const CColRef2dArray *pdrgdrgpcr2);
+  static bool Equals(const CColRef2dArray *pdrgdrgpcr1, const CColRef2dArray *pdrgdrgpcr2);
 
   // type of column reference (base/computed)
   virtual Ecolreftype Ecrt() const = 0;
 
   // is column a system column?
-  virtual BOOL IsSystemCol() const = 0;
+  virtual bool IsSystemCol() const = 0;
 
   // is column a distribution column?
-  virtual BOOL IsDistCol() const = 0;
+  virtual bool IsDistCol() const = 0;
 
   // is column a partition column?
-  virtual BOOL IsPartCol() const = 0;
+  virtual bool IsPartCol() const = 0;
 
   // print
   IOstream &OsPrint(IOstream &) const;
@@ -142,10 +141,10 @@ class CColRef {
   SLink m_link;
 
   // id, serves as hash key
-  const ULONG m_id;
+  const uint32_t m_id;
 
   // invalid key
-  static const ULONG m_ulInvalid;
+  static const uint32_t m_ulInvalid;
 
   void MarkAsUnused() {
     GPOS_ASSERT(m_used != EUsed);
@@ -156,7 +155,7 @@ class CColRef {
 
   void MarkAsUnknown() { m_used = EUnknown; }
 
-  EUsedStatus GetUsage(BOOL check_system_col = false, BOOL check_distribution_col = false) const {
+  EUsedStatus GetUsage(bool check_system_col = false, bool check_distribution_col = false) const {
     if ((!check_system_col && IsSystemCol()) || (!check_distribution_col && IsDistCol())) {
       return EUsed;
     }
@@ -175,9 +174,9 @@ inline IOstream &operator<<(IOstream &os, CColRef &cr) {
   return cr.OsPrint(os);
 }
 
-// hash map: CColRef -> ULONG
-using ColRefToUlongMap =
-    CHashMap<CColRef, ULONG, CColRef::HashValue, gpos::Equals<CColRef>, CleanupNULL<CColRef>, CleanupDelete<ULONG>>;
+// hash map: CColRef -> uint32_t
+using ColRefToUlongMap = CHashMap<CColRef, uint32_t, CColRef::HashValue, gpos::Equals<CColRef>, CleanupNULL<CColRef>,
+                                  CleanupDelete<uint32_t>>;
 
 using ColRefToUlongMapArray = CDynamicPtrArray<ColRefToUlongMap, CleanupRelease>;
 

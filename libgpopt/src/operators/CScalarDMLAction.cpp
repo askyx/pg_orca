@@ -29,7 +29,7 @@ using namespace gpmd;
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarDMLAction::Matches(COperator *pop) const {
+bool CScalarDMLAction::Matches(COperator *pop) const {
   return pop->Eopid() == Eopid();
 }
 

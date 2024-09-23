@@ -22,7 +22,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalAgg::CDXLPhysicalAgg(CMemoryPool *mp, EdxlAggStrategy dxl_agg_strategy, BOOL stream_safe)
+CDXLPhysicalAgg::CDXLPhysicalAgg(CMemoryPool *mp, EdxlAggStrategy dxl_agg_strategy, bool stream_safe)
     : CDXLPhysical(mp),
       m_grouping_colids_array(nullptr),
       m_dxl_agg_strategy(dxl_agg_strategy),
@@ -134,7 +134,7 @@ void CDXLPhysicalAgg::SetGroupingCols(ULongPtrArray *grouping_colids_array) {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalAgg::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLPhysicalAgg::AssertValid(const CDXLNode *node, bool validate_children) const {
   // assert proj list and filter are valid
   CDXLPhysical::AssertValid(node, validate_children);
 

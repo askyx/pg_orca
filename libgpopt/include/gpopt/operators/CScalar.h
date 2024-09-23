@@ -73,7 +73,7 @@ class CScalar : public COperator {
   ~CScalar() override = default;
 
   // type of operator
-  BOOL FScalar() const override {
+  bool FScalar() const override {
     GPOS_ASSERT(!FPhysical() && !FLogical() && !FPattern());
     return true;
   }
@@ -123,12 +123,12 @@ class CScalar : public COperator {
   }
 
   // derive subquery existence
-  virtual BOOL FHasSubquery(CExpressionHandle &exprhdl);
+  virtual bool FHasSubquery(CExpressionHandle &exprhdl);
 
   // derive non-scalar function existence
-  virtual BOOL FHasNonScalarFunction(CExpressionHandle &exprhdl);
+  virtual bool FHasNonScalarFunction(CExpressionHandle &exprhdl);
 
-  virtual BOOL FHasScalarArrayCmp(CExpressionHandle &exprhdl);
+  virtual bool FHasScalarArrayCmp(CExpressionHandle &exprhdl);
 
   // boolean expression evaluation
   virtual EBoolEvalResult Eber(ULongPtrArray *  // pdrgpulChildren
@@ -152,7 +152,7 @@ class CScalar : public COperator {
   virtual IMDId *MdidType() const = 0;
 
   // the type modifier of the scalar expression
-  virtual INT TypeModifier() const { return default_type_modifier; }
+  virtual int32_t TypeModifier() const { return default_type_modifier; }
 
 };  // class CScalar
 

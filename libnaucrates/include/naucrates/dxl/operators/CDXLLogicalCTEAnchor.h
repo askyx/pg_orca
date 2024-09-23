@@ -26,13 +26,13 @@ namespace gpdxl {
 class CDXLLogicalCTEAnchor : public CDXLLogical {
  private:
   // cte id
-  ULONG m_id;
+  uint32_t m_id;
 
  public:
   CDXLLogicalCTEAnchor(CDXLLogicalCTEAnchor &) = delete;
 
   // ctor
-  CDXLLogicalCTEAnchor(CMemoryPool *mp, ULONG id);
+  CDXLLogicalCTEAnchor(CMemoryPool *mp, uint32_t id);
 
   // operator type
   Edxlopid GetDXLOperator() const override;
@@ -41,15 +41,14 @@ class CDXLLogicalCTEAnchor : public CDXLLogical {
   const CWStringConst *GetOpNameStr() const override;
 
   // cte identifier
-  ULONG
-  Id() const { return m_id; }
+  uint32_t Id() const { return m_id; }
 
   // serialize operator in DXL format
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 
   // conversion function

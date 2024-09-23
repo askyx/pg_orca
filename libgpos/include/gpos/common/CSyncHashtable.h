@@ -74,7 +74,7 @@ class CSyncHashtable {
 
 #ifdef GPOS_DEBUG
     // bucket number
-    ULONG m_bucket_idx;
+    uint32_t m_bucket_idx;
 #endif  // GPOS_DEBUG
   };
 
@@ -82,33 +82,32 @@ class CSyncHashtable {
   SBucket *m_buckets;
 
   // number of ht buckets
-  ULONG m_nbuckets{0};
+  uint32_t m_nbuckets{0};
 
   // number of ht entries
-  ULONG_PTR m_size{0};
+  uintptr_t m_size{0};
 
   // offset of key
-  ULONG m_key_offset{gpos::ulong_max};
+  uint32_t m_key_offset{UINT32_MAX};
 
   // invalid key - needed for iteration
   const K *m_invalid_key;
 
   // pointer to hashing function
-  ULONG (*m_hashfn)(const K &);
+  uint32_t (*m_hashfn)(const K &);
 
   // pointer to key equality function
-  BOOL (*m_eqfn)(const K &, const K &);
+  bool (*m_eqfn)(const K &, const K &);
 
   // function to compute bucket index for key
-  ULONG
-  GetBucketIndex(const K &key) const {
+  uint32_t GetBucketIndex(const K &key) const {
     GPOS_ASSERT(IsValid(key) && "Invalid key is inaccessible");
 
     return m_hashfn(key) % m_nbuckets;
   }
 
   // function to get bucket by index
-  SBucket &GetBucket(const ULONG index) const {
+  SBucket &GetBucket(const uint32_t index) const {
     GPOS_ASSERT(index < m_nbuckets && "Invalid bucket index");
 
     return m_buckets[index];
@@ -116,15 +115,15 @@ class CSyncHashtable {
 
   // extract key out of type
   K &Key(T *value) const {
-    GPOS_ASSERT(gpos::ulong_max != m_key_offset && "Key offset not initialized.");
+    GPOS_ASSERT(UINT32_MAX != m_key_offset && "Key offset not initialized.");
 
-    K &k = *(K *)((BYTE *)value + m_key_offset);
+    K &k = *(K *)((uint8_t *)value + m_key_offset);
 
     return k;
   }
 
   // key validity check
-  BOOL IsValid(const K &key) const { return !m_eqfn(key, *m_invalid_key); }
+  bool IsValid(const K &key) const { return !m_eqfn(key, *m_invalid_key); }
 
  public:
   // type definition of function used to cleanup element
@@ -142,8 +141,8 @@ class CSyncHashtable {
   ~CSyncHashtable() { Cleanup(); }
 
   // Initialization of hashtable
-  void Init(CMemoryPool *mp, ULONG size, ULONG link_offset, ULONG key_offset, const K *invalid_key,
-            ULONG (*func_hash)(const K &), BOOL (*func_equal)(const K &, const K &)) {
+  void Init(CMemoryPool *mp, uint32_t size, uint32_t link_offset, uint32_t key_offset, const K *invalid_key,
+            uint32_t (*func_hash)(const K &), bool (*func_equal)(const K &, const K &)) {
     GPOS_ASSERT(nullptr == m_buckets);
     GPOS_ASSERT(0 == m_nbuckets);
     GPOS_ASSERT(nullptr != invalid_key);
@@ -164,7 +163,7 @@ class CSyncHashtable {
     CAutoRg<SBucket> argbucket;
     argbucket = m_buckets;
 
-    for (ULONG i = 0; i < m_nbuckets; i++) {
+    for (uint32_t i = 0; i < m_nbuckets; i++) {
       m_buckets[i].m_chain.Init(link_offset);
 #ifdef GPOS_DEBUG
       // add serial number
@@ -231,8 +230,7 @@ class CSyncHashtable {
   }
 
   // return number of entries
-  ULONG_PTR
-  Size() const { return m_size; }
+  uintptr_t Size() const { return m_size; }
 
 };  // class CSyncHashtable
 

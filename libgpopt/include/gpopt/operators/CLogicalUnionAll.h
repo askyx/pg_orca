@@ -40,13 +40,13 @@ class CLogicalUnionAll : public CLogicalUnion {
   EOperatorId Eopid() const override { return EopLogicalUnionAll; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalUnionAll"; }
+  const char *SzId() const override { return "CLogicalUnionAll"; }
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -72,7 +72,7 @@ class CLogicalUnionAll : public CLogicalUnion {
   IStatistics *PstatsDerive(CMemoryPool *mp, CExpressionHandle &exprhdl, IStatisticsArray *stats_ctxt) const override;
 
   CColRefSet *PcrsStat(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput,
-                       ULONG child_index) const override;
+                       uint32_t child_index) const override;
 
   // conversion function
   static CLogicalUnionAll *PopConvert(COperator *pop) {

@@ -36,7 +36,7 @@ class CScalarFunc : public CScalar {
   // return type
   IMDId *m_return_type_mdid;
 
-  const INT m_return_type_modifier;
+  const int32_t m_return_type_modifier;
 
   // function name
   const CWStringConst *m_pstrFunc;
@@ -45,17 +45,17 @@ class CScalarFunc : public CScalar {
   IMDFunction::EFuncStbl m_efs;
 
   // can the function return multiple rows?
-  BOOL m_returns_set;
+  bool m_returns_set;
 
   // does operator return NULL on NULL input?
-  BOOL m_returns_null_on_null_input;
+  bool m_returns_null_on_null_input;
 
-  // is operator return type BOOL?
-  BOOL m_fBoolReturnType;
+  // is operator return type bool?
+  bool m_fBoolReturnType;
 
   //  It is true if in the function, variadic arguments have been
   //	combined into an array last argument
-  BOOL m_funcvariadic;
+  bool m_funcvariadic;
 
  private:
  public:
@@ -64,8 +64,8 @@ class CScalarFunc : public CScalar {
   explicit CScalarFunc(CMemoryPool *mp);
 
   // ctor
-  CScalarFunc(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, INT return_type_modifier,
-              const CWStringConst *pstrFunc, BOOL funcvariadic);
+  CScalarFunc(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, int32_t return_type_modifier,
+              const CWStringConst *pstrFunc, bool funcvariadic);
 
   // dtor
   ~CScalarFunc() override;
@@ -74,21 +74,21 @@ class CScalarFunc : public CScalar {
   EOperatorId Eopid() const override { return EopScalarFunc; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarFunc"; }
+  const char *SzId() const override { return "CScalarFunc"; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }
@@ -99,7 +99,7 @@ class CScalarFunc : public CScalar {
   }
 
   // derive non-scalar function existence
-  BOOL FHasNonScalarFunction(CExpressionHandle &exprhdl) override;
+  bool FHasNonScalarFunction(CExpressionHandle &exprhdl) override;
 
   // conversion function
   static CScalarFunc *PopConvert(COperator *pop) {
@@ -115,7 +115,7 @@ class CScalarFunc : public CScalar {
   // func id
   IMDId *FuncMdId() const;
 
-  INT TypeModifier() const override;
+  int32_t TypeModifier() const override;
 
   // the type of the scalar expression
   IMDId *MdidType() const override;
@@ -130,7 +130,7 @@ class CScalarFunc : public CScalar {
   IOstream &OsPrint(IOstream &os) const override;
 
   // Is variadic flag set
-  BOOL IsFuncVariadic() const;
+  bool IsFuncVariadic() const;
 
 };  // class CScalarFunc
 

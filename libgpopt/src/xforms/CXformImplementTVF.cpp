@@ -52,8 +52,8 @@ CXformImplementTVF::CXformImplementTVF(CExpression *pexpr) : CXformImplementatio
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise CXformImplementTVF::Exfp(CExpressionHandle &exprhdl) const {
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     if (exprhdl.DeriveHasSubquery(ul)) {
       // xform is inapplicable if TVF argument is a subquery
       return CXform::ExfpNone;

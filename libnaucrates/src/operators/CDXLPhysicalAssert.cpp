@@ -24,7 +24,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLPhysicalAssert::CDXLPhysicalAssert(CMemoryPool *mp, const CHAR *sql_state) : CDXLPhysical(mp) {
+CDXLPhysicalAssert::CDXLPhysicalAssert(CMemoryPool *mp, const char *sql_state) : CDXLPhysical(mp) {
   GPOS_ASSERT(nullptr != sql_state);
   GPOS_ASSERT(GPOS_SQLSTATE_LENGTH == clib::Strlen(sql_state));
   clib::Strncpy(m_sql_state, sql_state, GPOS_SQLSTATE_LENGTH);
@@ -74,7 +74,7 @@ const CWStringConst *CDXLPhysicalAssert::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalAssert::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLPhysicalAssert::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(3 == dxlnode->Arity());
 
   CDXLNode *proj_list_dxlnode = (*dxlnode)[EdxlassertIndexProjList];
@@ -87,7 +87,7 @@ void CDXLPhysicalAssert::AssertValid(const CDXLNode *dxlnode, BOOL validate_chil
   GPOS_ASSERT(EdxloptypePhysical == physical_child_dxlnode->GetOperator()->GetDXLOperatorType());
 
   if (validate_children) {
-    for (ULONG ul = 0; ul < 3; ul++) {
+    for (uint32_t ul = 0; ul < 3; ul++) {
       CDXLNode *child_dxlnode = (*dxlnode)[ul];
       child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
     }

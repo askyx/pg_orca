@@ -105,7 +105,7 @@ CMDTypeInt8GPDB::~CMDTypeInt8GPDB() {
 //		Factory function for creating Int8 datums
 //
 //---------------------------------------------------------------------------
-IDatumInt8 *CMDTypeInt8GPDB::CreateInt8Datum(CMemoryPool *mp, LINT value, BOOL is_null) const {
+IDatumInt8 *CMDTypeInt8GPDB::CreateInt8Datum(CMemoryPool *mp, int64_t value, bool is_null) const {
   return GPOS_NEW(mp) CDatumInt8GPDB(m_mdid->Sysid(), value, is_null);
 }
 
@@ -216,8 +216,8 @@ IDatum *CMDTypeInt8GPDB::GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_
 IDatum *CMDTypeInt8GPDB::GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const {
   CDXLDatumInt8 *int8_dxl_datum = CDXLDatumInt8::Cast(const_cast<CDXLDatum *>(dxl_datum));
 
-  LINT val = int8_dxl_datum->Value();
-  BOOL is_null = int8_dxl_datum->IsNull();
+  int64_t val = int8_dxl_datum->Value();
+  bool is_null = int8_dxl_datum->IsNull();
 
   return GPOS_NEW(mp) CDatumInt8GPDB(m_mdid->Sysid(), val, is_null);
 }

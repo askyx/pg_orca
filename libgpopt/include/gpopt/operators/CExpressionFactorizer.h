@@ -40,17 +40,18 @@ class ExprMap;
 class CExpressionFactorizer {
  private:
   // map expression to a count, used in factorization
-  using ExprMap = CHashMap<CExpression, ULONG, CExpression::HashValue, CUtils::Equals, CleanupRelease<CExpression>,
-                           CleanupDelete<ULONG>>;
+  using ExprMap = CHashMap<CExpression, uint32_t, CExpression::HashValue, CUtils::Equals, CleanupRelease<CExpression>,
+                           CleanupDelete<uint32_t>>;
 
   // map operators to an array of expression arrays, corresponding to
   // a disjunction of expressions on columns created by that operator
-  using SourceToArrayPosMap = CHashMap<ULONG, CExpressionArrays, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                       CleanupDelete<ULONG>, CleanupRelease<CExpressionArrays>>;
+  using SourceToArrayPosMap = CHashMap<uint32_t, CExpressionArrays, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                       CleanupDelete<uint32_t>, CleanupRelease<CExpressionArrays>>;
 
   // iterator for map of operator to disjunctive form representation
-  using SourceToArrayPosMapIter = CHashMapIter<ULONG, CExpressionArrays, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                               CleanupDelete<ULONG>, CleanupRelease<CExpressionArrays>>;
+  using SourceToArrayPosMapIter =
+      CHashMapIter<uint32_t, CExpressionArrays, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                   CleanupDelete<uint32_t>, CleanupRelease<CExpressionArrays>>;
 
   // map columns to an array of expression arrays, corresponding to
   // a disjunction of expressions using that column
@@ -66,7 +67,7 @@ class CExpressionFactorizer {
 
   // helper for determining if given expression factor should be added to factors array
   static void AddFactor(CMemoryPool *mp, CExpression *pexpr, CExpressionArray *pdrgpexprFactors,
-                        CExpressionArray *pdrgpexprResidual, ExprMap *pexprmap, ULONG ulDisjuncts);
+                        CExpressionArray *pdrgpexprResidual, ExprMap *pexprmap, uint32_t ulDisjuncts);
 
   // helper for building a factors map
   static ExprMap *PexprmapFactors(CMemoryPool *mp, CExpression *pexpr);
@@ -91,7 +92,7 @@ class CExpressionFactorizer {
   // only one computed column
   // return true and set ppcrComputedColumn to that computed column,
   // otherwise return false
-  static BOOL FOpSourceIdOrComputedColumn(CExpression *pexpr, ULONG *ulOpSourceId, CColRef **ppcrComputedColumn);
+  static bool FOpSourceIdOrComputedColumn(CExpression *pexpr, uint32_t *ulOpSourceId, CColRef **ppcrComputedColumn);
 
   // if the given expression is a scalar that can be pushed, it returns
   // the set of used columns
@@ -101,24 +102,24 @@ class CExpressionFactorizer {
   // operator source id in the given source to array position map
   // or construct a new array and add it to the map
   static CExpressionArrays *PdrgPdrgpexprDisjunctArrayForSourceId(CMemoryPool *mp, SourceToArrayPosMap *psrc2array,
-                                                                  BOOL fAllowNewSources, ULONG ulOpSourceId);
+                                                                  bool fAllowNewSources, uint32_t ulOpSourceId);
 
   // find the array of expression arrays corresponding to the given
   // column in the given column to array position map
   // or construct a new array and add it to the map
   static CExpressionArrays *PdrgPdrgpexprDisjunctArrayForColumn(CMemoryPool *mp, ColumnToArrayPosMap *pcol2array,
-                                                                BOOL fAllowNewSources, CColRef *colref);
+                                                                bool fAllowNewSources, CColRef *colref);
 
   // if the given expression is a table column to constant comparison,
   // record it in the map
   static void StoreBaseOpToColumnExpr(CMemoryPool *mp, CExpression *pexpr, SourceToArrayPosMap *psrc2array,
                                       ColumnToArrayPosMap *pcol2array, const CColRefSet *pcrsProducedByChildren,
-                                      BOOL fAllowNewSources, ULONG ulPosition);
+                                      bool fAllowNewSources, uint32_t ulPosition);
 
   // construct a filter based on the expressions from 'pdrgpdrgpexpr'
   // and add to the array 'pdrgpexprPrefilters'
   static void AddInferredFiltersFromArray(CMemoryPool *mp, const CExpressionArrays *pdrgpdrgpexpr,
-                                          ULONG ulDisjChildrenLength, CExpressionArray *pdrgpexprPrefilters);
+                                          uint32_t ulDisjChildrenLength, CExpressionArray *pdrgpexprPrefilters);
 
   // create a conjunction of the given expression and inferred filters constructed out
   // of the given maps

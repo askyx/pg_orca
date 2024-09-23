@@ -151,13 +151,13 @@ void gpdxl::EresExceptionInit(CMemoryPool *mp) {
 
   // copy exception array into heap
   CMessage *rgpmsg[ExmiDXLSentinel];
-  for (ULONG i = 0; i < GPOS_ARRAY_SIZE(rgpmsg); i++) {
+  for (uint32_t i = 0; i < GPOS_ARRAY_SIZE(rgpmsg); i++) {
     rgpmsg[i] = GPOS_NEW(mp) CMessage(rgmsg[i]);
   }
 
   CMessageRepository *pmr = CMessageRepository::GetMessageRepository();
 
-  for (ULONG i = 0; i < GPOS_ARRAY_SIZE(rgmsg); i++) {
+  for (uint32_t i = 0; i < GPOS_ARRAY_SIZE(rgmsg); i++) {
     pmr->AddMessage(ElocEnUS_Utf8, rgpmsg[i]);
   }
 }

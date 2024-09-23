@@ -128,7 +128,7 @@ CRange::~CRange() {
 //		Is this range disjoint from the given range and to its left
 //
 //---------------------------------------------------------------------------
-BOOL CRange::FDisjointLeft(CRange *prange) {
+bool CRange::FDisjointLeft(CRange *prange) {
   GPOS_ASSERT(nullptr != prange);
 
   IDatum *pdatumLeft = prange->PdatumLeft();
@@ -156,7 +156,7 @@ BOOL CRange::FDisjointLeft(CRange *prange) {
 //		Does this range contain the given range
 //
 //---------------------------------------------------------------------------
-BOOL CRange::Contains(CRange *prange) {
+bool CRange::Contains(CRange *prange) {
   GPOS_ASSERT(nullptr != prange);
 
   return FStartsWithOrBefore(prange) && FEndsWithOrAfter(prange);
@@ -170,7 +170,7 @@ BOOL CRange::Contains(CRange *prange) {
 //		Does this range overlap only the left end of the given range
 //
 //---------------------------------------------------------------------------
-BOOL CRange::FOverlapsLeft(CRange *prange) {
+bool CRange::FOverlapsLeft(CRange *prange) {
   GPOS_ASSERT(nullptr != prange);
 
   return (FStartsBefore(prange) && !FEndsAfter(prange) && !FDisjointLeft(prange));
@@ -184,7 +184,7 @@ BOOL CRange::FOverlapsLeft(CRange *prange) {
 //		Does this range overlap only the right end of the given range
 //
 //---------------------------------------------------------------------------
-BOOL CRange::FOverlapsRight(CRange *prange) {
+bool CRange::FOverlapsRight(CRange *prange) {
   GPOS_ASSERT(nullptr != prange);
 
   return (FEndsAfter(prange) && !FStartsBefore(prange) && !prange->FDisjointLeft(this));
@@ -202,7 +202,7 @@ BOOL CRange::FOverlapsRight(CRange *prange) {
 //			(-inf, inf)(8, inf)	false
 //
 //---------------------------------------------------------------------------
-BOOL CRange::FUpperBoundEqualsLowerBound(CRange *prange) {
+bool CRange::FUpperBoundEqualsLowerBound(CRange *prange) {
   GPOS_ASSERT(nullptr != prange);
 
   IDatum *pdatumLeft = prange->PdatumLeft();
@@ -226,7 +226,7 @@ BOOL CRange::FUpperBoundEqualsLowerBound(CRange *prange) {
 //		Does this range start with or before the given range
 //
 //---------------------------------------------------------------------------
-BOOL CRange::FStartsWithOrBefore(CRange *prange) {
+bool CRange::FStartsWithOrBefore(CRange *prange) {
   if (FStartsBefore(prange)) {
     return true;
   }
@@ -251,7 +251,7 @@ BOOL CRange::FStartsWithOrBefore(CRange *prange) {
 //		Does this range start before the given range starts
 //
 //---------------------------------------------------------------------------
-BOOL CRange::FStartsBefore(CRange *prange) {
+bool CRange::FStartsBefore(CRange *prange) {
   GPOS_ASSERT(nullptr != prange);
 
   IDatum *pdatumLeft = prange->PdatumLeft();
@@ -280,7 +280,7 @@ BOOL CRange::FStartsBefore(CRange *prange) {
 //		Does this range end after the given range ends
 //
 //---------------------------------------------------------------------------
-BOOL CRange::FEndsAfter(CRange *prange) {
+bool CRange::FEndsAfter(CRange *prange) {
   GPOS_ASSERT(nullptr != prange);
 
   IDatum *pdatumRight = prange->PdatumRight();
@@ -309,7 +309,7 @@ BOOL CRange::FEndsAfter(CRange *prange) {
 //		Does this range end with or after the given range
 //
 //---------------------------------------------------------------------------
-BOOL CRange::FEndsWithOrAfter(CRange *prange) {
+bool CRange::FEndsWithOrAfter(CRange *prange) {
   if (FEndsAfter(prange)) {
     return true;
   }
@@ -334,7 +334,7 @@ BOOL CRange::FEndsWithOrAfter(CRange *prange) {
 //		Is the range a point
 //
 //---------------------------------------------------------------------------
-BOOL CRange::FPoint() const {
+bool CRange::FPoint() const {
   return (EriIncluded == m_eriLeft && EriIncluded == m_eriRight && m_pcomp->Equals(m_pdatumRight, m_pdatumLeft));
 }
 
@@ -596,7 +596,7 @@ IOstream &CRange::OsPrint(IOstream &os) const {
 //		debug print a point
 //
 //---------------------------------------------------------------------------
-IOstream &CRange::OsPrintBound(IOstream &os, IDatum *datum, const CHAR *szInfinity) {
+IOstream &CRange::OsPrintBound(IOstream &os, IDatum *datum, const char *szInfinity) {
   if (nullptr == datum) {
     os << szInfinity;
   } else {

@@ -48,28 +48,28 @@ class CPoint : public CRefCount {
   IDatum *GetDatum() const { return m_datum; }
 
   // is this point equal to another
-  BOOL Equals(const CPoint *) const;
+  bool Equals(const CPoint *) const;
 
   // is this point not equal to another
-  BOOL IsNotEqual(const CPoint *) const;
+  bool IsNotEqual(const CPoint *) const;
 
   // less than
-  BOOL IsLessThan(const CPoint *) const;
+  bool IsLessThan(const CPoint *) const;
 
   // less than or equals
-  BOOL IsLessThanOrEqual(const CPoint *) const;
+  bool IsLessThanOrEqual(const CPoint *) const;
 
   // greater than
-  BOOL IsGreaterThan(const CPoint *) const;
+  bool IsGreaterThan(const CPoint *) const;
 
   // greater than or equals
-  BOOL IsGreaterThanOrEqual(const CPoint *) const;
+  bool IsGreaterThanOrEqual(const CPoint *) const;
 
   // distance between two points
   CDouble Distance(const CPoint *) const;
 
   // distance between two points, taking bounds into account
-  CDouble Width(const CPoint *, BOOL include_lower, BOOL include_upper) const;
+  CDouble Width(const CPoint *, bool include_lower, bool include_upper) const;
 
   // print function
   IOstream &OsPrint(IOstream &os) const;

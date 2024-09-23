@@ -35,10 +35,10 @@ class CDXLLogicalDelete : public CDXLLogical {
   CDXLTableDescr *m_dxl_table_descr;
 
   // ctid column id
-  ULONG m_ctid_colid;
+  uint32_t m_ctid_colid;
 
   // segmentId column id
-  ULONG m_segid_colid;
+  uint32_t m_segid_colid;
 
   // list of deletion column ids
   ULongPtrArray *m_deletion_colid_array;
@@ -47,7 +47,7 @@ class CDXLLogicalDelete : public CDXLLogical {
   CDXLLogicalDelete(const CDXLLogicalDelete &) = delete;
 
   // ctor
-  CDXLLogicalDelete(CMemoryPool *mp, CDXLTableDescr *table_descr, ULONG ctid_colid, ULONG segid_colid,
+  CDXLLogicalDelete(CMemoryPool *mp, CDXLTableDescr *table_descr, uint32_t ctid_colid, uint32_t segid_colid,
                     ULongPtrArray *delete_colid_array);
 
   // dtor
@@ -63,12 +63,10 @@ class CDXLLogicalDelete : public CDXLLogical {
   CDXLTableDescr *GetDXLTableDescr() const { return m_dxl_table_descr; }
 
   // ctid column
-  ULONG
-  GetCtIdColId() const { return m_ctid_colid; }
+  uint32_t GetCtIdColId() const { return m_ctid_colid; }
 
   // segment id column
-  ULONG
-  GetSegmentIdColId() const { return m_segid_colid; }
+  uint32_t GetSegmentIdColId() const { return m_segid_colid; }
 
   // deletion column ids
   ULongPtrArray *GetDeletionColIdArray() const { return m_deletion_colid_array; }
@@ -76,7 +74,7 @@ class CDXLLogicalDelete : public CDXLLogical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *node, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *node, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 
   // serialize operator in DXL format

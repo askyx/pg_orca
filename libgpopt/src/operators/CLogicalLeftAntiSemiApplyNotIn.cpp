@@ -40,7 +40,7 @@ CXformSet *CLogicalLeftAntiSemiApplyNotIn::PxfsCandidates(CMemoryPool *mp) const
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalLeftAntiSemiApplyNotIn::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                                      BOOL must_exist) {
+                                                                      bool must_exist) {
   CColRefArray *pdrgpcrInner = CUtils::PdrgpcrRemap(mp, m_pdrgpcrInner, colref_mapping, must_exist);
 
   return GPOS_NEW(mp) CLogicalLeftAntiSemiApplyNotIn(mp, pdrgpcrInner, m_eopidOriginSubq);

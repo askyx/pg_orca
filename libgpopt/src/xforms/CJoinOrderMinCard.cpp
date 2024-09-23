@@ -36,7 +36,7 @@ CJoinOrderMinCard::CJoinOrderMinCard(CMemoryPool *mp, CExpressionArray *pdrgpexp
                                      CExpressionArray *pdrgpexprConjuncts)
     : CJoinOrder(mp, pdrgpexprComponents, pdrgpexprConjuncts, true /* m_include_loj_childs */), m_pcompResult(nullptr) {
 #ifdef GPOS_DEBUG
-  for (ULONG ul = 0; ul < m_ulComps; ul++) {
+  for (uint32_t ul = 0; ul < m_ulComps; ul++) {
     GPOS_ASSERT(nullptr != m_rgpcomp[ul]->m_pexpr->Pstats() && "stats were not derived on input component");
   }
 #endif  // GPOS_DEBUG
@@ -66,13 +66,13 @@ CExpression *CJoinOrderMinCard::PexprExpand() {
   GPOS_ASSERT(nullptr == m_pcompResult && "join order is already expanded");
 
   m_pcompResult = GPOS_NEW(m_mp) SComponent(m_mp, nullptr /*pexpr*/);
-  ULONG ulCoveredComps = 0;
+  uint32_t ulCoveredComps = 0;
   while (ulCoveredComps < m_ulComps) {
     CDouble dMinRows(0.0);
     SComponent *pcompBest = nullptr;        // best component to be added to current result
     SComponent *pcompBestResult = nullptr;  // result after adding best component
 
-    for (ULONG ul = 0; ul < m_ulComps; ul++) {
+    for (uint32_t ul = 0; ul < m_ulComps; ul++) {
       SComponent *pcompCurrent = m_rgpcomp[ul];
       if (pcompCurrent->m_fUsed) {
         // used components are already included in current result

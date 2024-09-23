@@ -81,7 +81,7 @@ CExpression *CLeftJoinPruningPreprocessor::PexprCheckLeftOuterJoinPruningConditi
   }
 }
 
-BOOL CLeftJoinPruningPreprocessor::CheckJoinPruningCondOnInnerRel(const CExpression *pexprNew,
+bool CLeftJoinPruningPreprocessor::CheckJoinPruningCondOnInnerRel(const CExpression *pexprNew,
                                                                   CColRefSet *output_columns) {
   GPOS_ASSERT(nullptr != pexprNew);
   GPOS_ASSERT(nullptr != output_columns);
@@ -104,7 +104,7 @@ BOOL CLeftJoinPruningPreprocessor::CheckJoinPruningCondOnInnerRel(const CExpress
   return true;
 }
 
-BOOL CLeftJoinPruningPreprocessor::CheckJoinPruningCondOnJoinCond(CMemoryPool *mp, const CExpression *pexprNew,
+bool CLeftJoinPruningPreprocessor::CheckJoinPruningCondOnJoinCond(CMemoryPool *mp, const CExpression *pexprNew,
                                                                   CColRefSet *result) {
   GPOS_ASSERT(nullptr != pexprNew);
   GPOS_ASSERT(nullptr != result);
@@ -126,10 +126,10 @@ BOOL CLeftJoinPruningPreprocessor::CheckJoinPruningCondOnJoinCond(CMemoryPool *m
   // Derived output columns of the outer relation of the left join
   CColRefSet *outer_rel_columns = outer_rel->DeriveOutputColumns();
 
-  ULONG num_keys = inner_rel_key_sets->Keys();
+  uint32_t num_keys = inner_rel_key_sets->Keys();
 
   // Extracting unique keys of inner relation
-  for (ULONG ul = 0; ul < num_keys; ul++) {
+  for (uint32_t ul = 0; ul < num_keys; ul++) {
     CColRefSet *pdrgpcrKey = inner_rel_key_sets->PcrsKey(mp, ul);
     inner_unique_keys->Include(pdrgpcrKey);
     pdrgpcrKey->Release();
@@ -182,7 +182,7 @@ BOOL CLeftJoinPruningPreprocessor::CheckJoinPruningCondOnJoinCond(CMemoryPool *m
   return true;
 }
 
-BOOL CLeftJoinPruningPreprocessor::CheckAndCondInJoinCond(CMemoryPool *mp, const CExpression *join_cond,
+bool CLeftJoinPruningPreprocessor::CheckAndCondInJoinCond(CMemoryPool *mp, const CExpression *join_cond,
                                                           const CColRefSet *inner_unique_keys, CColRefSet *result,
                                                           const CColRefSet *outer_rel_columns) {
   GPOS_ASSERT(nullptr != join_cond);
@@ -190,8 +190,8 @@ BOOL CLeftJoinPruningPreprocessor::CheckAndCondInJoinCond(CMemoryPool *mp, const
   GPOS_ASSERT(nullptr != result);
   GPOS_ASSERT(nullptr != outer_rel_columns);
 
-  ULONG arity_join = join_cond->Arity();
-  for (ULONG ul = 0; ul < arity_join; ul++) {
+  uint32_t arity_join = join_cond->Arity();
+  for (uint32_t ul = 0; ul < arity_join; ul++) {
     CExpression *join_cond_child = (*join_cond)[ul];
 
     // If the child of the ScalarBoolAnd is not a ScalarCmp then
@@ -226,16 +226,16 @@ BOOL CLeftJoinPruningPreprocessor::CheckAndCondInJoinCond(CMemoryPool *mp, const
   return true;
 }
 
-BOOL CLeftJoinPruningPreprocessor::CheckForFullUniqueKeySetInInnerRel(CMemoryPool *mp, const CExpression *pexprNew,
+bool CLeftJoinPruningPreprocessor::CheckForFullUniqueKeySetInInnerRel(CMemoryPool *mp, const CExpression *pexprNew,
                                                                       const CColRefSet *result) {
   GPOS_ASSERT(nullptr != pexprNew);
   GPOS_ASSERT(nullptr != result);
 
   CExpression *inner_rel = (*pexprNew)[1];
   CKeyCollection *inner_rel_key_sets = inner_rel->DeriveKeyCollection();
-  ULONG ulKeys = inner_rel_key_sets->Keys();
-  BOOL are_all_unique_keys_present;
-  for (ULONG ul = 0; ul < ulKeys; ul++) {
+  uint32_t ulKeys = inner_rel_key_sets->Keys();
+  bool are_all_unique_keys_present;
+  for (uint32_t ul = 0; ul < ulKeys; ul++) {
     CColRefSet *pdrgpcrKey = inner_rel_key_sets->PcrsKey(mp, ul);
     CColRefSetIter it(*pdrgpcrKey);
     are_all_unique_keys_present = true;
@@ -387,16 +387,16 @@ void CLeftJoinPruningPreprocessor::ComputeOutputColumns(const CExpression *pexpr
     CLogicalSetOp *pop = CLogicalSetOp::PopConvert(pexpr->Pop());
     // Starting from index 1, since the 0th input column array is the same
     // as the output column array
-    for (ULONG i = 1; i < pop->PdrgpdrgpcrInput()->Size(); i++) {
+    for (uint32_t i = 1; i < pop->PdrgpdrgpcrInput()->Size(); i++) {
       CColRefArray *pdrgpcrInput = (*pop->PdrgpdrgpcrInput())[i];
-      for (ULONG j = 0; j < pdrgpcrInput->Size(); j++) {
+      for (uint32_t j = 0; j < pdrgpcrInput->Size(); j++) {
         combined_output_pred_columns->Include((*pdrgpcrInput)[j]);
       }
     }
   }
 
-  ULONG arity = pexpr->Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  uint32_t arity = pexpr->Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CExpression *pexpr_child = (*pexpr)[ul];
     if (pexpr_child->Pop()->FScalar()) {
       CColRefSet *derived_used_columns_scalar = pexpr_child->DeriveUsedColumns();
@@ -411,8 +411,8 @@ CExpression *CLeftJoinPruningPreprocessor::JoinPruningTreeTraversal(CMemoryPool 
   GPOS_ASSERT(nullptr != pexpr);
   GPOS_ASSERT(nullptr != pdrgpexpr);
 
-  ULONG number_of_childs = pexpr->Arity();
-  for (ULONG ul = 0; ul < number_of_childs; ul++) {
+  uint32_t number_of_childs = pexpr->Arity();
+  for (uint32_t ul = 0; ul < number_of_childs; ul++) {
     CExpression *pexpr_child = (*pexpr)[ul];
     if (pexpr_child->Pop()->FLogical()) {
       CExpression *pexprLogicalJoinPrunedChild = PexprPreprocess(mp, pexpr_child, combined_output_pred_columns);

@@ -30,8 +30,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLDatumGeneric::CDXLDatumGeneric(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier, BOOL is_null, BYTE *byte_array,
-                                   ULONG length)
+CDXLDatumGeneric::CDXLDatumGeneric(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier, bool is_null,
+                                   uint8_t *byte_array, uint32_t length)
     : CDXLDatum(mp, mdid_type, type_modifier, is_null, length), m_byte_array(byte_array) {
   GPOS_ASSERT_IMP(m_is_null, (m_byte_array == nullptr) && (m_length == 0));
 }
@@ -56,6 +56,6 @@ CDXLDatumGeneric::~CDXLDatumGeneric() {
 //		Returns the bytearray of the datum
 //
 //---------------------------------------------------------------------------
-const BYTE *CDXLDatumGeneric::GetByteArray() const {
+const uint8_t *CDXLDatumGeneric::GetByteArray() const {
   return m_byte_array;
 }

@@ -39,7 +39,7 @@ class CXformSelect2Filter : public CXformImplementation {
   // ident accessors
   EXformId Exfid() const override { return ExfSelect2Filter; }
 
-  const CHAR *SzId() const override { return "CXformSelect2Filter"; }
+  const char *SzId() const override { return "CXformSelect2Filter"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

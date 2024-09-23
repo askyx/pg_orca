@@ -24,7 +24,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalSpool::CPhysicalSpool(CMemoryPool *mp, BOOL eager) : CPhysical(mp), m_eager(eager) {}
+CPhysicalSpool::CPhysicalSpool(CMemoryPool *mp, bool eager) : CPhysical(mp), m_eager(eager) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -45,13 +45,13 @@ CPhysicalSpool::~CPhysicalSpool() = default;
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalSpool::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                         ULONG child_index,
+                                         uint32_t child_index,
                                          CDrvdPropArray *,  // pdrgpdpCtxt
-                                         ULONG              // ulOptReq
+                                         uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(0 == child_index);
 
-  return PcrsChildReqd(mp, exprhdl, pcrsRequired, child_index, gpos::ulong_max);
+  return PcrsChildReqd(mp, exprhdl, pcrsRequired, child_index, UINT32_MAX);
 }
 
 //---------------------------------------------------------------------------
@@ -63,9 +63,9 @@ CColRefSet *CPhysicalSpool::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exp
 //
 //---------------------------------------------------------------------------
 COrderSpec *CPhysicalSpool::PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired,
-                                        ULONG child_index,
+                                        uint32_t child_index,
                                         CDrvdPropArray *,  // pdrgpdpCtxt
-                                        ULONG              // ulOptReq
+                                        uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
 
@@ -83,13 +83,13 @@ COrderSpec *CPhysicalSpool::PosRequired(CMemoryPool *mp, CExpressionHandle &expr
 CCTEReq *CPhysicalSpool::PcteRequired(CMemoryPool *,        // mp,
                                       CExpressionHandle &,  // exprhdl,
                                       CCTEReq *pcter,
-                                      ULONG
+                                      uint32_t
 #ifdef GPOS_DEBUG
                                           child_index
 #endif
                                       ,
                                       CDrvdPropArray *,  // pdrgpdpCtxt,
-                                      ULONG              // ulOptReq
+                                      uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -116,7 +116,7 @@ COrderSpec *CPhysicalSpool::PosDerive(CMemoryPool *,  // mp
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalSpool::Matches(COperator *pop) const {
+bool CPhysicalSpool::Matches(COperator *pop) const {
   if (Eopid() == pop->Eopid()) {
     CPhysicalSpool *popSpool = CPhysicalSpool::PopConvert(pop);
     return m_eager == popSpool->FEager();
@@ -125,10 +125,9 @@ BOOL CPhysicalSpool::Matches(COperator *pop) const {
   return false;
 }
 
-ULONG
-CPhysicalSpool::HashValue() const {
-  ULONG hash = COperator::HashValue();
-  return gpos::CombineHashes(hash, gpos::HashValue<BOOL>(&m_eager));
+uint32_t CPhysicalSpool::HashValue() const {
+  uint32_t hash = COperator::HashValue();
+  return gpos::CombineHashes(hash, gpos::HashValue<bool>(&m_eager));
 }
 
 //---------------------------------------------------------------------------
@@ -139,8 +138,8 @@ CPhysicalSpool::HashValue() const {
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalSpool::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                       ULONG  // ulOptReq
+bool CPhysicalSpool::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                       uint32_t  // ulOptReq
 ) const {
   return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }
@@ -166,7 +165,7 @@ CEnfdProp::EPropEnforcingType CPhysicalSpool::EpetOrder(CExpressionHandle &,  //
   return CEnfdProp::EpetUnnecessary;
 }
 
-BOOL CPhysicalSpool::FValidContext(CMemoryPool *, COptimizationContext *poc,
+bool CPhysicalSpool::FValidContext(CMemoryPool *, COptimizationContext *poc,
                                    COptimizationContextArray *pdrgpocChild) const {
   GPOS_ASSERT(nullptr != pdrgpocChild);
   GPOS_ASSERT(1 == pdrgpocChild->Size());

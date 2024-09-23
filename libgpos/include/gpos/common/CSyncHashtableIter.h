@@ -48,11 +48,11 @@ class CSyncHashtableIter {
   CSyncHashtable<T, K> &m_ht;
 
   // index of bucket to operate on
-  ULONG m_bucket_idx;
+  uint32_t m_bucket_idx;
 
   // a slab of memory to manufacture an invalid element; we enforce
   // memory alignment here to mimic allocation of a class object
-  ALIGN_STORAGE BYTE m_invalid_elem_data[sizeof(T)];
+  ALIGN_STORAGE uint8_t m_invalid_elem_data[sizeof(T)];
 
   // a pointer to memory slab to interpret it as invalid element
   T *m_invalid_elem;
@@ -95,7 +95,7 @@ class CSyncHashtableIter {
   }
 
   // a flag indicating if invalid element is currently in the hash table
-  BOOL m_invalid_elem_inserted;
+  bool m_invalid_elem_inserted;
 
  public:
   CSyncHashtableIter(const CSyncHashtableIter<T, K> &) = delete;
@@ -122,7 +122,7 @@ class CSyncHashtableIter {
   }
 
   // advances iterator
-  BOOL Advance() {
+  bool Advance() {
     GPOS_ASSERT(m_bucket_idx < m_ht.m_nbuckets && "Advancing an exhausted iterator");
 
     if (!m_invalid_elem_inserted) {

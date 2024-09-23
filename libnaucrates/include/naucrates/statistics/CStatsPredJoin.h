@@ -31,13 +31,13 @@ using namespace gpmd;
 class CStatsPredJoin : public CRefCount {
  private:
   // column id
-  ULONG m_colidOuter;
+  uint32_t m_colidOuter;
 
   // comparison type
   CStatsPred::EStatsCmpType m_stats_cmp_type;
 
   // column id
-  ULONG m_colidInner;
+  uint32_t m_colidInner;
 
  public:
   CStatsPredJoin &operator=(CStatsPredJoin &) = delete;
@@ -45,22 +45,20 @@ class CStatsPredJoin : public CRefCount {
   CStatsPredJoin(const CStatsPredJoin &) = delete;
 
   // c'tor
-  CStatsPredJoin(ULONG colid1, CStatsPred::EStatsCmpType stats_cmp_type, ULONG colid2)
+  CStatsPredJoin(uint32_t colid1, CStatsPred::EStatsCmpType stats_cmp_type, uint32_t colid2)
       : m_colidOuter(colid1), m_stats_cmp_type(stats_cmp_type), m_colidInner(colid2) {}
 
   // accessors
-  BOOL HasValidColIdOuter() const { return gpos::ulong_max != m_colidOuter; }
+  bool HasValidColIdOuter() const { return UINT32_MAX != m_colidOuter; }
 
-  ULONG
-  ColIdOuter() const { return m_colidOuter; }
+  uint32_t ColIdOuter() const { return m_colidOuter; }
 
   // comparison type
   CStatsPred::EStatsCmpType GetCmpType() const { return m_stats_cmp_type; }
 
-  BOOL HasValidColIdInner() const { return gpos::ulong_max != m_colidInner; }
+  bool HasValidColIdInner() const { return UINT32_MAX != m_colidInner; }
 
-  ULONG
-  ColIdInner() const { return m_colidInner; }
+  uint32_t ColIdInner() const { return m_colidInner; }
 
   // d'tor
   ~CStatsPredJoin() override = default;

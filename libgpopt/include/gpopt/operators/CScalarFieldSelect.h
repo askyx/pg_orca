@@ -37,16 +37,17 @@ class CScalarFieldSelect : public CScalar {
   IMDId *m_field_collation;
 
   // output typmod (usually -1)
-  INT m_type_modifier;
+  int32_t m_type_modifier;
 
   // attribute number of field to extract
-  SINT m_field_number;
+  int16_t m_field_number;
 
  public:
   CScalarFieldSelect(const CScalarFieldSelect &) = delete;
 
   // ctor/dtor
-  CScalarFieldSelect(CMemoryPool *mp, IMDId *field_type, IMDId *field_collation, INT type_modifier, SINT field_number);
+  CScalarFieldSelect(CMemoryPool *mp, IMDId *field_type, IMDId *field_collation, int32_t type_modifier,
+                     int16_t field_number);
 
   ~CScalarFieldSelect() override;
 
@@ -54,13 +55,13 @@ class CScalarFieldSelect : public CScalar {
   EOperatorId Eopid() const override { return EopScalarFieldSelect; }
 
   // operator name
-  const CHAR *SzId() const override { return "CScalarFieldSelect"; }
+  const char *SzId() const override { return "CScalarFieldSelect"; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // mdid of the field
   IMDId *MdidType() const override { return m_field_type; }
@@ -69,10 +70,10 @@ class CScalarFieldSelect : public CScalar {
   IMDId *FieldCollation() const { return m_field_collation; }
 
   // output mode type
-  INT TypeModifier() const override { return m_type_modifier; }
+  int32_t TypeModifier() const override { return m_type_modifier; }
 
   // attribute number of field
-  SINT FieldNumber() const { return m_field_number; }
+  int16_t FieldNumber() const { return m_field_number; }
 
   // conversion function
   static CScalarFieldSelect *PopConvert(COperator *pop) {
@@ -83,12 +84,12 @@ class CScalarFieldSelect : public CScalar {
   }
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

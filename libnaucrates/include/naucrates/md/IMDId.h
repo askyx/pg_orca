@@ -32,7 +32,7 @@ using namespace gpdxl;
 // fwd decl
 class CSystemId;
 
-static const INT default_type_modifier = -1;
+static const int32_t default_type_modifier = -1;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -47,7 +47,7 @@ class IMDId : public CRefCount {
   // number of deletion locks -- each MDAccessor adds a new deletion lock if it uses
   // an MDId object in its internal hash-table, the deletion lock is released when
   // MDAccessor is destroyed
-  ULONG_PTR m_deletion_locks{0};
+  uintptr_t m_deletion_locks{0};
 
  public:
   //------------------------------------------------------------------
@@ -81,19 +81,19 @@ class IMDId : public CRefCount {
   virtual EMDIdType MdidType() const = 0;
 
   // string representation of mdid
-  virtual const WCHAR *GetBuffer() const = 0;
+  virtual const wchar_t *GetBuffer() const = 0;
 
   // system id
   virtual CSystemId Sysid() const = 0;
 
   // equality check
-  virtual BOOL Equals(const IMDId *mdid) const = 0;
+  virtual bool Equals(const IMDId *mdid) const = 0;
 
   // computes the hash value for the metadata id
-  virtual ULONG HashValue() const = 0;
+  virtual uint32_t HashValue() const = 0;
 
   // return true if calling object's destructor is allowed
-  BOOL Deletable() const override { return (0 == m_deletion_locks); }
+  bool Deletable() const override { return (0 == m_deletion_locks); }
 
   // increase number of deletion locks
   void AddDeletionLock() { m_deletion_locks++; }
@@ -106,25 +106,24 @@ class IMDId : public CRefCount {
   }
 
   // return number of deletion locks
-  ULONG_PTR
-  DeletionLocks() const { return m_deletion_locks; }
+  uintptr_t DeletionLocks() const { return m_deletion_locks; }
 
   // static hash functions for use in different indexing structures,
   // e.g. hashmaps, MD cache, etc.
-  static ULONG MDIdHash(const IMDId *mdid) {
+  static uint32_t MDIdHash(const IMDId *mdid) {
     GPOS_ASSERT(nullptr != mdid);
     return mdid->HashValue();
   }
 
   // static equality functions for use in different structures,
   // e.g. hashmaps, MD cache, etc.
-  static BOOL MDIdCompare(const IMDId *left_mdid, const IMDId *right_mdid) {
+  static bool MDIdCompare(const IMDId *left_mdid, const IMDId *right_mdid) {
     GPOS_ASSERT(nullptr != left_mdid && nullptr != right_mdid);
     return left_mdid->Equals(right_mdid);
   }
 
   // Compare function used by CDynamicPtrArray::Sort
-  static INT CompareHashVal(const void *left, const void *right) {
+  static int32_t CompareHashVal(const void *left, const void *right) {
     if ((*((IMDId **)left))->HashValue() < (*((IMDId **)right))->HashValue()) {
       return -1;
     } else if ((*((IMDId **)left))->HashValue() > ((*(IMDId **)right))->HashValue()) {
@@ -136,10 +135,10 @@ class IMDId : public CRefCount {
   }
 
   // is the mdid valid
-  virtual BOOL IsValid() const = 0;
+  virtual bool IsValid() const = 0;
 
   // safe validity function
-  static BOOL IsValid(const IMDId *mdid) { return nullptr != mdid && mdid->IsValid(); }
+  static bool IsValid(const IMDId *mdid) { return nullptr != mdid && mdid->IsValid(); }
 
   virtual gpos::IOstream &OsPrint(gpos::IOstream &os) const = 0;
 

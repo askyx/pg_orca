@@ -27,10 +27,10 @@ namespace gpopt {
 class CPhysicalPartitionSelector : public CPhysical {
  private:
   // Scan id
-  ULONG m_scan_id;
+  uint32_t m_scan_id;
 
   // Unique id per Partition Selector created
-  ULONG m_selector_id;
+  uint32_t m_selector_id;
 
   // mdid of partitioned table
   IMDId *m_mdid;
@@ -42,7 +42,8 @@ class CPhysicalPartitionSelector : public CPhysical {
   CPhysicalPartitionSelector(const CPhysicalPartitionSelector &) = delete;
 
   // ctor
-  CPhysicalPartitionSelector(CMemoryPool *mp, ULONG scan_id, ULONG selector_id, IMDId *mdid, CExpression *pexprScalar);
+  CPhysicalPartitionSelector(CMemoryPool *mp, uint32_t scan_id, uint32_t selector_id, IMDId *mdid,
+                             CExpression *pexprScalar);
 
   // dtor
   ~CPhysicalPartitionSelector() override;
@@ -51,14 +52,12 @@ class CPhysicalPartitionSelector : public CPhysical {
   EOperatorId Eopid() const override { return EopPhysicalPartitionSelector; }
 
   // operator name
-  const CHAR *SzId() const override { return "CPhysicalPartitionSelector"; }
+  const char *SzId() const override { return "CPhysicalPartitionSelector"; }
 
   // scan id
-  ULONG
-  ScanId() const { return m_scan_id; }
+  uint32_t ScanId() const { return m_scan_id; }
 
-  ULONG
-  SelectorId() const { return m_selector_id; }
+  uint32_t SelectorId() const { return m_selector_id; }
 
   // partitioned table mdid
   IMDId *MDId() const { return m_mdid; }
@@ -67,13 +66,13 @@ class CPhysicalPartitionSelector : public CPhysical {
   CExpression *FilterExpr() const { return m_filter_expr; }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override {
+  bool FInputOrderSensitive() const override {
     // operator has one child
     return false;
   }
@@ -83,23 +82,23 @@ class CPhysicalPartitionSelector : public CPhysical {
   //-------------------------------------------------------------------------------------
 
   // compute required output columns of the n-th child
-  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG child_index,
-                           CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) override;
+  CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t child_index,
+                           CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) override;
 
   // compute required ctes of the n-th child
-  CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
-                        CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, uint32_t child_index,
+                        CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // compute required sort order of the n-th child
-  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
-                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, uint32_t child_index,
+                          CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   CPartitionPropagationSpec *PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                          CPartitionPropagationSpec *prsRequired, ULONG child_index,
-                                          CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const override;
+                                          CPartitionPropagationSpec *prsRequired, uint32_t child_index,
+                                          CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const override;
 
   // check if required columns are included in output columns
-  BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const override;
+  bool FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t ulOptReq) const override;
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties
@@ -119,7 +118,7 @@ class CPhysicalPartitionSelector : public CPhysical {
 
   // return true if operator passes through stats obtained from children,
   // this is used when computing stats during costing
-  BOOL FPassThruStats() const override { return true; }
+  bool FPassThruStats() const override { return true; }
 
   //-------------------------------------------------------------------------------------
   //-------------------------------------------------------------------------------------

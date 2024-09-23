@@ -58,11 +58,11 @@ class CIndexQualInfo {
   ~CIndexQualInfo() = default;
 
   // comparison function for sorting index qualifiers
-  static INT IndexQualInfoCmp(const void *p1, const void *p2) {
+  static int32_t IndexQualInfoCmp(const void *p1, const void *p2) {
     const CIndexQualInfo *qual_info1 = *(const CIndexQualInfo **)p1;
     const CIndexQualInfo *qual_info2 = *(const CIndexQualInfo **)p2;
 
-    return (INT)qual_info1->m_attno - (INT)qual_info2->m_attno;
+    return (int32_t)qual_info1->m_attno - (int32_t)qual_info2->m_attno;
   }
 };
 // array of index qual info

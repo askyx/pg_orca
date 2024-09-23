@@ -39,7 +39,7 @@ using namespace gpopt;
 //---------------------------------------------------------------------------
 CPhysicalHashJoin::CPhysicalHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexprOuterKeys,
                                      CExpressionArray *pdrgpexprInnerKeys, IMdIdArray *hash_opfamilies,
-                                     BOOL is_null_aware, CXform::EXformId origin_xform)
+                                     bool is_null_aware, CXform::EXformId origin_xform)
     : CPhysicalJoin(mp, origin_xform),
       m_pdrgpexprOuterKeys(pdrgpexprOuterKeys),
       m_pdrgpexprInnerKeys(pdrgpexprInnerKeys),
@@ -78,13 +78,13 @@ CPhysicalHashJoin::~CPhysicalHashJoin() {
 COrderSpec *CPhysicalHashJoin::PosRequired(CMemoryPool *mp,
                                            CExpressionHandle &,  // exprhdl
                                            COrderSpec *,         // posInput,
-                                           ULONG
+                                           uint32_t
 #ifdef GPOS_DEBUG
                                                child_index
 #endif  // GPOS_DEBUG
                                            ,
                                            CDrvdPropArray *,  // pdrgpdpCtxt
-                                           ULONG              // ulOptReq
+                                           uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(child_index < 2 && "Required sort order can be computed on the relational child only");
 
@@ -102,7 +102,7 @@ COrderSpec *CPhysicalHashJoin::PosRequired(CMemoryPool *mp,
 //		column identifier. This is to accommodate the case of self-joins where
 //		column names match, but the column identifier may not.
 //---------------------------------------------------------------------------
-static BOOL FIdenticalExpression(CExpression *left, CExpression *right) {
+static bool FIdenticalExpression(CExpression *left, CExpression *right) {
   if (left->Pop()->Eopid() == COperator::EopScalarIdent && right->Pop()->Eopid() == COperator::EopScalarIdent) {
     // skip colid check. just make sure that names are same.
     return CWStringConst::Equals(CScalarIdent::PopConvert(left->Pop())->Pcr()->Name().Pstr(),
@@ -110,7 +110,7 @@ static BOOL FIdenticalExpression(CExpression *left, CExpression *right) {
   } else if (!left->Pop()->Matches(right->Pop()) || left->Arity() != right->Arity()) {
     return false;
   } else {
-    for (ULONG ul = 0; ul < left->Arity(); ul++) {
+    for (uint32_t ul = 0; ul < left->Arity(); ul++) {
       if (!FIdenticalExpression((*left)[ul], (*right)[ul])) {
         return false;
       }
@@ -127,10 +127,10 @@ static BOOL FIdenticalExpression(CExpression *left, CExpression *right) {
 //		Check whether the expressions in input arrays match, *not* including
 //		colid.
 //---------------------------------------------------------------------------
-static BOOL FIdenticalExpressionArrays(const CExpressionArray *outer, const CExpressionArray *inner) {
+static bool FIdenticalExpressionArrays(const CExpressionArray *outer, const CExpressionArray *inner) {
   GPOS_ASSERT(outer->Size() == inner->Size());
 
-  for (ULONG ul = 0; ul < outer->Size(); ul++) {
+  for (uint32_t ul = 0; ul < outer->Size(); ul++) {
     if (!FIdenticalExpression((*outer)[ul], (*inner)[ul])) {
       return false;
     }
@@ -138,7 +138,7 @@ static BOOL FIdenticalExpressionArrays(const CExpressionArray *outer, const CExp
   return true;
 }
 
-BOOL CPhysicalHashJoin::FSelfJoinWithMatchingJoinKeys(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
+bool CPhysicalHashJoin::FSelfJoinWithMatchingJoinKeys(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
   // There may be duplicate mdids because the hash key is unique on a
   // combination of mdid and alias. Here we do not care about duplicate
   // aliases because joining the same table with different alias is still a
@@ -148,7 +148,7 @@ BOOL CPhysicalHashJoin::FSelfJoinWithMatchingJoinKeys(CMemoryPool *mp, CExpressi
   CTableDescriptorHashSet *innertabs =
       CUtils::RemoveDuplicateMdids(mp, exprhdl.DeriveTableDescriptor(1 /*child_index*/));
 
-  BOOL result = false;
+  bool result = false;
 
   // Check that this is a self join. Size() of 1 means that there is 1 unique
   // table on each side of the join. Check whether it is the same table.
@@ -197,15 +197,15 @@ CEnfdProp::EPropEnforcingType CPhysicalHashJoin::EpetOrder(CExpressionHandle &, 
 //		be all the "not null" columns coming from that child
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalHashJoin::FNullableHashKeys(CColRefSet *pcrsNotNull, BOOL fInner) const {
-  ULONG ulHashKeys = 0;
+bool CPhysicalHashJoin::FNullableHashKeys(CColRefSet *pcrsNotNull, bool fInner) const {
+  uint32_t ulHashKeys = 0;
   if (fInner) {
     ulHashKeys = m_pdrgpexprInnerKeys->Size();
   } else {
     ulHashKeys = m_pdrgpexprOuterKeys->Size();
   }
 
-  for (ULONG ul = 0; ul < ulHashKeys; ul++) {
+  for (uint32_t ul = 0; ul < ulHashKeys; ul++) {
     if (FNullableHashKey(ul, pcrsNotNull, fInner)) {
       return true;
     }
@@ -222,7 +222,7 @@ BOOL CPhysicalHashJoin::FNullableHashKeys(CColRefSet *pcrsNotNull, BOOL fInner) 
 //		Check whether a hash key is nullable
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalHashJoin::FNullableHashKey(ULONG ulKey, CColRefSet *pcrsNotNull, BOOL fInner) const {
+bool CPhysicalHashJoin::FNullableHashKey(uint32_t ulKey, CColRefSet *pcrsNotNull, bool fInner) const {
   COperator *pop = nullptr;
   if (fInner) {
     pop = (*m_pdrgpexprInnerKeys)[ulKey]->Pop();
@@ -282,7 +282,7 @@ CExpression *CPhysicalHashJoin::PexprJoinPredOnPartKeys(CMemoryPool *mp, CExpres
   GPOS_ASSERT(nullptr != pcrsAllowedRefs);
 
   CExpression *pexprPred = nullptr;
-  for (ULONG ulKey = 0; nullptr == pexprPred && ulKey < pdrgppartkeys->Size(); ulKey++) {
+  for (uint32_t ulKey = 0; nullptr == pexprPred && ulKey < pdrgppartkeys->Size(); ulKey++) {
     // get partition key
     CColRef2dArray *pdrgpdrgpcrPartKeys = (*pdrgppartkeys)[ulKey]->Pdrgpdrgpcr();
 
@@ -297,8 +297,8 @@ CExpression *CPhysicalHashJoin::PexprJoinPredOnPartKeys(CMemoryPool *mp, CExpres
 
 CPartitionPropagationSpec *CPhysicalHashJoin::PppsRequiredForJoins(CMemoryPool *mp, CExpressionHandle &exprhdl,
                                                                    CPartitionPropagationSpec *pppsRequired,
-                                                                   ULONG child_index, CDrvdPropArray *pdrgpdpCtxt,
-                                                                   ULONG ulOptReq) const {
+                                                                   uint32_t child_index, CDrvdPropArray *pdrgpdpCtxt,
+                                                                   uint32_t ulOptReq) const {
   GPOS_ASSERT(nullptr != pppsRequired);
   GPOS_ASSERT(nullptr != pdrgpdpCtxt);
 
@@ -322,8 +322,8 @@ CPartitionPropagationSpec *CPhysicalHashJoin::PppsRequiredForJoins(CMemoryPool *
     // For every consumer(Dynamic Table Scan, identified by scan-id),
     // if PppsRequired() is called for inner child, we can add a propagator.
     // if PppsRequired() is called for outer child, we can add a consumer.
-    for (ULONG ul = 0; ul < part_info_outer->UlConsumers(); ++ul) {
-      ULONG scan_id = part_info_outer->ScanId(ul);
+    for (uint32_t ul = 0; ul < part_info_outer->UlConsumers(); ++ul) {
+      uint32_t scan_id = part_info_outer->ScanId(ul);
       IMDId *rel_mdid = part_info_outer->GetRelMdId(ul);
       CPartKeysArray *part_keys_array = part_info_outer->Pdrgppartkeys(ul);
 
@@ -374,8 +374,8 @@ CPartitionPropagationSpec *CPhysicalHashJoin::PppsRequiredForJoins(CMemoryPool *
     // operator specific rules (as in the for loop above)
     CBitSet *allowed_scan_ids = GPOS_NEW(mp) CBitSet(mp);
     CPartInfo *part_info = exprhdl.DerivePartitionInfo(child_index);
-    for (ULONG ul = 0; ul < part_info->UlConsumers(); ++ul) {
-      ULONG scan_id = part_info->ScanId(ul);
+    for (uint32_t ul = 0; ul < part_info->UlConsumers(); ++ul) {
+      uint32_t scan_id = part_info->ScanId(ul);
       allowed_scan_ids->ExchangeSet(scan_id);
     }
     pps_result->InsertAllowedConsumers(pppsRequired, allowed_scan_ids);

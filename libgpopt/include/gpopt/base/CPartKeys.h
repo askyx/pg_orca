@@ -38,7 +38,7 @@ class CPartKeys : public CRefCount {
   CColRef2dArray *m_pdrgpdrgpcr;
 
   // number of levels
-  ULONG m_num_of_part_levels;
+  uint32_t m_num_of_part_levels;
 
  public:
   CPartKeys(const CPartKeys &) = delete;
@@ -50,20 +50,19 @@ class CPartKeys : public CRefCount {
   ~CPartKeys() override;
 
   // return key at a given level
-  CColRef *PcrKey(ULONG ulLevel) const;
+  CColRef *PcrKey(uint32_t ulLevel) const;
 
   // return array of keys
   CColRef2dArray *Pdrgpdrgpcr() const { return m_pdrgpdrgpcr; }
 
   // number of levels
-  ULONG
-  GetPartitioningLevel() const { return m_num_of_part_levels; }
+  uint32_t GetPartitioningLevel() const { return m_num_of_part_levels; }
 
   // copy part key into the given memory pool
   CPartKeys *PpartkeysCopy(CMemoryPool *mp);
 
   // check whether the key columns overlap the given column
-  BOOL FOverlap(CColRefSet *pcrs) const;
+  bool FOverlap(CColRefSet *pcrs) const;
 
   // create a new PartKeys object from the current one by remapping the
   // keys using the given hashmap

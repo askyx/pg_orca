@@ -56,7 +56,7 @@ CPhysicalSort::~CPhysicalSort() {
 //		Match operator
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalSort::Matches(COperator *pop) const {
+bool CPhysicalSort::Matches(COperator *pop) const {
   if (Eopid() != pop->Eopid()) {
     return false;
   }
@@ -74,15 +74,15 @@ BOOL CPhysicalSort::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalSort::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                        ULONG child_index,
+                                        uint32_t child_index,
                                         CDrvdPropArray *,  // pdrgpdpCtxt
-                                        ULONG              // ulOptReq
+                                        uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(0 == child_index);
 
   CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp, *m_pcrsSort);
   pcrs->Union(pcrsRequired);
-  CColRefSet *pcrsChildReqd = PcrsChildReqd(mp, exprhdl, pcrs, child_index, gpos::ulong_max);
+  CColRefSet *pcrsChildReqd = PcrsChildReqd(mp, exprhdl, pcrs, child_index, UINT32_MAX);
   pcrs->Release();
 
   return pcrsChildReqd;
@@ -99,13 +99,13 @@ CColRefSet *CPhysicalSort::PcrsRequired(CMemoryPool *mp, CExpressionHandle &expr
 COrderSpec *CPhysicalSort::PosRequired(CMemoryPool *mp,
                                        CExpressionHandle &,  // exprhdl
                                        COrderSpec *,         // posRequired
-                                       ULONG
+                                       uint32_t
 #ifdef GPOS_DEBUG
                                            child_index
 #endif  // GPOS_DEBUG
                                        ,
                                        CDrvdPropArray *,  // pdrgpdpCtxt
-                                       ULONG              // ulOptReq
+                                       uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
 
@@ -125,13 +125,13 @@ COrderSpec *CPhysicalSort::PosRequired(CMemoryPool *mp,
 CCTEReq *CPhysicalSort::PcteRequired(CMemoryPool *,        // mp,
                                      CExpressionHandle &,  // exprhdl,
                                      CCTEReq *pcter,
-                                     ULONG
+                                     uint32_t
 #ifdef GPOS_DEBUG
                                          child_index
 #endif
                                      ,
                                      CDrvdPropArray *,  // pdrgpdpCtxt,
-                                     ULONG              // ulOptReq
+                                     uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -145,8 +145,8 @@ CCTEReq *CPhysicalSort::PcteRequired(CMemoryPool *,        // mp,
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalSort::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                      ULONG  // ulOptReq
+bool CPhysicalSort::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                      uint32_t  // ulOptReq
 ) const {
   return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }

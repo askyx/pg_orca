@@ -47,7 +47,7 @@ class IConstExprEvaluator : public CRefCount {
 
   // returns true iff the evaluator can evaluate constant expressions without
   // subqueries
-  virtual BOOL FCanEvalExpressions() = 0;
+  virtual bool FCanEvalExpressions() = 0;
 };
 }  // namespace gpopt
 

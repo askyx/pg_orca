@@ -766,7 +766,7 @@ class CDXLTokens {
   // element for mapping Edxltoken to WCHARs
   struct SWszMapElem {
     Edxltoken m_edxlt;
-    const WCHAR *m_wsz;
+    const wchar_t *m_wsz;
   };
 
   // element for mapping Edxltoken to CWStringConst

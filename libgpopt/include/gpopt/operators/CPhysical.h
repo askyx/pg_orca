@@ -27,7 +27,7 @@ namespace gpopt {
 using namespace gpos;
 
 // arrays of unsigned integer arrays
-using UlongPtrArray = CDynamicPtrArray<ULONG_PTR, CleanupDeleteArray>;
+using UlongPtrArray = CDynamicPtrArray<uintptr_t, CleanupDeleteArray>;
 
 class CTableDescriptor;
 class CCTEMap;
@@ -72,16 +72,16 @@ class CPhysical : public COperator {
     CColRefSet *m_pcrsRequired;
 
     // index of target physical child for which required columns need to be computed
-    ULONG m_ulChildIndex;
+    uint32_t m_ulChildIndex;
 
     // index of scalar child to be used when computing required columns
-    ULONG m_ulScalarChildIndex;
+    uint32_t m_ulScalarChildIndex;
 
    public:
     CReqdColsRequest(const CReqdColsRequest &) = delete;
 
     // ctor
-    CReqdColsRequest(CColRefSet *pcrsRequired, ULONG child_index, ULONG ulScalarChildIndex)
+    CReqdColsRequest(CColRefSet *pcrsRequired, uint32_t child_index, uint32_t ulScalarChildIndex)
         : m_pcrsRequired(pcrsRequired), m_ulChildIndex(child_index), m_ulScalarChildIndex(ulScalarChildIndex) {
       GPOS_ASSERT(nullptr != pcrsRequired);
     }
@@ -93,18 +93,16 @@ class CPhysical : public COperator {
     CColRefSet *GetColRefSet() const { return m_pcrsRequired; }
 
     // child index to push requirements to
-    ULONG
-    UlChildIndex() const { return m_ulChildIndex; }
+    uint32_t UlChildIndex() const { return m_ulChildIndex; }
 
     // scalar child index
-    ULONG
-    UlScalarChildIndex() const { return m_ulScalarChildIndex; }
+    uint32_t UlScalarChildIndex() const { return m_ulScalarChildIndex; }
 
     // hash function
-    static ULONG HashValue(const CReqdColsRequest *prcr);
+    static uint32_t HashValue(const CReqdColsRequest *prcr);
 
     // equality function
-    static BOOL Equals(const CReqdColsRequest *prcrFst, const CReqdColsRequest *prcrSnd);
+    static bool Equals(const CReqdColsRequest *prcrFst, const CReqdColsRequest *prcrSnd);
 
   };  // class CReqdColsRequest
 
@@ -120,47 +118,48 @@ class CPhysical : public COperator {
   // number of requests that operator will create for its child,
   // array entries correspond to order, distribution, rewindability and partition
   // propagation, respectively
-  ULONG m_rgulOptReqs[GPOPT_PLAN_PROPS];
+  uint32_t m_rgulOptReqs[GPOPT_PLAN_PROPS];
 
   // array of expanded requests
   UlongPtrArray *m_pdrgpulpOptReqsExpanded;
 
   // total number of optimization requests
-  ULONG m_ulTotalOptRequests;
+  uint32_t m_ulTotalOptRequests;
 
   // update number of requests of a given property
-  void UpdateOptRequests(ULONG ulPropIndex, ULONG ulRequests);
+  void UpdateOptRequests(uint32_t ulPropIndex, uint32_t ulRequests);
 
   // check whether we can push a part table requirement to a given child, given
   // the knowledge of where the part index id is defined
-  static BOOL FCanPushPartReqToChild(CBitSet *pbsPartConsumer, ULONG child_index);
+  static bool FCanPushPartReqToChild(CBitSet *pbsPartConsumer, uint32_t child_index);
 
  protected:
   // set number of order requests that operator creates for its child
-  void SetOrderRequests(ULONG ulOrderReqs) { UpdateOptRequests(0 /*ulPropIndex*/, ulOrderReqs); }
+  void SetOrderRequests(uint32_t ulOrderReqs) { UpdateOptRequests(0 /*ulPropIndex*/, ulOrderReqs); }
 
   // set number of distribution requests that operator creates for its child
-  void SetDistrRequests(ULONG ulDistrReqs) { UpdateOptRequests(1 /*ulPropIndex*/, ulDistrReqs); }
+  void SetDistrRequests(uint32_t ulDistrReqs) { UpdateOptRequests(1 /*ulPropIndex*/, ulDistrReqs); }
 
   // set number of rewindability requests that operator creates for its child
-  void SetRewindRequests(ULONG ulRewindReqs) { UpdateOptRequests(2 /*ulPropIndex*/, ulRewindReqs); }
+  void SetRewindRequests(uint32_t ulRewindReqs) { UpdateOptRequests(2 /*ulPropIndex*/, ulRewindReqs); }
 
   // set number of partition propagation requests that operator creates for its child
-  void SetPartPropagateRequests(ULONG ulPartPropagationReqs) {
+  void SetPartPropagateRequests(uint32_t ulPartPropagationReqs) {
     UpdateOptRequests(3 /*ulPropIndex*/, ulPartPropagationReqs);
   }
 
   // pass cte requirement to the n-th child
-  CCTEReq *PcterNAry(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
+  CCTEReq *PcterNAry(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, uint32_t child_index,
                      CDrvdPropArray *pdrgpdpCtxt) const;
 
   // helper for computing required columns of the n-th child by including used
   // columns and excluding defined columns of the scalar child
-  CColRefSet *PcrsChildReqd(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput, ULONG child_index,
-                            ULONG ulScalarIndex);
+  CColRefSet *PcrsChildReqd(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsInput, uint32_t child_index,
+                            uint32_t ulScalarIndex);
 
   // helper for a simple case of computing child's required sort order
-  static COrderSpec *PosPassThru(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput, ULONG child_index);
+  static COrderSpec *PosPassThru(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput,
+                                 uint32_t child_index);
 
   // pass cte requirement to the child
   static CCTEReq *PcterPushThru(CCTEReq *pcter);
@@ -174,11 +173,11 @@ class CPhysical : public COperator {
 
   // helper for checking if output columns of a unary operator
   // that defines no new columns include the required columns
-  static BOOL FUnaryProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired);
+  static bool FUnaryProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired);
 
   // return true if the given column set includes any of the columns defined by
   // the unary node, as given by the handle
-  static BOOL FUnaryUsesDefinedColumns(CColRefSet *pcrs, CExpressionHandle &exprhdl);
+  static bool FUnaryUsesDefinedColumns(CColRefSet *pcrs, CExpressionHandle &exprhdl);
 
  public:
   CPhysical(const CPhysical &) = delete;
@@ -196,7 +195,7 @@ class CPhysical : public COperator {
   static CDouble GetSkew(IStatistics *stats);
 
   // type of operator
-  BOOL FPhysical() const override {
+  bool FPhysical() const override {
     GPOS_ASSERT(!FLogical() && !FScalar() && !FPattern());
     return true;
   }
@@ -213,26 +212,26 @@ class CPhysical : public COperator {
 
   // compute required output columns of the n-th child
   virtual CColRefSet *PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                   ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) = 0;
+                                   uint32_t child_index, CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) = 0;
 
   // compute required ctes of the n-th child
-  virtual CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
-                                CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const = 0;
+  virtual CCTEReq *PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, uint32_t child_index,
+                                CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const = 0;
 
   // compute required sort order of the n-th child
   virtual COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired,
-                                  ULONG child_index, CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const = 0;
+                                  uint32_t child_index, CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const = 0;
 
   // compute required partition propagation spec of the n-th child
   virtual CPartitionPropagationSpec *PppsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                  CPartitionPropagationSpec *pppsRequired, ULONG child_index,
-                                                  CDrvdPropArray *pdrgpdpCtxt, ULONG ulOptReq) const;
+                                                  CPartitionPropagationSpec *pppsRequired, uint32_t child_index,
+                                                  CDrvdPropArray *pdrgpdpCtxt, uint32_t ulOptReq) const;
 
   // required properties: check if required columns are included in output columns
-  virtual BOOL FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, ULONG ulOptReq) const = 0;
+  virtual bool FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired, uint32_t ulOptReq) const = 0;
 
   // required properties: check if required CTEs are included in derived CTE map
-  virtual BOOL FProvidesReqdCTEs(CExpressionHandle &exprhdl, const CCTEReq *pcter) const;
+  virtual bool FProvidesReqdCTEs(CExpressionHandle &exprhdl, const CCTEReq *pcter) const;
 
   //-------------------------------------------------------------------------------------
   // Derived Plan Properties
@@ -260,11 +259,11 @@ class CPhysical : public COperator {
                                                                  const CEnfdPartitionPropagation *per) const;
 
   // order matching type
-  virtual CEnfdOrder::EOrderMatching Eom(CReqdPropPlan *prppInput, ULONG child_index, CDrvdPropArray *pdrgpdpCtxt,
-                                         ULONG ulOptReq);
+  virtual CEnfdOrder::EOrderMatching Eom(CReqdPropPlan *prppInput, uint32_t child_index, CDrvdPropArray *pdrgpdpCtxt,
+                                         uint32_t ulOptReq);
 
   // check if optimization contexts is valid
-  virtual BOOL FValidContext(CMemoryPool *,               // mp
+  virtual bool FValidContext(CMemoryPool *,               // mp
                              COptimizationContext *,      // poc,
                              COptimizationContextArray *  // pdrgpocChild
   ) const {
@@ -282,39 +281,34 @@ class CPhysical : public COperator {
   }
 
   // number of order requests that operator creates for its child
-  ULONG
-  UlOrderRequests() const { return m_rgulOptReqs[0]; }
+  uint32_t UlOrderRequests() const { return m_rgulOptReqs[0]; }
 
   // number of distribution requests that operator creates for its child
-  ULONG
-  UlDistrRequests() const { return m_rgulOptReqs[1]; }
+  uint32_t UlDistrRequests() const { return m_rgulOptReqs[1]; }
 
   // number of rewindability requests that operator creates for its child
-  ULONG
-  UlRewindRequests() const { return m_rgulOptReqs[2]; }
+  uint32_t UlRewindRequests() const { return m_rgulOptReqs[2]; }
 
   // number of partition propagation requests that operator creates for its child
-  ULONG
-  UlPartPropagateRequests() const { return m_rgulOptReqs[3]; }
+  uint32_t UlPartPropagateRequests() const { return m_rgulOptReqs[3]; }
 
   // return total number of optimization requests
-  ULONG
-  UlOptRequests() const { return m_ulTotalOptRequests; }
+  uint32_t UlOptRequests() const { return m_ulTotalOptRequests; }
 
   // map request number to order, distribution, rewindability and partition propagation requests
-  void LookupRequest(ULONG ulReqNo,              // input: request number
-                     ULONG *pulOrderReq,         // output: order request number
-                     ULONG *pulDistrReq,         // output: distribution request number
-                     ULONG *pulRewindReq,        // output: rewindability request number
-                     ULONG *pulPartPropagateReq  // output: partition propagation request number
+  void LookupRequest(uint32_t ulReqNo,              // input: request number
+                     uint32_t *pulOrderReq,         // output: order request number
+                     uint32_t *pulDistrReq,         // output: distribution request number
+                     uint32_t *pulRewindReq,        // output: rewindability request number
+                     uint32_t *pulPartPropagateReq  // output: partition propagation request number
   );
 
   // return true if operator passes through stats obtained from children,
   // this is used when computing stats during costing
-  virtual BOOL FPassThruStats() const = 0;
+  virtual bool FPassThruStats() const = 0;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // conversion function
   static CPhysical *PopConvert(COperator *pop) {

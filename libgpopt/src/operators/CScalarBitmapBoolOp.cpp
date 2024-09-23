@@ -27,8 +27,8 @@
 
 using namespace gpopt;
 
-const WCHAR CScalarBitmapBoolOp::m_rgwszBitmapOpType[EbitmapboolSentinel][30] = {GPOS_WSZ_LIT("BitmapAnd"),
-                                                                                 GPOS_WSZ_LIT("BitmapOr")};
+const wchar_t CScalarBitmapBoolOp::m_rgwszBitmapOpType[EbitmapboolSentinel][30] = {GPOS_WSZ_LIT("BitmapAnd"),
+                                                                                   GPOS_WSZ_LIT("BitmapOr")};
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -66,10 +66,9 @@ CScalarBitmapBoolOp::~CScalarBitmapBoolOp() {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarBitmapBoolOp::HashValue() const {
-  ULONG ulBoolop = (ULONG)Ebitmapboolop();
-  return gpos::CombineHashes(COperator::HashValue(), gpos::HashValue<ULONG>(&ulBoolop));
+uint32_t CScalarBitmapBoolOp::HashValue() const {
+  uint32_t ulBoolop = (uint32_t)Ebitmapboolop();
+  return gpos::CombineHashes(COperator::HashValue(), gpos::HashValue<uint32_t>(&ulBoolop));
 }
 
 //---------------------------------------------------------------------------
@@ -80,7 +79,7 @@ CScalarBitmapBoolOp::HashValue() const {
 //		Match this operator with the given one.
 //
 //---------------------------------------------------------------------------
-BOOL CScalarBitmapBoolOp::Matches(COperator *pop) const {
+bool CScalarBitmapBoolOp::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }

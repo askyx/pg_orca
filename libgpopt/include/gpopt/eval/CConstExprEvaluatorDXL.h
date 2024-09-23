@@ -69,7 +69,7 @@ class CConstExprEvaluatorDXL : public IConstExprEvaluator {
   CExpression *PexprEval(CExpression *pexpr) override;
 
   // Returns true iff the evaluator can evaluate expressions
-  BOOL FCanEvalExpressions() override;
+  bool FCanEvalExpressions() override;
 };
 }  // namespace gpopt
 

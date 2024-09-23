@@ -46,7 +46,7 @@ class CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations : public CXformLeftSemiAp
   // ident accessors
   EXformId Exfid() const override { return ExfLeftSemiApplyIn2LeftSemiJoinNoCorrelations; }
 
-  const CHAR *SzId() const override { return "CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations"; }
+  const char *SzId() const override { return "CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations"; }
 
 };  // class CXformLeftSemiApplyIn2LeftSemiJoinNoCorrelations
 

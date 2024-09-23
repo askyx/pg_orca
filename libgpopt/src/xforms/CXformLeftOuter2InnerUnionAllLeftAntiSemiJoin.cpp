@@ -50,7 +50,7 @@
 using namespace gpopt;
 
 // if ratio of the cardinalities outer/inner is below this value, we apply the xform
-const DOUBLE CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::m_dOuterInnerRatioThreshold = 0.001;
+const double CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::m_dOuterInnerRatioThreshold = 0.001;
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -93,8 +93,8 @@ CXform::EXformPromise CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::Exfp(CExpre
   }
 
   // check if stats are derivable on child groups
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CGroup *pgroupChild = (*exprhdl.Pgexpr())[ul];
     if (!pgroupChild->FScalar() && !pgroupChild->FStatsDerivable(mp)) {
       // stats must be derivable on every child
@@ -113,7 +113,7 @@ CXform::EXformPromise CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::Exfp(CExpre
 //		Check the stats ratio to decide whether to apply the xform or not.
 //
 //---------------------------------------------------------------------------
-BOOL CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::FApplyXformUsingStatsInfo(const IStatistics *outer_stats,
+bool CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::FApplyXformUsingStatsInfo(const IStatistics *outer_stats,
                                                                               const IStatistics *inner_side_stats) {
   if (GPOS_FTRACE(gpos::EopttraceApplyLeftOuter2InnerUnionAllLeftAntiSemiJoinDisregardingStats)) {
     return true;
@@ -123,8 +123,8 @@ BOOL CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::FApplyXformUsingStatsInfo(co
     return false;
   }
 
-  DOUBLE num_rows_outer = outer_stats->Rows().Get();
-  DOUBLE dRowsInner = inner_side_stats->Rows().Get();
+  double num_rows_outer = outer_stats->Rows().Get();
+  double dRowsInner = inner_side_stats->Rows().Get();
   GPOS_ASSERT(0 < dRowsInner);
 
   return num_rows_outer / dRowsInner <= m_dOuterInnerRatioThreshold;
@@ -193,7 +193,7 @@ void CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::Transform(CXformContext *pxf
     return;
   }
 
-  const ULONG ulCTEOuterId = COptCtxt::PoctxtFromTLS()->Pcteinfo()->next_id();
+  const uint32_t ulCTEOuterId = COptCtxt::PoctxtFromTLS()->Pcteinfo()->next_id();
   CColRefSet *outer_refs = pexprOuter->DeriveOutputColumns();
   CColRefArray *pdrgpcrOuter = outer_refs->Pdrgpcr(mp);
   (void)CXformUtils::PexprAddCTEProducer(mp, ulCTEOuterId, pdrgpcrOuter, pexprOuter);
@@ -208,7 +208,7 @@ void CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::Transform(CXformContext *pxf
 
   CColRefSet *pcrsJoinOutput = pexpr->DeriveOutputColumns();
   CColRefArray *pdrgpcrJoinOutput = pcrsJoinOutput->Pdrgpcr(mp);
-  const ULONG ulCTEJoinId = COptCtxt::PoctxtFromTLS()->Pcteinfo()->next_id();
+  const uint32_t ulCTEJoinId = COptCtxt::PoctxtFromTLS()->Pcteinfo()->next_id();
   (void)CXformUtils::PexprAddCTEProducer(mp, ulCTEJoinId, pdrgpcrJoinOutput, pexprInnerJoin);
 
   CColRefSet *pcrsScalar = pexprScalar->DeriveUsedColumns();
@@ -246,7 +246,7 @@ void CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::Transform(CXformContext *pxf
 //		by this xform.
 //
 //---------------------------------------------------------------------------
-BOOL CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::FValidInnerExpr(CExpression *pexprInner) {
+bool CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::FValidInnerExpr(CExpression *pexprInner) {
   GPOS_ASSERT(nullptr != pexprInner);
 
   // set of inner operator ids that should not be considered because they usually
@@ -258,7 +258,7 @@ BOOL CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::FValidInnerExpr(CExpression 
   };
 
   const COperator::EOperatorId op_id = pexprInner->Pop()->Eopid();
-  for (ULONG ul = 0; ul < GPOS_ARRAY_SIZE(rgeopids); ++ul) {
+  for (uint32_t ul = 0; ul < GPOS_ARRAY_SIZE(rgeopids); ++ul) {
     if (rgeopids[ul] == op_id) {
       return false;
     }
@@ -278,7 +278,7 @@ BOOL CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::FValidInnerExpr(CExpression 
 //---------------------------------------------------------------------------
 CExpression *CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::PexprLeftAntiSemiJoinWithInnerGroupBy(
     CMemoryPool *mp, CColRefArray *pdrgpcrOuter, CColRefArray *pdrgpcrOuterCopy, CColRefSet *pcrsScalar,
-    CColRefSet *pcrsInner, CColRefArray *pdrgpcrJoinOutput, ULONG ulCTEJoinId, ULONG ulCTEOuterId) {
+    CColRefSet *pcrsInner, CColRefArray *pdrgpcrJoinOutput, uint32_t ulCTEJoinId, uint32_t ulCTEOuterId) {
   // compute the original outer keys and their correspondent keys on the two branches
   // of the LASJ
   CColRefSet *pcrsOuterKeys = GPOS_NEW(mp) CColRefSet(mp);
@@ -333,7 +333,8 @@ CExpression *CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::PexprLeftAntiSemiJoi
 //---------------------------------------------------------------------------
 CExpression *CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::PexprProjectOverLeftAntiSemiJoin(
     CMemoryPool *mp, CColRefArray *pdrgpcrOuter, CColRefSet *pcrsScalar, CColRefSet *pcrsInner,
-    CColRefArray *pdrgpcrJoinOutput, ULONG ulCTEJoinId, ULONG ulCTEOuterId, CColRefArray **ppdrgpcrProjectOutput) {
+    CColRefArray *pdrgpcrJoinOutput, uint32_t ulCTEJoinId, uint32_t ulCTEOuterId,
+    CColRefArray **ppdrgpcrProjectOutput) {
   GPOS_ASSERT(nullptr != pdrgpcrOuter);
   GPOS_ASSERT(nullptr != pcrsScalar);
   GPOS_ASSERT(nullptr != pcrsInner);
@@ -349,13 +350,13 @@ CExpression *CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::PexprProjectOverLeft
   GPOS_ASSERT(nullptr != pdrgpulIndexesOfOuter);
 
   UlongToColRefMap *colref_mapping = GPOS_NEW(mp) UlongToColRefMap(mp);
-  const ULONG ulOuterCopyLength = pdrgpcrOuterCopy->Size();
+  const uint32_t ulOuterCopyLength = pdrgpcrOuterCopy->Size();
 
-  for (ULONG ul = 0; ul < ulOuterCopyLength; ++ul) {
-    ULONG ulOrigIndex = *(*pdrgpulIndexesOfOuter)[ul];
+  for (uint32_t ul = 0; ul < ulOuterCopyLength; ++ul) {
+    uint32_t ulOrigIndex = *(*pdrgpulIndexesOfOuter)[ul];
     CColRef *pcrOriginal = (*pdrgpcrJoinOutput)[ulOrigIndex];
-    BOOL fInserted GPOS_ASSERTS_ONLY =
-        colref_mapping->Insert(GPOS_NEW(mp) ULONG(pcrOriginal->Id()), (*pdrgpcrOuterCopy)[ul]);
+    bool fInserted GPOS_ASSERTS_ONLY =
+        colref_mapping->Insert(GPOS_NEW(mp) uint32_t(pcrOriginal->Id()), (*pdrgpcrOuterCopy)[ul]);
     GPOS_ASSERT(fInserted);
   }
 
@@ -372,7 +373,7 @@ CExpression *CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::PexprProjectOverLeft
   return pexprProject;
 }
 
-BOOL CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::IsApplyOnce() {
+bool CXformLeftOuter2InnerUnionAllLeftAntiSemiJoin::IsApplyOnce() {
   return true;
 }
 // EOF

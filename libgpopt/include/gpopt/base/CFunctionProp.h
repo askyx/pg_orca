@@ -33,16 +33,16 @@ class CFunctionProp : public CRefCount {
   IMDFunction::EFuncStbl m_efs;
 
   // does this expression have a volatile Function Scan
-  BOOL m_fHasVolatileFunctionScan;
+  bool m_fHasVolatileFunctionScan;
 
   // is this function used as a scan operator
-  BOOL m_fScan;
+  bool m_fScan;
 
  public:
   CFunctionProp(const CFunctionProp &) = delete;
 
   // ctor
-  CFunctionProp(IMDFunction::EFuncStbl func_stability, BOOL fHasVolatileFunctionScan, BOOL fScan);
+  CFunctionProp(IMDFunction::EFuncStbl func_stability, bool fHasVolatileFunctionScan, bool fScan);
 
   // dtor
   ~CFunctionProp() override;
@@ -51,10 +51,10 @@ class CFunctionProp : public CRefCount {
   IMDFunction::EFuncStbl Efs() const { return m_efs; }
 
   // does this expression have a volatile Function Scan
-  virtual BOOL FHasVolatileFunctionScan() const { return m_fHasVolatileFunctionScan; }
+  virtual bool FHasVolatileFunctionScan() const { return m_fHasVolatileFunctionScan; }
 
   // check if must execute on a single host
-  BOOL NeedsSingletonExecution() const;
+  bool NeedsSingletonExecution() const;
 
   // print
   IOstream &OsPrint(IOstream &os) const;

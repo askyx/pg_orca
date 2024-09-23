@@ -61,10 +61,10 @@ CLogicalUnionAll::~CLogicalUnionAll() = default;
 //---------------------------------------------------------------------------
 CMaxCard CLogicalUnionAll::DeriveMaxCard(CMemoryPool *,  // mp
                                          CExpressionHandle &exprhdl) const {
-  const ULONG arity = exprhdl.Arity();
+  const uint32_t arity = exprhdl.Arity();
 
   CMaxCard maxcard = exprhdl.DeriveMaxCard(0);
-  for (ULONG ul = 1; ul < arity; ul++) {
+  for (uint32_t ul = 1; ul < arity; ul++) {
     maxcard += exprhdl.DeriveMaxCard(ul);
   }
 
@@ -80,7 +80,7 @@ CMaxCard CLogicalUnionAll::DeriveMaxCard(CMemoryPool *,  // mp
 //
 //---------------------------------------------------------------------------
 COperator *CLogicalUnionAll::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                        BOOL must_exist) {
+                                                        bool must_exist) {
   CColRefArray *pdrgpcrOutput = CUtils::PdrgpcrRemap(mp, m_pdrgpcrOutput, colref_mapping, must_exist);
   CColRef2dArray *pdrgpdrgpcrInput = CUtils::PdrgpdrgpcrRemap(mp, m_pdrgpdrgpcrInput, colref_mapping, must_exist);
 
@@ -141,8 +141,8 @@ IStatistics *CLogicalUnionAll::PstatsDeriveUnionAll(CMemoryPool *mp, CExpression
 
   IStatistics *result_stats = exprhdl.Pstats(0);
   result_stats->AddRef();
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 1; ul < arity; ul++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t ul = 1; ul < arity; ul++) {
     IStatistics *child_stats = exprhdl.Pstats(ul);
     CStatistics *stats = CUnionAllStatsProcessor::CreateStatsForUnionAll(
         mp, dynamic_cast<CStatistics *>(result_stats), dynamic_cast<CStatistics *>(child_stats), yy,
@@ -186,8 +186,8 @@ IStatistics *CLogicalUnionAll::PstatsDerive(CMemoryPool *mp, CExpressionHandle &
    * all output columns align directly with the input columns of the first
    * union all child.
    */
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 1; ul < arity; ul++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t ul = 1; ul < arity; ul++) {
     UlongToColRefMap *mapping = CUtils::PhmulcrMapping(mp, pdrgpcrOutput, (*pdrgpdrgpcrInput)[ul]);
     CColRefArray *pdrgpcrInputStats = CUtils::PdrgpcrRemap(mp, pdrgpcrOutputStats, mapping, true);
     pdrgpdrgpcrInputStats->Append(pdrgpcrInputStats);
@@ -210,7 +210,7 @@ IStatistics *CLogicalUnionAll::PstatsDerive(CMemoryPool *mp, CExpressionHandle &
 //---------------------------------------------------------------------------
 CColRefSet *CLogicalUnionAll::PcrsStat(CMemoryPool *mp,
                                        CExpressionHandle &,  // exprhdl
-                                       CColRefSet *pcrsInput, ULONG child_index) const {
+                                       CColRefSet *pcrsInput, uint32_t child_index) const {
   /*
    * We only need compute stats for columns required from parent of UnionAll
    * operator. But the output columns of UnionAll are different from it`s

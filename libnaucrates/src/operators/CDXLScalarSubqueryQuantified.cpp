@@ -27,7 +27,7 @@ using namespace gpmd;
 //
 //---------------------------------------------------------------------------
 CDXLScalarSubqueryQuantified::CDXLScalarSubqueryQuantified(CMemoryPool *mp, IMDId *scalar_op_mdid,
-                                                           CMDName *scalar_op_mdname, ULONG colid)
+                                                           CMDName *scalar_op_mdname, uint32_t colid)
     : CDXLScalar(mp), m_scalar_op_mdid(scalar_op_mdid), m_scalar_op_mdname(scalar_op_mdname), m_colid(colid) {
   GPOS_ASSERT(scalar_op_mdid->IsValid());
   GPOS_ASSERT(nullptr != scalar_op_mdname);
@@ -55,7 +55,7 @@ CDXLScalarSubqueryQuantified::~CDXLScalarSubqueryQuantified() {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarSubqueryQuantified::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarSubqueryQuantified::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(2 == dxlnode->Arity());
 
   CDXLNode *pdxlnScalarChild = (*dxlnode)[EdxlsqquantifiedIndexScalar];

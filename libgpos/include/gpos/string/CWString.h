@@ -22,7 +22,7 @@ namespace gpos {
 //
 //	@doc:
 //		Wide character String interface.
-//		Internally, the class uses a null-terminated WCHAR buffer to store the string characters.
+//		Internally, the class uses a null-terminated wchar_t buffer to store the string characters.
 //		The class API provides functions for accessing the wide-character buffer and its length,
 //		as well as functions that modify the current string by appending another string to it,
 //		or that construct a string according to a given format.
@@ -32,35 +32,35 @@ namespace gpos {
 class CWString : public CWStringBase {
  protected:
   // null-terminated wide character buffer
-  WCHAR *m_w_str_buffer;
+  wchar_t *m_w_str_buffer;
 
   // appends the contents of a buffer to the current string
-  virtual void AppendBuffer(const WCHAR *w_str_buffer) = 0;
+  virtual void AppendBuffer(const wchar_t *w_str_buffer) = 0;
 
  public:
   // ctor
-  CWString(ULONG length);
+  CWString(uint32_t length);
 
   // dtor
   ~CWString() override = default;
 
   // returns the wide character buffer storing the string
-  const WCHAR *GetBuffer() const override;
+  const wchar_t *GetBuffer() const override;
 
   // appends a string
   void Append(const CWStringBase *str);
 
   // appends a formatted string
-  virtual void AppendFormat(const WCHAR *format, ...) = 0;
+  virtual void AppendFormat(const wchar_t *format, ...) = 0;
 
   // appends a string and replaces character with string
-  virtual void AppendEscape(const CWStringBase *str, WCHAR wc, const WCHAR *w_str_replace) = 0;
+  virtual void AppendEscape(const CWStringBase *str, wchar_t wc, const wchar_t *w_str_replace) = 0;
 
   // appends a null terminated character array
-  virtual void AppendCharArray(const CHAR *sz) = 0;
+  virtual void AppendCharArray(const char *sz) = 0;
 
   // appends a null terminated wide character array
-  virtual void AppendWideCharArray(const WCHAR *w_str) = 0;
+  virtual void AppendWideCharArray(const wchar_t *w_str) = 0;
 
   // resets string
   virtual void Reset() = 0;

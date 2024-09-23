@@ -37,19 +37,19 @@ using namespace gpos;
 class CDXLDatumInt2 : public CDXLDatum {
  private:
   // int2 value
-  SINT m_val;
+  int16_t m_val;
 
  public:
   CDXLDatumInt2(const CDXLDatumInt2 &) = delete;
 
   // ctor
-  CDXLDatumInt2(CMemoryPool *mp, IMDId *mdid_type, BOOL is_null, SINT val);
+  CDXLDatumInt2(CMemoryPool *mp, IMDId *mdid_type, bool is_null, int16_t val);
 
   // dtor
   ~CDXLDatumInt2() override = default;
 
   // accessor of int value
-  SINT Value() const;
+  int16_t Value() const;
 
   // serialize the datum as the given element
 

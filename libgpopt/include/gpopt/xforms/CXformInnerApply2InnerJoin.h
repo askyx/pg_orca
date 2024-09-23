@@ -42,7 +42,7 @@ class CXformInnerApply2InnerJoin : public CXformApply2Join<CLogicalInnerApply, C
   // ident accessors
   EXformId Exfid() const override { return ExfInnerApply2InnerJoin; }
 
-  const CHAR *SzId() const override { return "CXformInnerApply2InnerJoin"; }
+  const char *SzId() const override { return "CXformInnerApply2InnerJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

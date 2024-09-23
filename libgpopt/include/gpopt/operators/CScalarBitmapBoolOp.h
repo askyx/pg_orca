@@ -42,7 +42,7 @@ class CScalarBitmapBoolOp : public CScalar {
   // bitmap type id
   IMDId *m_pmdidBitmapType;
 
-  static const WCHAR m_rgwszBitmapOpType[EbitmapboolSentinel][30];
+  static const wchar_t m_rgwszBitmapOpType[EbitmapboolSentinel][30];
 
  public:
   CScalarBitmapBoolOp(const CScalarBitmapBoolOp &) = delete;
@@ -63,21 +63,21 @@ class CScalarBitmapBoolOp : public CScalar {
   EOperatorId Eopid() const override { return EopScalarBitmapBoolOp; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarBitmapBoolOp"; }
+  const char *SzId() const override { return "CScalarBitmapBoolOp"; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return false; }
+  bool FInputOrderSensitive() const override { return false; }
 
   // return a copy of the operator with remapped columns
   COperator *PopCopyWithRemappedColumns(CMemoryPool *,       // mp,
                                         UlongToColRefMap *,  // colref_mapping,
-                                        BOOL                 // must_exist
+                                        bool                 // must_exist
                                         ) override {
     return PopCopyDefault();
   }

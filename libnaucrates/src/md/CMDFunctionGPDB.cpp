@@ -27,8 +27,8 @@ using namespace gpdxl;
 //
 //---------------------------------------------------------------------------
 CMDFunctionGPDB::CMDFunctionGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *result_type_mdid,
-                                 IMdIdArray *mdid_array, BOOL ReturnsSet, EFuncStbl func_stability, BOOL is_strict,
-                                 BOOL is_ndv_preserving, BOOL is_allowed_for_PS)
+                                 IMdIdArray *mdid_array, bool ReturnsSet, EFuncStbl func_stability, bool is_strict,
+                                 bool is_ndv_preserving, bool is_allowed_for_PS)
     : m_mp(mp),
       m_mdid(mdid),
       m_mdname(mdname),
@@ -134,7 +134,7 @@ IMdIdArray *CMDFunctionGPDB::OutputArgTypesMdidArray() const {
 //		Returns whether function result is a set
 //
 //---------------------------------------------------------------------------
-BOOL CMDFunctionGPDB::ReturnsSet() const {
+bool CMDFunctionGPDB::ReturnsSet() const {
   return m_returns_set;
 }
 
@@ -150,8 +150,8 @@ CWStringDynamic *CMDFunctionGPDB::GetOutputArgTypeArrayStr() const {
   GPOS_ASSERT(nullptr != m_mdid_types_array);
   CWStringDynamic *str = GPOS_NEW(m_mp) CWStringDynamic(m_mp);
 
-  const ULONG len = m_mdid_types_array->Size();
-  for (ULONG ul = 0; ul < len; ul++) {
+  const uint32_t len = m_mdid_types_array->Size();
+  for (uint32_t ul = 0; ul < len; ul++) {
     IMDId *mdid = (*m_mdid_types_array)[ul];
     if (ul == len - 1) {
       // last element: do not print a comma

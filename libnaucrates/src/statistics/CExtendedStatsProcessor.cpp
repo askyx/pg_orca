@@ -28,7 +28,7 @@
 
 using namespace gpopt;
 
-static BOOL IsDependencyCapablePredicate(CStatsPred *child_pred GPOS_UNUSED) {
+static bool IsDependencyCapablePredicate(CStatsPred *child_pred GPOS_UNUSED) {
   return child_pred->GetPredStatsType() == CStatsPred::EsptPoint;
 }
 
@@ -55,7 +55,7 @@ CMDExtStatsInfo *choose_best_statistics(CMemoryPool *mp, CMDExtStatsInfoArray *m
   int best_num_matched = 2;                         /* goal #1: maximize */
   int best_match_keys = (STATS_MAX_DIMENSIONS + 1); /* goal #2: minimize */
 
-  for (ULONG i = 0; i < md_statsinfo_array->Size(); i++) {
+  for (uint32_t i = 0; i < md_statsinfo_array->Size(); i++) {
     CMDExtStatsInfo *info = (*md_statsinfo_array)[i];
     int num_matched;
     int numkeys;
@@ -100,7 +100,7 @@ CMDExtStatsInfo *choose_best_statistics(CMemoryPool *mp, CMDExtStatsInfoArray *m
  * NB: This function is modified version of dependency_implies_attribute() in
  *     dependencies.c.
  */
-static bool dependency_implies_attribute(CMDDependency *dependency, INT attnum) {
+static bool dependency_implies_attribute(CMDDependency *dependency, int32_t attnum) {
   if (attnum == dependency->GetToAttno()) {
     return true;
   }
@@ -121,7 +121,7 @@ static bool dependency_is_fully_matched(CMDDependency *dependency, CBitSet *attn
    * Check that the dependency actually is fully covered by clauses. We have
    * to translate all attribute numbers, as those are referenced
    */
-  for (ULONG j = 0; j < dependency->GetNAttributes() - 1; j++) {
+  for (uint32_t j = 0; j < dependency->GetNAttributes() - 1; j++) {
     int attnum = *(*dependency->GetFromAttno())[j];
 
     if (!attnums->Get(attnum)) {
@@ -152,11 +152,11 @@ static bool dependency_is_fully_matched(CMDDependency *dependency, CBitSet *attn
  *     dependencies.c.
  */
 static CMDDependency *find_strongest_dependency(CMDDependencyArray *dependencies, CBitSet *attnums) {
-  ULONG i;
+  uint32_t i;
   CMDDependency *strongest = nullptr;
 
   /* number of attnums in clauses */
-  ULONG nattnums = attnums->Size();
+  uint32_t nattnums = attnums->Size();
 
   /*
    * Iterate over the MVDependency items and find the strongest one from the
@@ -220,7 +220,7 @@ void CExtendedStatsProcessor::ApplyCorrelatedStatsToScaleFactorFilterCalculation
     return;
   }
 
-  DOUBLE s1 = 1.0;
+  double s1 = 1.0;
   CMDExtStatsInfo *stat;
   CMDDependencyArray *dependencies;
 
@@ -237,11 +237,11 @@ void CExtendedStatsProcessor::ApplyCorrelatedStatsToScaleFactorFilterCalculation
    * We also skip clauses that we already estimated using different types of
    * statistics (we treat them as incompatible).
    */
-  for (ULONG ul = 0; ul < conjunctive_pred_stats->GetNumPreds(); ul++) {
+  for (uint32_t ul = 0; ul < conjunctive_pred_stats->GetNumPreds(); ul++) {
     CStatsPred *child_pred = conjunctive_pred_stats->GetPredStats(ul);
     if (!child_pred->IsAlreadyUsedInScaleFactorEstimation() && IsDependencyCapablePredicate(child_pred)) {
-      ULONG colid = child_pred->GetColId();
-      INT *attnum = colid_to_attno_mapping->Find(&colid);
+      uint32_t colid = child_pred->GetColId();
+      int32_t *attnum = colid_to_attno_mapping->Find(&colid);
       clauses_attnums->ExchangeSet(*attnum);
     }
   }
@@ -281,7 +281,7 @@ void CExtendedStatsProcessor::ApplyCorrelatedStatsToScaleFactorFilterCalculation
    * and remove the clauses from the list.
    */
   while (true) {
-    DOUBLE s2 = 1.0;
+    double s2 = 1.0;
     CMDDependency *dependency;
 
     /* the widest/strongest dependency, fully matched by clauses */
@@ -297,8 +297,8 @@ void CExtendedStatsProcessor::ApplyCorrelatedStatsToScaleFactorFilterCalculation
      * implied attribute - with dependency (a,b => c) we look for clauses
      * on 'c'.
      */
-    const ULONG filters = conjunctive_pred_stats->GetNumPreds();
-    for (ULONG ul = 0; ul < filters; ul++) {
+    const uint32_t filters = conjunctive_pred_stats->GetNumPreds();
+    for (uint32_t ul = 0; ul < filters; ul++) {
       CStatsPred *child_pred = conjunctive_pred_stats->GetPredStats(ul);
 
       /*
@@ -308,8 +308,8 @@ void CExtendedStatsProcessor::ApplyCorrelatedStatsToScaleFactorFilterCalculation
         continue;
       }
 
-      ULONG colid = child_pred->GetColId();
-      INT *attnum = colid_to_attno_mapping->Find(&colid);
+      uint32_t colid = child_pred->GetColId();
+      int32_t *attnum = colid_to_attno_mapping->Find(&colid);
 
       /*
        * Technically we could find more than one clause for a given
@@ -363,7 +363,7 @@ bool CExtendedStatsProcessor::ApplyCorrelatedStatsToNDistinctCalculation(CMemory
                                                                          const IMDExtStatsInfo *md_statsinfo,
                                                                          const UlongToIntMap *colid_to_attno_mapping,
                                                                          ULongPtrArray *&src_grouping_cols,
-                                                                         DOUBLE *ndistinct) {
+                                                                         double *ndistinct) {
   int nmatches;
   OID statOid = InvalidOid;
   const IMDExtStats *stats;
@@ -376,10 +376,10 @@ bool CExtendedStatsProcessor::ApplyCorrelatedStatsToNDistinctCalculation(CMemory
   }
 
   attnums = GPOS_NEW(mp) CBitSet(mp);
-  for (ULONG ul = 0; ul < src_grouping_cols->Size(); ul++) {
-    ULONG colid = *(*src_grouping_cols)[ul];
+  for (uint32_t ul = 0; ul < src_grouping_cols->Size(); ul++) {
+    uint32_t colid = *(*src_grouping_cols)[ul];
 
-    INT *attnum = colid_to_attno_mapping->Find(&colid);
+    int32_t *attnum = colid_to_attno_mapping->Find(&colid);
     if (!attnum) {
       attnums->Release();
       return false;
@@ -391,7 +391,7 @@ bool CExtendedStatsProcessor::ApplyCorrelatedStatsToNDistinctCalculation(CMemory
   nmatches = 1; /* we require at least two matches */
 
   CMDExtStatsInfoArray *md_statsinfo_array = md_statsinfo->GetExtStatInfoArray();
-  for (ULONG ul = 0; ul < md_statsinfo_array->Size(); ul++) {
+  for (uint32_t ul = 0; ul < md_statsinfo_array->Size(); ul++) {
     CMDExtStatsInfo *info = (*md_statsinfo_array)[ul];
     CBitSet *shared = GPOS_NEW(mp) CBitSet(mp, *attnums);
     int nshared;
@@ -446,7 +446,7 @@ bool CExtendedStatsProcessor::ApplyCorrelatedStatsToNDistinctCalculation(CMemory
     CMDNDistinct *item = nullptr;
 
     /* Find the specific item that exactly matches the combination */
-    for (ULONG i = 0; i < stats->GetNDistinctList()->Size(); i++) {
+    for (uint32_t i = 0; i < stats->GetNDistinctList()->Size(); i++) {
       CMDNDistinct *tmpitem = (*stats->GetNDistinctList())[i];
 
       if (tmpitem->GetAttrs()->Equals(matched)) {
@@ -457,12 +457,12 @@ bool CExtendedStatsProcessor::ApplyCorrelatedStatsToNDistinctCalculation(CMemory
 
     /* Form the output varinfo list, keeping only unmatched ones */
     ULongPtrArray *new_src_grouping_cols = GPOS_NEW(mp) ULongPtrArray(mp);
-    for (ULONG ul = 0; ul < src_grouping_cols->Size(); ul++) {
-      ULONG colid = *(*src_grouping_cols)[ul];
+    for (uint32_t ul = 0; ul < src_grouping_cols->Size(); ul++) {
+      uint32_t colid = *(*src_grouping_cols)[ul];
 
-      INT *attnum = colid_to_attno_mapping->Find(&colid);
+      int32_t *attnum = colid_to_attno_mapping->Find(&colid);
       if (!matched->Get(*attnum)) {
-        new_src_grouping_cols->Append(GPOS_NEW(mp) ULONG(colid));
+        new_src_grouping_cols->Append(GPOS_NEW(mp) uint32_t(colid));
       }
     }
     src_grouping_cols->Release();

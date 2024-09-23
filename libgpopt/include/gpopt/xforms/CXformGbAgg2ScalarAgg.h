@@ -40,7 +40,7 @@ class CXformGbAgg2ScalarAgg : public CXformImplementation {
   EXformId Exfid() const override { return ExfGbAgg2ScalarAgg; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformGbAgg2ScalarAgg"; }
+  const char *SzId() const override { return "CXformGbAgg2ScalarAgg"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

@@ -24,12 +24,11 @@ using namespace gpos;
 //		Wall-clock time in micro-seconds since object construction
 //
 //---------------------------------------------------------------------------
-ULONG
-CWallClock::ElapsedUS() const {
+uint32_t CWallClock::ElapsedUS() const {
   timeval time;
   syslib::GetTimeOfDay(&time, nullptr /*timezone*/);
 
-  ULONG diff = (ULONG)(((time.tv_sec - m_time.tv_sec) * GPOS_USEC_IN_SEC) + (time.tv_usec - m_time.tv_usec));
+  uint32_t diff = (uint32_t)(((time.tv_sec - m_time.tv_sec) * GPOS_USEC_IN_SEC) + (time.tv_usec - m_time.tv_usec));
 
   return diff;
 }

@@ -19,12 +19,12 @@ using namespace gpos;
 using namespace gpopt;
 
 // used for determining equality in memo (e.g in optimization contexts)
-BOOL CPartitionPropagationSpec::SPartPropSpecInfo::Equals(const SPartPropSpecInfo *other) const {
+bool CPartitionPropagationSpec::SPartPropSpecInfo::Equals(const SPartPropSpecInfo *other) const {
   GPOS_ASSERT_IMP(m_scan_id == other->m_scan_id, m_root_rel_mdid->Equals(other->m_root_rel_mdid));
   return m_scan_id == other->m_scan_id && m_type == other->m_type && m_selector_ids->Equals(other->m_selector_ids);
 }
 
-BOOL CPartitionPropagationSpec::SPartPropSpecInfo::FSatisfies(const SPartPropSpecInfo *other) const {
+bool CPartitionPropagationSpec::SPartPropSpecInfo::FSatisfies(const SPartPropSpecInfo *other) const {
   GPOS_ASSERT_IMP(m_scan_id == other->m_scan_id, m_root_rel_mdid->Equals(other->m_root_rel_mdid));
   return m_scan_id == other->m_scan_id && m_type == other->m_type;
 }
@@ -34,7 +34,7 @@ BOOL CPartitionPropagationSpec::SPartPropSpecInfo::FSatisfies(const SPartPropSpe
 // maintain a sorted array in CPartitionPropagationSpec.
 // Eg, consumer<1>(10) and consumer<1>(10,11) will be treated as equal by
 // CmpFunc, but as non-equal by Equals
-INT CPartitionPropagationSpec::SPartPropSpecInfo::CmpFunc(const void *val1, const void *val2) {
+int32_t CPartitionPropagationSpec::SPartPropSpecInfo::CmpFunc(const void *val1, const void *val2) {
   const SPartPropSpecInfo *info1 = *(const SPartPropSpecInfo **)val1;
   const SPartPropSpecInfo *info2 = *(const SPartPropSpecInfo **)val2;
 
@@ -52,7 +52,7 @@ CPartitionPropagationSpec::~CPartitionPropagationSpec() {
   m_scan_ids->Release();
 }
 
-BOOL CPartitionPropagationSpec::Equals(const CPartitionPropagationSpec *pps) const {
+bool CPartitionPropagationSpec::Equals(const CPartitionPropagationSpec *pps) const {
   if ((m_part_prop_spec_infos == nullptr) && (pps->m_part_prop_spec_infos == nullptr)) {
     return true;
   }
@@ -79,7 +79,7 @@ BOOL CPartitionPropagationSpec::Equals(const CPartitionPropagationSpec *pps) con
   return hmulpi.Advance() == hmulpi_other.Advance();
 }
 
-CPartitionPropagationSpec::SPartPropSpecInfo *CPartitionPropagationSpec::FindPartPropSpecInfo(ULONG scan_id) const {
+CPartitionPropagationSpec::SPartPropSpecInfo *CPartitionPropagationSpec::FindPartPropSpecInfo(uint32_t scan_id) const {
   if (!Contains(scan_id)) {
     return nullptr;
   }
@@ -90,7 +90,7 @@ CPartitionPropagationSpec::SPartPropSpecInfo *CPartitionPropagationSpec::FindPar
   return info;
 }
 
-const CBitSet *CPartitionPropagationSpec::SelectorIds(ULONG scan_id) const {
+const CBitSet *CPartitionPropagationSpec::SelectorIds(uint32_t scan_id) const {
   SPartPropSpecInfo *found_info = FindPartPropSpecInfo(scan_id);
 
   if (found_info == nullptr) {
@@ -100,7 +100,7 @@ const CBitSet *CPartitionPropagationSpec::SelectorIds(ULONG scan_id) const {
   return found_info->m_selector_ids;
 }
 
-void CPartitionPropagationSpec::Insert(ULONG scan_id, EPartPropSpecInfoType type, IMDId *rool_rel_mdid,
+void CPartitionPropagationSpec::Insert(uint32_t scan_id, EPartPropSpecInfoType type, IMDId *rool_rel_mdid,
                                        CBitSet *selector_ids, CExpression *expr) {
   GPOS_RTL_ASSERT(!Contains(scan_id));
 
@@ -134,7 +134,7 @@ void CPartitionPropagationSpec::Insert(ULONG scan_id, EPartPropSpecInfoType type
   // a case of consecutive propagator, consumer request
   // cannot happen, as the PPSRequired() is called for a given child index
   // and the child index decide if we will add propagator/consumer
-  m_part_prop_spec_infos->Insert(GPOS_NEW(mp) ULONG(scan_id), info);
+  m_part_prop_spec_infos->Insert(GPOS_NEW(mp) uint32_t(scan_id), info);
 }
 
 void CPartitionPropagationSpec::Insert(SPartPropSpecInfo *other) {
@@ -199,7 +199,7 @@ void CPartitionPropagationSpec::InsertAllowedConsumers(CPartitionPropagationSpec
   }
 }
 
-void CPartitionPropagationSpec::InsertAllExcept(CPartitionPropagationSpec *pps, ULONG scan_id) {
+void CPartitionPropagationSpec::InsertAllExcept(CPartitionPropagationSpec *pps, uint32_t scan_id) {
   UlongToSPartPropSpecInfoMapIter hmulpi(pps->m_part_prop_spec_infos);
   while (hmulpi.Advance()) {
     SPartPropSpecInfo *other_info = const_cast<SPartPropSpecInfo *>(hmulpi.Value());
@@ -258,7 +258,7 @@ void CPartitionPropagationSpec::InsertAllResolve(CPartitionPropagationSpec *pps)
   }
 }
 
-BOOL CPartitionPropagationSpec::FSatisfies(const CPartitionPropagationSpec *pps_reqd) const {
+bool CPartitionPropagationSpec::FSatisfies(const CPartitionPropagationSpec *pps_reqd) const {
   if (pps_reqd->m_part_prop_spec_infos == nullptr) {
     return true;
   }
@@ -278,7 +278,7 @@ BOOL CPartitionPropagationSpec::FSatisfies(const CPartitionPropagationSpec *pps_
 // Check if there is a matching partition propogation between two specs
 // This is used to ensure that there aren't partition selectors in places that
 // are unsupported by the executor
-BOOL CPartitionPropagationSpec::IsUnsupportedPartSelector(const CPartitionPropagationSpec *pps_reqd) const {
+bool CPartitionPropagationSpec::IsUnsupportedPartSelector(const CPartitionPropagationSpec *pps_reqd) const {
   if (pps_reqd->m_part_prop_spec_infos == nullptr) {
     return false;
   }
@@ -314,7 +314,7 @@ void CPartitionPropagationSpec::AppendEnforcers(CMemoryPool *mp, CExpressionHand
     }
 
     COptCtxt *opt_ctxt = COptCtxt::PoctxtFromTLS();
-    ULONG selector_id = opt_ctxt->NextPartSelectorId();
+    uint32_t selector_id = opt_ctxt->NextPartSelectorId();
 
     info->m_root_rel_mdid->AddRef();
     info->m_filter_expr->AddRef();
@@ -351,7 +351,7 @@ IOstream &CPartitionPropagationSpec::OsPrint(IOstream &os) const {
     return os;
   }
 
-  ULONG ul = 0;
+  uint32_t ul = 0;
   UlongToSPartPropSpecInfoMapIter hmulpi(m_part_prop_spec_infos);
   while (hmulpi.Advance()) {
     const SPartPropSpecInfo *part_info = hmulpi.Value();
@@ -380,7 +380,7 @@ IOstream &CPartitionPropagationSpec::OsPrint(IOstream &os) const {
   return os;
 }
 
-BOOL CPartitionPropagationSpec::ContainsAnyConsumers() const {
+bool CPartitionPropagationSpec::ContainsAnyConsumers() const {
   if (nullptr == m_part_prop_spec_infos) {
     return false;
   }

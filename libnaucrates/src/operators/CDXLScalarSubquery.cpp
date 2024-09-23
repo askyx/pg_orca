@@ -25,7 +25,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarSubquery::CDXLScalarSubquery(CMemoryPool *mp, ULONG colid) : CDXLScalar(mp), m_colid(colid) {}
+CDXLScalarSubquery::CDXLScalarSubquery(CMemoryPool *mp, uint32_t colid) : CDXLScalar(mp), m_colid(colid) {}
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -70,7 +70,7 @@ const CWStringConst *CDXLScalarSubquery::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarSubquery::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarSubquery::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(1 == dxlnode->Arity());
 
   CDXLNode *child_dxlnode = (*dxlnode)[0];

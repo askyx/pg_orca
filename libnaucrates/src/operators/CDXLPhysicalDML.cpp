@@ -27,8 +27,8 @@ using namespace gpdxl;
 //
 //---------------------------------------------------------------------------
 CDXLPhysicalDML::CDXLPhysicalDML(CMemoryPool *mp, const EdxlDmlType dxl_dml_type, CDXLTableDescr *table_descr,
-                                 ULongPtrArray *src_colids_array, ULONG action_colid, ULONG ctid_colid,
-                                 ULONG segid_colid)
+                                 ULongPtrArray *src_colids_array, uint32_t action_colid, uint32_t ctid_colid,
+                                 uint32_t segid_colid)
     : CDXLPhysical(mp),
       m_dxl_dml_type(dxl_dml_type),
       m_dxl_table_descr(table_descr),
@@ -96,7 +96,7 @@ const CWStringConst *CDXLPhysicalDML::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalDML::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLPhysicalDML::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(2 == node->Arity());
   CDXLNode *child_dxlnode = (*node)[1];
   GPOS_ASSERT(EdxloptypePhysical == child_dxlnode->GetOperator()->GetDXLOperatorType());

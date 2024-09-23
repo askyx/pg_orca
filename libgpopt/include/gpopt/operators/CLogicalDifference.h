@@ -41,13 +41,13 @@ class CLogicalDifference : public CLogicalSetOp {
   EOperatorId Eopid() const override { return EopLogicalDifference; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalDifference"; }
+  const char *SzId() const override { return "CLogicalDifference"; }
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override { return true; }
+  bool FInputOrderSensitive() const override { return true; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties

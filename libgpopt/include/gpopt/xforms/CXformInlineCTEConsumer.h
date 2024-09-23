@@ -42,7 +42,7 @@ class CXformInlineCTEConsumer : public CXformExploration {
   EXformId Exfid() const override { return ExfInlineCTEConsumer; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformInlineCTEConsumer"; }
+  const char *SzId() const override { return "CXformInlineCTEConsumer"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

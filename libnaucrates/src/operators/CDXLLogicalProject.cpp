@@ -87,7 +87,7 @@ const CWStringConst *CDXLLogicalProject::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLLogicalProject::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLLogicalProject::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   GPOS_ASSERT(2 == dxlnode->Arity());
 
   CDXLNode *proj_list_dxlnode = (*dxlnode)[0];
@@ -101,8 +101,8 @@ void CDXLLogicalProject::AssertValid(const CDXLNode *dxlnode, BOOL validate_chil
     child_dxlnode->GetOperator()->AssertValid(child_dxlnode, validate_children);
   }
 
-  const ULONG arity = proj_list_dxlnode->Arity();
-  for (ULONG ul = 0; ul < arity; ++ul) {
+  const uint32_t arity = proj_list_dxlnode->Arity();
+  for (uint32_t ul = 0; ul < arity; ++ul) {
     CDXLNode *pdxlnPrEl = (*proj_list_dxlnode)[ul];
     GPOS_ASSERT(EdxlopScalarIdent != pdxlnPrEl->GetOperator()->GetDXLOperator());
   }

@@ -22,55 +22,55 @@
 namespace gpos {
 namespace ioutils {
 // check state of file or directory
-void CheckState(const CHAR *file_path, SFileStat *file_state);
+void CheckState(const char *file_path, SFileStat *file_state);
 
 // check state of file or directory by file descriptor
-void CheckStateUsingFileDescriptor(const INT file_descriptor, SFileStat *file_state);
+void CheckStateUsingFileDescriptor(const int32_t file_descriptor, SFileStat *file_state);
 
 // check if path is mapped to an accessible file or directory
-BOOL PathExists(const CHAR *file_path);
+bool PathExists(const char *file_path);
 
 // get file size by file path
-ULLONG FileSize(const CHAR *file_path);
+uint64_t FileSize(const char *file_path);
 
 // get file size by file descriptor
-ULLONG FileSize(const INT file_descriptor);
+uint64_t FileSize(const int32_t file_descriptor);
 
 // check if path is directory
-BOOL IsDir(const CHAR *file_path);
+bool IsDir(const char *file_path);
 
 // check if path is file
-BOOL IsFile(const CHAR *file_path);
+bool IsFile(const char *file_path);
 
 // check permissions
-BOOL CheckFilePermissions(const CHAR *file_path, ULONG permission_bits);
+bool CheckFilePermissions(const char *file_path, uint32_t permission_bits);
 
 // create directory with specific permissions
-void CreateDir(const CHAR *file_path, ULONG permission_bits);
+void CreateDir(const char *file_path, uint32_t permission_bits);
 
 // delete file
-void RemoveDir(const CHAR *file_path);
+void RemoveDir(const char *file_path);
 
 // delete file
-void Unlink(const CHAR *file_path);
+void Unlink(const char *file_path);
 
 // open a file
-INT OpenFile(const CHAR *file_path, INT mode, INT permission_bits);
+int32_t OpenFile(const char *file_path, int32_t mode, int32_t permission_bits);
 
 // close a file descriptor
-INT CloseFile(INT file_descriptor);
+int32_t CloseFile(int32_t file_descriptor);
 
 // get file status
-INT GetFileState(INT file_descriptor, SFileStat *file_state);
+int32_t GetFileState(int32_t file_descriptor, SFileStat *file_state);
 
 // write to a file descriptor
-INT_PTR Write(INT file_descriptor, const void *buffer, const ULONG_PTR ulpCount);
+intptr_t Write(int32_t file_descriptor, const void *buffer, const uintptr_t ulpCount);
 
 // read from a file descriptor
-INT_PTR Read(INT file_descriptor, void *buffer, const ULONG_PTR ulpCount);
+intptr_t Read(int32_t file_descriptor, void *buffer, const uintptr_t ulpCount);
 
 // create a unique temporary directory
-void CreateTempDir(CHAR *dir_path);
+void CreateTempDir(char *dir_path);
 
 }  // namespace ioutils
 }  // namespace gpos

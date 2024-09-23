@@ -61,7 +61,7 @@ const CWStringConst *CDXLScalarDMLAction::GetOpNameStr() const {
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarDMLAction::HasBoolResult(CMDAccessor *  // md_accessor
+bool CDXLScalarDMLAction::HasBoolResult(CMDAccessor *  // md_accessor
 ) const {
   return false;
 }
@@ -76,7 +76,7 @@ BOOL CDXLScalarDMLAction::HasBoolResult(CMDAccessor *  // md_accessor
 //
 //---------------------------------------------------------------------------
 void CDXLScalarDMLAction::AssertValid(const CDXLNode *node,
-                                      BOOL  // validate_children
+                                      bool  // validate_children
 ) const {
   GPOS_ASSERT(0 == node->Arity());
 }

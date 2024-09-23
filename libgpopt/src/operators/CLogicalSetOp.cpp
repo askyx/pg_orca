@@ -113,8 +113,8 @@ void CLogicalSetOp::BuildColumnSets(CMemoryPool *mp) {
 
   m_pcrsOutput = GPOS_NEW(mp) CColRefSet(mp, m_pdrgpcrOutput);
   m_pdrgpcrsInput = GPOS_NEW(mp) CColRefSetArray(mp);
-  const ULONG ulChildren = m_pdrgpdrgpcrInput->Size();
-  for (ULONG ul = 0; ul < ulChildren; ul++) {
+  const uint32_t ulChildren = m_pdrgpdrgpcrInput->Size();
+  for (uint32_t ul = 0; ul < ulChildren; ul++) {
     CColRefSet *pcrsInput = GPOS_NEW(mp) CColRefSet(mp, (*m_pdrgpdrgpcrInput)[ul]);
     m_pdrgpcrsInput->Append(pcrsInput);
 
@@ -137,8 +137,8 @@ CColRefSet *CLogicalSetOp::DeriveOutputColumns(CMemoryPool *,  // mp
 #endif  // GPOS_DEBUG
 ) {
 #ifdef GPOS_DEBUG
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     CColRefSet *pcrsChildOutput = exprhdl.DeriveOutputColumns(ul);
     CColRefSet *pcrsInput = (*m_pdrgpcrsInput)[ul];
     GPOS_ASSERT(pcrsChildOutput->ContainsAll(pcrsInput) && "Unexpected outer references in SetOp input");
@@ -178,14 +178,14 @@ CKeyCollection *CLogicalSetOp::DeriveKeyCollection(CMemoryPool *mp,
 //
 //---------------------------------------------------------------------------
 CPartInfo *CLogicalSetOp::DerivePartitionInfo(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
-  const ULONG arity = exprhdl.Arity();
+  const uint32_t arity = exprhdl.Arity();
   GPOS_ASSERT(0 < arity);
 
   // start with the part info of the first child
   CPartInfo *ppartinfo = exprhdl.DerivePartitionInfo(0);
   ppartinfo->AddRef();
 
-  for (ULONG ul = 1; ul < arity; ul++) {
+  for (uint32_t ul = 1; ul < arity; ul++) {
     CPartInfo *ppartinfoChild = exprhdl.DerivePartitionInfo(ul);
     GPOS_ASSERT(nullptr != ppartinfoChild);
 
@@ -211,20 +211,20 @@ CPartInfo *CLogicalSetOp::DerivePartitionInfo(CMemoryPool *mp, CExpressionHandle
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalSetOp::Matches(COperator *pop) const {
+bool CLogicalSetOp::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
 
   CLogicalSetOp *popSetOp = CLogicalSetOp::PopConvert(pop);
   CColRef2dArray *pdrgpdrgpcrInput = popSetOp->PdrgpdrgpcrInput();
-  const ULONG arity = pdrgpdrgpcrInput->Size();
+  const uint32_t arity = pdrgpdrgpcrInput->Size();
 
   if (arity != m_pdrgpdrgpcrInput->Size() || !m_pdrgpcrOutput->Equals(popSetOp->PdrgpcrOutput())) {
     return false;
   }
 
-  for (ULONG ul = 0; ul < arity; ul++) {
+  for (uint32_t ul = 0; ul < arity; ul++) {
     if (!(*m_pdrgpdrgpcrInput)[ul]->Equals((*pdrgpdrgpcrInput)[ul])) {
       return false;
     }
@@ -242,11 +242,11 @@ BOOL CLogicalSetOp::Matches(COperator *pop) const {
 //
 //---------------------------------------------------------------------------
 CColRefSetArray *CLogicalSetOp::PdrgpcrsOutputEquivClasses(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                           BOOL fIntersect) const {
-  const ULONG ulChildren = exprhdl.Arity();
+                                                           bool fIntersect) const {
+  const uint32_t ulChildren = exprhdl.Arity();
   CColRefSetArray *pdrgpcrs = PdrgpcrsInputMapped(mp, exprhdl, 0 /*ulChild*/);
 
-  for (ULONG ul = 1; ul < ulChildren; ul++) {
+  for (uint32_t ul = 1; ul < ulChildren; ul++) {
     CColRefSetArray *pdrgpcrsChild = PdrgpcrsInputMapped(mp, exprhdl, ul);
     CColRefSetArray *pdrgpcrsMerged = nullptr;
 
@@ -274,13 +274,14 @@ CColRefSetArray *CLogicalSetOp::PdrgpcrsOutputEquivClasses(CMemoryPool *mp, CExp
 //		Get equivalence classes from one input child, mapped to output columns
 //
 //---------------------------------------------------------------------------
-CColRefSetArray *CLogicalSetOp::PdrgpcrsInputMapped(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulChild) const {
+CColRefSetArray *CLogicalSetOp::PdrgpcrsInputMapped(CMemoryPool *mp, CExpressionHandle &exprhdl,
+                                                    uint32_t ulChild) const {
   CColRefSetArray *pdrgpcrsInput = exprhdl.DerivePropertyConstraint(ulChild)->PdrgpcrsEquivClasses();
-  const ULONG length = pdrgpcrsInput->Size();
+  const uint32_t length = pdrgpcrsInput->Size();
 
   CColRefSet *pcrsChildInput = (*m_pdrgpcrsInput)[ulChild];
   CColRefSetArray *pdrgpcrs = GPOS_NEW(mp) CColRefSetArray(mp);
-  for (ULONG ul = 0; ul < length; ul++) {
+  for (uint32_t ul = 0; ul < length; ul++) {
     CColRefSet *pcrs = GPOS_NEW(mp) CColRefSet(mp);
     pcrs->Include((*pdrgpcrsInput)[ul]);
     pcrs->Intersection(pcrsChildInput);
@@ -307,8 +308,8 @@ CColRefSetArray *CLogicalSetOp::PdrgpcrsInputMapped(CMemoryPool *mp, CExpression
 //		Get constraints for a given output column from all children
 //
 //---------------------------------------------------------------------------
-CConstraintArray *CLogicalSetOp::PdrgpcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulColIndex,
-                                                  ULONG ulStart) const {
+CConstraintArray *CLogicalSetOp::PdrgpcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl, uint32_t ulColIndex,
+                                                  uint32_t ulStart) const {
   CConstraintArray *pdrgpcnstr = GPOS_NEW(mp) CConstraintArray(mp);
 
   CColRef *colref = (*m_pdrgpcrOutput)[ulColIndex];
@@ -316,8 +317,8 @@ CConstraintArray *CLogicalSetOp::PdrgpcnstrColumn(CMemoryPool *mp, CExpressionHa
     return pdrgpcnstr;
   }
 
-  const ULONG ulChildren = exprhdl.Arity();
-  for (ULONG ul = ulStart; ul < ulChildren; ul++) {
+  const uint32_t ulChildren = exprhdl.Arity();
+  for (uint32_t ul = ulStart; ul < ulChildren; ul++) {
     CConstraint *pcnstr = PcnstrColumn(mp, exprhdl, ulColIndex, ul);
     if (nullptr == pcnstr) {
       pcnstr = CConstraintInterval::PciUnbounded(mp, colref, true /*is_null*/);
@@ -337,8 +338,8 @@ CConstraintArray *CLogicalSetOp::PdrgpcnstrColumn(CMemoryPool *mp, CExpressionHa
 //		Get constraint for a given output column from a given children
 //
 //---------------------------------------------------------------------------
-CConstraint *CLogicalSetOp::PcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl, ULONG ulColIndex,
-                                         ULONG ulChild) const {
+CConstraint *CLogicalSetOp::PcnstrColumn(CMemoryPool *mp, CExpressionHandle &exprhdl, uint32_t ulColIndex,
+                                         uint32_t ulChild) const {
   GPOS_ASSERT(ulChild < exprhdl.Arity());
 
   // constraint from child
@@ -369,11 +370,11 @@ CConstraint *CLogicalSetOp::PcnstrColumn(CMemoryPool *mp, CExpressionHandle &exp
 //
 //---------------------------------------------------------------------------
 CPropConstraint *CLogicalSetOp::PpcDeriveConstraintSetop(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                         BOOL fIntersect) const {
-  const ULONG num_cols = m_pdrgpcrOutput->Size();
+                                                         bool fIntersect) const {
+  const uint32_t num_cols = m_pdrgpcrOutput->Size();
 
   CConstraintArray *pdrgpcnstr = GPOS_NEW(mp) CConstraintArray(mp);
-  for (ULONG ul = 0; ul < num_cols; ul++) {
+  for (uint32_t ul = 0; ul < num_cols; ul++) {
     // get constraints for this column from all children
     CConstraintArray *pdrgpcnstrCol = PdrgpcnstrColumn(mp, exprhdl, ul, 0 /*ulStart*/);
 
@@ -407,7 +408,7 @@ CPropConstraint *CLogicalSetOp::PpcDeriveConstraintSetop(CMemoryPool *mp, CExpre
 CColRefSet *CLogicalSetOp::PcrsStat(CMemoryPool *,        // mp
                                     CExpressionHandle &,  // exprhdl,
                                     CColRefSet *,         // pcrsInput
-                                    ULONG child_index) const {
+                                    uint32_t child_index) const {
   CColRefSet *pcrs = (*m_pdrgpcrsInput)[child_index];
   pcrs->AddRef();
 
@@ -428,8 +429,8 @@ IOstream &CLogicalSetOp::OsPrint(IOstream &os) const {
   os << ")";
 
   os << ", Input: [";
-  const ULONG ulChildren = m_pdrgpdrgpcrInput->Size();
-  for (ULONG ul = 0; ul < ulChildren; ul++) {
+  const uint32_t ulChildren = m_pdrgpdrgpcrInput->Size();
+  for (uint32_t ul = 0; ul < ulChildren; ul++) {
     os << "(";
     CUtils::OsPrintDrgPcr(os, (*m_pdrgpdrgpcrInput)[ul]);
     os << ")";

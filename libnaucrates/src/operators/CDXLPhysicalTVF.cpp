@@ -80,13 +80,13 @@ const CWStringConst *CDXLPhysicalTVF::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLPhysicalTVF::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLPhysicalTVF::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   // assert validity of function id and return type
   GPOS_ASSERT(nullptr != m_func_mdid);
   GPOS_ASSERT(nullptr != m_return_type_mdid);
 
-  const ULONG arity = dxlnode->Arity();
-  for (ULONG idx = 0; idx < arity; ++idx) {
+  const uint32_t arity = dxlnode->Arity();
+  for (uint32_t idx = 0; idx < arity; ++idx) {
     CDXLNode *dxlnode_arg = (*dxlnode)[idx];
     GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 

@@ -31,7 +31,7 @@ using namespace gpdxl;
 //
 //---------------------------------------------------------------------------
 CDXLScalarAggref::CDXLScalarAggref(CMemoryPool *mp, IMDId *agg_func_mdid, IMDId *resolved_rettype_mdid,
-                                   BOOL is_distinct, EdxlAggrefStage agg_stage, EdxlAggrefKind aggkind,
+                                   bool is_distinct, EdxlAggrefStage agg_stage, EdxlAggrefKind aggkind,
                                    ULongPtrArray *argtypes)
     : CDXLScalar(mp),
       m_agg_func_mdid(agg_func_mdid),
@@ -164,7 +164,7 @@ IMDId *CDXLScalarAggref::GetDXLResolvedRetTypeMDid() const {
 //		TRUE if it's agg(DISTINCT ...)
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarAggref::IsDistinct() const {
+bool CDXLScalarAggref::IsDistinct() const {
   return m_is_distinct;
 }
 
@@ -176,7 +176,7 @@ BOOL CDXLScalarAggref::IsDistinct() const {
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarAggref::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarAggref::HasBoolResult(CMDAccessor *md_accessor) const {
   const IMDAggregate *pmdagg = md_accessor->RetrieveAgg(m_agg_func_mdid);
   return (IMDType::EtiBool == md_accessor->RetrieveType(pmdagg->GetResultTypeMdid())->GetDatumType());
 }
@@ -190,13 +190,13 @@ BOOL CDXLScalarAggref::HasBoolResult(CMDAccessor *md_accessor) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarAggref::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarAggref::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   EdxlAggrefStage aggrefstage = ((CDXLScalarAggref *)dxlnode->GetOperator())->GetDXLAggStage();
 
   GPOS_ASSERT((EdxlaggstageFinal >= aggrefstage) && (EdxlaggstageNormal <= aggrefstage));
 
-  const ULONG arity = dxlnode->Arity();
-  for (ULONG ul = 0; ul < arity; ++ul) {
+  const uint32_t arity = dxlnode->Arity();
+  for (uint32_t ul = 0; ul < arity; ++ul) {
     CDXLNode *aggref_child_dxl = (*dxlnode)[ul];
     GPOS_ASSERT(EdxloptypeScalar == aggref_child_dxl->GetOperator()->GetDXLOperatorType());
 

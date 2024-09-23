@@ -33,8 +33,8 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLScalarCoerceBase::CDXLScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, INT type_modifier,
-                                           EdxlCoercionForm dxl_coerce_format, INT location)
+CDXLScalarCoerceBase::CDXLScalarCoerceBase(CMemoryPool *mp, IMDId *mdid_type, int32_t type_modifier,
+                                           EdxlCoercionForm dxl_coerce_format, int32_t location)
     : CDXLScalar(mp),
       m_result_type_mdid(mdid_type),
       m_type_modifier(type_modifier),
@@ -64,7 +64,7 @@ CDXLScalarCoerceBase::~CDXLScalarCoerceBase() {
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarCoerceBase::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarCoerceBase::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_result_type_mdid)->GetDatumType());
 }
 
@@ -77,7 +77,7 @@ BOOL CDXLScalarCoerceBase::HasBoolResult(CMDAccessor *md_accessor) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarCoerceBase::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLScalarCoerceBase::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(1 == node->Arity());
 
   CDXLNode *child_dxlnode = (*node)[0];

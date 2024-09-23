@@ -29,10 +29,10 @@ namespace gpos {
 class CFileReader : public CFileDescriptor {
  private:
   // file size
-  ULLONG m_file_size{0};
+  uint64_t m_file_size{0};
 
   // read size
-  ULLONG m_file_read_size{0};
+  uint64_t m_file_read_size{0};
 
  public:
   CFileReader(const CFileReader &) = delete;
@@ -44,19 +44,19 @@ class CFileReader : public CFileDescriptor {
   ~CFileReader() override;
 
   // get file size
-  ULLONG FileSize() const;
+  uint64_t FileSize() const;
 
   // get file read size
-  ULLONG FileReadSize() const;
+  uint64_t FileReadSize() const;
 
   // open file for reading
-  void Open(const CHAR *file_path, const ULONG permission_bits = S_IRUSR);
+  void Open(const char *file_path, const uint32_t permission_bits = S_IRUSR);
 
   // close file
   void Close();
 
   // read bytes to buffer
-  ULONG_PTR ReadBytesToBuffer(BYTE *read_buffer, const ULONG_PTR file_read_size);
+  uintptr_t ReadBytesToBuffer(uint8_t *read_buffer, const uintptr_t file_read_size);
 
 };  // class CFileReader
 

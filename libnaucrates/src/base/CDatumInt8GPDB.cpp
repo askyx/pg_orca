@@ -31,7 +31,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDatumInt8GPDB::CDatumInt8GPDB(CSystemId sysid, LINT val, BOOL is_null)
+CDatumInt8GPDB::CDatumInt8GPDB(CSystemId sysid, int64_t val, bool is_null)
     : m_mdid(nullptr), m_val(val), m_is_null(is_null) {
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
   IMDId *mdid = dynamic_cast<const CMDTypeInt8GPDB *>(md_accessor->PtMDType<IMDTypeInt8>(sysid))->MDId();
@@ -40,7 +40,7 @@ CDatumInt8GPDB::CDatumInt8GPDB(CSystemId sysid, LINT val, BOOL is_null)
 
   if (IsNull()) {
     // needed for hash computation
-    m_val = LINT(gpos::ulong_max >> 1);
+    m_val = int64_t(UINT32_MAX >> 1);
   }
 }
 
@@ -52,13 +52,13 @@ CDatumInt8GPDB::CDatumInt8GPDB(CSystemId sysid, LINT val, BOOL is_null)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDatumInt8GPDB::CDatumInt8GPDB(IMDId *mdid, LINT val, BOOL is_null) : m_mdid(mdid), m_val(val), m_is_null(is_null) {
+CDatumInt8GPDB::CDatumInt8GPDB(IMDId *mdid, int64_t val, bool is_null) : m_mdid(mdid), m_val(val), m_is_null(is_null) {
   GPOS_ASSERT(nullptr != m_mdid);
   GPOS_ASSERT(GPDB_INT8_OID == CMDIdGPDB::CastMdid(m_mdid)->Oid());
 
   if (IsNull()) {
     // needed for hash computation
-    m_val = LINT(gpos::ulong_max >> 1);
+    m_val = int64_t(UINT32_MAX >> 1);
   }
 }
 
@@ -82,7 +82,7 @@ CDatumInt8GPDB::~CDatumInt8GPDB() {
 //		Accessor of integer value
 //
 //---------------------------------------------------------------------------
-LINT CDatumInt8GPDB::Value() const {
+int64_t CDatumInt8GPDB::Value() const {
   return m_val;
 }
 
@@ -94,7 +94,7 @@ LINT CDatumInt8GPDB::Value() const {
 //		Accessor of is null
 //
 //---------------------------------------------------------------------------
-BOOL CDatumInt8GPDB::IsNull() const {
+bool CDatumInt8GPDB::IsNull() const {
   return m_is_null;
 }
 
@@ -106,8 +106,7 @@ BOOL CDatumInt8GPDB::IsNull() const {
 //		Accessor of size
 //
 //---------------------------------------------------------------------------
-ULONG
-CDatumInt8GPDB::Size() const {
+uint32_t CDatumInt8GPDB::Size() const {
   return 8;
 }
 
@@ -131,9 +130,8 @@ IMDId *CDatumInt8GPDB::MDId() const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CDatumInt8GPDB::HashValue() const {
-  return gpos::CombineHashes(m_mdid->HashValue(), gpos::HashValue<LINT>(&m_val));
+uint32_t CDatumInt8GPDB::HashValue() const {
+  return gpos::CombineHashes(m_mdid->HashValue(), gpos::HashValue<int64_t>(&m_val));
 }
 
 //---------------------------------------------------------------------------
@@ -163,7 +161,7 @@ const CWStringConst *CDatumInt8GPDB::GetStrRepr(CMemoryPool *mp) const {
 //		Matches the values of datums
 //
 //---------------------------------------------------------------------------
-BOOL CDatumInt8GPDB::Matches(const IDatum *datum) const {
+bool CDatumInt8GPDB::Matches(const IDatum *datum) const {
   if (!m_mdid->Equals(datum->MDId())) {
     return false;
   }

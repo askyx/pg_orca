@@ -42,7 +42,7 @@ class CXformLeftOuterApply2LeftOuterJoin : public CXformApply2Join<CLogicalLeftO
   // ident accessors
   EXformId Exfid() const override { return ExfLeftOuterApply2LeftOuterJoin; }
 
-  const CHAR *SzId() const override { return "CXformLeftOuterApply2LeftOuterJoin"; }
+  const char *SzId() const override { return "CXformLeftOuterApply2LeftOuterJoin"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

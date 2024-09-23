@@ -55,12 +55,12 @@ CScaleFactorUtils::OIDPairToScaleFactorArrayMap *CScaleFactorUtils::GenerateScal
   // so that the predicate does not get damped, and any following predicate will be damped accordingly.
   // If more than one dist col = dist col predicate exists (in the case of joins on multi-distkey tables)
   // any additional dist col = dist col predicate are treated as independent
-  BOOL contains_dist_pred = false;
+  bool contains_dist_pred = false;
   // iterate over joins to find predicates on same tables
-  for (ULONG ul = 0; ul < join_conds_scale_factors->Size(); ul++) {
+  for (uint32_t ul = 0; ul < join_conds_scale_factors->Size(); ul++) {
     CDouble local_scale_factor = (*(*join_conds_scale_factors)[ul]).m_scale_factor;
     IMdIdArray *oid_pair = (*(*join_conds_scale_factors)[ul]).m_oid_pair;
-    BOOL both_dist_keys = (*(*join_conds_scale_factors)[ul]).m_dist_keys;
+    bool both_dist_keys = (*(*join_conds_scale_factors)[ul]).m_dist_keys;
 
     if (oid_pair != nullptr && oid_pair->Size() == 2) {
       // the array of scale factors in the order of damping
@@ -89,7 +89,7 @@ CScaleFactorUtils::OIDPairToScaleFactorArrayMap *CScaleFactorUtils::GenerateScal
           // add the dist key pred as the first predicate
           new_scale_factor_array->Append(GPOS_NEW(mp) CDouble(local_scale_factor));
           // append the rest of the predicates after
-          for (ULONG i = 0; i < scale_factor_array->Size(); i++) {
+          for (uint32_t i = 0; i < scale_factor_array->Size(); i++) {
             CDouble scale_factor = (*(*scale_factor_array)[i]);
             new_scale_factor_array->Append(GPOS_NEW(mp) CDouble(scale_factor));
           }
@@ -134,7 +134,7 @@ CDouble CScaleFactorUtils::CalcCumulativeScaleFactorSqrtAlg(OIDPairToScaleFactor
     const CDoubleArray *scale_factor_array = iter.Value();
 
     // damp the join preds if they are on the same tables (ex: t1.a = t2.a AND t1.b = t2.b)
-    for (ULONG ul = 0; ul < scale_factor_array->Size(); ul++) {
+    for (uint32_t ul = 0; ul < scale_factor_array->Size(); ul++) {
       CDouble local_scale_factor = *(*scale_factor_array)[ul];
       CDouble fp(2);
       CDouble nth_root = fp.Pow(ul);
@@ -145,7 +145,7 @@ CDouble CScaleFactorUtils::CalcCumulativeScaleFactorSqrtAlg(OIDPairToScaleFactor
 
   // independent_join_preds are either dist_key = dist_key preds or
   // more complex predicates, such as t1.a = t2.a + t3.a;
-  for (ULONG ul = 0; ul < independent_join_preds->Size(); ul++) {
+  for (uint32_t ul = 0; ul < independent_join_preds->Size(); ul++) {
     CDouble local_scale_factor = *(*independent_join_preds)[ul];
     cumulative_scale_factor = cumulative_scale_factor * local_scale_factor;
   }
@@ -167,7 +167,7 @@ CDouble CScaleFactorUtils::CumulativeJoinScaleFactor(CMemoryPool *mp, const CSta
   GPOS_ASSERT(nullptr != stats_config);
   GPOS_ASSERT(nullptr != join_conds_scale_factors);
 
-  const ULONG num_join_conds = join_conds_scale_factors->Size();
+  const uint32_t num_join_conds = join_conds_scale_factors->Size();
   if (1 < num_join_conds) {
     // sort (in desc order) the scaling factor of the join conditions
     join_conds_scale_factors->Sort(CScaleFactorUtils::DescendingOrderCmpJoinFunc);
@@ -204,7 +204,7 @@ CDouble CScaleFactorUtils::CumulativeJoinScaleFactor(CMemoryPool *mp, const CSta
 
   CDouble cumulative_scale_factor(1.0);
   if (stats_config->DDampingFactorJoin() > 0) {
-    for (ULONG ul = 0; ul < num_join_conds; ul++) {
+    for (uint32_t ul = 0; ul < num_join_conds; ul++) {
       CDouble local_scale_factor = (*(*join_conds_scale_factors)[ul]).m_scale_factor;
       cumulative_scale_factor =
           cumulative_scale_factor * std::max(CStatistics::MinRows.Get(),
@@ -250,7 +250,7 @@ CDouble CScaleFactorUtils::CumulativeJoinScaleFactor(CMemoryPool *mp, const CSta
 //		Return scaling factor of the join predicate after apply damping
 //
 //---------------------------------------------------------------------------
-CDouble CScaleFactorUtils::DampedJoinScaleFactor(const CStatisticsConfig *stats_config, ULONG num_columns) {
+CDouble CScaleFactorUtils::DampedJoinScaleFactor(const CStatisticsConfig *stats_config, uint32_t num_columns) {
   if (1 >= num_columns) {
     return CDouble(1.0);
   }
@@ -266,7 +266,7 @@ CDouble CScaleFactorUtils::DampedJoinScaleFactor(const CStatisticsConfig *stats_
 //		Return scaling factor of the filter after apply damping
 //
 //---------------------------------------------------------------------------
-CDouble CScaleFactorUtils::DampedFilterScaleFactor(const CStatisticsConfig *stats_config, ULONG num_columns) {
+CDouble CScaleFactorUtils::DampedFilterScaleFactor(const CStatisticsConfig *stats_config, uint32_t num_columns) {
   GPOS_ASSERT(nullptr != stats_config);
 
   if (1 >= num_columns) {
@@ -284,7 +284,7 @@ CDouble CScaleFactorUtils::DampedFilterScaleFactor(const CStatisticsConfig *stat
 //		Return scaling factor of the group by predicate after apply damping
 //
 //---------------------------------------------------------------------------
-CDouble CScaleFactorUtils::DampedGroupByScaleFactor(const CStatisticsConfig *stats_config, ULONG num_columns) {
+CDouble CScaleFactorUtils::DampedGroupByScaleFactor(const CStatisticsConfig *stats_config, uint32_t num_columns) {
   GPOS_ASSERT(nullptr != stats_config);
 
   if (1 > num_columns) {
@@ -302,9 +302,9 @@ CDouble CScaleFactorUtils::DampedGroupByScaleFactor(const CStatisticsConfig *sta
 //		Sort the array of scaling factor
 //
 //---------------------------------------------------------------------------
-void CScaleFactorUtils::SortScalingFactor(CDoubleArray *scale_factors, BOOL is_descending) {
+void CScaleFactorUtils::SortScalingFactor(CDoubleArray *scale_factors, bool is_descending) {
   GPOS_ASSERT(nullptr != scale_factors);
-  const ULONG num_cols = scale_factors->Size();
+  const uint32_t num_cols = scale_factors->Size();
   if (1 < num_cols) {
     if (is_descending) {
       // sort (in desc order) the scaling factor based on the selectivity of each column
@@ -324,7 +324,7 @@ void CScaleFactorUtils::SortScalingFactor(CDoubleArray *scale_factors, BOOL is_d
 //		Comparison function for sorting double
 //
 //---------------------------------------------------------------------------
-INT CScaleFactorUtils::DescendingOrderCmpFunc(const void *val1, const void *val2) {
+int32_t CScaleFactorUtils::DescendingOrderCmpFunc(const void *val1, const void *val2) {
   GPOS_ASSERT(nullptr != val1 && nullptr != val2);
   const CDouble *double_val1 = *(const CDouble **)val1;
   const CDouble *double_val2 = *(const CDouble **)val2;
@@ -340,7 +340,7 @@ INT CScaleFactorUtils::DescendingOrderCmpFunc(const void *val1, const void *val2
 //		Comparison function for sorting SJoinCondition
 //
 //---------------------------------------------------------------------------
-INT CScaleFactorUtils::DescendingOrderCmpJoinFunc(const void *val1, const void *val2) {
+int32_t CScaleFactorUtils::DescendingOrderCmpJoinFunc(const void *val1, const void *val2) {
   GPOS_ASSERT(nullptr != val1 && nullptr != val2);
   const CDouble double_val1 = (*(const SJoinCondition **)val1)->m_scale_factor;
   const CDouble double_val2 = (*(const SJoinCondition **)val2)->m_scale_factor;
@@ -356,7 +356,7 @@ INT CScaleFactorUtils::DescendingOrderCmpJoinFunc(const void *val1, const void *
 //		Comparison function for sorting double
 //
 //---------------------------------------------------------------------------
-INT CScaleFactorUtils::AscendingOrderCmpFunc(const void *val1, const void *val2) {
+int32_t CScaleFactorUtils::AscendingOrderCmpFunc(const void *val1, const void *val2) {
   GPOS_ASSERT(nullptr != val1 && nullptr != val2);
   const CDouble *double_val1 = *(const CDouble **)val1;
   const CDouble *double_val2 = *(const CDouble **)val2;
@@ -372,7 +372,7 @@ INT CScaleFactorUtils::AscendingOrderCmpFunc(const void *val1, const void *val2)
 //		Helper function for double comparison
 //
 //---------------------------------------------------------------------------
-INT CScaleFactorUtils::DoubleCmpFunc(const CDouble *double_val1, const CDouble *double_val2, BOOL is_descending) {
+int32_t CScaleFactorUtils::DoubleCmpFunc(const CDouble *double_val1, const CDouble *double_val2, bool is_descending) {
   GPOS_ASSERT(nullptr != double_val1);
   GPOS_ASSERT(nullptr != double_val2);
 
@@ -405,14 +405,14 @@ CDouble CScaleFactorUtils::CalcScaleFactorCumulativeConj(const CStatisticsConfig
   GPOS_ASSERT(nullptr != stats_config);
   GPOS_ASSERT(nullptr != scale_factors);
 
-  const ULONG num_cols = scale_factors->Size();
+  const uint32_t num_cols = scale_factors->Size();
   CDouble scale_factor(1.0);
   if (1 < num_cols) {
     // sort (in desc order) the scaling factor based on the selectivity of each column
     scale_factors->Sort(CScaleFactorUtils::DescendingOrderCmpFunc);
   }
 
-  for (ULONG ul = 0; ul < num_cols; ul++) {
+  for (uint32_t ul = 0; ul < num_cols; ul++) {
     // apply damping factor
     CDouble local_scale_factor = *(*scale_factors)[ul];
     scale_factor =
@@ -438,7 +438,7 @@ CDouble CScaleFactorUtils::CalcScaleFactorCumulativeDisj(const CStatisticsConfig
   GPOS_ASSERT(nullptr != stats_config);
   GPOS_ASSERT(nullptr != scale_factors);
 
-  const ULONG num_cols = scale_factors->Size();
+  const uint32_t num_cols = scale_factors->Size();
   GPOS_ASSERT(0 < num_cols);
 
   if (1 == num_cols) {
@@ -452,7 +452,7 @@ CDouble CScaleFactorUtils::CalcScaleFactorCumulativeDisj(const CStatisticsConfig
   // rows = rows0 + rows1 * 0.75 + rows2 *(0.75)^2 + ...
 
   CDouble rows(0.0);
-  for (ULONG ul = 0; ul < num_cols; ul++) {
+  for (uint32_t ul = 0; ul < num_cols; ul++) {
     CDouble local_scale_factor = *(*scale_factors)[ul];
     GPOS_ASSERT(InvalidScaleFactor < local_scale_factor);
 

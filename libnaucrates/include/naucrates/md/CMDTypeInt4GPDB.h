@@ -113,7 +113,7 @@ class CMDTypeInt4GPDB : public IMDTypeInt4 {
   ~CMDTypeInt4GPDB() override;
 
   // factory method for creating INT4 datums
-  IDatumInt4 *CreateInt4Datum(CMemoryPool *mp, INT iValue, BOOL is_null) const override;
+  IDatumInt4 *CreateInt4Datum(CMemoryPool *mp, int32_t iValue, bool is_null) const override;
 
   // accessors
 
@@ -129,26 +129,25 @@ class CMDTypeInt4GPDB : public IMDTypeInt4 {
   // id of specified specified aggregate type
   IMDId *GetMdidForAggType(EAggType agg_type) const override;
 
-  BOOL IsFixedLength() const override { return true; }
+  bool IsFixedLength() const override { return true; }
 
   // is type composite
-  BOOL IsComposite() const override { return false; }
+  bool IsComposite() const override { return false; }
 
-  ULONG
-  Length() const override { return GPDB_INT4_LENGTH; }
+  uint32_t Length() const override { return GPDB_INT4_LENGTH; }
 
   // return the GPDB length
-  virtual INT GetGPDBLength() const { return GPDB_INT4_LENGTH; }
+  virtual int32_t GetGPDBLength() const { return GPDB_INT4_LENGTH; }
 
-  BOOL IsPassedByValue() const override { return true; }
+  bool IsPassedByValue() const override { return true; }
 
   const IMDId *CmpOpMdid() const override { return m_mdid_op_cmp; }
 
   // is type hashable
-  BOOL IsHashable() const override { return true; }
+  bool IsHashable() const override { return true; }
 
   // is type merge joinable
-  BOOL IsMergeJoinable() const override { return true; }
+  bool IsMergeJoinable() const override { return true; }
 
   IMDId *GetArrayTypeMdid() const override { return m_mdid_type_array; }
 

@@ -150,10 +150,10 @@ IMDId *CMDTypeBoolGPDB::GetMdidForAggType(EAggType agg_type) const {
 //		CMDTypeBoolGPDB::GetDatum
 //
 //	@doc:
-//		Factory function for creating BOOL datums
+//		Factory function for creating bool datums
 //
 //---------------------------------------------------------------------------
-IDatumBool *CMDTypeBoolGPDB::CreateBoolDatum(CMemoryPool *mp, BOOL bool_val, BOOL is_null) const {
+IDatumBool *CMDTypeBoolGPDB::CreateBoolDatum(CMemoryPool *mp, bool bool_val, bool is_null) const {
   return GPOS_NEW(mp) CDatumBoolGPDB(m_mdid->Sysid(), bool_val, is_null);
 }
 
@@ -209,8 +209,8 @@ IDatum *CMDTypeBoolGPDB::GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_
 //---------------------------------------------------------------------------
 IDatum *CMDTypeBoolGPDB::GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const {
   CDXLDatumBool *dxl_datum_bool = CDXLDatumBool::Cast(const_cast<CDXLDatum *>(dxl_datum));
-  BOOL value = dxl_datum_bool->GetValue();
-  BOOL is_null = dxl_datum_bool->IsNull();
+  bool value = dxl_datum_bool->GetValue();
+  bool is_null = dxl_datum_bool->IsNull();
 
   return GPOS_NEW(mp) CDatumBoolGPDB(m_mdid->Sysid(), value, is_null);
 }

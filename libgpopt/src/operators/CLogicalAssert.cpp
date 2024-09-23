@@ -54,7 +54,7 @@ CLogicalAssert::CLogicalAssert(CMemoryPool *mp, CException *pexc) : CLogicalUnar
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalAssert::Matches(COperator *pop) const {
+bool CLogicalAssert::Matches(COperator *pop) const {
   if (Eopid() != pop->Eopid()) {
     return false;
   }

@@ -6,7 +6,7 @@
 //		CMDTypeBoolGPDB.h
 //
 //	@doc:
-//		Class for representing BOOL types in GPDB
+//		Class for representing bool types in GPDB
 //---------------------------------------------------------------------------
 
 #ifndef GPMD_CMDTypeBoolGPDB_H
@@ -48,7 +48,7 @@ using namespace gpnaucrates;
 //		CMDTypeBoolGPDB
 //
 //	@doc:
-//		Class for representing BOOL types in GPDB
+//		Class for representing bool types in GPDB
 //
 //---------------------------------------------------------------------------
 class CMDTypeBoolGPDB : public IMDTypeBool {
@@ -118,20 +118,19 @@ class CMDTypeBoolGPDB : public IMDTypeBool {
   CMDName Mdname() const override;
 
   // is type fixed length
-  BOOL IsFixedLength() const override { return true; }
+  bool IsFixedLength() const override { return true; }
 
   // is type composite
-  BOOL IsComposite() const override { return false; }
+  bool IsComposite() const override { return false; }
 
   // type length
-  ULONG
-  Length() const override { return GPDB_BOOL_LENGTH; }
+  uint32_t Length() const override { return GPDB_BOOL_LENGTH; }
 
   // return the GPDB length
-  virtual INT GetGPDBLength() const { return GPDB_BOOL_LENGTH; }
+  virtual int32_t GetGPDBLength() const { return GPDB_BOOL_LENGTH; }
 
   // is type passed by value
-  BOOL IsPassedByValue() const override { return true; }
+  bool IsPassedByValue() const override { return true; }
 
   // id of specified comparison operator type
   IMDId *GetMdidForCmpType(ECmpType cmp_type) const override;
@@ -142,10 +141,10 @@ class CMDTypeBoolGPDB : public IMDTypeBool {
   IMDId *GetMdidForAggType(EAggType agg_type) const override;
 
   // is type hashable
-  BOOL IsHashable() const override { return true; }
+  bool IsHashable() const override { return true; }
 
   // is type merge joinable
-  BOOL IsMergeJoinable() const override { return true; }
+  bool IsMergeJoinable() const override { return true; }
 
   // array type id
   IMDId *GetArrayTypeMdid() const override { return m_mdid_type_array; }
@@ -157,7 +156,7 @@ class CMDTypeBoolGPDB : public IMDTypeBool {
   IDatum *DatumNull() const override { return m_datum_null; }
 
   // factory method for creating constants
-  IDatumBool *CreateBoolDatum(CMemoryPool *mp, BOOL fValue, BOOL is_null) const override;
+  IDatumBool *CreateBoolDatum(CMemoryPool *mp, bool fValue, bool is_null) const override;
 
   // create typed datum from DXL datum
   IDatum *GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const override;

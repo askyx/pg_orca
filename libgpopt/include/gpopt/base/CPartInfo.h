@@ -45,7 +45,7 @@ class CPartInfo : public CRefCount {
   class CPartInfoEntry : public CRefCount {
    private:
     // scan id
-    ULONG m_scan_id;
+    uint32_t m_scan_id;
 
     // partition table mdid
     IMDId *m_mdid;
@@ -57,13 +57,13 @@ class CPartInfo : public CRefCount {
     CPartInfoEntry(const CPartInfoEntry &) = delete;
 
     // ctor
-    CPartInfoEntry(ULONG scan_id, IMDId *mdid, CPartKeysArray *pdrgppartkeys);
+    CPartInfoEntry(uint32_t scan_id, IMDId *mdid, CPartKeysArray *pdrgppartkeys);
 
     // dtor
     ~CPartInfoEntry() override;
 
     // scan id
-    virtual ULONG ScanId() const { return m_scan_id; }
+    virtual uint32_t ScanId() const { return m_scan_id; }
 
     // create a copy of the current object, and add a set of remapped
     // part keys to this entry, using the existing keys and the given hashmap
@@ -101,26 +101,25 @@ class CPartInfo : public CRefCount {
   ~CPartInfo() override;
 
   // number of part table consumers
-  ULONG
-  UlConsumers() const { return m_pdrgppartentries->Size(); }
+  uint32_t UlConsumers() const { return m_pdrgppartentries->Size(); }
 
   // add part table consumer
-  void AddPartConsumer(CMemoryPool *mp, ULONG scan_id, IMDId *mdid, CColRef2dArray *pdrgpdrgpcrPart);
+  void AddPartConsumer(CMemoryPool *mp, uint32_t scan_id, IMDId *mdid, CColRef2dArray *pdrgpdrgpcrPart);
 
   // scan id of the entry at the given position
-  ULONG ScanId(ULONG ulPos) const;
+  uint32_t ScanId(uint32_t ulPos) const;
 
   // relation mdid of the entry at the given position
-  IMDId *GetRelMdId(ULONG ulPos) const;
+  IMDId *GetRelMdId(uint32_t ulPos) const;
 
   // part keys of the entry at the given position
-  CPartKeysArray *Pdrgppartkeys(ULONG ulPos) const;
+  CPartKeysArray *Pdrgppartkeys(uint32_t ulPos) const;
 
   // check if part info contains given scan id
-  BOOL FContainsScanId(ULONG scan_id) const;
+  bool FContainsScanId(uint32_t scan_id) const;
 
   // part keys of the entry with the given scan id
-  CPartKeysArray *PdrgppartkeysByScanId(ULONG scan_id) const;
+  CPartKeysArray *PdrgppartkeysByScanId(uint32_t scan_id) const;
 
   // return a new part info object with an additional set of remapped keys
   CPartInfo *PpartinfoWithRemappedKeys(CMemoryPool *mp, CColRefArray *pdrgpcrSrc, CColRefArray *pdrgpcrDest) const;

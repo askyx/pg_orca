@@ -25,10 +25,10 @@ void GetTimeOfDay(TIMEVAL *tv, TIMEZONE *tz);
 void GetRusage(RUSAGE *usage);
 
 // open a connection to the system logger for a program
-void OpenLog(const CHAR *ident, INT option, INT facility);
+void OpenLog(const char *ident, int32_t option, int32_t facility);
 
 // generate a log message
-void SysLog(INT priority, const CHAR *format);
+void SysLog(int32_t priority, const char *format);
 
 // close the descriptor being used to write to the system logger
 void CloseLog();

@@ -66,7 +66,7 @@ CPhysicalScan::~CPhysicalScan() {
 //		Not called for leaf operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalScan::FInputOrderSensitive() const {
+bool CPhysicalScan::FInputOrderSensitive() const {
   GPOS_ASSERT(!"Unexpected function call of FInputOrderSensitive");
   return false;
 }
@@ -79,16 +79,16 @@ BOOL CPhysicalScan::FInputOrderSensitive() const {
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalScan::FProvidesReqdCols(CExpressionHandle &,  // exprhdl
+bool CPhysicalScan::FProvidesReqdCols(CExpressionHandle &,  // exprhdl
                                       CColRefSet *pcrsRequired,
-                                      ULONG  // ulOptReq
+                                      uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcrsRequired);
 
   CColRefSet *pcrs = GPOS_NEW(m_mp) CColRefSet(m_mp);
   pcrs->Include(m_pdrgpcrOutput);
 
-  BOOL result = pcrs->ContainsAll(pcrsRequired);
+  bool result = pcrs->ContainsAll(pcrsRequired);
   pcrs->Release();
 
   return result;

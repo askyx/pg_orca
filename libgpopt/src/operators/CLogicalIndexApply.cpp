@@ -17,7 +17,7 @@ CLogicalIndexApply::CLogicalIndexApply(CMemoryPool *mp)
   m_fPattern = true;
 }
 
-CLogicalIndexApply::CLogicalIndexApply(CMemoryPool *mp, CColRefArray *pdrgpcrOuterRefs, BOOL fOuterJoin,
+CLogicalIndexApply::CLogicalIndexApply(CMemoryPool *mp, CColRefArray *pdrgpcrOuterRefs, bool fOuterJoin,
                                        CExpression *origJoinPred)
     : CLogicalApply(mp), m_pdrgpcrOuterRefs(pdrgpcrOuterRefs), m_fOuterJoin(fOuterJoin), m_origJoinPred(origJoinPred) {
   GPOS_ASSERT(nullptr != pdrgpcrOuterRefs);
@@ -46,7 +46,7 @@ CXformSet *CLogicalIndexApply::PxfsCandidates(CMemoryPool *mp) const {
   return xform_set;
 }
 
-BOOL CLogicalIndexApply::Matches(COperator *pop) const {
+bool CLogicalIndexApply::Matches(COperator *pop) const {
   GPOS_ASSERT(nullptr != pop);
 
   if (pop->Eopid() == Eopid()) {
@@ -80,7 +80,7 @@ IStatistics *CLogicalIndexApply::PstatsDerive(CMemoryPool *mp, CExpressionHandle
 
 // return a copy of the operator with remapped columns
 COperator *CLogicalIndexApply::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                          BOOL must_exist) {
+                                                          bool must_exist) {
   COperator *result = nullptr;
   CColRefArray *colref_array = CUtils::PdrgpcrRemap(mp, m_pdrgpcrOuterRefs, colref_mapping, must_exist);
   CExpression *remapped_orig_join_pred = nullptr;

@@ -24,7 +24,7 @@ using namespace gpos;
 //		ctor
 //
 //---------------------------------------------------------------------------
-CAutoTimer::CAutoTimer(const CHAR *sz, BOOL fPrint) : m_timer_text_label(sz), m_print_text_label(fPrint) {
+CAutoTimer::CAutoTimer(const char *sz, bool fPrint) : m_timer_text_label(sz), m_print_text_label(fPrint) {
   GPOS_ASSERT(nullptr != sz);
 }
 
@@ -41,7 +41,7 @@ CAutoTimer::~CAutoTimer() throw() {
     // suspend cancellation - destructors should not throw
     CAutoSuspendAbort asa;
 
-    ULONG ulElapsedTimeMS = m_clock.ElapsedMS();
+    uint32_t ulElapsedTimeMS = m_clock.ElapsedMS();
 
     GPOS_TRACE_FORMAT("timer:%s: %dms", m_timer_text_label, ulElapsedTimeMS);
   }

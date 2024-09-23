@@ -40,7 +40,7 @@ class CXformImplementAssert : public CXformImplementation {
   EXformId Exfid() const override { return ExfImplementAssert; }
 
   // xform name
-  const CHAR *SzId() const override { return "CXformImplementAssert"; }
+  const char *SzId() const override { return "CXformImplementAssert"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

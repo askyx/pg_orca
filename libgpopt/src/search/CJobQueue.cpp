@@ -50,7 +50,7 @@ CJobQueue::EJobQueueResult CJobQueue::EjqrAdd(CJob *pj) {
       // check if job is completed
       if (!m_fCompleted) {
         m_listjQueued.Append(pj);
-        BOOL fOwner = (pj == m_listjQueued.First());
+        bool fOwner = (pj == m_listjQueued.First());
 
         // first caller becomes the owner
         if (fOwner) {

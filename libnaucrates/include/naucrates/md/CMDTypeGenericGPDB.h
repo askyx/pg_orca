@@ -58,16 +58,16 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   CMDName *m_mdname;
 
   // is this a fixed-length type
-  BOOL m_is_fixed_length;
+  bool m_is_fixed_length;
 
   // FIXME: we seem to only use m_gpdb_length here, why?
 #ifdef GPOS_DEBUG
   // type length in number of bytes for fixed-length types, 0 otherwise
-  ULONG m_length;
+  uint32_t m_length;
 #endif
 
   // is type passed by value or by reference
-  BOOL m_is_passed_by_value;
+  bool m_is_passed_by_value;
 
   IMDId *m_part_opfamily;
 
@@ -108,16 +108,16 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   IMDId *m_mdid_count;
 
   // is type hashable
-  BOOL m_is_hashable;
+  bool m_is_hashable;
 
   // is type merge joinable using '='
-  BOOL m_is_merge_joinable;
+  bool m_is_merge_joinable;
 
   // is type composite
-  BOOL m_is_composite_type;
+  bool m_is_composite_type;
 
   // is type text related
-  BOOL m_is_text_related;
+  bool m_is_text_related;
 
   // id of the relation corresponding to a composite type
   IMDId *m_mdid_base_relation;
@@ -126,7 +126,7 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   IMDId *m_mdid_type_array;
 
   // GPDB specific length
-  INT m_gpdb_length;
+  int32_t m_gpdb_length;
 
   // a null datum of this type (used for statistics comparison)
   IDatum *m_datum_null;
@@ -135,12 +135,12 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   CMDTypeGenericGPDB(const CMDTypeGenericGPDB &) = delete;
 
   // ctor
-  CMDTypeGenericGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, BOOL is_fixed_length, ULONG length,
-                     BOOL is_passed_by_value, IMDId *mdid_part_opfamily, IMDId *mdid_op_eq, IMDId *mdid_op_neq,
+  CMDTypeGenericGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, bool is_fixed_length, uint32_t length,
+                     bool is_passed_by_value, IMDId *mdid_part_opfamily, IMDId *mdid_op_eq, IMDId *mdid_op_neq,
                      IMDId *mdid_op_lt, IMDId *mdid_op_leq, IMDId *mdid_op_gt, IMDId *mdid_op_geq, IMDId *mdid_op_cmp,
                      IMDId *pmdidMin, IMDId *pmdidMax, IMDId *pmdidAvg, IMDId *pmdidSum, IMDId *pmdidCount,
-                     BOOL is_hashable, BOOL is_merge_joinable, BOOL is_composite_type, BOOL is_text_related,
-                     IMDId *mdid_base_relation, IMDId *mdid_type_array, INT gpdb_length);
+                     bool is_hashable, bool is_merge_joinable, bool is_composite_type, bool is_text_related,
+                     IMDId *mdid_base_relation, IMDId *mdid_type_array, int32_t gpdb_length);
 
   // dtor
   ~CMDTypeGenericGPDB() override;
@@ -151,15 +151,14 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
 
   CMDName Mdname() const override;
 
-  BOOL IsFixedLength() const override { return m_is_fixed_length; }
+  bool IsFixedLength() const override { return m_is_fixed_length; }
 
   // is type composite
-  BOOL IsComposite() const override { return m_is_composite_type; }
+  bool IsComposite() const override { return m_is_composite_type; }
 
-  ULONG
-  Length() const override { return m_gpdb_length; }
+  uint32_t Length() const override { return m_gpdb_length; }
 
-  BOOL IsPassedByValue() const override { return m_is_passed_by_value; }
+  bool IsPassedByValue() const override { return m_is_passed_by_value; }
 
   // id of specified comparison operator type
   IMDId *GetMdidForCmpType(ECmpType ecmpt) const override;
@@ -170,12 +169,12 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   const IMDId *CmpOpMdid() const override { return m_mdid_op_cmp; }
 
   // is type hashable
-  BOOL IsHashable() const override { return m_is_hashable; }
+  bool IsHashable() const override { return m_is_hashable; }
 
-  BOOL IsTextRelated() const override { return m_is_text_related; }
+  bool IsTextRelated() const override { return m_is_text_related; }
 
   // is type merge joinable on '='
-  BOOL IsMergeJoinable() const override { return m_is_merge_joinable; }
+  bool IsMergeJoinable() const override { return m_is_merge_joinable; }
 
   // id of the relation corresponding to a composite type
   IMDId *GetBaseRelMdid() const override { return m_mdid_base_relation; }
@@ -193,7 +192,7 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   IDatum *GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const override;
 
   // return the GPDB length
-  virtual INT GetGPDBLength() const { return m_gpdb_length; }
+  virtual int32_t GetGPDBLength() const { return m_gpdb_length; }
 
   // return the null constant for this type
   IDatum *DatumNull() const override { return m_datum_null; }
@@ -213,37 +212,37 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
 #endif
 
   // is type an ambiguous one? e.g., AnyElement in GPDB
-  BOOL IsAmbiguous() const override;
+  bool IsAmbiguous() const override;
 
   // create a dxl datum
-  static CDXLDatum *CreateDXLDatumVal(CMemoryPool *mp, IMDId *mdid, const IMDType *md_type, INT type_modifier,
-                                      BOOL is_null, BYTE *byte_array, ULONG length, LINT lint_Value,
+  static CDXLDatum *CreateDXLDatumVal(CMemoryPool *mp, IMDId *mdid, const IMDType *md_type, int32_t type_modifier,
+                                      bool is_null, uint8_t *byte_array, uint32_t length, int64_t lint_Value,
                                       CDouble double_Value);
 
   // create a dxl datum of types having double mapping
-  static CDXLDatum *CreateDXLDatumStatsDoubleMappable(CMemoryPool *mp, IMDId *mdid, INT type_modifier, BOOL is_null,
-                                                      BYTE *byte_array, ULONG length, LINT lint_Value,
+  static CDXLDatum *CreateDXLDatumStatsDoubleMappable(CMemoryPool *mp, IMDId *mdid, int32_t type_modifier, bool is_null,
+                                                      uint8_t *byte_array, uint32_t length, int64_t lint_Value,
                                                       CDouble double_Value);
 
   // create a dxl datum of types having lint mapping
-  static CDXLDatum *CreateDXLDatumStatsIntMappable(CMemoryPool *mp, IMDId *mdid, INT type_modifier, BOOL is_null,
-                                                   BYTE *byte_array, ULONG length, LINT lint_Value,
+  static CDXLDatum *CreateDXLDatumStatsIntMappable(CMemoryPool *mp, IMDId *mdid, int32_t type_modifier, bool is_null,
+                                                   uint8_t *byte_array, uint32_t length, int64_t lint_Value,
                                                    CDouble double_Value);
 
   // create a NULL constant for this type
-  IDatum *CreateGenericNullDatum(CMemoryPool *mp, INT type_modifier) const override;
+  IDatum *CreateGenericNullDatum(CMemoryPool *mp, int32_t type_modifier) const override;
 
   // does a datum of this type need bytea to Lint mapping for statistics computation
-  static BOOL HasByte2IntMapping(const IMDType *mdtype);
+  static bool HasByte2IntMapping(const IMDType *mdtype);
 
   // does a datum of this type need bytea to double mapping for statistics computation
-  static BOOL HasByte2DoubleMapping(const IMDId *mdid);
+  static bool HasByte2DoubleMapping(const IMDId *mdid);
 
   // is this a time-related type
-  static BOOL IsTimeRelatedType(const IMDId *mdid);
+  static bool IsTimeRelatedType(const IMDId *mdid);
 
   // is this a network-related type
-  static BOOL IsNetworkRelatedType(const IMDId *mdid);
+  static bool IsNetworkRelatedType(const IMDId *mdid);
 };
 }  // namespace gpmd
 

@@ -54,16 +54,16 @@ class CLogicalGbAgg;
 class CUtils {
  private:
   // check if the expression is a scalar boolean const
-  static BOOL FScalarConstBool(CExpression *pexpr, BOOL value);
+  static bool FScalarConstBool(CExpression *pexpr, bool value);
 
   // check if two expressions have the same children in any order
-  static BOOL FMatchChildrenUnordered(const CExpression *pexprLeft, const CExpression *pexprRight);
+  static bool FMatchChildrenUnordered(const CExpression *pexprLeft, const CExpression *pexprRight);
 
   // check if two expressions have the same children in the same order
-  static BOOL FMatchChildrenOrdered(const CExpression *pexprLeft, const CExpression *pexprRight);
+  static bool FMatchChildrenOrdered(const CExpression *pexprLeft, const CExpression *pexprRight);
 
   // checks that the given type has all the comparisons: Eq, NEq, L, LEq, G, GEq
-  static BOOL FHasAllDefaultComparisons(const IMDType *pmdtype);
+  static bool FHasAllDefaultComparisons(const IMDType *pmdtype);
 
   //	append the expressions in the source array to destination array
   static void AppendArrayExpr(CExpressionArray *pdrgpexprSrc, CExpressionArray *pdrgpexprDest);
@@ -79,7 +79,7 @@ class CUtils {
 
 #endif  // GPOS_DEBUG
 
-  static IOstream &OsPrintDrgPcoldesc(IOstream &os, CColumnDescriptorArray *pdrgpcoldescIncludedCols, ULONG length);
+  static IOstream &OsPrintDrgPcoldesc(IOstream &os, CColumnDescriptorArray *pdrgpcoldescIncludedCols, uint32_t length);
 
   //-------------------------------------------------------------------
   // Helpers for generating expressions
@@ -165,7 +165,7 @@ class CUtils {
   static CExpression *PexprIsNotFalse(CMemoryPool *mp, CExpression *pexpr);
 
   // find if a scalar expression uses a nullable columns from the output of a logical expression
-  static BOOL FUsesNullableCol(CMemoryPool *mp, CExpression *pexprScalar, CExpression *pexprLogical);
+  static bool FUsesNullableCol(CMemoryPool *mp, CExpression *pexprScalar, CExpression *pexprLogical);
 
   // generate a scalar op expression for a column reference and an expression
   static CExpression *PexprScalarOp(CMemoryPool *mp, const CColRef *pcrLeft, CExpression *pexpr, CWStringConst strOp,
@@ -186,14 +186,14 @@ class CUtils {
 
   // generate an aggregate function operator
   static CScalarAggFunc *PopAggFunc(
-      CMemoryPool *mp, IMDId *pmdidAggFunc, const CWStringConst *pstrAggFunc, BOOL is_distinct,
-      EAggfuncStage eaggfuncstage, BOOL fSplit,
+      CMemoryPool *mp, IMDId *pmdidAggFunc, const CWStringConst *pstrAggFunc, bool is_distinct,
+      EAggfuncStage eaggfuncstage, bool fSplit,
       IMDId *pmdidResolvedReturnType,  // return type to be used if original return type is ambiguous
-      EAggfuncKind aggkind, ULongPtrArray *argtypes, BOOL fRepSafe);
+      EAggfuncKind aggkind, ULongPtrArray *argtypes, bool fRepSafe);
 
   // generate an aggregate function
   static CExpression *PexprAggFunc(CMemoryPool *mp, IMDId *pmdidAggFunc, const CWStringConst *pstrAggFunc,
-                                   const CColRef *colref, BOOL is_distinct, EAggfuncStage eaggfuncstage, BOOL fSplit);
+                                   const CColRef *colref, bool is_distinct, EAggfuncStage eaggfuncstage, bool fSplit);
 
   // generate a count(*) expression
   static CExpression *PexprCountStar(CMemoryPool *mp);
@@ -202,13 +202,13 @@ class CUtils {
   static CExpression *PexprCountStar(CMemoryPool *mp, CExpression *pexprLogical);
 
   // return True if passed expression is a Project Element defined on count(*)/count(any) agg
-  static BOOL FCountAggProjElem(CExpression *pexprPrjElem, CColRef **ppcrCount);
+  static bool FCountAggProjElem(CExpression *pexprPrjElem, CColRef **ppcrCount);
 
   // check if given expression has a count(*)/count(Any) agg
-  static BOOL FHasCountAgg(CExpression *pexpr, CColRef **ppcrCount);
+  static bool FHasCountAgg(CExpression *pexpr, CColRef **ppcrCount);
 
   // check if given expression has count matching the given column, returns the Logical GroupBy Agg above
-  static BOOL FHasCountAggMatchingColumn(const CExpression *pexpr, const CColRef *colref,
+  static bool FHasCountAggMatchingColumn(const CExpression *pexpr, const CColRef *colref,
                                          const CLogicalGbAgg **ppgbAgg);
 
   // generate a GbAgg with count(*) and sum(col) over the given expression
@@ -221,14 +221,14 @@ class CUtils {
   static CExpression *PexprGbAggSum(CMemoryPool *mp, CExpression *pexprLogical, CColRefArray *pdrgpcrSum);
 
   // generate a count(col) expression
-  static CExpression *PexprCount(CMemoryPool *mp, const CColRef *colref, BOOL is_distinct);
+  static CExpression *PexprCount(CMemoryPool *mp, const CColRef *colref, bool is_distinct);
 
   // generate a min(col) expression
   static CExpression *PexprMin(CMemoryPool *mp, CMDAccessor *md_accessor, const CColRef *colref);
 
   // generate an aggregate expression
   static CExpression *PexprAgg(CMemoryPool *mp, CMDAccessor *md_accessor, IMDType::EAggType agg_type,
-                               const CColRef *colref, BOOL is_distinct);
+                               const CColRef *colref, bool is_distinct);
 
   // generate a select expression
   static CExpression *PexprLogicalSelect(CMemoryPool *mp, CExpression *pexpr, CExpression *pexprPredicate);
@@ -241,7 +241,7 @@ class CUtils {
 
   // generate a project expression
   static CExpression *PexprLogicalProject(CMemoryPool *mp, CExpression *pexpr, CExpression *pexprPrjList,
-                                          BOOL fNewComputedCol);
+                                          bool fNewComputedCol);
 
   // generate a sequence project expression
   static CExpression *PexprLogicalSequenceProject(CMemoryPool *mp, COrderSpecArray *pdrgpos, CWindowFrameArray *pdrgpwf,
@@ -262,7 +262,7 @@ class CUtils {
 
   // generate a project expression with one or more additional project elements
   static CExpression *PexprAddProjection(CMemoryPool *mp, CExpression *pexpr, CExpressionArray *pdrgpexprProjected,
-                                         BOOL fNewComputedCol = true);
+                                         bool fNewComputedCol = true);
 
   // generate an aggregate expression
   static CExpression *PexprLogicalGbAggGlobal(CMemoryPool *mp, CColRefArray *colref_array, CExpression *pexpr,
@@ -273,26 +273,26 @@ class CUtils {
                                         CExpression *pexprPrL, COperator::EGbAggType egbaggtype);
 
   // check if the aggregate is local or global
-  static BOOL FHasGlobalAggFunc(const CExpression *pexprProjList);
+  static bool FHasGlobalAggFunc(const CExpression *pexprProjList);
 
   // check if given project list has only aggregate functions
   // that can be safely executed on replicated slices
-  static BOOL FContainsOnlyReplicationSafeAggFuncs(const CExpression *pexprProjList);
+  static bool FContainsOnlyReplicationSafeAggFuncs(const CExpression *pexprProjList);
 
   // generate a bool expression
-  static CExpression *PexprScalarConstBool(CMemoryPool *mp, BOOL value, BOOL is_null = false);
+  static CExpression *PexprScalarConstBool(CMemoryPool *mp, bool value, bool is_null = false);
 
   // generate an int4 expression
-  static CExpression *PexprScalarConstInt4(CMemoryPool *mp, INT val);
+  static CExpression *PexprScalarConstInt4(CMemoryPool *mp, int32_t val);
 
   // generate an int8 expression
-  static CExpression *PexprScalarConstInt8(CMemoryPool *mp, LINT val, BOOL is_null = false);
+  static CExpression *PexprScalarConstInt8(CMemoryPool *mp, int64_t val, bool is_null = false);
 
   // generate an oid constant expression
   static CExpression *PexprScalarConstOid(CMemoryPool *mp, OID oid_val);
 
   // generate a NULL constant of a given type
-  static CExpression *PexprScalarConstNull(CMemoryPool *mp, const IMDType *typ, INT type_modifier);
+  static CExpression *PexprScalarConstNull(CMemoryPool *mp, const IMDType *typ, int32_t type_modifier);
 
   // comparison operator type
   static IMDType::ECmpType ParseCmpType(IMDId *mdid);
@@ -335,7 +335,7 @@ class CUtils {
   //-------------------------------------------------------------------
 
   // extract the nth partition key from the given array of partition keys
-  static CColRef *PcrExtractPartKey(CColRef2dArray *pdrgpdrgpcr, ULONG ulLevel);
+  static CColRef *PcrExtractPartKey(CColRef2dArray *pdrgpdrgpcr, uint32_t ulLevel);
 
   //-------------------------------------------------------------------
   // Helpers for comparisons
@@ -345,41 +345,41 @@ class CUtils {
   static CExpressionArray *PdrgpexprDedup(CMemoryPool *mp, CExpressionArray *pdrgpexpr);
 
   // deep equality of expression trees
-  static BOOL Equals(const CExpression *pexprLeft, const CExpression *pexprRight);
+  static bool Equals(const CExpression *pexprLeft, const CExpression *pexprRight);
 
   // compare expression against an array of expressions
-  static BOOL FEqualAny(const CExpression *pexpr, const CExpressionArray *pdrgpexpr);
+  static bool FEqualAny(const CExpression *pexpr, const CExpressionArray *pdrgpexpr);
 
   // deep equality of expression arrays
-  static BOOL Equals(const CExpressionArray *pdrgpexprLeft, const CExpressionArray *pdrgpexprRight);
+  static bool Equals(const CExpressionArray *pdrgpexprLeft, const CExpressionArray *pdrgpexprRight);
 
   // check if first expression array contains all expressions in second array
-  static BOOL Contains(const CExpressionArray *pdrgpexprFst, const CExpressionArray *pdrgpexprSnd);
+  static bool Contains(const CExpressionArray *pdrgpexprFst, const CExpressionArray *pdrgpexprSnd);
 
   // return the number of occurrences of the given expression in the given
   // array of expressions
-  static ULONG UlOccurrences(const CExpression *pexpr, CExpressionArray *pdrgpexpr);
+  static uint32_t UlOccurrences(const CExpression *pexpr, CExpressionArray *pdrgpexpr);
 
   //-------------------------------------------------------------------
   // Helpers for datums
   //-------------------------------------------------------------------
 
   // check to see if the expression is a scalar const TRUE
-  static BOOL FScalarConstTrue(CExpression *pexpr);
+  static bool FScalarConstTrue(CExpression *pexpr);
 
   // check to see if the expression is a scalar const FALSE
-  static BOOL FScalarConstFalse(CExpression *pexpr);
+  static bool FScalarConstFalse(CExpression *pexpr);
 
-  // check if the given expression is an INT, the template parameter is an INT type
+  // check if the given expression is an int32_t, the template parameter is an int32_t type
   template <class T>
-  static BOOL FScalarConstInt(CExpression *pexpr);
+  static bool FScalarConstInt(CExpression *pexpr);
 
   //-------------------------------------------------------------------
   // Helpers for printing
   //-------------------------------------------------------------------
 
   // column reference array print helper
-  static IOstream &OsPrintDrgPcr(IOstream &os, const CColRefArray *colref_array, ULONG = gpos::ulong_max);
+  static IOstream &OsPrintDrgPcr(IOstream &os, const CColRefArray *colref_array, uint32_t = UINT32_MAX);
 
   //-------------------------------------------------------------------
   // Helpers for column reference sets
@@ -415,233 +415,233 @@ class CUtils {
   // append elements from input array to output array, starting from given index, after add-refing them
   template <class T, void (*CleanupFn)(T *)>
   static void AddRefAppend(CDynamicPtrArray<T, CleanupFn> *pdrgptOutput, CDynamicPtrArray<T, CleanupFn> *pdrgptInput,
-                           ULONG ulStart = 0);
+                           uint32_t ulStart = 0);
 
   // check for existence of subqueries
-  static BOOL FHasSubquery(CExpression *pexpr);
+  static bool FHasSubquery(CExpression *pexpr);
 
   // check existence of subqueries or Apply operators in deep expression tree
-  static BOOL FHasSubqueryOrApply(CExpression *pexpr, BOOL fCheckRoot = true);
+  static bool FHasSubqueryOrApply(CExpression *pexpr, bool fCheckRoot = true);
 
   // check existence of correlated apply operators in deep expression tree
-  static BOOL FHasCorrelatedApply(CExpression *pexpr, BOOL fCheckRoot = true);
+  static bool FHasCorrelatedApply(CExpression *pexpr, bool fCheckRoot = true);
 
   // check for existence of CTE anchor
-  static BOOL FHasCTEAnchor(CExpression *pexpr);
+  static bool FHasCTEAnchor(CExpression *pexpr);
 
   // check for existence of outer references
-  static BOOL HasOuterRefs(CExpression *pexpr);
+  static bool HasOuterRefs(CExpression *pexpr);
 
   // check if a given operator is a logical join
-  static BOOL FLogicalJoin(COperator *pop);
+  static bool FLogicalJoin(COperator *pop);
 
   // check if a given operator is a logical set operation
-  static BOOL FLogicalSetOp(COperator *pop);
+  static bool FLogicalSetOp(COperator *pop);
 
   // check if a given operator is a logical unary operator
-  static BOOL FLogicalUnary(COperator *pop);
+  static bool FLogicalUnary(COperator *pop);
 
   // check if a given operator is a physical join
-  static BOOL FPhysicalJoin(COperator *pop);
+  static bool FPhysicalJoin(COperator *pop);
 
   // check if a given operator is a physical scan
-  static BOOL FPhysicalScan(COperator *pop);
+  static bool FPhysicalScan(COperator *pop);
 
   // check if a given operator is a physical agg
-  static BOOL FPhysicalAgg(COperator *pop);
+  static bool FPhysicalAgg(COperator *pop);
 
   // check if given expression has any one stage agg nodes
-  static BOOL FHasOneStagePhysicalAgg(const CExpression *pexpr);
+  static bool FHasOneStagePhysicalAgg(const CExpression *pexpr);
 
   // check if a given operator is an enforcer
-  static BOOL FEnforcer(COperator *pop);
+  static bool FEnforcer(COperator *pop);
 
   // check if a given operator is a hash join
-  static BOOL FHashJoin(COperator *pop);
+  static bool FHashJoin(COperator *pop);
 
   // check if a given operator is a correlated nested loops join
-  static BOOL FCorrelatedNLJoin(COperator *pop);
+  static bool FCorrelatedNLJoin(COperator *pop);
 
   // check if a given operator is a nested loops join
-  static BOOL FNLJoin(COperator *pop);
+  static bool FNLJoin(COperator *pop);
 
   // check if a given operator is an Apply
-  static BOOL FApply(COperator *pop);
+  static bool FApply(COperator *pop);
 
   // check if a given operator is a correlated Apply
-  static BOOL FCorrelatedApply(COperator *pop);
+  static bool FCorrelatedApply(COperator *pop);
 
   // check if a given operator is left semi apply
-  static BOOL FLeftSemiApply(COperator *pop);
+  static bool FLeftSemiApply(COperator *pop);
 
   // check if a given operator is left anti semi apply
-  static BOOL FLeftAntiSemiApply(COperator *pop);
+  static bool FLeftAntiSemiApply(COperator *pop);
 
   // check if a given operator is a subquery
-  static BOOL FSubquery(COperator *pop);
+  static bool FSubquery(COperator *pop);
 
   // check if a given operator is existential subquery
-  static BOOL FExistentialSubquery(COperator *pop);
+  static bool FExistentialSubquery(COperator *pop);
 
   // check if a given operator is quantified subquery
-  static BOOL FQuantifiedSubquery(COperator *pop);
+  static bool FQuantifiedSubquery(COperator *pop);
 
   // check if given expression is a Project Element with scalar subquery
-  static BOOL FProjElemWithScalarSubq(CExpression *pexpr);
+  static bool FProjElemWithScalarSubq(CExpression *pexpr);
 
   // check if given expression is a scalar subquery with a ConstTableGet as the only child
-  static BOOL FScalarSubqWithConstTblGet(CExpression *pexpr);
+  static bool FScalarSubqWithConstTblGet(CExpression *pexpr);
 
   // check if given expression is a Project on ConstTable with one scalar subquery in Project List
-  static BOOL FProjectConstTableWithOneScalarSubq(CExpression *pexpr);
+  static bool FProjectConstTableWithOneScalarSubq(CExpression *pexpr);
 
   // check if an expression is a 0 offset
-  static BOOL FScalarConstIntZero(CExpression *pexprOffset);
+  static bool FScalarConstIntZero(CExpression *pexprOffset);
 
   // check if a limit expression has 0 offset
-  static BOOL FHasZeroOffset(CExpression *pexpr);
+  static bool FHasZeroOffset(CExpression *pexpr);
 
   // check if expression is scalar comparison
-  static BOOL FScalarCmp(CExpression *pexpr);
+  static bool FScalarCmp(CExpression *pexpr);
 
   // check if expression is scalar array comparison
-  static BOOL FScalarArrayCmp(CExpression *pexpr);
+  static bool FScalarArrayCmp(CExpression *pexpr);
 
   // check if given operator exists in the given list
-  static BOOL FOpExists(const COperator *pop, const COperator::EOperatorId *peopid, ULONG ulOps);
+  static bool FOpExists(const COperator *pop, const COperator::EOperatorId *peopid, uint32_t ulOps);
 
   // check if given expression has any operator in the given list
-  static BOOL FHasOp(const CExpression *pexpr, const COperator::EOperatorId *peopid, ULONG ulOps);
+  static bool FHasOp(const CExpression *pexpr, const COperator::EOperatorId *peopid, uint32_t ulOps);
 
   // return number of inlinable CTEs in the given expression
-  static ULONG UlInlinableCTEs(CExpression *pexpr, ULONG ulDepth = 1);
+  static uint32_t UlInlinableCTEs(CExpression *pexpr, uint32_t ulDepth = 1);
 
   // return number of joins in the given expression
-  static ULONG UlJoins(CExpression *pexpr);
+  static uint32_t UlJoins(CExpression *pexpr);
 
   // return number of subqueries in the given expression
-  static ULONG UlSubqueries(CExpression *pexpr);
+  static uint32_t UlSubqueries(CExpression *pexpr);
 
   // check if expression is scalar bool op
-  static BOOL FScalarBoolOp(CExpression *pexpr);
+  static bool FScalarBoolOp(CExpression *pexpr);
 
   // is the given expression a scalar bool op of the passed type?
-  static BOOL FScalarBoolOp(CExpression *pexpr, CScalarBoolOp::EBoolOperator eboolop);
+  static bool FScalarBoolOp(CExpression *pexpr, CScalarBoolOp::EBoolOperator eboolop);
 
   // check if expression is scalar bool test op
-  static BOOL FScalarBooleanTest(CExpression *pexpr);
+  static bool FScalarBooleanTest(CExpression *pexpr);
 
   // check if expression is scalar null test
-  static BOOL FScalarNullTest(CExpression *pexpr);
+  static bool FScalarNullTest(CExpression *pexpr);
 
   // check if given expression is a NOT NULL predicate
-  static BOOL FScalarNotNull(CExpression *pexpr);
+  static bool FScalarNotNull(CExpression *pexpr);
 
   // check if expression is scalar identifier
-  static BOOL FScalarIdent(CExpression *pexpr);
+  static bool FScalarIdent(CExpression *pexpr);
 
   // check if expression is scalar identifier (with or without a cast)
-  static BOOL FScalarIdentIgnoreCast(CExpression *pexpr);
+  static bool FScalarIdentIgnoreCast(CExpression *pexpr);
 
-  static BOOL FScalarConstAndScalarIdentArray(CExpression *pexprArray);
+  static bool FScalarConstAndScalarIdentArray(CExpression *pexprArray);
 
   // check if expression is scalar identifier of boolean type
-  static BOOL FScalarIdentBoolType(CExpression *pexpr);
+  static bool FScalarIdentBoolType(CExpression *pexpr);
 
   // check if expression is scalar array
-  static BOOL FScalarArray(CExpression *pexpr);
+  static bool FScalarArray(CExpression *pexpr);
 
   // returns number of children or constants of it is all constants
-  static ULONG UlScalarArrayArity(CExpression *pexpr);
+  static uint32_t UlScalarArrayArity(CExpression *pexpr);
 
   // returns constant operator of a scalar array expression
-  static CScalarConst *PScalarArrayConstChildAt(CExpression *pexprArray, ULONG ul);
+  static CScalarConst *PScalarArrayConstChildAt(CExpression *pexprArray, uint32_t ul);
 
   // returns constant expression of a scalar array expression
-  static CExpression *PScalarArrayExprChildAt(CMemoryPool *mp, CExpression *pexprArray, ULONG ul);
+  static CExpression *PScalarArrayExprChildAt(CMemoryPool *mp, CExpression *pexprArray, uint32_t ul);
 
   // returns the scalar array expression child of CScalarArrayComp
   static CExpression *PexprScalarArrayChild(CExpression *pexpr);
 
   // returns if the scalar array has all constant elements or children
-  static BOOL FScalarConstArray(CExpression *pexpr);
+  static bool FScalarConstArray(CExpression *pexpr);
 
   // returns if the scalar constant is an array
-  static BOOL FIsConstArray(CExpression *pexpr);
+  static bool FIsConstArray(CExpression *pexpr);
 
   // returns MDId for gp_percentile based on return type
   static CMDIdGPDB *GetPercentileAggMDId(CMemoryPool *mp, CExpression *pexprAggFn);
 
   // returns if the scalar constant array has already been collapased
-  static BOOL FScalarArrayCollapsed(CExpression *pexprArray);
+  static bool FScalarArrayCollapsed(CExpression *pexprArray);
 
   // returns true if the subquery is a ScalarSubqueryAny
-  static BOOL FAnySubquery(COperator *pop);
+  static bool FAnySubquery(COperator *pop);
 
   // returns true if the subquery is a ScalarSubqueryExists
-  static BOOL FExistsSubquery(COperator *pop);
+  static bool FExistsSubquery(COperator *pop);
 
   // returns true if the expression is a correlated EXISTS/ANY subquery
-  static BOOL FCorrelatedExistsAnySubquery(CExpression *pexpr);
+  static bool FCorrelatedExistsAnySubquery(CExpression *pexpr);
 
-  static CScalarProjectElement *PNthProjectElement(CExpression *pexpr, ULONG ul);
+  static CScalarProjectElement *PNthProjectElement(CExpression *pexpr, uint32_t ul);
 
   // returns the expression under the Nth project element of a CLogicalProject
-  static CExpression *PNthProjectElementExpr(CExpression *pexpr, ULONG ul);
+  static CExpression *PNthProjectElementExpr(CExpression *pexpr, uint32_t ul);
 
   // check if the Project list has an inner reference assuming project list has one projecet element
-  static BOOL FInnerRefInProjectList(CExpression *pexpr);
+  static bool FInnerRefInProjectList(CExpression *pexpr);
 
   // Check if expression tree has a col being referenced in the CColRefSet passed as input
-  static BOOL FExprHasAnyCrFromCrs(CExpression *pexpr, CColRefSet *pcrs);
+  static bool FExprHasAnyCrFromCrs(CExpression *pexpr, CColRefSet *pcrs);
 
   // If it's a scalar array of all CScalarConst, collapse it into a single
   // expression but keep the constants in the operator.
   static CExpression *PexprCollapseConstArray(CMemoryPool *mp, CExpression *pexprArray);
 
   // check if expression is scalar array coerce
-  static BOOL FScalarArrayCoerce(CExpression *pexpr);
+  static bool FScalarArrayCoerce(CExpression *pexpr);
 
   // is the given expression a scalar identifier with the given column reference
-  static BOOL FScalarIdent(CExpression *pexpr, CColRef *colref);
+  static bool FScalarIdent(CExpression *pexpr, CColRef *colref);
 
   // check if expression is scalar const
-  static BOOL FScalarConst(CExpression *pexpr);
+  static bool FScalarConst(CExpression *pexpr);
 
   // check if this is a variable-free expression
-  static BOOL FVarFreeExpr(CExpression *pexpr);
+  static bool FVarFreeExpr(CExpression *pexpr);
 
   // check if expression is a predicate
-  static BOOL FPredicate(CExpression *pexpr);
+  static bool FPredicate(CExpression *pexpr);
 
   // is this type supported in contradiction detection using stats logic
-  static BOOL FIntType(IMDId *mdid_type);
+  static bool FIntType(IMDId *mdid_type);
 
   // is this type supported in contradiction detection
-  static BOOL FConstrainableType(IMDId *mdid_type);
+  static bool FConstrainableType(IMDId *mdid_type);
 
   // check if a binary operator uses only columns produced by its children
-  static BOOL FUsesChildColsOnly(CExpressionHandle &exprhdl);
+  static bool FUsesChildColsOnly(CExpressionHandle &exprhdl);
 
   // check if inner child of a binary operator uses columns not produced by outer child
-  static BOOL FInnerUsesExternalCols(CExpressionHandle &exprhdl);
+  static bool FInnerUsesExternalCols(CExpressionHandle &exprhdl);
 
   // check if inner child of a binary operator uses only columns not produced by outer child
-  static BOOL FInnerUsesExternalColsOnly(CExpressionHandle &exprhdl);
+  static bool FInnerUsesExternalColsOnly(CExpressionHandle &exprhdl);
 
   // check if comparison operators are available for the given columns
-  static BOOL FComparisonPossible(CColRefArray *colref_array, IMDType::ECmpType cmp_type);
+  static bool FComparisonPossible(CColRefArray *colref_array, IMDType::ECmpType cmp_type);
 
-  static ULONG UlCountOperator(const CExpression *pexpr, COperator::EOperatorId op_id);
+  static uint32_t UlCountOperator(const CExpression *pexpr, COperator::EOperatorId op_id);
 
   // check if hashing is possible for the given columns
-  static BOOL IsHashable(CColRefArray *colref_array);
+  static bool IsHashable(CColRefArray *colref_array);
 
   // check if the given operator is a logical DML operator
-  static BOOL FLogicalDML(COperator *pop);
+  static bool FLogicalDML(COperator *pop);
 
   // return regular string from wide-character string
-  static CHAR *CreateMultiByteCharStringFromWCString(CMemoryPool *mp, WCHAR *wsz);
+  static char *CreateMultiByteCharStringFromWCString(CMemoryPool *mp, wchar_t *wsz);
 
   // return column reference defined by project element
   static CColRef *PcrFromProjElem(CExpression *pexprPrEl);
@@ -650,20 +650,20 @@ class CUtils {
   static ULongPtrArray *Pdrgpul(CMemoryPool *mp, const CColRefArray *colref_array);
 
   // generate a timestamp-based file name
-  static void GenerateFileName(CHAR *buf, const CHAR *szPrefix, const CHAR *szExt, ULONG length, ULONG ulSessionId,
-                               ULONG ulCmdId);
+  static void GenerateFileName(char *buf, const char *szPrefix, const char *szExt, uint32_t length,
+                               uint32_t ulSessionId, uint32_t ulCmdId);
 
   // return the mapping of the given colref based on the given hashmap
-  static CColRef *PcrRemap(const CColRef *colref, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  static CColRef *PcrRemap(const CColRef *colref, UlongToColRefMap *colref_mapping, bool must_exist);
 
   // create a new colrefset corresponding to the given colrefset
   // and based on the given mapping
-  static CColRefSet *PcrsRemap(CMemoryPool *mp, CColRefSet *pcrs, UlongToColRefMap *colref_mapping, BOOL must_exist);
+  static CColRefSet *PcrsRemap(CMemoryPool *mp, CColRefSet *pcrs, UlongToColRefMap *colref_mapping, bool must_exist);
 
   // create an array of column references corresponding to the given array
   // and based on the given mapping
   static CColRefArray *PdrgpcrRemap(CMemoryPool *mp, CColRefArray *colref_array, UlongToColRefMap *colref_mapping,
-                                    BOOL must_exist);
+                                    bool must_exist);
 
   // create an array of column references corresponding to the given array
   // and based on the given mapping and create new colrefs if necessary
@@ -673,7 +673,7 @@ class CUtils {
   // create an array of column arrays corresponding to the given array
   // and based on the given mapping
   static CColRef2dArray *PdrgpdrgpcrRemap(CMemoryPool *mp, CColRef2dArray *pdrgpdrgpcr,
-                                          UlongToColRefMap *colref_mapping, BOOL must_exist);
+                                          UlongToColRefMap *colref_mapping, bool must_exist);
 
   // remap given array of expressions with provided column mappings
   static CExpressionArray *PdrgpexprRemap(CMemoryPool *mp, CExpressionArray *pdrgpexpr,
@@ -693,14 +693,14 @@ class CUtils {
   // create an array of new column references with the same names and
   // types as the given column references.
   // if the passed map is not null, mappings from old to copied variables are added to it
-  static CColRefArray *PdrgpcrCopy(CMemoryPool *mp, CColRefArray *colref_array, BOOL fAllComputed = false,
+  static CColRefArray *PdrgpcrCopy(CMemoryPool *mp, CColRefArray *colref_array, bool fAllComputed = false,
                                    UlongToColRefMap *colref_mapping = nullptr);
 
   // equality check between two arrays of column refs. Inputs can be NULL
-  static BOOL Equals(CColRefArray *pdrgpcrFst, CColRefArray *pdrgpcrSnd);
+  static bool Equals(CColRefArray *pdrgpcrFst, CColRefArray *pdrgpcrSnd);
 
   // compute hash value for an array of column references
-  static ULONG UlHashColArray(const CColRefArray *colref_array, const ULONG ulMaxCols = 5);
+  static uint32_t UlHashColArray(const CColRefArray *colref_array, const uint32_t ulMaxCols = 5);
 
   // return the set of column reference from the CTE Producer corresponding to the
   // subset of input columns from the CTE Consumer
@@ -712,14 +712,14 @@ class CUtils {
   static CExpression *PexprConjINDFCond(CMemoryPool *mp, CColRef2dArray *pdrgpdrgpcrInput);
 
   // check whether a colref array contains repeated items
-  static BOOL FHasDuplicates(const CColRefArray *colref_array);
+  static bool FHasDuplicates(const CColRefArray *colref_array);
 
   // cast the input expression to the destination mdid
   static CExpression *PexprCast(CMemoryPool *mp, CMDAccessor *md_accessor, CExpression *pexpr, IMDId *mdid_dest);
 
   // construct a func element expr for array coerce
   static CExpression *PexprFuncElemExpr(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid_func,
-                                        IMDId *mdid_elem_type, INT typmod);
+                                        IMDId *mdid_elem_type, int32_t typmod);
 
   // construct a logical join expression of the given type, with the given children
   static CExpression *PexprLogicalJoin(CMemoryPool *mp, EdxlJoinType edxljointype, CExpressionArray *pdrgpexpr);
@@ -732,7 +732,7 @@ class CUtils {
   static CColRefSet *PcrsExtractColumns(CMemoryPool *mp, const CExpressionArray *pdrgpexpr);
 
   // create a new bitset of the given length, where all the bits are set
-  static CBitSet *PbsAllSet(CMemoryPool *mp, ULONG size);
+  static CBitSet *PbsAllSet(CMemoryPool *mp, uint32_t size);
 
   // return a new bitset, setting the bits in the given array
   static CBitSet *Pbs(CMemoryPool *mp, ULongPtrArray *pdrgpul);
@@ -744,64 +744,64 @@ class CUtils {
   static CColRef *PcrMap(CColRef *pcrSource, CColRefArray *pdrgpcrSource, CColRefArray *pdrgpcrTarget);
 
   //	return index of the set containing given column
-  static ULONG UlPcrIndexContainingSet(CColRefSetArray *pdrgpcrs, const CColRef *colref);
+  static uint32_t UlPcrIndexContainingSet(CColRefSetArray *pdrgpcrs, const CColRef *colref);
 
   // collapse the top two project nodes, if unable return NULL
   static CExpression *PexprCollapseProjects(CMemoryPool *mp, CExpression *pexpr);
 
   // match function between index get/scan operators
   template <class T>
-  static BOOL FMatchIndex(T *pop1, COperator *pop2);
+  static bool FMatchIndex(T *pop1, COperator *pop2);
 
   // match function between dynamic index get/scan operators
   template <class T>
-  static BOOL FMatchDynamicIndex(T *pop1, COperator *pop2);
+  static bool FMatchDynamicIndex(T *pop1, COperator *pop2);
 
   // match function between dynamic get/scan operators
   template <class T>
-  static BOOL FMatchDynamicScan(T *pop1, COperator *pop2);
+  static bool FMatchDynamicScan(T *pop1, COperator *pop2);
 
   // match function between dynamic bitmap get/scan operators
   template <class T>
-  static BOOL FMatchDynamicBitmapScan(T *pop1, COperator *pop2);
+  static bool FMatchDynamicBitmapScan(T *pop1, COperator *pop2);
 
   // match function between bitmap get/scan operators
   template <class T>
-  static BOOL FMatchBitmapScan(T *pop1, COperator *pop2);
+  static bool FMatchBitmapScan(T *pop1, COperator *pop2);
 
   // compares two Idatums, useful for sorting functions
-  static INT IDatumCmp(const void *val1, const void *val2);
+  static int32_t IDatumCmp(const void *val1, const void *val2);
 
   // compares two CPoints, useful for sorting functions
-  static INT CPointCmp(const void *val1, const void *val2);
+  static int32_t CPointCmp(const void *val1, const void *val2);
 
   // check if the equivalance classes are disjoint
-  static BOOL FEquivalanceClassesDisjoint(CMemoryPool *mp, const CColRefSetArray *pdrgpcrs);
+  static bool FEquivalanceClassesDisjoint(CMemoryPool *mp, const CColRefSetArray *pdrgpcrs);
 
   // check if the equivalance classes are same
-  static BOOL FEquivalanceClassesEqual(CMemoryPool *mp, CColRefSetArray *pdrgpcrsFst, CColRefSetArray *pdrgpcrsSnd);
+  static bool FEquivalanceClassesEqual(CMemoryPool *mp, CColRefSetArray *pdrgpcrsFst, CColRefSetArray *pdrgpcrsSnd);
 
   // generate a limit expression on top of the given relational child with the given offset and limit count
-  static CExpression *PexprLimit(CMemoryPool *mp, CExpression *pexpr, ULONG ulOffSet, ULONG count);
+  static CExpression *PexprLimit(CMemoryPool *mp, CExpression *pexpr, uint32_t ulOffSet, uint32_t count);
 
   // generate a limit expression on top of the given relational child with given offset, limit count and OrderSpec
-  static CExpression *BuildLimitExprWithOrderSpec(CMemoryPool *mp, CExpression *pexpr, COrderSpec *pos, ULONG ulOffSet,
-                                                  ULONG count);
+  static CExpression *BuildLimitExprWithOrderSpec(CMemoryPool *mp, CExpression *pexpr, COrderSpec *pos,
+                                                  uint32_t ulOffSet, uint32_t count);
 
   // return true if given expression contains window aggregate function
-  static BOOL FHasAggWindowFunc(CExpression *pexpr);
+  static bool FHasAggWindowFunc(CExpression *pexpr);
 
   // return true if given expression contains ordered aggregate function
-  static BOOL FHasOrderedAggToSplit(CExpression *pexpr);
+  static bool FHasOrderedAggToSplit(CExpression *pexpr);
 
   // return true if the given expression is a cross join
-  static BOOL FCrossJoin(CExpression *pexpr);
+  static bool FCrossJoin(CExpression *pexpr);
 
   // return true if can create hash join for the expression
-  static BOOL IsHashJoinPossible(CMemoryPool *mp, CExpression *pexpr);
+  static bool IsHashJoinPossible(CMemoryPool *mp, CExpression *pexpr);
 
   // is this scalar expression an NDV-preserving function (used for join stats derivation)
-  static BOOL IsExprNDVPreserving(CExpression *pexpr, const CColRef **underlying_colref);
+  static bool IsExprNDVPreserving(CExpression *pexpr, const CColRef **underlying_colref);
 
   // search the given array of predicates for predicates with equality or IS NOT
   // DISTINCT FROM operators that has one side equal to the given expression
@@ -811,28 +811,28 @@ class CUtils {
 
   static CExpression *MakeJoinWithoutInferredPreds(CMemoryPool *mp, CExpression *join_expr);
 
-  static BOOL Contains(const CExpressionArray *exprs, CExpression *expr_to_match);
+  static bool Contains(const CExpressionArray *exprs, CExpression *expr_to_match);
 
-  static BOOL Equals(const CExpressionArrays *exprs_arr, const CExpressionArrays *other_exprs_arr);
+  static bool Equals(const CExpressionArrays *exprs_arr, const CExpressionArrays *other_exprs_arr);
 
-  static BOOL Equals(const IMdIdArray *mdids, const IMdIdArray *other_mdids);
+  static bool Equals(const IMdIdArray *mdids, const IMdIdArray *other_mdids);
 
-  static BOOL Equals(const IMDId *mdid, const IMDId *other_mdid);
+  static bool Equals(const IMDId *mdid, const IMDId *other_mdid);
 
-  static BOOL CanRemoveInferredPredicates(COperator::EOperatorId op_id);
+  static bool CanRemoveInferredPredicates(COperator::EOperatorId op_id);
 
   static CExpressionArrays *GetCombinedExpressionArrays(CMemoryPool *mp, CExpressionArrays *exprs_array,
                                                         CExpressionArrays *exprs_array_other);
 
   static void AddExprs(CExpressionArrays *results_exprs, CExpressionArrays *input_exprs);
 
-  static BOOL FScalarConstBoolNull(CExpression *pexpr);
+  static bool FScalarConstBoolNull(CExpression *pexpr);
 
-  static BOOL FScalarConstOrBinaryCoercible(CExpression *pexpr);
+  static bool FScalarConstOrBinaryCoercible(CExpression *pexpr);
 
-  static BOOL FScalarIdentNullTest(CExpression *pexpr);
+  static bool FScalarIdentNullTest(CExpression *pexpr);
 
-  static BOOL FContainsScalarIdentNullTest(CExpression *pexpr);
+  static bool FContainsScalarIdentNullTest(CExpression *pexpr);
 
   static CTableDescriptorHashSet *RemoveDuplicateMdids(CMemoryPool *mp, CTableDescriptorHashSet *tabdescs);
 
@@ -994,14 +994,14 @@ CExpression *CUtils::PexprLogicalCorrelatedQuantifiedApply(CMemoryPool *mp, CExp
 //---------------------------------------------------------------------------
 template <class T, void (*CleanupFn)(T *)>
 void CUtils::AddRefAppend(CDynamicPtrArray<T, CleanupFn> *pdrgptOutput, CDynamicPtrArray<T, CleanupFn> *pdrgptInput,
-                          ULONG ulStart) {
+                          uint32_t ulStart) {
   GPOS_ASSERT(nullptr != pdrgptOutput);
   GPOS_ASSERT(nullptr != pdrgptInput);
 
-  const ULONG size = pdrgptInput->Size();
+  const uint32_t size = pdrgptInput->Size();
   GPOS_ASSERT_IMP(0 < size, ulStart < size);
 
-  for (ULONG ul = ulStart; ul < size; ul++) {
+  for (uint32_t ul = ulStart; ul < size; ul++) {
     T *pt = (*pdrgptInput)[ul];
     CRefCount *prc = dynamic_cast<CRefCount *>(pt);
     prc->AddRef();
@@ -1014,12 +1014,12 @@ void CUtils::AddRefAppend(CDynamicPtrArray<T, CleanupFn> *pdrgptOutput, CDynamic
 //		CUtils::FScalarConstInt
 //
 //	@doc:
-//		Check if the given expression is an INT,
-//		the template parameter is an INT type
+//		Check if the given expression is an int32_t,
+//		the template parameter is an int32_t type
 //
 //---------------------------------------------------------------------------
 template <class T>
-BOOL CUtils::FScalarConstInt(CExpression *pexpr) {
+bool CUtils::FScalarConstInt(CExpression *pexpr) {
   GPOS_ASSERT(nullptr != pexpr);
 
   IMDType::ETypeInfo type_info = T::GetTypeInfo();
@@ -1045,7 +1045,7 @@ BOOL CUtils::FScalarConstInt(CExpression *pexpr) {
 //
 //---------------------------------------------------------------------------
 template <class T>
-BOOL CUtils::FMatchIndex(T *pop1, COperator *pop2) {
+bool CUtils::FMatchIndex(T *pop1, COperator *pop2) {
   if (pop1->Eopid() != pop2->Eopid()) {
     return false;
   }
@@ -1067,7 +1067,7 @@ BOOL CUtils::FMatchIndex(T *pop1, COperator *pop2) {
 //
 //---------------------------------------------------------------------------
 template <class T>
-BOOL CUtils::FMatchDynamicIndex(T *pop1, COperator *pop2) {
+bool CUtils::FMatchDynamicIndex(T *pop1, COperator *pop2) {
   if (pop1->Eopid() != pop2->Eopid()) {
     return false;
   }
@@ -1097,7 +1097,7 @@ BOOL CUtils::FMatchDynamicIndex(T *pop1, COperator *pop2) {
 //
 //---------------------------------------------------------------------------
 template <class T>
-BOOL CUtils::FMatchDynamicScan(T *pop1, COperator *pop2) {
+bool CUtils::FMatchDynamicScan(T *pop1, COperator *pop2) {
   if (pop1->Eopid() != pop2->Eopid()) {
     return false;
   }
@@ -1118,7 +1118,7 @@ BOOL CUtils::FMatchDynamicScan(T *pop1, COperator *pop2) {
 //
 //---------------------------------------------------------------------------
 template <class T>
-BOOL CUtils::FMatchDynamicBitmapScan(T *pop1, COperator *pop2) {
+bool CUtils::FMatchDynamicBitmapScan(T *pop1, COperator *pop2) {
   if (pop1->Eopid() != pop2->Eopid()) {
     return false;
   }
@@ -1139,7 +1139,7 @@ BOOL CUtils::FMatchDynamicBitmapScan(T *pop1, COperator *pop2) {
 //
 //---------------------------------------------------------------------------
 template <class T>
-BOOL CUtils::FMatchBitmapScan(T *pop1, COperator *pop2) {
+bool CUtils::FMatchBitmapScan(T *pop1, COperator *pop2) {
   if (pop1->Eopid() != pop2->Eopid()) {
     return false;
   }

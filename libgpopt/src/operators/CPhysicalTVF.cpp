@@ -73,7 +73,7 @@ CPhysicalTVF::~CPhysicalTVF() {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalTVF::Matches(COperator *pop) const {
+bool CPhysicalTVF::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CPhysicalTVF *popTVF = CPhysicalTVF::PopConvert(pop);
 
@@ -92,7 +92,7 @@ BOOL CPhysicalTVF::Matches(COperator *pop) const {
 //		Sensitivity to input order
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalTVF::FInputOrderSensitive() const {
+bool CPhysicalTVF::FInputOrderSensitive() const {
   return true;
 }
 
@@ -108,9 +108,9 @@ BOOL CPhysicalTVF::FInputOrderSensitive() const {
 CColRefSet *CPhysicalTVF::PcrsRequired(CMemoryPool *,        // mp,
                                        CExpressionHandle &,  // exprhdl,
                                        CColRefSet *,         // pcrsRequired,
-                                       ULONG,                // child_index,
+                                       uint32_t,             // child_index,
                                        CDrvdPropArray *,     // pdrgpdpCtxt
-                                       ULONG                 // ulOptReq
+                                       uint32_t              // ulOptReq
 ) {
   GPOS_ASSERT(!"CPhysicalTVF has no relational children");
   return nullptr;
@@ -127,9 +127,9 @@ CColRefSet *CPhysicalTVF::PcrsRequired(CMemoryPool *,        // mp,
 COrderSpec *CPhysicalTVF::PosRequired(CMemoryPool *,        // mp,
                                       CExpressionHandle &,  // exprhdl,
                                       COrderSpec *,         // posRequired,
-                                      ULONG,                // child_index,
+                                      uint32_t,             // child_index,
                                       CDrvdPropArray *,     // pdrgpdpCtxt
-                                      ULONG                 // ulOptReq
+                                      uint32_t              // ulOptReq
 ) const {
   GPOS_ASSERT(!"CPhysicalTVF has no relational children");
   return nullptr;
@@ -146,9 +146,9 @@ COrderSpec *CPhysicalTVF::PosRequired(CMemoryPool *,        // mp,
 CCTEReq *CPhysicalTVF::PcteRequired(CMemoryPool *,        // mp,
                                     CExpressionHandle &,  // exprhdl,
                                     CCTEReq *,            // pcter,
-                                    ULONG,                // child_index,
+                                    uint32_t,             // child_index,
                                     CDrvdPropArray *,     // pdrgpdpCtxt,
-                                    ULONG                 // ulOptReq
+                                    uint32_t              // ulOptReq
 ) const {
   GPOS_ASSERT(!"CPhysicalTVF has no relational children");
   return nullptr;
@@ -162,9 +162,9 @@ CCTEReq *CPhysicalTVF::PcteRequired(CMemoryPool *,        // mp,
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalTVF::FProvidesReqdCols(CExpressionHandle &,  // exprhdl,
+bool CPhysicalTVF::FProvidesReqdCols(CExpressionHandle &,  // exprhdl,
                                      CColRefSet *pcrsRequired,
-                                     ULONG  // ulOptReq
+                                     uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcrsRequired);
 

@@ -112,16 +112,16 @@ class CJob {
   CJobQueue *m_pjq{nullptr};
 
   // reference counter
-  ULONG_PTR m_ulpRefs{0};
+  uintptr_t m_ulpRefs{0};
 
   // job id - set by job factory
-  ULONG m_id{0};
+  uint32_t m_id{0};
 
   // job type
   EJobType m_ejt;
 
   // flag indicating if job is initialized
-  BOOL m_fInit{false};
+  bool m_fInit{false};
 
 #ifdef GPOS_DEBUG
   // job state
@@ -153,23 +153,21 @@ class CJob {
   void IncRefs() { m_ulpRefs++; }
 
   // decrement reference counter
-  ULONG_PTR
-  UlpDecrRefs() {
+  uintptr_t UlpDecrRefs() {
     GPOS_ASSERT(0 < m_ulpRefs && "Decrement counter from 0");
     return m_ulpRefs--;
   }
 
   // notify parent of job completion;
   // return true if parent is runnable;
-  BOOL FResumeParent() const;
+  bool FResumeParent() const;
 
 #ifdef GPOS_DEBUG
   // reference counter accessor
-  ULONG_PTR
-  UlpRefs() const { return m_ulpRefs; }
+  uintptr_t UlpRefs() const { return m_ulpRefs; }
 
   // check if job type is valid
-  BOOL FValidType() const { return (EjtTest <= m_ejt && EjtSentinel > m_ejt); }
+  bool FValidType() const { return (EjtTest <= m_ejt && EjtSentinel > m_ejt); }
 
   // get state
   EJobState Ejs() const { return m_ejs; }
@@ -180,8 +178,7 @@ class CJob {
 
  protected:
   // id accessor
-  ULONG
-  Id() const { return m_id; }
+  uint32_t Id() const { return m_id; }
 
   // ctor
   CJob() = default;
@@ -193,7 +190,7 @@ class CJob {
   virtual void Reset();
 
   // check if job is initialized
-  BOOL FInit() const { return m_fInit; }
+  bool FInit() const { return m_fInit; }
 
   // mark job as initialized
   void SetInit() {
@@ -207,7 +204,7 @@ class CJob {
 
   // actual job execution given a scheduling context
   // returns true if job completes, false if it is suspended
-  virtual BOOL FExecute(CSchedulerContext *psc) = 0;
+  virtual bool FExecute(CSchedulerContext *psc) = 0;
 
   // type accessor
   EJobType Ejt() const { return m_ejt; }

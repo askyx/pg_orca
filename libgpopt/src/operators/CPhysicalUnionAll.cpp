@@ -9,7 +9,7 @@
 using namespace gpopt;
 
 // sensitivity to order of inputs
-BOOL CPhysicalUnionAll::FInputOrderSensitive() const {
+bool CPhysicalUnionAll::FInputOrderSensitive() const {
   return false;
 }
 
@@ -20,8 +20,8 @@ CPhysicalUnionAll::CPhysicalUnionAll(CMemoryPool *mp, CColRefArray *pdrgpcrOutpu
 
   // build set representation of input columns
   m_pdrgpcrsInput = GPOS_NEW(mp) CColRefSetArray(mp);
-  const ULONG arity = m_pdrgpdrgpcrInput->Size();
-  for (ULONG ulChild = 0; ulChild < arity; ulChild++) {
+  const uint32_t arity = m_pdrgpdrgpcrInput->Size();
+  for (uint32_t ulChild = 0; ulChild < arity; ulChild++) {
     CColRefArray *colref_array = (*m_pdrgpdrgpcrInput)[ulChild];
     m_pdrgpcrsInput->Append(GPOS_NEW(mp) CColRefSet(mp, colref_array));
   }
@@ -60,7 +60,7 @@ CPhysicalUnionAll *CPhysicalUnionAll::PopConvert(COperator *pop) {
 //		Match operators
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalUnionAll::Matches(COperator *pop) const {
+bool CPhysicalUnionAll::Matches(COperator *pop) const {
   if (Eopid() == pop->Eopid()) {
     CPhysicalUnionAll *popUnionAll = CPhysicalUnionAll::PopConvert(pop);
 
@@ -81,9 +81,9 @@ BOOL CPhysicalUnionAll::Matches(COperator *pop) const {
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalUnionAll::PcrsRequired(CMemoryPool *mp,
                                             CExpressionHandle &,  // exprhdl,
-                                            CColRefSet *pcrsRequired, ULONG child_index,
+                                            CColRefSet *pcrsRequired, uint32_t child_index,
                                             CDrvdPropArray *,  // pdrgpdpCtxt
-                                            ULONG              // ulOptReq
+                                            uint32_t           // ulOptReq
 ) {
   return MapOutputColRefsToInput(mp, pcrsRequired, child_index);
 }
@@ -99,13 +99,13 @@ CColRefSet *CPhysicalUnionAll::PcrsRequired(CMemoryPool *mp,
 COrderSpec *CPhysicalUnionAll::PosRequired(CMemoryPool *mp,
                                            CExpressionHandle &,  // exprhdl,
                                            COrderSpec *,         // posRequired,
-                                           ULONG
+                                           uint32_t
 #ifdef GPOS_DEBUG
                                                child_index
 #endif  // GPOS_DEBUG
                                            ,
                                            CDrvdPropArray *,  // pdrgpdpCtxt
-                                           ULONG              // ulOptReq
+                                           uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(PdrgpdrgpcrInput()->Size() > child_index);
 
@@ -121,9 +121,9 @@ COrderSpec *CPhysicalUnionAll::PosRequired(CMemoryPool *mp,
 //		Compute required CTE map of the n-th child
 //
 //---------------------------------------------------------------------------
-CCTEReq *CPhysicalUnionAll::PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter, ULONG child_index,
-                                         CDrvdPropArray *pdrgpdpCtxt,
-                                         ULONG  // ulOptReq
+CCTEReq *CPhysicalUnionAll::PcteRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CCTEReq *pcter,
+                                         uint32_t child_index, CDrvdPropArray *pdrgpdpCtxt,
+                                         uint32_t  // ulOptReq
 ) const {
   return PcterNAry(mp, exprhdl, pcter, child_index, pdrgpdpCtxt);
 }
@@ -136,13 +136,13 @@ CCTEReq *CPhysicalUnionAll::PcteRequired(CMemoryPool *mp, CExpressionHandle &exp
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalUnionAll::FProvidesReqdCols(CExpressionHandle &
+bool CPhysicalUnionAll::FProvidesReqdCols(CExpressionHandle &
 #ifdef GPOS_DEBUG
                                               exprhdl
 #endif  // GPOS_DEBUG
                                           ,
                                           CColRefSet *pcrsRequired,
-                                          ULONG  // ulOptReq
+                                          uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcrsRequired);
   GPOS_ASSERT(PdrgpdrgpcrInput()->Size() == exprhdl.Arity());
@@ -151,7 +151,7 @@ BOOL CPhysicalUnionAll::FProvidesReqdCols(CExpressionHandle &
 
   // include output columns
   pcrs->Include(PdrgpcrOutput());
-  BOOL fProvidesCols = pcrs->ContainsAll(pcrsRequired);
+  bool fProvidesCols = pcrs->ContainsAll(pcrsRequired);
   pcrs->Release();
 
   return fProvidesCols;
@@ -192,7 +192,7 @@ CEnfdProp::EPropEnforcingType CPhysicalUnionAll::EpetOrder(CExpressionHandle &, 
   return CEnfdProp::EpetRequired;
 }
 
-BOOL CPhysicalUnionAll::FPassThruStats() const {
+bool CPhysicalUnionAll::FPassThruStats() const {
   return false;
 }
 
@@ -206,22 +206,22 @@ BOOL CPhysicalUnionAll::FPassThruStats() const {
 //		the function returns NULL if no mapping could be constructed
 //
 //---------------------------------------------------------------------------
-ULongPtrArray *CPhysicalUnionAll::PdrgpulMap(CMemoryPool *mp, CExpressionArray *pdrgpexpr, ULONG child_index) const {
+ULongPtrArray *CPhysicalUnionAll::PdrgpulMap(CMemoryPool *mp, CExpressionArray *pdrgpexpr, uint32_t child_index) const {
   GPOS_ASSERT(nullptr != pdrgpexpr);
 
   CColRefArray *colref_array = (*PdrgpdrgpcrInput())[child_index];
-  const ULONG ulExprs = pdrgpexpr->Size();
-  const ULONG num_cols = colref_array->Size();
+  const uint32_t ulExprs = pdrgpexpr->Size();
+  const uint32_t num_cols = colref_array->Size();
   ULongPtrArray *pdrgpul = GPOS_NEW(mp) ULongPtrArray(mp);
-  for (ULONG ulExpr = 0; ulExpr < ulExprs; ulExpr++) {
+  for (uint32_t ulExpr = 0; ulExpr < ulExprs; ulExpr++) {
     CExpression *pexpr = (*pdrgpexpr)[ulExpr];
     if (COperator::EopScalarIdent != pexpr->Pop()->Eopid()) {
       continue;
     }
     const CColRef *colref = CScalarIdent::PopConvert(pexpr->Pop())->Pcr();
-    for (ULONG ulCol = 0; ulCol < num_cols; ulCol++) {
+    for (uint32_t ulCol = 0; ulCol < num_cols; ulCol++) {
       if ((*colref_array)[ulCol] == colref) {
-        pdrgpul->Append(GPOS_NEW(mp) ULONG(ulCol));
+        pdrgpul->Append(GPOS_NEW(mp) uint32_t(ulCol));
       }
     }
   }
@@ -235,16 +235,17 @@ ULongPtrArray *CPhysicalUnionAll::PdrgpulMap(CMemoryPool *mp, CExpressionArray *
   return pdrgpul;
 }
 
-CColRefSet *CPhysicalUnionAll::MapOutputColRefsToInput(CMemoryPool *mp, CColRefSet *out_col_refs, ULONG child_index) {
+CColRefSet *CPhysicalUnionAll::MapOutputColRefsToInput(CMemoryPool *mp, CColRefSet *out_col_refs,
+                                                       uint32_t child_index) {
   CColRefSet *result = GPOS_NEW(mp) CColRefSet(mp);
   CColRefArray *all_outcols = m_pdrgpcrOutput;
-  ULONG total_num_cols = all_outcols->Size();
+  uint32_t total_num_cols = all_outcols->Size();
   CColRefArray *in_colref_array = (*PdrgpdrgpcrInput())[child_index];
   CColRefSetIter iter(*out_col_refs);
   while (iter.Advance()) {
-    BOOL found = false;
+    bool found = false;
     // find the index in the complete list of output columns
-    for (ULONG i = 0; i < total_num_cols && !found; i++) {
+    for (uint32_t i = 0; i < total_num_cols && !found; i++) {
       if (iter.Bit() == (*all_outcols)[i]->Id()) {
         // the input colref will have the same index, but in the list of input cols
         result->Include((*in_colref_array)[i]);

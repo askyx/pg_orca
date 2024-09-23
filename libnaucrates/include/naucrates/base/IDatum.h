@@ -24,9 +24,9 @@ using namespace gpmd;
 
 class IDatum;
 
-// hash map mapping ULONG -> Datum
-using UlongToIDatumMap =
-    CHashMap<ULONG, IDatum, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>, CleanupRelease<IDatum>>;
+// hash map mapping uint32_t -> Datum
+using UlongToIDatumMap = CHashMap<uint32_t, IDatum, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                  CleanupDelete<uint32_t>, CleanupRelease<IDatum>>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -53,68 +53,68 @@ class IDatum : public CRefCount {
   // accessor of metadata id
   virtual IMDId *MDId() const = 0;
 
-  virtual INT TypeModifier() const { return default_type_modifier; }
+  virtual int32_t TypeModifier() const { return default_type_modifier; }
 
   // accessor of size
-  virtual ULONG Size() const = 0;
+  virtual uint32_t Size() const = 0;
 
   // is datum null?
-  virtual BOOL IsNull() const = 0;
+  virtual bool IsNull() const = 0;
 
   // return string representation
   virtual const CWStringConst *GetStrRepr(CMemoryPool *mp) const = 0;
 
   // hash function
-  virtual ULONG HashValue() const = 0;
+  virtual uint32_t HashValue() const = 0;
 
   // Match function on datums
-  virtual BOOL Matches(const IDatum *) const = 0;
+  virtual bool Matches(const IDatum *) const = 0;
 
   // create a copy of the datum
   virtual IDatum *MakeCopy(CMemoryPool *mp) const = 0;
 
   // stats greater than
-  virtual BOOL StatsAreGreaterThan(const IDatum *datum) const {
-    BOOL stats_are_comparable = datum->StatsAreComparable(this);
+  virtual bool StatsAreGreaterThan(const IDatum *datum) const {
+    bool stats_are_comparable = datum->StatsAreComparable(this);
     GPOS_ASSERT(stats_are_comparable && "Invalid invocation of StatsAreGreaterThan");
     return stats_are_comparable && datum->StatsAreLessThan(this);
   }
 
   // does the datum need to be padded before statistical derivation
-  virtual BOOL NeedsPadding() const = 0;
+  virtual bool NeedsPadding() const = 0;
 
   // return the padded datum
-  virtual IDatum *MakePaddedDatum(CMemoryPool *mp, ULONG col_len) const = 0;
+  virtual IDatum *MakePaddedDatum(CMemoryPool *mp, uint32_t col_len) const = 0;
 
   // does datum support like predicate
-  virtual BOOL SupportsLikePredicate() const = 0;
+  virtual bool SupportsLikePredicate() const = 0;
 
   // return the default scale factor of like predicate
   virtual CDouble GetLikePredicateScaleFactor() const = 0;
 
   // byte array for char/varchar columns
-  virtual const BYTE *GetByteArrayValue() const = 0;
+  virtual const uint8_t *GetByteArrayValue() const = 0;
 
   // is datum mappable to a base type for statistics purposes
-  virtual BOOL StatsMappable() { return this->StatsAreComparable(this); }
+  virtual bool StatsMappable() { return this->StatsAreComparable(this); }
 
   // can datum be mapped to a double
-  virtual BOOL IsDatumMappableToDouble() const = 0;
+  virtual bool IsDatumMappableToDouble() const = 0;
 
   // map to double for statistics computation
   virtual CDouble GetDoubleMapping() const = 0;
 
-  // can datum be mapped to LINT
-  virtual BOOL IsDatumMappableToLINT() const = 0;
+  // can datum be mapped to int64_t
+  virtual bool IsDatumMappableToLINT() const = 0;
 
-  // map to LINT for statistics computation
-  virtual LINT GetLINTMapping() const = 0;
+  // map to int64_t for statistics computation
+  virtual int64_t GetLINTMapping() const = 0;
 
-  // equality based on mapping to LINT or CDouble
-  virtual BOOL StatsAreEqual(const IDatum *datum) const;
+  // equality based on mapping to int64_t or CDouble
+  virtual bool StatsAreEqual(const IDatum *datum) const;
 
   // stats less than
-  virtual BOOL StatsAreLessThan(const IDatum *datum) const;
+  virtual bool StatsAreLessThan(const IDatum *datum) const;
 
   // distance function
   virtual CDouble GetStatsDistanceFrom(const IDatum *datum) const;
@@ -123,11 +123,11 @@ class IDatum : public CRefCount {
   CDouble GetValAsDouble() const;
 
   // check if the given pair of datums are stats comparable
-  virtual BOOL StatsAreComparable(const IDatum *datum) const;
+  virtual bool StatsAreComparable(const IDatum *datum) const;
 
   virtual gpos::IOstream &OsPrint(gpos::IOstream &os) const = 0;
 
-  BOOL operator==(const IDatum &other) const {
+  bool operator==(const IDatum &other) const {
     if (this == &other) {
       // same object reference
       return true;

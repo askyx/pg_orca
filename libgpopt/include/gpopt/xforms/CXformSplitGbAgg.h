@@ -29,7 +29,7 @@ class CXformSplitGbAgg : public CXformExploration {
  private:
  protected:
   // check if the transformation is applicable;
-  static BOOL FApplicable(CExpression *pexpr);
+  static bool FApplicable(CExpression *pexpr);
 
   // generate a project lists for the local and global aggregates
   // from the original aggregate
@@ -56,10 +56,10 @@ class CXformSplitGbAgg : public CXformExploration {
   EXformId Exfid() const override { return ExfSplitGbAgg; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformSplitGbAgg"; }
+  const char *SzId() const override { return "CXformSplitGbAgg"; }
 
   // Compatibility function for splitting aggregates
-  BOOL FCompatible(CXform::EXformId exfid) override {
+  bool FCompatible(CXform::EXformId exfid) override {
     return ((CXform::ExfSplitDQA != exfid) && (CXform::ExfSplitGbAgg != exfid) && (CXform::ExfEagerAgg != exfid));
   }
 

@@ -87,7 +87,7 @@ IMDId *CDXLScalarIfStmt::GetResultTypeMdId() const {
 //		Does the operator return a boolean result
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarIfStmt::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarIfStmt::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_result_type_mdid)->GetDatumType());
 }
 
@@ -100,11 +100,11 @@ BOOL CDXLScalarIfStmt::HasBoolResult(CMDAccessor *md_accessor) const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarIfStmt::AssertValid(const CDXLNode *node, BOOL validate_children) const {
-  const ULONG arity = node->Arity();
+void CDXLScalarIfStmt::AssertValid(const CDXLNode *node, bool validate_children) const {
+  const uint32_t arity = node->Arity();
   GPOS_ASSERT(3 == arity);
 
-  for (ULONG idx = 0; idx < arity; ++idx) {
+  for (uint32_t idx = 0; idx < arity; ++idx) {
     CDXLNode *dxlnode_arg = (*node)[idx];
     GPOS_ASSERT(EdxloptypeScalar == dxlnode_arg->GetOperator()->GetDXLOperatorType());
 

@@ -56,10 +56,10 @@ class CDefaultComparator : public IComparator {
   IConstExprEvaluator *m_pceeval;
 
   // construct a comparison expression from the given components and evaluate it
-  BOOL FEvalComparison(CMemoryPool *mp, const IDatum *datum1, const IDatum *datum2, IMDType::ECmpType cmp_type) const;
+  bool FEvalComparison(CMemoryPool *mp, const IDatum *datum1, const IDatum *datum2, IMDType::ECmpType cmp_type) const;
 
   // return true iff we should use the internal (stats-based) evaluation
-  static BOOL FUseInternalEvaluator(const IDatum *datum1, const IDatum *datum2, BOOL *can_use_external_evaluator);
+  static bool FUseInternalEvaluator(const IDatum *datum1, const IDatum *datum2, bool *can_use_external_evaluator);
 
  public:
   CDefaultComparator(const CDefaultComparator &) = delete;
@@ -71,19 +71,19 @@ class CDefaultComparator : public IComparator {
   ~CDefaultComparator() override = default;
 
   // tests if the two arguments are equal
-  BOOL Equals(const IDatum *datum1, const IDatum *datum2) const override;
+  bool Equals(const IDatum *datum1, const IDatum *datum2) const override;
 
   // tests if the first argument is less than the second
-  BOOL IsLessThan(const IDatum *datum1, const IDatum *datum2) const override;
+  bool IsLessThan(const IDatum *datum1, const IDatum *datum2) const override;
 
   // tests if the first argument is less or equal to the second
-  BOOL IsLessThanOrEqual(const IDatum *datum1, const IDatum *datum2) const override;
+  bool IsLessThanOrEqual(const IDatum *datum1, const IDatum *datum2) const override;
 
   // tests if the first argument is greater than the second
-  BOOL IsGreaterThan(const IDatum *datum1, const IDatum *datum2) const override;
+  bool IsGreaterThan(const IDatum *datum1, const IDatum *datum2) const override;
 
   // tests if the first argument is greater or equal to the second
-  BOOL IsGreaterThanOrEqual(const IDatum *datum1, const IDatum *datum2) const override;
+  bool IsGreaterThanOrEqual(const IDatum *datum1, const IDatum *datum2) const override;
 
 };  // CDefaultComparator
 }  // namespace gpopt

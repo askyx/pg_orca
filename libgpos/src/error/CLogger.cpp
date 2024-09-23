@@ -53,14 +53,14 @@ CLogger::~CLogger() = default;
 //		Log message
 //
 //---------------------------------------------------------------------------
-void CLogger::Log(const WCHAR *msg, ULONG severity, const CHAR *filename, ULONG line) {
+void CLogger::Log(const wchar_t *msg, uint32_t severity, const char *filename, uint32_t line) {
   // format log message
   Format(msg, severity, filename, line);
 
-  for (ULONG i = 0; i < GPOS_LOG_WRITE_RETRIES; i++) {
+  for (uint32_t i = 0; i < GPOS_LOG_WRITE_RETRIES; i++) {
     GPOS_CHECK_ABORT;
 
-    BOOL pending_exceptions = ITask::Self()->HasPendingExceptions();
+    bool pending_exceptions = ITask::Self()->HasPendingExceptions();
 
     // logging is exercised in catch blocks so it cannot throw;
     // the only propagated exception is Abort;
@@ -102,9 +102,9 @@ void CLogger::Log(const WCHAR *msg, ULONG severity, const CHAR *filename, ULONG 
 //		Format log message
 //
 //---------------------------------------------------------------------------
-void CLogger::Format(const WCHAR *msg, ULONG severity,
-                     const CHAR *,  // filename
-                     ULONG          // line
+void CLogger::Format(const wchar_t *msg, uint32_t severity,
+                     const char *,  // filename
+                     uint32_t       // line
 ) {
   m_entry_wrapper.Reset();
   m_msg_wrapper.Reset();
@@ -114,7 +114,7 @@ void CLogger::Format(const WCHAR *msg, ULONG severity,
   if (ILogger::EeilMsgHeader <= InfoLevel()) {
     // LOG ENTRY FORMAT: [date],[thread id],[severity],[message],
 
-    const CHAR *sev = CException::m_severity[severity];
+    const char *sev = CException::m_severity[severity];
     m_msg_wrapper.Append(&strc);
 
     AppendDate();

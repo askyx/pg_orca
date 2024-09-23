@@ -27,7 +27,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CStatsPredPoint::CStatsPredPoint(ULONG colid, CStatsPred::EStatsCmpType stats_cmp_type, CPoint *point)
+CStatsPredPoint::CStatsPredPoint(uint32_t colid, CStatsPred::EStatsCmpType stats_cmp_type, CPoint *point)
     : CStatsPred(colid), m_stats_cmp_type(stats_cmp_type), m_pred_point(point) {
   GPOS_ASSERT(nullptr != point);
 }
@@ -42,7 +42,7 @@ CStatsPredPoint::CStatsPredPoint(ULONG colid, CStatsPred::EStatsCmpType stats_cm
 //---------------------------------------------------------------------------
 CStatsPredPoint::CStatsPredPoint(CMemoryPool *mp, const CColRef *colref, CStatsPred::EStatsCmpType stats_cmp_type,
                                  IDatum *datum)
-    : CStatsPred(gpos::ulong_max), m_stats_cmp_type(stats_cmp_type), m_pred_point(nullptr) {
+    : CStatsPred(UINT32_MAX), m_stats_cmp_type(stats_cmp_type), m_pred_point(nullptr) {
   GPOS_ASSERT(nullptr != colref);
   GPOS_ASSERT(nullptr != datum);
 

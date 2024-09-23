@@ -46,12 +46,12 @@ using namespace gpmd;
 using namespace gpdxl;
 
 // hash maps
-using UlongToExprArrayMap =
-    CHashMap<ULONG, CExpressionArray, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>, CleanupNULL>;
+using UlongToExprArrayMap = CHashMap<uint32_t, CExpressionArray, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                     CleanupDelete<uint32_t>, CleanupNULL>;
 
 // iterator
-using UlongToExprArrayMapIter = CHashMapIter<ULONG, CExpressionArray, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                             CleanupDelete<ULONG>, CleanupNULL>;
+using UlongToExprArrayMapIter = CHashMapIter<uint32_t, CExpressionArray, gpos::HashValue<uint32_t>,
+                                             gpos::Equals<uint32_t>, CleanupDelete<uint32_t>, CleanupNULL>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -86,8 +86,8 @@ class CTranslatorDXLToExpr {
   // maintains the mapping between CTE identifier and DXL representation of the corresponding CTE producer
   IdToCDXLNodeMap *m_phmulpdxlnCTEProducer;
 
-  // id of CTE that we are currently processing (gpos::ulong_max for main query)
-  ULONG m_ulCTEId;
+  // id of CTE that we are currently processing (UINT32_MAX for main query)
+  uint32_t m_ulCTEId;
 
   // a copy of the pointer to column factory, obtained at construction time
   CColumnFactory *m_pcf;
@@ -100,7 +100,7 @@ class CTranslatorDXLToExpr {
 
   // helper for creating quantified subquery
   CExpression *PexprScalarSubqueryQuantified(Edxlopid edxlopid, IMDId *scalar_op_mdid, const CWStringConst *str,
-                                             ULONG colid, CDXLNode *pdxlnLogicalChild, CDXLNode *pdxlnScalarChild);
+                                             uint32_t colid, CDXLNode *pdxlnLogicalChild, CDXLNode *pdxlnScalarChild);
 
   // translate a logical DXL operator into an optimizer expression
   CExpression *PexprLogical(const CDXLNode *dxlnode);
@@ -129,7 +129,7 @@ class CTranslatorDXLToExpr {
 
   // build expression and columns of SetOpChild
   void BuildSetOpChild(
-      const CDXLNode *pdxlnSetOp, ULONG child_index,
+      const CDXLNode *pdxlnSetOp, uint32_t child_index,
       CExpression **ppexprChild,                   // output: generated child expression
       CColRefArray **ppdrgpcrChild,                // output: generated child input columns
       CExpressionArray **ppdrgpexprChildProjElems  // output: project elements to remap child input columns
@@ -141,10 +141,11 @@ class CTranslatorDXLToExpr {
 
   // create new column reference and add to the hashmap maintaining
   // the mapping between DXL ColIds and column reference.
-  CColRef *PcrCreate(const CColRef *colref, const IMDType *pmdtype, INT type_modifier, BOOL fStoreMapping, ULONG colid);
+  CColRef *PcrCreate(const CColRef *colref, const IMDType *pmdtype, int32_t type_modifier, bool fStoreMapping,
+                     uint32_t colid);
 
   // check if we currently support the casting of such column types
-  static BOOL FCastingUnknownType(IMDId *pmdidSource, IMDId *mdid_dest);
+  static bool FCastingUnknownType(IMDId *pmdidSource, IMDId *mdid_dest);
 
   // translate a DXL logical get into an expr logical get
   CExpression *PexprLogicalGet(const CDXLNode *pdxlnLgGet);
@@ -174,7 +175,7 @@ class CTranslatorDXLToExpr {
   CExpression *PexprLogicalCTEConsumer(const CDXLNode *pdxlnLgCTEConsumer);
 
   // get cte id for the given dxl cte id
-  ULONG UlMapCTEId(const ULONG ulIdOld);
+  uint32_t UlMapCTEId(const uint32_t ulIdOld);
 
   // translate a DXL logical insert into expression
   CExpression *PexprLogicalInsert(const CDXLNode *dxlnode);
@@ -337,11 +338,11 @@ class CTranslatorDXLToExpr {
 
   // look up the column reference in the hash map. We raise an exception if
   // the column is not found
-  static CColRef *LookupColRef(UlongToColRefMap *colref_mapping, ULONG colid);
+  static CColRef *LookupColRef(UlongToColRefMap *colref_mapping, uint32_t colid);
 
  public:
   // ctor
-  CTranslatorDXLToExpr(CMemoryPool *mp, CMDAccessor *md_accessor, BOOL fInitColumnFactory = true);
+  CTranslatorDXLToExpr(CMemoryPool *mp, CMDAccessor *md_accessor, bool fInitColumnFactory = true);
 
   // dtor
   ~CTranslatorDXLToExpr();

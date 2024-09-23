@@ -36,10 +36,10 @@ CFileDescriptor::CFileDescriptor() = default;
 //		Open file descriptor
 //
 //---------------------------------------------------------------------------
-void CFileDescriptor::OpenFile(const CHAR *file_path, ULONG mode, ULONG permission_bits) {
+void CFileDescriptor::OpenFile(const char *file_path, uint32_t mode, uint32_t permission_bits) {
   GPOS_ASSERT(!IsFileOpen());
 
-  BOOL fOpened = false;
+  bool fOpened = false;
 
   while (!fOpened) {
     m_file_descriptor = GPOS_FILE_DESCR_INVALID;
@@ -88,10 +88,10 @@ CFileDescriptor::~CFileDescriptor() {
 void CFileDescriptor::CloseFile() {
   GPOS_ASSERT(IsFileOpen());
 
-  BOOL fClosed = false;
+  bool fClosed = false;
 
   while (!fClosed) {
-    INT res = ioutils::CloseFile(m_file_descriptor);
+    int32_t res = ioutils::CloseFile(m_file_descriptor);
 
     // check for error
     if (0 != res) {

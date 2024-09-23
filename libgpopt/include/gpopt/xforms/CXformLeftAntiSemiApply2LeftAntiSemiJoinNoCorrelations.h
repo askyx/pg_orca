@@ -44,7 +44,7 @@ class CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations
   // ident accessors
   EXformId Exfid() const override { return ExfLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations; }
 
-  const CHAR *SzId() const override { return "CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations"; }
+  const char *SzId() const override { return "CXformLeftAntiSemiApply2LeftAntiSemiJoinNoCorrelations"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

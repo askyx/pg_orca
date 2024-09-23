@@ -40,7 +40,7 @@ class CXformDelete2DML : public CXformExploration {
   EXformId Exfid() const override { return ExfDelete2DML; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformDelete2DML"; }
+  const char *SzId() const override { return "CXformDelete2DML"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

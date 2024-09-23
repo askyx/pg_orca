@@ -93,7 +93,7 @@ void CDrvdPropPlan::Derive(CMemoryPool *mp, CExpressionHandle &exprhdl, CDrvdPro
 void CDrvdPropPlan::CopyCTEProducerPlanProps(CMemoryPool *mp, CDrvdPropCtxt *pdpctxt, COperator *pop) {
   CDrvdPropCtxtPlan *pdpctxtplan = CDrvdPropCtxtPlan::PdpctxtplanConvert(pdpctxt);
   CPhysicalCTEConsumer *popCTEConsumer = CPhysicalCTEConsumer::PopConvert(pop);
-  ULONG ulCTEId = popCTEConsumer->UlCTEId();
+  uint32_t ulCTEId = popCTEConsumer->UlCTEId();
   UlongToColRefMap *colref_mapping = popCTEConsumer->Phmulcr();
   CDrvdPropPlan *pdpplan = pdpctxtplan->PdpplanCTEProducer(ulCTEId);
   if (nullptr != pdpplan) {
@@ -114,7 +114,7 @@ void CDrvdPropPlan::CopyCTEProducerPlanProps(CMemoryPool *mp, CDrvdPropCtxt *pdp
 //		Check for satisfying required properties
 //
 //---------------------------------------------------------------------------
-BOOL CDrvdPropPlan::FSatisfies(const CReqdPropPlan *prpp) const {
+bool CDrvdPropPlan::FSatisfies(const CReqdPropPlan *prpp) const {
   GPOS_ASSERT(nullptr != prpp);
   GPOS_ASSERT(nullptr != prpp->Peo());
   GPOS_ASSERT(nullptr != prpp->Pcter());
@@ -131,9 +131,8 @@ BOOL CDrvdPropPlan::FSatisfies(const CReqdPropPlan *prpp) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CDrvdPropPlan::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(m_pos->HashValue(), m_pcm->HashValue());
+uint32_t CDrvdPropPlan::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(m_pos->HashValue(), m_pcm->HashValue());
 
   return ulHash;
 }
@@ -146,8 +145,7 @@ CDrvdPropPlan::HashValue() const {
 //		Equality function
 //
 //---------------------------------------------------------------------------
-ULONG
-CDrvdPropPlan::Equals(const CDrvdPropPlan *pdpplan) const {
+uint32_t CDrvdPropPlan::Equals(const CDrvdPropPlan *pdpplan) const {
   return m_pos->Matches(pdpplan->Pos()) && m_ppps->Equals(pdpplan->Ppps()) && m_pcm->Equals(pdpplan->GetCostModel());
 }
 

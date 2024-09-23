@@ -59,7 +59,7 @@ const CWStringConst *CDXLScalarJoinFilter::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarJoinFilter::AssertValid(const CDXLNode *node, BOOL validate_children) const {
+void CDXLScalarJoinFilter::AssertValid(const CDXLNode *node, bool validate_children) const {
   GPOS_ASSERT(1 >= node->Arity());
 
   if (1 == node->Arity()) {

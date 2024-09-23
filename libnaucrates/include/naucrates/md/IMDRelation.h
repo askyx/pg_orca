@@ -64,73 +64,73 @@ class IMDRelation : public IMDCacheObject {
   Emdtype MDType() const override { return EmdtRel; }
 
   // is this a temp relation
-  virtual BOOL IsTemporary() const = 0;
+  virtual bool IsTemporary() const = 0;
 
   // storage type (heap, appendonly, ...)
   virtual Erelstoragetype RetrieveRelStorageType() const = 0;
 
   // number of columns
-  virtual ULONG ColumnCount() const = 0;
+  virtual uint32_t ColumnCount() const = 0;
 
   // width of a column with regards to the position
-  virtual DOUBLE ColWidth(ULONG pos) const = 0;
+  virtual double ColWidth(uint32_t pos) const = 0;
 
   // does relation have dropped columns
-  virtual BOOL HasDroppedColumns() const = 0;
+  virtual bool HasDroppedColumns() const = 0;
 
   // number of non-dropped columns
-  virtual ULONG NonDroppedColsCount() const = 0;
+  virtual uint32_t NonDroppedColsCount() const = 0;
 
   // return the position of the given attribute position excluding dropped columns
-  virtual ULONG NonDroppedColAt(ULONG pos) const = 0;
+  virtual uint32_t NonDroppedColAt(uint32_t pos) const = 0;
 
   // return the position of a column in the metadata object given the attribute number in the system catalog
-  virtual ULONG GetPosFromAttno(INT attno) const = 0;
+  virtual uint32_t GetPosFromAttno(int32_t attno) const = 0;
 
   // return the original positions of all the non-dropped columns
   virtual ULongPtrArray *NonDroppedColsArray() const = 0;
 
   // number of system columns
-  virtual ULONG SystemColumnsCount() const = 0;
+  virtual uint32_t SystemColumnsCount() const = 0;
 
   // retrieve the column at the given position
-  virtual const IMDColumn *GetMdCol(ULONG pos) const = 0;
+  virtual const IMDColumn *GetMdCol(uint32_t pos) const = 0;
 
   // number of key sets
-  virtual ULONG KeySetCount() const = 0;
+  virtual uint32_t KeySetCount() const = 0;
 
   // key set at given position
-  virtual const ULongPtrArray *KeySetAt(ULONG pos) const = 0;
+  virtual const ULongPtrArray *KeySetAt(uint32_t pos) const = 0;
 
   // return true if a hash distributed table needs to be considered as random
-  virtual BOOL ConvertHashToRandom() const = 0;
+  virtual bool ConvertHashToRandom() const = 0;
 
   // is this a partitioned table
-  virtual BOOL IsPartitioned() const = 0;
+  virtual bool IsPartitioned() const = 0;
 
   // number of partition columns
-  virtual ULONG PartColumnCount() const = 0;
+  virtual uint32_t PartColumnCount() const = 0;
 
   // retrieve the partition column at the given position
-  virtual const IMDColumn *PartColAt(ULONG pos) const = 0;
+  virtual const IMDColumn *PartColAt(uint32_t pos) const = 0;
 
   // retrieve list of partition types
   virtual CharPtrArray *GetPartitionTypes() const = 0;
 
   // retrieve the partition type of the given partition level
-  virtual CHAR PartTypeAtLevel(ULONG pos) const = 0;
+  virtual char PartTypeAtLevel(uint32_t pos) const = 0;
 
   // number of indices
-  virtual ULONG IndexCount() const = 0;
+  virtual uint32_t IndexCount() const = 0;
 
   // retrieve the id of the metadata cache index at the given position
-  virtual IMDId *IndexMDidAt(ULONG pos) const = 0;
+  virtual IMDId *IndexMDidAt(uint32_t pos) const = 0;
 
   // number of check constraints
-  virtual ULONG CheckConstraintCount() const = 0;
+  virtual uint32_t CheckConstraintCount() const = 0;
 
   // retrieve the id of the check constraint cache at the given position
-  virtual IMDId *CheckConstraintMDidAt(ULONG pos) const = 0;
+  virtual IMDId *CheckConstraintMDidAt(uint32_t pos) const = 0;
 
   // part constraint
   virtual CDXLNode *MDPartConstraint() const = 0;
@@ -141,7 +141,7 @@ class IMDRelation : public IMDCacheObject {
   // name of storage type
   static const CWStringConst *GetStorageTypeStr(IMDRelation::Erelstoragetype rel_storage_type);
 
-  BOOL IsAORowOrColTable() const {
+  bool IsAORowOrColTable() const {
     Erelstoragetype st = RetrieveRelStorageType();
     return st == ErelstorageAppendOnlyCols || st == ErelstorageAppendOnlyRows;
   }

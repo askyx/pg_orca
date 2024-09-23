@@ -24,7 +24,7 @@ namespace gpos {
 //		Template derived from CBitSetIter
 //
 //---------------------------------------------------------------------------
-template <class T, ULONG sentinel_index>
+template <class T, uint32_t sentinel_index>
 class CEnumSetIter : public CBitSetIter {
  private:
  public:

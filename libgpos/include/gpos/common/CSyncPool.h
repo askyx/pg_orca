@@ -25,7 +25,7 @@
 #include "gpos/types.h"
 #include "gpos/utils.h"
 
-#define BYTES_PER_ULONG (GPOS_SIZEOF(ULONG))
+#define BYTES_PER_ULONG (GPOS_SIZEOF(uint32_t))
 #define BITS_PER_ULONG (BYTES_PER_ULONG * 8)
 
 namespace gpos {
@@ -47,32 +47,32 @@ class CSyncPool {
   T *m_objects;
 
   // bitmap indicating object reservation
-  ULONG *m_objs_reserved;
+  uint32_t *m_objs_reserved;
 
   // bitmap indicating object recycle
-  ULONG *m_objs_recycled;
+  uint32_t *m_objs_recycled;
 
   // number of allocated objects
-  ULONG m_numobjs;
+  uint32_t m_numobjs;
 
-  // number of elements (ULONG) in bitmap
-  ULONG m_bitmap_size;
+  // number of elements (uint32_t) in bitmap
+  uint32_t m_bitmap_size;
 
   // offset of last lookup - clock index
-  ULONG_PTR m_last_lookup_idx;
+  uintptr_t m_last_lookup_idx;
 
   // offset of id inside the object
-  ULONG m_id_offset;
+  uint32_t m_id_offset;
 
   // atomically set bit if it is unset
-  BOOL SetBit(ULONG *dest, ULONG bit_val) {
+  bool SetBit(uint32_t *dest, uint32_t bit_val) {
     GPOS_ASSERT(nullptr != dest);
 
-    ULONG old_val = *dest;
+    uint32_t old_val = *dest;
 
     // keep trying while the bit is unset
     while (0 == (bit_val & old_val)) {
-      ULONG new_val = bit_val | old_val;
+      uint32_t new_val = bit_val | old_val;
 
       // attempt to set the bit
       if (*dest == old_val) {
@@ -87,14 +87,14 @@ class CSyncPool {
   }
 
   // atomically unset bit if it is set
-  BOOL UnsetBit(ULONG *dest, ULONG bit_val) {
+  bool UnsetBit(uint32_t *dest, uint32_t bit_val) {
     GPOS_ASSERT(nullptr != dest);
 
-    ULONG old_val = *dest;
+    uint32_t old_val = *dest;
 
     // keep trying while the bit is set
     while (bit_val == (bit_val & old_val)) {
-      ULONG new_val = bit_val ^ old_val;
+      uint32_t new_val = bit_val ^ old_val;
 
       // attempt to set the bit
       if (*dest == old_val) {
@@ -112,7 +112,7 @@ class CSyncPool {
   CSyncPool(const CSyncPool &) = delete;
 
   // ctor
-  CSyncPool(CMemoryPool *mp, ULONG size)
+  CSyncPool(CMemoryPool *mp, uint32_t size)
       : m_mp(mp),
         m_objects(nullptr),
         m_objs_reserved(nullptr),
@@ -120,24 +120,24 @@ class CSyncPool {
         m_numobjs(size),
         m_bitmap_size(size / BITS_PER_ULONG + 1),
         m_last_lookup_idx(0),
-        m_id_offset(gpos::ulong_max) {}
+        m_id_offset(UINT32_MAX) {}
 
   // dtor
   ~CSyncPool() {
-    if (gpos::ulong_max != m_id_offset) {
+    if (UINT32_MAX != m_id_offset) {
       GPOS_ASSERT(nullptr != m_objects);
       GPOS_ASSERT(nullptr != m_objs_reserved);
       GPOS_ASSERT(nullptr != m_objs_recycled);
 
 #ifdef GPOS_DEBUG
       if (!ITask::Self()->HasPendingExceptions()) {
-        for (ULONG i = 0; i < m_numobjs; i++) {
-          ULONG elem_offset = i / BITS_PER_ULONG;
-          ULONG bit_offset = i % BITS_PER_ULONG;
-          ULONG bit_val = 1 << bit_offset;
+        for (uint32_t i = 0; i < m_numobjs; i++) {
+          uint32_t elem_offset = i / BITS_PER_ULONG;
+          uint32_t bit_offset = i % BITS_PER_ULONG;
+          uint32_t bit_val = 1 << bit_offset;
 
-          BOOL reserved = (bit_val == (m_objs_reserved[elem_offset] & bit_val));
-          BOOL recycled = (bit_val == (m_objs_recycled[elem_offset] & bit_val));
+          bool reserved = (bit_val == (m_objs_reserved[elem_offset] & bit_val));
+          bool recycled = (bit_val == (m_objs_recycled[elem_offset] & bit_val));
 
           GPOS_ASSERT((!reserved || recycled) && "Object is still in use");
         }
@@ -151,23 +151,23 @@ class CSyncPool {
   }
 
   // init function to facilitate arrays
-  void Init(ULONG id_offset) {
+  void Init(uint32_t id_offset) {
     GPOS_ASSERT(ALIGNED_32(id_offset));
 
     m_objects = GPOS_NEW_ARRAY(m_mp, T, m_numobjs);
-    m_objs_reserved = GPOS_NEW_ARRAY(m_mp, ULONG, m_bitmap_size);
-    m_objs_recycled = GPOS_NEW_ARRAY(m_mp, ULONG, m_bitmap_size);
+    m_objs_reserved = GPOS_NEW_ARRAY(m_mp, uint32_t, m_bitmap_size);
+    m_objs_recycled = GPOS_NEW_ARRAY(m_mp, uint32_t, m_bitmap_size);
 
     m_id_offset = id_offset;
 
     // initialize object ids
-    for (ULONG i = 0; i < m_numobjs; i++) {
-      ULONG *id = (ULONG *)(((BYTE *)&m_objects[i]) + m_id_offset);
+    for (uint32_t i = 0; i < m_numobjs; i++) {
+      uint32_t *id = (uint32_t *)(((uint8_t *)&m_objects[i]) + m_id_offset);
       *id = i;
     }
 
     // initialize bitmaps
-    for (ULONG i = 0; i < m_bitmap_size; i++) {
+    for (uint32_t i = 0; i < m_bitmap_size; i++) {
       m_objs_reserved[i] = 0;
       m_objs_recycled[i] = 0;
     }
@@ -175,17 +175,17 @@ class CSyncPool {
 
   // find unreserved object and reserve it
   T *PtRetrieve() {
-    GPOS_ASSERT(gpos::ulong_max != m_id_offset && "Id offset not initialized.");
+    GPOS_ASSERT(UINT32_MAX != m_id_offset && "Id offset not initialized.");
 
     // iterate over all objects twice (two full clock rotations);
     // objects marked as recycled cannot be reserved on the first round;
-    for (ULONG i = 0; i < 2 * m_numobjs; i++) {
+    for (uint32_t i = 0; i < 2 * m_numobjs; i++) {
       // move clock index
-      ULONG_PTR index = (m_last_lookup_idx++) % m_numobjs;
+      uintptr_t index = (m_last_lookup_idx++) % m_numobjs;
 
-      ULONG elem_offset = (ULONG)index / BITS_PER_ULONG;
-      ULONG bit_offset = (ULONG)index % BITS_PER_ULONG;
-      ULONG bit_val = 1 << bit_offset;
+      uint32_t elem_offset = (uint32_t)index / BITS_PER_ULONG;
+      uint32_t bit_offset = (uint32_t)index % BITS_PER_ULONG;
+      uint32_t bit_val = 1 << bit_offset;
 
       // attempt to reserve object
       if (SetBit(&m_objs_reserved[elem_offset], bit_val)) {
@@ -193,7 +193,7 @@ class CSyncPool {
         T *elem = &m_objects[index];
 
 #ifdef GPOS_DEBUG
-        ULONG *id = (ULONG *)(((BYTE *)elem) + m_id_offset);
+        uint32_t *id = (uint32_t *)(((uint8_t *)elem) + m_id_offset);
         GPOS_ASSERT(index == *id);
 #endif  // GPOS_DEBUG
 
@@ -205,7 +205,7 @@ class CSyncPool {
         // attempt to unset the recycle bit
         if (UnsetBit(&m_objs_recycled[elem_offset], bit_val)) {
 #ifdef GPOS_DEBUG
-          BOOL recycled =
+          bool recycled =
 #endif  // GPOS_DEBUG
 
               // unset the reserve bit - must succeed
@@ -218,17 +218,17 @@ class CSyncPool {
 
     // no object is currently available, create a new one
     T *elem = GPOS_NEW(m_mp) T();
-    *(ULONG *)(((BYTE *)elem) + m_id_offset) = gpos::ulong_max;
+    *(uint32_t *)(((uint8_t *)elem) + m_id_offset) = UINT32_MAX;
 
     return elem;
   }
 
   // recycle reserved object
   void Recycle(T *elem) {
-    GPOS_ASSERT(gpos::ulong_max != m_id_offset && "Id offset not initialized.");
+    GPOS_ASSERT(UINT32_MAX != m_id_offset && "Id offset not initialized.");
 
-    ULONG offset = *(ULONG *)(((BYTE *)elem) + m_id_offset);
-    if (gpos::ulong_max == offset) {
+    uint32_t offset = *(uint32_t *)(((uint8_t *)elem) + m_id_offset);
+    if (UINT32_MAX == offset) {
       // object does not belong to the array, delete it
       GPOS_DELETE(elem);
       return;
@@ -236,15 +236,15 @@ class CSyncPool {
 
     GPOS_ASSERT(offset < m_numobjs);
 
-    ULONG elem_offset = offset / BITS_PER_ULONG;
-    ULONG bit_offset = offset % BITS_PER_ULONG;
-    ULONG bit_val = 1 << bit_offset;
+    uint32_t elem_offset = offset / BITS_PER_ULONG;
+    uint32_t bit_offset = offset % BITS_PER_ULONG;
+    uint32_t bit_val = 1 << bit_offset;
 
 #ifdef GPOS_DEBUG
-    ULONG reserved = m_objs_reserved[elem_offset];
+    uint32_t reserved = m_objs_reserved[elem_offset];
     GPOS_ASSERT((bit_val == (bit_val & reserved)) && "Object is not reserved");
 
-    BOOL mark_recycled =
+    bool mark_recycled =
 #endif  // GPOS_DEBUG
         SetBit(&m_objs_recycled[elem_offset], bit_val);
 

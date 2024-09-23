@@ -30,17 +30,16 @@ using namespace gpos;
 class CCTEConfig : public CRefCount {
  private:
   // CTE inlining cut-off
-  ULONG m_ulCTEInliningCutoff;
+  uint32_t m_ulCTEInliningCutoff;
 
  public:
   CCTEConfig(const CCTEConfig &) = delete;
 
   // ctor
-  CCTEConfig(ULONG cte_inlining_cut_off) : m_ulCTEInliningCutoff(cte_inlining_cut_off) {}
+  CCTEConfig(uint32_t cte_inlining_cut_off) : m_ulCTEInliningCutoff(cte_inlining_cut_off) {}
 
   // CTE inlining cut-off
-  ULONG
-  UlCTEInliningCutoff() const { return m_ulCTEInliningCutoff; }
+  uint32_t UlCTEInliningCutoff() const { return m_ulCTEInliningCutoff; }
 
   // generate default optimizer configurations
   static CCTEConfig *PcteconfDefault(CMemoryPool *mp) { return GPOS_NEW(mp) CCTEConfig(0 /* cte_inlining_cut_off */); }

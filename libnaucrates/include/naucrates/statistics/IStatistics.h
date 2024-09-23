@@ -36,27 +36,27 @@ using namespace gpopt;
 class IStatistics;
 
 // hash map from column id to a histogram
-using UlongToHistogramMap = CHashMap<ULONG, CHistogram, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                     CleanupDelete<ULONG>, CleanupDelete<CHistogram>>;
+using UlongToHistogramMap = CHashMap<uint32_t, CHistogram, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                     CleanupDelete<uint32_t>, CleanupDelete<CHistogram>>;
 
 // iterator
-using UlongToHistogramMapIter = CHashMapIter<ULONG, CHistogram, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                             CleanupDelete<ULONG>, CleanupDelete<CHistogram>>;
+using UlongToHistogramMapIter = CHashMapIter<uint32_t, CHistogram, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                             CleanupDelete<uint32_t>, CleanupDelete<CHistogram>>;
 
-// hash map from column ULONG to CDouble
-using UlongToDoubleMap =
-    CHashMap<ULONG, CDouble, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>, CleanupDelete<CDouble>>;
+// hash map from column uint32_t to CDouble
+using UlongToDoubleMap = CHashMap<uint32_t, CDouble, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                  CleanupDelete<uint32_t>, CleanupDelete<CDouble>>;
 
 // iterator
-using UlongToDoubleMapIter = CHashMapIter<ULONG, CDouble, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                          CleanupDelete<ULONG>, CleanupDelete<CDouble>>;
+using UlongToDoubleMapIter = CHashMapIter<uint32_t, CDouble, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                          CleanupDelete<uint32_t>, CleanupDelete<CDouble>>;
 
-using UlongToUlongMap =
-    CHashMap<ULONG, ULONG, gpos::HashValue<ULONG>, gpos::Equals<ULONG>, CleanupDelete<ULONG>, CleanupDelete<ULONG>>;
+using UlongToUlongMap = CHashMap<uint32_t, uint32_t, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                 CleanupDelete<uint32_t>, CleanupDelete<uint32_t>>;
 
-// hash maps mapping INT -> ULONG
-using IntToUlongMap =
-    CHashMap<INT, ULONG, gpos::HashValue<INT>, gpos::Equals<INT>, CleanupDelete<INT>, CleanupDelete<ULONG>>;
+// hash maps mapping int32_t -> uint32_t
+using IntToUlongMap = CHashMap<int32_t, uint32_t, gpos::HashValue<int32_t>, gpos::Equals<int32_t>,
+                               CleanupDelete<int32_t>, CleanupDelete<uint32_t>>;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -94,20 +94,20 @@ class IStatistics : public CRefCount {
   virtual void SetRows(CDouble rows) = 0;
 
   // number of blocks in the relation (not always up to-to-date)
-  virtual ULONG RelPages() const = 0;
+  virtual uint32_t RelPages() const = 0;
 
   // number of all-visible blocks in the relation (not always up-to-date)
-  virtual ULONG RelAllVisible() const = 0;
+  virtual uint32_t RelAllVisible() const = 0;
 
   // is statistics on an empty input
-  virtual BOOL IsEmpty() const = 0;
+  virtual bool IsEmpty() const = 0;
 
   // statistics could be computed using predicates with external parameters (outer references),
   // this is the total number of external parameters' values
   virtual CDouble NumRebinds() const = 0;
 
   // skew estimate for given column
-  virtual CDouble GetSkew(ULONG colid) const = 0;
+  virtual CDouble GetSkew(uint32_t colid) const = 0;
 
   // what is the width in bytes
   virtual CDouble Width() const = 0;
@@ -119,10 +119,10 @@ class IStatistics : public CRefCount {
   virtual CDouble Width(CMemoryPool *mp, CColRefSet *colrefs) const = 0;
 
   // the risk of errors in cardinality estimation
-  virtual ULONG StatsEstimationRisk() const = 0;
+  virtual uint32_t StatsEstimationRisk() const = 0;
 
   // update the risk of errors in cardinality estimation
-  virtual void SetStatsEstimationRisk(ULONG risk) = 0;
+  virtual void SetStatsEstimationRisk(uint32_t risk) = 0;
 
   // look up the number of distinct values of a particular column
   virtual CDouble GetNDVs(const CColRef *colref) = 0;
@@ -130,7 +130,7 @@ class IStatistics : public CRefCount {
   // look up the fraction of null values of a particular column
   virtual CDouble GetNullFreq(const CColRef *colref) = 0;
 
-  virtual ULONG GetNumberOfPredicates() const = 0;
+  virtual uint32_t GetNumberOfPredicates() const = 0;
 
   // Compute stats for given column
   virtual IStatistics *ComputeColStats(CMemoryPool *mp, CColRef *colref, IMDId *rel_mdid) = 0;
@@ -150,7 +150,7 @@ class IStatistics : public CRefCount {
   // anti semi join
   virtual IStatistics *CalcLASJoinStats(CMemoryPool *mp, const IStatistics *other_stats,
                                         CStatsPredJoinArray *join_preds_stats,
-                                        BOOL DoIgnoreLASJHistComputation) const = 0;
+                                        bool DoIgnoreLASJHistComputation) const = 0;
 
   // return required props associated with stats object
   virtual CReqdPropRelational *GetReqdRelationalProps(CMemoryPool *mp) const = 0;
@@ -169,7 +169,7 @@ class IStatistics : public CRefCount {
 
   // copy stats with remapped column ids
   virtual IStatistics *CopyStatsWithRemap(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                          BOOL must_exist = true) const = 0;
+                                          bool must_exist = true) const = 0;
 
   // return a set of column references we have stats for
   virtual CColRefSet *GetColRefSet(CMemoryPool *mp) const = 0;
@@ -181,11 +181,11 @@ class IStatistics : public CRefCount {
   virtual CDXLStatsDerivedRelation *GetDxlStatsDrvdRelation(CMemoryPool *mp, CMDAccessor *md_accessor) const = 0;
 
   // is the join type either a left semi join or left anti-semi join
-  static BOOL IsSemiJoin(IStatistics::EStatsJoinType join_type) {
+  static bool IsSemiJoin(IStatistics::EStatsJoinType join_type) {
     return (IStatistics::EsjtLeftAntiSemiJoin == join_type) || (IStatistics::EsjtLeftSemiJoin == join_type);
   }
 
-  BOOL operator==(const IStatistics &other) const {
+  bool operator==(const IStatistics &other) const {
     if (this == &other) {
       // same object reference
       return true;

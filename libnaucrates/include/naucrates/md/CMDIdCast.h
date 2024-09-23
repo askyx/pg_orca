@@ -39,7 +39,7 @@ class CMDIdCast : public IMDId {
   CMDIdGPDB *m_mdid_dest;
 
   // buffer for the serialized mdid
-  WCHAR m_mdid_buffer[GPDXL_MDID_LENGTH];
+  wchar_t m_mdid_buffer[GPDXL_MDID_LENGTH];
 
   // string representation of the mdid
   mutable CWStringStatic m_str;
@@ -59,7 +59,7 @@ class CMDIdCast : public IMDId {
   EMDIdType MdidType() const override { return EmdidCastFunc; }
 
   // string representation of mdid
-  const WCHAR *GetBuffer() const override;
+  const wchar_t *GetBuffer() const override;
 
   // source system id
   CSystemId Sysid() const override { return m_mdid_src->Sysid(); }
@@ -71,16 +71,15 @@ class CMDIdCast : public IMDId {
   IMDId *MdidDest() const;
 
   // equality check
-  BOOL Equals(const IMDId *mdid) const override;
+  bool Equals(const IMDId *mdid) const override;
 
   // computes the hash value for the metadata id
-  ULONG
-  HashValue() const override {
+  uint32_t HashValue() const override {
     return gpos::CombineHashes(MdidType(), gpos::CombineHashes(m_mdid_src->HashValue(), m_mdid_dest->HashValue()));
   }
 
   // is the mdid valid
-  BOOL IsValid() const override { return IMDId::IsValid(m_mdid_src) && IMDId::IsValid(m_mdid_dest); }
+  bool IsValid() const override { return IMDId::IsValid(m_mdid_src) && IMDId::IsValid(m_mdid_dest); }
 
   // debug print of the metadata id
   IOstream &OsPrint(IOstream &os) const override;

@@ -54,7 +54,7 @@ class CLogicalNAryJoin : public CLogicalJoin {
   EOperatorId Eopid() const override { return EopLogicalNAryJoin; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalNAryJoin"; }
+  const char *SzId() const override { return "CLogicalNAryJoin"; }
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -101,9 +101,9 @@ class CLogicalNAryJoin : public CLogicalJoin {
   // conversion function, only if the NAryJoin has LOJ children
   static CLogicalNAryJoin *PopConvertNAryLOJ(COperator *pop);
 
-  BOOL HasOuterJoinChildren() const { return (nullptr != m_lojChildPred); }
+  bool HasOuterJoinChildren() const { return (nullptr != m_lojChildPred); }
 
-  BOOL IsInnerJoinChild(ULONG child_num) const {
+  bool IsInnerJoinChild(uint32_t child_num) const {
     return (nullptr == m_lojChildPred || *((*m_lojChildPred)[child_num]) == 0);
   }
 
@@ -118,7 +118,7 @@ class CLogicalNAryJoin : public CLogicalJoin {
     return (*nary_join_expr)[nary_join_expr->Arity() - 1];
   }
 
-  CExpression *GetOnPredicateForLOJChild(CExpression *nary_join_expr, ULONG child_num) const {
+  CExpression *GetOnPredicateForLOJChild(CExpression *nary_join_expr, uint32_t child_num) const {
     GPOS_ASSERT(nary_join_expr->Pop() == this);
     GPOS_ASSERT(0 < *(*m_lojChildPred)[child_num]);
 

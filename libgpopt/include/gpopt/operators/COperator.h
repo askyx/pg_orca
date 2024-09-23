@@ -49,13 +49,13 @@ class COperator : public CRefCount {
  protected:
   // operator id that is unique over all instances of all operator types
   // for the current query
-  ULONG m_ulOpId;
+  uint32_t m_ulOpId;
 
   // memory pool for internal allocations
   CMemoryPool *m_mp;
 
   // is pattern of xform
-  BOOL m_fPattern;
+  bool m_fPattern;
 
   // return an addref'ed copy of the operator
   virtual COperator *PopCopyDefault();
@@ -65,11 +65,11 @@ class COperator : public CRefCount {
 
   // derive function properties from children
   static CFunctionProp *PfpDeriveFromChildren(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                              IMDFunction::EFuncStbl efsDefault, BOOL fHasVolatileFunctionScan,
-                                              BOOL fScan);
+                                              IMDFunction::EFuncStbl efsDefault, bool fHasVolatileFunctionScan,
+                                              bool fScan);
 
   // generate unique operator ids
-  static ULONG m_aulOpIdCounter;
+  static uint32_t m_aulOpIdCounter;
 
  public:
   COperator(COperator &) = delete;
@@ -266,38 +266,37 @@ class COperator : public CRefCount {
   ~COperator() override = default;
 
   // the id of the operator
-  ULONG
-  UlOpId() const { return m_ulOpId; }
+  uint32_t UlOpId() const { return m_ulOpId; }
 
   // ident accessors
   virtual EOperatorId Eopid() const = 0;
 
   // return a string for operator name
-  virtual const CHAR *SzId() const = 0;
+  virtual const char *SzId() const = 0;
 
   // the following functions check operator's type
 
   // is operator logical?
-  virtual BOOL FLogical() const { return false; }
+  virtual bool FLogical() const { return false; }
 
   // is operator physical?
-  virtual BOOL FPhysical() const { return false; }
+  virtual bool FPhysical() const { return false; }
 
   // is operator scalar?
-  virtual BOOL FScalar() const { return false; }
+  virtual bool FScalar() const { return false; }
 
   // is operator pattern?
-  virtual BOOL FPattern() const { return false; }
+  virtual bool FPattern() const { return false; }
 
   // hash function
-  virtual ULONG HashValue() const;
+  virtual uint32_t HashValue() const;
 
   // sensitivity to order of inputs
-  virtual BOOL FInputOrderSensitive() const = 0;
+  virtual bool FInputOrderSensitive() const = 0;
 
   // match function;
   // abstract to enforce an implementation for each new operator
-  virtual BOOL Matches(COperator *pop) const = 0;
+  virtual bool Matches(COperator *pop) const = 0;
 
   // create container for derived properties
   virtual CDrvdProp *PdpCreate(CMemoryPool *mp) const = 0;
@@ -306,7 +305,7 @@ class COperator : public CRefCount {
   virtual CReqdProp *PrpCreate(CMemoryPool *mp) const = 0;
 
   // return a copy of the operator with remapped columns
-  virtual COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) = 0;
+  virtual COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) = 0;
 
   virtual CTableDescriptorHashSet *DeriveTableDescriptor(CMemoryPool *mp, CExpressionHandle &exprhdl) const;
 

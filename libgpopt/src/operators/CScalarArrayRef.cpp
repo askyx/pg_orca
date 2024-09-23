@@ -24,7 +24,7 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarArrayRef::CScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid, INT type_modifier, IMDId *array_type_mdid,
+CScalarArrayRef::CScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid, int32_t type_modifier, IMDId *array_type_mdid,
                                  IMDId *return_type_mdid)
     : CScalar(mp),
       m_pmdidElem(elem_type_mdid),
@@ -51,7 +51,7 @@ CScalarArrayRef::~CScalarArrayRef() {
   m_mdid_type->Release();
 }
 
-INT CScalarArrayRef::TypeModifier() const {
+int32_t CScalarArrayRef::TypeModifier() const {
   return m_type_modifier;
 }
 
@@ -63,8 +63,7 @@ INT CScalarArrayRef::TypeModifier() const {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarArrayRef::HashValue() const {
+uint32_t CScalarArrayRef::HashValue() const {
   return gpos::CombineHashes(CombineHashes(m_pmdidElem->HashValue(), m_pmdidArray->HashValue()),
                              m_mdid_type->HashValue());
 }
@@ -77,7 +76,7 @@ CScalarArrayRef::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarArrayRef::Matches(COperator *pop) const {
+bool CScalarArrayRef::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }

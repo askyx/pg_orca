@@ -56,14 +56,14 @@ class CDXLScalarSubPlan : public CDXLScalar {
   CDXLNode *m_dxlnode_test_expr;
 
   // does test expression contain outer param
-  BOOL m_outer_param;
+  bool m_outer_param;
 
  public:
   CDXLScalarSubPlan(CDXLScalarSubPlan &) = delete;
 
   // ctor/dtor
   CDXLScalarSubPlan(CMemoryPool *mp, IMDId *first_col_type_mdid, CDXLColRefArray *dxl_colref_array,
-                    EdxlSubPlanType dxl_subplan_type, CDXLNode *dxlnode_test_expr, BOOL outer_param = false);
+                    EdxlSubPlanType dxl_subplan_type, CDXLNode *dxlnode_test_expr, bool outer_param = false);
 
   ~CDXLScalarSubPlan() override;
 
@@ -85,7 +85,7 @@ class CDXLScalarSubPlan : public CDXLScalar {
   // return test expression
   CDXLNode *GetDxlTestExpr() const { return m_dxlnode_test_expr; }
 
-  BOOL FOuterParam() const { return m_outer_param; }
+  bool FOuterParam() const { return m_outer_param; }
 
   // serialize operator in DXL format
 
@@ -98,7 +98,7 @@ class CDXLScalarSubPlan : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
+  bool HasBoolResult(CMDAccessor *md_accessor) const override;
 
   // return a string representation of Subplan type
   const CWStringConst *GetSubplanTypeStr() const;
@@ -106,7 +106,7 @@ class CDXLScalarSubPlan : public CDXLScalar {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

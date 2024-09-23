@@ -47,7 +47,7 @@ class CDXLScalarOneTimeFilter : public CDXLScalarFilter {
   // serialize operator in DXL format
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     GPOS_ASSERT(!"Invalid function call for a container operator");
     return false;

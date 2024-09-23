@@ -125,11 +125,11 @@ CDrvdPropScalar *CDrvdPropScalar::GetDrvdScalarProps(CDrvdProp *pdp) {
 //		Check for satisfying required properties
 //
 //---------------------------------------------------------------------------
-BOOL CDrvdPropScalar::FSatisfies(const CReqdPropPlan *prpp) const {
+bool CDrvdPropScalar::FSatisfies(const CReqdPropPlan *prpp) const {
   GPOS_ASSERT(nullptr != prpp);
   GPOS_ASSERT(nullptr != prpp->PcrsRequired());
 
-  BOOL fSatisfies = m_pcrsDefined->ContainsAll(prpp->PcrsRequired());
+  bool fSatisfies = m_pcrsDefined->ContainsAll(prpp->PcrsRequired());
 
   return fSatisfies;
 }
@@ -146,8 +146,8 @@ CColRefSet *CDrvdPropScalar::DeriveDefinedColumns(CExpressionHandle &exprhdl) {
     m_pcrsDefined = popScalar->PcrsDefined(m_mp, exprhdl);
 
     // add defined columns of children
-    const ULONG arity = exprhdl.Arity();
-    for (ULONG i = 0; i < arity; i++) {
+    const uint32_t arity = exprhdl.Arity();
+    for (uint32_t i = 0; i < arity; i++) {
       // only propagate properties from scalar children
       if (exprhdl.FScalarChild(i)) {
         m_pcrsDefined->Union(exprhdl.DeriveDefinedColumns(i));
@@ -169,8 +169,8 @@ CColRefSet *CDrvdPropScalar::DeriveUsedColumns(CExpressionHandle &exprhdl) {
     m_pcrsUsed = popScalar->PcrsUsed(m_mp, exprhdl);
 
     // add used columns of children
-    const ULONG arity = exprhdl.Arity();
-    for (ULONG i = 0; i < arity; i++) {
+    const uint32_t arity = exprhdl.Arity();
+    for (uint32_t i = 0; i < arity; i++) {
       // only propagate properties from scalar children
       if (exprhdl.FScalarChild(i)) {
         m_pcrsUsed->Union(exprhdl.DeriveUsedColumns(i));
@@ -196,8 +196,8 @@ CColRefSet *CDrvdPropScalar::DeriveSetReturningFunctionColumns(CExpressionHandle
     CScalar *popScalar = CScalar::PopConvert(exprhdl.Pop());
     m_pcrsSetReturningFunction = popScalar->PcrsSetReturningFunction(m_mp, exprhdl);
 
-    const ULONG arity = exprhdl.Arity();
-    for (ULONG i = 0; i < arity; i++) {
+    const uint32_t arity = exprhdl.Arity();
+    for (uint32_t i = 0; i < arity; i++) {
       // only propagate properties from scalar children
       if (exprhdl.FScalarChild(i)) {
         m_pcrsSetReturningFunction->Union(exprhdl.DeriveSetReturningFunctionColumns(i));
@@ -214,12 +214,12 @@ CColRefSet *CDrvdPropScalar::DeriveSetReturningFunctionColumns(CExpressionHandle
 }
 
 // do subqueries appear in the operator's tree?
-BOOL CDrvdPropScalar::HasSubquery() const {
+bool CDrvdPropScalar::HasSubquery() const {
   GPOS_RTL_ASSERT(IsComplete());
   return m_fHasSubquery;
 }
 
-BOOL CDrvdPropScalar::DeriveHasSubquery(CExpressionHandle &exprhdl) {
+bool CDrvdPropScalar::DeriveHasSubquery(CExpressionHandle &exprhdl) {
   if (!m_is_prop_derived->ExchangeSet(EdptFHasSubquery)) {
     CScalar *popScalar = CScalar::PopConvert(exprhdl.Pop());
     m_fHasSubquery = popScalar->FHasSubquery(exprhdl);
@@ -260,12 +260,12 @@ CFunctionProp *CDrvdPropScalar::DeriveFunctionProperties(CExpressionHandle &expr
 }
 
 // scalar expression contains non-scalar function?
-BOOL CDrvdPropScalar::HasNonScalarFunction() const {
+bool CDrvdPropScalar::HasNonScalarFunction() const {
   GPOS_RTL_ASSERT(IsComplete());
   return m_fHasNonScalarFunction;
 }
 
-BOOL CDrvdPropScalar::DeriveHasNonScalarFunction(CExpressionHandle &exprhdl) {
+bool CDrvdPropScalar::DeriveHasNonScalarFunction(CExpressionHandle &exprhdl) {
   if (!m_is_prop_derived->ExchangeSet(EdptFHasNonScalarFunction)) {
     CScalar *popScalar = CScalar::PopConvert(exprhdl.Pop());
     m_fHasNonScalarFunction = popScalar->FHasNonScalarFunction(exprhdl);
@@ -274,14 +274,12 @@ BOOL CDrvdPropScalar::DeriveHasNonScalarFunction(CExpressionHandle &exprhdl) {
 }
 
 // return total number of Distinct Aggs, only applicable to project list
-ULONG
-CDrvdPropScalar::GetTotalDistinctAggs() const {
+uint32_t CDrvdPropScalar::GetTotalDistinctAggs() const {
   GPOS_RTL_ASSERT(IsComplete());
   return m_ulDistinctAggs;
 }
 
-ULONG
-CDrvdPropScalar::DeriveTotalDistinctAggs(CExpressionHandle &exprhdl) {
+uint32_t CDrvdPropScalar::DeriveTotalDistinctAggs(CExpressionHandle &exprhdl) {
   if (!m_is_prop_derived->ExchangeSet(EdptUlDistinctAggs)) {
     if (COperator::EopScalarProjectList == exprhdl.Pop()->Eopid()) {
       m_ulDistinctAggs = CScalarProjectList::UlDistinctAggs(exprhdl);
@@ -290,12 +288,12 @@ CDrvdPropScalar::DeriveTotalDistinctAggs(CExpressionHandle &exprhdl) {
   return m_ulDistinctAggs;
 }
 
-BOOL CDrvdPropScalar::HasScalarFuncProject() const {
+bool CDrvdPropScalar::HasScalarFuncProject() const {
   GPOS_RTL_ASSERT(IsComplete());
   return m_fHasScalarFunc;
 }
 
-BOOL CDrvdPropScalar::DeriveHasScalarFuncProject(CExpressionHandle &exprhdl) {
+bool CDrvdPropScalar::DeriveHasScalarFuncProject(CExpressionHandle &exprhdl) {
   if (!m_is_prop_derived->ExchangeSet(EdptFHasScalarFuncProject)) {
     if (COperator::EopScalarProjectList == exprhdl.Pop()->Eopid()) {
       m_fHasScalarFunc = CScalarProjectList::FHasScalarFunc(exprhdl);
@@ -305,12 +303,12 @@ BOOL CDrvdPropScalar::DeriveHasScalarFuncProject(CExpressionHandle &exprhdl) {
 }
 
 // does operator define Distinct Aggs on different arguments, only applicable to project lists
-BOOL CDrvdPropScalar::HasMultipleDistinctAggs() const {
+bool CDrvdPropScalar::HasMultipleDistinctAggs() const {
   GPOS_RTL_ASSERT(IsComplete());
   return m_fHasMultipleDistinctAggs;
 }
 
-BOOL CDrvdPropScalar::DeriveHasMultipleDistinctAggs(CExpressionHandle &exprhdl) {
+bool CDrvdPropScalar::DeriveHasMultipleDistinctAggs(CExpressionHandle &exprhdl) {
   if (!m_is_prop_derived->ExchangeSet(EdptFHasMultipleDistinctAggs)) {
     if (COperator::EopScalarProjectList == exprhdl.Pop()->Eopid()) {
       m_fHasMultipleDistinctAggs = CScalarProjectList::FHasMultipleDistinctAggs(exprhdl);
@@ -319,12 +317,12 @@ BOOL CDrvdPropScalar::DeriveHasMultipleDistinctAggs(CExpressionHandle &exprhdl) 
   return m_fHasMultipleDistinctAggs;
 }
 
-BOOL CDrvdPropScalar::HasScalarArrayCmp() const {
+bool CDrvdPropScalar::HasScalarArrayCmp() const {
   GPOS_RTL_ASSERT(IsComplete());
   return m_fHasScalarArrayCmp;
 }
 
-BOOL CDrvdPropScalar::DeriveHasScalarArrayCmp(CExpressionHandle &exprhdl) {
+bool CDrvdPropScalar::DeriveHasScalarArrayCmp(CExpressionHandle &exprhdl) {
   if (!m_is_prop_derived->ExchangeSet(EdptFHasScalarArrayCmp)) {
     CScalar *popScalar = CScalar::PopConvert(exprhdl.Pop());
     m_fHasScalarArrayCmp = popScalar->FHasScalarArrayCmp(exprhdl);
@@ -332,20 +330,19 @@ BOOL CDrvdPropScalar::DeriveHasScalarArrayCmp(CExpressionHandle &exprhdl) {
   return m_fHasScalarArrayCmp;
 }
 
-ULONG
-CDrvdPropScalar::DeriveTotalOrderedAggs(CExpressionHandle &exprhdl) {
+uint32_t CDrvdPropScalar::DeriveTotalOrderedAggs(CExpressionHandle &exprhdl) {
   if (COperator::EopScalarProjectList == exprhdl.Pop()->Eopid() && !m_is_prop_derived->ExchangeSet(EdptUlOrderedAggs)) {
     m_ulOrderedAggs = CScalarProjectList::UlOrderedAggs(exprhdl);
   }
   return m_ulOrderedAggs;
 }
 
-BOOL CDrvdPropScalar::ContainsOnlyReplicationSafeAggFuncs() const {
+bool CDrvdPropScalar::ContainsOnlyReplicationSafeAggFuncs() const {
   GPOS_RTL_ASSERT(IsComplete());
   return m_fContainsOnlyReplicationSafeAggFuncs;
 }
 
-BOOL CDrvdPropScalar::DeriveContainsOnlyReplicationSafeAggFuncs(CExpressionHandle &exprhdl) {
+bool CDrvdPropScalar::DeriveContainsOnlyReplicationSafeAggFuncs(CExpressionHandle &exprhdl) {
   if (!m_is_prop_derived->ExchangeSet(EdptFContainsOnlyReplicationSafeAggFuncs)) {
     if (COperator::EopScalarProjectList == exprhdl.Pop()->Eopid()) {
       m_fContainsOnlyReplicationSafeAggFuncs = CScalarProjectList::FContainsOnlyReplicationSafeAggFuncs(exprhdl);

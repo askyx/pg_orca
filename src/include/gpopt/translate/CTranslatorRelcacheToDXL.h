@@ -82,14 +82,14 @@ class CTranslatorRelcacheToDXL {
     IMDFunction::EFuncStbl m_stability;
 
     // is function strict?
-    BOOL m_is_strict;
+    bool m_is_strict;
 
     // can the function return multiple rows?
-    BOOL m_returns_set;
+    bool m_returns_set;
 
    public:
     // ctor
-    SFuncProps(OID oid, IMDFunction::EFuncStbl stability, BOOL is_strict, BOOL ReturnsSet)
+    SFuncProps(OID oid, IMDFunction::EFuncStbl stability, bool is_strict, bool ReturnsSet)
         : m_oid(oid), m_stability(stability), m_is_strict(is_strict), m_returns_set(ReturnsSet) {}
 
     // dtor
@@ -102,10 +102,10 @@ class CTranslatorRelcacheToDXL {
     IMDFunction::EFuncStbl GetStability() const { return m_stability; }
 
     // is function strict?
-    BOOL IsStrict() const { return m_is_strict; }
+    bool IsStrict() const { return m_is_strict; }
 
     // does function return set?
-    BOOL ReturnsSet() const { return m_returns_set; }
+    bool ReturnsSet() const { return m_returns_set; }
 
   };  // struct SFuncProps
 
@@ -116,10 +116,10 @@ class CTranslatorRelcacheToDXL {
   static void LookupFuncProps(
       OID func_oid,
       IMDFunction::EFuncStbl *stability,  // output: function stability
-      BOOL *is_strict,                    // output: is function strict?
-      BOOL *is_ndv_preserving,            // output: preserves NDVs of inputs
-      BOOL *ReturnsSet,                   // output: does function return set?
-      BOOL *is_allowed_for_PS  // output: is this an increasing function (lossy cast) allowed for partition selection
+      bool *is_strict,                    // output: is function strict?
+      bool *is_ndv_preserving,            // output: preserves NDVs of inputs
+      bool *ReturnsSet,                   // output: does function return set?
+      bool *is_allowed_for_PS  // output: is this an increasing function (lossy cast) allowed for partition selection
   );
 
   // check and fall back for unsupported relations
@@ -129,7 +129,7 @@ class CTranslatorRelcacheToDXL {
   static CMDName *GetTypeName(CMemoryPool *mp, IMDId *mdid);
 
   // get function stability property from the GPDB character representation
-  static CMDFunctionGPDB::EFuncStbl GetFuncStability(CHAR c);
+  static CMDFunctionGPDB::EFuncStbl GetFuncStability(char c);
 
   // get type of aggregate's intermediate result from the relcache
   static IMDId *RetrieveAggIntermediateResultType(CMemoryPool *mp, IMDId *mdid);
@@ -151,11 +151,11 @@ class CTranslatorRelcacheToDXL {
 
   // transform GPDB's MCV information to optimizer's histogram structure
   static CHistogram *TransformMcvToOrcaHistogram(CMemoryPool *mp, const IMDType *md_type, const Datum *mcv_values,
-                                                 const float4 *mcv_frequencies, ULONG num_mcv_values);
+                                                 const float4 *mcv_frequencies, uint32_t num_mcv_values);
 
   // transform GPDB's hist information to optimizer's histogram structure
   static CHistogram *TransformHistToOrcaHistogram(CMemoryPool *mp, const IMDType *md_type, const Datum *hist_values,
-                                                  ULONG num_hist_values, CDouble num_distinct, CDouble hist_freq);
+                                                  uint32_t num_hist_values, CDouble num_distinct, CDouble hist_freq);
 
   // histogram to array of dxl buckets
   static CDXLBucketArray *TransformHistogramToDXLBucketArray(CMemoryPool *mp, const IMDType *md_type,
@@ -164,31 +164,31 @@ class CTranslatorRelcacheToDXL {
   // transform stats from pg_stats form to optimizer's preferred form
   static CDXLBucketArray *TransformStatsToDXLBucketArray(CMemoryPool *mp, OID att_type, CDouble num_distinct,
                                                          CDouble null_freq, const Datum *mcv_values,
-                                                         const float4 *mcv_frequencies, ULONG num_mcv_values,
-                                                         const Datum *hist_values, ULONG num_hist_values);
+                                                         const float4 *mcv_frequencies, uint32_t num_mcv_values,
+                                                         const Datum *hist_values, uint32_t num_hist_values);
 
   // get partition keys and types for a relation
   static void RetrievePartKeysAndTypes(CMemoryPool *mp, Relation rel, OID oid, ULongPtrArray **part_keys,
                                        CharPtrArray **part_types);
 
   // get keysets for relation
-  static ULongPtr2dArray *RetrieveRelKeysets(CMemoryPool *mp, OID oid, BOOL should_add_default_keys,
-                                             BOOL is_partitioned, ULONG *attno_mapping);
+  static ULongPtr2dArray *RetrieveRelKeysets(CMemoryPool *mp, OID oid, bool should_add_default_keys,
+                                             bool is_partitioned, uint32_t *attno_mapping);
 
   // storage type for a relation
   static IMDRelation::Erelstoragetype RetrieveRelStorageType(Relation rel);
 
   // fix frequencies if they add up to more than 1.0
-  static void NormalizeFrequencies(float4 *pdrgf, ULONG length, CDouble *null_freq);
+  static void NormalizeFrequencies(float4 *pdrgf, uint32_t length, CDouble *null_freq);
 
   // get the relation columns
   static CMDColumnArray *RetrieveRelColumns(CMemoryPool *mp, CMDAccessor *md_accessor, Relation rel);
 
   // construct a mapping GPDB attnos -> position in the column array
-  static ULONG *ConstructAttnoMapping(CMemoryPool *mp, CMDColumnArray *mdcol_array, ULONG max_cols);
+  static uint32_t *ConstructAttnoMapping(CMemoryPool *mp, CMDColumnArray *mdcol_array, uint32_t max_cols);
 
   // check if index is supported
-  static BOOL IsIndexSupported(Relation index_rel);
+  static bool IsIndexSupported(Relation index_rel);
 
   // retrieve part constraint for relation
   static CDXLNode *RetrievePartConstraintForRel(CMemoryPool *mp, CMDAccessor *md_accessor, Relation rel,
@@ -204,10 +204,10 @@ class CTranslatorRelcacheToDXL {
   static IMdIdArray *RetrieveRelCheckConstraints(CMemoryPool *mp, OID oid);
 
   // does relation type have system columns
-  static BOOL RelHasSystemColumns(char rel_kind);
+  static bool RelHasSystemColumns(char rel_kind);
 
   // translate Optimizer comparison types to GPDB
-  static ULONG GetComparisonType(IMDType::ECmpType cmp_type);
+  static uint32_t GetComparisonType(IMDType::ECmpType cmp_type);
 
   // retrieve the opfamilies mdids for the given scalar op
   static IMdIdArray *RetrieveScOpOpFamilies(CMemoryPool *mp, IMDId *mdid_scalar_op);
@@ -247,10 +247,10 @@ class CTranslatorRelcacheToDXL {
   static CMDCheckConstraintGPDB *RetrieveCheckConstraints(CMemoryPool *mp, CMDAccessor *md_accessor, IMDId *mdid);
 
   // populate the attribute number to position mapping
-  static ULONG *PopulateAttnoPositionMap(CMemoryPool *mp, const IMDRelation *md_rel, ULONG size);
+  static uint32_t *PopulateAttnoPositionMap(CMemoryPool *mp, const IMDRelation *md_rel, uint32_t size);
 
   // return the position of a given attribute number
-  static ULONG GetAttributePosition(INT attno, const ULONG *attno_mapping);
+  static uint32_t GetAttributePosition(int32_t attno, const uint32_t *attno_mapping);
 
   // retrieve a type from the relcache
   static IMDType *RetrieveType(CMemoryPool *mp, IMDId *mdid);
@@ -265,7 +265,7 @@ class CTranslatorRelcacheToDXL {
   static CMDAggregateGPDB *RetrieveAgg(CMemoryPool *mp, IMDId *mdid);
 
   // translate GPDB comparison type
-  static IMDType::ECmpType ParseCmpType(ULONG cmpt);
+  static IMDType::ECmpType ParseCmpType(uint32_t cmpt);
 };
 }  // namespace gpdxl
 

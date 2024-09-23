@@ -21,8 +21,8 @@
 using namespace gpopt;
 using namespace gpmd;
 
-const WCHAR CScalarBoolOp::m_rgwszBool[EboolopSentinel][30] = {GPOS_WSZ_LIT("EboolopAnd"), GPOS_WSZ_LIT("EboolopOr"),
-                                                               GPOS_WSZ_LIT("EboolopNot")};
+const wchar_t CScalarBoolOp::m_rgwszBool[EboolopSentinel][30] = {GPOS_WSZ_LIT("EboolopAnd"), GPOS_WSZ_LIT("EboolopOr"),
+                                                                 GPOS_WSZ_LIT("EboolopNot")};
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -33,10 +33,9 @@ const WCHAR CScalarBoolOp::m_rgwszBool[EboolopSentinel][30] = {GPOS_WSZ_LIT("Ebo
 //		id of comparison
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarBoolOp::HashValue() const {
-  ULONG ulBoolop = (ULONG)Eboolop();
-  return gpos::CombineHashes(COperator::HashValue(), gpos::HashValue<ULONG>(&ulBoolop));
+uint32_t CScalarBoolOp::HashValue() const {
+  uint32_t ulBoolop = (uint32_t)Eboolop();
+  return gpos::CombineHashes(COperator::HashValue(), gpos::HashValue<uint32_t>(&ulBoolop));
 }
 
 //---------------------------------------------------------------------------
@@ -47,7 +46,7 @@ CScalarBoolOp::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarBoolOp::Matches(COperator *pop) const {
+bool CScalarBoolOp::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarBoolOp *popLog = CScalarBoolOp::PopConvert(pop);
 
@@ -66,7 +65,7 @@ BOOL CScalarBoolOp::Matches(COperator *pop) const {
 //		Is boolean operator commutative?
 //
 //---------------------------------------------------------------------------
-BOOL CScalarBoolOp::FCommutative(EBoolOperator eboolop) {
+bool CScalarBoolOp::FCommutative(EBoolOperator eboolop) {
   switch (eboolop) {
     case EboolopAnd:
     case EboolopOr:

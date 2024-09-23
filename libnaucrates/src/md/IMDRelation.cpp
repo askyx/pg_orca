@@ -54,9 +54,9 @@ const CWStringConst *IMDRelation::GetStorageTypeStr(IMDRelation::Erelstoragetype
 CWStringDynamic *IMDRelation::ColumnsToStr(CMemoryPool *mp, ULongPtrArray *colid_array) {
   CWStringDynamic *str = GPOS_NEW(mp) CWStringDynamic(mp);
 
-  ULONG length = colid_array->Size();
-  for (ULONG ul = 0; ul < length; ul++) {
-    ULONG id = *((*colid_array)[ul]);
+  uint32_t length = colid_array->Size();
+  for (uint32_t ul = 0; ul < length; ul++) {
+    uint32_t id = *((*colid_array)[ul]);
     if (ul == length - 1) {
       // last element: do not print a comma
       str->AppendFormat(GPOS_WSZ_LIT("%d"), id);

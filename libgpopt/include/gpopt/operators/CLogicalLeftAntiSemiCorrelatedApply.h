@@ -46,7 +46,7 @@ class CLogicalLeftAntiSemiCorrelatedApply : public CLogicalLeftAntiSemiApply {
   EOperatorId Eopid() const override { return EopLogicalLeftAntiSemiCorrelatedApply; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalLeftAntiSemiCorrelatedApply"; }
+  const char *SzId() const override { return "CLogicalLeftAntiSemiCorrelatedApply"; }
 
   //-------------------------------------------------------------------------------------
   // Transformations
@@ -60,10 +60,10 @@ class CLogicalLeftAntiSemiCorrelatedApply : public CLogicalLeftAntiSemiApply {
   //-------------------------------------------------------------------------------------
 
   // return true if operator is a correlated apply
-  BOOL FCorrelated() const override { return true; }
+  bool FCorrelated() const override { return true; }
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // conversion function
   static CLogicalLeftAntiSemiCorrelatedApply *PopConvert(COperator *pop) {

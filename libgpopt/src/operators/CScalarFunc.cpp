@@ -49,8 +49,8 @@ CScalarFunc::CScalarFunc(CMemoryPool *mp)
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CScalarFunc::CScalarFunc(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, INT return_type_modifier,
-                         const CWStringConst *pstrFunc, BOOL funcvariadic)
+CScalarFunc::CScalarFunc(CMemoryPool *mp, IMDId *mdid_func, IMDId *mdid_return_type, int32_t return_type_modifier,
+                         const CWStringConst *pstrFunc, bool funcvariadic)
     : CScalar(mp),
       m_func_mdid(mdid_func),
       m_return_type_mdid(mdid_return_type),
@@ -132,8 +132,7 @@ IMDFunction::EFuncStbl CScalarFunc::EfsGetFunctionStability() const {
 //		id of function
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarFunc::HashValue() const {
+uint32_t CScalarFunc::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(),
                              gpos::CombineHashes(m_func_mdid->HashValue(), m_return_type_mdid->HashValue()));
 }
@@ -146,7 +145,7 @@ CScalarFunc::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarFunc::Matches(COperator *pop) const {
+bool CScalarFunc::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -168,7 +167,7 @@ IMDId *CScalarFunc::MdidType() const {
   return m_return_type_mdid;
 }
 
-INT CScalarFunc::TypeModifier() const {
+int32_t CScalarFunc::TypeModifier() const {
   return m_return_type_modifier;
 }
 
@@ -180,7 +179,7 @@ INT CScalarFunc::TypeModifier() const {
 //		Derive existence of non-scalar functions from expression handle
 //
 //---------------------------------------------------------------------------
-BOOL CScalarFunc::FHasNonScalarFunction(CExpressionHandle &exprhdl) {
+bool CScalarFunc::FHasNonScalarFunction(CExpressionHandle &exprhdl) {
   return m_returns_set || CScalar::FHasNonScalarFunction(exprhdl);
 }
 
@@ -215,7 +214,7 @@ CScalar::EBoolEvalResult CScalarFunc::Eber(ULongPtrArray *pdrgpulChildren) const
 
   return EberAny;
 }
-BOOL CScalarFunc::IsFuncVariadic() const {
+bool CScalarFunc::IsFuncVariadic() const {
   return m_funcvariadic;
 }
 

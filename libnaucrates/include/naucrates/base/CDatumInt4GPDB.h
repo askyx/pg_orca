@@ -30,17 +30,17 @@ class CDatumInt4GPDB : public IDatumInt4 {
   IMDId *m_mdid;
 
   // integer value
-  INT m_val;
+  int32_t m_val;
 
   // is null
-  BOOL m_is_null;
+  bool m_is_null;
 
  public:
   CDatumInt4GPDB(const CDatumInt4GPDB &) = delete;
 
   // ctors
-  CDatumInt4GPDB(CSystemId sysid, INT val, BOOL is_null = false);
-  CDatumInt4GPDB(IMDId *mdid, INT val, BOOL is_null = false);
+  CDatumInt4GPDB(CSystemId sysid, int32_t val, bool is_null = false);
+  CDatumInt4GPDB(IMDId *mdid, int32_t val, bool is_null = false);
 
   // dtor
   ~CDatumInt4GPDB() override;
@@ -49,22 +49,22 @@ class CDatumInt4GPDB : public IDatumInt4 {
   IMDId *MDId() const override;
 
   // accessor of size
-  ULONG Size() const override;
+  uint32_t Size() const override;
 
   // accessor of integer value
-  INT Value() const override;
+  int32_t Value() const override;
 
   // accessor of is null
-  BOOL IsNull() const override;
+  bool IsNull() const override;
 
   // return string representation
   const CWStringConst *GetStrRepr(CMemoryPool *mp) const override;
 
   // hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function for datums
-  BOOL Matches(const IDatum *) const override;
+  bool Matches(const IDatum *) const override;
 
   // copy datum
   IDatum *MakeCopy(CMemoryPool *mp) const override;

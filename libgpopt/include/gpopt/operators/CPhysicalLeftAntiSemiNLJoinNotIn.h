@@ -35,7 +35,7 @@ class CPhysicalLeftAntiSemiNLJoinNotIn : public CPhysicalLeftAntiSemiNLJoin {
   EOperatorId Eopid() const override { return EopPhysicalLeftAntiSemiNLJoinNotIn; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalLeftAntiSemiNLJoinNotIn"; }
+  const char *SzId() const override { return "CPhysicalLeftAntiSemiNLJoinNotIn"; }
 
   // conversion function
   static CPhysicalLeftAntiSemiNLJoinNotIn *PopConvert(COperator *pop) {

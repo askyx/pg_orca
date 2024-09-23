@@ -36,13 +36,13 @@ class CDXLScalarArray : public CDXLScalar {
   IMDId *m_array_type_mdid;
 
   // is it a multidimensional array
-  BOOL m_multi_dimensional_array;
+  bool m_multi_dimensional_array;
 
  public:
   CDXLScalarArray(const CDXLScalarArray &) = delete;
 
   // ctor
-  CDXLScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, BOOL multi_dimensional_array);
+  CDXLScalarArray(CMemoryPool *mp, IMDId *elem_type_mdid, IMDId *array_type_mdid, bool multi_dimensional_array);
 
   // dtor
   ~CDXLScalarArray() override;
@@ -60,7 +60,7 @@ class CDXLScalarArray : public CDXLScalar {
   IMDId *ArrayTypeMDid() const;
 
   // is array multi-dimensional
-  BOOL IsMultiDimensional() const;
+  bool IsMultiDimensional() const;
 
   // serialize operator in DXL format
 
@@ -73,7 +73,7 @@ class CDXLScalarArray : public CDXLScalar {
   }
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *  // md_accessor
+  bool HasBoolResult(CMDAccessor *  // md_accessor
   ) const override {
     return false;
   }
@@ -81,7 +81,7 @@ class CDXLScalarArray : public CDXLScalar {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

@@ -40,7 +40,7 @@ class CSearchStage {
   CXformSet *m_xforms;
 
   // time threshold in milliseconds
-  ULONG m_time_threshold;
+  uint32_t m_time_threshold;
 
   // cost threshold
   CCost m_cost_threshold;
@@ -56,7 +56,7 @@ class CSearchStage {
 
  public:
   // ctor
-  CSearchStage(CXformSet *xform_set, ULONG ulTimeThreshold = gpos::ulong_max, CCost costThreshold = CCost(0.0));
+  CSearchStage(CXformSet *xform_set, uint32_t ulTimeThreshold = UINT32_MAX, CCost costThreshold = CCost(0.0));
 
   // dtor
   virtual ~CSearchStage();
@@ -64,33 +64,31 @@ class CSearchStage {
   // restart timer if time threshold is not default indicating don't timeout
   // Restart() is a costly method, so avoid calling unnecessarily
   void RestartTimer() {
-    if (m_time_threshold != gpos::ulong_max) {
+    if (m_time_threshold != UINT32_MAX) {
       m_timer.Restart();
     }
   }
 
   // is search stage timed-out?
-  // if threshold is gpos::ulong_max, its the default and we need not time out
+  // if threshold is UINT32_MAX, its the default and we need not time out
   // ElapsedMS() is a costly method, so avoid calling unnecesarily
-  BOOL FTimedOut() const {
-    if (m_time_threshold == gpos::ulong_max) {
+  bool FTimedOut() const {
+    if (m_time_threshold == UINT32_MAX) {
       return false;
     }
     return m_timer.ElapsedMS() > m_time_threshold;
   }
 
   // return elapsed time (in millseconds) since timer was last restarted
-  ULONG
-  UlElapsedTime() const { return m_timer.ElapsedMS(); }
+  uint32_t UlElapsedTime() const { return m_timer.ElapsedMS(); }
 
-  BOOL FAchievedReqdCost() const { return (nullptr != m_pexprBest && m_costBest <= m_cost_threshold); }
+  bool FAchievedReqdCost() const { return (nullptr != m_pexprBest && m_costBest <= m_cost_threshold); }
 
   // xforms set accessor
   CXformSet *GetXformSet() const { return m_xforms; }
 
   // time threshold accessor
-  ULONG
-  TimeThreshold() const { return m_time_threshold; }
+  uint32_t TimeThreshold() const { return m_time_threshold; }
 
   // cost threshold accessor
   CCost CostThreshold() const { return m_cost_threshold; }

@@ -28,7 +28,7 @@ using namespace gpopt;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CPhysicalCTEConsumer::CPhysicalCTEConsumer(CMemoryPool *mp, ULONG id, CColRefArray *colref_array,
+CPhysicalCTEConsumer::CPhysicalCTEConsumer(CMemoryPool *mp, uint32_t id, CColRefArray *colref_array,
                                            UlongToColRefMap *colref_mapping)
     : CPhysical(mp), m_id(id), m_pdrgpcr(colref_array), m_phmulcr(colref_mapping) {
   GPOS_ASSERT(nullptr != colref_array);
@@ -59,9 +59,9 @@ CPhysicalCTEConsumer::~CPhysicalCTEConsumer() {
 CColRefSet *CPhysicalCTEConsumer::PcrsRequired(CMemoryPool *,        // mp,
                                                CExpressionHandle &,  // exprhdl,
                                                CColRefSet *,         // pcrsRequired,
-                                               ULONG,                // child_index,
+                                               uint32_t,             // child_index,
                                                CDrvdPropArray *,     // pdrgpdpCtxt
-                                               ULONG                 // ulOptReq
+                                               uint32_t              // ulOptReq
 ) {
   GPOS_ASSERT(!"CPhysicalCTEConsumer has no relational children");
   return nullptr;
@@ -78,9 +78,9 @@ CColRefSet *CPhysicalCTEConsumer::PcrsRequired(CMemoryPool *,        // mp,
 COrderSpec *CPhysicalCTEConsumer::PosRequired(CMemoryPool *,        // mp,
                                               CExpressionHandle &,  // exprhdl,
                                               COrderSpec *,         // posRequired,
-                                              ULONG,                // child_index,
+                                              uint32_t,             // child_index,
                                               CDrvdPropArray *,     // pdrgpdpCtxt
-                                              ULONG                 // ulOptReq
+                                              uint32_t              // ulOptReq
 ) const {
   GPOS_ASSERT(!"CPhysicalCTEConsumer has no relational children");
   return nullptr;
@@ -97,9 +97,9 @@ COrderSpec *CPhysicalCTEConsumer::PosRequired(CMemoryPool *,        // mp,
 CCTEReq *CPhysicalCTEConsumer::PcteRequired(CMemoryPool *,        // mp,
                                             CExpressionHandle &,  // exprhdl,
                                             CCTEReq *,            // pcter,
-                                            ULONG,                // child_index,
+                                            uint32_t,             // child_index,
                                             CDrvdPropArray *,     // pdrgpdpCtxt,
-                                            ULONG                 // ulOptReq
+                                            uint32_t              // ulOptReq
 ) const {
   GPOS_ASSERT(!"CPhysicalCTEConsumer has no relational children");
   return nullptr;
@@ -150,8 +150,8 @@ CCTEMap *CPhysicalCTEConsumer::PcmDerive(CMemoryPool *mp, CExpressionHandle &
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalCTEConsumer::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                             ULONG  // ulOptReq
+bool CPhysicalCTEConsumer::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                             uint32_t  // ulOptReq
 ) const {
   GPOS_ASSERT(nullptr != pcrsRequired);
 
@@ -187,7 +187,7 @@ CEnfdProp::EPropEnforcingType CPhysicalCTEConsumer::EpetOrder(CExpressionHandle 
 //		Match function
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalCTEConsumer::Matches(COperator *pop) const {
+bool CPhysicalCTEConsumer::Matches(COperator *pop) const {
   if (pop->Eopid() != Eopid()) {
     return false;
   }
@@ -205,9 +205,8 @@ BOOL CPhysicalCTEConsumer::Matches(COperator *pop) const {
 //		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysicalCTEConsumer::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_id);
+uint32_t CPhysicalCTEConsumer::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_id);
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcr));
 
   return ulHash;

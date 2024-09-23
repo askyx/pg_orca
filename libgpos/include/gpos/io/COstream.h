@@ -50,14 +50,14 @@ class COstream : public IOstream {
   ~COstream() override = default;
 
   // default implementations for the following interfaces available
-  IOstream &operator<<(const CHAR *) override;
-  IOstream &operator<<(const WCHAR) override;
-  IOstream &operator<<(const CHAR) override;
-  IOstream &operator<<(ULONG) override;
-  IOstream &operator<<(ULLONG) override;
-  IOstream &operator<<(INT) override;
-  IOstream &operator<<(LINT) override;
-  IOstream &operator<<(DOUBLE) override;
+  IOstream &operator<<(const char *) override;
+  IOstream &operator<<(const wchar_t) override;
+  IOstream &operator<<(const char) override;
+  IOstream &operator<<(uint32_t) override;
+  IOstream &operator<<(uint64_t) override;
+  IOstream &operator<<(int32_t) override;
+  IOstream &operator<<(int64_t) override;
+  IOstream &operator<<(double) override;
   IOstream &operator<<(const void *) override;
 
   // to support std:endl only
@@ -68,7 +68,7 @@ class COstream : public IOstream {
 
  private:
   // formatting buffer
-  WCHAR m_string_format_buffer[GPOS_OSTREAM_CONVBUF_SIZE];
+  wchar_t m_string_format_buffer[GPOS_OSTREAM_CONVBUF_SIZE];
 
   // wrapper string for formatting buffer
   CWStringStatic m_static_string_buffer;
@@ -77,7 +77,7 @@ class COstream : public IOstream {
   EStreamManipulator m_stream_manipulator{EsmDec};
 
   // append formatted string
-  IOstream &AppendFormat(const WCHAR *format, ...);
+  IOstream &AppendFormat(const wchar_t *format, ...);
 
   // what is the stream modifier?
   EStreamManipulator GetStreamManipulator() const;

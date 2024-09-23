@@ -49,9 +49,9 @@ class CSchedulerContext {
   CEngine *m_peng;
 
   // flag indicating if context has been initialized
-  BOOL m_fInit{false};
+  bool m_fInit{false};
 
-  BOOL FInit() const { return m_fInit; }
+  bool FInit() const { return m_fInit; }
 
  public:
   CSchedulerContext(const CSchedulerContext &) = delete;

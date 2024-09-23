@@ -32,13 +32,13 @@ class CDXLLogicalGet : public CDXLLogical {
   CDXLTableDescr *m_dxl_table_descr;
 
   // the table has row level security enabled and contains security quals
-  BOOL m_has_security_quals{false};
+  bool m_has_security_quals{false};
 
  public:
   CDXLLogicalGet(CDXLLogicalGet &) = delete;
 
   // ctor
-  CDXLLogicalGet(CMemoryPool *mp, CDXLTableDescr *table_descr, BOOL hasSecurityQuals = false);
+  CDXLLogicalGet(CMemoryPool *mp, CDXLTableDescr *table_descr, bool hasSecurityQuals = false);
 
   // dtor
   ~CDXLLogicalGet() override;
@@ -51,7 +51,7 @@ class CDXLLogicalGet : public CDXLLogical {
   // serialize operator in DXL format
 
   // check if given column is defined by operator
-  BOOL IsColDefined(ULONG colid) const override;
+  bool IsColDefined(uint32_t colid) const override;
 
   // conversion function
   static CDXLLogicalGet *Cast(CDXLOperator *dxl_op) {
@@ -61,12 +61,12 @@ class CDXLLogicalGet : public CDXLLogical {
     return dynamic_cast<CDXLLogicalGet *>(dxl_op);
   }
 
-  BOOL HasSecurityQuals() const;
+  bool HasSecurityQuals() const;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

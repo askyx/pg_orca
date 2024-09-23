@@ -55,13 +55,13 @@ CMemoryVisitorPrint::~CMemoryVisitorPrint() = default;
 //		Prints the live object information to the output stream.
 //
 //---------------------------------------------------------------------------
-void CMemoryVisitorPrint::Visit(void *user_addr, SIZE_T user_size, void *total_addr, SIZE_T total_size,
-                                const CHAR *alloc_filename, const ULONG alloc_line, ULLONG alloc_seq_number,
+void CMemoryVisitorPrint::Visit(void *user_addr, size_t user_size, void *total_addr, size_t total_size,
+                                const char *alloc_filename, const uint32_t alloc_line, uint64_t alloc_seq_number,
                                 CStackDescriptor *stack_desc) {
   m_os << COstream::EsmDec << "allocation sequence number " << alloc_seq_number << "," << " total size "
-       << (ULONG)total_size << " bytes," << " base address " << total_addr << "," << " user size " << (ULONG)user_size
-       << " bytes," << " user address " << user_addr << "," << " allocated by " << alloc_filename << ":" << alloc_line
-       << std::endl;
+       << (uint32_t)total_size << " bytes," << " base address " << total_addr << "," << " user size "
+       << (uint32_t)user_size << " bytes," << " user address " << user_addr << "," << " allocated by " << alloc_filename
+       << ":" << alloc_line << std::endl;
 
   ITask *task = ITask::Self();
   if (nullptr != task) {

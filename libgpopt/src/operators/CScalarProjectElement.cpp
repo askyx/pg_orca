@@ -25,8 +25,7 @@ using namespace gpopt;
 //		Hash value built from colref and Eop
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarProjectElement::HashValue() const {
+uint32_t CScalarProjectElement::HashValue() const {
   return gpos::CombineHashes(COperator::HashValue(), gpos::HashPtr<CColRef>(m_pcr));
 }
 
@@ -38,7 +37,7 @@ CScalarProjectElement::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarProjectElement::Matches(COperator *pop) const {
+bool CScalarProjectElement::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarProjectElement *popScPrEl = CScalarProjectElement::PopConvert(pop);
 
@@ -57,7 +56,7 @@ BOOL CScalarProjectElement::Matches(COperator *pop) const {
 //		Not called for leaf operators
 //
 //---------------------------------------------------------------------------
-BOOL CScalarProjectElement::FInputOrderSensitive() const {
+bool CScalarProjectElement::FInputOrderSensitive() const {
   return false;
 }
 
@@ -70,8 +69,8 @@ BOOL CScalarProjectElement::FInputOrderSensitive() const {
 //
 //---------------------------------------------------------------------------
 COperator *CScalarProjectElement::PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping,
-                                                             BOOL must_exist) {
-  ULONG id = m_pcr->Id();
+                                                             bool must_exist) {
+  uint32_t id = m_pcr->Id();
   CColRef *colref = colref_mapping->Find(&id);
   if (nullptr == colref) {
     if (must_exist) {
@@ -81,7 +80,7 @@ COperator *CScalarProjectElement::PopCopyWithRemappedColumns(CMemoryPool *mp, Ul
       CName name(m_pcr->Name());
       colref = col_factory->PcrCreate(m_pcr->RetrieveType(), m_pcr->TypeModifier(), name);
 
-      BOOL result GPOS_ASSERTS_ONLY = colref_mapping->Insert(GPOS_NEW(mp) ULONG(id), colref);
+      bool result GPOS_ASSERTS_ONLY = colref_mapping->Insert(GPOS_NEW(mp) uint32_t(id), colref);
       GPOS_ASSERT(result);
     } else {
       colref = m_pcr;

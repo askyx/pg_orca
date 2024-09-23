@@ -18,7 +18,7 @@
 using namespace gpopt;
 
 // initialization of static variables
-const CHAR *CEnfdOrder::m_szOrderMatching[EomSentinel] = {"satisfy"};
+const char *CEnfdOrder::m_szOrderMatching[EomSentinel] = {"satisfy"};
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -54,7 +54,7 @@ CEnfdOrder::~CEnfdOrder() {
 //		order specification of this object for the specified matching type
 //
 //---------------------------------------------------------------------------
-BOOL CEnfdOrder::FCompatible(COrderSpec *pos) const {
+bool CEnfdOrder::FCompatible(COrderSpec *pos) const {
   GPOS_ASSERT(nullptr != pos);
 
   switch (m_eom) {
@@ -76,8 +76,7 @@ BOOL CEnfdOrder::FCompatible(COrderSpec *pos) const {
 // 		Hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CEnfdOrder::HashValue() const {
+uint32_t CEnfdOrder::HashValue() const {
   return gpos::CombineHashes(m_eom + 1, m_pos->HashValue());
 }
 
@@ -90,7 +89,7 @@ CEnfdOrder::HashValue() const {
 //
 //---------------------------------------------------------------------------
 CEnfdProp::EPropEnforcingType CEnfdOrder::Epet(CExpressionHandle &exprhdl, CPhysical *popPhysical,
-                                               BOOL fOrderReqd) const {
+                                               bool fOrderReqd) const {
   if (fOrderReqd) {
     return popPhysical->EpetOrder(exprhdl, this);
   }

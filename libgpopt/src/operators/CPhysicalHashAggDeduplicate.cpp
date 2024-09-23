@@ -27,10 +27,10 @@ using namespace gpopt;
 //---------------------------------------------------------------------------
 CPhysicalHashAggDeduplicate::CPhysicalHashAggDeduplicate(CMemoryPool *mp, CColRefArray *colref_array,
                                                          CColRefArray *pdrgpcrMinimal, COperator::EGbAggType egbaggtype,
-                                                         CColRefArray *pdrgpcrKeys, BOOL fGeneratesDuplicates,
-                                                         BOOL fMultiStage, BOOL isAggFromSplitDQA,
+                                                         CColRefArray *pdrgpcrKeys, bool fGeneratesDuplicates,
+                                                         bool fMultiStage, bool isAggFromSplitDQA,
                                                          CLogicalGbAgg::EAggStage aggStage,
-                                                         BOOL should_enforce_distribution)
+                                                         bool should_enforce_distribution)
     : CPhysicalHashAgg(mp, colref_array, pdrgpcrMinimal, egbaggtype, fGeneratesDuplicates,
                        nullptr /*pdrgpcrGbMinusDistinct*/, fMultiStage, isAggFromSplitDQA, aggStage,
                        should_enforce_distribution),

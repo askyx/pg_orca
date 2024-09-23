@@ -39,7 +39,7 @@ CMDName::CMDName(CMemoryPool *mp, const CWStringBase *str) : m_name(nullptr), m_
 //		can become property of the CMDName object
 //
 //---------------------------------------------------------------------------
-CMDName::CMDName(const CWStringConst *str, BOOL owns_memory) : m_name(str), m_deep_copy(owns_memory) {
+CMDName::CMDName(const CWStringConst *str, bool owns_memory) : m_name(str), m_deep_copy(owns_memory) {
   GPOS_ASSERT(nullptr != m_name);
   GPOS_ASSERT(m_name->IsValid());
 }

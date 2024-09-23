@@ -56,24 +56,23 @@ class CDXLLogicalConstTable : public CDXLLogical {
   const CDXLColDescrArray *GetDXLColumnDescrArray() const { return m_col_descr_array; }
 
   // return the column descriptor at a given position
-  CDXLColDescr *GetColumnDescrAt(ULONG ul) const;
+  CDXLColDescr *GetColumnDescrAt(uint32_t ul) const;
 
   // number of columns
-  ULONG Arity() const;
+  uint32_t Arity() const;
 
   // number of constant tuples
-  ULONG
-  GetConstTupleCount() const { return m_const_tuples_datum_array->Size(); }
+  uint32_t GetConstTupleCount() const { return m_const_tuples_datum_array->Size(); }
 
   // return the const tuple (datum array) at a given position
-  const CDXLDatumArray *GetConstTupleDatumArrayAt(ULONG ulTuplePos) const {
+  const CDXLDatumArray *GetConstTupleDatumArrayAt(uint32_t ulTuplePos) const {
     return (*m_const_tuples_datum_array)[ulTuplePos];
   }
 
   // serialize operator in DXL format
 
   // check if given column is defined by operator
-  BOOL IsColDefined(ULONG colid) const override;
+  bool IsColDefined(uint32_t colid) const override;
 
   // conversion function
   static CDXLLogicalConstTable *Cast(CDXLOperator *dxl_op) {
@@ -86,7 +85,7 @@ class CDXLLogicalConstTable : public CDXLLogical {
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 };
 }  // namespace gpdxl

@@ -58,10 +58,10 @@ CPhysicalDML::CPhysicalDML(CMemoryPool *mp, CLogicalDML::EDMLOperator edmlop, CT
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
 
   const IMDRelation *pmdrel = md_accessor->RetrieveRel(ptabdesc->MDId());
-  BOOL is_intermediate_part = (pmdrel->IsPartitioned() && nullptr != pmdrel->MDPartConstraint());
+  bool is_intermediate_part = (pmdrel->IsPartitioned() && nullptr != pmdrel->MDPartConstraint());
   if (CLogicalDML::EdmlDelete == edmlop && !is_intermediate_part) {
     CColRefArray *colref_array = GPOS_NEW(mp) CColRefArray(mp);
-    for (ULONG ul = 0; ul < m_pdrgpcrSource->Size(); ++ul) {
+    for (uint32_t ul = 0; ul < m_pdrgpcrSource->Size(); ++ul) {
       CColRef *colref = (*m_pdrgpcrSource)[ul];
       if (colref->IsDistCol() || colref->IsPartCol()) {
         colref_array->Append(colref);
@@ -101,13 +101,13 @@ CPhysicalDML::~CPhysicalDML() {
 COrderSpec *CPhysicalDML::PosRequired(CMemoryPool *,        // mp
                                       CExpressionHandle &,  // exprhdl
                                       COrderSpec *,         // posRequired
-                                      ULONG
+                                      uint32_t
 #ifdef GPOS_DEBUG
                                           child_index
 #endif  // GPOS_DEBUG
                                       ,
                                       CDrvdPropArray *,  // pdrgpdpCtxt
-                                      ULONG              // ulOptReq
+                                      uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   m_pos->AddRef();
@@ -163,13 +163,13 @@ CEnfdProp::EPropEnforcingType CPhysicalDML::EpetOrder(CExpressionHandle &exprhdl
 CColRefSet *CPhysicalDML::PcrsRequired(CMemoryPool *mp,
                                        CExpressionHandle &,  // exprhdl,
                                        CColRefSet *pcrsRequired,
-                                       ULONG
+                                       uint32_t
 #ifdef GPOS_DEBUG
                                            child_index
 #endif  // GPOS_DEBUG
                                        ,
                                        CDrvdPropArray *,  // pdrgpdpCtxt
-                                       ULONG              // ulOptReq
+                                       uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(0 == child_index && "Required properties can only be computed on the relational child");
 
@@ -190,13 +190,13 @@ CColRefSet *CPhysicalDML::PcrsRequired(CMemoryPool *mp,
 CCTEReq *CPhysicalDML::PcteRequired(CMemoryPool *,        // mp,
                                     CExpressionHandle &,  // exprhdl,
                                     CCTEReq *pcter,
-                                    ULONG
+                                    uint32_t
 #ifdef GPOS_DEBUG
                                         child_index
 #endif
                                     ,
                                     CDrvdPropArray *,  // pdrgpdpCtxt,
-                                    ULONG              // ulOptReq
+                                    uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
   return PcterPushThru(pcter);
@@ -210,8 +210,8 @@ CCTEReq *CPhysicalDML::PcteRequired(CMemoryPool *,        // mp,
 //		Check if required columns are included in output columns
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalDML::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                     ULONG  // ulOptReq
+bool CPhysicalDML::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
+                                     uint32_t  // ulOptReq
 ) const {
   return FUnaryProvidesReqdCols(exprhdl, pcrsRequired);
 }
@@ -224,9 +224,8 @@ BOOL CPhysicalDML::FProvidesReqdCols(CExpressionHandle &exprhdl, CColRefSet *pcr
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CPhysicalDML::HashValue() const {
-  ULONG ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
+uint32_t CPhysicalDML::HashValue() const {
+  uint32_t ulHash = gpos::CombineHashes(COperator::HashValue(), m_ptabdesc->MDId()->HashValue());
   ulHash = gpos::CombineHashes(ulHash, gpos::HashPtr<CColRef>(m_pcrAction));
   ulHash = gpos::CombineHashes(ulHash, CUtils::UlHashColArray(m_pdrgpcrSource));
 
@@ -246,7 +245,7 @@ CPhysicalDML::HashValue() const {
 //		Match operator
 //
 //---------------------------------------------------------------------------
-BOOL CPhysicalDML::Matches(COperator *pop) const {
+bool CPhysicalDML::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CPhysicalDML *popDML = CPhysicalDML::PopConvert(pop);
 
@@ -292,9 +291,9 @@ COrderSpec *CPhysicalDML::PosComputeRequired(CMemoryPool *mp, CTableDescriptor *
   if (1 < pdrgpbsKeys->Size() && CLogicalDML::EdmlUpdate == m_edmlop) {
     // if this is an update on the target table's keys, enforce order on
     // the action column, see explanation in function's comment
-    const ULONG ulKeySets = pdrgpbsKeys->Size();
-    BOOL fNeedsSort = false;
-    for (ULONG ul = 0; ul < ulKeySets; ul++) {
+    const uint32_t ulKeySets = pdrgpbsKeys->Size();
+    bool fNeedsSort = false;
+    for (uint32_t ul = 0; ul < ulKeySets; ul++) {
       CBitSet *pbs = (*pdrgpbsKeys)[ul];
       if (!pbs->IsDisjoint(m_pbsModified)) {
         fNeedsSort = true;

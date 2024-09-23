@@ -36,7 +36,7 @@ class CAutoMDAccessor : public CStackObject {
   IMDProvider *m_pimdp;
 
   // do we own cache object?
-  BOOL m_fOwnCache;
+  bool m_fOwnCache;
 
   // metadata cache
   CMDAccessor::MDCache *m_pcache;

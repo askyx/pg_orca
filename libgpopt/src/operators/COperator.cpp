@@ -20,7 +20,7 @@
 using namespace gpopt;
 
 // generate unique operator ids
-ULONG COperator::m_aulOpIdCounter(0);
+uint32_t COperator::m_aulOpIdCounter(0);
 
 //---------------------------------------------------------------------------
 //	@function:
@@ -42,11 +42,10 @@ COperator::COperator(CMemoryPool *mp) : m_ulOpId(m_aulOpIdCounter++), m_mp(mp), 
 //		default hash function based on operator ID
 //
 //---------------------------------------------------------------------------
-ULONG
-COperator::HashValue() const {
-  ULONG ulEopid = (ULONG)Eopid();
+uint32_t COperator::HashValue() const {
+  uint32_t ulEopid = (uint32_t)Eopid();
 
-  return gpos::HashValue<ULONG>(&ulEopid);
+  return gpos::HashValue<uint32_t>(&ulEopid);
 }
 
 //---------------------------------------------------------------------------
@@ -73,8 +72,8 @@ IOstream &COperator::OsPrint(IOstream &os) const {
 IMDFunction::EFuncStbl COperator::EfsDeriveFromChildren(CExpressionHandle &exprhdl, IMDFunction::EFuncStbl efsDefault) {
   IMDFunction::EFuncStbl efs = efsDefault;
 
-  const ULONG arity = exprhdl.Arity();
-  for (ULONG ul = 0; ul < arity; ul++) {
+  const uint32_t arity = exprhdl.Arity();
+  for (uint32_t ul = 0; ul < arity; ul++) {
     IMDFunction::EFuncStbl efsChild = exprhdl.PfpChild(ul)->Efs();
     if (efsChild > efs) {
       efs = efsChild;
@@ -93,8 +92,8 @@ IMDFunction::EFuncStbl COperator::EfsDeriveFromChildren(CExpressionHandle &exprh
 //
 //---------------------------------------------------------------------------
 CFunctionProp *COperator::PfpDeriveFromChildren(CMemoryPool *mp, CExpressionHandle &exprhdl,
-                                                IMDFunction::EFuncStbl efsDefault, BOOL fHasVolatileFunctionScan,
-                                                BOOL fScan) {
+                                                IMDFunction::EFuncStbl efsDefault, bool fHasVolatileFunctionScan,
+                                                bool fScan) {
   IMDFunction::EFuncStbl efs = EfsDeriveFromChildren(exprhdl, efsDefault);
 
   return GPOS_NEW(mp) CFunctionProp(efs, fHasVolatileFunctionScan || exprhdl.FChildrenHaveVolatileFuncScan(), fScan);
@@ -111,7 +110,7 @@ CFunctionProp *COperator::PfpDeriveFromChildren(CMemoryPool *mp, CExpressionHand
 CTableDescriptorHashSet *COperator::DeriveTableDescriptor(CMemoryPool *mp, CExpressionHandle &exprhdl) const {
   CTableDescriptorHashSet *table_descriptor_set = GPOS_NEW(mp) CTableDescriptorHashSet(mp);
 
-  for (ULONG ul = 0; ul < exprhdl.Arity(); ul++) {
+  for (uint32_t ul = 0; ul < exprhdl.Arity(); ul++) {
     CTableDescriptorHashSetIter hsiter(exprhdl.DeriveTableDescriptor(ul));
     while (hsiter.Advance()) {
       CTableDescriptor *ptabdesc = const_cast<CTableDescriptor *>(hsiter.Get());

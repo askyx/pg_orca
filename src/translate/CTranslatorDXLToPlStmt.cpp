@@ -320,7 +320,7 @@ void CTranslatorDXLToPlStmt::SetParamIds(Plan *plan) {
   plan->allParam = bitmapset;
 }
 
-List *CTranslatorDXLToPlStmt::TranslatePartOids(IMdIdArray *parts, INT lockmode) {
+List *CTranslatorDXLToPlStmt::TranslatePartOids(IMdIdArray *parts, int32_t lockmode) {
   List *oids_list = NIL;
 
   for (uint32_t ul = 0; ul < parts->Size(); ul++) {
@@ -462,11 +462,11 @@ bool CTranslatorDXLToPlStmt::SetIndexVarAttnoWalker(Node *node, SContextIndexVar
   }
 
   if (IsA(node, Var) && ((Var *)node)->varno != OUTER_VAR) {
-    INT attno = ((Var *)node)->varattno;
+    int32_t attno = ((Var *)node)->varattno;
     const IMDRelation *md_rel = ctxt_index_var_attno_walker->m_md_rel;
     const IMDIndex *index = ctxt_index_var_attno_walker->m_md_index;
 
-    uint32_t index_col_pos_idx_max = gpos::ulong_max;
+    uint32_t index_col_pos_idx_max = UINT32_MAX;
     const uint32_t arity = md_rel->ColumnCount();
     for (uint32_t col_pos_idx = 0; col_pos_idx < arity; col_pos_idx++) {
       const IMDColumn *md_col = md_rel->GetMdCol(col_pos_idx);
@@ -476,7 +476,7 @@ bool CTranslatorDXLToPlStmt::SetIndexVarAttnoWalker(Node *node, SContextIndexVar
       }
     }
 
-    if (gpos::ulong_max > index_col_pos_idx_max) {
+    if (UINT32_MAX > index_col_pos_idx_max) {
       ((Var *)node)->varattno = 1 + index->GetKeyPos(index_col_pos_idx_max);
     }
 
@@ -855,7 +855,7 @@ void CTranslatorDXLToPlStmt::TranslateIndexConditions(CDXLNode *index_cond_list_
 
     GPOS_ASSERT((IsA(left_arg, Var) || IsA(right_arg, Var)) && "expected index key in index qual");
 
-    INT attno = 0;
+    int32_t attno = 0;
     if (IsA(left_arg, Var) && ((Var *)left_arg)->varno != OUTER_VAR) {
       // index key is on the left side
       attno = ((Var *)left_arg)->varattno;
@@ -1221,7 +1221,7 @@ Plan *CTranslatorDXLToPlStmt::TranslateDXLTvf(const CDXLNode *tvf_dxlnode, CDXLT
     OID oid_type = gpdb::ExprType((Node *)target_entry->expr);
     GPOS_ASSERT(InvalidOid != oid_type);
 
-    INT typ_mod = gpdb::ExprTypeMod((Node *)target_entry->expr);
+    int32_t typ_mod = gpdb::ExprTypeMod((Node *)target_entry->expr);
     Oid collation_type_oid = gpdb::TypeCollation(oid_type);
 
     rtfunc->funccolnames = gpdb::LAppend(rtfunc->funccolnames, gpdb::MakeStringValue(target_entry->resname));
@@ -1267,7 +1267,7 @@ RangeTblEntry *CTranslatorDXLToPlStmt::TranslateDXLTvfToRangeTblEntry(const CDXL
     CDXLNode *proj_elem_dxlnode = (*project_list_dxlnode)[ul];
     CDXLScalarProjElem *dxl_proj_elem = CDXLScalarProjElem::Cast(proj_elem_dxlnode->GetOperator());
 
-    CHAR *col_name_char_array = CTranslatorUtils::CreateMultiByteCharStringFromWCString(
+    char *col_name_char_array = CTranslatorUtils::CreateMultiByteCharStringFromWCString(
         dxl_proj_elem->GetMdNameAlias()->GetMDName()->GetBuffer());
 
     Node *val_colname = gpdb::MakeStringValue(col_name_char_array);
@@ -1295,7 +1295,7 @@ RangeTblEntry *CTranslatorDXLToPlStmt::TranslateDXLTvfToRangeTblEntry(const CDXL
     const_expr->constlen = type->Length();
     Datum val = gpdb::DatumFromPointer(datum_generic_dxl->GetByteArray());
     uint32_t length = (uint32_t)gpdb::DatumSize(val, false, const_expr->constlen);
-    CHAR *str = (CHAR *)gpdb::GPDBAlloc(length + 1);
+    char *str = (char *)gpdb::GPDBAlloc(length + 1);
     memcpy(str, datum_generic_dxl->GetByteArray(), length);
     str[length] = '\0';
     const_expr->constvalue = gpdb::DatumFromPointer(str);
@@ -1380,7 +1380,7 @@ RangeTblEntry *CTranslatorDXLToPlStmt::TranslateDXLValueScanToRangeTblEntry(
     CDXLNode *proj_elem_dxlnode = (*project_list_dxlnode)[ul];
     CDXLScalarProjElem *dxl_proj_elem = CDXLScalarProjElem::Cast(proj_elem_dxlnode->GetOperator());
 
-    CHAR *col_name_char_array = CTranslatorUtils::CreateMultiByteCharStringFromWCString(
+    char *col_name_char_array = CTranslatorUtils::CreateMultiByteCharStringFromWCString(
         dxl_proj_elem->GetMdNameAlias()->GetMDName()->GetBuffer());
 
     Node *val_colname = gpdb::MakeStringValue(col_name_char_array);
@@ -1472,7 +1472,7 @@ Plan *CTranslatorDXLToPlStmt::TranslateDXLNLJoin(const CDXLNode *nl_join_dxlnode
       CDXLColRef *pdxlcr = (*pdrgdxlcrOuterRefs)[ul];
       IMDId *pmdid = pdxlcr->MdidType();
       uint32_t ulColid = pdxlcr->Id();
-      INT iTypeModifier = pdxlcr->TypeModifier();
+      int32_t iTypeModifier = pdxlcr->TypeModifier();
       OID iTypeOid = CMDIdGPDB::CastMdid(pmdid)->Oid();
 
       if (nullptr == right_dxl_translate_ctxt.GetParamIdMappingElement(ulColid)) {
@@ -1756,7 +1756,7 @@ Plan *CTranslatorDXLToPlStmt::TranslateDXLAgg(const CDXLNode *agg_dxlnode, CDXLT
 
   // Set the aggsplit for the agg node
   ListCell *lc;
-  INT aggsplit = 0;
+  int32_t aggsplit = 0;
   foreach (lc, plan->targetlist) {
     TargetEntry *te = (TargetEntry *)lfirst(lc);
     if (IsA(te->expr, Aggref)) {
@@ -2836,7 +2836,7 @@ Index CTranslatorDXLToPlStmt::ProcessDXLTblDescr(const CDXLTableDescr *table_des
     const CDXLColDescr *dxl_col_descr = table_descr->GetColumnDescrAt(ul);
     GPOS_ASSERT(nullptr != dxl_col_descr);
 
-    INT attno = dxl_col_descr->AttrNum();
+    int32_t attno = dxl_col_descr->AttrNum();
     GPOS_ASSERT(0 != attno);
 
     base_table_context->colid_to_attno_map[dxl_col_descr->Id()] = attno;
@@ -2870,21 +2870,21 @@ Index CTranslatorDXLToPlStmt::ProcessDXLTblDescr(const CDXLTableDescr *table_des
       CTranslatorUtils::CreateMultiByteCharStringFromWCString(table_descr->MdName()->GetMDName()->GetBuffer());
 
   // get column names
-  INT last_attno = 0;
+  int32_t last_attno = 0;
   for (uint32_t ul = 0; ul < arity; ++ul) {
     const CDXLColDescr *dxl_col_descr = table_descr->GetColumnDescrAt(ul);
-    INT attno = dxl_col_descr->AttrNum();
+    int32_t attno = dxl_col_descr->AttrNum();
 
     if (0 < attno) {
       // if attno > last_attno + 1, there were dropped attributes
       // add those to the RTE as they are required by GPDB
-      for (INT dropped_col_attno = last_attno + 1; dropped_col_attno < attno; dropped_col_attno++) {
+      for (int32_t dropped_col_attno = last_attno + 1; dropped_col_attno < attno; dropped_col_attno++) {
         Node *val_dropped_colname = gpdb::MakeStringValue(PStrDup(""));
         alias->colnames = gpdb::LAppend(alias->colnames, val_dropped_colname);
       }
 
       // non-system attribute
-      CHAR *col_name_char_array =
+      char *col_name_char_array =
           CTranslatorUtils::CreateMultiByteCharStringFromWCString(dxl_col_descr->MdName()->GetMDName()->GetBuffer());
       Node *val_colname = gpdb::MakeStringValue(col_name_char_array);
 
@@ -3101,7 +3101,7 @@ List *CTranslatorDXLToPlStmt::CreateTargetListWithNullsForDroppedCols(List *targ
       last_tgt_elem++;
     }
 
-    CHAR *name_str = CTranslatorUtils::CreateMultiByteCharStringFromWCString(md_col->Mdname().GetMDName()->GetBuffer());
+    char *name_str = CTranslatorUtils::CreateMultiByteCharStringFromWCString(md_col->Mdname().GetMDName()->GetBuffer());
     TargetEntry *te_new = gpdb::MakeTargetEntry(expr, resno, name_str, false /*resjunk*/);
     result_list = gpdb::LAppend(result_list, te_new);
     resno++;
@@ -3138,7 +3138,7 @@ List *CTranslatorDXLToPlStmt::TranslateDXLProjectListToHashTargetList(const CDXL
 
     // find column type
     OID oid_type = gpdb::ExprType((Node *)te_child->expr);
-    INT type_modifier = gpdb::ExprTypeMod((Node *)te_child->expr);
+    int32_t type_modifier = gpdb::ExprTypeMod((Node *)te_child->expr);
 
     // find the original varno and attno for this column
     Index idx_varnoold = 0;
@@ -3162,7 +3162,7 @@ List *CTranslatorDXLToPlStmt::TranslateDXLProjectListToHashTargetList(const CDXL
     var->varnosyn = idx_varnoold;
     var->varattnosyn = attno_old;
 
-    CHAR *resname = CTranslatorUtils::CreateMultiByteCharStringFromWCString(
+    char *resname = CTranslatorUtils::CreateMultiByteCharStringFromWCString(
         sc_proj_elem_dxlop->GetMdNameAlias()->GetMDName()->GetBuffer());
 
     TargetEntry *target_entry = gpdb::MakeTargetEntry((Expr *)var, (AttrNumber)(ul + 1), resname,
@@ -3513,7 +3513,7 @@ void CTranslatorDXLToPlStmt::TranslateSortCols(const CDXLNode *sort_col_list_dxl
 //
 //---------------------------------------------------------------------------
 Cost CTranslatorDXLToPlStmt::CostFromStr(const CWStringBase *str) {
-  CHAR *sz = CTranslatorUtils::CreateMultiByteCharStringFromWCString(str->GetBuffer());
+  char *sz = CTranslatorUtils::CreateMultiByteCharStringFromWCString(str->GetBuffer());
   return gpos::clib::Strtod(sz);
 }
 
@@ -3539,12 +3539,12 @@ void CTranslatorDXLToPlStmt::AddJunkTargetEntryForColId(List **target_list, CDXL
   // TODO: Oct 29, 2012; see if entry already exists in the target list
 
   OID expr_oid = gpdb::ExprType((Node *)target_entry->expr);
-  INT type_modifier = gpdb::ExprTypeMod((Node *)target_entry->expr);
+  int32_t type_modifier = gpdb::ExprTypeMod((Node *)target_entry->expr);
   Var *var = gpdb::MakeVar(OUTER_VAR, target_entry->resno, expr_oid, type_modifier,
                            0  // varlevelsup
   );
   uint32_t resno = gpdb::ListLength(*target_list) + 1;
-  CHAR *resname_str = PStrDup(resname);
+  char *resname_str = PStrDup(resname);
   TargetEntry *te_new = gpdb::MakeTargetEntry((Expr *)var, resno, resname_str, true /* resjunk */);
   *target_list = gpdb::LAppend(*target_list, te_new);
 }

@@ -74,7 +74,7 @@ class CTranslatorDXLToScalar {
   CMDAccessor *m_md_accessor;
 
   // indicates whether a sublink was encountered during translation of the scalar subtree
-  BOOL m_has_subqueries;
+  bool m_has_subqueries;
 
   CMappingColIdVar *colid_var{nullptr};
 
@@ -124,7 +124,7 @@ class CTranslatorDXLToScalar {
   SubPlan *TranslateSubplanFromChildPlan(Plan *plan_child, SubLinkType slink, CContextDXLToPlStmt *dxl_to_plstmt_ctxt);
 
   // translate subplan test expression
-  Expr *TranslateDXLSubplanTestExprToScalar(CDXLNode *test_expr_node, SubLinkType slink, BOOL has_outer_refs,
+  Expr *TranslateDXLSubplanTestExprToScalar(CDXLNode *test_expr_node, SubLinkType slink, bool has_outer_refs,
                                             List **param_ids_list);
 
   // translate subplan parameters
@@ -134,7 +134,7 @@ class CTranslatorDXLToScalar {
   // translate subplan test expression parameters
   void TranslateDXLTestExprScalarIdentToExpr(CDXLNode *child_node, Param *param, CDXLScalarIdent **ident, Expr **expr);
 
-  CHAR *GetSubplanAlias(ULONG plan_id);
+  char *GetSubplanAlias(uint32_t plan_id);
 
   static Param *TranslateParamFromMapping(const CMappingElementColIdParamId *colid_to_param_id_map);
 
@@ -182,7 +182,7 @@ class CTranslatorDXLToScalar {
 
   struct STypeOidAndTypeModifier {
     OID oid_type;
-    INT type_modifier;
+    int32_t type_modifier;
   };
 
   // ctor
@@ -201,16 +201,16 @@ class CTranslatorDXLToScalar {
   Expr *TranslateDXLScalarCmpToScalar(const CDXLNode *scalar_cmp_node, CMappingColIdVar *colid_var);
 
   // checks if the operator return a boolean result
-  static BOOL HasBoolResult(CDXLNode *dxlnode, CMDAccessor *md_accessor);
+  static bool HasBoolResult(CDXLNode *dxlnode, CMDAccessor *md_accessor);
 
   // check if the operator is a "true" bool constant
-  static BOOL HasConstTrue(CDXLNode *dxlnode, CMDAccessor *md_accessor);
+  static bool HasConstTrue(CDXLNode *dxlnode, CMDAccessor *md_accessor);
 
   // check if the operator is a NULL constant
-  static BOOL HasConstNull(CDXLNode *dxlnode);
+  static bool HasConstNull(CDXLNode *dxlnode);
 
   // are there subqueries in the tree
-  BOOL HasSubqueries() const { return m_has_subqueries; }
+  bool HasSubqueries() const { return m_has_subqueries; }
 
   // translate a DXL datum into GPDB const expression
   Expr *TranslateDXLDatumToScalar(CDXLDatum *datum_dxl);

@@ -44,28 +44,28 @@ class CScalarIdent : public CScalar {
   EOperatorId Eopid() const override { return EopScalarIdent; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CScalarIdent"; }
+  const char *SzId() const override { return "CScalarIdent"; }
 
   // accessor
   const CColRef *Pcr() const { return m_pcr; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
-  static ULONG HashValue(const CScalarIdent *pscalarIdent) { return CColRef::HashValue(pscalarIdent->Pcr()); }
+  static uint32_t HashValue(const CScalarIdent *pscalarIdent) { return CColRef::HashValue(pscalarIdent->Pcr()); }
 
-  static BOOL Equals(const CScalarIdent *left, const CScalarIdent *right) {
+  static bool Equals(const CScalarIdent *left, const CScalarIdent *right) {
     return CColRef::Equals(left->Pcr(), right->Pcr());
   }
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // return locally used columns
   CColRefSet *PcrsUsed(CMemoryPool *mp,
@@ -90,22 +90,22 @@ class CScalarIdent : public CScalar {
   IMDId *MdidType() const override;
 
   // the type modifier of the scalar expression
-  INT TypeModifier() const override;
+  int32_t TypeModifier() const override;
 
   // print
   IOstream &OsPrint(IOstream &os) const override;
 
   // is the given expression a scalar cast of a scalar identifier
-  static BOOL FCastedScId(CExpression *pexpr);
+  static bool FCastedScId(CExpression *pexpr);
 
   // is the given expression a scalar cast of given scalar identifier
-  static BOOL FCastedScId(CExpression *pexpr, CColRef *colref);
+  static bool FCastedScId(CExpression *pexpr, CColRef *colref);
 
   // is the given expression a scalar func allowed for Partition selection of given scalar identifier
-  static BOOL FAllowedFuncScId(CExpression *pexpr);
+  static bool FAllowedFuncScId(CExpression *pexpr);
 
   // is the given expression a scalar func allowed for Partition selection of given scalar identifier
-  static BOOL FAllowedFuncScId(CExpression *pexpr, CColRef *colref);
+  static bool FAllowedFuncScId(CExpression *pexpr, CColRef *colref);
 
 };  // class CScalarIdent
 

@@ -26,7 +26,7 @@ using namespace gpdxl;
 //		Construct a logical get operator node given its table descriptor rtable entry
 //
 //---------------------------------------------------------------------------
-CDXLLogicalGet::CDXLLogicalGet(CMemoryPool *mp, CDXLTableDescr *table_descr, BOOL hasSecurityQuals)
+CDXLLogicalGet::CDXLLogicalGet(CMemoryPool *mp, CDXLTableDescr *table_descr, bool hasSecurityQuals)
     : CDXLLogical(mp), m_dxl_table_descr(table_descr), m_has_security_quals(hasSecurityQuals) {}
 
 //---------------------------------------------------------------------------
@@ -85,10 +85,10 @@ CDXLTableDescr *CDXLLogicalGet::GetDXLTableDescr() const {
 //		Check if given column is defined by operator
 //
 //---------------------------------------------------------------------------
-BOOL CDXLLogicalGet::IsColDefined(ULONG colid) const {
-  const ULONG size = m_dxl_table_descr->Arity();
-  for (ULONG descr_id = 0; descr_id < size; descr_id++) {
-    ULONG id = m_dxl_table_descr->GetColumnDescrAt(descr_id)->Id();
+bool CDXLLogicalGet::IsColDefined(uint32_t colid) const {
+  const uint32_t size = m_dxl_table_descr->Arity();
+  for (uint32_t descr_id = 0; descr_id < size; descr_id++) {
+    uint32_t id = m_dxl_table_descr->GetColumnDescrAt(descr_id)->Id();
     if (id == colid) {
       return true;
     }
@@ -97,7 +97,7 @@ BOOL CDXLLogicalGet::IsColDefined(ULONG colid) const {
   return false;
 }
 
-BOOL CDXLLogicalGet::HasSecurityQuals() const {
+bool CDXLLogicalGet::HasSecurityQuals() const {
   return m_has_security_quals;
 }
 
@@ -111,7 +111,7 @@ BOOL CDXLLogicalGet::HasSecurityQuals() const {
 //
 //---------------------------------------------------------------------------
 void CDXLLogicalGet::AssertValid(const CDXLNode *,  // dxlnode
-                                 BOOL               // validate_children
+                                 bool               // validate_children
 ) const {
   // assert validity of table descriptor
   GPOS_ASSERT(nullptr != m_dxl_table_descr);

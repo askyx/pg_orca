@@ -6,7 +6,7 @@
 //		CIdGenerator.h
 //
 //	@doc:
-//		Class providing methods for a ULONG counter
+//		Class providing methods for a uint32_t counter
 //
 //	@owner:
 //
@@ -18,7 +18,7 @@
 #ifndef GPDXL_CIdGenerator_H
 #define GPDXL_CIdGenerator_H
 
-#define GPDXL_INVALID_ID gpos::ulong_max
+#define GPDXL_INVALID_ID UINT32_MAX
 
 #include "gpos/base.h"
 
@@ -27,12 +27,12 @@ using namespace gpos;
 
 class CIdGenerator {
  private:
-  ULONG id;
+  uint32_t id;
 
  public:
-  explicit CIdGenerator(ULONG);
-  ULONG next_id();
-  ULONG current_id() const;
+  explicit CIdGenerator(uint32_t);
+  uint32_t next_id();
+  uint32_t current_id() const;
 };
 }  // namespace gpdxl
 #endif  // GPDXL_CIdGenerator_H

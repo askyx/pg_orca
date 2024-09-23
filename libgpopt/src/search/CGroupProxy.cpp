@@ -71,7 +71,7 @@ void CGroupProxy::MoveDuplicateGExpr(CGroupExpression *pgexpr) {
   GPOS_ASSERT(pgexpr->Pgroup() == m_pgroup);
 
 #ifdef GPOS_DEBUG
-  ULONG ulGExprsOld = m_pgroup->m_listGExprs.Size() + m_pgroup->m_listDupGExprs.Size();
+  uint32_t ulGExprsOld = m_pgroup->m_listGExprs.Size() + m_pgroup->m_listDupGExprs.Size();
 #endif  // GPOS_DEBUG
 
   m_pgroup->MoveDuplicateGExpr(pgexpr);
@@ -137,7 +137,7 @@ CGroupExpression *CGroupProxy::PgexprFirst() {
 //		flag
 //
 //---------------------------------------------------------------------------
-CGroupExpression *CGroupProxy::PgexprSkip(CGroupExpression *pgexprStart, BOOL fSkipLogical) {
+CGroupExpression *CGroupProxy::PgexprSkip(CGroupExpression *pgexprStart, bool fSkipLogical) {
   CGroupExpression *pgexpr = pgexprStart;
   while (nullptr != pgexpr && fSkipLogical == pgexpr->Pop()->FLogical()) {
     pgexpr = PgexprNext(pgexpr);

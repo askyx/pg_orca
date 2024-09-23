@@ -100,7 +100,7 @@ CMDTypeOidGPDB::~CMDTypeOidGPDB() {
 //		Factory function for creating OID datums
 //
 //---------------------------------------------------------------------------
-IDatumOid *CMDTypeOidGPDB::CreateOidDatum(CMemoryPool *mp, OID oValue, BOOL is_null) const {
+IDatumOid *CMDTypeOidGPDB::CreateOidDatum(CMemoryPool *mp, OID oValue, bool is_null) const {
   return GPOS_NEW(mp) CDatumOidGPDB(m_mdid->Sysid(), oValue, is_null);
 }
 
@@ -211,7 +211,7 @@ IDatum *CMDTypeOidGPDB::GetDatumForDXLConstVal(const CDXLScalarConstValue *dxl_o
 IDatum *CMDTypeOidGPDB::GetDatumForDXLDatum(CMemoryPool *mp, const CDXLDatum *dxl_datum) const {
   CDXLDatumOid *dxl_datumOid = CDXLDatumOid::Cast(const_cast<CDXLDatum *>(dxl_datum));
   OID oid_value = dxl_datumOid->OidValue();
-  BOOL is_null = dxl_datumOid->IsNull();
+  bool is_null = dxl_datumOid->IsNull();
 
   return GPOS_NEW(mp) CDatumOidGPDB(m_mdid->Sysid(), oid_value, is_null);
 }

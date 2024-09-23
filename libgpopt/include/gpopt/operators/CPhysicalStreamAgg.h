@@ -38,7 +38,7 @@ class CPhysicalStreamAgg : public CPhysicalAgg {
  protected:
   // compute required sort columns of the n-th child
   COrderSpec *PosRequiredStreamAgg(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired,
-                                   ULONG child_index, CColRefArray *pdrgpcrGrp) const;
+                                   uint32_t child_index, CColRefArray *pdrgpcrGrp) const;
 
   // initialize the order spec using the given array of columns
   void InitOrderSpec(CMemoryPool *mp, CColRefArray *pdrgpcrOrder);
@@ -49,9 +49,9 @@ class CPhysicalStreamAgg : public CPhysicalAgg {
   // ctor
   CPhysicalStreamAgg(CMemoryPool *mp, CColRefArray *colref_array,
                      CColRefArray *pdrgpcrMinimal,  // minimal grouping columns based on FD's
-                     COperator::EGbAggType egbaggtype, BOOL fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA,
-                     BOOL fMultiStage, BOOL isAggFromSplitDQA, CLogicalGbAgg::EAggStage aggStage,
-                     BOOL should_enforce_distribution = true
+                     COperator::EGbAggType egbaggtype, bool fGeneratesDuplicates, CColRefArray *pdrgpcrArgDQA,
+                     bool fMultiStage, bool isAggFromSplitDQA, CLogicalGbAgg::EAggStage aggStage,
+                     bool should_enforce_distribution = true
                      // should_enforce_distribution should be set to false if
                      // 'local' and 'global' splits don't need to have different
                      // distributions. This flag is set to false if the local
@@ -65,16 +65,16 @@ class CPhysicalStreamAgg : public CPhysicalAgg {
   EOperatorId Eopid() const override { return EopPhysicalStreamAgg; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CPhysicalStreamAgg"; }
+  const char *SzId() const override { return "CPhysicalStreamAgg"; }
 
   //-------------------------------------------------------------------------------------
   // Required Plan Properties
   //-------------------------------------------------------------------------------------
 
   // compute required sort columns of the n-th child
-  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, ULONG child_index,
+  COrderSpec *PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posRequired, uint32_t child_index,
                           CDrvdPropArray *,  // pdrgpdpCtxt,
-                          ULONG              // ulOptReq
+                          uint32_t           // ulOptReq
   ) const override {
     return PosRequiredStreamAgg(mp, exprhdl, posRequired, child_index, m_pdrgpcrMinimal);
   }

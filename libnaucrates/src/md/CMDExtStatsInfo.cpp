@@ -22,12 +22,12 @@ using namespace gpmd;
 CWStringDynamic *CMDExtStatsInfo::KeysToStr(CMemoryPool *mp) {
   CWStringDynamic *str = GPOS_NEW(mp) CWStringDynamic(mp);
 
-  ULONG length = m_keys->Size();
-  ULONG ul = 0;
+  uint32_t length = m_keys->Size();
+  uint32_t ul = 0;
 
   CBitSetIter bsi(*m_keys);
   while (bsi.Advance()) {
-    const ULONG attno = bsi.Bit();
+    const uint32_t attno = bsi.Bit();
     if (ul == length - 1) {
       // last element: do not print a comma
       str->AppendFormat(GPOS_WSZ_LIT("%d"), attno);

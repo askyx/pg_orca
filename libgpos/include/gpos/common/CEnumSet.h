@@ -23,7 +23,7 @@ namespace gpos {
 //		Template derived from CBitSet
 //
 //---------------------------------------------------------------------------
-template <class T, ULONG sentinel_index>
+template <class T, uint32_t sentinel_index>
 class CEnumSet : public CBitSet {
  private:
  public:
@@ -38,30 +38,30 @@ class CEnumSet : public CBitSet {
   ~CEnumSet() override = default;
 
   // determine if bit is set
-  BOOL Get(T t) const {
+  bool Get(T t) const {
     GPOS_ASSERT(t >= 0);
 
-    ULONG bit_index = static_cast<ULONG>(t);
+    uint32_t bit_index = static_cast<uint32_t>(t);
     GPOS_ASSERT(bit_index < sentinel_index && "Out of range of enum");
 
     return CBitSet::Get(bit_index);
   }
 
   // set given bit; return previous value
-  BOOL ExchangeSet(T t) {
+  bool ExchangeSet(T t) {
     GPOS_ASSERT(t >= 0);
 
-    ULONG bit_index = static_cast<ULONG>(t);
+    uint32_t bit_index = static_cast<uint32_t>(t);
     GPOS_ASSERT(bit_index < sentinel_index && "Out of range of enum");
 
     return CBitSet::ExchangeSet(bit_index);
   }
 
   // clear given bit; return previous value
-  BOOL ExchangeClear(T t) {
+  bool ExchangeClear(T t) {
     GPOS_ASSERT(t >= 0);
 
-    ULONG bit_index = static_cast<ULONG>(t);
+    uint32_t bit_index = static_cast<uint32_t>(t);
     GPOS_ASSERT(bit_index < sentinel_index && "Out of range of enum");
 
     return CBitSet::ExchangeClear(bit_index);

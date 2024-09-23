@@ -31,8 +31,8 @@ using namespace gpmd;
 //
 //---------------------------------------------------------------------------
 CScalarAggFunc::CScalarAggFunc(CMemoryPool *mp, IMDId *pmdidAggFunc, IMDId *resolved_rettype,
-                               const CWStringConst *pstrAggFunc, BOOL is_distinct, EAggfuncStage eaggfuncstage,
-                               BOOL fSplit, EAggfuncKind aggkind, ULongPtrArray *argtypes, BOOL fRepSafe)
+                               const CWStringConst *pstrAggFunc, bool is_distinct, EAggfuncStage eaggfuncstage,
+                               bool fSplit, EAggfuncKind aggkind, ULongPtrArray *argtypes, bool fRepSafe)
     : CScalar(mp),
       m_pmdidAggFunc(pmdidAggFunc),
       m_pmdidResolvedRetType(resolved_rettype),
@@ -88,7 +88,7 @@ IMDId *CScalarAggFunc::MDId() const {
 //		Is function count(*)?
 //
 //---------------------------------------------------------------------------
-BOOL CScalarAggFunc::FCountStar() const {
+bool CScalarAggFunc::FCountStar() const {
   // TODO,  04/26/2012, make this function system-independent
   // using MDAccessor
   return m_pmdidAggFunc->Equals(&CMDIdGPDB::m_mdid_count_star);
@@ -102,14 +102,14 @@ BOOL CScalarAggFunc::FCountStar() const {
 //		Is function count(Any)?
 //
 //---------------------------------------------------------------------------
-BOOL CScalarAggFunc::FCountAny() const {
+bool CScalarAggFunc::FCountAny() const {
   // TODO,  04/26/2012, make this function system-independent
   // using MDAccessor
   return m_pmdidAggFunc->Equals(&CMDIdGPDB::m_mdid_count_any);
 }
 
 // Is function either min() or max()?
-BOOL CScalarAggFunc::IsMinMax(const IMDType *mdtype) const {
+bool CScalarAggFunc::IsMinMax(const IMDType *mdtype) const {
   return m_pmdidAggFunc->Equals(mdtype->GetMdidForAggType(IMDType::EaggMin)) ||
          m_pmdidAggFunc->Equals(mdtype->GetMdidForAggType(IMDType::EaggMax));
 }
@@ -122,13 +122,12 @@ BOOL CScalarAggFunc::IsMinMax(const IMDType *mdtype) const {
 //		Operator specific hash function
 //
 //---------------------------------------------------------------------------
-ULONG
-CScalarAggFunc::HashValue() const {
-  ULONG ulAggfuncstage = (ULONG)m_eaggfuncstage;
+uint32_t CScalarAggFunc::HashValue() const {
+  uint32_t ulAggfuncstage = (uint32_t)m_eaggfuncstage;
   return gpos::CombineHashes(
       CombineHashes(COperator::HashValue(), m_pmdidAggFunc->HashValue()),
-      CombineHashes(gpos::HashValue<ULONG>(&ulAggfuncstage),
-                    CombineHashes(gpos::HashValue<BOOL>(&m_is_distinct), gpos::HashValue<BOOL>(&m_fSplit))));
+      CombineHashes(gpos::HashValue<uint32_t>(&ulAggfuncstage),
+                    CombineHashes(gpos::HashValue<bool>(&m_is_distinct), gpos::HashValue<bool>(&m_fSplit))));
 }
 
 //---------------------------------------------------------------------------
@@ -139,7 +138,7 @@ CScalarAggFunc::HashValue() const {
 //		Match function on operator level
 //
 //---------------------------------------------------------------------------
-BOOL CScalarAggFunc::Matches(COperator *pop) const {
+bool CScalarAggFunc::Matches(COperator *pop) const {
   if (pop->Eopid() == Eopid()) {
     CScalarAggFunc *popScAggFunc = CScalarAggFunc::PopConvert(pop);
 
@@ -159,7 +158,7 @@ BOOL CScalarAggFunc::Matches(COperator *pop) const {
 //		Lookup mdid of return type for given Agg function
 //
 //---------------------------------------------------------------------------
-IMDId *CScalarAggFunc::PmdidLookupReturnType(IMDId *pmdidAggFunc, BOOL fGlobal, CMDAccessor *pmdaInput) {
+IMDId *CScalarAggFunc::PmdidLookupReturnType(IMDId *pmdidAggFunc, bool fGlobal, CMDAccessor *pmdaInput) {
   GPOS_ASSERT(nullptr != pmdidAggFunc);
   CMDAccessor *md_accessor = pmdaInput;
 

@@ -41,7 +41,7 @@ CXform::EXformPromise CXformIndexGet2IndexScan::Exfp(CExpressionHandle &exprhdl)
 
   CTableDescriptor *ptabdesc = popGet->Ptabdesc();
   CIndexDescriptor *pindexdesc = popGet->Pindexdesc();
-  BOOL possible_ao_table =
+  bool possible_ao_table =
       ptabdesc->IsAORowOrColTable() || ptabdesc->RetrieveRelStorageType() == IMDRelation::ErelstorageMixedPartitioned;
 
   if (pindexdesc->IndexType() != IMDIndex::EmdindBitmap && possible_ao_table) {

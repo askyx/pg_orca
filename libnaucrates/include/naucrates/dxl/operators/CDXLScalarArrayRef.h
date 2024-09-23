@@ -33,7 +33,7 @@ class CDXLScalarArrayRef : public CDXLScalar {
   IMDId *m_elem_type_mdid;
 
   // element type modifier
-  INT m_type_modifier;
+  int32_t m_type_modifier;
 
   // array type id
   IMDId *m_array_type_mdid;
@@ -45,7 +45,7 @@ class CDXLScalarArrayRef : public CDXLScalar {
   CDXLScalarArrayRef(const CDXLScalarArrayRef &) = delete;
 
   // ctor
-  CDXLScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid, INT type_modifier, IMDId *array_type_mdid,
+  CDXLScalarArrayRef(CMemoryPool *mp, IMDId *elem_type_mdid, int32_t type_modifier, IMDId *array_type_mdid,
                      IMDId *return_type_mdid);
 
   // dtor
@@ -61,7 +61,7 @@ class CDXLScalarArrayRef : public CDXLScalar {
   IMDId *ElementTypeMDid() const { return m_elem_type_mdid; }
 
   // element type modifier
-  INT TypeModifier() const;
+  int32_t TypeModifier() const;
 
   // array type id
   IMDId *ArrayTypeMDid() const { return m_array_type_mdid; }
@@ -72,12 +72,12 @@ class CDXLScalarArrayRef : public CDXLScalar {
   // serialize operator in DXL format
 
   // does the operator return a boolean result
-  BOOL HasBoolResult(CMDAccessor *md_accessor) const override;
+  bool HasBoolResult(CMDAccessor *md_accessor) const override;
 
 #ifdef GPOS_DEBUG
   // checks whether the operator has valid structure, i.e. number and
   // types of child nodes
-  void AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const override;
+  void AssertValid(const CDXLNode *dxlnode, bool validate_children) const override;
 #endif  // GPOS_DEBUG
 
   // conversion function

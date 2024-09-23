@@ -21,8 +21,7 @@ using namespace gpdxl;
 //		Get the next plan id
 //
 //---------------------------------------------------------------------------
-ULONG
-CContextDXLToPlStmt::GetNextPlanId() {
+uint32_t CContextDXLToPlStmt::GetNextPlanId() {
   return ++m_plan_id_counter;
 }
 
@@ -34,8 +33,7 @@ CContextDXLToPlStmt::GetNextPlanId() {
 //		Get the next param id, for a parameter of type 'typeoid'
 //
 //---------------------------------------------------------------------------
-ULONG
-CContextDXLToPlStmt::GetNextParamId(OID typeoid) {
+uint32_t CContextDXLToPlStmt::GetNextParamId(OID typeoid) {
   m_param_types_list = gpdb::LAppendOid(m_param_types_list, typeoid);
 
   return ++m_param_id_counter;
@@ -136,7 +134,8 @@ RangeTblEntry *CContextDXLToPlStmt::GetRTEByIndex(Index index) {
 //		descriptors for `c` will have zero assigned query id.
 //---------------------------------------------------------------------------
 
-Index CContextDXLToPlStmt::GetRTEIndexByAssignedQueryId(ULONG assigned_query_id_for_target_rel, bool *is_rte_exists) {
+Index CContextDXLToPlStmt::GetRTEIndexByAssignedQueryId(uint32_t assigned_query_id_for_target_rel,
+                                                        bool *is_rte_exists) {
   *is_rte_exists = false;
 
   if (assigned_query_id_for_target_rel == UNASSIGNED_QUERYID) {

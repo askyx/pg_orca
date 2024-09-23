@@ -29,7 +29,7 @@ namespace gpos {
 class CFileDescriptor {
  private:
   // file descriptor
-  INT m_file_descriptor{GPOS_FILE_DESCR_INVALID};
+  int32_t m_file_descriptor{GPOS_FILE_DESCR_INVALID};
 
  protected:
   // ctor -- accessible through inheritance only
@@ -39,10 +39,10 @@ class CFileDescriptor {
   virtual ~CFileDescriptor();
 
   // get file descriptor
-  INT GetFileDescriptor() const { return m_file_descriptor; }
+  int32_t GetFileDescriptor() const { return m_file_descriptor; }
 
   // open file
-  void OpenFile(const CHAR *file_path, ULONG mode, ULONG permission_bits);
+  void OpenFile(const char *file_path, uint32_t mode, uint32_t permission_bits);
 
   // close file
   void CloseFile();
@@ -51,7 +51,7 @@ class CFileDescriptor {
   CFileDescriptor(const CFileDescriptor &) = delete;
 
   // check if file is open
-  BOOL IsFileOpen() const { return (GPOS_FILE_DESCR_INVALID != m_file_descriptor); }
+  bool IsFileOpen() const { return (GPOS_FILE_DESCR_INVALID != m_file_descriptor); }
 
 };  // class CFile
 }  // namespace gpos

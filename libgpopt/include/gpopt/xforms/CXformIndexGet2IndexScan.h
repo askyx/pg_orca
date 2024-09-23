@@ -40,7 +40,7 @@ class CXformIndexGet2IndexScan : public CXformImplementation {
   EXformId Exfid() const override { return ExfIndexGet2IndexScan; }
 
   // xform name
-  const CHAR *SzId() const override { return "CXformIndexGet2IndexScan"; }
+  const char *SzId() const override { return "CXformIndexGet2IndexScan"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &  // exprhdl

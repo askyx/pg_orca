@@ -20,9 +20,9 @@ using namespace gpdxl;
 
 // ctor
 CMDArrayCoerceCastGPDB::CMDArrayCoerceCastGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, IMDId *mdid_src,
-                                               IMDId *mdid_dest, BOOL is_binary_coercible, IMDId *mdid_cast_func,
-                                               EmdCoercepathType path_type, INT type_modifier, BOOL is_explicit,
-                                               EdxlCoercionForm dxl_coerce_format, INT location,
+                                               IMDId *mdid_dest, bool is_binary_coercible, IMDId *mdid_cast_func,
+                                               EmdCoercepathType path_type, int32_t type_modifier, bool is_explicit,
+                                               EdxlCoercionForm dxl_coerce_format, int32_t location,
                                                IMDId *mdid_src_elemtype)
     : CMDCastGPDB(mp, mdid, mdname, mdid_src, mdid_dest, is_binary_coercible, mdid_cast_func, path_type),
       m_type_modifier(type_modifier),
@@ -40,12 +40,12 @@ CMDArrayCoerceCastGPDB::~CMDArrayCoerceCastGPDB() {
 }
 
 // return type modifier
-INT CMDArrayCoerceCastGPDB::TypeModifier() const {
+int32_t CMDArrayCoerceCastGPDB::TypeModifier() const {
   return m_type_modifier;
 }
 
 // return is explicit cast
-BOOL CMDArrayCoerceCastGPDB::IsExplicit() const {
+bool CMDArrayCoerceCastGPDB::IsExplicit() const {
   return m_is_explicit;
 }
 
@@ -55,7 +55,7 @@ EdxlCoercionForm CMDArrayCoerceCastGPDB::GetCoercionForm() const {
 }
 
 // return token location
-INT CMDArrayCoerceCastGPDB::Location() const {
+int32_t CMDArrayCoerceCastGPDB::Location() const {
   return m_location;
 }
 

@@ -46,7 +46,7 @@ class CLogicalGet : public CLogical {
   CColRefSet *m_pcrsDist;
 
   // relation has row level security enabled and has security quals
-  BOOL m_has_security_quals{false};
+  bool m_has_security_quals{false};
 
   void CreatePartCols(CMemoryPool *mp, const ULongPtrArray *pdrgpulPart);
 
@@ -57,10 +57,10 @@ class CLogicalGet : public CLogical {
   // ctors
   explicit CLogicalGet(CMemoryPool *mp);
 
-  CLogicalGet(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc, BOOL hasSecurityQuals);
+  CLogicalGet(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc, bool hasSecurityQuals);
 
   CLogicalGet(CMemoryPool *mp, const CName *pnameAlias, CTableDescriptor *ptabdesc, CColRefArray *pdrgpcrOutput,
-              BOOL hasSecurityQuals);
+              bool hasSecurityQuals);
 
   // dtor
   ~CLogicalGet() override;
@@ -72,7 +72,7 @@ class CLogicalGet : public CLogical {
   virtual const CColRefSet *PcrsDist() const { return m_pcrsDist; }
 
   // return a string for operator name
-  const CHAR *SzId() const override { return "CLogicalGet"; }
+  const char *SzId() const override { return "CLogicalGet"; }
 
   // accessors
   CColRefArray *PdrgpcrOutput() const { return m_pdrgpcrOutput; }
@@ -86,19 +86,19 @@ class CLogicalGet : public CLogical {
   // partition columns
   CColRef2dArray *PdrgpdrgpcrPartColumns() const { return m_pdrgpdrgpcrPart; }
 
-  BOOL HasSecurityQuals() const { return m_has_security_quals; }
+  bool HasSecurityQuals() const { return m_has_security_quals; }
 
   // operator specific hash function
-  ULONG HashValue() const override;
+  uint32_t HashValue() const override;
 
   // match function
-  BOOL Matches(COperator *pop) const override;
+  bool Matches(COperator *pop) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   //-------------------------------------------------------------------------------------
   // Derived Relational Properties
@@ -125,9 +125,8 @@ class CLogicalGet : public CLogical {
   }
 
   // derive join depth
-  ULONG
-  DeriveJoinDepth(CMemoryPool *,       // mp
-                  CExpressionHandle &  // exprhdl
+  uint32_t DeriveJoinDepth(CMemoryPool *,       // mp
+                           CExpressionHandle &  // exprhdl
   ) const override {
     return 1;
   }
@@ -148,7 +147,7 @@ class CLogicalGet : public CLogical {
   CColRefSet *PcrsStat(CMemoryPool *,        // mp,
                        CExpressionHandle &,  // exprhdl
                        CColRefSet *,         // pcrsInput
-                       ULONG                 // child_index
+                       uint32_t              // child_index
   ) const override {
     GPOS_ASSERT(!"CLogicalGet has no children");
     return nullptr;

@@ -28,7 +28,7 @@ using namespace gpdxl;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CDXLLogicalCTEConsumer::CDXLLogicalCTEConsumer(CMemoryPool *mp, ULONG id, ULongPtrArray *output_colids_array)
+CDXLLogicalCTEConsumer::CDXLLogicalCTEConsumer(CMemoryPool *mp, uint32_t id, ULongPtrArray *output_colids_array)
     : CDXLLogical(mp), m_id(id), m_output_colids_array(output_colids_array) {
   GPOS_ASSERT(nullptr != output_colids_array);
 }
@@ -77,10 +77,10 @@ const CWStringConst *CDXLLogicalCTEConsumer::GetOpNameStr() const {
 //		Check if given column is defined by operator
 //
 //---------------------------------------------------------------------------
-BOOL CDXLLogicalCTEConsumer::IsColDefined(ULONG colid) const {
-  const ULONG size = m_output_colids_array->Size();
-  for (ULONG idx = 0; idx < size; idx++) {
-    ULONG id = *((*m_output_colids_array)[idx]);
+bool CDXLLogicalCTEConsumer::IsColDefined(uint32_t colid) const {
+  const uint32_t size = m_output_colids_array->Size();
+  for (uint32_t idx = 0; idx < size; idx++) {
+    uint32_t id = *((*m_output_colids_array)[idx]);
     if (id == colid) {
       return true;
     }
@@ -99,7 +99,7 @@ BOOL CDXLLogicalCTEConsumer::IsColDefined(ULONG colid) const {
 //
 //---------------------------------------------------------------------------
 void CDXLLogicalCTEConsumer::AssertValid(const CDXLNode *dxlnode,
-                                         BOOL  // validate_children
+                                         bool  // validate_children
 ) const {
   GPOS_ASSERT(0 == dxlnode->Arity());
 }

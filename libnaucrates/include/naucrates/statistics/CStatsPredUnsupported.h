@@ -40,8 +40,8 @@ class CStatsPredUnsupported : public CStatsPred {
   CStatsPredUnsupported(const CStatsPredUnsupported &) = delete;
 
   // ctors
-  CStatsPredUnsupported(ULONG colid, CStatsPred::EStatsCmpType stats_pred_type);
-  CStatsPredUnsupported(ULONG colid, CStatsPred::EStatsCmpType stats_pred_type, CDouble default_scale_factor);
+  CStatsPredUnsupported(uint32_t colid, CStatsPred::EStatsCmpType stats_pred_type);
+  CStatsPredUnsupported(uint32_t colid, CStatsPred::EStatsCmpType stats_pred_type, CDouble default_scale_factor);
 
   // filter type id
   CStatsPred::EStatsPredType GetPredStatsType() const override { return CStatsPred::EsptUnsupported; }

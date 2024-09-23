@@ -89,7 +89,7 @@ CDXLScalarBitmapBoolOp::EdxlBitmapBoolOp CDXLScalarBitmapBoolOp::GetDXLBitmapOpT
 //		Is operator returning a boolean value
 //
 //---------------------------------------------------------------------------
-BOOL CDXLScalarBitmapBoolOp::HasBoolResult(CMDAccessor *md_accessor) const {
+bool CDXLScalarBitmapBoolOp::HasBoolResult(CMDAccessor *md_accessor) const {
   return (IMDType::EtiBool == md_accessor->RetrieveType(m_mdid_type)->GetDatumType());
 }
 
@@ -118,15 +118,15 @@ const CWStringConst *CDXLScalarBitmapBoolOp::GetOpNameStr() const {
 //		Checks whether operator node is well-structured
 //
 //---------------------------------------------------------------------------
-void CDXLScalarBitmapBoolOp::AssertValid(const CDXLNode *dxlnode, BOOL validate_children) const {
+void CDXLScalarBitmapBoolOp::AssertValid(const CDXLNode *dxlnode, bool validate_children) const {
   EdxlBitmapBoolOp bitmap_bool_dxlop = ((CDXLScalarBitmapBoolOp *)dxlnode->GetOperator())->GetDXLBitmapOpType();
 
   GPOS_ASSERT((bitmap_bool_dxlop == EdxlbitmapAnd) || (bitmap_bool_dxlop == EdxlbitmapOr));
 
-  ULONG arity = dxlnode->Arity();
+  uint32_t arity = dxlnode->Arity();
   GPOS_ASSERT(2 == arity);
 
-  for (ULONG ul = 0; ul < arity; ++ul) {
+  for (uint32_t ul = 0; ul < arity; ++ul) {
     CDXLNode *dxlnode_arg = (*dxlnode)[ul];
     Edxlopid dxl_operator = dxlnode_arg->GetOperator()->GetDXLOperator();
 

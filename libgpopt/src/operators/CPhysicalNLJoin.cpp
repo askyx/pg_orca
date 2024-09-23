@@ -60,9 +60,9 @@ CPhysicalNLJoin::~CPhysicalNLJoin() = default;
 //
 //---------------------------------------------------------------------------
 COrderSpec *CPhysicalNLJoin::PosRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, COrderSpec *posInput,
-                                         ULONG child_index,
+                                         uint32_t child_index,
                                          CDrvdPropArray *,  // pdrgpdpCtxt
-                                         ULONG              // ulOptReq
+                                         uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(child_index < 2 && "Required sort order can be computed on the relational child only");
 
@@ -82,9 +82,9 @@ COrderSpec *CPhysicalNLJoin::PosRequired(CMemoryPool *mp, CExpressionHandle &exp
 //
 //---------------------------------------------------------------------------
 CColRefSet *CPhysicalNLJoin::PcrsRequired(CMemoryPool *mp, CExpressionHandle &exprhdl, CColRefSet *pcrsRequired,
-                                          ULONG child_index,
+                                          uint32_t child_index,
                                           CDrvdPropArray *,  // pdrgpdpCtxt
-                                          ULONG              // ulOptReq
+                                          uint32_t           // ulOptReq
 ) {
   GPOS_ASSERT(child_index < 2 && "Required properties can only be computed on the relational child");
 

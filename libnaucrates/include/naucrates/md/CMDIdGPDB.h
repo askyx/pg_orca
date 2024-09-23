@@ -42,13 +42,13 @@ class CMDIdGPDB : public IMDId {
   OID m_oid;
 
   // major version number
-  ULONG m_major_version;
+  uint32_t m_major_version;
 
   // minor version number
-  ULONG m_minor_version;
+  uint32_t m_minor_version;
 
   // buffer for the serialized mdid
-  WCHAR m_mdid_array[GPDXL_MDID_LENGTH];
+  wchar_t m_mdid_array[GPDXL_MDID_LENGTH];
 
   // string representation of the mdid
   mutable CWStringStatic m_str;
@@ -59,7 +59,7 @@ class CMDIdGPDB : public IMDId {
  public:
   // ctors
   CMDIdGPDB(CSystemId sysid, OID oid);
-  CMDIdGPDB(EMDIdType mdIdType, OID oid, ULONG version_major = 1, ULONG version_minor = 0);
+  CMDIdGPDB(EMDIdType mdIdType, OID oid, uint32_t version_major = 1, uint32_t version_minor = 0);
 
   // copy ctor
   explicit CMDIdGPDB(const CMDIdGPDB &mdidSource);
@@ -67,7 +67,7 @@ class CMDIdGPDB : public IMDId {
   EMDIdType MdidType() const override { return m_sysid.MdidType(); }
 
   // string representation of mdid
-  const WCHAR *GetBuffer() const override;
+  const wchar_t *GetBuffer() const override;
 
   // source system id
   CSystemId Sysid() const override { return m_sysid; }
@@ -76,24 +76,23 @@ class CMDIdGPDB : public IMDId {
   virtual OID Oid() const;
 
   // major version
-  virtual ULONG VersionMajor() const;
+  virtual uint32_t VersionMajor() const;
 
   // minor version
-  virtual ULONG VersionMinor() const;
+  virtual uint32_t VersionMinor() const;
 
   // equality check
-  BOOL Equals(const IMDId *mdid) const override;
+  bool Equals(const IMDId *mdid) const override;
 
   // computes the hash value for the metadata id
-  ULONG
-  HashValue() const override {
+  uint32_t HashValue() const override {
     return gpos::CombineHashes(MdidType(), gpos::CombineHashes(gpos::HashValue(&m_oid),
                                                                gpos::CombineHashes(gpos::HashValue(&m_major_version),
                                                                                    gpos::HashValue(&m_minor_version))));
   }
 
   // is the mdid valid
-  BOOL IsValid() const override;
+  bool IsValid() const override;
 
   // debug print of the metadata id
   IOstream &OsPrint(IOstream &os) const override;

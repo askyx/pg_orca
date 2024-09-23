@@ -127,26 +127,26 @@ class CException {
  private:
   struct ErrCodeElem {
     // exception number
-    ULONG m_exception_num;
+    uint32_t m_exception_num;
 
     // SQL standard error code
-    const CHAR *m_sql_state;
+    const char *m_sql_state;
   };
 
   // error range
-  ULONG m_major;
+  uint32_t m_major;
 
   // error number
-  ULONG m_minor;
+  uint32_t m_minor;
 
   // SQL state error code
-  const CHAR *m_sql_state;
+  const char *m_sql_state;
 
   // filename
-  CHAR *m_filename;
+  char *m_filename;
 
   // line in file
-  ULONG m_line;
+  uint32_t m_line;
 
   // sql state error codes
   static const ErrCodeElem m_errcode[ExmiSQLTest - ExmiSQLDefault + 1];
@@ -155,7 +155,7 @@ class CException {
   static void Raise(CException exc) __attribute__((__noreturn__));
 
   // get sql error code for given exception
-  static const CHAR *GetSQLState(ULONG major, ULONG minor);
+  static const char *GetSQLState(uint32_t major, uint32_t minor);
 
  public:
   // severity levels
@@ -170,43 +170,41 @@ class CException {
   };
 
   // severity levels
-  static const CHAR *m_severity[ExsevSentinel];
+  static const char *m_severity[ExsevSentinel];
 
   // ctor
-  CException(ULONG major, ULONG minor);
-  CException(ULONG major, ULONG minor, const CHAR *filename, ULONG line);
+  CException(uint32_t major, uint32_t minor);
+  CException(uint32_t major, uint32_t minor, const char *filename, uint32_t line);
 
   // accessors
-  ULONG
-  Major() const { return m_major; }
+  uint32_t Major() const { return m_major; }
 
-  ULONG
-  Minor() const { return m_minor; }
+  uint32_t Minor() const { return m_minor; }
 
-  const CHAR *Filename() const { return m_filename; }
+  const char *Filename() const { return m_filename; }
 
-  ULONG
-  Line() const { return m_line; }
+  uint32_t Line() const { return m_line; }
 
-  const CHAR *GetSQLState() const { return m_sql_state; }
+  const char *GetSQLState() const { return m_sql_state; }
 
   // simple equality
-  BOOL operator==(const CException &exc) const { return m_major == exc.m_major && m_minor == exc.m_minor; }
+  bool operator==(const CException &exc) const { return m_major == exc.m_major && m_minor == exc.m_minor; }
 
   // simple inequality
-  BOOL operator!=(const CException &exc) const { return !(*this == exc); }
+  bool operator!=(const CException &exc) const { return !(*this == exc); }
 
   // equality function -- needed for hashtable
-  static BOOL Equals(const CException &exc, const CException &excOther) { return exc == excOther; }
+  static bool Equals(const CException &exc, const CException &excOther) { return exc == excOther; }
 
   // basic hash function
-  static ULONG HashValue(const CException &exc) { return exc.m_major ^ exc.m_minor; }
+  static uint32_t HashValue(const CException &exc) { return exc.m_major ^ exc.m_minor; }
 
   // wrapper around throw
-  static void Raise(const CHAR *filename, ULONG line, ULONG major, ULONG minor, ...) __attribute__((__noreturn__));
+  static void Raise(const char *filename, uint32_t line, uint32_t major, uint32_t minor, ...)
+      __attribute__((__noreturn__));
 
   // rethrow wrapper
-  static void Reraise(CException exc, BOOL propagate = false) __attribute__((__noreturn__));
+  static void Reraise(CException exc, bool propagate = false) __attribute__((__noreturn__));
 
   // invalid exception
   static const CException m_invalid_exception;

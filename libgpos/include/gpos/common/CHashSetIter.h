@@ -13,7 +13,7 @@
 
 namespace gpos {
 // Hash set iterator
-template <class T, ULONG (*HashFn)(const T *), BOOL (*EqFn)(const T *, const T *), void (*CleanupFn)(T *)>
+template <class T, uint32_t (*HashFn)(const T *), bool (*EqFn)(const T *, const T *), void (*CleanupFn)(T *)>
 class CHashSetIter : public CStackObject {
   // short hand for hashset type
   using TSet = CHashSet<T, HashFn, EqFn, CleanupFn>;
@@ -23,13 +23,13 @@ class CHashSetIter : public CStackObject {
   const TSet *m_set;
 
   // current hashchain
-  ULONG m_chain_idx;
+  uint32_t m_chain_idx;
 
   // current element
-  ULONG m_elem_idx;
+  uint32_t m_elem_idx;
 
   // is initialized?
-  BOOL m_is_initialized;
+  bool m_is_initialized;
 
  public:
   CHashSetIter(const CHashSetIter<T, HashFn, EqFn, CleanupFn> &) = delete;
@@ -41,7 +41,7 @@ class CHashSetIter : public CStackObject {
   virtual ~CHashSetIter() = default;
 
   // advance iterator to next element
-  BOOL Advance() {
+  bool Advance() {
     if (m_elem_idx < m_set->m_elements->Size()) {
       m_elem_idx++;
       return true;

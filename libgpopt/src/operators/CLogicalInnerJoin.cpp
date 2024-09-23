@@ -84,7 +84,7 @@ CXformSet *CLogicalInnerJoin::PxfsCandidates(CMemoryPool *mp) const {
 //		prioritize innerJoin with less predicates for stats derivation
 //
 //---------------------------------------------------------------------------
-BOOL CLogicalInnerJoin::FFewerConj(CMemoryPool *mp, CGroupExpression *pgexprFst, CGroupExpression *pgexprSnd) {
+bool CLogicalInnerJoin::FFewerConj(CMemoryPool *mp, CGroupExpression *pgexprFst, CGroupExpression *pgexprSnd) {
   if (nullptr == pgexprFst || nullptr == pgexprSnd) {
     return false;
   }
@@ -103,8 +103,8 @@ BOOL CLogicalInnerJoin::FFewerConj(CMemoryPool *mp, CGroupExpression *pgexprFst,
   CExpressionArray *pdrgpexprConjFst = CPredicateUtils::PdrgpexprConjuncts(mp, pgroupScalarFst->PexprScalarRep());
   CExpressionArray *pdrgpexprConjSnd = CPredicateUtils::PdrgpexprConjuncts(mp, pgroupScalarSnd->PexprScalarRep());
 
-  ULONG ulConjFst = pdrgpexprConjFst->Size();
-  ULONG ulConjSnd = pdrgpexprConjSnd->Size();
+  uint32_t ulConjFst = pdrgpexprConjFst->Size();
+  uint32_t ulConjSnd = pdrgpexprConjSnd->Size();
 
   pdrgpexprConjFst->Release();
   pdrgpexprConjSnd->Release();

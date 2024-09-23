@@ -10,7 +10,9 @@
 #include "naucrates/dxl/operators/CDXLScalarIdent.h"
 
 extern "C" {
-#include "nodes/plannodes.h"
+#include <postgres.h>
+
+#include <nodes/plannodes.h>
 }
 
 #include <unordered_map>

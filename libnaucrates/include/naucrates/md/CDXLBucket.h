@@ -40,10 +40,10 @@ class CDXLBucket : public CRefCount {
   CDXLDatum *m_upper_bound_dxl_datum;
 
   // is lower bound closed (i.e., the boundary point is included in the bucket)
-  BOOL m_is_lower_closed;
+  bool m_is_lower_closed;
 
   // is upper bound closed (i.e., the boundary point is included in the bucket)
-  BOOL m_is_upper_closed;
+  bool m_is_upper_closed;
 
   // frequency
   CDouble m_frequency;
@@ -55,17 +55,17 @@ class CDXLBucket : public CRefCount {
   CDXLBucket(const CDXLBucket &) = delete;
 
   // ctor
-  CDXLBucket(CDXLDatum *dxl_datum_lower, CDXLDatum *dxl_datum_upper, BOOL is_lower_closed, BOOL is_upper_closed,
+  CDXLBucket(CDXLDatum *dxl_datum_lower, CDXLDatum *dxl_datum_upper, bool is_lower_closed, bool is_upper_closed,
              CDouble frequency, CDouble distinct);
 
   // dtor
   ~CDXLBucket() override;
 
   // is lower bound closed
-  BOOL IsLowerClosed() const { return m_is_lower_closed; }
+  bool IsLowerClosed() const { return m_is_lower_closed; }
 
   // is upper bound closed
-  BOOL IsUpperClosed() const { return m_is_upper_closed; }
+  bool IsUpperClosed() const { return m_is_upper_closed; }
 
   // min value for the bucket
   const CDXLDatum *GetDXLDatumLower() const;

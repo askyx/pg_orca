@@ -74,7 +74,7 @@ void CXformSelect2IndexGet::Transform(CXformContext *pxfctxt, CXformResult *pxfr
 
   // get the indexes on this relation
   CLogicalGet *popGet = CLogicalGet::PopConvert(pexprRelational->Pop());
-  const ULONG ulIndices = popGet->Ptabdesc()->IndexCount();
+  const uint32_t ulIndices = popGet->Ptabdesc()->IndexCount();
   if (0 == ulIndices) {
     return;
   }
@@ -100,7 +100,7 @@ void CXformSelect2IndexGet::Transform(CXformContext *pxfctxt, CXformResult *pxfr
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
   const IMDRelation *pmdrel = md_accessor->RetrieveRel(popGet->Ptabdesc()->MDId());
 
-  for (ULONG ul = 0; ul < ulIndices; ul++) {
+  for (uint32_t ul = 0; ul < ulIndices; ul++) {
     IMDId *pmdidIndex = pmdrel->IndexMDidAt(ul);
     const IMDIndex *pmdindex = md_accessor->RetrieveIndex(pmdidIndex);
     // We consider ForwardScan here because, BackwardScan is only supported

@@ -26,9 +26,9 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CPhysicalHashAgg::CPhysicalHashAgg(CMemoryPool *mp, CColRefArray *colref_array, CColRefArray *pdrgpcrMinimal,
-                                   COperator::EGbAggType egbaggtype, BOOL fGeneratesDuplicates,
-                                   CColRefArray *pdrgpcrArgDQA, BOOL fMultiStage, BOOL isAggFromSplitDQA,
-                                   CLogicalGbAgg::EAggStage aggStage, BOOL should_enforce_distribution)
+                                   COperator::EGbAggType egbaggtype, bool fGeneratesDuplicates,
+                                   CColRefArray *pdrgpcrArgDQA, bool fMultiStage, bool isAggFromSplitDQA,
+                                   CLogicalGbAgg::EAggStage aggStage, bool should_enforce_distribution)
     : CPhysicalAgg(mp, colref_array, pdrgpcrMinimal, egbaggtype, fGeneratesDuplicates, pdrgpcrArgDQA, fMultiStage,
                    isAggFromSplitDQA, aggStage, should_enforce_distribution) {}
 
@@ -53,13 +53,13 @@ CPhysicalHashAgg::~CPhysicalHashAgg() = default;
 COrderSpec *CPhysicalHashAgg::PosRequired(CMemoryPool *mp,
                                           CExpressionHandle &,  // exprhdl
                                           COrderSpec *,         // posRequired
-                                          ULONG
+                                          uint32_t
 #ifdef GPOS_DEBUG
                                               child_index
 #endif  // GPOS_DEBUG
                                           ,
                                           CDrvdPropArray *,  // pdrgpdpCtxt
-                                          ULONG              // ulOptReq
+                                          uint32_t           // ulOptReq
 ) const {
   GPOS_ASSERT(0 == child_index);
 

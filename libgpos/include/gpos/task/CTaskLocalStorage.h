@@ -60,14 +60,14 @@ class CTaskLocalStorage {
   void Remove(CTaskLocalStorageObject *);
 
   // equality function -- used for hashtable
-  static BOOL Equals(const CTaskLocalStorage::Etlsidx &idx, const CTaskLocalStorage::Etlsidx &idx_other) {
+  static bool Equals(const CTaskLocalStorage::Etlsidx &idx, const CTaskLocalStorage::Etlsidx &idx_other) {
     return idx == idx_other;
   }
 
   // hash function
-  static ULONG HashIdx(const CTaskLocalStorage::Etlsidx &idx) {
+  static uint32_t HashIdx(const CTaskLocalStorage::Etlsidx &idx) {
     // keys are unique
-    return static_cast<ULONG>(idx);
+    return static_cast<uint32_t>(idx);
   }
 
   // invalid Etlsidx

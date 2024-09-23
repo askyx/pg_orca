@@ -43,9 +43,9 @@ CXformCTEAnchor2TrivialSelect::CXformCTEAnchor2TrivialSelect(CMemoryPool *mp)
 //
 //---------------------------------------------------------------------------
 CXform::EXformPromise CXformCTEAnchor2TrivialSelect::Exfp(CExpressionHandle &exprhdl) const {
-  ULONG id = CLogicalCTEAnchor::PopConvert(exprhdl.Pop())->Id();
+  uint32_t id = CLogicalCTEAnchor::PopConvert(exprhdl.Pop())->Id();
   CCTEInfo *pcteinfo = COptCtxt::PoctxtFromTLS()->Pcteinfo();
-  const ULONG ulConsumers = pcteinfo->UlConsumers(id);
+  const uint32_t ulConsumers = pcteinfo->UlConsumers(id);
   GPOS_ASSERT(0 < ulConsumers);
 
   // also inline if CTE contains outer references

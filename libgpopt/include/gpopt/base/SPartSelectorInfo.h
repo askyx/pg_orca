@@ -12,7 +12,7 @@
 namespace gpopt {
 struct SPartSelectorInfoEntry {
   // selector id
-  ULONG m_selector_id;
+  uint32_t m_selector_id;
 
   // filter stored in the partition selector
   CExpression *m_filter_expr;
@@ -20,7 +20,7 @@ struct SPartSelectorInfoEntry {
   // statistics of the subtree of the partition selector
   IStatistics *m_stats;
 
-  SPartSelectorInfoEntry(ULONG mSelectorId, CExpression *mFilterExpr, IStatistics *mStats)
+  SPartSelectorInfoEntry(uint32_t mSelectorId, CExpression *mFilterExpr, IStatistics *mStats)
       : m_selector_id(mSelectorId), m_filter_expr(mFilterExpr), m_stats(mStats) {}
 
   ~SPartSelectorInfoEntry() {
@@ -29,8 +29,8 @@ struct SPartSelectorInfoEntry {
   }
 };
 
-using SPartSelectorInfo = CHashMap<ULONG, SPartSelectorInfoEntry, gpos::HashValue<ULONG>, gpos::Equals<ULONG>,
-                                   CleanupDelete<ULONG>, CleanupDelete<SPartSelectorInfoEntry>>;
+using SPartSelectorInfo = CHashMap<uint32_t, SPartSelectorInfoEntry, gpos::HashValue<uint32_t>, gpos::Equals<uint32_t>,
+                                   CleanupDelete<uint32_t>, CleanupDelete<SPartSelectorInfoEntry>>;
 
 }  // namespace gpopt
 #endif  // !GPOPT_CPartSelectorInfo_H

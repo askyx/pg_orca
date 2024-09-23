@@ -30,7 +30,7 @@ namespace gpos {
 class CDouble {
  private:
   // double-precision value
-  DOUBLE m_d;
+  double m_d;
 
   // check validity in ctor
   inline void CheckValidity() {
@@ -49,7 +49,7 @@ class CDouble {
   }
 
   // assign value while maintaining current sign
-  inline void SetSignedVal(DOUBLE val) {
+  inline void SetSignedVal(double val) {
     if (0.0 <= m_d) {
       m_d = val;
     } else {
@@ -59,18 +59,18 @@ class CDouble {
 
  public:
   // ctors
-  inline CDouble(DOUBLE d) : m_d(d) { CheckValidity(); }
+  inline CDouble(double d) : m_d(d) { CheckValidity(); }
 
-  inline CDouble(ULLONG ull) : m_d(DOUBLE(ull)) { CheckValidity(); }
+  inline CDouble(uint64_t ull) : m_d(double(ull)) { CheckValidity(); }
 
-  inline CDouble(ULONG ul) : m_d(DOUBLE(ul)) { CheckValidity(); }
+  inline CDouble(uint32_t ul) : m_d(double(ul)) { CheckValidity(); }
 
-  inline CDouble(LINT li) : m_d(DOUBLE(li)) { CheckValidity(); }
+  inline CDouble(int64_t li) : m_d(double(li)) { CheckValidity(); }
 
-  inline CDouble(INT i) : m_d(DOUBLE(i)) { CheckValidity(); }
+  inline CDouble(int32_t i) : m_d(double(i)) { CheckValidity(); }
 
   // value accessor
-  inline DOUBLE Get() const { return m_d; }
+  inline double Get() const { return m_d; }
 
   // arithmetic operators
   friend CDouble operator+(const CDouble &left, const CDouble &right) { return CDouble(left.m_d + right.m_d); }
@@ -85,22 +85,22 @@ class CDouble {
   friend CDouble operator-(const CDouble &d) { return CDouble(-d.m_d); }
 
   // logical operators
-  friend BOOL operator==(const CDouble &left, const CDouble &right) {
+  friend bool operator==(const CDouble &left, const CDouble &right) {
     CDouble fpCompare(left.m_d - right.m_d);
 
     return (fabs(fpCompare.m_d) == GPOS_FP_ABS_MIN);
   }
 
-  friend BOOL operator!=(const CDouble &left, const CDouble &right);
-  friend BOOL operator<(const CDouble &left, const CDouble &right);
-  friend BOOL operator<=(const CDouble &left, const CDouble &right);
-  friend BOOL operator>(const CDouble &left, const CDouble &right) {
+  friend bool operator!=(const CDouble &left, const CDouble &right);
+  friend bool operator<(const CDouble &left, const CDouble &right);
+  friend bool operator<=(const CDouble &left, const CDouble &right);
+  friend bool operator>(const CDouble &left, const CDouble &right) {
     CDouble fpCompare(left.m_d - right.m_d);
 
     return (fpCompare.m_d > GPOS_FP_ABS_MIN);
   }
 
-  friend BOOL operator>=(const CDouble &left, const CDouble &right);
+  friend bool operator>=(const CDouble &left, const CDouble &right);
 
   // absolute
   inline CDouble Absolute() const { return CDouble(fabs(m_d)); }
@@ -121,7 +121,7 @@ class CDouble {
   inline IOstream &OsPrint(IOstream &os) const { return os << m_d; }
 
   // compare two double values using given precision
-  inline static BOOL Equals(DOUBLE dLeft, DOUBLE dRight, DOUBLE dPrecision = GPOS_FP_ABS_MIN) {
+  inline static bool Equals(double dLeft, double dRight, double dPrecision = GPOS_FP_ABS_MIN) {
     return fabs(dRight - dLeft) <= dPrecision;
   }
 
@@ -134,29 +134,29 @@ inline CDouble operator*(const CDouble &left, const CDouble &right);
 inline CDouble operator/(const CDouble &left, const CDouble &right);
 
 // logical operators
-inline BOOL operator==(const CDouble &left, const CDouble &right);
-inline BOOL operator>(const CDouble &left, const CDouble &right);
+inline bool operator==(const CDouble &left, const CDouble &right);
+inline bool operator>(const CDouble &left, const CDouble &right);
 
 // negation
 inline CDouble operator-(const CDouble &d);
 
 // '!=' operator
-inline BOOL operator!=(const CDouble &left, const CDouble &right) {
+inline bool operator!=(const CDouble &left, const CDouble &right) {
   return (!(left == right));
 }
 
 // '<=' operator
-inline BOOL operator>=(const CDouble &left, const CDouble &right) {
+inline bool operator>=(const CDouble &left, const CDouble &right) {
   return (left == right || left > right);
 }
 
 // '>' operator
-inline BOOL operator<(const CDouble &left, const CDouble &right) {
+inline bool operator<(const CDouble &left, const CDouble &right) {
   return (right > left);
 }
 
 // '>=' operator
-inline BOOL operator<=(const CDouble &left, const CDouble &right) {
+inline bool operator<=(const CDouble &left, const CDouble &right) {
   return (right == left || right > left);
 }
 

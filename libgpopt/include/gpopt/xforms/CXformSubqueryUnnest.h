@@ -29,11 +29,11 @@ class CXformSubqueryUnnest : public CXformExploration {
  private:
  protected:
   // helper for subquery unnesting
-  static CExpression *PexprSubqueryUnnest(CMemoryPool *mp, CExpression *pexpr, BOOL fEnforceCorrelatedApply);
+  static CExpression *PexprSubqueryUnnest(CMemoryPool *mp, CExpression *pexpr, bool fEnforceCorrelatedApply);
 
   // actual transform
   virtual void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr,
-                         BOOL fEnforceCorrelatedApply) const;
+                         bool fEnforceCorrelatedApply) const;
 
  public:
   CXformSubqueryUnnest(const CXformSubqueryUnnest &) = delete;
@@ -51,7 +51,7 @@ class CXformSubqueryUnnest : public CXformExploration {
   void Transform(CXformContext *pxfctxt, CXformResult *pxfres, CExpression *pexpr) const override;
 
   // is transformation a subquery unnesting (Subquery To Apply) xform?
-  BOOL FSubqueryUnnesting() const override { return true; }
+  bool FSubqueryUnnesting() const override { return true; }
 
 };  // class CXformSubqueryUnnest
 

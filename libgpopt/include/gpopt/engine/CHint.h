@@ -15,11 +15,11 @@
 #include "gpos/common/CRefCount.h"
 #include "gpos/memory/CMemoryPool.h"
 
-#define JOIN_ORDER_DP_THRESHOLD ULONG(10)
-#define BROADCAST_THRESHOLD ULONG(10000000)
-#define PUSH_GROUP_BY_BELOW_SETOP_THRESHOLD ULONG(10)
-#define XFORM_BIND_THRESHOLD ULONG(0)
-#define SKEW_FACTOR ULONG(0)
+#define JOIN_ORDER_DP_THRESHOLD uint32_t(10)
+#define BROADCAST_THRESHOLD uint32_t(10000000)
+#define PUSH_GROUP_BY_BELOW_SETOP_THRESHOLD uint32_t(10)
+#define XFORM_BIND_THRESHOLD uint32_t(0)
+#define SKEW_FACTOR uint32_t(0)
 
 namespace gpopt {
 using namespace gpos;
@@ -34,29 +34,29 @@ using namespace gpos;
 //---------------------------------------------------------------------------
 class CHint : public CRefCount {
  private:
-  ULONG m_ulJoinArityForAssociativityCommutativity;
+  uint32_t m_ulJoinArityForAssociativityCommutativity;
 
-  ULONG m_ulArrayExpansionThreshold;
+  uint32_t m_ulArrayExpansionThreshold;
 
-  ULONG m_ulJoinOrderDPLimit;
+  uint32_t m_ulJoinOrderDPLimit;
 
-  ULONG m_ulBroadcastThreshold;
+  uint32_t m_ulBroadcastThreshold;
 
-  BOOL m_fEnforceConstraintsOnDML;
+  bool m_fEnforceConstraintsOnDML;
 
-  ULONG m_ulPushGroupByBelowSetopThreshold;
+  uint32_t m_ulPushGroupByBelowSetopThreshold;
 
-  ULONG m_ulXform_bind_threshold;
+  uint32_t m_ulXform_bind_threshold;
 
-  ULONG m_ulSkewFactor;
+  uint32_t m_ulSkewFactor;
 
  public:
   CHint(const CHint &) = delete;
 
   // ctor
-  CHint(ULONG join_arity_for_associativity_commutativity, ULONG array_expansion_threshold, ULONG ulJoinOrderDPLimit,
-        ULONG broadcast_threshold, BOOL enforce_constraint_on_dml, ULONG push_group_by_below_setop_threshold,
-        ULONG xform_bind_threshold, ULONG skew_factor)
+  CHint(uint32_t join_arity_for_associativity_commutativity, uint32_t array_expansion_threshold,
+        uint32_t ulJoinOrderDPLimit, uint32_t broadcast_threshold, bool enforce_constraint_on_dml,
+        uint32_t push_group_by_below_setop_threshold, uint32_t xform_bind_threshold, uint32_t skew_factor)
       : m_ulJoinArityForAssociativityCommutativity(join_arity_for_associativity_commutativity),
         m_ulArrayExpansionThreshold(array_expansion_threshold),
         m_ulJoinOrderDPLimit(ulJoinOrderDPLimit),
@@ -70,8 +70,7 @@ class CHint : public CRefCount {
   // explore JoinAssociativity and JoinCommutativity transformations.
   // When the number of relations exceed this we'll prune the search space
   // by not pursuing the above mentioned two transformations.
-  ULONG
-  UlJoinArityForAssociativityCommutativity() const { return m_ulJoinArityForAssociativityCommutativity; }
+  uint32_t UlJoinArityForAssociativityCommutativity() const { return m_ulJoinArityForAssociativityCommutativity; }
 
   // Maximum number of elements in the scalar comparison with an array which
   // will be expanded for constraint derivation. The benefits of using a smaller number
@@ -80,40 +79,34 @@ class CHint : public CRefCount {
   // size is greater than threshold:
   // "(expression) scalar op ANY/ALL (array of constants)" OR
   // "(expression1, expression2) scalar op ANY/ALL ((const-x1, const-y1), ... (const-xn, const-yn))"
-  ULONG
-  UlArrayExpansionThreshold() const { return m_ulArrayExpansionThreshold; }
+  uint32_t UlArrayExpansionThreshold() const { return m_ulArrayExpansionThreshold; }
 
   // Maximum number of relations in an n-ary join operator where ORCA will
   // explore join ordering via dynamic programming.
-  ULONG
-  UlJoinOrderDPLimit() const { return m_ulJoinOrderDPLimit; }
+  uint32_t UlJoinOrderDPLimit() const { return m_ulJoinOrderDPLimit; }
 
   // Maximum number of rows ORCA will broadcast
-  ULONG
-  UlBroadcastThreshold() const { return m_ulBroadcastThreshold; }
+  uint32_t UlBroadcastThreshold() const { return m_ulBroadcastThreshold; }
 
   // If true, ORCA will add Assertion nodes to the plan to enforce CHECK
   // and NOT NULL constraints on inserted/updated values. (Otherwise it
   // is up to the executor to enforce them.)
-  BOOL FEnforceConstraintsOnDML() const { return m_fEnforceConstraintsOnDML; }
+  bool FEnforceConstraintsOnDML() const { return m_fEnforceConstraintsOnDML; }
 
   // Skip CXformPushGbBelowSetOp if set op arity is greater than this
-  ULONG
-  UlPushGroupByBelowSetopThreshold() const { return m_ulPushGroupByBelowSetopThreshold; }
+  uint32_t UlPushGroupByBelowSetopThreshold() const { return m_ulPushGroupByBelowSetopThreshold; }
 
   // Stop generating alternatives for group expression if bindings exceed this threshold
-  ULONG
-  UlXformBindThreshold() const { return m_ulXform_bind_threshold; }
+  uint32_t UlXformBindThreshold() const { return m_ulXform_bind_threshold; }
 
   // User defined skew multiplier, multiplied to the skew ratio calculated from 1000 samples
-  ULONG
-  UlSkewFactor() const { return m_ulSkewFactor; }
+  uint32_t UlSkewFactor() const { return m_ulSkewFactor; }
 
   // generate default hint configurations, which disables sort during insert on
   // append only row-oriented partitioned tables by default
   static CHint *PhintDefault(CMemoryPool *mp) {
-    return GPOS_NEW(mp) CHint(gpos::int_max,                       /* join_arity_for_associativity_commutativity */
-                              gpos::int_max,                       /* array_expansion_threshold */
+    return GPOS_NEW(mp) CHint(INT32_MAX,                           /* join_arity_for_associativity_commutativity */
+                              INT32_MAX,                           /* array_expansion_threshold */
                               JOIN_ORDER_DP_THRESHOLD,             /*ulJoinOrderDPLimit*/
                               BROADCAST_THRESHOLD,                 /*broadcast_threshold*/
                               true,                                /* enforce_constraint_on_dml */

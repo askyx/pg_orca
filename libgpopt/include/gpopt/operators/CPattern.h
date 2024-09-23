@@ -37,7 +37,7 @@ class CPattern : public COperator {
   ~CPattern() override = default;
 
   // type of operator
-  BOOL FPattern() const override {
+  bool FPattern() const override {
     GPOS_ASSERT(!FPhysical() && !FScalar() && !FLogical());
     return true;
   }
@@ -49,16 +49,16 @@ class CPattern : public COperator {
   CReqdProp *PrpCreate(CMemoryPool *mp) const override;
 
   // match function
-  BOOL Matches(COperator *) const override;
+  bool Matches(COperator *) const override;
 
   // sensitivity to order of inputs
-  BOOL FInputOrderSensitive() const override;
+  bool FInputOrderSensitive() const override;
 
   // check if operator is a pattern leaf
-  virtual BOOL FLeaf() const = 0;
+  virtual bool FLeaf() const = 0;
 
   // return a copy of the operator with remapped columns
-  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, BOOL must_exist) override;
+  COperator *PopCopyWithRemappedColumns(CMemoryPool *mp, UlongToColRefMap *colref_mapping, bool must_exist) override;
 
   // conversion function
   static CPattern *PopConvert(COperator *pop) {
@@ -69,7 +69,7 @@ class CPattern : public COperator {
   }
 
   // helper to check multi-node pattern
-  static BOOL FMultiNode(COperator *pop) {
+  static bool FMultiNode(COperator *pop) {
     return COperator::EopPatternMultiLeaf == pop->Eopid() || COperator::EopPatternMultiTree == pop->Eopid();
   }
 

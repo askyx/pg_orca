@@ -34,22 +34,22 @@ namespace gpos {
 class CMessage {
  private:
   // severity
-  ULONG m_severity;
+  uint32_t m_severity;
 
   // format string
-  const WCHAR *m_fmt;
+  const wchar_t *m_fmt;
 
   // length of format string
-  ULONG m_fmt_len;
+  uint32_t m_fmt_len;
 
   // number of parameters
-  ULONG m_num_params;
+  uint32_t m_num_params;
 
   // comment string
-  const WCHAR *m_comment;
+  const wchar_t *m_comment;
 
   // length of commen string
-  ULONG m_comment_len;
+  uint32_t m_comment_len;
 
  public:
   // exception carries error number/identification
@@ -59,8 +59,8 @@ class CMessage {
   // as soon as available
   //
   // ctor
-  CMessage(CException exc, ULONG severity, const WCHAR *fmt, ULONG fmt_len, ULONG num_params, const WCHAR *comment,
-           ULONG comment_len);
+  CMessage(CException exc, uint32_t severity, const wchar_t *fmt, uint32_t fmt_len, uint32_t num_params,
+           const wchar_t *comment, uint32_t comment_len);
 
   // copy ctor
   CMessage(const CMessage &);
@@ -69,17 +69,16 @@ class CMessage {
   void Format(CWStringStatic *buf, VA_LIST) const;
 
   // severity accessor
-  ULONG
-  GetSeverity() const { return m_severity; }
+  uint32_t GetSeverity() const { return m_severity; }
 
   // link object
   SLink m_link;
 
   // access a message by index
-  static CMessage *GetMessage(ULONG index);
+  static CMessage *GetMessage(uint32_t index);
 
   // format an error message
-  static void FormatMessage(CWStringStatic *str, ULONG major, ULONG minor, ...);
+  static void FormatMessage(CWStringStatic *str, uint32_t major, uint32_t minor, ...);
 
 #ifdef GPOS_DEBUG
   // debug print function

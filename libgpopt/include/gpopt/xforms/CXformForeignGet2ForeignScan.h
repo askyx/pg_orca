@@ -40,7 +40,7 @@ class CXformForeignGet2ForeignScan : public CXformImplementation {
   EXformId Exfid() const override { return ExfForeignGet2ForeignScan; }
 
   // return a string for xform name
-  const CHAR *SzId() const override { return "CXformForeignGet2ForeignScan"; }
+  const char *SzId() const override { return "CXformForeignGet2ForeignScan"; }
 
   // compute xform promise for a given expression handle
   EXformPromise Exfp(CExpressionHandle &exprhdl) const override;

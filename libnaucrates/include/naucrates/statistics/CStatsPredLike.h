@@ -48,13 +48,13 @@ class CStatsPredLike : public CStatsPred {
   CStatsPredLike(const CStatsPredLike &) = delete;
 
   // ctor
-  CStatsPredLike(ULONG colid, CExpression *expr_left, CExpression *expr_right, CDouble default_scale_factor);
+  CStatsPredLike(uint32_t colid, CExpression *expr_left, CExpression *expr_right, CDouble default_scale_factor);
 
   // dtor
   ~CStatsPredLike() override;
 
   // the column identifier on which the predicates are on
-  ULONG GetColId() const override;
+  uint32_t GetColId() const override;
 
   // filter type id
   EStatsPredType GetPredStatsType() const override { return CStatsPred::EsptLike; }
