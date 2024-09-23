@@ -68,7 +68,6 @@
 #include "naucrates/base/CDatumBoolGPDB.h"
 #include "naucrates/base/IDatumInt8.h"
 #include "naucrates/dxl/operators/CDXLDatumBool.h"
-#include "naucrates/dxl/operators/CDXLDirectDispatchInfo.h"
 #include "naucrates/dxl/operators/CDXLPhysicalAppend.h"
 #include "naucrates/dxl/operators/CDXLPhysicalAssert.h"
 #include "naucrates/dxl/operators/CDXLPhysicalBitmapTableScan.h"
@@ -894,9 +893,9 @@ CTableDescriptor *CTranslatorExprToDXL::MakeTableDescForPart(const IMDRelation *
   part_mdid->AddRef();
 
   CTableDescriptor *table_descr = GPOS_NEW(m_mp) CTableDescriptor(
-      m_mp, part_mdid, part->Mdname().GetMDName(), part->ConvertHashToRandom(), part->GetRelDistribution(),
-      part->RetrieveRelStorageType(), root_table_desc->GetRelAOVersion(), root_table_desc->GetExecuteAsUserId(),
-      root_table_desc->LockMode(), root_table_desc->GetAclMode(), root_table_desc->GetAssignedQueryIdForTargetRel());
+      m_mp, part_mdid, part->Mdname().GetMDName(), part->ConvertHashToRandom(), part->RetrieveRelStorageType(),
+      root_table_desc->GetExecuteAsUserId(), root_table_desc->LockMode(), root_table_desc->GetAclMode(),
+      root_table_desc->GetAssignedQueryIdForTargetRel());
 
   for (uint32_t ul = 0; ul < part->ColumnCount(); ++ul) {
     const IMDColumn *mdCol = part->GetMdCol(ul);
@@ -3491,10 +3490,8 @@ CDXLNode *CTranslatorExprToDXL::PdxlnDML(CExpression *pexpr,
   CDXLTableDescr *table_descr = MakeDXLTableDescr(ptabdesc, nullptr /*pdrgpcrOutput*/, nullptr /*requiredProperties*/);
   ULongPtrArray *pdrgpul = CUtils::Pdrgpul(m_mp, pdrgpcrSource);
 
-  CDXLDirectDispatchInfo *dxl_direct_dispatch_info = GetDXLDirectDispatchInfo(pexpr);
-  CDXLPhysicalDML *pdxlopDML =
-      GPOS_NEW(m_mp) CDXLPhysicalDML(m_mp, dxl_dml_type, table_descr, pdrgpul, action_colid, ctid_colid, segid_colid,
-                                     dxl_direct_dispatch_info, popDML->FSplit());
+  CDXLPhysicalDML *pdxlopDML = GPOS_NEW(m_mp) CDXLPhysicalDML(m_mp, dxl_dml_type, table_descr, pdrgpul, action_colid,
+                                                              ctid_colid, segid_colid, popDML->FSplit());
 
   // project list
   CColRefSet *pcrsOutput = pexpr->Prpp()->PcrsRequired();
@@ -3512,86 +3509,6 @@ CDXLNode *CTranslatorExprToDXL::PdxlnDML(CExpression *pexpr,
 #endif
 
   return pdxlnDML;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorExprToDXL::GetDXLDirectDispatchInfo
-//
-//	@doc:
-//		Return the direct dispatch info spec for the possible values of the distribution
-//		key in a DML insert statement. Returns NULL if values are not constant.
-//
-//---------------------------------------------------------------------------
-CDXLDirectDispatchInfo *CTranslatorExprToDXL::GetDXLDirectDispatchInfo(CExpression *pexprDML) {
-  GPOS_ASSERT(nullptr != pexprDML);
-
-  CPhysicalDML *popDML = CPhysicalDML::PopConvert(pexprDML->Pop());
-  CTableDescriptor *ptabdesc = popDML->Ptabdesc();
-  const CColumnDescriptorArray *pdrgpcoldescDist = ptabdesc->PdrgpcoldescDist();
-  if ((CLogicalDML::EdmlInsert != popDML->Edmlop() && CLogicalDML::EdmlDelete != popDML->Edmlop()) ||
-      IMDRelation::EreldistrHash != ptabdesc->GetRelDistribution() || 1 < pdrgpcoldescDist->Size()) {
-    // directed dispatch only supported for insert and delete statements
-    // on hash-distributed tables with a single distribution column
-
-    return nullptr;
-  }
-
-  // get index of distribution column in the DML's source array. For non-delete DMLs, the
-  // source array has the same columns as the table descriptor's, and the columns will match.
-  // For deletes, we need to find the distribution col's index by iterating through the delete operator's source
-  // columns (which will only include distribution and partitioning columns, so this will be fast)
-  uint32_t ulPos = 0;
-  GPOS_ASSERT(1 == pdrgpcoldescDist->Size());
-  if (CLogicalDML::EdmlDelete == popDML->Edmlop()) {
-    for (uint32_t ul = 0; ul < (popDML->PdrgpcrSource())->Size(); ul++) {
-      if ((*popDML->PdrgpcrSource())[ul]->IsDistCol()) {
-        ulPos = ul;
-        break;
-      }
-    }
-  } else {
-    CColumnDescriptor *pcoldesc = (*pdrgpcoldescDist)[0];
-    ulPos = gpopt::CTableDescriptor::UlPos(pcoldesc, ptabdesc->Pdrgpcoldesc());
-    GPOS_ASSERT(ulPos < ptabdesc->Pdrgpcoldesc()->Size() && "Column not found");
-  }
-
-  CColRef *pcrDistrCol = (*popDML->PdrgpcrSource())[ulPos];
-  CPropConstraint *ppc = (*pexprDML)[0]->DerivePropertyConstraint();
-
-  if (nullptr == ppc->Pcnstr()) {
-    return nullptr;
-  }
-
-  CConstraint *pcnstrDistrCol = ppc->Pcnstr()->Pcnstr(m_mp, pcrDistrCol);
-  if (!CPredicateUtils::FConstColumn(pcnstrDistrCol, pcrDistrCol)) {
-    CRefCount::SafeRelease(pcnstrDistrCol);
-    return nullptr;
-  }
-
-  GPOS_ASSERT(CConstraint::EctInterval == pcnstrDistrCol->Ect());
-
-  CConstraintInterval *pci = dynamic_cast<CConstraintInterval *>(pcnstrDistrCol);
-  GPOS_ASSERT(1 >= pci->Pdrgprng()->Size());
-
-  CDXLDatumArray *pdrgpdxldatum = GPOS_NEW(m_mp) CDXLDatumArray(m_mp);
-  CDXLDatum *dxl_datum = nullptr;
-
-  if (1 == pci->Pdrgprng()->Size()) {
-    const CRange *prng = (*pci->Pdrgprng())[0];
-    dxl_datum = CTranslatorExprToDXLUtils::GetDatumVal(m_mp, m_pmda, prng->PdatumLeft());
-  } else {
-    GPOS_ASSERT(pci->FIncludesNull());
-    dxl_datum = pcrDistrCol->RetrieveType()->GetDXLDatumNull(m_mp);
-  }
-
-  pdrgpdxldatum->Append(dxl_datum);
-
-  pcnstrDistrCol->Release();
-
-  CDXLDatum2dArray *pdrgpdrgpdxldatum = GPOS_NEW(m_mp) CDXLDatum2dArray(m_mp);
-  pdrgpdrgpdxldatum->Append(pdrgpdxldatum);
-  return GPOS_NEW(m_mp) CDXLDirectDispatchInfo(pdrgpdrgpdxldatum, false);
 }
 
 //---------------------------------------------------------------------------
@@ -5333,7 +5250,6 @@ CDXLNode *CTranslatorExprToDXL::GetSortColListDXL(const COrderSpec *pos) {
 //---------------------------------------------------------------------------
 CDXLNode *CTranslatorExprToDXL::PdxlnHashExprList(const CExpressionArray *pdrgpexpr, const IMdIdArray *opfamilies) {
   GPOS_ASSERT(nullptr != pdrgpexpr);
-  GPOS_ASSERT_IMP(GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution), nullptr != opfamilies);
 
   CDXLNode *hash_expr_list = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarHashExprList(m_mp));
 
@@ -5341,10 +5257,6 @@ CDXLNode *CTranslatorExprToDXL::PdxlnHashExprList(const CExpressionArray *pdrgpe
     CExpression *pexpr = (*pdrgpexpr)[ul];
 
     IMDId *opfamily = nullptr;
-    if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-      opfamily = (*opfamilies)[ul];
-      opfamily->AddRef();
-    }
 
     // constrct a hash expr node for the col ref
     CDXLNode *pdxlnHashExpr = GPOS_NEW(m_mp) CDXLNode(m_mp, GPOS_NEW(m_mp) CDXLScalarHashExpr(m_mp, opfamily));

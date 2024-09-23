@@ -52,25 +52,6 @@ class IMDRelation : public IMDCacheObject {
     ErelstorageSentinel
   };
 
-  //-------------------------------------------------------------------
-  //	@doc:
-  //		Append-only table version (if append-only table)
-  //-------------------------------------------------------------------
-  enum Erelaoversion { AORelationVersion_None, AORelationVersion_GP6, AORelationVersion_GP7, MaxAORelationVersion };
-
-  //-------------------------------------------------------------------
-  //	@doc:
-  //		Distribution policy of a relation
-  //-------------------------------------------------------------------
-  enum Ereldistrpolicy {
-    EreldistrCoordinatorOnly,
-    EreldistrHash,
-    EreldistrRandom,
-    EreldistrReplicated,
-    EreldistrUniversal,
-    EreldistrSentinel
-  };
-
   // Partition type of a partitioned relation
   enum Erelpartitiontype { ErelpartitionRange = 'r', ErelpartitionList = 'l' };
 
@@ -82,20 +63,11 @@ class IMDRelation : public IMDCacheObject {
   // object type
   Emdtype MDType() const override { return EmdtRel; }
 
-  // Gets current cluster's append-only table version
-  static Erelaoversion GetCurrentAOVersion() { return static_cast<Erelaoversion>(MaxAORelationVersion - 1); }
-
   // is this a temp relation
   virtual BOOL IsTemporary() const = 0;
 
   // storage type (heap, appendonly, ...)
   virtual Erelstoragetype RetrieveRelStorageType() const = 0;
-
-  // append only table version
-  virtual Erelaoversion GetRelAOVersion() const = 0;
-
-  // distribution policy (none, hash, random)
-  virtual Ereldistrpolicy GetRelDistribution() const = 0;
 
   // number of columns
   virtual ULONG ColumnCount() const = 0;
@@ -129,14 +101,6 @@ class IMDRelation : public IMDCacheObject {
 
   // key set at given position
   virtual const ULongPtrArray *KeySetAt(ULONG pos) const = 0;
-
-  // number of distribution columns
-  virtual ULONG DistrColumnCount() const = 0;
-
-  // retrieve the column at the given position in the distribution key for the relation
-  virtual const IMDColumn *GetDistrColAt(ULONG pos) const = 0;
-
-  virtual IMDId *GetDistrOpfamilyAt(ULONG pos) const = 0;
 
   // return true if a hash distributed table needs to be considered as random
   virtual BOOL ConvertHashToRandom() const = 0;
@@ -173,9 +137,6 @@ class IMDRelation : public IMDCacheObject {
 
   // child partition oids
   virtual IMdIdArray *ChildPartitionMdids() const { return nullptr; }
-
-  // relation distribution policy as a string value
-  static const CWStringConst *GetDistrPolicyStr(Ereldistrpolicy rel_distr_policy);
 
   // name of storage type
   static const CWStringConst *GetStorageTypeStr(IMDRelation::Erelstoragetype rel_storage_type);

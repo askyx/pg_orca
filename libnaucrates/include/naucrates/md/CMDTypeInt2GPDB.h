@@ -65,8 +65,7 @@ class CMDTypeInt2GPDB : public IMDTypeInt2 {
 
   // type id
   IMDId *m_mdid;
-  IMDId *m_distr_opfamily;
-  IMDId *m_legacy_distr_opfamily;
+
   IMDId *m_part_opfamily;
 
   // mdids of different operators
@@ -121,8 +120,6 @@ class CMDTypeInt2GPDB : public IMDTypeInt2 {
   // accessor of metadata id
   IMDId *MDId() const override;
 
-  IMDId *GetDistrOpfamilyMdid() const override;
-
   IMDId *GetPartOpfamilyMdid() const override;
 
   // accessor of type name
@@ -133,9 +130,6 @@ class CMDTypeInt2GPDB : public IMDTypeInt2 {
 
   // id of specified aggregate type
   IMDId *GetMdidForAggType(EAggType agg_type) const override;
-
-  // is type redistributable
-  BOOL IsRedistributable() const override { return true; }
 
   // is type has fixed length
   BOOL IsFixedLength() const override { return true; }

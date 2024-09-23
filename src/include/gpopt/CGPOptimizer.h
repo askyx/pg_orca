@@ -30,10 +30,7 @@ class OptConfig;
 class CGPOptimizer {
  public:
   // optimize given query using GP optimizer
-  static PlannedStmt *GPOPTOptimizedPlan(Query *query, bool *had_unexpected_failure, gpdxl::OptConfig *config);
-
-  // serialize planned statement into DXL
-  static char *SerializeDXLPlan(Query *query);
+  static PlannedStmt *GPOPTOptimizedPlan(Query *query, gpdxl::OptConfig *config);
 
   // gpopt initialize and terminate
   static void InitGPOPT();
@@ -43,8 +40,6 @@ class CGPOptimizer {
 
 extern "C" {
 
-extern PlannedStmt *GPOPTOptimizedPlan(Query *query, bool *had_unexpected_failure, gpdxl::OptConfig *config);
-extern char *SerializeDXLPlan(Query *query);
 extern void InitGPOPT();
 extern void TerminateGPOPT();
 }

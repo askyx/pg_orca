@@ -572,11 +572,6 @@ void CXformUtils::ImplementHashJoin(CXformContext *pxfctxt, CXformResult *pxfres
   pdrgpexprOuter = GPOS_NEW(mp) CExpressionArray(mp);
   pdrgpexprInner = GPOS_NEW(mp) CExpressionArray(mp);
 
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-    CRefCount::SafeRelease(join_opfamilies);
-    join_opfamilies = GPOS_NEW(mp) IMdIdArray(mp);
-  }
-
   for (ULONG ul = 0; ul < ulPreds; ul++) {
     CExpression *pexprPred = (*pdrgpexpr)[ul];
     if (CPhysicalJoin::FHashJoinCompatible(pexprPred, pexprOuter, pexprInner)) {
@@ -594,19 +589,9 @@ void CXformUtils::ImplementHashJoin(CXformContext *pxfctxt, CXformResult *pxfres
       pexprPredOuter->AddRef();
       pdrgpexprOuter->Append(pexprPredOuter);
       pdrgpexprInner->Append(pexprPredInner);
-
-      if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-        CMDAccessor *mda = COptCtxt::PoctxtFromTLS()->Pmda();
-        IMDId *hash_opfamily = mda->RetrieveScOp(mdid_scop)->HashOpfamilyMdid();
-        GPOS_ASSERT(nullptr != hash_opfamily && hash_opfamily->IsValid());
-        hash_opfamily->AddRef();
-        join_opfamilies->Append(hash_opfamily);
-      }
     }
   }
   GPOS_ASSERT(pdrgpexprInner->Size() == pdrgpexprOuter->Size());
-  GPOS_ASSERT_IMP(GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution),
-                  pdrgpexprInner->Size() == join_opfamilies->Size());
 
   // construct new HashJoin expression using explicit casting, if needed
   pexpr->Pop()->AddRef();
@@ -676,11 +661,6 @@ void CXformUtils::ImplementMergeJoin(CXformContext *pxfctxt, CXformResult *pxfre
   pdrgpexprOuter = GPOS_NEW(mp) CExpressionArray(mp);
   pdrgpexprInner = GPOS_NEW(mp) CExpressionArray(mp);
 
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-    CRefCount::SafeRelease(join_opfamilies);
-    join_opfamilies = GPOS_NEW(mp) IMdIdArray(mp);
-  }
-
   CExpressionArray *pdrgpexpr = CPredicateUtils::PdrgpexprConjuncts(mp, pexprScalar);
   ULONG ulPreds = pdrgpexpr->Size();
   for (ULONG ul = 0; ul < ulPreds; ul++) {
@@ -697,13 +677,6 @@ void CXformUtils::ImplementMergeJoin(CXformContext *pxfctxt, CXformResult *pxfre
       pdrgpexprOuter->Append(pexprPredOuter);
       pdrgpexprInner->Append(pexprPredInner);
 
-      if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-        CMDAccessor *mda = COptCtxt::PoctxtFromTLS()->Pmda();
-        IMDId *hash_opfamily = mda->RetrieveScOp(mdid_scop)->HashOpfamilyMdid();
-        GPOS_ASSERT(nullptr != hash_opfamily && hash_opfamily->IsValid());
-        hash_opfamily->AddRef();
-        join_opfamilies->Append(hash_opfamily);
-      }
     } else {
       // In case of FULL merge joins, all the merge clauses must be merge
       // compatible or we cannot create a merge join.
@@ -715,8 +688,6 @@ void CXformUtils::ImplementMergeJoin(CXformContext *pxfctxt, CXformResult *pxfre
     }
   }
   GPOS_ASSERT(pdrgpexprInner->Size() == pdrgpexprOuter->Size());
-  GPOS_ASSERT_IMP(GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution),
-                  pdrgpexprInner->Size() == join_opfamilies->Size());
 
   // construct new MergeJoin expression using explicit casting, if needed
   pexpr->Pop()->AddRef();

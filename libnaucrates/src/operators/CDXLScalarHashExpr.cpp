@@ -24,9 +24,7 @@ using namespace gpdxl;
 //		Constructor
 //
 //---------------------------------------------------------------------------
-CDXLScalarHashExpr::CDXLScalarHashExpr(CMemoryPool *mp, IMDId *opfamily) : CDXLScalar(mp), m_mdid_opfamily(opfamily) {
-  GPOS_ASSERT_IMP(GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution), m_mdid_opfamily->IsValid());
-}
+CDXLScalarHashExpr::CDXLScalarHashExpr(CMemoryPool *mp, IMDId *opfamily) : CDXLScalar(mp), m_mdid_opfamily(opfamily) {}
 
 //---------------------------------------------------------------------------
 //	@function:

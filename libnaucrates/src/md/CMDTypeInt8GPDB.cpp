@@ -43,13 +43,7 @@ CMDName CMDTypeInt8GPDB::m_mdname(&m_str);
 //---------------------------------------------------------------------------
 CMDTypeInt8GPDB::CMDTypeInt8GPDB(CMemoryPool *mp) : m_mp(mp) {
   m_mdid = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT8_OID);
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-    m_distr_opfamily = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT8_OPFAMILY);
-    m_legacy_distr_opfamily = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT8_LEGACY_OPFAMILY);
-  } else {
-    m_distr_opfamily = nullptr;
-    m_legacy_distr_opfamily = nullptr;
-  }
+
   m_part_opfamily = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT8_PART_OPFAMILY);
   m_mdid_op_eq = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT8_EQ_OP);
   m_mdid_op_neq = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, GPDB_INT8_NEQ_OP);
@@ -81,8 +75,7 @@ CMDTypeInt8GPDB::CMDTypeInt8GPDB(CMemoryPool *mp) : m_mp(mp) {
 //---------------------------------------------------------------------------
 CMDTypeInt8GPDB::~CMDTypeInt8GPDB() {
   m_mdid->Release();
-  CRefCount::SafeRelease(m_distr_opfamily);
-  CRefCount::SafeRelease(m_legacy_distr_opfamily);
+
   CRefCount::SafeRelease(m_part_opfamily);
   m_mdid_op_eq->Release();
   m_mdid_op_neq->Release();
@@ -126,14 +119,6 @@ IDatumInt8 *CMDTypeInt8GPDB::CreateInt8Datum(CMemoryPool *mp, LINT value, BOOL i
 //---------------------------------------------------------------------------
 IMDId *CMDTypeInt8GPDB::MDId() const {
   return m_mdid;
-}
-
-IMDId *CMDTypeInt8GPDB::GetDistrOpfamilyMdid() const {
-  if (GPOS_FTRACE(EopttraceUseLegacyOpfamilies)) {
-    return m_legacy_distr_opfamily;
-  } else {
-    return m_distr_opfamily;
-  }
 }
 
 IMDId *CMDTypeInt8GPDB::GetPartOpfamilyMdid() const {

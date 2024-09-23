@@ -317,10 +317,6 @@ class CTranslatorDXLToExpr {
   // translate a dxl node into an expression tree
   CExpression *Pexpr(const CDXLNode *dxlnode);
 
-  // update table descriptor's distribution columns from the MD cache object
-  static void AddDistributionColumns(CTableDescriptor *ptabdesc, const IMDRelation *pmdrel,
-                                     IntToUlongMap *phmiulAttnoColMapping);
-
   // main translation routine for DXL tree -> Expr tree
   CExpression *Pexpr(const CDXLNode *dxlnode, const CDXLNodeArray *query_output_dxlnode_array,
                      const CDXLNodeArray *cte_producers);

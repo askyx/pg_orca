@@ -367,31 +367,6 @@ CConstraint *CConstraint::PcnstrFromScalarCmp(CMemoryPool *mp, CExpression *pexp
       return nullptr;
     }
 
-    if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-      // The left type and right type are both scalar ident types
-      // In case of casting, such as
-      // --CScalarCast
-      //   +--CScalarIdent "a" (0)
-      // We look at the data type before casting, instead of after
-      // This is because equivalent classes are built with columns
-      // based on their input types
-
-      // Eg. foo.a -- varchar, bar.b -- char
-      // Joining foo and bar on foo.a = bar.b requires casting
-      // foo.a to bpchar. But since hash of varchar (before cast)
-      // and hash of char don't belong to the same opfamily, we
-      // cannot generate equivalent classes with foo.a and bar.b
-
-      // To build equivalence class, operator has to belong
-      // to the left column's hash (distribution) opfamily, and the
-      // right column's hash (distribution) opfamily
-
-      if (!CPredicateUtils::FOpInOpfamily(left_mdid, pexpr, IMDIndex::EmdindHash) ||
-          !CPredicateUtils::FOpInOpfamily(right_mdid, pexpr, IMDIndex::EmdindHash)) {
-        return nullptr;
-      }
-    }
-
     BOOL pcrLeftIncludesNull = infer_nulls_as && CColRef::EcrtTable == pcrLeft->Ecrt() &&
                                CColRefTable::PcrConvert(const_cast<CColRef *>(pcrLeft))->IsNullable();
     BOOL pcrRightIncludesNull = infer_nulls_as && CColRef::EcrtTable == pcrRight->Ecrt() &&

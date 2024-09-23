@@ -31,11 +31,6 @@ class CGPDBTypeHelper {
 
     os << "Type name: " << mdtype->Mdname().GetMDName()->GetBuffer() << std::endl;
 
-    const CWStringConst *redistributable_str = mdtype->IsRedistributable() ? CDXLTokens::GetDXLTokenStr(EdxltokenTrue)
-                                                                           : CDXLTokens::GetDXLTokenStr(EdxltokenFalse);
-
-    os << "Redistributable: " << redistributable_str->GetBuffer() << std::endl;
-
     const CWStringConst *fixed_len_str = mdtype->IsFixedLength() ? CDXLTokens::GetDXLTokenStr(EdxltokenTrue)
                                                                  : CDXLTokens::GetDXLTokenStr(EdxltokenFalse);
 

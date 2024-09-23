@@ -197,10 +197,6 @@ struct SOptContext {
   // ctor
   SOptContext();
 
-  // If there is an error print as warning and throw exception to abort
-  // plan generation
-  void HandleError(BOOL *had_unexpected_failure);
-
   // free all members except input and output pointers
   void Free(EPin input, EPin epinOutput) const;
 
@@ -238,10 +234,6 @@ class COptTasks {
 
   // generate an instance of optimizer cost model
   static ICostModel *GetCostModel(CMemoryPool *mp, ULONG num_segments);
-
-  // print warning messages for columns with missing statistics
-  static void PrintMissingStatsWarning(CMemoryPool *mp, CMDAccessor *md_accessor, IMdIdArray *col_stats,
-                                       MdidHashSet *phsmdidRel);
 
  public:
   // convert Query->DXL->LExpr->Optimize->PExpr->DXL

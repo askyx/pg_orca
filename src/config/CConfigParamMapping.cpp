@@ -515,9 +515,6 @@ CBitSet *CConfigParamMapping::PackConfigParamInBitset(CMemoryPool *mp,
   // instead of outer reference as in the case with GPDB 4/5
   traceflag_bitset->ExchangeSet(EopttraceIndexedNLJOuterRefAsParams);
 
-  // enable using opfamilies in distribution specs for GPDB 6
-  traceflag_bitset->ExchangeSet(EopttraceConsiderOpfamiliesForDistribution);
-
   if (!optimizer_enable_right_outer_join) {
     // disable right outer join if the corresponding GUC is turned off
     traceflag_bitset->ExchangeSet(GPOPT_DISABLE_XFORM_TF(CXform::ExfLeftJoin2RightJoin));

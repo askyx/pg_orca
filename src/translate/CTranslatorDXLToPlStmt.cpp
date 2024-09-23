@@ -32,7 +32,6 @@ extern "C" {
 #include "gpos/common/CBitSet.h"
 #include "gpos/common/CBitSetIter.h"
 #include "naucrates/dxl/operators/CDXLDatumGeneric.h"
-#include "naucrates/dxl/operators/CDXLDirectDispatchInfo.h"
 #include "naucrates/dxl/operators/CDXLNode.h"
 #include "naucrates/dxl/operators/CDXLPhysicalAgg.h"
 #include "naucrates/dxl/operators/CDXLPhysicalAppend.h"
@@ -2706,8 +2705,6 @@ Plan *CTranslatorDXLToPlStmt::TranslateDXLDml(const CDXLNode *dml_dxlnode, CDXLT
   IMDId *mdid_target_table = phy_dml_dxlop->GetDXLTableDescr()->MDId();
   const IMDRelation *md_rel = m_md_accessor->RetrieveRel(mdid_target_table);
 
-
-
   if (CMD_UPDATE == m_cmd_type && gpdb::HasUpdateTriggers(CMDIdGPDB::CastMdid(mdid_target_table)->Oid())) {
     GPOS_RAISE(gpdxl::ExmaDXL, gpdxl::ExmiQuery2DXLUnsupportedFeature,
                GPOS_WSZ_LIT("UPDATE on a table with UPDATE triggers"));
@@ -3466,14 +3463,6 @@ void CTranslatorDXLToPlStmt::TranslateHashExprList(const CDXLNode *hash_expr_lis
   }
 
   List *hash_expr_opfamilies = NIL;
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-    for (uint32_t ul = 0; ul < arity; ul++) {
-      CDXLNode *hash_expr_dxlnode = (*hash_expr_list_dxlnode)[ul];
-      CDXLScalarHashExpr *hash_expr_dxlop = CDXLScalarHashExpr::Cast(hash_expr_dxlnode->GetOperator());
-      const IMDId *opfamily = hash_expr_dxlop->MdidOpfamily();
-      hash_expr_opfamilies = gpdb::LAppendOid(hash_expr_opfamilies, CMDIdGPDB::CastMdid(opfamily)->Oid());
-    }
-  }
 
   *hash_expr_out_list = hash_expr_list;
   *hash_expr_opfamilies_out_list = hash_expr_opfamilies;
@@ -3527,25 +3516,6 @@ void CTranslatorDXLToPlStmt::TranslateSortCols(const CDXLNode *sort_col_list_dxl
 Cost CTranslatorDXLToPlStmt::CostFromStr(const CWStringBase *str) {
   CHAR *sz = CTranslatorUtils::CreateMultiByteCharStringFromWCString(str->GetBuffer());
   return gpos::clib::Strtod(sz);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorDXLToPlStmt::IsTgtTblDistributed
-//
-//	@doc:
-//		Check if given operator is a DML on a distributed table
-//
-//---------------------------------------------------------------------------
-bool CTranslatorDXLToPlStmt::IsTgtTblDistributed(CDXLOperator *dxlop) {
-  if (EdxlopPhysicalDML != dxlop->GetDXLOperator()) {
-    return false;
-  }
-
-  CDXLPhysicalDML *phy_dml_dxlop = CDXLPhysicalDML::Cast(dxlop);
-  IMDId *mdid = phy_dml_dxlop->GetDXLTableDescr()->MDId();
-
-  return IMDRelation::EreldistrCoordinatorOnly != m_md_accessor->RetrieveRel(mdid)->GetRelDistribution();
 }
 
 //---------------------------------------------------------------------------

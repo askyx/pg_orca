@@ -220,16 +220,13 @@ BOOL CPhysicalJoin::FHashJoinCompatible(CExpression *pexprPred,   // predicate i
 
   CExpression *pexprPredOuter = nullptr;
   CExpression *pexprPredInner = nullptr;
-  IMDId *mdid_scop = nullptr;
   if (CPredicateUtils::IsEqualityOp(pexprPred)) {
     pexprPredOuter = (*pexprPred)[0];
     pexprPredInner = (*pexprPred)[1];
-    mdid_scop = CScalarCmp::PopConvert(pexprPred->Pop())->MdIdOp();
   } else if (CPredicateUtils::FINDF(pexprPred)) {
     CExpression *pexpr = (*pexprPred)[0];
     pexprPredOuter = (*pexpr)[0];
     pexprPredInner = (*pexpr)[1];
-    mdid_scop = CScalarIsDistinctFrom::PopConvert(pexpr->Pop())->MdIdOp();
   } else {
     return false;
   }
@@ -238,11 +235,6 @@ BOOL CPhysicalJoin::FHashJoinCompatible(CExpression *pexprPred,   // predicate i
   IMDId *pmdidTypeInner = CScalar::PopConvert(pexprPredInner->Pop())->MdidType();
 
   CMDAccessor *md_accessor = COptCtxt::PoctxtFromTLS()->Pmda();
-
-  const IMDScalarOp *scop = md_accessor->RetrieveScOp(mdid_scop);
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution) && nullptr == scop->HashOpfamilyMdid()) {
-    return false;
-  }
 
   // This check is mainly added for RANGE TYPES; RANGE's are treated as
   // containers and whether a range type can support hashing is decided
@@ -273,13 +265,11 @@ BOOL CPhysicalJoin::FMergeJoinCompatible(CExpression *pexprPred,   // predicate 
 
   CExpression *pexprPredOuter = nullptr;
   CExpression *pexprPredInner = nullptr;
-  IMDId *mdid_scop = nullptr;
 
   // Only merge join between ScalarIdents of the same types is currently supported
   if (CPredicateUtils::FEqIdentsOfSameType(pexprPred)) {
     pexprPredOuter = (*pexprPred)[0];
     pexprPredInner = (*pexprPred)[1];
-    mdid_scop = CScalarCmp::PopConvert(pexprPred->Pop())->MdIdOp();
     GPOS_ASSERT(CUtils::FScalarIdent(pexprPredOuter));
     GPOS_ASSERT(CUtils::FScalarIdent(pexprPredInner));
   } else {
@@ -290,23 +280,6 @@ BOOL CPhysicalJoin::FMergeJoinCompatible(CExpression *pexprPred,   // predicate 
   IMDId *pmdidTypeInner = CScalar::PopConvert(pexprPredInner->Pop())->MdidType();
 
   CMDAccessor *mda = COptCtxt::PoctxtFromTLS()->Pmda();
-
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-    const IMDScalarOp *op = mda->RetrieveScOp(mdid_scop);
-    const IMDType *left_type = mda->RetrieveType(pmdidTypeOuter);
-    const IMDType *right_type = mda->RetrieveType(pmdidTypeInner);
-
-    // MJ sends Sort requests whose btree opclass must match that of the join
-    // clause. ORCA currently doesn't have support to retrive the information
-    // to send such requests.
-    // So, check that hash family used for distribution matches the default for
-    // its operands' types. This must match the operator using in
-    // CPhysicalFullMergeJoin::PosRequired().
-    if (!CUtils::Equals(op->HashOpfamilyMdid(), left_type->GetDistrOpfamilyMdid()) ||
-        !CUtils::Equals(op->HashOpfamilyMdid(), right_type->GetDistrOpfamilyMdid())) {
-      return false;
-    }
-  }
 
   // MJ sends a distribution request for merge clauses on both sides, they
   // must, therefore, be hashable and merge joinable.

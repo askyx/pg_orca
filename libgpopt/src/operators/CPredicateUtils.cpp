@@ -1284,8 +1284,7 @@ CExpression *CPredicateUtils::PexprExtractPredicatesOnPartKeys(CMemoryPool *mp, 
       // The trace flag is ONLY used here to pass the icw tests,
       // due to the difficulty in reverse engineering a bunch of
       // mdp tests that don't include the original query.
-      if (!GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution) ||
-          FOpInOpfamily(colref, pexprCmp, IMDIndex::EmdindBtree)) {
+      if (FOpInOpfamily(colref, pexprCmp, IMDIndex::EmdindBtree)) {
         // operator has to belong to the column's btree (partition) opfamily
         pexprCmp->AddRef();
         pdrgpexpr->Append(pexprCmp);
@@ -1343,10 +1342,8 @@ BOOL CPredicateUtils::FOpInOpfamily(IMDId *col_mdid, CExpression *pexpr, IMDInde
 
     // retieve column's opfamily
     const IMDType *col_type = mda->RetrieveType(col_mdid);
-    const IMDId *col_dist_opfamily = nullptr, *col_part_opfamily = nullptr;
-    if (IMDIndex::EmdindHash == access_method) {
-      col_dist_opfamily = col_type->GetDistrOpfamilyMdid();
-    } else if (IMDIndex::EmdindBtree == access_method) {
+    const IMDId *col_part_opfamily = nullptr;
+    if (IMDIndex::EmdindBtree == access_method) {
       col_part_opfamily = col_type->GetPartOpfamilyMdid();
     } else {
       GPOS_ASSERT(IMDIndex::EmdindSentinel == access_method);
@@ -1356,7 +1353,6 @@ BOOL CPredicateUtils::FOpInOpfamily(IMDId *col_mdid, CExpression *pexpr, IMDInde
       // used for distribution or partition. We aim to be
       // as specific as possible in the caller function.
       // Here we have to be open to both options.
-      col_dist_opfamily = col_type->GetDistrOpfamilyMdid();
       col_part_opfamily = col_type->GetPartOpfamilyMdid();
     }
 
@@ -1380,7 +1376,7 @@ BOOL CPredicateUtils::FOpInOpfamily(IMDId *col_mdid, CExpression *pexpr, IMDInde
       IMDId *op_opfamily = op->OpfamilyMdidAt(ul);
 
       // Return true if either hash or btree opfamily matches
-      if (CUtils::Equals(op_opfamily, col_dist_opfamily) || CUtils::Equals(op_opfamily, col_part_opfamily)) {
+      if (CUtils::Equals(op_opfamily, col_part_opfamily)) {
         return true;
       }
     }

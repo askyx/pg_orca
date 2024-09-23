@@ -64,8 +64,7 @@ class CMDTypeInt8GPDB : public IMDTypeInt8 {
 
   // type id
   IMDId *m_mdid;
-  IMDId *m_distr_opfamily;
-  IMDId *m_legacy_distr_opfamily;
+
   IMDId *m_part_opfamily;
 
   // mdids of different operators
@@ -119,8 +118,6 @@ class CMDTypeInt8GPDB : public IMDTypeInt8 {
   // type id
   IMDId *MDId() const override;
 
-  IMDId *GetDistrOpfamilyMdid() const override;
-
   IMDId *GetPartOpfamilyMdid() const override;
 
   // type name
@@ -131,8 +128,6 @@ class CMDTypeInt8GPDB : public IMDTypeInt8 {
 
   // id of specified specified aggregate type
   IMDId *GetMdidForAggType(EAggType agg_type) const override;
-
-  BOOL IsRedistributable() const override { return true; }
 
   BOOL IsFixedLength() const override { return true; }
 

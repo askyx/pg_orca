@@ -17,14 +17,6 @@
 using namespace gpdxl;
 using namespace gpmd;
 
-//---------------------------------------------------------------------------
-//	@function:
-//		IMDRelation::GetDistrPolicyStr
-//
-//	@doc:
-//		Return relation distribution policy as a string value
-//
-//---------------------------------------------------------------------------
 const CWStringConst* IMDIndex::GetDXLStr(EmdindexType index_type) {
   switch (index_type) {
     case EmdindBtree:

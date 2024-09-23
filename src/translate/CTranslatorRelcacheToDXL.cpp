@@ -410,34 +410,6 @@ IMDCacheObject *CTranslatorRelcacheToDXL::RetrieveExtStatsInfo(CMemoryPool *mp, 
 
 //---------------------------------------------------------------------------
 //	@function:
-//		get_ao_version
-//
-//	@doc:
-//		Retrieve a relation's AORelationVersion. If table is partitioned then
-//		return the lowest AORelationVersion from all children. If table is not
-//		AO table (e.g. heap table) or a partitioned table that does not contain
-//		an AO table then return AORelationVersion_None.
-//
-//---------------------------------------------------------------------------
-static IMDRelation::Erelaoversion get_ao_version(gpdb::RelationWrapper &rel) {
-  // partitioned table - return lowest version of child partitions
-  if (gpdb::GPDBRelationRetrievePartitionDesc(rel.get())) {
-    IMDRelation::Erelaoversion low_ao_version = IMDRelation::MaxAORelationVersion;
-    for (int i = 0; i < gpdb::GPDBRelationRetrievePartitionDesc(rel.get())->nparts; i++) {
-      gpdb::RelationWrapper child_rel = gpdb::GetRelation(gpdb::GPDBRelationRetrievePartitionDesc(rel.get())->oids[i]);
-      IMDRelation::Erelaoversion child_low_version = get_ao_version(child_rel);
-      if (child_low_version < low_ao_version && child_low_version != IMDRelation::AORelationVersion_None) {
-        low_ao_version = child_low_version;
-      }
-    }
-    return low_ao_version;
-  }
-
-  return IMDRelation::AORelationVersion_None;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		CTranslatorRelcacheToDXL::RetrieveRel
 //
 //	@doc:
@@ -458,11 +430,7 @@ IMDRelation *CTranslatorRelcacheToDXL::RetrieveRel(CMemoryPool *mp, CMDAccessor 
 
   CMDName *mdname = nullptr;
   IMDRelation::Erelstoragetype rel_storage_type = IMDRelation::ErelstorageSentinel;
-  IMDRelation::Erelaoversion rel_ao_version = IMDRelation::AORelationVersion_None;
   CMDColumnArray *mdcol_array = nullptr;
-  IMDRelation::Ereldistrpolicy dist = IMDRelation::EreldistrSentinel;
-  ULongPtrArray *distr_cols = nullptr;
-  IMdIdArray *distr_op_families = nullptr;
   CMDIndexInfoArray *md_index_info_array = nullptr;
   ULongPtrArray *part_keys = nullptr;
   CharPtrArray *part_types = nullptr;
@@ -480,9 +448,6 @@ IMDRelation *CTranslatorRelcacheToDXL::RetrieveRel(CMemoryPool *mp, CMDAccessor 
 
   // get storage type
   rel_storage_type = RetrieveRelStorageType(rel.get());
-
-  // get append only table version
-  rel_ao_version = get_ao_version(rel);
 
   // get relation columns
   mdcol_array = RetrieveRelColumns(mp, md_accessor, rel.get());
@@ -515,7 +480,7 @@ IMDRelation *CTranslatorRelcacheToDXL::RetrieveRel(CMemoryPool *mp, CMDAccessor 
 
   // get key sets
   BOOL should_add_default_keys = RelHasSystemColumns(rel->rd_rel->relkind);
-  keyset_array = RetrieveRelKeysets(mp, oid, should_add_default_keys, is_partitioned, attno_mapping, dist);
+  keyset_array = RetrieveRelKeysets(mp, oid, should_add_default_keys, is_partitioned, attno_mapping);
 
   // collect all check constraints
   check_constraint_mdids = RetrieveRelCheckConstraints(mp, oid);
@@ -539,10 +504,10 @@ IMDRelation *CTranslatorRelcacheToDXL::RetrieveRel(CMemoryPool *mp, CMDAccessor 
     foreign_server_mdid = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, gpdb::GetForeignServerId(oid));
   }
 
-  md_rel = GPOS_NEW(mp) CMDRelationGPDB(
-      mp, mdid, mdname, is_temporary, rel_storage_type, rel_ao_version, dist, mdcol_array, distr_cols,
-      distr_op_families, part_keys, part_types, partition_oids, convert_hash_to_random, keyset_array,
-      md_index_info_array, check_constraint_mdids, mdpart_constraint, foreign_server_mdid, rel->rd_rel->reltuples);
+  md_rel = GPOS_NEW(mp)
+      CMDRelationGPDB(mp, mdid, mdname, is_temporary, rel_storage_type, mdcol_array, part_keys, part_types,
+                      partition_oids, convert_hash_to_random, keyset_array, md_index_info_array, check_constraint_mdids,
+                      mdpart_constraint, foreign_server_mdid, rel->rd_rel->reltuples);
 
   return md_rel;
 }
@@ -933,15 +898,6 @@ IMDType *CTranslatorRelcacheToDXL::RetrieveType(CMemoryPool *mp, IMDId *mdid) {
   // get array type mdid
   CMDIdGPDB *mdid_type_array = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, gpdb::GetArrayType(oid_type));
 
-  OID distr_opfamily = gpdb::GetDefaultDistributionOpfamilyForType(oid_type);
-
-  BOOL is_redistributable = false;
-  CMDIdGPDB *mdid_distr_opfamily = nullptr;
-  if (distr_opfamily != InvalidOid) {
-    mdid_distr_opfamily = GPOS_NEW(mp) CMDIdGPDB(IMDId::EmdidGeneral, distr_opfamily);
-    is_redistributable = true;
-  }
-
   OID part_opfamily = gpdb::GetDefaultPartitionOpfamilyForType(oid_type);
   CMDIdGPDB *mdid_part_opfamily = nullptr;
   if (part_opfamily != InvalidOid) {
@@ -949,11 +905,11 @@ IMDType *CTranslatorRelcacheToDXL::RetrieveType(CMemoryPool *mp, IMDId *mdid) {
   }
 
   mdid->AddRef();
-  return GPOS_NEW(mp) CMDTypeGenericGPDB(
-      mp, mdid, mdname, is_redistributable, is_fixed_length, length, is_passed_by_value, mdid_distr_opfamily, nullptr,
-      mdid_part_opfamily, mdid_op_eq, mdid_op_neq, mdid_op_lt, mdid_op_leq, mdid_op_gt, mdid_op_geq, mdid_op_cmp,
-      mdid_min, mdid_max, mdid_avg, mdid_sum, mdid_count, is_hashable, is_merge_joinable, is_composite_type,
-      is_text_related_type, mdid_type_relid, mdid_type_array, ptce->typlen);
+  return GPOS_NEW(mp)
+      CMDTypeGenericGPDB(mp, mdid, mdname, is_fixed_length, length, is_passed_by_value, mdid_part_opfamily, mdid_op_eq,
+                         mdid_op_neq, mdid_op_lt, mdid_op_leq, mdid_op_gt, mdid_op_geq, mdid_op_cmp, mdid_min, mdid_max,
+                         mdid_avg, mdid_sum, mdid_count, is_hashable, is_merge_joinable, is_composite_type,
+                         is_text_related_type, mdid_type_relid, mdid_type_array, ptce->typlen);
 }
 
 //---------------------------------------------------------------------------
@@ -2096,8 +2052,7 @@ ULONG *CTranslatorRelcacheToDXL::ConstructAttnoMapping(CMemoryPool *mp, CMDColum
 //
 //---------------------------------------------------------------------------
 ULongPtr2dArray *CTranslatorRelcacheToDXL::RetrieveRelKeysets(CMemoryPool *mp, OID oid, BOOL should_add_default_keys,
-                                                              BOOL is_partitioned, ULONG *attno_mapping,
-                                                              IMDRelation::Ereldistrpolicy rel_distr_policy) {
+                                                              BOOL is_partitioned, ULONG *attno_mapping) {
   ULongPtr2dArray *key_sets = GPOS_NEW(mp) ULongPtr2dArray(mp);
 
   List *rel_keys = gpdb::GetRelationKeys(oid);
@@ -2123,7 +2078,7 @@ ULongPtr2dArray *CTranslatorRelcacheToDXL::RetrieveRelKeysets(CMemoryPool *mp, O
   // 2. Skip addition of {segid, ctid} as a key for replicated table,
   // as same data is present across segments thus seg_id,
   // will not help in defining a unique tuple.
-  if (should_add_default_keys && IMDRelation::EreldistrReplicated != rel_distr_policy) {
+  if (should_add_default_keys) {
     ULongPtrArray *key_set = GPOS_NEW(mp) ULongPtrArray(mp);
     if (is_partitioned) {
       // TableOid is part of default key for partitioned tables

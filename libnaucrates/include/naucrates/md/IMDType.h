@@ -69,8 +69,6 @@ class IMDType : public IMDCacheObject {
   // object type
   Emdtype MDType() const override { return EmdtType; }
 
-  virtual IMDId *GetDistrOpfamilyMdid() const = 0;
-
   virtual IMDId *GetPartOpfamilyMdid() const = 0;
 
   // md id of cache object
@@ -90,9 +88,6 @@ class IMDType : public IMDCacheObject {
 
   // type is merge joinable on '='
   virtual BOOL IsMergeJoinable() const = 0;
-
-  // is type redistributable
-  virtual BOOL IsRedistributable() const = 0;
 
   // id of the array type for the type
   virtual IMDId *GetArrayTypeMdid() const = 0;

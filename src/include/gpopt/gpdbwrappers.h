@@ -304,14 +304,10 @@ bool HeapAttIsNull(HeapTuple tup, int attnum);
 // free heap tuple
 void FreeHeapTuple(HeapTuple htup);
 
-// get the default hash opclass for type
-Oid GetDefaultDistributionOpclassForType(Oid typid);
-
 // get the column-definition hash opclass for type
 Oid GetColumnDefOpclassForType(List *opclassName, Oid typid);
 
 // get the default hash opfamily for type
-Oid GetDefaultDistributionOpfamilyForType(Oid typid);
 Oid GetDefaultPartitionOpfamilyForType(Oid typid);
 
 // get the hash function in an opfamily for given datatype

@@ -465,12 +465,7 @@ void CGroup::SetJoinKeys(CExpressionArray *pdrgpexprOuter, CExpressionArray *pdr
   pdrgpexprInner->AddRef();
   m_pdrgpexprJoinKeysInner = pdrgpexprInner;
 
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-    GPOS_ASSERT(join_opfamilies != nullptr);
-    join_opfamilies->AddRef();
-  } else {
-    GPOS_ASSERT(nullptr == join_opfamilies);
-  }
+  GPOS_ASSERT(nullptr == join_opfamilies);
   m_join_opfamilies = join_opfamilies;
 }
 

@@ -46,7 +46,6 @@ extern "C" {
 #include "gpopt/translate/CTranslatorUtils.h"
 #include "gpopt/translate/plan_generator.h"
 #include "gpopt/utils/CConstExprEvaluatorProxy.h"
-#include "gpopt/utils/gpdbdefs.h"
 #include "gpopt/xforms/CXformFactory.h"
 #include "gpos/_api.h"
 #include "gpos/base.h"
@@ -382,9 +381,6 @@ void *COptTasks::OptimizeTask(void *ptr) {
   void *plan_dxl = nullptr;
   bool flag = GPOS_CONDIF(enable_new_planner_generation);
 
-  IMdIdArray *col_stats = nullptr;
-  MdidHashSet *rel_stats = nullptr;
-
   GPOS_TRY {
     // set trace flags
     trace_flags = CConfigParamMapping::PackConfigParamInBitset(mp, CXform::ExfSentinel);
@@ -455,16 +451,6 @@ void *COptTasks::OptimizeTask(void *ptr) {
         }
       }
 
-      CStatisticsConfig *stats_conf = optimizer_config->GetStatsConf();
-      col_stats = GPOS_NEW(mp) IMdIdArray(mp);
-      stats_conf->CollectMissingStatsColumns(col_stats);
-
-      rel_stats = GPOS_NEW(mp) MdidHashSet(mp);
-      PrintMissingStatsWarning(mp, &mda, col_stats, rel_stats);
-
-      rel_stats->Release();
-      col_stats->Release();
-
       expr_evaluator->Release();
       query_dxl->Release();
       optimizer_config->Release();
@@ -474,8 +460,6 @@ void *COptTasks::OptimizeTask(void *ptr) {
   }
   GPOS_CATCH_EX(ex) {
     ResetTraceflags(enabled_trace_flags, disabled_trace_flags);
-    CRefCount::SafeRelease(rel_stats);
-    CRefCount::SafeRelease(col_stats);
     CRefCount::SafeRelease(enabled_trace_flags);
     CRefCount::SafeRelease(disabled_trace_flags);
     CRefCount::SafeRelease(trace_flags);
@@ -502,65 +486,6 @@ void *COptTasks::OptimizeTask(void *ptr) {
   }
 
   return nullptr;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		COptTasks::PrintMissingStatsWarning
-//
-//	@doc:
-//		Print warning messages for columns with missing statistics
-//
-//---------------------------------------------------------------------------
-void COptTasks::PrintMissingStatsWarning(CMemoryPool *mp, CMDAccessor *md_accessor, IMdIdArray *col_stats,
-                                         MdidHashSet *rel_stats) {
-  GPOS_ASSERT(nullptr != md_accessor);
-  GPOS_ASSERT(nullptr != col_stats);
-  GPOS_ASSERT(nullptr != rel_stats);
-
-  CWStringDynamic wcstr(mp);
-  COstreamString oss(&wcstr);
-
-  const uint32_t num_missing_col_stats = col_stats->Size();
-  for (uint32_t ul = 0; ul < num_missing_col_stats; ul++) {
-    IMDId *mdid = (*col_stats)[ul];
-    CMDIdColStats *mdid_col_stats = CMDIdColStats::CastMdid(mdid);
-
-    IMDId *rel_mdid = mdid_col_stats->GetRelMdId();
-    const uint32_t pos = mdid_col_stats->Position();
-    const IMDRelation *rel = md_accessor->RetrieveRel(rel_mdid);
-
-    if (IMDRelation::ErelstorageForeign != rel->RetrieveRelStorageType()) {
-      if (!rel_stats->Contains(rel_mdid)) {
-        if (0 != ul) {
-          oss << ", ";
-        }
-
-        rel_mdid->AddRef();
-        rel_stats->Insert(rel_mdid);
-        oss << rel->Mdname().GetMDName()->GetBuffer();
-      }
-
-      CMDName mdname = rel->GetMdCol(pos)->Mdname();
-
-      char msgbuf[NAMEDATALEN * 2 + 100];
-      snprintf(msgbuf, sizeof(msgbuf), "Missing statistics for column: %s.%s",
-               CreateMultiByteCharStringFromWCString(rel->Mdname().GetMDName()->GetBuffer()),
-               CreateMultiByteCharStringFromWCString(mdname.GetMDName()->GetBuffer()));
-      GpdbEreport(ERRCODE_SUCCESSFUL_COMPLETION, LOG, msgbuf, nullptr);
-    }
-  }
-
-  if (0 < rel_stats->Size()) {
-    int length = NAMEDATALEN * rel_stats->Size() + 200;
-    char msgbuf[length];
-    snprintf(msgbuf, sizeof(msgbuf), "One or more columns in the following table(s) do not have statistics: %s",
-             CreateMultiByteCharStringFromWCString(wcstr.GetBuffer()));
-    GpdbEreport(ERRCODE_SUCCESSFUL_COMPLETION, NOTICE, msgbuf,
-                "For non-partitioned tables, run analyze <table_name>(<column_list>)."
-                " For partitioned tables, run analyze rootpartition <table_name>(<column_list>)."
-                " See log for columns missing statistics.");
-  }
 }
 
 //---------------------------------------------------------------------------

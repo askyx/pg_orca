@@ -504,23 +504,6 @@ CConstraintInterval *CConstraintInterval::PciIntervalFromScalarCmp(CMemoryPool *
   // TODO:  - May 28, 2012; add support for other expression forms
   // besides (column relop const)
   if (CPredicateUtils::FCompareIdentToConst(pexpr)) {
-    // For a const predicate to be converted to an interval, the operator
-    // has to belong to the ident's opfamily and const's opfamily. Note
-    // here we don't differentiate the ident and const sides. This is
-    // because the opfamily check runs the same code path for ident and
-    // const expressions. In practice, we should mostly see the expression
-    // in the form of `ident op const` here, cause preprocessor flips
-    // `const op ident` whenever the operator is commutative.
-    if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-      CExpression *pexprLeft = (*pexpr)[0];
-      CExpression *pexprRight = (*pexpr)[1];
-
-      if (!CPredicateUtils::FOpInOpfamily(pexprLeft, pexpr, access_method) ||
-          !CPredicateUtils::FOpInOpfamily(pexprRight, pexpr, access_method)) {
-        return nullptr;
-      }
-    }
-
     // column
 #ifdef GPOS_DEBUG
     CScalarIdent *popScId;

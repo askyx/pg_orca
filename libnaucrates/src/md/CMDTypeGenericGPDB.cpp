@@ -41,9 +41,8 @@ using namespace gpmd;
 //		Ctor
 //
 //---------------------------------------------------------------------------
-CMDTypeGenericGPDB::CMDTypeGenericGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, BOOL is_redistributable,
-                                       BOOL is_fixed_length, ULONG length GPOS_ASSERTS_ONLY, BOOL is_passed_by_value,
-                                       IMDId *mdid_distr_opfamily, IMDId *mdid_legacy_distr_opfamily,
+CMDTypeGenericGPDB::CMDTypeGenericGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, BOOL is_fixed_length,
+                                       ULONG length GPOS_ASSERTS_ONLY, BOOL is_passed_by_value,
                                        IMDId *mdid_part_opfamily, IMDId *mdid_op_eq, IMDId *mdid_op_neq,
                                        IMDId *mdid_op_lt, IMDId *mdid_op_leq, IMDId *mdid_op_gt, IMDId *mdid_op_geq,
                                        IMDId *mdid_op_cmp, IMDId *mdid_op_min, IMDId *mdid_op_max, IMDId *mdid_op_avg,
@@ -53,14 +52,11 @@ CMDTypeGenericGPDB::CMDTypeGenericGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *md
     : m_mp(mp),
       m_mdid(mdid),
       m_mdname(mdname),
-      m_is_redistributable(is_redistributable),
       m_is_fixed_length(is_fixed_length),
 #ifdef GPOS_DEBUG
       m_length(length),
 #endif
       m_is_passed_by_value(is_passed_by_value),
-      m_distr_opfamily(mdid_distr_opfamily),
-      m_legacy_distr_opfamily(mdid_legacy_distr_opfamily),
       m_part_opfamily(mdid_part_opfamily),
       m_mdid_op_eq(mdid_op_eq),
       m_mdid_op_neq(mdid_op_neq),
@@ -100,8 +96,7 @@ CMDTypeGenericGPDB::CMDTypeGenericGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *md
 //---------------------------------------------------------------------------
 CMDTypeGenericGPDB::~CMDTypeGenericGPDB() {
   m_mdid->Release();
-  CRefCount::SafeRelease(m_distr_opfamily);
-  CRefCount::SafeRelease(m_legacy_distr_opfamily);
+
   CRefCount::SafeRelease(m_part_opfamily);
   m_mdid_op_eq->Release();
   m_mdid_op_neq->Release();
@@ -453,26 +448,8 @@ BOOL CMDTypeGenericGPDB::IsNetworkRelatedType(const IMDId *mdid) {
          mdid->Equals(&CMDIdGPDB::m_mdid_macaddr);
 }
 
-IMDId *CMDTypeGenericGPDB::GetDistrOpfamilyMdid() const {
-  if (GPOS_FTRACE(EopttraceUseLegacyOpfamilies)) {
-    return m_legacy_distr_opfamily;
-  } else {
-    return m_distr_opfamily;
-  }
-}
-
 IMDId *CMDTypeGenericGPDB::GetPartOpfamilyMdid() const {
   return m_part_opfamily;
-}
-
-BOOL CMDTypeGenericGPDB::IsRedistributable() const {
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution) && GPOS_FTRACE(EopttraceUseLegacyOpfamilies)) {
-    return (nullptr != m_legacy_distr_opfamily);
-  }
-  // If EopttraceConsiderOpfamiliesForDistribution is set, m_is_redistributable
-  // is redundant. It's still used here for MDP tests where the traceflag is
-  // unset and/or opfamilies are not available for all types.
-  return m_is_redistributable;
 }
 
 #ifdef GPOS_DEBUG

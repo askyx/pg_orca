@@ -25,14 +25,6 @@ using namespace gpopt;
 BOOL CXformJoin2IndexApplyGeneric::FCanLeftOuterIndexApply(CMemoryPool *mp, CExpression *pexprInner,
                                                            CExpression *pexprScalar, CTableDescriptor *ptabDesc,
                                                            const CColRefSet *pcrsDist) {
-  IMDRelation::Ereldistrpolicy ereldist = ptabDesc->GetRelDistribution();
-
-  if (ereldist == IMDRelation::EreldistrRandom) {
-    return false;
-  } else if (ereldist == IMDRelation::EreldistrCoordinatorOnly) {
-    return true;
-  }
-
   // now consider hash distributed table
   CColRefSet *pcrsInnerOutput = pexprInner->DeriveOutputColumns();
   CColRefSet *pcrsScalarExpr = pexprScalar->DeriveUsedColumns();
@@ -233,9 +225,7 @@ void CXformJoin2IndexApplyGeneric::Transform(CXformContext *pxfctxt, CXformResul
           return;
         }
 
-        if (nullptr != groupingColsToCheck.Value() &&
-            (!groupingColsToCheck->ContainsAll(distributionCols) ||
-             ptabdescInner->GetRelDistribution() == IMDRelation::EreldistrRandom)) {
+        if (nullptr != groupingColsToCheck.Value() && (!groupingColsToCheck->ContainsAll(distributionCols))) {
           // the grouping columns are not a superset of the distribution columns,
           // or distribution columns are empty when the table is randomly distributed
           return;

@@ -52,20 +52,11 @@ class CTableDescriptor : public CRefCount {
   // array of columns
   CColumnDescriptorArray *m_pdrgpcoldesc;
 
-  // distribution policy
-  IMDRelation::Ereldistrpolicy m_rel_distr_policy;
-
   // storage type
   IMDRelation::Erelstoragetype m_erelstoragetype;
 
-  // append only table version
-  IMDRelation::Erelaoversion m_erelaoversion;
-
   // distribution columns for hash distribution
   CColumnDescriptorArray *m_pdrgpcoldescDist;
-
-  // Opfamily used for hash distribution
-  IMdIdArray *m_distr_opfamilies;
 
   // if true, we need to consider a hash distributed table as random
   // there are two possible scenarios:
@@ -100,9 +91,8 @@ class CTableDescriptor : public CRefCount {
 
   // ctor
   CTableDescriptor(CMemoryPool *, IMDId *mdid, const CName &, BOOL convert_hash_to_random,
-                   IMDRelation::Ereldistrpolicy rel_distr_policy, IMDRelation::Erelstoragetype erelstoragetype,
-                   IMDRelation::Erelaoversion erelaoversion, uint32_t ulExecuteAsUser, INT lockmode, uint32_t acl_mode,
-                   uint32_t assigned_query_id_for_target_rel);
+                   IMDRelation::Erelstoragetype erelstoragetype, uint32_t ulExecuteAsUser, INT lockmode,
+                   uint32_t acl_mode, uint32_t assigned_query_id_for_target_rel);
 
   // dtor
   ~CTableDescriptor() override;
@@ -145,23 +135,14 @@ class CTableDescriptor : public CRefCount {
   // distribution column descriptors accessor
   const CColumnDescriptorArray *PdrgpcoldescDist() const { return m_pdrgpcoldescDist; }
 
-  // distribution column descriptors accessor
-  const IMdIdArray *DistrOpfamilies() const { return m_distr_opfamilies; }
-
   // partition column indexes accessor
   const ULongPtrArray *PdrgpulPart() const { return m_pdrgpulPart; }
 
   // array of key sets
   const CBitSetArray *PdrgpbsKeys() const { return m_pdrgpbsKeys; }
 
-  // distribution policy
-  IMDRelation::Ereldistrpolicy GetRelDistribution() const { return m_rel_distr_policy; }
-
   // storage type
   IMDRelation::Erelstoragetype RetrieveRelStorageType() const { return m_erelstoragetype; }
-
-  // append only table version
-  IMDRelation::Erelaoversion GetRelAOVersion() const { return m_erelaoversion; }
 
   BOOL IsPartitioned() const { return 0 < m_pdrgpulPart->Size(); }
 

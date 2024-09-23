@@ -36,8 +36,7 @@ static PlannedStmt *pg_planner(Query *parse, const char *query_string, int curso
   switch (parse->commandType) {
     case CMD_SELECT:
       try {
-        bool error;
-        return GPOPTOptimizedPlan(parse, &error, &config);
+        return CGPOptimizer::GPOPTOptimizedPlan(parse, &config);
       } catch (const std::exception &e) {
         elog(WARNING, "pg_orca Failed to plan query, get error: %s", e.what());
         return standard_planner(parse, query_string, cursorOptions, boundParams);

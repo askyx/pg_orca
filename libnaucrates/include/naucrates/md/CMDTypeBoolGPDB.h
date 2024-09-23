@@ -60,8 +60,7 @@ class CMDTypeBoolGPDB : public IMDTypeBool {
 
   // type id
   IMDId *m_mdid;
-  IMDId *m_distr_opfamily;
-  IMDId *m_legacy_distr_opfamily;
+
   IMDId *m_part_opfamily;
 
   // mdids of different operators
@@ -113,15 +112,10 @@ class CMDTypeBoolGPDB : public IMDTypeBool {
   // type id
   IMDId *MDId() const override;
 
-  IMDId *GetDistrOpfamilyMdid() const override;
-
   IMDId *GetPartOpfamilyMdid() const override;
 
   // type name
   CMDName Mdname() const override;
-
-  // is type redistributable
-  BOOL IsRedistributable() const override { return true; }
 
   // is type fixed length
   BOOL IsFixedLength() const override { return true; }

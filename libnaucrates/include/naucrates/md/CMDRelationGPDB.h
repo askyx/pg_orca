@@ -53,22 +53,11 @@ class CMDRelationGPDB : public IMDRelation {
   // storage type
   Erelstoragetype m_rel_storage_type;
 
-  // append only table version
-  Erelaoversion m_rel_ao_version;
-
-  // distribution policy
-  Ereldistrpolicy m_rel_distr_policy;
-
   // columns
   CMDColumnArray *m_md_col_array;
 
   // number of dropped columns
   ULONG m_dropped_cols;
-
-  // indices of distribution columns
-  ULongPtrArray *m_distr_col_array;
-
-  IMdIdArray *m_distr_opfamilies;
 
   // do we need to consider a hash distributed table as random distributed
   BOOL m_convert_hash_to_random;
@@ -121,12 +110,10 @@ class CMDRelationGPDB : public IMDRelation {
 
   // ctor
   CMDRelationGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, BOOL is_temp_table, Erelstoragetype rel_storage_type,
-                  Erelaoversion rel_ao_version, Ereldistrpolicy rel_distr_policy, CMDColumnArray *mdcol_array,
-                  ULongPtrArray *distr_col_array, IMdIdArray *distr_opfamilies, ULongPtrArray *partition_cols_array,
-                  CharPtrArray *str_part_types_array, IMdIdArray *partition_oids, BOOL convert_hash_to_random,
-                  ULongPtr2dArray *keyset_array, CMDIndexInfoArray *md_index_info_array,
-                  IMdIdArray *mdid_check_constraint_array, CDXLNode *mdpart_constraint, IMDId *foreign_server,
-                  CDouble rows);
+                  CMDColumnArray *mdcol_array, ULongPtrArray *partition_cols_array, CharPtrArray *str_part_types_array,
+                  IMdIdArray *partition_oids, BOOL convert_hash_to_random, ULongPtr2dArray *keyset_array,
+                  CMDIndexInfoArray *md_index_info_array, IMdIdArray *mdid_check_constraint_array,
+                  CDXLNode *mdpart_constraint, IMDId *foreign_server, CDouble rows);
 
   // dtor
   ~CMDRelationGPDB() override;
@@ -144,12 +131,6 @@ class CMDRelationGPDB : public IMDRelation {
 
   // storage type (heap, appendonly, ...)
   Erelstoragetype RetrieveRelStorageType() const override;
-
-  // append only table version
-  Erelaoversion GetRelAOVersion() const override;
-
-  // distribution policy (none, hash, random)
-  Ereldistrpolicy GetRelDistribution() const override;
 
   // number of columns
   ULONG ColumnCount() const override;
@@ -183,14 +164,6 @@ class CMDRelationGPDB : public IMDRelation {
 
   // key set at given position
   const ULongPtrArray *KeySetAt(ULONG pos) const override;
-
-  // number of distribution columns
-  ULONG DistrColumnCount() const override;
-
-  // retrieve the column at the given position in the distribution columns list for the relation
-  const IMDColumn *GetDistrColAt(ULONG pos) const override;
-
-  IMDId *GetDistrOpfamilyAt(ULONG pos) const override;
 
   // return true if a hash distributed table needs to be considered as random
   BOOL ConvertHashToRandom() const override;

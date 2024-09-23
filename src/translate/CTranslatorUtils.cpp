@@ -123,24 +123,6 @@ CDXLTableDescr *CTranslatorUtils::GetTableDescr(CMemoryPool *mp, CMDAccessor *md
 
   const uint32_t len = rel->ColumnCount();
 
-  IMDRelation::Ereldistrpolicy distribution_policy = rel->GetRelDistribution();
-
-  if (nullptr != is_distributed_table &&
-      (IMDRelation::EreldistrHash == distribution_policy || IMDRelation::EreldistrRandom == distribution_policy ||
-       IMDRelation::EreldistrReplicated == distribution_policy)) {
-    *is_distributed_table = true;
-  } else if (IMDRelation::ErelstorageForeign != rel->RetrieveRelStorageType() &&
-             !optimizer_enable_coordinator_only_queries &&
-             (IMDRelation::EreldistrCoordinatorOnly == distribution_policy)) {
-    // fall back to the planner for queries on coordinator-only table if they are disabled with Orca. This is due to
-    // the fact that catalog tables (coordinator-only) are not analyzed often and will result in Orca producing
-    // inferior plans.
-
-    GPOS_THROW_EXCEPTION(gpdxl::ExmaDXL,                          // major
-                         gpdxl::ExmiQuery2DXLUnsupportedFeature,  // minor
-                         GPOS_WSZ_LIT("Queries on coordinator-only tables"));
-  }
-
   // add columns from md cache relation object to table descriptor
   for (uint32_t ul = 0; ul < len; ul++) {
     const IMDColumn *md_col = rel->GetMdCol(ul);

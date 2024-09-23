@@ -57,9 +57,6 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   // type name
   CMDName *m_mdname;
 
-  // can type be redistributed based on non-legacy distr opfamily
-  BOOL m_is_redistributable;
-
   // is this a fixed-length type
   BOOL m_is_fixed_length;
 
@@ -71,10 +68,6 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
 
   // is type passed by value or by reference
   BOOL m_is_passed_by_value;
-
-  IMDId *m_distr_opfamily;
-
-  IMDId *m_legacy_distr_opfamily;
 
   IMDId *m_part_opfamily;
 
@@ -142,13 +135,12 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   CMDTypeGenericGPDB(const CMDTypeGenericGPDB &) = delete;
 
   // ctor
-  CMDTypeGenericGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, BOOL is_redistributable, BOOL is_fixed_length,
-                     ULONG length, BOOL is_passed_by_value, IMDId *mdid_distr_opfamily,
-                     IMDId *mdid_legacy_distr_opfamily, IMDId *mdid_part_opfamily, IMDId *mdid_op_eq,
-                     IMDId *mdid_op_neq, IMDId *mdid_op_lt, IMDId *mdid_op_leq, IMDId *mdid_op_gt, IMDId *mdid_op_geq,
-                     IMDId *mdid_op_cmp, IMDId *pmdidMin, IMDId *pmdidMax, IMDId *pmdidAvg, IMDId *pmdidSum,
-                     IMDId *pmdidCount, BOOL is_hashable, BOOL is_merge_joinable, BOOL is_composite_type,
-                     BOOL is_text_related, IMDId *mdid_base_relation, IMDId *mdid_type_array, INT gpdb_length);
+  CMDTypeGenericGPDB(CMemoryPool *mp, IMDId *mdid, CMDName *mdname, BOOL is_fixed_length, ULONG length,
+                     BOOL is_passed_by_value, IMDId *mdid_part_opfamily, IMDId *mdid_op_eq, IMDId *mdid_op_neq,
+                     IMDId *mdid_op_lt, IMDId *mdid_op_leq, IMDId *mdid_op_gt, IMDId *mdid_op_geq, IMDId *mdid_op_cmp,
+                     IMDId *pmdidMin, IMDId *pmdidMax, IMDId *pmdidAvg, IMDId *pmdidSum, IMDId *pmdidCount,
+                     BOOL is_hashable, BOOL is_merge_joinable, BOOL is_composite_type, BOOL is_text_related,
+                     IMDId *mdid_base_relation, IMDId *mdid_type_array, INT gpdb_length);
 
   // dtor
   ~CMDTypeGenericGPDB() override;
@@ -158,8 +150,6 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   IMDId *MDId() const override;
 
   CMDName Mdname() const override;
-
-  BOOL IsRedistributable() const override;
 
   BOOL IsFixedLength() const override { return m_is_fixed_length; }
 
@@ -191,8 +181,6 @@ class CMDTypeGenericGPDB : public IMDTypeGeneric {
   IMDId *GetBaseRelMdid() const override { return m_mdid_base_relation; }
 
   IMDId *GetArrayTypeMdid() const override { return m_mdid_type_array; }
-
-  IMDId *GetDistrOpfamilyMdid() const override;
 
   IMDId *GetPartOpfamilyMdid() const override;
 

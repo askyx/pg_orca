@@ -30,19 +30,14 @@ using namespace gpopt;
 //
 //---------------------------------------------------------------------------
 CTableDescriptor::CTableDescriptor(CMemoryPool *mp, IMDId *mdid, const CName &name, BOOL convert_hash_to_random,
-                                   IMDRelation::Ereldistrpolicy rel_distr_policy,
-                                   IMDRelation::Erelstoragetype erelstoragetype,
-                                   IMDRelation::Erelaoversion erelaoversion, ULONG ulExecuteAsUser, INT lockmode,
+                                   IMDRelation::Erelstoragetype erelstoragetype, ULONG ulExecuteAsUser, INT lockmode,
                                    ULONG acl_mode, ULONG assigned_query_id_for_target_rel)
     : m_mp(mp),
       m_mdid(mdid),
       m_name(mp, name),
       m_pdrgpcoldesc(nullptr),
-      m_rel_distr_policy(rel_distr_policy),
       m_erelstoragetype(erelstoragetype),
-      m_erelaoversion(erelaoversion),
       m_pdrgpcoldescDist(nullptr),
-      m_distr_opfamilies(nullptr),
       m_convert_hash_to_random(convert_hash_to_random),
       m_pdrgpulPart(nullptr),
       m_pdrgpbsKeys(nullptr),
@@ -57,9 +52,6 @@ CTableDescriptor::CTableDescriptor(CMemoryPool *mp, IMDId *mdid, const CName &na
   m_pdrgpcoldescDist = GPOS_NEW(m_mp) CColumnDescriptorArray(m_mp);
   m_pdrgpulPart = GPOS_NEW(m_mp) ULongPtrArray(m_mp);
   m_pdrgpbsKeys = GPOS_NEW(m_mp) CBitSetArray(m_mp);
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-    m_distr_opfamilies = GPOS_NEW(m_mp) IMdIdArray(m_mp);
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -77,7 +69,6 @@ CTableDescriptor::~CTableDescriptor() {
   m_pdrgpcoldescDist->Release();
   m_pdrgpulPart->Release();
   m_pdrgpbsKeys->Release();
-  CRefCount::SafeRelease(m_distr_opfamilies);
 }
 
 //---------------------------------------------------------------------------
@@ -173,14 +164,6 @@ void CTableDescriptor::AddDistributionColumn(ULONG ulPos, IMDId *opfamily) {
   pcoldesc->AddRef();
   m_pdrgpcoldescDist->Append(pcoldesc);
   pcoldesc->SetAsDistCol();
-
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-    GPOS_ASSERT(nullptr != opfamily && opfamily->IsValid());
-    opfamily->AddRef();
-    m_distr_opfamilies->Append(opfamily);
-
-    GPOS_ASSERT(m_pdrgpcoldescDist->Size() == m_distr_opfamilies->Size());
-  }
 }
 
 //---------------------------------------------------------------------------

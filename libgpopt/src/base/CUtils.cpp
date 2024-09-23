@@ -2552,24 +2552,6 @@ CUtils::UlCountOperator(const CExpression *pexpr, COperator::EOperatorId op_id) 
   return ulOpCnt;
 }
 
-// return the max subset of redistributable columns for the given columns
-CColRefArray *CUtils::PdrgpcrRedistributableSubset(CMemoryPool *mp, CColRefArray *colref_array) {
-  GPOS_ASSERT(nullptr != colref_array);
-  GPOS_ASSERT(0 < colref_array->Size());
-
-  CColRefArray *pdrgpcrRedist = GPOS_NEW(mp) CColRefArray(mp);
-  const ULONG size = colref_array->Size();
-  for (ULONG ul = 0; ul < size; ul++) {
-    CColRef *colref = (*colref_array)[ul];
-    const IMDType *pmdtype = colref->RetrieveType();
-    if (pmdtype->IsRedistributable()) {
-      pdrgpcrRedist->Append(colref);
-    }
-  }
-
-  return pdrgpcrRedist;
-}
-
 // check if hashing is possible for the given columns
 BOOL CUtils::IsHashable(CColRefArray *colref_array) {
   GPOS_ASSERT(nullptr != colref_array);

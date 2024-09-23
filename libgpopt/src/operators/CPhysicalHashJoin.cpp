@@ -50,12 +50,6 @@ CPhysicalHashJoin::CPhysicalHashJoin(CMemoryPool *mp, CExpressionArray *pdrgpexp
   GPOS_ASSERT(nullptr != pdrgpexprInnerKeys);
   GPOS_ASSERT(pdrgpexprOuterKeys->Size() == pdrgpexprInnerKeys->Size());
 
-  if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-    GPOS_ASSERT(nullptr != hash_opfamilies);
-    m_hash_opfamilies = hash_opfamilies;
-    GPOS_ASSERT(pdrgpexprOuterKeys->Size() == m_hash_opfamilies->Size());
-  }
-
   CreateOptRequests();
 }
 

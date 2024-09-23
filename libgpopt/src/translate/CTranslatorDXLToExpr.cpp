@@ -1713,20 +1713,14 @@ CTableDescriptor *CTranslatorDXLToExpr::Ptabdesc(CDXLTableDescr *table_descr) {
     ulPosNonDropped++;
   }
 
-  // get distribution policy
-  IMDRelation::Ereldistrpolicy rel_distr_policy = pmdrel->GetRelDistribution();
-
   // get storage type
   IMDRelation::Erelstoragetype rel_storage_type = pmdrel->RetrieveRelStorageType();
 
-  // get append only table version
-  IMDRelation::Erelaoversion rel_ao_version = pmdrel->GetRelAOVersion();
-
   mdid->AddRef();
-  CTableDescriptor *ptabdesc = GPOS_NEW(m_mp)
-      CTableDescriptor(m_mp, mdid, CName(m_mp, &strName), pmdrel->ConvertHashToRandom(), rel_distr_policy,
-                       rel_storage_type, rel_ao_version, table_descr->GetExecuteAsUserId(), table_descr->LockMode(),
-                       table_descr->GetAclMode(), table_descr->GetAssignedQueryIdForTargetRel());
+  CTableDescriptor *ptabdesc =
+      GPOS_NEW(m_mp) CTableDescriptor(m_mp, mdid, CName(m_mp, &strName), pmdrel->ConvertHashToRandom(),
+                                      rel_storage_type, table_descr->GetExecuteAsUserId(), table_descr->LockMode(),
+                                      table_descr->GetAclMode(), table_descr->GetAssignedQueryIdForTargetRel());
 
   const ULONG ulColumns = table_descr->Arity();
   for (ULONG ul = 0; ul < ulColumns; ul++) {
@@ -1754,10 +1748,6 @@ CTableDescriptor *CTranslatorDXLToExpr::Ptabdesc(CDXLTableDescr *table_descr) {
     ptabdesc->AddColumn(pcoldesc);
   }
 
-  if (IMDRelation::EreldistrHash == rel_distr_policy) {
-    AddDistributionColumns(ptabdesc, pmdrel, phmiulAttnoColMapping);
-  }
-
   if (pmdrel->IsPartitioned()) {
     const ULONG ulPartCols = pmdrel->PartColumnCount();
     // compute partition columns for table descriptor
@@ -1776,14 +1766,6 @@ CTableDescriptor *CTranslatorDXLToExpr::Ptabdesc(CDXLTableDescr *table_descr) {
   phmiulAttnoPosMapping->Release();
   phmiulAttnoColMapping->Release();
   phmululColMapping->Release();
-
-  if (IMDRelation::EreldistrCoordinatorOnly == rel_distr_policy) {
-    COptCtxt::PoctxtFromTLS()->SetHasCoordinatorOnlyTables();
-  }
-
-  if (IMDRelation::EreldistrReplicated == rel_distr_policy) {
-    COptCtxt::PoctxtFromTLS()->SetHasReplicatedTables();
-  }
 
   return ptabdesc;
 }
@@ -3186,38 +3168,6 @@ COrderSpec *CTranslatorDXLToExpr::Pos(const CDXLNode *dxlnode) {
   }
 
   return pos;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorDXLToExpr::AddDistributionColumns
-//
-//	@doc:
-// 		Add distribution column info from the MD relation to the table descriptor
-//
-//---------------------------------------------------------------------------
-void CTranslatorDXLToExpr::AddDistributionColumns(CTableDescriptor *ptabdesc, const IMDRelation *pmdrel,
-                                                  IntToUlongMap *phmiulAttnoColMapping) {
-  GPOS_ASSERT(nullptr != ptabdesc);
-  GPOS_ASSERT(nullptr != pmdrel);
-
-  // compute distribution columns for table descriptor
-  ULONG num_cols = pmdrel->DistrColumnCount();
-  for (ULONG ul = 0; ul < num_cols; ul++) {
-    const IMDColumn *pmdcol = pmdrel->GetDistrColAt(ul);
-    INT attno = pmdcol->AttrNum();
-    ULONG *pulPos = phmiulAttnoColMapping->Find(&attno);
-    GPOS_ASSERT(nullptr != pulPos);
-
-    IMDId *opfamily = nullptr;
-    if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-      opfamily = pmdrel->GetDistrOpfamilyAt(ul);
-      GPOS_ASSERT(nullptr != opfamily && opfamily->IsValid());
-      // opfamily->AddRef();
-    }
-
-    ptabdesc->AddDistributionColumn(*pulPos, opfamily);
-  }
 }
 
 void CTranslatorDXLToExpr::MarkUnknownColsAsUnused() {

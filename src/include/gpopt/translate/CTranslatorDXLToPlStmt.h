@@ -66,7 +66,6 @@ using namespace gpopt;
 
 // fwd decl
 class CDXLNode;
-class CDXLDirectDispatchInfo;
 
 //---------------------------------------------------------------------------
 //	@class:
@@ -368,9 +367,6 @@ class CTranslatorDXLToPlStmt {
 
   // parse string value into a Const
   static Cost CostFromStr(const CWStringBase *str);
-
-  // check if the given operator is a DML operator on a distributed table
-  bool IsTgtTblDistributed(CDXLOperator *dxlop);
 
   // add a target entry for a junk column with given colid to the target list
   static void AddJunkTargetEntryForColId(List **target_list, CDXLTranslateContext *dxl_translate_ctxt, ULONG colid,

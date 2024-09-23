@@ -10,38 +10,7 @@
 using Relation = struct RelationData *;
 
 namespace gpdb {
-/// \class
-/// A transparent RAII wrapper for a pointer to a Postgres RelationData.
-/// "Transparent" means that an object of this type can be used in most contexts
-/// that expect a Relation. The main advantage of using this wrapper is that it
-/// automatically closes the wrapper relation when exiting scope. So you no
-/// longer have to write code like this:
-/// \code
-/// void RetrieveRel(Oid reloid) {
-///     Relation rel = GetRelation(reloid);
-///     if (IsPartialDist(rel)) {
-///         CloseRelation(rel);
-///         GPOS_RAISE(...);
-///     }
-///     try {
-///         do_stuff();
-///         CloseRelation(rel);
-///     catch (...) {
-///         CloseRelation(rel);
-///         GPOS_RETHROW(...);
-///     }
-/// }
-/// \endcode
-/// and instead you can write this:
-/// \code
-/// void RetrieveRel(Oid reloid) {
-///     gpdb::RelationWrapper rel = GetRelation(reloid);
-///     if (IsPartialDist(rel.get())) {
-///         GPOS_RAISE(...);
-///     }
-///     do_stuff();
-/// }
-/// \endcode
+
 class RelationWrapper {
  public:
   RelationWrapper(RelationWrapper const &) = delete;

@@ -130,8 +130,7 @@ CIndexDescriptor *CIndexDescriptor::Pindexdesc(CMemoryPool *mp, const CTableDesc
 BOOL CIndexDescriptor::SupportsIndexOnlyScan(CTableDescriptor *ptabdesc) const {
   // index only scan is not supported on GPDB 6 append-only tables.
   return !((ptabdesc->IsAORowOrColTable() ||
-            IMDRelation::ErelstorageMixedPartitioned == ptabdesc->RetrieveRelStorageType()) &&
-           ptabdesc->GetRelAOVersion() < IMDRelation::AORelationVersion_GP7);
+            IMDRelation::ErelstorageMixedPartitioned == ptabdesc->RetrieveRelStorageType()));
 }
 
 //---------------------------------------------------------------------------

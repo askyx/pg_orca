@@ -19,7 +19,6 @@
 namespace gpdxl {
 // fwd decl
 class CDXLTableDescr;
-class CDXLDirectDispatchInfo;
 
 enum EdxlDmlType { Edxldmlinsert, Edxldmldelete, Edxldmlupdate, EdxldmlSentinel };
 
@@ -51,9 +50,6 @@ class CDXLPhysicalDML : public CDXLPhysical {
   // segmentid column id
   ULONG m_segid_colid;
 
-  // direct dispatch info for insert statements
-  CDXLDirectDispatchInfo *m_direct_dispatch_info;
-
   // Is Split Update
   BOOL m_fSplit;
 
@@ -63,7 +59,7 @@ class CDXLPhysicalDML : public CDXLPhysical {
   // ctor
   CDXLPhysicalDML(CMemoryPool *mp, const EdxlDmlType dxl_dml_type, CDXLTableDescr *table_descr,
                   ULongPtrArray *src_colids_array, ULONG action_colid, ULONG ctid_colid, ULONG segid_colid,
-                  CDXLDirectDispatchInfo *dxl_direct_dispatch_info, BOOL fSplit);
+                  BOOL fSplit);
 
   // dtor
   ~CDXLPhysicalDML() override;
@@ -94,9 +90,6 @@ class CDXLPhysicalDML : public CDXLPhysical {
   // segmentid column id
   ULONG
   GetSegmentIdColId() const { return m_segid_colid; }
-
-  // direct dispatch info
-  CDXLDirectDispatchInfo *GetDXLDirectDispatchInfo() const { return m_direct_dispatch_info; }
 
   // Is update using split
   BOOL FSplit() const { return m_fSplit; }

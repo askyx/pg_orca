@@ -223,18 +223,6 @@ CExpression *CCastUtils::PexprAddCast(CMemoryPool *mp, CExpression *pexprPred) {
     return pexprNewPred;
   }
 
-  // To perform explicit cast on the hash join condition,
-  // operator has to belong to the left column's hash (distribution)
-  // opfamily, and the right column's hash (distribution) opfamily.
-  if (CUtils::FScalarIdent(pexprLeft) && CUtils::FScalarIdent(pexprRight)) {
-    if (GPOS_FTRACE(EopttraceConsiderOpfamiliesForDistribution)) {
-      if (!CPredicateUtils::FOpInOpfamily(pexprLeft, pexprChild, IMDIndex::EmdindHash) ||
-          !CPredicateUtils::FOpInOpfamily(pexprRight, pexprChild, IMDIndex::EmdindHash)) {
-        return pexprNewPred;
-      }
-    }
-  }
-
   pexprLeft->AddRef();
   pexprRight->AddRef();
 

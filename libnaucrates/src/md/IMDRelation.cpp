@@ -18,31 +18,6 @@ using namespace gpmd;
 
 //---------------------------------------------------------------------------
 //	@function:
-//		IMDRelation::GetDistrPolicyStr
-//
-//	@doc:
-//		Return relation distribution policy as a string value
-//
-//---------------------------------------------------------------------------
-const CWStringConst *IMDRelation::GetDistrPolicyStr(Ereldistrpolicy rel_distr_policy) {
-  switch (rel_distr_policy) {
-    case EreldistrCoordinatorOnly:
-      return CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrCoordinatorOnly);
-    case EreldistrHash:
-      return CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrHash);
-    case EreldistrRandom:
-      return CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrRandom);
-    case EreldistrReplicated:
-      return CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrReplicated);
-    case EreldistrUniversal:
-      return CDXLTokens::GetDXLTokenStr(EdxltokenRelDistrUniversal);
-    default:
-      return nullptr;
-  }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
 //		IMDRelation::GetStorageTypeStr
 //
 //	@doc:

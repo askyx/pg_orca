@@ -61,22 +61,6 @@ class CTranslatorExprToDXLUtils {
                                                                     const CColRef *pcrDistrCol,
                                                                     CConstraint *pcnstrDistrCol);
 
-  // compute the direct dispatch info  from the constraints
-  // on the distribution keys
-  static CDXLDirectDispatchInfo *GetDXLDirectDispatchInfo(CMemoryPool *mp, CMDAccessor *md_accessor,
-                                                          CExpressionArray *pdrgpexprHashed, CConstraint *pcnstr);
-
-  // compute the direct dispatch info  from the constraints
-  // for a randomly distributed table
-  static CDXLDirectDispatchInfo *GetDXLDirectDispatchInfoRandDist(CMemoryPool *mp, CMDAccessor *md_accessor,
-                                                                  const CColRef *pcrDistrCol,
-                                                                  CConstraint *pcnstrDistrCol);
-
-  // compute the direct dispatch info for a single distribution key from the constraints
-  // on the distribution key
-  static CDXLDirectDispatchInfo *PdxlddinfoSingleDistrKey(CMemoryPool *mp, CMDAccessor *md_accessor,
-                                                          CExpression *pexprHashed, CConstraint *pcnstr);
-
   // check if the given constant value for a particular distribution column can be used
   // to identify which segment to direct dispatch to.
   static BOOL FDirectDispatchable(CMDAccessor *md_accessor, const CColRef *pcrDistrCol, const CDXLDatum *dxl_datum);
@@ -107,8 +91,7 @@ class CTranslatorExprToDXLUtils {
 
   // create a scalar identifier node for the given column reference
   static CDXLNode *PdxlnIdent(CMemoryPool *mp, ColRefToDXLNodeMap *phmcrdxlnSubplans,
-                              ColRefToDXLNodeMap *phmcrdxlnIndexLookup, 
-                              const CColRef *colref);
+                              ColRefToDXLNodeMap *phmcrdxlnIndexLookup, const CColRef *colref);
 
   // replace subplan entry in the given map with a dxl column reference
   static void ReplaceSubplan(CMemoryPool *mp, ColRefToDXLNodeMap *phmcrdxlnSubplans, const CColRef *colref,

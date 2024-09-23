@@ -39,11 +39,9 @@ extern MemoryContext MessageContext;
 //		Optimize given query using GP optimizer
 //
 //---------------------------------------------------------------------------
-PlannedStmt *CGPOptimizer::GPOPTOptimizedPlan(Query *query, bool *had_unexpected_failure, gpdxl::OptConfig *config) {
+PlannedStmt *CGPOptimizer::GPOPTOptimizedPlan(Query *query, gpdxl::OptConfig *config) {
   SOptContext gpopt_context;
   PlannedStmt *plStmt = nullptr;
-
-  *had_unexpected_failure = false;
 
   gpopt_context.config = config;
 
@@ -89,37 +87,12 @@ PlannedStmt *CGPOptimizer::GPOPTOptimizedPlan(Query *query, bool *had_unexpected
       }
     }
 
-    *had_unexpected_failure = gpopt_context.m_is_unexpected_failure;
-
     if (serialized_error_msg) {
       pfree(serialized_error_msg);
     }
   }
   GPOS_CATCH_END;
   return plStmt;
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CGPOptimizer::SerializeDXLPlan
-//
-//	@doc:
-//		Serialize planned statement into DXL
-//
-//---------------------------------------------------------------------------
-char *CGPOptimizer::SerializeDXLPlan(Query *query) {
-  GPOS_TRY;
-  { return COptTasks::Optimize(query); }
-  GPOS_CATCH_EX(ex);
-  {
-    if (errstart(ERROR, TEXTDOMAIN)) {
-      errcode(ERRCODE_INTERNAL_ERROR);
-      errmsg("optimizer failed to produce plan");
-      errfinish(ex.Filename(), ex.Line(), nullptr);
-    }
-  }
-  GPOS_CATCH_END;
-  return nullptr;
 }
 
 //---------------------------------------------------------------------------
@@ -165,13 +138,6 @@ void CGPOptimizer::TerminateGPOPT() {
 //
 //---------------------------------------------------------------------------
 extern "C" {
-PlannedStmt *GPOPTOptimizedPlan(Query *query, bool *had_unexpected_failure, gpdxl::OptConfig *config) {
-  return CGPOptimizer::GPOPTOptimizedPlan(query, had_unexpected_failure, config);
-}
-
-char *SerializeDXLPlan(Query *query) {
-  return CGPOptimizer::SerializeDXLPlan(query);
-}
 
 void InitGPOPT() {
   GPOS_TRY {

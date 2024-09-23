@@ -27,7 +27,6 @@
 #include "naucrates/dxl/operators/CDXLDatumBool.h"
 #include "naucrates/dxl/operators/CDXLDatumInt4.h"
 #include "naucrates/dxl/operators/CDXLDatumOid.h"
-#include "naucrates/dxl/operators/CDXLDirectDispatchInfo.h"
 #include "naucrates/dxl/operators/CDXLPhysicalHashJoin.h"
 #include "naucrates/dxl/operators/CDXLPhysicalPartitionSelector.h"
 #include "naucrates/dxl/operators/CDXLPhysicalResult.h"
@@ -275,8 +274,7 @@ CDXLNode *CTranslatorExprToDXLUtils::PdxlnProjElem(
   CDXLNode *pdxlnPrEl = GPOS_NEW(mp) CDXLNode(mp, pdxlopPrEl);
 
   // create a scalar identifier for the proj element expression
-  CDXLNode *pdxlnScId =
-      PdxlnIdent(mp, phmcrdxlnSubplans, nullptr /*phmcrdxlnIndexLookup*/,  colref);
+  CDXLNode *pdxlnScId = PdxlnIdent(mp, phmcrdxlnSubplans, nullptr /*phmcrdxlnIndexLookup*/, colref);
 
   if (EdxlopScalarSubPlan == pdxlnScId->GetOperator()->GetDXLOperator()) {
     // modify map by replacing subplan entry with the projected
@@ -561,182 +559,6 @@ void CTranslatorExprToDXLUtils::SetStats(CMemoryPool *mp, CMDAccessor *md_access
     CDXLPhysicalProperties::PdxlpropConvert(dxlnode->GetProperties())
         ->SetStats(stats->GetDxlStatsDrvdRelation(mp, md_accessor));
   }
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorExprToDXLUtils::GetDXLDirectDispatchInfoRandDist
-//
-//	@doc:
-//		Compute the direct dispatch info spec if the table is randomly
-//		distributed. Returns NULL if this is not possible
-//
-//---------------------------------------------------------------------------
-CDXLDirectDispatchInfo *CTranslatorExprToDXLUtils::GetDXLDirectDispatchInfoRandDist(CMemoryPool *mp,
-                                                                                    CMDAccessor *md_accessor,
-                                                                                    const CColRef *pcrDistrCol,
-                                                                                    CConstraint *pcnstrDistrCol) {
-  // For a random distributed table, we get direct gp_segment_id
-  // value in the expression, so we use it as is.
-  const BOOL useRawValues = true;
-
-  CDXLDatum2dArray *pdrgpdrgpdxldatum = nullptr;
-
-  if (CPredicateUtils::FConstColumn(pcnstrDistrCol, pcrDistrCol)) {
-    CDXLDatum *dxl_datum = PdxldatumFromPointConstraint(mp, md_accessor, pcrDistrCol, pcnstrDistrCol);
-    GPOS_ASSERT(nullptr != dxl_datum);
-
-    if (FDirectDispatchable(md_accessor, pcrDistrCol, dxl_datum)) {
-      CDXLDatumArray *pdrgpdxldatum = GPOS_NEW(mp) CDXLDatumArray(mp);
-
-      dxl_datum->AddRef();
-      pdrgpdxldatum->Append(dxl_datum);
-
-      pdrgpdrgpdxldatum = GPOS_NEW(mp) CDXLDatum2dArray(mp);
-      pdrgpdrgpdxldatum->Append(pdrgpdxldatum);
-    }
-
-    dxl_datum->Release();
-  } else if (CPredicateUtils::FColumnDisjunctionOfConst(pcnstrDistrCol, pcrDistrCol)) {
-    pdrgpdrgpdxldatum = PdrgpdrgpdxldatumFromDisjPointConstraint(mp, md_accessor, pcrDistrCol, pcnstrDistrCol);
-  }
-
-  CRefCount::SafeRelease(pcnstrDistrCol);
-
-  if (nullptr == pdrgpdrgpdxldatum) {
-    return nullptr;
-  }
-  return GPOS_NEW(mp) CDXLDirectDispatchInfo(pdrgpdrgpdxldatum, useRawValues);
-}
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorExprToDXLUtils::GetDXLDirectDispatchInfo
-//
-//	@doc:
-//		Compute the direct dispatch info spec. Returns NULL if this is not
-//		possible
-//
-//---------------------------------------------------------------------------
-CDXLDirectDispatchInfo *CTranslatorExprToDXLUtils::GetDXLDirectDispatchInfo(CMemoryPool *mp, CMDAccessor *md_accessor,
-                                                                            CExpressionArray *pdrgpexprHashed,
-                                                                            CConstraint *pcnstr) {
-  GPOS_ASSERT(nullptr != pdrgpexprHashed);
-  GPOS_ASSERT(nullptr != pcnstr);
-
-  const ULONG ulHashExpr = pdrgpexprHashed->Size();
-  GPOS_ASSERT(0 < ulHashExpr);
-
-  // If we have single distribution key for table
-  if (1 == ulHashExpr) {
-    CExpression *pexprHashed = (*pdrgpexprHashed)[0];
-    return PdxlddinfoSingleDistrKey(mp, md_accessor, pexprHashed, pcnstr);
-  }
-
-  BOOL fSuccess = true;
-  CDXLDatumArray *pdrgpdxldatum = GPOS_NEW(mp) CDXLDatumArray(mp);
-
-  // If we have multiple distribution keys for the table
-  for (ULONG ul = 0; ul < ulHashExpr && fSuccess; ul++) {
-    CExpression *pexpr = (*pdrgpexprHashed)[ul];
-    if (!CUtils::FScalarIdent(pexpr)) {
-      fSuccess = false;
-      break;
-    }
-
-    const CColRef *pcrDistrCol = CScalarIdent::PopConvert(pexpr->Pop())->Pcr();
-
-    CConstraint *pcnstrDistrCol = pcnstr->Pcnstr(mp, pcrDistrCol);
-
-    CDXLDatum *dxl_datum = PdxldatumFromPointConstraint(mp, md_accessor, pcrDistrCol, pcnstrDistrCol);
-    CRefCount::SafeRelease(pcnstrDistrCol);
-
-    if (nullptr != dxl_datum && FDirectDispatchable(md_accessor, pcrDistrCol, dxl_datum)) {
-      pdrgpdxldatum->Append(dxl_datum);
-    } else {
-      CRefCount::SafeRelease(dxl_datum);
-
-      fSuccess = false;
-      break;
-    }
-  }
-
-  if (!fSuccess) {
-    pdrgpdxldatum->Release();
-
-    return nullptr;
-  }
-
-  CDXLDatum2dArray *pdrgpdrgpdxldatum = GPOS_NEW(mp) CDXLDatum2dArray(mp);
-  pdrgpdrgpdxldatum->Append(pdrgpdxldatum);
-  return GPOS_NEW(mp) CDXLDirectDispatchInfo(pdrgpdrgpdxldatum, false);
-}
-
-//---------------------------------------------------------------------------
-//	@function:
-//		CTranslatorExprToDXLUtils::PdxlddinfoSingleDistrKey
-//
-//	@doc:
-//		Compute the direct dispatch info spec for a single distribution key.
-//		Returns NULL if this is not possible
-//
-//---------------------------------------------------------------------------
-CDXLDirectDispatchInfo *CTranslatorExprToDXLUtils::PdxlddinfoSingleDistrKey(CMemoryPool *mp, CMDAccessor *md_accessor,
-                                                                            CExpression *pexprHashed,
-                                                                            CConstraint *pcnstr) {
-  GPOS_ASSERT(nullptr != pexprHashed);
-  if (!CUtils::FScalarIdent(pexprHashed)) {
-    return nullptr;
-  }
-
-  const CColRef *pcrDistrCol = CScalarIdent::PopConvert(pexprHashed->Pop())->Pcr();
-
-  BOOL useRawValues = false;
-  CConstraint *pcnstrDistrCol = pcnstr->Pcnstr(mp, pcrDistrCol);
-  CConstraintInterval *pcnstrInterval;
-  // Avoid direct dispatch when pcnstrDistrCol specifies a constant column
-  if (!CPredicateUtils::FConstColumn(pcnstrDistrCol, pcrDistrCol) &&
-      (pcnstrInterval = dynamic_cast<CConstraintInterval *>(pcnstr->GetConstraintOnSegmentId())) != nullptr) {
-    if (pcnstrDistrCol != nullptr) {
-      pcnstrDistrCol->Release();
-    }
-    // If the constraint is on gp_segment_id then we trick ourselves into
-    // considering the constraint as being on a distribution column.
-    pcnstrDistrCol = pcnstrInterval;
-    pcnstrDistrCol->AddRef();
-    pcrDistrCol = pcnstrInterval->Pcr();
-    useRawValues = true;
-  }
-
-  CDXLDatum2dArray *pdrgpdrgpdxldatum = nullptr;
-
-  if (CPredicateUtils::FConstColumn(pcnstrDistrCol, pcrDistrCol)) {
-    CDXLDatum *dxl_datum = PdxldatumFromPointConstraint(mp, md_accessor, pcrDistrCol, pcnstrDistrCol);
-    GPOS_ASSERT(nullptr != dxl_datum);
-
-    if (FDirectDispatchable(md_accessor, pcrDistrCol, dxl_datum))
-
-    {
-      CDXLDatumArray *pdrgpdxldatum = GPOS_NEW(mp) CDXLDatumArray(mp);
-
-      dxl_datum->AddRef();
-      pdrgpdxldatum->Append(dxl_datum);
-
-      pdrgpdrgpdxldatum = GPOS_NEW(mp) CDXLDatum2dArray(mp);
-      pdrgpdrgpdxldatum->Append(pdrgpdxldatum);
-    }
-
-    dxl_datum->Release();
-  } else if (CPredicateUtils::FColumnDisjunctionOfConst(pcnstrDistrCol, pcrDistrCol)) {
-    pdrgpdrgpdxldatum = PdrgpdrgpdxldatumFromDisjPointConstraint(mp, md_accessor, pcrDistrCol, pcnstrDistrCol);
-  }
-
-  CRefCount::SafeRelease(pcnstrDistrCol);
-
-  if (nullptr == pdrgpdrgpdxldatum) {
-    return nullptr;
-  }
-
-  return GPOS_NEW(mp) CDXLDirectDispatchInfo(pdrgpdrgpdxldatum, useRawValues);
 }
 
 //---------------------------------------------------------------------------

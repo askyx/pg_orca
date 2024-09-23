@@ -25,7 +25,6 @@
 #include <limits>  // std::numeric_limits
 
 #include "catalog/pg_collation.h"
-#include "gpopt/utils/gpdbdefs.h"
 #include "gpos/base.h"
 #include "gpos/error/CAutoExceptionStack.h"
 #include "gpos/error/CException.h"
@@ -37,18 +36,28 @@ extern "C" {
 #include <access/genam.h>
 #include <catalog/pg_aggregate.h>
 #include <catalog/pg_inherits.h>
+#include <commands/defrem.h>
 #include <foreign/fdwapi.h>
+#include <funcapi.h>
+#include <nodes/makefuncs.h>
 #include <nodes/nodeFuncs.h>
 #include <optimizer/clauses.h>
 #include <optimizer/optimizer.h>
 #include <optimizer/plancat.h>
 #include <optimizer/subselect.h>
+#include <optimizer/tlist.h>
 #include <parser/parse_agg.h>
+#include <parser/parse_oper.h>
 #include <partitioning/partdesc.h>
 #include <storage/lmgr.h>
+#include <utils/builtins.h>
+#include <utils/datum.h>
 #include <utils/fmgroids.h>
+#include <utils/inval.h>
 #include <utils/memutils.h>
+#include <utils/numeric.h>
 #include <utils/partcache.h>
+#include <utils/syscache.h>
 }
 
 using namespace gpos;
@@ -778,28 +787,10 @@ void gpdb::FreeHeapTuple(HeapTuple htup) {
   }
 }
 
-Oid gpdb::GetDefaultDistributionOpclassForType(Oid typid) {
-  {
-    /* catalog tables: pg_type, pg_opclass */
-    return (typid);
-  }
-
-  return false;
-}
-
 Oid gpdb::GetColumnDefOpclassForType(List *opclassName, Oid typid) {
   {
     /* catalog tables: pg_type, pg_opclass */
     return typid;
-  }
-
-  return false;
-}
-
-Oid gpdb::GetDefaultDistributionOpfamilyForType(Oid typid) {
-  {
-    /* catalog tables: pg_type, pg_opclass */
-    return (typid);
   }
 
   return false;

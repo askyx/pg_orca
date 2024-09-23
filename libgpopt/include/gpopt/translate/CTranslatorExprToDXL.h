@@ -419,9 +419,6 @@ class CTranslatorExprToDXL {
   CDXLNode *PdxlnExistentialSubplan(CColRefArray *pdrgpcrInner, CExpression *pexprCorrelatedNLJoin,
                                     CDXLColRefArray *dxl_colref_array);
 
-  // compute the direct dispatch info for the given DML expression
-  CDXLDirectDispatchInfo *GetDXLDirectDispatchInfo(CExpression *pexprDML);
-
   void AddPartForScanId(ULONG scanid, ULONG index);
 
   // helper to find subplan type from a correlated left outer join expression

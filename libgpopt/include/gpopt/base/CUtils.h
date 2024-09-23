@@ -634,9 +634,6 @@ class CUtils {
 
   static ULONG UlCountOperator(const CExpression *pexpr, COperator::EOperatorId op_id);
 
-  // return the max subset of redistributable columns for the given columns
-  static CColRefArray *PdrgpcrRedistributableSubset(CMemoryPool *mp, CColRefArray *colref_array);
-
   // check if hashing is possible for the given columns
   static BOOL IsHashable(CColRefArray *colref_array);
 

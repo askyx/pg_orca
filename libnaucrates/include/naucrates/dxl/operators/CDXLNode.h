@@ -24,8 +24,6 @@ using namespace gpos;
 class CDXLNode;
 class CDXLOperator;
 
-class CDXLDirectDispatchInfo;
-
 using CDXLNodeArray = CDynamicPtrArray<CDXLNode, CleanupRelease>;
 
 // arrays of OID
@@ -53,9 +51,6 @@ class CDXLNode : public CRefCount {
 
   // array of children
   CDXLNodeArray *m_dxl_array;
-
-  // direct dispatch spec
-  CDXLDirectDispatchInfo *m_direct_dispatch_info;
 
  public:
   CDXLNode(const CDXLNode &) = delete;
@@ -92,9 +87,6 @@ class CDXLNode : public CRefCount {
 
   // accessor for children nodes
   const CDXLNodeArray *GetChildDXLNodeArray() const { return m_dxl_array; }
-
-  // accessor to direct dispatch info
-  CDXLDirectDispatchInfo *GetDXLDirectDispatchInfo() const { return m_direct_dispatch_info; }
 
   // setters
   void AddChild(CDXLNode *child_dxlnode);
