@@ -44,6 +44,11 @@ file(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp 
 )
 
+list(REMOVE_ITEM
+  ORCA_SRC
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pg_orca.cpp
+)
+
 add_library(
   orca_core
     OBJECT
@@ -83,8 +88,8 @@ find_package(PostgreSQL REQUIRED)
 add_postgresql_extension(
   pg_orca
     VERSION 1.0
-    SOURCES pg_orca.cpp
-    SCRIPTS pg_orca--1.0.sql
+    SOURCES src/pg_orca.cpp
+    SCRIPTS src/pg_orca--1.0.sql
 )
 
 target_link_libraries(pg_orca orca_core)

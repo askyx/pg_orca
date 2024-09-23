@@ -14,8 +14,6 @@
 #include "gpopt/exception.h"
 #include "gpos/base.h"
 #include "gpos/common/CAutoP.h"
-#include "gpos/common/CDebugCounter.h"
-#include "gpos/common/CMainArgs.h"
 #include "gpos/error/CLoggerStream.h"
 #include "gpos/error/CMessageRepository.h"
 #include "gpos/io/COstreamString.h"
@@ -98,9 +96,7 @@ void gpos_init(struct gpos_init_params *params) {
   CMessageRepository::Init();
   CCacheFactory::Init();
 
-#ifdef GPOS_DEBUG_COUNTERS
-  CDebugCounter::Init();
-#endif
+
 }
 
 //---------------------------------------------------------------------------
@@ -211,9 +207,7 @@ int gpos_exec(gpos_exec_params *params) {
 //
 //---------------------------------------------------------------------------
 void gpos_terminate() {
-#ifdef GPOS_DEBUG_COUNTERS
-  CDebugCounter::Shutdown();
-#endif
+
 #ifdef GPOS_DEBUG
   CMessageRepository::Shutdown();
   CWorkerPoolManager::Shutdown();

@@ -37,7 +37,6 @@ class CTask : public ITask {
   friend class CTaskSchedulerFifo;
   friend class CWorker;
   friend class CWorkerPoolManager;
-  friend class CUnittest;
   friend class CAutoSuspendAbort;
 
  private:
