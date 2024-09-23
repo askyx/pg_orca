@@ -1300,7 +1300,7 @@ CCost CCostModelGPDB::CostIndexOnlyScan(CMemoryPool *mp GPOS_UNUSED,    // mp
 
   CDouble dRowsIndex = pci->Rows();
 
-  ULONG ulIndexKeys;
+  ULONG ulIndexKeys = 0;
   ULONG ulIncludedColWidth = 0;
   IStatistics *stats = nullptr;
 

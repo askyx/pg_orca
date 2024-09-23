@@ -1277,8 +1277,8 @@ uint32_t PlanGenerator::ProcessDXLTblDescr(const CTableDescriptor *ptabdesc, con
 }
 
 Const *PlanGenerator::CreateConstFromItem(gpnaucrates::IDatum *datum) {
-  int constlen;
-  Datum constvalue;
+  int constlen = -1;
+  Datum constvalue = 0;
   bool constisnull = datum->IsNull();
   bool constbyval;
 

@@ -1,9 +1,10 @@
-cmake_minimum_required(VERSION 3.25)
-project(gpopt_main LANGUAGES CXX C)
+cmake_minimum_required(VERSION 3.20)
+project(pg_orca LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS on)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -59,7 +60,6 @@ target_link_options(orca_core
     ${ORCA_LINK_OPTIONS}
 )
 
-
 target_compile_definitions(
   orca_core
     PUBLIC
@@ -80,7 +80,6 @@ target_include_directories(
 
 find_package(PostgreSQL REQUIRED)
 
-
 add_postgresql_extension(
   pg_orca
     VERSION 1.0
@@ -89,7 +88,6 @@ add_postgresql_extension(
 )
 
 target_link_libraries(pg_orca orca_core)
-
 
 # clang-format
 add_custom_target(format
