@@ -9,6 +9,7 @@ extern "C" {
 
 #include <postgres.h>
 #include <fmgr.h>
+#include <commands/explain_format.h>
 
 #include <commands/explain.h>
 #include <optimizer/planner.h>

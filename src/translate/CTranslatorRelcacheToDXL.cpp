@@ -523,8 +523,9 @@ IMDRelation *CTranslatorRelcacheToDXL::RetrieveRel(CMemoryPool *mp, CMDAccessor 
 CMDColumnArray *CTranslatorRelcacheToDXL::RetrieveRelColumns(CMemoryPool *mp, CMDAccessor *md_accessor, Relation rel) {
   CMDColumnArray *mdcol_array = GPOS_NEW(mp) CMDColumnArray(mp);
 
+  TupleDesc tupdesc = RelationGetDescr(rel);
   for (uint32_t ul = 0; ul < (uint32_t)rel->rd_att->natts; ul++) {
-    Form_pg_attribute att = &rel->rd_att->attrs[ul];
+    Form_pg_attribute att = TupleDescAttr(tupdesc, ul);;
     CMDName *md_colname = CDXLUtils::CreateMDNameFromCharArray(mp, NameStr(att->attname));
 
     uint32_t col_len = UINT32_MAX;
