@@ -530,7 +530,7 @@ Expr *CTranslatorDXLToScalar::TranslateDXLScalarAggrefToScalar(const CDXLNode *a
   if (dxlop->IsDistinct()) {
     List *aggdistinct = TranslateScalarListChildren((*aggref_node)[EdxlscalaraggrefIndexAggDistinct]);
 
-    uint32_t i;
+    uint32_t i = 0;
     ListCell *lc;
     foreach (lc, aggdistinct) {
       i++;
@@ -550,7 +550,7 @@ Expr *CTranslatorDXLToScalar::TranslateDXLScalarAggrefToScalar(const CDXLNode *a
     }
   }
 
-  int attno;
+  int attno = 0;
   aggref->args = NIL;
   ListCell *lc;
   foreach (lc, args) {
